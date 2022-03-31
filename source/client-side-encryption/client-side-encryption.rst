@@ -17,7 +17,7 @@ Client Side Encryption
 
 .. _lmc-integrating: https://github.com/mongodb/libmongocrypt/blob/master/integrating.md
 
-.. default-role:: any
+.. default-role:: literal
 
 .. role:: ts(code)
    :language: typescript
@@ -43,64 +43,60 @@ and decrypted with minimal application code changes.
 META
 ====
 
-The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`__.
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
 Terms
 =====
 
-.. glossary::
+encrypted MongoClient
+   A MongoClient with client side encryption enabled.
 
-   encrypted MongoClient
-      A MongoClient with client side encryption enabled.
+data key
+   A key used to encrypt and decrypt BSON values. Data keys are
+   encrypted with a key management service (e.g. AWS KMS) and stored within a document in the
+   MongoDB key vault collection (see `Key vault collection schema for data keys`_ for a description of the data key document). Therefore, a client needs access to both
+   MongoDB and the external KMS service to utilize a data key.
 
-   data key
-      A key used to encrypt and decrypt BSON values. Data keys are
-      encrypted with a key management service (e.g. AWS KMS) and stored within a document in the
-      MongoDB key vault collection (see `Key vault collection schema for data keys`_ for a description of the data key document). Therefore, a client needs access to both
-      MongoDB and the external KMS service to utilize a data key.
+MongoDB key vault collection
+   A MongoDB collection designated to contain data keys. This can either be co-located with the data-bearing cluster, or in a separate external MongoDB cluster.
 
-   MongoDB key vault collection
-      A MongoDB collection designated to contain data keys. This can either be co-located with the data-bearing cluster, or in a separate external MongoDB cluster.
+Key Management Service (KMS)
+   An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS. Only AWS KMS (and a local service) is supported.
 
-   Key Management Service (KMS)
-      An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS. Only AWS KMS (and a local service) is supported.
+Customer Master Key (CMK)
+   The underlying key AWS KMS uses to encrypt and decrypt. See `AWS Key Management Service Concepts <https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys>`_.
 
-   Customer Master Key (CMK)
-      The underlying key AWS KMS uses to encrypt and decrypt. See `AWS Key Management Service Concepts <https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys>`_.
+schema
+   A MongoDB JSON Schema (either supplied by
+   the server or client-side) which may include metadata about encrypted
+   fields. This is a JSON Schema based on draft 4 of the JSON Schema
+   specification, `as documented in the MongoDB
+   manual. <https://docs.mongodb.com/manual/reference/operator/query/jsonSchema/>`_.
 
-   schema
-      A MongoDB JSON Schema (either supplied by
-      the server or client-side) which may include metadata about encrypted
-      fields. This is a JSON Schema based on draft 4 of the JSON Schema
-      specification, `as documented in the MongoDB
-      manual. <https://docs.mongodb.com/manual/reference/operator/query/jsonSchema/>`_.
+libmongocrypt_
+   A library, written in C, that coordinates communication,
+   does encryption/decryption, caches key and schemas. `Located here <https://github.com/mongodb/libmongocrypt>`_.
 
-   libmongocrypt
-      A library, written in C, that coordinates communication,
-      does encryption/decryption, caches key and schemas. `Located here <https://github.com/mongodb/libmongocrypt>`_.
+mongocryptd_
+   A local process the driver communicates with to determine
+   how to encrypt values in a command.
 
-   mongocryptd
-      A local process the driver communicates with to determine
-      how to encrypt values in a command. Refer: `cse.managing-mongocryptd`.
+csfle_
+   This initialism, spelled in all-lowercase, refers to the *client-side
+   field-level-encryption* dynamic library provided as part of a MongoDB
+   Enterprise distribution. It replaces mongocryptd_ as the method of
+   :ref:`marking-up a database command for encryption <subtype6.intent-to-encrypt>`.
 
-   csfle
-      This initialism, spelled in all-lowercase, refers to the
-      *client-side field-level-encryption* dynamic library provided as part of a
-      MongoDB Enterprise distribution. It replaces `mongocryptd` as the method of
-      `marking-up a database command for encryption <subtype6.intent-to-encrypt>`.
+   .. seealso::
 
-      .. seealso::
+      - `Introduction on csfle <csfle_>`_
+      - `Enabling csfle`_
 
-         - `Introduction on csfle <cse.csfle>`
-         - `cse.enabling-csfle`
-
-   ciphertext
-      One of the data formats of
-      :doc:`BSON binary subtype 6 </client-side-encryption/subtype6>`, representing
-      an encoded BSON document containing encrypted ciphertext and metadata.
-
+ciphertext
+   One of the data formats of `BSON binary subtype 6 <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst>`_, representing an encoded BSON document containing
+   encrypted ciphertext and metadata.
 
 Introduction
 ============
@@ -173,8 +169,8 @@ The driver communicates with…
 -  **MongoDB key vault collection** to get encrypted data keys and create new data
    keys.
 -  **A KMS Provider** to decrypt fetched data keys and encrypt new data keys.
--  **mongocryptd** to ask what values in BSON commands must be
-   encrypted (Only needed if the `csfle` library is not used).
+-  **mongocryptd** to ask what values in BSON commands must be encrypted (unless
+   csfle_ is in use).
 
 The MongoDB key vault may be the same as the MongoDB cluster. Users may
 choose to have data key stored on a separate MongoDB cluster, or
@@ -200,36 +196,32 @@ encrypt newly created data keys.
 mongocryptd
 -----------
 `mongocryptd` is a singleton local process needed for auto-encryption when no
-`csfle` library is used. It speaks the MongoDB wire protocol and the driver uses
-`mongocryptd` by connecting with a MongoClient. By default, if `csfle` is
-unavailable, the driver should attempt to automatically spawn `mongocryptd`. If
-the MongoClient is configured with :option:`extraOptions.mongocryptdBypassSpawn`
-set to |true|, OR :option:`bypassAutoEncryption` is set to |true| then the
-driver will not attempt to spawn `mongocryptd`. The `mongocryptd` process is
-responsible for self terminating after idling for a time period. If
-:option:`extraOptions.csfleRequired` is set to |true|, the driver will not
-connect to `mongocryptd` and instead rely on `csfle` being available.
+csfle_ library is used. It speaks the MongoDB wire protocol and the driver uses
+mongocryptd_ by connecting with a MongoClient. By default, if csfle_ is
+unavailable, the driver should attempt to automatically spawn mongocryptd_. If
+the MongoClient is configured with `extraOptions.mongocryptdBypassSpawn` set to
+|true|, OR `bypassAutoEncryption` is set to |true| then the driver will not
+attempt to spawn mongocryptd_. The mongocryptd_ process is responsible for self
+terminating after idling for a time period. If |opt-csfle-required| is set to
+|true|, the driver will not connect to mongocryptd_ and instead rely on csfle_
+being available.
 
-.. seealso:: Refer to `cse.managing-mongocryptd` for more information.
-
-
-.. _cse.csfle:
 
 csfle
 -----
 
-`csfle` is a dynamically-loaded C++ library providing query analysis for
-auto-encryption. It replaces `mongocryptd` for performing query analysis to
-`mark-up sensitive fields within a command <subtype6.intent-to-encrypt>`.
+csfle_ is a dynamically-loaded C++ library providing query analysis for
+auto-encryption. It replaces mongocryptd_ for performing query analysis to
+:ref:`mark-up sensitive fields within a command <subtype6.intent-to-encrypt>`.
 
-Drivers are not required to load and interact with `csfle` directly. Instead,
-they inform `libmongocrypt` where to find `csfle` and `libmongocrypt` will
-handle `csfle` communication automatically.
+Drivers are not required to load and interact with csfle_ directly. Instead,
+they inform libmongocrypt_ where to find csfle_ and libmongocrypt_ will handle
+csfle_ communication automatically.
 
 .. seealso::
 
-   Refer to `cse.enabling-csfle` for information on using enabling the `csfle`
-   library
+   Refer to `Enabling csfle`_ for information on using enabling the
+   csfle_ library
 
 
 libmongocrypt
@@ -253,7 +245,7 @@ external components. `Located here <https://github.com/mongodb/libmongocrypt>`_.
 
 -  performing all I/O needed at every state:
 
-   -  speaking to `mongocryptd` to mark commands (unless `csfle` is used).
+   -  speaking to mongocryptd_ to mark commands (unless csfle_ is used).
 
    -  fetching encrypted data keys from key vault collection (mongod).
 
@@ -280,46 +272,8 @@ Drivers MAY deviate the spelling of option names to conform to their
 language's naming conventions and implement options in an idiomatic way
 (e.g. keyword arguments, builder classes, etc.).
 
-
 MongoClient Changes
 -------------------
-
-A MongoClient can be configured to automatically encrypt collection
-commands and decrypt results.
-
-Drivers MUST document that auto encryption is an enterprise-only
-feature and that auto encryption only occurs on collection level
-operations by including the following in the driver documentation for
-AutoEncryptionOpts_:
-
-   Automatic encryption is an enterprise only feature that only applies to
-   operations on a collection. Automatic encryption is not supported for
-   operations on a database or view, and operations that are not bypassed
-   will result in error (see `libmongocrypt: Auto Encryption Allow-List`_).
-   To bypass automatic encryption for all operations, set
-   ``bypassAutoEncryption=true`` in AutoEncryptionOpts_.
-
-Explicit encryption/decryption and automatic decryption is a community feature.
-A MongoClient_ configured with
-:option:`bypassAutoEncryption=true <bypassAutoEncryption>` will still
-automatically decrypt.
-
-Drivers MUST document that auto encryption requires the authenticated
-user to have the listCollections privilege action by including the
-following in the driver documentation for MongoClient_.
-
-   Automatic encryption requires the authenticated user to have the
-   `listCollections privilege
-   action <https://docs.mongodb.com/manual/reference/command/listCollections/#dbcmd.listCollections>`_.
-
-See `Why is client side encryption configured on a MongoClient?`_
-
-
-MongoClient
-^^^^^^^^^^^
-
-The following additional properties are required on a MongoClient for
-client-side encryption:
 
 .. code:: typescript
 
@@ -334,318 +288,70 @@ client-side encryption:
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
    }
 
-.. glossary::
-
-   ``libmongocrypt_handle``
-
-      This is a handle to the `libmongocrypt` library and associated context.
-      There must be one per client that wishes to use `libmongocrypt`.
-
-   ``mongocryptd_client``
-
-      This is a regular ``MongoClient`` that talks to `mongocryptd` for
-      command marking. This client is not required if `csfle` is in use.
-
-AutoEncryptionOpts
-^^^^^^^^^^^^^^^^^^
-
-.. code:: typescript
-
    class AutoEncryptionOpts {
-      bypassAutoEncryption: Optional<Boolean>; // Default false.
       keyVaultClient: Optional<MongoClient>;
       keyVaultNamespace: String;
       kmsProviders: Map<String, Map<String, Value>>;
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
+      bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
       tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
    }
 
-.. option:: bypassAutoEncryption
-
-   :type: :ts:`boolean | undefined`
-
-   Drivers MUST disable auto encryption when the 'bypassAutoEncryption' option
-   is |true| and not try to
-   `spawn mongocryptd <cse.managing-mongocryptd>` nor
-   `load csfle <cse.enabling-csfle>`. Automatic encryption may be
-   completely disabled with the ``bypassAutoEncryption`` option. See
-   `Why is there a bypassAutoEncryption?`_.
-
-.. option:: keyVaultClient
-
-   :type: :ts:`MongoClient | undefined` (Refer: MongoClient_)
-
-   The key vault collection is assumed to reside on the same MongoDB cluster as
-   indicated by the connecting URI. But the optional ``keyVaultClient`` can be
-   used to route data key queries to a separate MongoDB cluster.
-
-   If a ``keyVaultClient`` is not passed, and the parent MongoClient_ is
-   configured with a limited ``maxPoolSize``, the ``keyVaultClient`` is set to
-   an internal MongoClient_. See
-   `keyVaultClient, metadataClient, and the internal MongoClient`_ for
-   configuration behavior.
-
-   See `whats-the-deal`.
-
-.. option:: keyVaultNamespace
-
-   :type: :ts:`string`
-
-   The key vault collection namespace refers to a collection that contains all
-   data keys used for encryption and decryption (aka the key vault collection).
-   Data keys are stored as documents in a special MongoDB collection. Data keys
-   are protected with encryption by a KMS provider (AWS KMS, Azure key vault,
-   GCP KMS, a local master key, or KMIP).
-
-.. option:: schemaMap
-
-   :type: :ts:`undefined | {[key: string]: object}`
-
-   Automatic encryption is configured with an "encrypt" field in a collection's
-   JSONSchema. By default, a collection's JSONSchema is periodically polled with
-   the listCollections command. But a JSONSchema may be specified locally with
-   the schemaMap option. Drivers MUST document that a local schema is more
-   secure and MUST include the following in the driver documentation for
-   MongoClient:
-
-      Supplying a ``schemaMap`` provides more security than relying on JSON
-      Schemas obtained from the server. It protects against a malicious server
-      advertising a false JSON Schema, which could trick the client into sending
-      unencrypted data that should be encrypted.
-
-   Drivers MUST document that a local schema only applies to client side
-   encryption, and specifying JSON Schema features unrelated to encryption will
-   result in error. Drivers MUST include the following in the driver
-   documentation for MongoClient:
-
-      Schemas supplied in the ``schemaMap`` only apply to configuring automatic
-      encryption for client side encryption. Other validation rules in the JSON
-      schema will not be enforced by the driver and will result in an error.
-
-.. option:: kmsProviders
-
-   :type: :ts:`{[kmsProviderName: string]: object}`
-
-   Multiple KMS providers may be specified. The ``kmsProviders`` map values
-   differ by provider (:ts:`"aws"`, :ts:`"azure"`, :ts:`"gcp"`, :ts:`"local"`,
-   and :ts:`"kmip"`). The :ts:`"local"` provider is configured with master key
-   material. The external providers are configured with credentials to
-   authenticate.
-
-   Drivers MUST enable TLS for all KMS connections.
-
-   .. seealso:: `Why are extraOptions and kmsProviders maps?`_
-
-   The following defines the shape and schema of the supported KMS providers:
-
-   .. code-block:: typescript
-
-      aws: {
-         accessKeyId: String,
-         secretAccessKey: String,
-         sessionToken: Optional<String> // Required for temporary AWS credentials.
-      }
-
-      azure: {
-         tenantId: String,
-         clientId: String,
-         clientSecret: String,
-         identityPlatformEndpoint: Optional<String> // Defaults to login.microsoftonline.com
-      }
-
-      gcp: {
-         email: String,
-         privateKey: byte[] or String, // May be passed as a base64 encoded string.
-         endpoint: Optional<String> // Defaults to oauth2.googleapis.com
-      }
-
-      local: {
-         key: byte[96] or String // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
-      }
-
-      kmip: {
-         endpoint: String
-      }
-
-.. option:: tlsOptions
-
-   :type: :ts:`undefined | {[key: string]: TLSOptions}` (Refer: TLSOptions_)
-
-   A mapping between :option:`kmsProvider <kmsProviders>` names and
-   `TLS Options <TLSOptions_>`_.
-
-.. option:: extraOptions
-
-   :type: :ts:`undefined | ExtraOptions` (Refer: `ExtraOptions <cse.extraOptions>`)
-
-   Set extra options. Refer to `cse.extraOptions`
-
-
-.. _TLSOptions:
-
-KMS Provider TLS Options
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-Drivers MUST provide TLS options to configure TLS connections for KMS providers.
-
-The TLS options SHOULD be consistent with the existing TLS options for MongoDB
-server TLS connections. The TLS options MUST enable setting a custom client
-certificate, equivalent to the `tlsCertificateKeyFile <uri.options>` URI option.
-
-Drivers SHOULD provide API that is consistent with configuring TLS options for
-MongoDB server TLS connections. New API to support the options MUST be
-independent of the KMS provider to permit future extension. The following is an
-example:
-
-.. code:: typescript
-
-   class AutoEncryptionOpts {
-      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
-      // The TLSOptions apply to any TLS socket required to communicate
-      // with the KMS provider.
-      setTLSOptions (opts Map<String, TLSOptions>)
-   }
-
-   class ClientEncryptionOpts {
-      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
-      // The TLSOptions apply to any TLS socket required to communicate
-      // with the KMS provider.
-      setTLSOptions (opts Map<String, TLSOptions>)
-   }
-
-Drivers MUST raise an error if the TLS options are set to disable TLS.
-The error MUST contain the message "TLS is required".
-
-Drivers SHOULD raise an error if insecure TLS options are set. The error MUST
-contain the message "Insecure TLS options prohibited". This includes options
-equivalent to the following :doc:`URI options </uri-options/uri-options>`:
-
-- ``tlsInsecure``
-- ``tlsAllowInvalidCertificates``
-- ``tlsAllowInvalidHostnames``
-- ``tlsDisableOCSPEndpointCheck``
-- ``tlsDisableCertificateRevocationCheck``
-
-
-See :doc:`the OCSP specification </ocsp-support/ocsp-support>` for a description
-of the default values of ``tlsDisableOCSPEndpointCheck`` and
-``tlsDisableCertificateRevocationCheck`` Drivers MUST NOT modify the default
-value of ``tlsDisableOCSPEndpointCheck`` and
-``tlsDisableCertificateRevocationCheck`` for KMS TLS connections.
-
-.. seealso:: `Why do KMS providers require TLS options?`_
-
-.. _cse.extraOptions:
-
-Extra Auto-Encryption Options
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The `extraOptions` parameter to AutoEncryptionOpts_ relate to `mongocryptd`
-and `csfle`, with more detail described in the Implementation_ section:
-
-.. code-block:: typescript
-
-   interface ExtraOptions {
-      mongocryptdURI: string;
-      mongocryptdBypassSpawn: boolean;
-      mongocryptdSpawnPath: string,
-      mongocryptdSpawnArgs: string[];
-      csfleSearchPaths: string[];
-      csflePathOverride: string | undefined;
-      csfleRequired: boolean;
-   }
-
-Drivers MUST implement extraOptions in a way that allows
-deprecating/removing options in the future without an API break, such as
-with a BSON document or map type instead of a struct type with fixed
-fields.
-
-.. seealso:: `Why are extraOptions and kmsProviders maps?`_.
-
-.. rubric:: Options
-
-.. option:: extraOptions.mongocryptdURI
-
-   :type: :ts:`string`
-   :default: :ts:`"mongodb://localhost:27020"`
-
-   Allows the user to set the URI to use when connecting to `mongocryptd`.
-
-.. option:: extraOptions.mongocryptdBypassSpawn
-
-   :type: :ts:`boolean`
-   :default: |false|
-
-   Disables automatic spawning of `mongocryptd`. Refer:
-   `Managing mongocryptd`_
-
-.. option:: extraOptions.mongocryptdSpawnArgs
-
-   :type: :ts:`string[]`
-   :default: :ts:`["--idleShutdownTimeoutSecs=60"]`
-
-   Allow the user to specify additional command-line options for spawning
-   `mongocryptd` Refer: `Managing mongocryptd`_
-
-.. option:: extraOptions.mongocryptdSpawnPath
-
-   :type: :ts:`string`
-   :default: :ts:`""`
-
-   Used for spawning. Defaults to empty string and spawns `mongocryptd` from
-   system path. Refer: `Managing mongocryptd`_
-
-.. option:: extraOptions.csfleSearchPaths
-
-   :type: :ts:`string[]`
-   :default: :ts:`["$ORIGIN"]`
-
-   .. |opt-paths| replace:: :option:`extraOptions.csfleSearchPaths`
-
-   Allow the user to specify directories in which to search for `csfle`. Refer:
-
-   - :ref:`cse.csfle.search-paths`
-   - :ref:`cse.csfle.path-resolution`
-   - :ref:`cse.enabling-csfle`
-
-.. option:: extraOptions.csflePathOverride
-
-   :type: :ts:`undefined | string`
-   :default: :ts:`undefined`
-
-   .. |opt-path-override| replace:: :option:`extraOptions.csflePathOverride`
-
-   Allow the user to specify an absolute path to a `csfle` dynamic library to
-   load. Refer:
-
-   - :ref:`cse.csfle.override-path`
-   - :ref:`cse.csfle.path-resolution`
-   - :ref:`cse.enabling-csfle`
-
-.. option:: extraOptions.csfleRequired
-
-   :type: :ts:`boolean`
-   :default: |false|
-
-   If |true|, the driver MUST refuse to continue unless `csfle` was loaded
-   successfully.
-
-   If, after initializing a `libmongocrypt_handle`, `csfle` is detected to be
-   unavailable AND :option:`extraOptions.csfleRequired` is |true|, the driver
-   MUST consider the `libmongocrypt_handle` to be invalid and return an error to
-   the user. Refer:
-
-   - :ref:`cse.enabling-csfle`
-   - `Managing mongocryptd`_
-   - `Detecting csfle Availability`_
-
+A MongoClient can be configured to automatically encrypt collection
+commands and decrypt results.
+
+Drivers MUST document that auto encryption is an enterprise-only
+feature and that auto encryption only occurs on collection level
+operations by including the following in the driver documentation for
+AutoEncryptionOpts:
+
+   Automatic encryption is an enterprise only feature that only applies to
+   operations on a collection. Automatic encryption is not supported for
+   operations on a database or view, and operations that are not bypassed
+   will result in error (see `libmongocrypt: Auto Encryption Allow-List`_).
+   To bypass automatic encryption for all operations, set
+   bypassAutoEncryption=true in AutoEncryptionOpts.
+
+Explicit encryption/decryption and automatic decryption is a community
+feature. A MongoClient configured with bypassAutoEncryption=true will
+still automatically decrypt.
+
+Drivers MUST document that auto encryption requires the authenticated
+user to have the listCollections privilege action by including the
+following in the driver documentation for MongoClient.
+
+   Automatic encryption requires the authenticated user to have the
+   `listCollections privilege
+   action <https://docs.mongodb.com/manual/reference/command/listCollections/#dbcmd.listCollections>`__.
+
+See `Why is client side encryption configured on a MongoClient?`_
+
+keyVaultNamespace
+^^^^^^^^^^^^^^^^^
+The key vault collection namespace refers to a collection that contains all
+data keys used for encryption and decryption (aka the key vault collection).
+Data keys are stored as documents in a special MongoDB collection. Data
+keys are protected with encryption by a KMS provider (AWS KMS, Azure key
+vault, GCP KMS, a local master key, or KMIP).
+
+keyVaultClient
+^^^^^^^^^^^^^^
+The key vault collection is assumed to reside on the same MongoDB
+cluster as indicated by the connecting URI. But the optional
+keyVaultClient can be used to route data key queries to a separate
+MongoDB cluster.
+
+If a ``keyVaultClient`` is not passed, and the parent ``MongoClient`` is
+configured with a limited ``maxPoolSize``, the ``keyVaultClient`` is set to an
+internal ``MongoClient``. See `keyVaultClient, metadataClient, and the internal
+MongoClient`_ for configuration behavior.
+
+See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
 keyVaultClient, metadataClient, and the internal MongoClient
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The following pseudo-code describes the configuration behavior for the three
-``MongoClients``:
+The following pseudo-code describes the configuration behavior for the three ``MongoClient`` objects:
 
 .. code::
 
@@ -686,13 +392,13 @@ the following as a template:
    internal ``MongoClient`` is created if any of the following are true:
 
    - ``AutoEncryptionOpts.keyVaultClient`` is not passed.
-   - ``AutoEncryptionOpts.bypassAutomaticEncryption`` is |false|.
+   - ``AutoEncryptionOpts.bypassAutomaticEncryption`` is ``false``.
 
    If an internal ``MongoClient`` is created, it is configured with the same
    options as the parent ``MongoClient`` except ``minPoolSize`` is set to ``0``
    and ``AutoEncryptionOpts`` is omitted.
 
-See `whats-the-deal`.
+See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
 kmsProviders
 ^^^^^^^^^^^^
@@ -734,6 +440,172 @@ See `Why are extraOptions and kmsProviders maps?`_
 
 Drivers MUST enable TLS for all KMS connections.
 
+KMS provider TLS options
+````````````````````````
+
+Drivers MUST provide TLS options to configure TLS connections KMS providers.
+
+The TLS options SHOULD be consistent with the existing TLS options for MongoDB
+server TLS connections. The TLS options MUST enable setting a custom client
+certificate, equivalent to the `tlsCertificateKeyFile` URI option.
+
+Drivers SHOULD provide API that is consistent with configuring TLS options for
+MongoDB server TLS connections. New API to support the options MUST be
+independent of the KMS provider to permit future extension. The following is an
+example:
+
+.. code:: typescript
+
+   class AutoEncryptionOpts {
+      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // The TLSOptions apply to any TLS socket required to communicate
+      // with the KMS provider.
+      setTLSOptions (opts Map<String, TLSOptions>)
+   }
+
+   class ClientEncryptionOpts {
+      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // The TLSOptions apply to any TLS socket required to communicate
+      // with the KMS provider.
+      setTLSOptions (opts Map<String, TLSOptions>)
+   }
+
+Drivers MUST raise an error if the TLS options are set to disable TLS.
+The error MUST contain the message "TLS is required".
+
+Drivers SHOULD raise an error if insecure TLS options are set.
+The error MUST contain the message "Insecure TLS options prohibited".
+This includes options equivalent to the following URI options:
+
+- `tlsInsecure`
+- `tlsAllowInvalidCertificates`
+- `tlsAllowInvalidHostnames`
+- `tlsDisableOCSPEndpointCheck`
+- `tlsDisableCertificateRevocationCheck`
+
+See the OCSP specification for a description of the default values of
+`tlsDisableOCSPEndpointCheck
+<https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisableocspendpointcheck>`_
+and `tlsDisableCertificateRevocationCheck
+<https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisablecertificaterevocationcheck>`_
+Drivers MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and
+`tlsDisableCertificateRevocationCheck` for KMS TLS connections.
+
+See `Why do KMS providers require TLS options?`_
+
+schemaMap
+^^^^^^^^^
+Automatic encryption is configured with an "encrypt" field in a
+collection's JSONSchema. By default, a collection's JSONSchema is
+periodically polled with the listCollections command. But a JSONSchema
+may be specified locally with the schemaMap option. Drivers MUST
+document that a local schema is more secure and MUST include the
+following in the driver documentation for MongoClient:
+
+   Supplying a schemaMap provides more security than relying on JSON
+   Schemas obtained from the server. It protects against a malicious server
+   advertising a false JSON Schema, which could trick the client into
+   sending unencrypted data that should be encrypted.
+
+Drivers MUST document that a local schema only applies to client side
+encryption, and specifying JSON Schema features unrelated to encryption
+will result in error. Drivers MUST include the following in the driver
+documentation for MongoClient:
+
+   Schemas supplied in the schemaMap only apply to configuring automatic
+   encryption for client side encryption. Other validation rules in the
+   JSON schema will not be enforced by the driver and will result in an
+   error.
+
+bypassAutoEncryption
+^^^^^^^^^^^^^^^^^^^^
+
+Drivers MUST disable auto encryption when the 'bypassAutoEncryption'
+option is true and not try to spawn mongocryptd. Automatic encryption
+may be disabled with the bypassAutoEncryption option.
+See `Why is there a bypassAutoEncryption?`_.
+
+extraOptions
+^^^^^^^^^^^^
+The extraOptions relate to the mongocryptd process, an implementation
+detail described in the `Implementation`_ section:
+
+.. code:: typescript
+
+   {
+      // Defaults to "mongodb://localhost:27020".
+      mongocryptdURI: Optional<String>,
+
+      // Defaults to false.
+      mongocryptdBypassSpawn: Optional<Boolean>,
+
+      // Used for spawning. Defaults to empty string and spawns mongocryptd from system path.
+      mongocryptdSpawnPath: Optional<String>,
+
+      // Passed when spawning mongocryptd. If omitted, this defaults to ["--idleShutdownTimeoutSecs=60"]
+      mongocryptdSpawnArgs: Optional<Array[String]>
+
+      // Set the paths used to search for the csfle library
+      csfleSearchPaths: Array<string>;
+
+      // Override the path used to load the csfle library
+      csflePathOverride: Optional<string>;
+
+      // If 'true', refuse to continue encryption without a csfle library
+      csfleRequired: boolean;
+   }
+
+Drivers MUST implement extraOptions in a way that allows
+deprecating/removing options in the future without an API break, such as
+with a BSON document or map type instead of a struct type with fixed
+fields. See `Why are extraOptions and kmsProviders maps?`_.
+
+.. option:: extraOptions.csfleSearchPaths
+
+   :type: :ts:`string[]`
+   :default: :ts:`["$ORIGIN"]`
+
+   .. |opt-paths| replace:: :option:`extraOptions.csfleSearchPaths`
+
+   Allow the user to specify directories in which to search for csfle_. Refer:
+
+   - `Setting Search Paths`_
+   - `Path Resolution Behavior`_
+   - `Enabling csfle`_
+
+
+.. option:: extraOptions.csflePathOverride
+
+   :type: :ts:`undefined | string`
+   :default: :ts:`undefined`
+
+   .. |opt-path-override| replace:: :option:`extraOptions.csflePathOverride`
+
+   Allow the user to specify an absolute path to a csfle_ dynamic library to
+   load. Refer:
+
+   - `Overriding the csfle Library Path`_
+   - `Path Resolution Behavior`_
+   - `Enabling csfle`_
+
+.. option:: extraOptions.csfleRequired
+
+   :type: :ts:`boolean`
+   :default: |false|
+
+   .. |opt-csfle-required| replace:: :option:`extraOptions.csfleRequired`
+
+   If |true|, the driver MUST refuse to continue unless csfle_ was loaded
+   successfully.
+
+   If, after initializing a `libmongocrypt_handle`, csfle_ is detected to be
+   unavailable AND |opt-csfle-required| is |true|, the driver
+   MUST consider the `libmongocrypt_handle` to be invalid and return an error to
+   the user. Refer:
+
+   - `Enabling csfle`_
+   - `Managing mongocryptd`_
+   - `Detecting csfle Availability`_
 
 ClientEncryption
 ----------------
@@ -839,8 +711,8 @@ Drivers MUST document the expected fields in the masterKey document for the
 "aws", "azure", "gcp", and "kmip" KMS providers. Additionally, they MUST
 document that masterKey is **required** for these providers and is not optional.
 
-The value of ``endpoint`` or ``keyVaultEndpoint`` is a host name with optional
-port number separated by a colon. E.g. "kms.us-east-1.amazonaws.com" or
+The value of `endpoint` or `keyVaultEndpoint` is a host name with optional port
+number separated by a colon. E.g. "kms.us-east-1.amazonaws.com" or
 "kms.us-east-1.amazonaws.com:443". It is assumed that the host name is not an IP
 address or IP literal. Though drivers MUST NOT inspect the value of "endpoint"
 that a user sets when creating a data key, a driver will inspect it when
@@ -892,7 +764,7 @@ User facing API: When Auto Encryption Fails
 ===========================================
 
 Auto encryption requires parsing the MongoDB query language client side (with
-the `mongocryptd` process or `csfle` library). For unsupported operations, an
+the mongocryptd_ process or csfle_ library). For unsupported operations, an
 exception will propagate to prevent the possibility of the client sending
 unencrypted data that should be encrypted. Drivers MUST include the following in
 the documentation for MongoClient:
@@ -901,8 +773,8 @@ the documentation for MongoClient:
    configured with bypassAutoEncryption=true and use
    ClientEncryption.encrypt() to manually encrypt values.
 
-For example, currently an aggregate with ``$lookup`` into a foreign collection
-is unsupported (`mongocryptd` and `csfle` return an error):
+For example, currently an aggregate with $lookup into a foreign collection is
+unsupported (mongocryptd_ and csfle_ return errors):
 
 .. code:: python
 
@@ -982,29 +854,28 @@ See `Why do operations on views fail?`_.
 Implementation
 ==============
 
-Drivers MUST integrate with libmongocrypt. libmongocrypt exposes a simple state
-machine to perform operations. Refer:
-`Integrating libmongocrypt <lmc-integrating_>`_.
+Drivers MUST integrate with libmongocrypt. libmongocrypt exposes a
+simple state machine to perform operations. Follow `the guide to integrating libmongocrypt <https://github.com/mongodb/libmongocrypt/blob/master/integrating.md>`_.
 
 Drivers SHOULD take a best-effort approach to store sensitive data
 securely when interacting with KMS since responses may include decrypted
 data key material (e.g. use secure malloc if available).
 
-All errors from the MongoClient to `mongocryptd` or the `csfle` error category
+All errors from the MongoClient to mongocryptd_ or the csfle_ error category
 MUST be distinguished in some way (e.g. exception type) to make it easier for
 users to distinguish when a command fails due to auto encryption limitations.
 
-All errors from the MongoClient interacting with the key vault collection MUST
-be distinguished in some way (e.g. exception type) to make it easier for users
-to distinguish when a command fails due to behind-the-scenes operations required
-for encryption or decryption.
+All errors from the MongoClient interacting with the key vault
+collection MUST be distinguished in some way (e.g. exception type) to
+make it easier for users to distinguish when a command fails due to
+behind-the-scenes operations required for encryption or decryption.
 
 Drivers MUST apply timeouts to operations executed as part of client-side encryption per `Client Side Operations
 Timeout: Client Side Encryption
-<../client-side-operations-timeout/client-side-operations-timeout.rst#client-side-encryption>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.rst#client-side-encryption>`__.
 
-Integrating with `libmongocrypt`
-================================
+Integrating with libmongocrypt
+==============================
 
 Each ClientEncryption instance MUST have one `libmongocrypt_handle`.
 
@@ -1016,12 +887,12 @@ Each ClientEncryption instance MUST have one `libmongocrypt_handle`.
    `The Guide to Integrating libmongocrypt <lmc-integrating_>`_
       For information about integrating the libmongocrypt library in a driver.
 
-`libmongocrypt` exposes logging capabilities. If a driver provides a
+libmongocrypt exposes logging capabilities. If a driver provides a
 logging mechanism, it MUST enable this logging and integrate. E.g. if
 your driver exposes a logging callback that a user can set, it SHOULD be
 possible to get log messages from libmongocrypt.
 
-Drivers MUST propagate errors from `libmongocrypt` in whatever way is
+Drivers MUST propagate errors from libmongocrypt in whatever way is
 idiomatic to the driver (exception, error object, etc.). These errors
 MUST be distinguished in some way (e.g. exception type) to make it
 easier for users to distinguish when a command fails due to client side
@@ -1029,69 +900,65 @@ encryption.
 
 
 .. index:: csfle
-.. _cse.enabling-csfle:
+.. _Enabling csfle:
 
-Enabling Command Marking with the `csfle` Library
+Enabling Command Marking with the csfle_ Library
 =================================================
 
 The MongoDB Enterprise distribution includes a dynamic library named
 ``mongo_csfle_v1`` (with the appropriate file extension or filename suffix for
-the host platform). This library will be loaded by `libmongocrypt` when the
+the host platform). This library will be loaded by libmongocrypt_ when the
 ``mongocrypt_init`` function is invoked
 `(from the libmongocrypt C API) <lmc-c-api_>`_ based on the search critera that
 are provided by the driver.
 
-`libmongocrypt` allows the driver to specify an arbitrary list of directory
-paths in which to search for the `csfle` dynamic library. The user may specify
-`csfle` search behavior by specifying options in `extraOptions`: |opt-paths| and
+libmongocrypt_ allows the driver to specify an arbitrary list of directory paths
+in which to search for the csfle_ dynamic library. The user may specify csfle_
+search behavior by specifying options in extraOptions_: |opt-paths| and
 |opt-path-override|.
 
 .. note::
 
-   The driver MUST NOT manipulate or do any validation on the `csfle` path
-   options provided in `extraOptions`. They should be passed through to
-   `libmongocrypt` unchanged.
+   The driver MUST NOT manipulate or do any validation on the csfle_ path
+   options provided in extraOptions_. They should be passed through to
+   libmongocrypt_ unchanged.
 
 
 .. _search path:
 .. _search paths:
-.. _cse.csfle.search-paths:
 
 Setting Search Paths
 --------------------
 
-The driver MUST append `csfle` search paths to the `libmongocrypt_handle`. For
+The driver MUST append csfle_ search paths to the `libmongocrypt_handle`. For
 each path :math:`P` in |opt-paths|, append :math:`P` to the search paths on the
 `libmongocrypt_handle`, maintaining the order of the user-provided array.
 
 
 .. rubric:: Explaination
 
-The |opt-paths| array allows the user to customize the location of the `csfle`
+The |opt-paths| array allows the user to customize the location of the csfle_
 library that they want to use for their application. For example, a user may
-have bundled a `csfle` library with their application and knows where in the
+have bundled a csfle_ library with their application and knows where in the
 bundle that library is located.
 
-.. seealso:: `cse.csfle.path-resolution`_
+.. seealso:: `Path Resolution Behavior`_
 
 
 .. _override path:
-.. _cse.csfle.override-path:
 
-Overriding the `csfle` Library Path
--------------------------------------
+Overriding the csfle_ Library Path
+----------------------------------
 
 If |opt-path-override| was specified by the user, the driver MUST set the
-`csfle` path override on the `libmongocrypt_handle`.
+csfle_ path override on the `libmongocrypt_handle`.
 
 .. note::
 
-   If a path override is set on a `libmongocrypt_handle` and `libmongocrypt`
-   fails to load `csfle` from that filepath, then that will result in a
-   hard-error when initializing `libmongocrypt`.
+   If a path override is set on a `libmongocrypt_handle` and libmongocrypt_
+   fails to load csfle_ from that filepath, then that will result in a
+   hard-error when initializing libmongocrypt_.
 
-
-.. _cse.csfle.path-resolution:
 
 Path Resolution Behavior
 ------------------------
@@ -1099,119 +966,115 @@ Path Resolution Behavior
 .. |---| unicode:: U+2014
 
 Drivers should include and note the following information regarding the behavior
-of `csfle` path options in `extraOptions`:
+of csfle_ path options in extraOptions_:
 
-- If used, the `override path`_ must be given as a path to the `csfle` dynamic
+- If used, the `override path`_ must be given as a path to the csfle_ dynamic
   library file *itself*, and not simply the directory that contains it.
 
 - If the `override path`_ is specified, the `search paths`_ will be ignored.
 
-- For `csfle` `search paths`_ and the `override path`_, if the given path is a
+- For csfle_ `search paths`_ and the `override path`_, if the given path is a
   relative path and the first path component is the literal string
   :ts:`"$ORIGIN"`, the :ts:`"$ORIGIN"` component will be replaced by the
-  absolute path to the directory containing the `libmongocrypt` library that is
-  performing the `csfle` search. This behavior mimics the ``$ORIGIN`` behavior
-  of the ``RUNPATH``/``RPATH`` properties of ELF executable files. This permits
-  bundling the `csfle` library along with `libmongocrypt` for creating portable
+  absolute path to the directory containing the libmongocrypt_ library that is
+  performing the csfle_ search. This behavior mimics the ``$ORIGIN`` behavior of
+  the ``RUNPATH``/``RPATH`` properties of ELF executable files. This permits
+  bundling the csfle_ library along with libmongocrypt_ for creating portable
   application distributions without relying on a externally/globally available
-  `csfle` library.
+  csfle_ library.
 
   .. note:: No other ``RPATH``/``RUNPATH``-style substitutions are available.
 
-- For `csfle` `search paths`_, if a search path string is :ts:`"$SYSTEM"`, then
-  |---| instead of `libmongocrypt` searching for `csfle` in a directory named
-  "``$SYSTEM``" |---| `libmongocrypt` will defer to the operating system's own
+- For csfle_ `search paths`_, if a search path string is :ts:`"$SYSTEM"`, then
+  |---| instead of libmongocrypt_ searching for csfle_ in a directory named
+  "``$SYSTEM``" |---| libmongocrypt_ will defer to the operating system's own
   dynamic-library resolution mechanism when processing that search-path.
 
 - If a `search path`_ or `override path`_ is given as a relative path, that path
   will be resolved relative to the working directory of the operating system
   process.
 
-- If an `override path`_ was specified and `libmongocrypt` fails to load `csfle`
-  from that filepath, `libmongocrypt` will fail to initialize with a hard-error.
+- If an `override path`_ was specified and libmongocrypt_ fails to load csfle_
+  from that filepath, libmongocrypt_ will fail to initialize with a hard-error.
 
-- If `libmongocrypt` fails to load the `csfle` library from the `search paths`_,
-  `libmongocrypt` will proceed without error and presume that `csfle` is
+- If libmongocrypt_ fails to load the csfle_ library from the `search paths`_,
+  libmongocrypt_ will proceed without error and presume that csfle_ is
   unavailable.
 
-- If |opt-paths| is specified to be an empty array, the resulting `csfle` search
-  paths will also be an empty array, effectively disabling `csfle` searching.
+- If |opt-paths| is specified to be an empty array, the resulting csfle_ search
+  paths will also be an empty array, effectively disabling csfle_ searching.
 
-  In this case, unless |opt-path-override| is specified, `libmongocrypt` is
-  guaranteed not to load `csfle`.
+  In this case, unless |opt-path-override| is specified, libmongocrypt_ is
+  guaranteed not to load csfle_.
 
 
-.. _cse.csfle.detecting:
-
-Detecting `csfle` Availability
+Detecting csfle_ Availability
 ------------------------------
 
-`csfle` availability can only be reliably detected after initializing the
+csfle_ availability can only be reliably detected *after* initializing the
 `libmongocrypt_handle`.
 
 After initializing the `libmongocrypt_handle`, the driver can detect whether
-`csfle` was successfully loaded by asking `libmongocrypt` for the `csfle`
-version string. If the result is an empty string, `libmongocrypt` did not load
-`csfle` and the driver must rely on `mongocryptd` to mark command documents for
+csfle_ was successfully loaded by asking libmongocrypt_ for the csfle_
+version string. If the result is an empty string, libmongocrypt_ did not load
+csfle_ and the driver must rely on mongocryptd_ to mark command documents for
 encryption.
 
 
-"Disabling" `csfle`
+"Disabling" csfle_
 -------------------
 
-As noted in `Path Resolution Behavior`_, `csfle` can be "disabled" on a
+As noted in `Path Resolution Behavior`_, csfle_ can be "disabled" on a
 `libmongocrypt_handle` by omission:
 
 1. Set |opt-paths| to an empty array :ts:`[]`,
-2. AND do not specify a `csfle` library `override path`_ (|opt-path-override|).
+2. AND do not specify a csfle_ library `override path`_ (|opt-path-override|).
 
-This has an effect of "disabling" `csfle` for that `libmongocrypt_handle`.
+This has an effect of "disabling" csfle_ for that `libmongocrypt_handle`.
 
-If at least one `csfle` search path is appended, the `libmongocrypt_handle`
-"wants" `csfle`, but it might *not* successfully load `csfle`. Failing to
-load a `csfle` library after searching every directory in the search paths is
-*not* an error *unless* there is another `csfle` library already loaded in the
-same operating system process (See: `cse.csfle-multiple`).
+If at least one csfle_ search path is appended, the `libmongocrypt_handle`
+"wants" csfle_, but it might *not* successfully load csfle_. Failing to
+load a csfle_ library after searching every directory in the search paths is
+*not* an error *unless* there is another csfle_ library already loaded in the
+same operating system process (See: `Loading csfle multiple times`_).
 
-If the `csfle` `override path`_ is set on a `libmongocrypt_handle`, that library
-handle *requires* `csfle`, and failing to load a `csfle` library from that
+If the csfle_ `override path`_ is set on a `libmongocrypt_handle`, that library
+handle *requires* csfle_, and failing to load a csfle_ library from that
 `override path`_ will result in a hard error.
 
 
-.. _cse.csfle-multiple:
-
-Loading `csfle` Multiple Times
+Loading csfle_ Multiple Times
 ------------------------------
 
-Due to implementation restrictions, there must not be more than one `csfle`
+Due to implementation restrictions, there must not be more than one csfle_
 dynamic library loaded simultaneously in a single operating system process.
 `libmongocrypt` will do its best to enforce this at the time that it loads
-`csfle` while initializing a `libmongocrypt_handle`. `libmongocrypt` will keep
-track of the open `csfle` library globally, and any subsequent attempt to use a
-`csfle` library that does not exactly match the filepath of the already-loaded
-`csfle` will result in an error.
+csfle_ while initializing a `libmongocrypt_handle`. `libmongocrypt` will keep
+track of the open csfle_ library globally, and any subsequent attempt to use a
+csfle_ library that does not exactly match the filepath of the already-loaded
+csfle_ will result in an error.
 
 If at least one `libmongocrypt_handle` exists in an operating system process
-that has an open handle to a `csfle` library, subsequent attempts to initialize
+that has an open handle to a csfle_ library, subsequent attempts to initialize
 an additional `libmongocrypt_handle` will fail if:
 
-1. The new `libmongocrypt_handle` wants `csfle` (i.e. has at least one
+1. The new `libmongocrypt_handle` wants csfle_ (i.e. has at least one
    `search path`_ OR set an `override path`_).
 2. AND the initialization of that `libmongocrypt_handle` does not successfully
-   find the same `csfle` library that was loaded by the existing
-   `libmongocrypt_handle` that is already using `csfle`.
+   find the same csfle_ library that was loaded by the existing
+   `libmongocrypt_handle` that is already using csfle_.
 
-Drivers SHOULD document this limitation for users along with the documentation
-on the ``csfle*`` options in `extraOptions`. Specifically, care should
-be taken to always specify the same set of search and override paths for the
-lifetime of a `libmongocrypt_handle` that has `csfle` open.
+Drivers MUST document this limitation for users along with the documentation on
+the ``csfle*`` options in extraOptions_ by including the following:
 
-Once all open handles to a `csfle` library are closed, it is possible to load a
-different `csfle` library than was previously loaded. The restriction only
+   All `MongoClient` objects in the same process should use the same set of
+   |opt-paths| and |opt-path-override|, as it is an error ot load more that one
+   csfle_ dynamic library simultaneously in a single operating system process.
+
+Once all open handles to a csfle_ library are closed, it is possible to load a
+different csfle_ library than was previously loaded. The restriction only
 applies to simultaneous open handles within a single process.
 
-
-.. _cse.managing-mongocryptd:
 
 Managing mongocryptd
 ====================
@@ -1222,64 +1085,80 @@ If the following conditions are met:
   `bypassAutoEncryption` is not |false|)
 - **AND** the user has not disabled `mongocryptd` spawning (i.e. by setting
   `extraOptions.mongocryptdBypassSpawn` to |true|),
-- **AND** the `cse.csfle` library is unavailable,
-- **AND** the :option:`extraOptions.csfleRequired` option is |false|.
+- **AND** the csfle_ library is unavailable (Refer:
+  `Detecting csfle Availability`_),
+- **AND** the |opt-csfle-required| option is |false|.
 
 **then** ``mongocryptd`` MUST be spawned by the driver.
 
-If the :option:`extraOptions.csfleRequired` option is |true| then the driver
-MUST NOT attempt to spawn or connect to `mongocryptd`.
+If the |opt-csfle-required| option is |true| then the driver MUST NOT attempt to
+spawn or connect to `mongocryptd`.
+
+.. note::
+
+   Since spawning mongocryptd_ requires checking whether csfle_ is loaded, and
+   checking whether csfle_ is available can only be done *after* having
+   initialized the `libmongocrypt_handle`, drivers will need to defer spawning
+   mongocryptd_ until *after* initializing libmongocrypt_ and checking for
+   csfle_.
+
+Spawning mongocryptd_
+---------------------
+
+If a MongoClient is configured for Client Side Encryption
+(eg. bypassAutoEncryption=false), then by default
+(unless mongocryptdBypassSpawn=true), mongocryptd MUST be
+spawned by the driver. Spawning MUST include the command line argument
+--idleShutdownTimeoutSecs. If the user does not supply one through
+extraOptions.mongocryptdSpawnArgs (which may be either in the form
+"--idleShutdownTimeoutSecs=60" or as two consecutive arguments
+["--idleShutdownTimeoutSecs", 60], then the driver MUST append
+--idleShutdownTimeoutSecs=60 to the arguments. This tells mongocryptd
+to automatically terminate after 60 seconds of non-use. The stdout
+and stderr of the spawned process MUST not be exposed in the driver (e.g.
+redirect to /dev/null). Users can pass the argument --logpath to
+extraOptions.mongocryptdSpawnArgs if they need to inspect mongocryptd
+logs.
+
+Upon construction, the MongoClient MUST create a MongoClient to
+mongocryptd configured with serverSelectionTimeoutMS=10000.
+
+If spawning is necessary, the driver MUST spawn mongocryptd whenever
+server selection on the MongoClient to mongocryptd fails. If the
+MongoClient fails to connect after spawning, the server selection error
+is propagated to the user.
 
 
-Spawning ``mongocryptd``
-------------------------
+Connecting to mongocryptd_
+--------------------------
 
-Spawning MUST include the command line argument ``--idleShutdownTimeoutSecs``.
-If the user does not supply one through `extraOptions.mongocryptdSpawnArgs`
-(which may be either in the form "``--idleShutdownTimeoutSecs=60``" or as two
-consecutive arguments ``["--idleShutdownTimeoutSecs", 60]``, then the driver
-MUST append ``--idleShutdownTimeoutSecs=60`` to the arguments. This tells
-``mongocryptd`` to automatically terminate after 60 seconds of non-use. The
-stdout and stderr of the spawned process MUST not be exposed in the driver (e.g.
-redirect to ``/dev/null``). Users can pass the argument ``--logpath`` to
-`extraOptions.mongocryptdSpawnArgs` if they need to inspect mongocryptd logs.
+Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
+, connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
-Upon construction, the MongoClient MUST create a `mongocryptd_client`
-configured with ``serverSelectionTimeoutMS=10000``.
+If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
+then the driver is not responsible for spawning mongocryptd. If server
+selection ever fails when connecting to mongocryptd, the server
+selection error is propagated to the user.
 
-If spawning is necessary, the driver MUST spawn mongocryptd whenever server
-selection on the `mongocryptd_client` fails. If the `mongocryptd_client` fails
-to connect after spawning, the server selection error is propagated to the user.
+.. note::
 
-
-Connecting to mongocryptd
--------------------------
-
-Single-threaded drivers MUST connect with
-:doc:`serverSelectionTryOnce=false </server-selection/server-selection>`,
-``connectTimeoutMS=10000``, and MUST bypass
-:doc:`cooldownMS </server-discovery-and-monitoring/server-monitoring>` when
-connecting to mongocryptd. See
-`Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
-
-If the ClientEncryption is configured with ``mongocryptdBypassSpawn=true``, then
-the driver is not responsible for spawning mongocryptd and server selection
-failures when connecting to mongocryptd should be propagated to the user.
+   A correctly-behaving driver will never attempt to connect to mongocryptd_
+   when |opt-csfle-required| is set to |true|.
 
 ClientEncryption
 ================
-The new ClientEncryption type interacts uses `libmongocrypt` to perform
+The new ClientEncryption type interacts uses libmongocrypt to perform
 encryption and decryption, and to implement
-``ClientEncryption.createDataKey()``, ``ClientEncryption.encrypt()``, and
-``ClientEncryption.decrypt()``.
+ClientEncryption.createDataKey(), ClientEncryption.encrypt(), and
+ClientEncryption.decrypt(). See the `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_ for more information.
 
-The ClientEncryption contains a MongoClient connected to the MongoDB cluster
-containing the key vault collection. It does not contain a MongoClient to
-mongocryptd.
+The ClientEncryption contains a MongoClient connected to the MongoDB
+cluster containing the key vault collection. It does not contain a
+MongoClient to mongocryptd.
 
-Note, aside from ``createDataKey()``, there is no new API for querying,
-updating, or removing data keys. Much of this can be done with existing CRUD
-operations.
+Note, aside from createDataKey(), there is no new API for querying,
+updating, or removing data keys. Much of this can be done with existing
+CRUD operations.
 
 Key Vault collection
 ====================
@@ -1309,7 +1188,7 @@ The state machine is created with the libmongocrypt function
 <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_ for
 more information.
 
-An encrypted MongoClient_ configured with `bypassAutoEncryption` MUST NOT
+An encrypted MongoClient configured with bypassAutoEncryption MUST NOT
 attempt automatic encryption for any command.
 
 Otherwise, an encrypted MongoClient MUST attempt to auto encrypt all
@@ -1318,7 +1197,7 @@ encryption is necessary, or bypass many checks if the command is deemed
 to not possibly contain any encrypted data (e.g. ping). See the appendix
 section: `libmongocrypt: Auto Encryption Allow-List`_.
 
-An encrypted MongoClient_ MUST attempt to auto decrypt the results of all
+An encrypted MongoClient MUST attempt to auto decrypt the results of all
 commands.
 
 Drivers MUST raise an error when attempting to auto encrypt a command if
@@ -1351,7 +1230,7 @@ splitting occurs relative to automatic encryption is implementation-dependent.
 
 Drivers MUST not reduce the size limits for a single write before automatic
 encryption. I.e. if a single document has size larger than 2MiB (but less than
-``maxBsonObjectSize``) proceed with automatic encryption.
+`maxBsonObjectSize`) proceed with automatic encryption.
 
 Drivers MUST document the performance limitation of enabling client side
 encryption by including the following documentation in MongoClient:
@@ -1369,8 +1248,6 @@ intent-to-encrypt marking
    One of the data formats of BSON binary
    subtype 6, representing an encoded BSON document containing plaintext
    and metadata.
-
-.. seealso:: `BSON Subtype-6 Intent-to-encrypt <subtype6.intent-to-encrypt>`
 
 Key vault collection schema for data keys
 -----------------------------------------
@@ -1496,8 +1373,7 @@ Types 1 and 2: Ciphertext
       uint8 ciphertext[ciphertext_length];
    }
 
-See :doc:`Driver Spec: BSON Binary Subtype 6 </client-side-encryption/subtype6>`
-for more information.
+See `Driver Spec: BSON Binary Subtype 6 <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst>`_ for more information.
 
 JSONSchema "encrypt"
 --------------------
@@ -1581,7 +1457,7 @@ libmongocrypt: Crypto implementation
 ------------------------------------
 
 libmongocrypt uses AEAD_SHA256_CBC_HMAC512 for both "randomized" and
-"deterministic" encryption algorithms. It is described in this `IETF document draft <https://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-05>`_.
+"deterministic" encryption algorithms. It is described in this `IETF document draft <https://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-05>`__.
 For "randomized", libmongocrypt securely creates a random IV. For
 "deterministic", libmongocrypt securely creates a random IV key and any
 given encryption operation will derive the IV from the IV key and the
@@ -1594,43 +1470,43 @@ libmongocrypt determines whether or not the command requires encryption
 (i.e. is sent to mongocryptd) based on the table below. Commands not
 listed in this table will result in an error returned by libmongocrypt.
 
-.. csv-table::
-
-   **Command**, **Action**
-   ``aggregate (collection)``, AUTOENCRYPT
-   ``count``, AUTOENCRYPT
-   ``distinct``, AUTOENCRYPT
-   ``delete``, AUTOENCRYPT
-   ``find``, AUTOENCRYPT
-   ``findAndModify``, AUTOENCRYPT
-   ``getMore``, BYPASS
-   ``insert``, AUTOENCRYPT
-   ``update``, AUTOENCRYPT
-   ``authenticate``, BYPASS
-   ``getnonce``, BYPASS
-   ``logout``, BYPASS
-   ``hello``, BYPASS
-   ``legacy hello``, BYPASS
-   ``abortTransaction``, BYPASS
-   ``commitTransaction``, BYPASS
-   ``endSessions``, BYPASS
-   ``startSession``, BYPASS
-   ``create``, BYPASS
-   ``createIndexes``, BYPASS
-   ``drop``, BYPASS
-   ``dropDatabase``, BYPASS
-   ``dropIndexes``, BYPASS
-   ``killCursors``, BYPASS
-   ``listCollections``, BYPASS
-   ``listDatabases``, BYPASS
-   ``listIndexes``, BYPASS
-   ``renameCollection``, BYPASS
-   ``explain``, AUTOENCRYPT
-   ``ping``, BYPASS
-   ``killAllSessions``, BYPASS
-   ``killSessions``, BYPASS
-   ``killAllSessionsByPattern``, BYPASS
-   ``refreshSessions``, BYPASS
+======================== ===========
+**Command**              **Action**
+aggregate (collection)   AUTOENCRYPT
+count                    AUTOENCRYPT
+distinct                 AUTOENCRYPT
+delete                   AUTOENCRYPT
+find                     AUTOENCRYPT
+findAndModify            AUTOENCRYPT
+getMore                  BYPASS
+insert                   AUTOENCRYPT
+update                   AUTOENCRYPT
+authenticate             BYPASS
+getnonce                 BYPASS
+logout                   BYPASS
+hello                    BYPASS
+legacy hello             BYPASS
+abortTransaction         BYPASS
+commitTransaction        BYPASS
+endSessions              BYPASS
+startSession             BYPASS
+create                   BYPASS
+createIndexes            BYPASS
+drop                     BYPASS
+dropDatabase             BYPASS
+dropIndexes              BYPASS
+killCursors              BYPASS
+listCollections          BYPASS
+listDatabases            BYPASS
+listIndexes              BYPASS
+renameCollection         BYPASS
+explain                  AUTOENCRYPT
+ping                     BYPASS
+killAllSessions          BYPASS
+killSessions             BYPASS
+killAllSessionsByPattern BYPASS
+refreshSessions          BYPASS
+======================== ===========
 
 All AUTOENCRYPT commands are sent to mongocryptd, even if there is no
 JSONSchema. This is to ensure that commands that reference other
@@ -1638,7 +1514,7 @@ collections (e.g. aggregate with $lookup) are handled properly.
 
 Test Plan
 =========
-See the :doc:`README.rst <tests/README>` in the test directory.
+See the `README.rst <../client-side-encryption/tests/README.rst>`_ in the test directory.
 
 Rationale
 =========
@@ -1646,26 +1522,23 @@ Rationale
 Design Principles
 -----------------
 In addition to the `Driver
-Mantras <https://github.com/mongodb/specifications#driver-mantras>`_
+Mantras <https://github.com/mongodb/specifications#driver-mantras>`__
 there are design principles specific to this project.
 
 1. Make encryption easy to enable
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+---------------------------------
 Users should be able to enable encryption with minimal application
 change.
 
 2. Minimize risk of exposing sensitive data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+-------------------------------------------
 Storing or querying with unencrypted data can have dire consequences,
 because users may not be made aware immediately. When in doubt, we
 should error. It should be clear to the user when an operation gets
 encrypted and when one doesn't.
 
 3. Minimize API
-^^^^^^^^^^^^^^^
-
+---------------
 The first version of Client Side Encryption is to get signal. If it
 becomes popular, further improvements will be made (removing mongocryptd
 process, support for more queries, better performance). But the public
@@ -1674,7 +1547,6 @@ minimal to accomplish our goals.
 
 How did we arrive at this API?
 ------------------------------
-
 The API for client side encryption underwent multiple iterations during
 the design process.
 
@@ -1682,7 +1554,7 @@ Why is client side encryption configured on a MongoClient?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There is state that must be shared among all auto encrypted collections:
-the `mongocryptd_client` and the `libmongocrypt_handle` (because
+the MongoClient to mongocryptd and the handle to libmongocrypt (because
 key caching + JSONSchema caching occurs in libmongocrypt).
 
 Why not make auto encryption "opt-in"?
@@ -1745,18 +1617,17 @@ cluster).
 Why are extraOptions and kmsProviders maps?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`extraOptions` and `kmsProviders` are maps because we don't want AWS as part of
-the public types and we don't want to put `mongocryptd` and `csfle` options as
-types since they are an implementation detail we'd like to hide as much as
-possible.
+Because we don't want AWS as part of the public types and we don't want
+to put mongocryptd_ and csfle_ options as types since mongocryptd is an
+implementation detail we'd like to hide as much as possible.
 
-Why is there a ``bypassAutoEncryption``?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why is there a bypassAutoEncryption?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`bypassAutoEncryption` still supports auto decryption. In cases where
-`mongocryptd` or `csfle` cannot analyze a query, it's still useful to provide
-auto decryption. Just like static program analysis cannot always prove that a
-runtime invariant holds, `mongocryptd`/`csfle` cannot always prove that a query
+bypassAutoEncryption still supports auto decryption. In cases where
+mongocryptd_ or csfle_ cannot analyze a query, it's still useful to provide auto
+decryption. Just like static program analysis cannot always prove that a
+runtime invariant holds, mongocryptd_/csfle_ cannot always prove that a query
 will be safe with respect to encryption at runtime.
 
 Why not require compatibility between mongocryptd and the server?
@@ -1806,9 +1677,9 @@ Why limit to one top-level $jsonSchema?
 -  If we allow siblings, we can run into cases where the user specifies
    a top-level $and/$or or any arbitrary match-expression that could
    have nested $jsonSchema's.
--  Furthermore, the initial versions of `mongocryptd` and `csfle` are only
+-  Furthermore, the initial versions of mongocryptd_ and csfle_ are only
    implementing query analysis when the validator consists of a single
-   $jsonSchema predicate. This helps to simplify the `mongocryptd` and `csfle`
+   $jsonSchema predicate. This helps to simplify the mongocryptd_ and csfle_
    logic, and unifies it with the case where users configure their schemas
    directly in the driver.
 
@@ -1924,8 +1795,6 @@ on sockets. See the SDAM spec description of `cooldownMS <../source/server-disco
 Because single threaded drivers may exceed ``serverSelectionTimeoutMS`` by the
 duration of the topology scan, ``connectTimeoutMS`` is also reduced.
 
-.. _whats-the-deal:
-
 What's the deal with metadataClient, keyVaultClient, and the internal client?
 -----------------------------------------------------------------------------
 
@@ -1979,7 +1848,7 @@ Why is the metadataClient not needed if bypassAutoEncryption=true
 
 JSON schema data is only needed for automatic encryption but not for automatic
 decryption. ``listCollections`` is not run when ``bypassAutoEncryption`` is
-|true|, making a metadataClient unnecessary.
+``true``, making a metadataClient unnecessary.
 
 Why are commands sent to mongocryptd on collections without encrypted fields?
 -----------------------------------------------------------------------------
@@ -2045,10 +1914,10 @@ with the key service.
 
 Remove mongocryptd
 ------------------
-A future version plans to remove the `mongocryptd` process and fold the logic
-into `libmongocrypt` using the `csfle` library. Therefore, this spec mandates
+A future version plans to remove the mongocryptd_ process and fold the logic
+into `libmongocrypt` using the csfle_ library. Therefore, this spec mandates
 that drivers use `libmongocrypt` to abstract encryption logic, deduplicate work,
-and to provide a simpler future path to removing `mongocryptd`.
+and to provide a simpler future path to removing mongocryptd_.
 
 Support external key vault collection discovery
 -----------------------------------------------
@@ -2092,7 +1961,7 @@ Changelog
    :align: left
 
    Date, Description
-   22-03-29, Document the usage of the new `csfle` library
+   22-03-31, Document the usage of the new csfle_ library
    22-02-24, Rename Versioned API to Stable API
    22-01-19, Require that timeouts be applied per the CSOT spec
    21-11-04, Add 'kmip' KMS provider
