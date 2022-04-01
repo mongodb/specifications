@@ -909,7 +909,7 @@ The MongoDB Enterprise distribution includes a dynamic library named
 ``mongo_csfle_v1`` (with the appropriate file extension or filename suffix for
 the host platform). This library will be loaded by libmongocrypt_ when the
 ``mongocrypt_init`` function is invoked
-`(from the libmongocrypt C API) <lmc-c-api_>`_ based on the search critera that
+`(from the libmongocrypt C API) <lmc-c-api_>`_ based on the search criteria that
 are provided by the driver.
 
 libmongocrypt_ allows the driver to specify an arbitrary list of directory paths
