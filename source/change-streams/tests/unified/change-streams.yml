@@ -227,7 +227,7 @@ tests:
   - description: "to field is set in a rename change event"
     runOnRequirements:
       - minServerVersion: "4.0.1"
-      - topologies: [ replicaset ]
+        topologies: [ replicaset ]
     operations:
       - name: createChangeStream
         object: *collection0
