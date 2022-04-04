@@ -1,5 +1,5 @@
 # Tests for resume behavior on server versions that support the ResumableChangeStreamError label
-description: "change-streams errors"
+description: "change-streams-resume-errorlabels"
 schemaVersion: "1.7"
 createEntities:
   - client:
