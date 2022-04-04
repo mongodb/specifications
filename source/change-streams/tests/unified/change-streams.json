@@ -428,6 +428,11 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.0.1"
+        },
+        {
+          "topologies": [
+            "replicaset"
+          ]
         }
       ],
       "operations": [
@@ -438,6 +443,13 @@
             "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
+        },
+        {
+          "name": "dropCollection",
+          "object": "database0",
+          "arguments": {
+            "collection": "collection1"
+          }
         },
         {
           "name": "rename",
