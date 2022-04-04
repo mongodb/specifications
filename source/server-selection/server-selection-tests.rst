@@ -281,11 +281,11 @@ Prose Test
 
 Multi-threaded and async drivers MUST also implement the following prose test:
 
-1. Configure a sharded cluster with two mongoses. Use a 4.2.9 or newer server version.
+#. Configure a sharded cluster with two mongoses. Use a 4.2.9 or newer server version.
    This test should not be run using TLS or authentication to reduce the chance of
    a false test failure.
 
-2. Enable the following failpoint against exactly one of the mongoses::
+#. Enable the following failpoint against exactly one of the mongoses::
 
      {
         configureFailPoint: "failCommand",
@@ -298,34 +298,32 @@ Multi-threaded and async drivers MUST also implement the following prose test:
         },
      }
 
-3. Insert an empty document into the collection being used for the test.
-
-4. Create a client with both mongoses' addresses in its seed list,
+#. Create a client with both mongoses' addresses in its seed list,
    appName="loadBalancingTest", and localThresholdMS=30000.
 
    * localThresholdMS is set to a high value to help avoid a single mongos
      being selected too many times due to a random spike in latency in the
      other mongos.
 
-5. Using CMAP events, ensure the client's connection pools for both
+#. Using CMAP events, ensure the client's connection pools for both
    mongoses have been saturated, either via setting minPoolSize=maxPoolSize or
    executing operations.
 
    * This helps reduce any noise introduced by connection establishment latency
      during the actual server selection tests.
 
-6. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
+#. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
    with empty filters using that client.
 
-7. Using command monitoring events, assert that fewer than 25% of the
+#. Using command monitoring events, assert that fewer than 25% of the
    CommandStartedEvents occurred on the mongos that the failpoint was enabled on.
 
-8. Disable the failpoint.
+#. Disable the failpoint.
 
-9. Start 10 concurrent threads / tasks that each run 100 `findOne` operations
+#. Start 10 concurrent threads / tasks that each run 100 `findOne` operations
    with empty filters using that client.
 
-10. Using command monitoring events, assert that each mongos was selected
+#. Using command monitoring events, assert that each mongos was selected
     roughly 50% of the time (within +/- 10%).
 
 Application-Provided Server Selector
