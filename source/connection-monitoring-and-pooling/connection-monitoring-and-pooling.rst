@@ -734,7 +734,7 @@ Clearning a load balanced pool
 A Pool MUST also have a method of clearing all `Connections <#connection>`_ for
 a specific ``serviceId`` for use when in load balancer mode. This method
 increments the generation of the pool for that specific ``serviceId`` in the
-generation map. A PoolClearedEvent MUST be emitteed after incrementing the
+generation map. A PoolClearedEvent MUST be emitted after incrementing the
 generation. Note that this method MUST NOT transition the pool to the "paused"
 state and MUST NOT clear the WaitQueue.
 
