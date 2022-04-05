@@ -354,8 +354,10 @@ has the following properties:
       /**
        *  Mark all current Connections as stale, clear the WaitQueue, and mark the pool as "paused".
        *  No connections may be checked out or created in this pool until ready() is called again.
+       *  closeInUseConnections specifies whether the pool will force close "in use" connections as part of the clear. 
+       *  Default false.
        */
-      clear(): void;
+      clear(closeInUseConnections: Optional<Boolean>): void;
 
       /**
        *  Mark the pool as "ready", allowing checkOuts to resume and connections to be created in the background.
@@ -728,6 +730,19 @@ eagerly so that any operations waiting on `Connections <#connection>`_ can retry
 as soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear
 requests from the WaitQueue.
 
+The clearing method MUST provide the option to close any in-use connections as part
+of the clearing (henceforth referred to as the closeInUseConnections flag in this
+specification). The closing of these connections MUST NOT be done eagerly, and
+instead should be handled asynchronously or by the background thread. The next
+background thread run SHOULD be scheduled as soon as possible if it's responsible
+for closing these connections requested by closeInUseConnections flag.
+The pool MUST only close in use connections whose generation is less than or equal 
+to the generation of the pool at the moment of the clear (before the increment) 
+that used the closeInUseConnections flag. Any operations that have their connections 
+closed in this way MUST fail with a retryable error. If possible, the error SHOULD 
+be a PoolClearedError with the following message: "Connection to <pool address> closed 
+due to server monitor timeout".
+
 Clearning a load balanced pool
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -777,10 +792,12 @@ monitoring the state of all available `Connections <#connection>`_. This backgro
 thread SHOULD
 
 -  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize.
--  Remove and close perished available `Connections <#connection>`_.
+-  Remove and close perished available `Connections <#connection>`_ including "in use" connections if `closeInUseConnections` option was set to true in the most recent pool clear.
 - Apply timeouts to connection establishment per `Client Side Operations
   Timeout: Background Connection Pooling
   <../client-side-operations-timeout/client-side-operations-timeout.rst#background-connection-pooling>`__.
+
+A pool SHOULD allow immediate scheduling of the next background thread iteration after a clear is performed. 
 
 Conceptually, the aforementioned activities are organized into sequential Background Thread Runs.
 A Run MUST do as much work as readily available and then end instead of waiting for more work.
@@ -849,7 +866,12 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * The service id for which the pool was cleared for in load balancing mode.
        * See load balancer specification for more information about this field.
        */
-      serviceId: Optional<ObjectId>
+      serviceId: Optional<ObjectId>;
+
+      /**
+       * A flag whether the pool forced closing "in use" connections as part of the clear.
+      */
+      closeInUseConnections: Optional<Boolean>;
     }
 
     /**
@@ -1115,6 +1137,26 @@ clear the pool again. This situation is possible if the pool is cleared by the
 background thread after it encounters an error establishing a connection, but
 the ServerDescription for the endpoint was not updated accordingly yet.
 
+Why does the pool need to support closing in use connections as part of its clear logic?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If a SDAM monitor has observed a network timeout, we assume that all connections
+including "in use" connections are no longer healthy. In some cases connections 
+will fail to detect the network timeout fast enough. For example, a server request 
+can hang at the OS level in TCP retry loop up for 17 minutes before failing. Therefore 
+these connections MUST be proactively closed in the case of a server monitor network timeout. 
+Requesting an immediate backround thread run will speed up this process.
+
+Why don't we configure TCP_USER_TIMEOUT?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ideally, a reasonable TCP_USER_TIMEOUT can help with detecting stale connections as an 
+alternative to `closeInUseConnections` in Clear. 
+Unfortunately this approach is platform dependent and not each driver allows easily configuring it.
+For example, C# driver can configure this socket option on linux only with target frameworks 
+higher or equal to .net 5.0. On macOS, there is no straight equavalent for this option, 
+it's possible that we can find some equavalent configuration, but this configuration will also 
+require target frameworks higher than or equal to .net 5.0. The advantage of using Background Thread to 
+manage perished connections is that it will work regardless of environment setup.
+
 Backwards Compatibility
 =======================
 
@@ -1174,6 +1216,8 @@ Change log
 :2021-06-02: Formalize the behavior of a `Background Thread <#background-thread>`__.
 
 :2021-11-08: Make maxConnecting configurable.
+
+:2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 
 .. Section for links.
 

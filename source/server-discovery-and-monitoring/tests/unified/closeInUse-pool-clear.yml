@@ -1,0 +1,311 @@
+---
+description: closeInUse
+
+schemaVersion: "1.10"
+
+runOnRequirements:
+  # failCommand appName requirements
+  - minServerVersion: "4.9"
+    serverless: forbid
+
+createEntities:
+  - client:
+      id: &setupClient setupClient
+      useMultipleMongoses: false
+
+initialData: &initialData
+  - collectionName: &collectionName closeInUse
+    databaseName: &databaseName sdam-tests
+    documents:
+
+tests:
+  - description: Connection pool clear uses closeInUseConnections=true after monitor timeout
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - serverDescriptionChangedEvent
+                  - poolClearedEvent
+                  - connectionClosedEvent
+                  - commandStartedEvent
+                  - commandFailedEvent
+                  - connectionCheckedOutEvent
+                  - connectionCheckedInEvent
+                uriOptions:
+                  connectTimeoutMS: 500
+                  heartbeatFrequencyMS: 500
+                  appname: closeInUse
+                  retryReads: false
+                  minPoolSize: 0
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - thread:
+                id: thread1
+      - name: insertOne
+        object: *collection
+        arguments:
+          document:
+            _id: 1
+      - name: runOnThread
+        object: testRunner
+        arguments:
+          thread: *thread1
+          operation:
+            name: find
+            object: *collection
+            arguments:
+              filter:
+                $where : sleep(5000) || true
+            expectError:
+              isError: true
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 2
+            data:
+              failCommands:
+                - hello, isMaster
+              blockConnection:  true,
+              blockTimeMS: 1500,                
+              appName: closeInUse        
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            commandFailedEvent: {}
+          count: 1
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolClearedEvent: { closeInUseConnections: true }
+          count: 1
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionCheckedInEvent: { }
+          count: 2
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionClosed: { reason: stale }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            commandFailedEvent: { }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolClearedEvent: { }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionClosedEvent: { }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionCheckedOutEvent: { }
+          count: 2
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionCheckedInEvent: { }
+          count: 2          
+
+    expectEvents:
+      - client: *client
+        eventType: command
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: find
+          - commandFailedEvent:
+              commandName: find
+
+    outcome:
+      - collectionName: *collectionName
+        databaseName: *databaseName
+        documents:
+          - _id: 1
+
+  - description: Error returned from connection pool clear with closeInUseConnections=true is retryable
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - serverDescriptionChangedEvent
+                  - poolClearedEvent
+                  - connectionClosedEvent
+                  - commandStartedEvent
+                  - commandFailedEvent
+                  - connectionCheckedOutEvent
+                  - connectionCheckedInEvent
+                uriOptions:
+                  connectTimeoutMS: 500
+                  heartbeatFrequencyMS: 500
+                  appname: closeInUseRetryable
+                  retryReads: true
+                  minPoolSize: 0
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - thread:
+                id: thread1
+      - name: insertOne
+        object: *collection
+        arguments:
+          document:
+            _id: 1
+      - name: runOnThread
+        object: testRunner
+        arguments:
+          thread: *thread1
+          operation:
+            name: find
+            object: *collection
+            arguments:
+              filter:
+                $where : sleep(5000) || true
+            expectError:
+              isError: true
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 2
+            data:
+              failCommands:
+                - hello, isMaster
+              blockConnection:  true,
+              blockTimeMS: 1500,                
+              appName: closeInUseRetryable        
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            commandFailedEvent: {}
+          count: 1
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolClearedEvent: { closeInUseConnections: true }
+          count: 1
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionCheckedInEvent: { }
+          count: 3
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionClosed: { reason: stale }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            commandFailedEvent: { }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolClearedEvent: { }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionClosedEvent: { }
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionCheckedOutEvent: { }
+          count: 3
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionCheckedInEvent: { }
+          count: 3
+
+    expectEvents:
+      - client: *client
+        eventType: command
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: find
+          - commandFailedEvent:
+              commandName: find
+          - commandStartedEvent:
+              commandName: find
+    outcome:
+      - collectionName: *collectionName
+        databaseName: *databaseName
+        documents:
+          - _id: 1

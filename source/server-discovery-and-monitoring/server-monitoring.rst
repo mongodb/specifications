@@ -616,7 +616,10 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
 #. Clear the connection pool for the server (See `Clear the connection pool on
    both network and command errors`_). For CMAP compliant drivers, clearing the
    pool MUST be synchronized with marking the server as Unknown (see `Why
-   synchronize clearing a server's pool with updating the topology?`_).
+   synchronize clearing a server's pool with updating the topology?`_). If this 
+   was a network timeout error, then the pool MUST be cleared with closeInUseConnections = true 
+   (see Why does the pool need to support closing in use connections as part of 
+   its clear logic?)
 #. If this was a network error and the server was in a known state before the
    error, the client MUST NOT sleep and MUST begin the next check immediately.
    (See `retry hello or legacy hello calls once`_ and
@@ -692,7 +695,7 @@ The event API here is assumed to be like the standard `Python Event
                 topology.onServerDescriptionChanged(description, connection pool for server)
                 if description.error != Null:
                     # Clear the connection pool only after the server description is set to Unknown.
-                    clear connection pool for server
+                    clear(closeInUseConnections: isNetworkTimeout(description.error)) connection pool for server
 
             # Immediately proceed to the next check if the previous response
             # was successful and included the topologyVersion field, or the
@@ -1099,7 +1102,9 @@ A monitor clears the connection pool when a server check fails with a network
 or command error (`Network or command error during server check`_).
 When the check fails with a network error it is likely that all connections
 to that server are also closed.
-(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_).
+(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_). When the check fails 
+with a network timeout error, a monitor SHOULD set closeInUseConnections to true. 
+See, `Why does the pool need to support closing in use connections as part of its clear logic?`_.
 
 When the server is shutting down, it may respond to hello or legacy hello commands with
 ShutdownInProgress errors before closing connections. In this case, the
@@ -1160,6 +1165,8 @@ Changelog
 
 - 2022-02-24: Rename Versioned API to Stable API
 
+- 2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
+
 .. Section for links.
 
 .. _Server Selection Spec: /source/server-selection/server-selection.rst
@@ -1182,3 +1189,4 @@ Changelog
 .. _Client Side Operations Timeout Spec: /source/client-side-operations-timeout/client-side-operations-timeout.rst
 .. _timeoutMS: /source/client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS
 .. _t-digest algorithm: https://github.com/tdunning/t-digest
+.. _Why does the pool need to support closing in use connections as part of its clear logic?: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Why-does-the-pool-need-to-support-closing-in-use-connections-as-part-of-its-clear-logic?

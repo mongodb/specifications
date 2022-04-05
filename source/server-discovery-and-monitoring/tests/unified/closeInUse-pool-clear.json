@@ -1,0 +1,481 @@
+{
+  "description": "closeInUse",
+  "schemaVersion": "1.10",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "4.9",
+      "serverless": "forbid"
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "setupClient",
+        "useMultipleMongoses": false
+      }
+    }
+  ],  
+  "initialData": [
+    {
+      "collectionName": "closeInUse",
+      "databaseName": "sdam-tests",
+      "documents": []
+    }
+  ],  
+  "tests": [
+    {
+      "description": "Connection pool clear uses closeInUseConnections=true after monitor timeout",
+      "operations": [
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "uriOptions": {
+                    "connectTimeoutMS": 500,  
+                    "heartbeatFrequencyMS": 500,
+                    "appname": "closeInUse",
+                    "retryReads": false,
+                    "minPoolSize": 0
+                  },
+                  "observeEvents": [
+                    "serverDescriptionChangedEvent",
+                    "poolClearedEvent",
+                    "connectionClosedEvent",
+                    "commandStartedEvent",
+                    "commandFailedEvent",
+                    "connectionCheckedOutEvent",
+                    "connectionCheckedInEvent"
+                  ]
+                }
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "sdam-tests"
+                }
+              },
+              {
+                "collection": {
+                  "id": "collection",
+                  "database": "database",
+                  "collectionName": "closeInUse"
+                }
+              },
+              {
+                "thread": {
+                  "id": "thread1"
+                }
+              }
+            ]
+          }
+        },      
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": { "_id" : 1 }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1",
+            "operation": {
+                "name": "find",
+                "object": "collection",
+                "arguments": {
+                    "filter": { "$where": "sleep(5000) || true" }
+                },
+                "expectError": {
+                  "isError": true
+                }
+            }
+          }
+        },
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 2
+              },
+              "data": {
+                "failCommands": [
+                  "hello", "isMaster"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 1500,
+                "appName": "closeInUse"
+              }
+            },
+            "client": "setupClient"
+          }
+        },        
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "commandFailedEvent": {}  
+            },
+            "count": 1
+          }
+        },        
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "poolClearedEvent": { "closeInUseConnections" : "true" }  
+            },
+            "count": 1
+          }
+        }, 
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "connectionCheckedInEvent": {}  
+            },
+            "count": 2
+          }
+        }, 
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "connectionClosed": { "reason" : "stale" }  
+            },
+            "count": 1
+          }
+        }, 
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "commandFailedEvent": {}  
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "poolClearedEvent": {}  
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "connectionClosedEvent": {}  
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "connectionCheckedOutEvent": {}  
+            },
+            "count": 2
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "connectionCheckedInEvent": {}  
+            },
+            "count": 2
+          }
+        },
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "eventType": "command",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "find"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "find"
+              }
+            }
+         ]
+       }
+      ],
+      "outcome": [{
+        "collectionName": "closeInUse",
+        "databaseName": "sdam-tests",
+        "documents": [{ "_id": 1 }]
+      }]
+    },
+    {
+      "description": "Error returned from connection pool clear with closeInUseConnections=true is retryable",
+      "operations": [
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "uriOptions": {
+                    "connectTimeoutMS": 500,  
+                    "heartbeatFrequencyMS": 500,
+                    "appname": "closeInUseRetryable",
+                    "retryReads": true,
+                    "minPoolSize": 0
+                  },
+                  "observeEvents": [
+                    "serverDescriptionChangedEvent",
+                    "poolClearedEvent",
+                    "connectionClosedEvent",
+                    "commandFailedEvent",
+                    "commandStartedEvent",
+                    "connectionCheckedOutEvent",
+                    "connectionCheckedInEvent"
+                  ]
+                }
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "sdam-tests"
+                }
+              },
+              {
+                "collection": {
+                  "id": "collection",
+                  "database": "database",
+                  "collectionName": "closeInUse"
+                }
+              },
+              {
+                "thread": {
+                  "id": "thread1"
+                }
+              }
+            ]
+          }
+        },      
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": { "_id" : 1 }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1",
+            "operation": {
+                "name": "find",
+                "object": "collection",
+                "arguments": {
+                    "filter": { "$where": "sleep(5000) || true" }
+                }
+            }
+          }
+        },
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 2
+              },
+              "data": {
+                "failCommands": [
+                  "hello", "isMaster"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 1500,
+                "appName": "closeInUseRetryable"
+              }
+            },
+            "client": "setupClient"
+          }
+        },        
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "commandFailedEvent": {}  
+            },
+            "count": 1
+          }
+        },        
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "poolClearedEvent": { "closeInUseConnections" : true }  
+            },
+            "count": 1
+          }
+        }, 
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "connectionCheckedInEvent": {}  
+            },
+            "count": 3
+          }
+        }, 
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "connectionClosed": { "reason" : "stale" }   
+            },
+            "count": 1
+          }
+        }, 
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "commandFailedEvent": {}  
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "poolClearedEvent": {}  
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "connectionClosedEvent": {}  
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "connectionCheckedOutEvent": {}  
+            },
+            "count": 3
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",  
+            "event": {
+              "connectionCheckedInEvent": {}  
+            },
+            "count": 3
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "eventType": "command",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+                "commandStartedEvent": {
+                    "commandName": "find"
+                }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "find"
+              }
+            },            
+            {
+              "commandStartedEvent": {
+                "commandName": "find"
+              }
+            }
+         ]
+       }
+      ],
+      "outcome": [{
+        "collectionName": "closeInUse",
+        "databaseName": "sdam-tests",
+        "documents": [{ "_id": 1 }]
+      }]
+    }
+  ]
+}
