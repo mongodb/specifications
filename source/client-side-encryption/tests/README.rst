@@ -756,17 +756,7 @@ Test cases
 
    Expect this to fail with a socket connection error.
 
-5. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        endpoint: "kms.us-east-2.amazonaws.com"
-      }
-
-   Expect this to fail with an exception with a message containing the string: "us-east-1"
+5. This test case has been removed.
 
 6. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
 
