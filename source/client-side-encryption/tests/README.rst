@@ -766,7 +766,7 @@ Test cases
         endpoint: "kms.us-east-2.amazonaws.com"
       }
 
-   Expect this to fail with an exception with a message containing the string: "us-east-1"
+   Expect this to fail with an exception.
 
 6. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
 
