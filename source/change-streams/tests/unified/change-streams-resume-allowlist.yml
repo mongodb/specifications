@@ -105,6 +105,7 @@ tests:
                             true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after HostUnreachable
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -183,6 +184,7 @@ tests:
                             true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after HostNotFound
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -261,6 +263,7 @@ tests:
                             true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after NetworkTimeout
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -339,6 +342,7 @@ tests:
                             true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after ShutdownInProgress
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -417,6 +421,7 @@ tests:
                             true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after PrimarySteppedDown
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -494,6 +499,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after ExceededTimeLimit
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -571,6 +577,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after SocketException
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -648,6 +655,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after NotWritablePrimary
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -725,6 +733,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after InterruptedAtShutdown
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -802,6 +811,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after InterruptedDueToReplStateChange
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -879,6 +889,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after NotPrimaryNoSecondaryOk
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -956,6 +967,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after NotPrimaryOrSecondary
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -1033,6 +1045,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after StaleShardVersion
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -1110,6 +1123,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after StaleEpoch
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -1187,6 +1201,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after RetryChangeStream
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -1264,6 +1279,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
   - description: change stream resumes after FailedToSatisfyReadPreference
     runOnRequirements:
       - minServerVersion: "4.2"
@@ -1341,6 +1357,7 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+
     # CursorNotFound is special-cased to be resumable regardless of server versions or error labels, so this test has
     # no maxWireVersion.
   - description: change stream resumes after CursorNotFound
