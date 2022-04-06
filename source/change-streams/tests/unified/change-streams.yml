@@ -138,7 +138,7 @@ tests:
   - description: "Test that comment is set on getMore"
     runOnRequirements:
       - minServerVersion: "4.4.0"
-        # Topolgies are limited because of potentially empty getMore responses
+        # Topologies are limited because of potentially empty getMore responses
         # on sharded clusters.
         # See https://jira.mongodb.org/browse/DRIVERS-2248 for more details.
         topologies: [ replicaset ]
@@ -183,7 +183,7 @@ tests:
   - description: "Test that comment is not set on getMore - pre 4.4"
     runOnRequirements:
       - maxServerVersion: "4.3.99"
-        # Topolgies are limited because of potentially empty getMore responses
+        # Topologies are limited because of potentially empty getMore responses
         # on sharded clusters.
         # See https://jira.mongodb.org/browse/DRIVERS-2248 for more details.
         topologies: [ replicaset ]
@@ -334,6 +334,9 @@ tests:
             viewOn: "db.coll"
 
   - description: "Test server error on projecting out _id"
+    runOnRequirements:
+      - minServerVersion: "4.2"
+        # Server returns an error if _id is modified on versions 4.2 and higher
     operations:
       - name: createChangeStream
         object: *collection0
@@ -371,4 +374,3 @@ tests:
             db: *database0
             coll: *collection0
           newField: "value"
-
