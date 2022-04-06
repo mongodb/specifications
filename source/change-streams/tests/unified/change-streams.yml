@@ -2,7 +2,7 @@ description: "change-streams"
 schemaVersion: "1.0"
 runOnRequirements:
   - minServerVersion: "3.6"
-  - topologies: [ replicaset, sharded-replicaset ]
+    topologies: [ replicaset, sharded-replicaset ]
 createEntities:
   - client:
       id: &client0 client0
@@ -233,10 +233,14 @@ tests:
         arguments:
           pipeline: []
         saveResultAsEntity: &changeStream0 changeStream0
+      - name: dropCollection
+        object: *database0
+        arguments:
+          collection: &collection1 collection1
       - name: rename
         object: *collection0
         arguments:
-          to: &collection1 collection1
+          to: *collection1
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:

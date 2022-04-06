@@ -3,9 +3,7 @@
   "schemaVersion": "1.0",
   "runOnRequirements": [
     {
-      "minServerVersion": "3.6"
-    },
-    {
+      "minServerVersion": "3.6",
       "topologies": [
         "replicaset",
         "sharded-replicaset"
@@ -438,6 +436,13 @@
             "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
+        },
+        {
+          "name": "dropCollection",
+          "object": "database0",
+          "arguments": {
+            "collection": "collection1"
+          }
         },
         {
           "name": "rename",
