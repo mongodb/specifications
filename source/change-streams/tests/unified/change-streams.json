@@ -1188,9 +1188,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": {
-                    "$numberInt": "1"
-                  },
+                  "aggregate": 1,
                   "cursor": {},
                   "pipeline": [
                     {
@@ -1312,9 +1310,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": {
-                    "$numberInt": "1"
-                  },
+                  "aggregate": 1,
                   "cursor": {},
                   "pipeline": [
                     {

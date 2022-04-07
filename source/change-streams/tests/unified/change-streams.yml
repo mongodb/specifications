@@ -608,8 +608,7 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                aggregate:
-                  $numberInt: "1"
+                aggregate: 1
                 cursor: {}
                 pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
@@ -672,8 +671,7 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                aggregate:
-                  $numberInt: "1"
+                aggregate: 1
                 cursor: {}
                 pipeline:
                   - $changeStream: { allChangesForCluster: true }
