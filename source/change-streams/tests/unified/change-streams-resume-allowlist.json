@@ -1,6 +1,16 @@
 {
   "description": "change-streams-resume-allowlist",
   "schemaVersion": "1.7",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "3.6",
+      "topologies": [
+        "replicaset",
+        "sharded-replicaset",
+        "load-balanced"
+      ]
+    }
+  ],
   "createEntities": [
     {
       "client": {
@@ -54,12 +64,7 @@
       "description": "change stream resumes after a network error",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.2",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
+          "minServerVersion": "4.2"
         }
       ],
       "operations": [
@@ -185,11 +190,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -316,11 +317,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -447,11 +444,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -578,11 +571,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -709,11 +698,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -840,11 +825,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -971,11 +952,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -1102,11 +1079,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -1233,11 +1206,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -1364,11 +1333,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -1495,11 +1460,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -1626,11 +1587,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -1757,11 +1714,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -1888,11 +1841,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -2019,11 +1968,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -2150,11 +2095,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.2",
-          "maxServerVersion": "4.2.99",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
       "operations": [
@@ -2280,11 +2221,7 @@
       "description": "change stream resumes after CursorNotFound",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.2",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset"
-          ]
+          "minServerVersion": "4.2"
         }
       ],
       "operations": [
