@@ -31,10 +31,7 @@ tests:
   - description: change stream resumes after HostUnreachable
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -42,21 +39,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout # SERVER-46091 explains why a new failpoint was needed
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 6
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -77,8 +71,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -101,10 +94,7 @@ tests:
   - description: change stream resumes after HostNotFound
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -112,21 +102,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 7
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -147,8 +134,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -171,10 +157,7 @@ tests:
   - description: change stream resumes after NetworkTimeout
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -182,21 +165,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 89
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -217,8 +197,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -240,10 +219,7 @@ tests:
   - description: change stream resumes after ShutdownInProgress
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -251,21 +227,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 91
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -286,8 +259,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -310,10 +282,7 @@ tests:
   - description: change stream resumes after PrimarySteppedDown
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -321,21 +290,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 189
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -356,8 +322,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -380,10 +345,7 @@ tests:
   - description: change stream resumes after ExceededTimeLimit
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -391,21 +353,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 262
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -426,8 +385,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -450,10 +408,7 @@ tests:
   - description: change stream resumes after SocketException
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -461,21 +416,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 9001
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -496,8 +448,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -520,10 +471,7 @@ tests:
   - description: change stream resumes after NotWritablePrimary
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -531,21 +479,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 10107
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -566,8 +511,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -590,10 +534,7 @@ tests:
   - description: change stream resumes after InterruptedAtShutdown
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -601,21 +542,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 11600
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -636,8 +574,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -660,10 +597,7 @@ tests:
   - description: change stream resumes after InterruptedDueToReplStateChange
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -671,21 +605,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 11602
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -706,8 +637,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -730,10 +660,7 @@ tests:
   - description: change stream resumes after NotPrimaryNoSecondaryOk
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -741,21 +668,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 13435
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -776,8 +700,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -800,10 +723,7 @@ tests:
   - description: change stream resumes after NotPrimaryOrSecondary
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -811,21 +731,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 13436
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -846,8 +763,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -870,10 +786,7 @@ tests:
   - description: change stream resumes after StaleShardVersion
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -881,21 +794,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 63
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -916,8 +826,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -940,10 +849,7 @@ tests:
   - description: change stream resumes after StaleEpoch
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -951,21 +857,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 150
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -986,8 +889,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1010,10 +912,7 @@ tests:
   - description: change stream resumes after RetryChangeStream
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1021,21 +920,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 234
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1056,8 +952,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1080,10 +975,7 @@ tests:
   - description: change stream resumes after FailedToSatisfyReadPreference
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1091,21 +983,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               errorCode: 133
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1126,8 +1015,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1151,10 +1039,7 @@ tests:
   - description: change stream resumes if error contains ResumableChangeStreamError
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1162,25 +1047,20 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 50 # Use an error code that does not have the allow list label by default
               closeConnection: false
-              errorLabels:
-                - ResumableChangeStreamError
+              errorLabels: [ ResumableChangeStreamError ]
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1201,8 +1081,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1225,10 +1104,7 @@ tests:
   - description: change stream does not resume if error does not contain ResumableChangeStreamError
     runOnRequirements:
       - minServerVersion: "4.3.1"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1236,24 +1112,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand # failCommand will not add the allow list error label
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 6 # Use an error code that is on the allow list
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectError:
-          errorCode: 6
+        expectError: { errorCode: 6 }

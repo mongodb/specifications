@@ -30,29 +30,23 @@ tests:
   - description: "The watch helper must not throw a custom exception when executed against a single server topology, but instead depend on a server error"
     runOnRequirements:
       - minServerVersion: "3.6.0"
-        topologies:
-          - single
+        topologies: [ single ]
     operations:
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
-        expectError:
-          errorCode: 40573
+        arguments: { pipeline: [] }
+        expectError: { errorCode: 40573 }
 
   - description: Change Stream should error when an invalid aggregation stage is passed in
     runOnRequirements:
       - minServerVersion: "3.6.0"
-        topologies:
-          - replicaset
+        topologies: [ replicaset ]
     operations:
       - name: createChangeStream
         object: *collection0
         arguments:
-          pipeline:
-            - $unsupported: foo
-        expectError:
-          errorCode: 40324
+          pipeline: [ { $unsupported: foo } ]
+        expectError: { errorCode: 40324 }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -70,35 +64,26 @@ tests:
   - description: Change Stream should error when _id is projected out
     runOnRequirements:
       - minServerVersion: "4.1.11"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: createChangeStream
         object: *collection0
         arguments:
           pipeline:
-            - $project:
-                _id: 0
+            - $project: { _id: 0 }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            z: 3
+          document: { z: 3 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectError:
-          errorCode: 280
+        expectError: { errorCode: 280 }
 
   - description: change stream errors on ElectionInProgress
     runOnRequirements:
       - minServerVersion: "4.2"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -106,11 +91,9 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 216
               closeConnection: false
       - name: createChangeStream
@@ -121,9 +104,7 @@ tests:
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            z: 3
+          document: { z: 3 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectError:
-          errorCode: 216
+        expectError: { errorCode: 216 }

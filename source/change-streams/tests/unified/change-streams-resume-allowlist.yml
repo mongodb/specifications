@@ -31,10 +31,7 @@ tests:
   - description: change stream resumes after a network error
     runOnRequirements:
       - minServerVersion: "4.2"
-        topologies:
-          - replicaset
-          - sharded
-          - load-balanced
+        topologies: [ replicaset, sharded, load-balanced ]
     operations:
       - name: failPoint
         object: testRunner
@@ -42,22 +39,18 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               closeConnection: true
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -78,8 +71,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -103,9 +95,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -113,23 +103,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 6
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -150,8 +136,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -175,9 +160,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -185,23 +168,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 7
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -222,8 +201,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -247,9 +225,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -257,23 +233,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 89
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -294,8 +266,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -319,9 +290,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -329,23 +298,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 91
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -366,8 +331,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -391,9 +355,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -401,23 +363,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 189
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -438,8 +396,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -463,9 +420,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -473,23 +428,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 262
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -510,8 +461,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -535,9 +485,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -545,23 +493,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 9001
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -582,8 +526,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -607,9 +550,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -617,23 +558,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 10107
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -654,8 +591,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -679,9 +615,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -689,23 +623,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 11600
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -726,8 +656,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -751,9 +680,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -761,23 +688,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 11602
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -798,8 +721,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -823,9 +745,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -833,23 +753,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 13435
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -870,8 +786,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -895,9 +810,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -905,23 +818,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 13436
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -942,8 +851,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -967,9 +875,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -977,23 +883,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 63
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1014,8 +916,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1039,9 +940,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1049,23 +948,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 150
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1086,8 +981,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1111,9 +1005,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1121,23 +1013,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 234
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1158,8 +1046,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1183,9 +1070,7 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.2"
         maxServerVersion: "4.2.99"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1193,23 +1078,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 133
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1230,8 +1111,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
@@ -1256,9 +1136,7 @@ tests:
   - description: change stream resumes after CursorNotFound
     runOnRequirements:
       - minServerVersion: "4.2"
-        topologies:
-          - replicaset
-          - sharded
+        topologies: [ replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -1266,23 +1144,19 @@ tests:
           client: globalClient
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - getMore
+              failCommands: [ getMore ]
               errorCode: 43
               closeConnection: false
       - name: createChangeStream
         object: *collection0
-        arguments:
-          pipeline: []
+        arguments: { pipeline: [] }
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
         arguments:
-          document:
-            x: 1
+          document: { x: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -1303,8 +1177,7 @@ tests:
               command:
                 aggregate: *collection0
                 cursor: {}
-                pipeline:
-                  - $changeStream: {}
+                pipeline: [ { $changeStream: {} } ]
               commandName: aggregate
               databaseName: *database0
           - commandStartedEvent:
