@@ -1,6 +1,16 @@
 {
   "description": "change-streams-resume-errorlabels",
   "schemaVersion": "1.7",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "4.3.1",
+      "topologies": [
+        "replicaset",
+        "sharded-replicaset",
+        "load-balanced"
+      ]
+    }
+  ],
   "createEntities": [
     {
       "client": {
@@ -52,16 +62,6 @@
   "tests": [
     {
       "description": "change stream resumes after HostUnreachable",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -180,16 +180,6 @@
     },
     {
       "description": "change stream resumes after HostNotFound",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -308,16 +298,6 @@
     },
     {
       "description": "change stream resumes after NetworkTimeout",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -435,16 +415,6 @@
     },
     {
       "description": "change stream resumes after ShutdownInProgress",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -563,16 +533,6 @@
     },
     {
       "description": "change stream resumes after PrimarySteppedDown",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -691,16 +651,6 @@
     },
     {
       "description": "change stream resumes after ExceededTimeLimit",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -819,16 +769,6 @@
     },
     {
       "description": "change stream resumes after SocketException",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -947,16 +887,6 @@
     },
     {
       "description": "change stream resumes after NotWritablePrimary",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1075,16 +1005,6 @@
     },
     {
       "description": "change stream resumes after InterruptedAtShutdown",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1203,16 +1123,6 @@
     },
     {
       "description": "change stream resumes after InterruptedDueToReplStateChange",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1331,16 +1241,6 @@
     },
     {
       "description": "change stream resumes after NotPrimaryNoSecondaryOk",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1459,16 +1359,6 @@
     },
     {
       "description": "change stream resumes after NotPrimaryOrSecondary",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1587,16 +1477,6 @@
     },
     {
       "description": "change stream resumes after StaleShardVersion",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1715,16 +1595,6 @@
     },
     {
       "description": "change stream resumes after StaleEpoch",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1843,16 +1713,6 @@
     },
     {
       "description": "change stream resumes after RetryChangeStream",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -1971,16 +1831,6 @@
     },
     {
       "description": "change stream resumes after FailedToSatisfyReadPreference",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -2099,16 +1949,6 @@
     },
     {
       "description": "change stream resumes if error contains ResumableChangeStreamError",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
@@ -2233,16 +2073,6 @@
     },
     {
       "description": "change stream does not resume if error does not contain ResumableChangeStreamError",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.3.1",
-          "topologies": [
-            "replicaset",
-            "sharded-replicaset",
-            "load-balanced"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
