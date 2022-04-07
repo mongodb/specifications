@@ -60,18 +60,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -86,8 +83,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -98,8 +94,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -135,18 +130,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -161,8 +153,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -173,8 +164,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -210,18 +200,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -236,8 +223,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -248,8 +234,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
 
   - description: change stream resumes after ShutdownInProgress
@@ -284,18 +269,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -310,8 +292,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -322,8 +303,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -359,18 +339,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -385,8 +362,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -397,8 +373,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -434,18 +409,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -460,8 +432,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -472,8 +443,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -509,18 +479,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -535,8 +502,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -547,8 +513,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -584,18 +549,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -610,8 +572,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -622,8 +583,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -659,18 +619,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -685,8 +642,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -697,8 +653,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -734,18 +689,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -760,8 +712,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -772,8 +723,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -809,18 +759,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -835,8 +782,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -847,8 +793,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -884,18 +829,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -910,8 +852,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -922,8 +863,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -959,18 +899,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -985,8 +922,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -997,8 +933,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -1034,18 +969,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -1060,8 +992,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -1072,8 +1003,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -1109,18 +1039,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -1135,8 +1062,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -1147,8 +1073,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -1184,18 +1109,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -1210,8 +1132,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -1222,8 +1143,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 
@@ -1264,18 +1184,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -1290,8 +1207,7 @@ tests:
               databaseName: *database0
           - commandStartedEvent:
               command:
-                getMore:
-                  $$exists: true
+                getMore: { $$exists: true }
                 collection: *collection0
               commandName: getMore
               databaseName: *database0
@@ -1302,8 +1218,7 @@ tests:
                 pipeline:
                   - $changeStream:
                       resumeAfter:
-                        $$unsetOrMatches:
-                          $$exists: true
+                        $$unsetOrMatches: { $$exists: true }
               commandName: aggregate
               databaseName: *database0
 

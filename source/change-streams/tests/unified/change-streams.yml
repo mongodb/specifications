@@ -433,18 +433,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -477,18 +474,15 @@ tests:
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
-          _id:
-            $$exists: true
-          documentKey:
-            $$exists: true
+          _id: { $$exists: true }
+          documentKey: { $$exists: true }
           operationType: insert
           ns:
             db: *database0
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
 
   - description: Executing a watch helper on a Collection results in notifications for changes to the specified collection
     runOnRequirements:
@@ -525,8 +519,7 @@ tests:
             coll: *collection0
           fullDocument:
             z: 3
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -572,8 +565,7 @@ tests:
             coll: *collection0
           fullDocument:
             z: 3
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -624,8 +616,7 @@ tests:
             coll: *collection1
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -635,8 +626,7 @@ tests:
             coll: *collection0
           fullDocument:
             z: 3
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -686,8 +676,7 @@ tests:
             coll: *collection1
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -697,8 +686,7 @@ tests:
             coll: *collection0
           fullDocument:
             y: 2
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -708,8 +696,7 @@ tests:
             coll: *collection0
           fullDocument:
             z: 3
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
@@ -770,8 +757,7 @@ tests:
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -796,8 +782,7 @@ tests:
             coll: *collection0
           fullDocument:
             x: 3
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -953,8 +938,7 @@ tests:
             coll: *collection0
           fullDocument:
             x: 1
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -964,8 +948,7 @@ tests:
             coll: *collection0
           fullDocument:
             x: 2
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -975,8 +958,7 @@ tests:
             coll: *collection0
           fullDocument:
             x: 3
-            _id:
-              $$exists: true
+            _id: { $$exists: true }
     expectEvents:
       - client: *client0
         ignoreExtraEvents: true
