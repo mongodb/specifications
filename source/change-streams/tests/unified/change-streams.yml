@@ -726,10 +726,7 @@ tests:
           updateDescription:
             updatedFields: { x: 2 }
             removedFields: []
-            truncatedArrays:
-              $$unsetOrMatches:
-                $$exists:
-                  true
+            truncatedArrays: { $$unsetOrMatches: { $$exists: true } }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:

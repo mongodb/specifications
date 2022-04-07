@@ -86,8 +86,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -151,8 +150,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -216,8 +214,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -281,8 +278,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -346,8 +342,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -411,8 +406,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -476,8 +470,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -541,8 +534,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -606,8 +598,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -671,8 +662,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -736,8 +726,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -801,8 +790,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -866,8 +854,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -931,8 +918,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -996,8 +982,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -1061,8 +1046,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -1126,8 +1110,7 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
 
@@ -1192,7 +1175,6 @@ tests:
                 cursor: {}
                 pipeline:
                   - $changeStream:
-                      resumeAfter:
-                        $$unsetOrMatches: { $$exists: true }
+                      resumeAfter: { $$unsetOrMatches: { $$exists: true } }
               commandName: aggregate
               databaseName: *database0
