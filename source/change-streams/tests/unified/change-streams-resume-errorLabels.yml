@@ -36,7 +36,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout # SERVER-46091 explains why a new failpoint was needed
             mode: { times: 1 }
@@ -99,7 +99,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -162,7 +162,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -224,7 +224,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -287,7 +287,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -350,7 +350,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -413,7 +413,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -476,7 +476,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -539,7 +539,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -602,7 +602,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -665,7 +665,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -728,7 +728,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -791,7 +791,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -854,7 +854,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -917,7 +917,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -980,7 +980,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failGetMoreAfterCursorCheckout
             mode: { times: 1 }
@@ -1044,7 +1044,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -1109,7 +1109,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failCommand # failCommand will not add the allow list error label
             mode: { times: 1 }

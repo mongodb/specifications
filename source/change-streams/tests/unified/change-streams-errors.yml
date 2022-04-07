@@ -88,7 +88,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: globalClient
+          client: *globalClient
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 1 }
