@@ -115,9 +115,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -248,9 +246,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -381,9 +377,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -514,9 +508,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -647,9 +639,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -780,9 +770,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -913,9 +901,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1046,9 +1032,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1179,9 +1163,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1312,9 +1294,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1445,9 +1425,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1578,9 +1556,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1711,9 +1687,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1844,9 +1818,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1977,9 +1949,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -2110,9 +2080,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -2243,9 +2211,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -2375,9 +2341,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }

@@ -70,8 +70,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -149,8 +148,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -228,8 +226,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -307,8 +304,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -386,8 +382,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -465,8 +460,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -543,8 +537,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -621,8 +614,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -699,8 +691,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -777,8 +768,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -855,8 +845,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -933,8 +922,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -1011,8 +999,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -1089,8 +1076,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -1167,8 +1153,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -1245,8 +1230,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -1323,8 +1307,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -1402,8 +1385,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:

@@ -836,9 +836,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -914,9 +912,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -981,9 +977,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "z": {
-                "$numberInt": "3"
-              },
+              "z": 3,
               "_id": {
                 "$$exists": true
               }
@@ -1068,9 +1062,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "z": {
-                "$numberInt": "3"
-              },
+              "z": 3,
               "_id": {
                 "$$exists": true
               }
@@ -1094,9 +1086,7 @@
                     },
                     {
                       "$match": {
-                        "fullDocument.z": {
-                          "$numberInt": "3"
-                        }
+                        "fullDocument.z": 3
                       }
                     }
                   ]
@@ -1165,9 +1155,7 @@
               "coll": "collection1"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1184,9 +1172,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "z": {
-                "$numberInt": "3"
-              },
+              "z": 3,
               "_id": {
                 "$$exists": true
               }
@@ -1276,9 +1262,7 @@
               "coll": "collection1"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1295,9 +1279,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "y": {
-                "$numberInt": "2"
-              },
+              "y": 2,
               "_id": {
                 "$$exists": true
               }
@@ -1314,9 +1296,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "z": {
-                "$numberInt": "3"
-              },
+              "z": 3,
               "_id": {
                 "$$exists": true
               }
@@ -1425,9 +1405,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1445,9 +1423,7 @@
             },
             "updateDescription": {
               "updatedFields": {
-                "x": {
-                  "$numberInt": "2"
-                }
+                "x": 2
               },
               "removedFields": [],
               "truncatedArrays": {
@@ -1468,9 +1444,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "3"
-              },
+              "x": 3,
               "_id": {
                 "$$exists": true
               }
@@ -1738,9 +1712,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "1"
-              },
+              "x": 1,
               "_id": {
                 "$$exists": true
               }
@@ -1757,9 +1729,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "2"
-              },
+              "x": 2,
               "_id": {
                 "$$exists": true
               }
@@ -1776,9 +1746,7 @@
               "coll": "collection0"
             },
             "fullDocument": {
-              "x": {
-                "$numberInt": "3"
-              },
+              "x": 3,
               "_id": {
                 "$$exists": true
               }

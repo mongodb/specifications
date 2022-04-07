@@ -442,8 +442,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
     expectEvents:
@@ -487,8 +486,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
 
@@ -526,8 +524,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            z:
-              $numberInt: "3"
+            z: 3
             _id:
               $$exists: true
     expectEvents:
@@ -574,8 +571,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            z:
-              $numberInt: "3"
+            z: 3
             _id:
               $$exists: true
     expectEvents:
@@ -589,8 +585,7 @@ tests:
                 pipeline:
                   - $changeStream: {}
                   - $match:
-                      fullDocument.z:
-                        $numberInt: "3"
+                      fullDocument.z: 3
               commandName: aggregate
               databaseName: *database0
 
@@ -628,8 +623,7 @@ tests:
             db: *database0
             coll: *collection1
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
       - name: iterateUntilDocumentOrError
@@ -640,8 +634,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            z:
-              $numberInt: "3"
+            z: 3
             _id:
               $$exists: true
     expectEvents:
@@ -692,8 +685,7 @@ tests:
             db: *database0
             coll: *collection1
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
       - name: iterateUntilDocumentOrError
@@ -704,8 +696,7 @@ tests:
             db: *database1
             coll: *collection0
           fullDocument:
-            y:
-              $numberInt: "2"
+            y: 2
             _id:
               $$exists: true
       - name: iterateUntilDocumentOrError
@@ -716,8 +707,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            z:
-              $numberInt: "3"
+            z: 3
             _id:
               $$exists: true
     expectEvents:
@@ -779,8 +769,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
       - name: iterateUntilDocumentOrError
@@ -792,8 +781,7 @@ tests:
             coll: *collection0
           updateDescription:
             updatedFields:
-              x:
-                $numberInt: "2"
+              x: 2
             removedFields: []
             truncatedArrays:
               $$unsetOrMatches:
@@ -807,8 +795,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "3"
+            x: 3
             _id:
               $$exists: true
       - name: iterateUntilDocumentOrError
@@ -965,8 +952,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "1"
+            x: 1
             _id:
               $$exists: true
       - name: iterateUntilDocumentOrError
@@ -977,8 +963,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "2"
+            x: 2
             _id:
               $$exists: true
       - name: iterateUntilDocumentOrError
@@ -989,8 +974,7 @@ tests:
             db: *database0
             coll: *collection0
           fullDocument:
-            x:
-              $numberInt: "3"
+            x: 3
             _id:
               $$exists: true
     expectEvents:
