@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-03-25
-:Version: 1.13.1
+:Last Modified: 2022-04-08
+:Version: 1.14
 
 .. contents::
 
@@ -175,20 +175,34 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     updateDescription: Optional<UpdateDescription>;
 
     /**
-     * Always present for operations of type ‘insert’ and ‘replace’. Also
-     * present for operations of type ‘update’ if the user has specified ‘updateLookup’
-     * in the ‘fullDocument’ arguments to the ‘$changeStream’ stage.
+     * Always present for operations of type 'insert' and 'replace'. Also
+     * present for operations of type 'update' if the user has specified
+     * 'updateLookup' for the 'fullDocument' option when creating the change
+     * stream.
      *
-     * For operations of type ‘insert’ and ‘replace’, this key will contain the
-     * document being inserted, or the new version of the document that is replacing
-     * the existing document, respectively.
+     * For operations of type 'insert' and 'replace', this key will contain the
+     * document being inserted or the new version of the document that is
+     * replacing the existing document, respectively.
      *
-     * For operations of type ‘update’, this key will contain a copy of the full
+     * For operations of type 'update', this key will contain a copy of the full
      * version of the document from some point after the update occurred. If the
      * document was deleted since the updated happened, it will be null.
+     *
+     * Contains the point-in-time post-image of the modified document if the
+     * post-image is available and either "required" or "whenAvailable" was
+     * specified for the "fullDocument" option when creating the change stream.
+     * A post-image is always available for "insert" and "replace" events.
      */
     fullDocument: Document | null;
 
+    /**
+     * Contains the pre-image of the modified or deleted document if the
+     * pre-image is available for the change event and either "required" or
+     * "whenAvailable" was specified for the "fullDocumentBeforeChange" option
+     * when creating the change stream. If "whenAvailable" was specified but the
+     * pre-image is unavailable, this will be explicitly set to null.
+     */
+    fullDocumentBeforeChange: Document | null;
   }
 
   class UpdateDescription {
@@ -347,15 +361,51 @@ Driver API
 
   class ChangeStreamOptions {
     /**
-     * Allowed values: ‘updateLookup’.  When set to ‘updateLookup’, the change notification
-     * for partial updates will include both a delta describing the changes to the document,
-     * as well as a copy of the entire document that was changed from some time after the
-     * change occurred. The default is to not send a value.
-     * For forward compatibility, a driver MUST NOT raise an error when a user provides an
-     * unknown value. The driver relies on the server to validate this option.
+     * Allowed values: 'updateLookup', 'whenAvailable', 'required'.
+     *
+     * The default is to not send a value. By default, the change notification
+     * for partial updates will include a delta describing the changes to the
+     * document.
+     *
+     * When set to 'updateLookup', the change notification for partial updates
+     * will include both a delta describing the changes to the document as well
+     * as a copy of the entire document that was changed from some time after
+     * the change occurred.
+     *
+     * When set to 'whenAvailable', configures the change stream to return the
+     * post-image of the modified document for replace and update change events
+     * if the post-image for this event is available.
+     *
+     * When set to 'required', the same behavior as 'whenAvailable' except that
+     * an error is raised if the post-image is not available.
+     *
+     * For forward compatibility, a driver MUST NOT raise an error when a user
+     * provides an unknown value. The driver relies on the server to validate
+     * this option.
+     *
      * @note this is an option of the `$changeStream` pipeline stage.
      */
     fullDocument: Optional<String>;
+
+    /**
+     * Allowed values: 'whenAvailable', 'required', 'off'.
+     *
+     * The default is to not send a value, which is equivalent to 'off'.
+     *
+     * When set to 'whenAvailable', configures the change stream to return the
+     * pre-image of the modified document for replace, update, and delete change
+     * events if it is available.
+     *
+     * When set to 'required', the same behavior as 'whenAvailable' except that
+     * an error is raised if the pre-image is not available.
+     *
+     * For forward compatibility, a driver MUST NOT raise an error when a user
+     * provides an unknown value. The driver relies on the server to validate
+     * this option.
+     *
+     * @note this is an option of the `$changeStream` pipeline stage.
+     */
+    fullDocumentBeforeChange: Optional<String>;
 
     /**
      * Specifies the logical starting point for the new change stream.
@@ -945,4 +995,7 @@ Changelog
 | 2022-02-28 | Added ``to`` to ``ChangeStreamDocument``.                  |
 +------------+------------------------------------------------------------+
 | 2022-03-25 | Do not error when parsing change stream event documents.   |
++------------+------------------------------------------------------------+
+| 2022-04-08 | Support returning point-in-time pre and post-images with   |
+|            | fullDocumentBeforeChange and fullDocument.                 |
 +------------+------------------------------------------------------------+
