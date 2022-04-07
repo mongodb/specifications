@@ -57,7 +57,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -185,7 +185,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -313,7 +313,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -440,7 +440,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -568,7 +568,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -696,7 +696,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -824,7 +824,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -952,7 +952,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1080,7 +1080,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1208,7 +1208,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1336,7 +1336,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1464,7 +1464,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1592,7 +1592,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1720,7 +1720,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1848,7 +1848,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -1976,7 +1976,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -2104,7 +2104,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
@@ -2238,7 +2238,7 @@
           "minServerVersion": "4.3.1",
           "topologies": [
             "replicaset",
-            "sharded",
+            "sharded-replicaset",
             "load-balanced"
           ]
         }
