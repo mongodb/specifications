@@ -546,7 +546,7 @@ detail described in the `Implementation`_ section:
       mongocryptdSpawnArgs: Optional<Array[String]>
 
       // Override the path used to load the csfle library
-      csflePathOverride: Optional<string>;
+      csflePath: Optional<string>;
 
       // If 'true', refuse to continue encryption without a csfle library
       csfleRequired: boolean;
@@ -560,12 +560,12 @@ deprecating/removing options in the future without an API break, such as
 with a BSON document or map type instead of a struct type with fixed
 fields. See `Why are extraOptions and kmsProviders maps?`_.
 
-.. option:: extraOptions.csflePathOverride
+.. option:: extraOptions.csflePath
 
    :type: :ts:`undefined | string`
    :default: :ts:`undefined`
 
-   .. |opt-path-override| replace:: :option:`extraOptions.csflePathOverride`
+   .. |opt-path-override| replace:: :option:`extraOptions.csflePath`
 
    Allow the user to specify an absolute path to a csfle_ dynamic library to
    load. Refer:
