@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-04-07
+:Last Modified: 2022-04-11
 :Version: 1.4.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -908,12 +908,41 @@ The MongoDB Enterprise distribution includes a dynamic library named
 ``mongo_csfle_v1`` (with the appropriate file extension or filename suffix for
 the host platform). This library will be loaded by libmongocrypt_ when the
 ``mongocrypt_init`` function is invoked
-`(from the libmongocrypt C API) <lmc-c-api_>`_.
+`(from the libmongocrypt C API) <lmc-c-api_>`_ based on the search criteria that
+are provided by the driver.
 
-By default, libmongocrypt_ will search for the ``mongo_csfle_v1`` library using
-the system's default library search mechanism (via :ts:`dlopen()` or
-:ts:`LoadLibrary`). The exact path to a known csfle_ library file can be
-specified by the user using |opt-path-override|.
+libmongocrypt_ allows the driver to specify an arbitrary list of directory
+`search paths`_ in which to search for the csfle_ dynamic library. The
+user-facing API does not expose this full search path functionality. This
+extended search path customization is intended to facilitate driver testing with
+csfle_.
+
+.. note::
+
+   The driver MUST NOT manipulate or do any validation on the csfle_ path
+   options provided in extraOptions_. They should be passed through to
+   libmongocrypt_ unchanged.
+
+.. seealso:: `Path Resolution Behavior`_
+
+
+.. _search path:
+.. _search paths:
+
+Setting Search Paths
+--------------------
+
+In the user-facing API, if the option |opt-csfle-disabled| is |false| AND
+|opt-path-override| is not specified, the driver MUST append the literal string
+:ts:`"$SYSTEM"` to the search paths for the `libmongocrypt_handle`.
+
+
+.. rubric:: Explaination
+
+The `search paths`_ array in libmongocrypt_ allows the driver to customize the
+way that libmongocrypt_ searches and loads the csfle_ library. For testing
+purposes, the driver may change the paths that it appends for csfle_ searching
+to better isolate the test execution from the ambient state of the host system.
 
 .. seealso:: `Path Resolution Behavior`_
 
@@ -967,6 +996,29 @@ of csfle_ path options in extraOptions_:
   error and presume that csfle_ is unavailable.
 
 
+.. rubric:: Search Paths for Testing
+
+Drivers can make use of different `search paths`_ settings for testing purposes.
+These search paths use the following behavior:
+
+- For csfle_ `search paths`_, if a search path string is :ts:`"$SYSTEM"`, then
+  |---| instead of libmongocrypt_ searching for csfle_ in a directory named
+  "``$SYSTEM``" |---| libmongocrypt_ will defer to the operating system's own
+  dynamic-library resolution mechanism when processing that search-path. For
+  this reason, :ts:`"$SYSTEM"` is the only search path appended when the driver
+  is used via the user-facing API.
+- The `search paths`_ also support the ``$ORIGIN`` substitution string.
+- Like with the `override path`_, if a `search path`_ is given as a relative
+  path, that path will be resolved relative to the working directory of the
+  operating system process.
+- If no `search paths`_ are appended to the `libmongocrypt_handle`, the
+  resulting search paths will be an empty array, effectively disabling csfle_
+  searching.
+
+  In this case, unless an `override path`_ is specified, libmongocrypt_ is
+  guaranteed not to load csfle_.
+
+
 Detecting csfle_ Availability
 ------------------------------
 
@@ -981,10 +1033,17 @@ encryption.
 
 
 "Disabling" csfle_
--------------------
+------------------
 
-If |opt-csfle-disabled| is set to |true|, then csfle_ should be disabled on the
-`libmongocrypt_handle` before calling `libmongocrypt_init`.
+If |opt-csfle-disabled| is set to |true|, then csfle_ no `search path`_ will be
+appended to the libmongocrypt_handle.
+
+
+As noted in `Path Resolution Behavior`_, csfle_ can be "disabled" on a
+`libmongocrypt_handle` by omission:
+
+1. Do not specify any `search paths`_,
+2. AND do not specify a csfle_ library `override path`_ (|opt-path-override|).
 
 This will have the effect that libmongocrypt_ will not attempt to search or load
 csfle_ during initialization.
@@ -992,8 +1051,8 @@ csfle_ during initialization.
 .. note::
 
    If |opt-csfle-disabled| is |true| while either |opt-path-override| is defined
-   or |opt-csfle-required| is |true|, this will cause initialization of
-   encryption to unconditionally fail.
+   or |opt-csfle-required| is |true|, the driver MUST not attempt to load
+   libmongocrypt_ and instead issue an error to the user.
 
 
 Loading csfle_ Multiple Times
@@ -1914,7 +1973,7 @@ Changelog
    :align: left
 
    Date, Description
-   22-04-07, Document the usage of the new csfle_ library
+   22-04-11, Document the usage of the new csfle_ library
    22-02-24, Rename Versioned API to Stable API
    22-01-19, Require that timeouts be applied per the CSOT spec
    21-11-04, Add 'kmip' KMS provider
