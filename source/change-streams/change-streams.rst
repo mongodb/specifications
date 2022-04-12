@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-04-08
+:Last Modified: 2022-04-13
 :Version: 1.14
 
 .. contents::
@@ -996,6 +996,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2022-03-25 | Do not error when parsing change stream event documents.   |
 +------------+------------------------------------------------------------+
-| 2022-04-08 | Support returning point-in-time pre and post-images with   |
+| 2022-04-13 | Support returning point-in-time pre and post-images with   |
 |            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
 +------------+------------------------------------------------------------+
