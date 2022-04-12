@@ -361,11 +361,11 @@ Driver API
 
   class ChangeStreamOptions {
     /**
-     * Allowed values: 'updateLookup', 'whenAvailable', 'required'.
+     * Allowed values: 'default', 'updateLookup', 'whenAvailable', 'required'.
      *
-     * The default is to not send a value. By default, the change notification
-     * for partial updates will include a delta describing the changes to the
-     * document.
+     * The default is to not send a value, which is equivalent to 'default'. By
+     * default, the change notification for partial updates will include a delta
+     * describing the changes to the document.
      *
      * When set to 'updateLookup', the change notification for partial updates
      * will include both a delta describing the changes to the document as well
