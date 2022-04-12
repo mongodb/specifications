@@ -160,15 +160,6 @@ tests:
                 pipeline:
                   - $changeStream: { fullDocument: "required" }
 
-
-
-
-
-
-
-
-
-
   - description: "fullDocumentBeforeChange:whenAvailable with changeStreamPreAndPostImages enabled"
     operations:
       - name: runCommand

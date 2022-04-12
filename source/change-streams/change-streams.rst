@@ -189,17 +189,17 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * document was deleted since the updated happened, it will be null.
      *
      * Contains the point-in-time post-image of the modified document if the
-     * post-image is available and either "required" or "whenAvailable" was
-     * specified for the "fullDocument" option when creating the change stream.
-     * A post-image is always available for "insert" and "replace" events.
+     * post-image is available and either 'required' or 'whenAvailable' was
+     * specified for the 'fullDocument' option when creating the change stream.
+     * A post-image is always available for 'insert' and 'replace' events.
      */
     fullDocument: Document | null;
 
     /**
      * Contains the pre-image of the modified or deleted document if the
-     * pre-image is available for the change event and either "required" or
-     * "whenAvailable" was specified for the "fullDocumentBeforeChange" option
-     * when creating the change stream. If "whenAvailable" was specified but the
+     * pre-image is available for the change event and either 'required' or
+     * 'whenAvailable' was specified for the 'fullDocumentBeforeChange' option
+     * when creating the change stream. If 'whenAvailable' was specified but the
      * pre-image is unavailable, this will be explicitly set to null.
      */
     fullDocumentBeforeChange: Document | null;
@@ -997,5 +997,5 @@ Changelog
 | 2022-03-25 | Do not error when parsing change stream event documents.   |
 +------------+------------------------------------------------------------+
 | 2022-04-08 | Support returning point-in-time pre and post-images with   |
-|            | fullDocumentBeforeChange and fullDocument.                 |
+|            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
 +------------+------------------------------------------------------------+
