@@ -632,20 +632,21 @@
           "expectResult": 3
         }
       ],
-      "expectedEvents": [
+      "expectEvents": [
         {
           "client": "client0",
           "events": [
             {
-              "commandStartedEvent": null,
-              "command": {
-                "count": "coll0",
-                "comment": {
-                  "key": "value"
-                }
-              },
-              "commandName": "count",
-              "databaseName": "edc-tests"
+              "commandStartedEvent": {
+                "command": {
+                  "count": "coll0",
+                  "comment": {
+                    "key": "value"
+                  }
+                },
+                "commandName": "count",
+                "databaseName": "edc-tests"
+              }
             }
           ]
         }
