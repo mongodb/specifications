@@ -2,7 +2,7 @@ SCHEMA=../schema-1.7.json
 
 .PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions crud collection-management sessions command-monitoring HAS_AJV
 
-all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions crud collection-management sessions command-monitoring
+all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions change-streams crud collection-management sessions command-monitoring
 
 invalid: HAS_AJV
 	@# Redirect stdout to hide expected validation errors
@@ -25,6 +25,9 @@ gridfs: HAS_AJV
 
 transactions: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../transactions/tests/unified/*.yml" --valid
+
+change-streams: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../change-streams/tests/unified/*.yml" --valid
 
 crud: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../crud/tests/unified/*.yml" --valid
