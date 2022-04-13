@@ -599,13 +599,13 @@
                         }
                       }
                     }
-                  ]
+                  ],
+                  "comment": {
+                    "key": "value"
+                  }
                 },
                 "commandName": "aggregate",
-                "databaseName": "edc-tests",
-                "comment": {
-                  "key": "value"
-                }
+                "databaseName": "edc-tests"
               }
             }
           ]
