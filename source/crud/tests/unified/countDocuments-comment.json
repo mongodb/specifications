@@ -1,0 +1,157 @@
+{
+  "description": "count",
+  "schemaVersion": "1.0",
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "useMultipleMongoses": false,
+        "uriOptions": {
+          "retryReads": false
+        },
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "count-test"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection0",
+        "database": "database0",
+        "collectionName": "coll0"
+      }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "coll0",
+      "databaseName": "count-test",
+      "documents": [
+        {
+          "_id": 1,
+          "x": 11
+        },
+        {
+          "_id": 2,
+          "x": 22
+        },
+        {
+          "_id": 3,
+          "x": 33
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "description": "count with comment on 4.4.0 or greater",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4.0"
+        }
+      ],
+      "operations": [
+        {
+          "name": "countDocuments",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "comment": {
+              "key": "value"
+            }
+          },
+          "expectResult": 3
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "aggregate": "coll0",
+                  "pipeline": [
+                    {
+                      "$match": {}
+                    },
+                    {
+                      "$group": {
+                        "_id": 1,
+                        "n": {
+                          "$sum": 1
+                        }
+                      }
+                    }
+                  ],
+                  "comment": {
+                    "key": "value"
+                  }
+                },
+                "commandName": "aggregate",
+                "databaseName": "count-test"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "count with comment on less than 4.4.0 - string comment",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "3.6.0",
+          "maxServerVersion": "4.3.99"
+        }
+      ],
+      "operations": [
+        {
+          "name": "countDocuments",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "comment": "comment"
+          },
+          "expectResult": 3
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "aggregate": "coll0",
+                  "pipeline": [
+                    {
+                      "$match": {}
+                    },
+                    {
+                      "$group": {
+                        "_id": 1,
+                        "n": {
+                          "$sum": 1
+                        }
+                      }
+                    }
+                  ],
+                  "comment": "comment"
+                },
+                "commandName": "aggregate",
+                "databaseName": "count-test"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
