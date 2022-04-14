@@ -65,6 +65,8 @@ subtype          uint8    Type of blob format.
 2        AEAD_AES_CBC_HMAC_SHA512 randomized ciphertext.    The metadata and encrypted data for random encrypted data.
 ======== ================================================== =====================================================================================================================
 
+.. _subtype6.intent-to-encrypt:
+
 Type 0: Intent-to-encrypt marking
 ---------------------------------
 
