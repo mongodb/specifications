@@ -14,7 +14,7 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "edc-tests"
+        "databaseName": "edc-comment-tests"
       }
     },
     {
@@ -28,7 +28,7 @@
   "initialData": [
     {
       "collectionName": "coll0",
-      "databaseName": "edc-tests",
+      "databaseName": "edc-comment-tests",
       "documents": [
         {
           "_id": 1,
@@ -93,7 +93,7 @@
                   }
                 },
                 "commandName": "aggregate",
-                "databaseName": "edc-tests"
+                "databaseName": "edc-comment-tests"
               }
             }
           ]
@@ -133,7 +133,7 @@
                   }
                 },
                 "commandName": "count",
-                "databaseName": "edc-tests"
+                "databaseName": "edc-comment-tests"
               }
             }
           ]
@@ -169,7 +169,7 @@
                   "comment": "comment"
                 },
                 "commandName": "count",
-                "databaseName": "edc-tests"
+                "databaseName": "edc-comment-tests"
               }
             }
           ]
@@ -211,7 +211,7 @@
                   }
                 },
                 "commandName": "count",
-                "databaseName": "edc-tests"
+                "databaseName": "edc-comment-tests"
               }
             }
           ]
