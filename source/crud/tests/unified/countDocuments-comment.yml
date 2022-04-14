@@ -40,7 +40,9 @@ tests:
           - commandStartedEvent:
               command:
                 aggregate: *collection0Name
-                pipeline: &pipeline [{'$match': {}}, {'$group': {'_id': 1, 'n': {'$sum': 1}}}]
+                pipeline: &pipeline
+                  - $match: {}
+                  - $group: { _id: 1, n: { $sum: 1 } }
                 comment: *documentComment
               commandName: aggregate
               databaseName: *database0Name

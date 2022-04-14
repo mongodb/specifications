@@ -31,7 +31,7 @@ tests:
       - name: estimatedDocumentCount
         object: *collection0
         arguments:
-          comment: &objectComment { key: "value"}
+          comment: &documentComment { key: "value"}
         expectResult: 3
     expectEvents:
       - client: *client0
@@ -42,7 +42,7 @@ tests:
                 pipeline: &pipeline
                   - $collStats: { count: {} }
                   - $group: { _id: 1, n: { $sum: $count }}
-                comment: *objectComment
+                comment: *documentComment
               commandName: aggregate
               databaseName: *database0Name
 
@@ -56,7 +56,7 @@ tests:
       - name: estimatedDocumentCount
         object: *collection0
         arguments:
-          comment: *objectComment
+          comment: *documentComment
         expectResult: 3
     expectEvents:
       - client: *client0
@@ -64,7 +64,7 @@ tests:
           - commandStartedEvent:
               command:
                 count: *collection0Name
-                comment: *objectComment
+                comment: *documentComment
               commandName: count
               databaseName: *database0Name
 
@@ -85,5 +85,30 @@ tests:
               command:
                 count: *collection0Name
                 comment: *stringComment
+              commandName: count
+              databaseName: *database0Name
+
+  - description: "estimatedDocumentCount with document comment on less than 4.4 - server error"
+    runOnRequirements:
+      - minServerVersion: "3.6.0"
+        maxServerVersion: "4.3.99"
+    operations:
+      - name: estimatedDocumentCount
+        object: *collection0
+        arguments:
+          # Even though according to the docs count command does not support any
+          # comment for server version less than 4.4, no error is raised by such
+          # servers. Therefore, we have only one tests with document comment
+          # to test server errors.
+          comment: *documentComment
+        expectError:
+          isClientError: false
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                count: *collection0Name
+                comment: *documentComment
               commandName: count
               databaseName: *database0Name

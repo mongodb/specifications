@@ -411,7 +411,7 @@ Read
      *
      * The comment can be any valid BSON type for server versions 4.4.14 and above.
      * For server versions between 4.4.0 and 4.4.14 string comment is supported.
-     # Servers versions below 4.4.0  do not support comment for count command,
+     * Servers versions below 4.4.0 do not support comment for count command,
      * which is used to implement estimatedDocumentCount for server versions
      * versions less than 4.9.0. Therefore, providing a comment may result
      * in a server-side error.
