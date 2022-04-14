@@ -1,5 +1,5 @@
 {
-  "description": "countDocuments-comment",
+  "description": "estimatedDocumentCount-comment",
   "schemaVersion": "1.0",
   "createEntities": [
     {
@@ -14,7 +14,7 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "count-test"
+        "databaseName": "edc-tests"
       }
     },
     {
@@ -28,7 +28,7 @@
   "initialData": [
     {
       "collectionName": "coll0",
-      "databaseName": "count-test",
+      "databaseName": "edc-tests",
       "documents": [
         {
           "_id": 1,
@@ -47,18 +47,17 @@
   ],
   "tests": [
     {
-      "description": "countDocuments with document comment on 4.4.0 or greater",
+      "description": "estimatedDocumentCount with document comment on 4.9.0 or greater",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.4.0"
+          "minServerVersion": "4.9.0"
         }
       ],
       "operations": [
         {
-          "name": "countDocuments",
+          "name": "estimatedDocumentCount",
           "object": "collection0",
           "arguments": {
-            "filter": {},
             "comment": {
               "key": "value"
             }
@@ -76,13 +75,15 @@
                   "aggregate": "coll0",
                   "pipeline": [
                     {
-                      "$match": {}
+                      "$collStats": {
+                        "count": {}
+                      }
                     },
                     {
                       "$group": {
                         "_id": 1,
                         "n": {
-                          "$sum": 1
+                          "$sum": "$count"
                         }
                       }
                     }
@@ -92,7 +93,7 @@
                   }
                 },
                 "commandName": "aggregate",
-                "databaseName": "count-test"
+                "databaseName": "edc-tests"
               }
             }
           ]
@@ -100,18 +101,58 @@
       ]
     },
     {
-      "description": "countDocuments with string comment on less than 4.4.0",
+      "description": "estimatedDocumentCount with document comment on less than 4.9.0",
       "runOnRequirements": [
         {
-          "minServerVersion": "3.6.0"
+          "minServerVersion": "4.4.14",
+          "maxServerVersion": "4.8.99"
         }
       ],
       "operations": [
         {
-          "name": "countDocuments",
+          "name": "estimatedDocumentCount",
           "object": "collection0",
           "arguments": {
-            "filter": {},
+            "comment": {
+              "key": "value"
+            }
+          },
+          "expectResult": 3
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "count": "coll0",
+                  "comment": {
+                    "key": "value"
+                  }
+                },
+                "commandName": "count",
+                "databaseName": "edc-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "estimatedDocumentCount with string comment on less than 4.4.14",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4.0",
+          "maxServerVersion": "4.4.13"
+        }
+      ],
+      "operations": [
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection0",
+          "arguments": {
             "comment": "comment"
           },
           "expectResult": 3
@@ -124,80 +165,11 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": "coll0",
-                  "pipeline": [
-                    {
-                      "$match": {}
-                    },
-                    {
-                      "$group": {
-                        "_id": 1,
-                        "n": {
-                          "$sum": 1
-                        }
-                      }
-                    }
-                  ],
+                  "count": "coll0",
                   "comment": "comment"
                 },
-                "commandName": "aggregate",
-                "databaseName": "count-test"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "countDocuments with document comment on less than 4.4.0 - server error",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "3.6.0",
-          "maxServerVersion": "4.3.99"
-        }
-      ],
-      "operations": [
-        {
-          "name": "countDocuments",
-          "object": "collection0",
-          "arguments": {
-            "filter": {},
-            "comment": {
-              "key": "value"
-            }
-          },
-          "expectError": {
-            "isClientError": false
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client0",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "aggregate": "coll0",
-                  "pipeline": [
-                    {
-                      "$match": {}
-                    },
-                    {
-                      "$group": {
-                        "_id": 1,
-                        "n": {
-                          "$sum": 1
-                        }
-                      }
-                    }
-                  ],
-                  "comment": {
-                    "key": "value"
-                  }
-                },
-                "commandName": "aggregate",
-                "databaseName": "count-test"
+                "commandName": "count",
+                "databaseName": "edc-tests"
               }
             }
           ]
