@@ -47,7 +47,7 @@
   ],
   "tests": [
     {
-      "description": "estimatedDocumentCount with document comment on 4.9.0 or greater",
+      "description": "estimatedDocumentCount with document comment - post 4.9",
       "runOnRequirements": [
         {
           "minServerVersion": "4.9.0"
