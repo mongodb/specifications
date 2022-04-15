@@ -46,7 +46,7 @@ tests:
               commandName: aggregate
               databaseName: *database0Name
 
-  - description: "estimatedDocumentCount with document comment on less than 4.9.0"
+  - description: "estimatedDocumentCount with document comment - pre 4.9"
     runOnRequirements:
       # https://jira.mongodb.org/browse/SERVER-63315
       # Server supports count with comment of any type for comment starting from 4.4.14.
