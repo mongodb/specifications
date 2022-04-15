@@ -24,7 +24,7 @@ initialData:
       - { _id: 3, x: 33 }
 
 tests:
-  - description: "countDocuments with document comment on 4.4.0 or greater"
+  - description: "countDocuments with document comment"
     runOnRequirements:
       - minServerVersion: 4.4.0
     operations:
