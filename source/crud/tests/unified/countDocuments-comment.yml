@@ -47,7 +47,7 @@ tests:
               commandName: aggregate
               databaseName: *database0Name
 
-  - description: "countDocuments with string comment on less than 4.4.0"
+  - description: "countDocuments with string comment"
     runOnRequirements:
       - minServerVersion: 3.6.0
     operations:

@@ -68,10 +68,10 @@ tests:
               commandName: count
               databaseName: *database0Name
 
-  - description: "estimatedDocumentCount with string comment on less than 4.4.14"
+  - description: "estimatedDocumentCount with string comment on less than 4.9.0"
     runOnRequirements:
       - minServerVersion: "4.4.0"
-        maxServerVersion: "4.4.13"
+        maxServerVersion: "4.8.99"
     operations:
       - name: estimatedDocumentCount
         object: *collection0
@@ -88,10 +88,10 @@ tests:
               commandName: count
               databaseName: *database0Name
 
-  - description: "estimatedDocumentCount with document comment on less than 4.4 - server error"
+  - description: "estimatedDocumentCount with document comment on less than 4.4.13 - server error"
     runOnRequirements:
       - minServerVersion: "3.6.0"
-        maxServerVersion: "4.3.99"
+        maxServerVersion: "4.4.13"
     operations:
       - name: estimatedDocumentCount
         object: *collection0
@@ -100,6 +100,8 @@ tests:
           # comment for server version less than 4.4, no error is raised by such
           # servers. Therefore, we have only one tests with document comment
           # to test server errors.
+          # https://jira.mongodb.org/browse/SERVER-63315
+          # Server supports count with comment of any type for comment starting from 4.4.14.
           comment: *documentComment
         expectError:
           isClientError: false

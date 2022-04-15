@@ -141,11 +141,11 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount with string comment on less than 4.4.14",
+      "description": "estimatedDocumentCount with string comment on less than 4.9.0",
       "runOnRequirements": [
         {
           "minServerVersion": "4.4.0",
-          "maxServerVersion": "4.4.13"
+          "maxServerVersion": "4.8.99"
         }
       ],
       "operations": [
@@ -177,11 +177,11 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount with document comment on less than 4.4 - server error",
+      "description": "estimatedDocumentCount with document comment on less than 4.4.13 - server error",
       "runOnRequirements": [
         {
           "minServerVersion": "3.6.0",
-          "maxServerVersion": "4.3.99"
+          "maxServerVersion": "4.4.13"
         }
       ],
       "operations": [
