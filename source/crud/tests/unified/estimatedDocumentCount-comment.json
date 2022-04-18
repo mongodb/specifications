@@ -177,7 +177,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount with document comment - pre 4.4.13, server error",
+      "description": "estimatedDocumentCount with document comment - pre 4.4.14, server error",
       "runOnRequirements": [
         {
           "minServerVersion": "3.6.0",
