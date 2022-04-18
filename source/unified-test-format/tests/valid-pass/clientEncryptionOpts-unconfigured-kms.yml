@@ -1,0 +1,22 @@
+description: clientEncryptionOpts-unconfigured-kms
+
+schemaVersion: "1.8"
+
+createEntities:
+  - client:
+      id: &client0 client0
+  - encryptedClient:
+      id: &encryptedClient0 encryptedClient0
+      clientEncryptionOpts:
+        keyVaultClient: *client0
+        keyVaultNamespace: keyvault.datakeys
+        kmsProviders:
+          aws: {}
+          azure: {}
+          gcp: {}
+          kmip: {}
+          local: {}
+
+tests:
+  - description: ""
+    operations: []
