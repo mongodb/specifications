@@ -98,6 +98,37 @@ ciphertext
    One of the data formats of `BSON binary subtype 6 <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst>`_, representing an encoded BSON document containing
    encrypted ciphertext and metadata.
 
+FLE 1
+   FLE 1 is the first version of Client-Side Field Level Encryption. FLE 1 is almost entirely client-side with the exception of server-side JSON schema.
+
+FLE 2
+   FLE 2 the second version of Client-Side Field Level Encryption. Data is encrypted client-side. FLE 2 supports indexed encrypted fields, which are further processed server-side.
+
+EncryptedFieldConfig
+   A BSON document describing the FLE 2 encrypted fields. This is analogous to the JSON Schema in FLE 1. The following is an example EncryptedFieldConfig in extended canonical JSON:
+
+   .. code:: json:
+
+      {
+          "escCollection": "escCollectionName",
+          "eccCollection": "eccCollectionName",
+          "ecocCollection": "ecocCollectionName",
+          "fields": [
+              {
+                  "path": "firstName",
+                  "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }},
+                  "bsonType": "string",
+                  "queries": {"queryType": "equality"}
+              },
+              {
+                  "path": "ssn",
+                  "keyId": { "$binary": { "subType": "04", "base64": "BBBBBBBBBBBBBBBBBBBBBB==" }},
+                  "bsonType": "string"
+              }
+          ]
+      }
+
+
 Introduction
 ============
 
@@ -1884,6 +1915,8 @@ https://docs.mongodb.com/manual/tutorial/configure-encryption/.
 TLS options may be useful for the AWS, Azure, and GCP KMS providers in
 a case where the default trust store does not include the needed CA
 certificates.
+
+
 
 Future work
 ===========
