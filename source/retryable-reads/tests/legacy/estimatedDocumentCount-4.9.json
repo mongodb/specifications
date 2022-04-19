@@ -1,9 +1,4 @@
 {
-  "runOn": [
-    {
-      "minServerVersion": "4.9.0"
-    }
-  ],
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
   "data": [
@@ -30,22 +25,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -77,22 +57,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -100,22 +65,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -150,22 +100,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -197,22 +132,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -220,22 +140,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }

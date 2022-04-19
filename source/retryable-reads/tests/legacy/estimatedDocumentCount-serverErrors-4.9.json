@@ -42,22 +42,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -65,22 +50,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -112,22 +82,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -135,22 +90,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -182,22 +122,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -205,22 +130,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -252,22 +162,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -275,22 +170,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -322,22 +202,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -345,22 +210,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -392,22 +242,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -415,22 +250,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -462,22 +282,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -485,22 +290,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -532,22 +322,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -555,22 +330,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -602,22 +362,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -625,22 +370,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -672,22 +402,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -695,22 +410,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -742,22 +442,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -765,22 +450,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -812,22 +482,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -835,22 +490,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -885,22 +525,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "coll"
             },
             "database_name": "retryable-reads-tests"
           }

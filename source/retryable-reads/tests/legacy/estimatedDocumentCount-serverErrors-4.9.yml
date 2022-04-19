@@ -25,10 +25,7 @@ tests:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                      aggregate: *collection_name
-                      pipeline: &pipeline
-                        - $collStats: { count: {} }
-                        - $group: { _id: 1, n: { $sum: $count }}
+                      count: *collection_name
                     database_name: *database_name
             - *retryable_command_started_event
     -

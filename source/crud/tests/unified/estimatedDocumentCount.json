@@ -58,12 +58,7 @@
   ],
   "tests": [
     {
-      "description": "estimatedDocumentCount uses $collStats on 4.9.0 or greater",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.9.0"
-        }
-      ],
+      "description": "estimatedDocumentCount always uses count",
       "operations": [
         {
           "name": "estimatedDocumentCount",
@@ -78,24 +73,9 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": "coll0",
-                  "pipeline": [
-                    {
-                      "$collStats": {
-                        "count": {}
-                      }
-                    },
-                    {
-                      "$group": {
-                        "_id": 1,
-                        "n": {
-                          "$sum": "$count"
-                        }
-                      }
-                    }
-                  ]
+                  "count": "coll0"
                 },
-                "commandName": "aggregate",
+                "commandName": "count",
                 "databaseName": "edc-tests"
               }
             }
@@ -104,12 +84,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount with maxTimeMS on 4.9.0 or greater",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.9.0"
-        }
-      ],
+      "description": "estimatedDocumentCount with maxTimeMS",
       "operations": [
         {
           "name": "estimatedDocumentCount",
@@ -127,25 +102,10 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": "coll0",
-                  "pipeline": [
-                    {
-                      "$collStats": {
-                        "count": {}
-                      }
-                    },
-                    {
-                      "$group": {
-                        "_id": 1,
-                        "n": {
-                          "$sum": "$count"
-                        }
-                      }
-                    }
-                  ],
+                  "count": "coll0",
                   "maxTimeMS": 6000
                 },
-                "commandName": "aggregate",
+                "commandName": "count",
                 "databaseName": "edc-tests"
               }
             }
@@ -154,12 +114,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount on non-existent collection on 4.9.0 or greater",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.9.0"
-        }
-      ],
+      "description": "estimatedDocumentCount on non-existent collection",
       "operations": [
         {
           "name": "estimatedDocumentCount",
@@ -174,24 +129,9 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": "coll1",
-                  "pipeline": [
-                    {
-                      "$collStats": {
-                        "count": {}
-                      }
-                    },
-                    {
-                      "$group": {
-                        "_id": 1,
-                        "n": {
-                          "$sum": "$count"
-                        }
-                      }
-                    }
-                  ]
+                  "count": "coll1"
                 },
-                "commandName": "aggregate",
+                "commandName": "count",
                 "databaseName": "edc-tests"
               }
             }
@@ -200,12 +140,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount errors correctly on 4.9.0 or greater--command error",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.9.0"
-        }
-      ],
+      "description": "estimatedDocumentCount errors correctly--command error",
       "operations": [
         {
           "name": "failPoint",
@@ -219,7 +154,7 @@
               },
               "data": {
                 "failCommands": [
-                  "aggregate"
+                  "count"
                 ],
                 "errorCode": 8
               }
@@ -241,24 +176,9 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": "coll0",
-                  "pipeline": [
-                    {
-                      "$collStats": {
-                        "count": {}
-                      }
-                    },
-                    {
-                      "$group": {
-                        "_id": 1,
-                        "n": {
-                          "$sum": "$count"
-                        }
-                      }
-                    }
-                  ]
+                  "count": "coll0"
                 },
-                "commandName": "aggregate",
+                "commandName": "count",
                 "databaseName": "edc-tests"
               }
             }
@@ -267,12 +187,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount errors correctly on 4.9.0 or greater--socket error",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.9.0"
-        }
-      ],
+      "description": "estimatedDocumentCount errors correctly--socket error",
       "operations": [
         {
           "name": "failPoint",
@@ -286,7 +201,7 @@
               },
               "data": {
                 "failCommands": [
-                  "aggregate"
+                  "count"
                 ],
                 "closeConnection": true
               }
@@ -308,24 +223,9 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "aggregate": "coll0",
-                  "pipeline": [
-                    {
-                      "$collStats": {
-                        "count": {}
-                      }
-                    },
-                    {
-                      "$group": {
-                        "_id": 1,
-                        "n": {
-                          "$sum": "$count"
-                        }
-                      }
-                    }
-                  ]
+                  "count": "coll0"
                 },
-                "commandName": "aggregate",
+                "commandName": "count",
                 "databaseName": "edc-tests"
               }
             }

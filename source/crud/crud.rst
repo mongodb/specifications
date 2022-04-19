@@ -754,30 +754,26 @@ older sharded clusters.
 estimatedDocumentCount
 ~~~~~~~~~~~~~~~~~~~~~~
 
-On server versions greater than or equal to 4.9.0 (wire version 12 or higher),
-the estimatedDocumentCount function is implemented using the ``$collStats``
-aggregate pipeline stage with ``$group`` to gather results from multiple shards.
-As documented above, the only supported option is maxTimeMS::
+The estimatedDocumentCount function is implemented using the ``count`` command
+with no query filter, skip, limit, or other options that would alter the
+results. Once again, the only supported option is maxTimeMS.
 
-  pipeline = [
-    { '$collStats': { 'count': {} } },
-    { '$group': { '_id': 1, 'n': { '$sum': '$count' } } }
-  ]
+Drivers MUST document that due to a bug in versions 5.0.0-5.0.7 of MongoDB,
+estimatedDocumentCount was not included in the Stable API, and that users of the
+Stable API are recommended to upgrade their server version to 5.0.8+ or set
+``apiStrict: false`` to avoid encountering errors when using
+estimatedDocumentCount.
 
-Similar to the count command, the estimated count of documents is returned
-in the ``n`` field. Implementations can assume that the document containing
-the single result of the aggregation pipeline is contained in the first batch of
-the server's reply to the aggregate command. It is not necessary to execute a getMore
-operation to ensure that the result is available.
-
-In the event this aggregation is run against a non-existent namespace, a NamespaceNotFound(26)
-error will be returned during execution. Drivers MUST interpret the server error code 26 as
-a ``0`` count.
-
-For server versions less than 4.9.0 (wire version 11 or under), the estimatedDocumentCount
-function is implemented using the ``count`` command with no query filter, skip,
-limit, or other options that would alter the results. Once again, the only supported
-option is maxTimeMS.
+The 5.0-compat releases of many drivers were changed to use ``$collStats`` in
+their implementations of estimatedDocumentCount due to the ``count`` command
+being omitted from the V1 Stable API. This had the unintended consequence of
+breaking estimatedDocumentCount on views, so this change was reverted as it was
+seen as a bug / regression. Drivers that revert this change MUST include in
+their release notes that users of the Stable API with ``apiStrict: true`` will
+start seeing errors when using estimatedDocumentCount due to a bug in server
+versions 5.0.0-5.0.7 and recommend that they upgrade their server version to
+5.0.8 or set ``apiStrict: false``. They MUST also document that
+estimatedDocumentCount can now be used with views.
 
 ~~~~~~~~~~~~~~
 countDocuments

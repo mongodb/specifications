@@ -31,9 +31,7 @@ initialData:
       - { _id: 3, x: 33 }
 
 tests:
-  - description: "estimatedDocumentCount uses $collStats on 4.9.0 or greater"
-    runOnRequirements:
-      - minServerVersion: "4.9.0"
+  - description: "estimatedDocumentCount always uses count"
     operations:
       - name: estimatedDocumentCount
         object: *collection0
@@ -43,16 +41,11 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                aggregate: *collection0Name
-                pipeline: &pipeline
-                  - $collStats: { count: {} }
-                  - $group: { _id: 1, n: { $sum: $count }}
-              commandName: aggregate
+                count: *collection0Name
+              commandName: count
               databaseName: *database0Name
 
-  - description: "estimatedDocumentCount with maxTimeMS on 4.9.0 or greater"
-    runOnRequirements:
-      - minServerVersion: "4.9.0"
+  - description: "estimatedDocumentCount with maxTimeMS"
     operations:
       - name: estimatedDocumentCount
         object: *collection0
@@ -64,17 +57,12 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                aggregate: *collection0Name
-                pipeline: &pipeline
-                  - $collStats: { count: {} }
-                  - $group: { _id: 1, n: { $sum: $count }}
+                count: *collection0Name
                 maxTimeMS: 6000
-              commandName: aggregate
+              commandName: count
               databaseName: *database0Name
 
-  - description: "estimatedDocumentCount on non-existent collection on 4.9.0 or greater"
-    runOnRequirements:
-      - minServerVersion: "4.9.0"
+  - description: "estimatedDocumentCount on non-existent collection"
     operations:
       - name: estimatedDocumentCount
         object: *collection1
@@ -84,16 +72,11 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                aggregate: *collection1Name
-                pipeline: &pipeline
-                  - $collStats: { count: {} }
-                  - $group: { _id: 1, n: { $sum: $count }}
-              commandName: aggregate
+                count: *collection1Name
+              commandName: count
               databaseName: *database0Name
 
-  - description: "estimatedDocumentCount errors correctly on 4.9.0 or greater--command error"
-    runOnRequirements:
-      - minServerVersion: "4.9.0"
+  - description: "estimatedDocumentCount errors correctly--command error"
     operations:
       - name: failPoint
         object: testRunner
@@ -103,7 +86,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-              failCommands: [ aggregate ]
+              failCommands: [ count ]
               errorCode: 8 # UnknownError
       - name: estimatedDocumentCount
         object: *collection0
@@ -114,16 +97,11 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                aggregate: *collection0Name
-                pipeline: &pipeline
-                  - $collStats: { count: {} }
-                  - $group: { _id: 1, n: { $sum: $count }}
-              commandName: aggregate
+                count: *collection0Name
+              commandName: count
               databaseName: *database0Name
 
-  - description: "estimatedDocumentCount errors correctly on 4.9.0 or greater--socket error"
-    runOnRequirements:
-      - minServerVersion: "4.9.0"
+  - description: "estimatedDocumentCount errors correctly--socket error"
     operations:
       - name: failPoint
         object: testRunner
@@ -133,7 +111,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-              failCommands: [ aggregate ]
+              failCommands: [ count ]
               closeConnection: true
       - name: estimatedDocumentCount
         object: *collection0
@@ -144,11 +122,8 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                aggregate: *collection0Name
-                pipeline: &pipeline
-                  - $collStats: { count: {} }
-                  - $group: { _id: 1, n: { $sum: $count }}
-              commandName: aggregate
+                count: *collection0Name
+              commandName: count
               databaseName: *database0Name
 
   - description: "estimatedDocumentCount uses count on less than 4.9.0"

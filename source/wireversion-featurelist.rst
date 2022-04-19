@@ -71,7 +71,6 @@ Server Wire version and Feature List
 
    * - 5.0
      - 13
-     - | Consistent $collStats count behavior on sharded and non-sharded topologies
        | $out and $merge on secondaries (technically FCV 4.4+)
        
    * - 5.1

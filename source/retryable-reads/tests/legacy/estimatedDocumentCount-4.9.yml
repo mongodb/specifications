@@ -1,6 +1,3 @@
-runOn:
-    - minServerVersion: "4.9.0"
-
 database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
@@ -21,10 +18,7 @@ tests:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        aggregate: *collection_name
-                        pipeline: &pipeline
-                          - $collStats: { count: {} }
-                          - $group: { _id: 1, n: { $sum: $count }}
+                        count: *collection_name
                     database_name: *database_name
     -
         description: "EstimatedDocumentCount succeeds on second attempt"

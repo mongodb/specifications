@@ -15,22 +15,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "driverdata",
-              "pipeline": [
-                {
-                  "$collStats": {
-                    "count": {}
-                  }
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": "$count"
-                    }
-                  }
-                }
-              ]
+              "count": "driverdata"
             },
             "command_name": "aggregate",
             "database_name": "test"
