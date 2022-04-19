@@ -232,6 +232,7 @@ Supported Entity Types
 Test runners MUST support the following types of entities:
 
 - MongoClient. See `entity_client`_ and `Client Operations`_.
+- ClientEncryption. See `entity_encryptedClient`__.
 - Database. See `entity_database`_ and `Database Operations`_.
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
@@ -581,6 +582,58 @@ The structure of this object is as follows:
           events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
   - ``serverApi``: Optional `serverApi`_ object.
+
+.. _entity_encryptedClient:
+
+- ``encryptedClient``: Optional object. Defines a ClientEncryption object.
+
+  The structure of this object is as follows:
+
+  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g.
+    ``id: &encryptedClient0 encryptedClient0``).
+
+  - ``clientEncryptionOpts``: Required document. A value corresponding to a
+    `ClientEncryptionOpts
+    <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
+
+    The structure of this document is as follows:
+
+    - ``keyVaultClient``: Required string. MongoClient entity from which this
+      encryptedClient will be created. The YAML file SHOULD use an `alias
+      node`_ for a client entity's ``id`` field (e.g.
+      ``keyVaultClient: *client0``).
+
+    - ``keyVaultNamespace``: Required string. The database and collection to use
+      as the keyvault collection for this encryptedClient. The namespace takes
+      the form ``database.collection`` (e.g.
+      ``keyVaultNamespace: keyvault.datakeys``).
+
+    - ``kmsProviders``: Required document. Drivers MUST NOT configure a KMS
+      provider if it is not given. This is to permit testing conditions where a
+      required KMS provider is not configured. If a KMS provider is given as an
+      empty document (e.g. ``kmsProviders: { aws: {} }``), drivers MUST
+      configure the KMS provider without credentials to permit testing
+      conditions where KMS credentials are needed. If a KMS credentials field is
+      given as an empty document (e.g.
+      ``kmsProviders: { aws: { accessKeyId: {}, secretAccessKey: {} } }``),
+      drivers MUST replace the field with credentials that satisfy the
+      operations required by the unified test files. Drivers MAY load the
+      credentials from the environment or a configuration file as needed to
+      satisfy the requirements of the given KMS provider and tests. If a KMS
+      credentials field is not given (e.g. the required field
+      ``secretAccessKey`` is omitted in:
+      ``kmsProviders: { aws: { accessKeyId: {} } }``), Drivers MUST NOT include
+      the field during KMS configuration. This is to permit testing conditions
+      where required KMS credentials fields are not provided. Otherwise, Drivers
+      MUST configure the KMS provider with the explicit value of KMS credentials
+      field given in the test file (e.g.
+      ``kmsProviders: { aws: { accessKeyId: abc, secretAccessKey: def } }``).
+      This is to permit testing conditions where invalid KMS credentials are
+      provided.
+    
+    - ``tlsOptions``: Not supported. Drivers MAY internally configure TLS
+      options as needed to satisfy the requirements of certain KMS providers.
 
 .. _entity_database:
 
