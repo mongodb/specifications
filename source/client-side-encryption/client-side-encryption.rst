@@ -634,8 +634,6 @@ If a collection is present on both the ``EncryptedFieldConfigMap`` and ``schemaM
 
 If a collection is present on the ``EncryptedFieldConfigMap``, the behavior of ``CreateCollection()`` and ``Collection.Drop()`` is altered. See :ref:`fle2-createcollection-drop`.
 
-Drivers MUST pass the ``EncryptedFieldConfig`` through to libmongocrypt_.
-
 Automatic encryption in FLE 2 is configured with the ``EncryptedFieldConfig``.
 
 If a collection is not present on the ``EncryptedFieldConfig`` a server-side collection ``EncryptedFieldConfig`` may be used by libmongocrypt_.
