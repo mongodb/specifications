@@ -463,7 +463,7 @@ tests:
           database: *database_name
           collection: "encryptedCollection"
           index: __safeContent___1
-      
+
     expectations:
         # events from dropCollection ... begin
         - command_started_event:
