@@ -770,21 +770,22 @@ correct count of the documents when performed against a view. In future server
 versions, this will be updated to provide a fast but estimated count instead,
 matching the behavior of the command on regular collections.
 
-The 5.0-compat versions of many drivers were changed to use ``$collStats`` in
-their implementations of estimatedDocumentCount due to the ``count`` command
-being omitted from v1 of the Stable API. This had the unintended consequence of
-breaking estimatedDocumentCount on views, so this change was reverted as it was
-seen as a bug / regression. The release notes for the drivers versions that
-revert this change MUST document that users of the Stable API with ``apiStrict:
-true`` will start seeing errors when using estimatedDocumentCount against server
-versions 5.0.0 - 5.0.7 / 5.1.0 - 5.3.1 due to a bug in the server. The release
-notes MUST recommend that such users upgrade their deployments to 5.0.8 or 5.3.2
-(if on Atlas) or set ``apiStrict: false`` when constructing their
-MongoClients. This change is not seen as requiring a major version bump in
-drivers due to it being considered a bug fix and the relative rarity of users
-using estimatedDocumentCount with ``apiStrict: true``. The release notes MUST
-also document that estimatedDocumentCount can now be used to perform
-slow-but-accurate counts with views. 
+The 5.0-compat versions of many drivers were changed to use the ``$collStats``
+aggregation stage in their implementations of estimatedDocumentCount due to the
+``count`` command being omitted from v1 of the Stable API. This had the
+unintended consequence of breaking estimatedDocumentCount on views, so this
+change was reverted as it was seen as a bug / regression. The release notes for
+the drivers versions that change from ``$collStats`` back to ``count`` MUST
+document that users of the Stable API with ``apiStrict: true`` will start seeing
+errors when using estimatedDocumentCount against server versions 5.0.0 - 5.0.7 /
+5.1.0 - 5.3.1 due to a bug in the server. The release notes MUST recommend that
+such users upgrade their deployments to 5.0.8 or 5.3.2 (if on Atlas) or set
+``apiStrict: false`` when constructing their MongoClients. This change is not
+seen as requiring a major version bump in drivers due to it being considered a
+bug fix and the relative rarity of users using estimatedDocumentCount with
+``apiStrict: true``. The release notes MUST also document that
+estimatedDocumentCount can once again be used to perform slow-but-accurate
+counts with views.
 
 ~~~~~~~~~~~~~~
 countDocuments
