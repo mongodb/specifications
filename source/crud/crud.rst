@@ -778,7 +778,7 @@ seen as a bug / regression. The release notes for the drivers versions that
 revert this change MUST document that users of the Stable API with ``apiStrict:
 true`` will start seeing errors when using estimatedDocumentCount against server
 versions 5.0.0 - 5.0.7 / 5.1.0 - 5.3.1 due to a bug in the server. The release
-notes MUST recommend that such users upgrade their deployments to 5.0.8 or 5.3.1
+notes MUST recommend that such users upgrade their deployments to 5.0.8 or 5.3.2
 (if on Atlas) or set ``apiStrict: false`` when constructing their
 MongoClients. This change is not seen as requiring a major version bump in
 drivers due to it being considered a bug fix and the relative rarity of users
