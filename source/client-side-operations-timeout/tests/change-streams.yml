@@ -67,12 +67,12 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: createChangeStream
         object: *collection
         arguments:
           pipeline: []
-          timeoutMS: 10
+          timeoutMS: 50
         expectError:
           isTimeoutError: true
     expectEvents:

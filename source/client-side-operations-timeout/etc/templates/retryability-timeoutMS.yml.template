@@ -18,7 +18,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 50
+        timeoutMS: 100
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -41,9 +41,9 @@ initialData:
 tests:
   # For each retryable operation, run three tests:
   #
-  # 1. timeoutMS applies to the whole operation, not to individual attempts - Client timeoutMS=50 and the operation is
-  # fails with a retryable error after being blocked server-side for 30ms. The operation should fail with a timeout error
-  # because the second attempt should take it over the 50ms limit. This test only runs on 4.4+ because it uses the
+  # 1. timeoutMS applies to the whole operation, not to individual attempts - Client timeoutMS=100 and the operation is
+  # fails with a retryable error after being blocked server-side for 60ms. The operation should fail with a timeout error
+  # because the second attempt should take it over the 100ms limit. This test only runs on 4.4+ because it uses the
   # blockConnection option in failCommand.
   #
   # 2. operation is retried multiple times if timeoutMS is set to a non-zero value - Client timeoutMS=20 and the
@@ -74,7 +74,7 @@ tests:
             data:
               failCommands: ["{{operation.command_name}}"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: {{operation.operation_name}}
@@ -103,12 +103,11 @@ tests:
               errorLabels: ["RetryableWriteError"]
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
-        {% if operation.arguments|length > 0 -%}
         arguments:
+          timeoutMS: 250
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        {%- endif %}
     expectEvents:
       - client: *client
         events:

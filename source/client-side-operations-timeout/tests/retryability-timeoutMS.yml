@@ -18,7 +18,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 50
+        timeoutMS: 100
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -41,9 +41,9 @@ initialData:
 tests:
   # For each retryable operation, run three tests:
   #
-  # 1. timeoutMS applies to the whole operation, not to individual attempts - Client timeoutMS=50 and the operation is
-  # fails with a retryable error after being blocked server-side for 30ms. The operation should fail with a timeout error
-  # because the second attempt should take it over the 50ms limit. This test only runs on 4.4+ because it uses the
+  # 1. timeoutMS applies to the whole operation, not to individual attempts - Client timeoutMS=100 and the operation is
+  # fails with a retryable error after being blocked server-side for 60ms. The operation should fail with a timeout error
+  # because the second attempt should take it over the 100ms limit. This test only runs on 4.4+ because it uses the
   # blockConnection option in failCommand.
   #
   # 2. operation is retried multiple times if timeoutMS is set to a non-zero value - Client timeoutMS=20 and the
@@ -73,7 +73,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: insertOne
@@ -100,6 +100,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
+          timeoutMS: 250
           document: { x: 1 }
           
     expectEvents:
@@ -178,7 +179,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: insertMany
@@ -206,6 +207,7 @@ tests:
       - name: insertMany
         object: *collection
         arguments:
+          timeoutMS: 250
           documents:
             - { x: 1 }
           
@@ -286,7 +288,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: deleteOne
@@ -313,6 +315,7 @@ tests:
       - name: deleteOne
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -391,7 +394,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: replaceOne
@@ -419,6 +422,7 @@ tests:
       - name: replaceOne
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           replacement: { x: 1 }
           
@@ -499,7 +503,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: updateOne
@@ -527,6 +531,7 @@ tests:
       - name: updateOne
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -607,7 +612,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: findOneAndDelete
@@ -634,6 +639,7 @@ tests:
       - name: findOneAndDelete
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -712,7 +718,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: findOneAndReplace
@@ -740,6 +746,7 @@ tests:
       - name: findOneAndReplace
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           replacement: { x: 1 }
           
@@ -820,7 +827,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: findOneAndUpdate
@@ -848,6 +855,7 @@ tests:
       - name: findOneAndUpdate
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -928,7 +936,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: bulkWrite
@@ -957,6 +965,7 @@ tests:
       - name: bulkWrite
         object: *collection
         arguments:
+          timeoutMS: 250
           requests:
             - insertOne:
                 document: { _id: 1 }
@@ -1039,7 +1048,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: listDatabases
@@ -1066,6 +1075,7 @@ tests:
       - name: listDatabases
         object: *client
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -1144,7 +1154,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: listDatabaseNames
@@ -1168,7 +1178,9 @@ tests:
               errorLabels: ["RetryableWriteError"]
       - name: listDatabaseNames
         object: *client
-        
+        arguments:
+          timeoutMS: 250
+          
     expectEvents:
       - client: *client
         events:
@@ -1244,7 +1256,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: createChangeStream
@@ -1271,6 +1283,7 @@ tests:
       - name: createChangeStream
         object: *client
         arguments:
+          timeoutMS: 250
           pipeline: []
           
     expectEvents:
@@ -1349,7 +1362,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: aggregate
@@ -1376,6 +1389,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
+          timeoutMS: 250
           pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
     expectEvents:
@@ -1454,7 +1468,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: listCollections
@@ -1481,6 +1495,7 @@ tests:
       - name: listCollections
         object: *database
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -1559,7 +1574,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: listCollectionNames
@@ -1586,6 +1601,7 @@ tests:
       - name: listCollectionNames
         object: *database
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -1664,7 +1680,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: createChangeStream
@@ -1691,6 +1707,7 @@ tests:
       - name: createChangeStream
         object: *database
         arguments:
+          timeoutMS: 250
           pipeline: []
           
     expectEvents:
@@ -1769,7 +1786,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: aggregate
@@ -1796,6 +1813,7 @@ tests:
       - name: aggregate
         object: *collection
         arguments:
+          timeoutMS: 250
           pipeline: []
           
     expectEvents:
@@ -1874,7 +1892,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: count
@@ -1901,6 +1919,7 @@ tests:
       - name: count
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -1979,7 +1998,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: countDocuments
@@ -2006,6 +2025,7 @@ tests:
       - name: countDocuments
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -2084,7 +2104,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: estimatedDocumentCount
@@ -2108,7 +2128,9 @@ tests:
               errorLabels: ["RetryableWriteError"]
       - name: estimatedDocumentCount
         object: *collection
-        
+        arguments:
+          timeoutMS: 250
+          
     expectEvents:
       - client: *client
         events:
@@ -2184,7 +2206,7 @@ tests:
             data:
               failCommands: ["distinct"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: distinct
@@ -2212,6 +2234,7 @@ tests:
       - name: distinct
         object: *collection
         arguments:
+          timeoutMS: 250
           fieldName: x
           filter: {}
           
@@ -2292,7 +2315,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: find
@@ -2319,6 +2342,7 @@ tests:
       - name: find
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -2397,7 +2421,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: findOne
@@ -2424,6 +2448,7 @@ tests:
       - name: findOne
         object: *collection
         arguments:
+          timeoutMS: 250
           filter: {}
           
     expectEvents:
@@ -2502,7 +2527,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: listIndexes
@@ -2526,7 +2551,9 @@ tests:
               errorLabels: ["RetryableWriteError"]
       - name: listIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 250
+          
     expectEvents:
       - client: *client
         events:
@@ -2602,7 +2629,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 60
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: createChangeStream
@@ -2629,6 +2656,7 @@ tests:
       - name: createChangeStream
         object: *collection
         arguments:
+          timeoutMS: 250
           pipeline: []
           
     expectEvents:
