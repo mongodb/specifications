@@ -657,7 +657,6 @@ A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`
 - The value of ``AutoEncryptionOpts.EncryptedFieldConfigMap[<databaseName>.<collectionName>]``.
 
 If the collection namespace has an associated ``EncryptedFieldConfig``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
-:
 
 - Create the collection with name ``EncryptedFieldConfig["escCollection"]`` using default options.
   If ``EncryptedFieldConfig["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
