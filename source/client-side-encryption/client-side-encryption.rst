@@ -680,9 +680,6 @@ A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the col
 
 If the collection namespace has an associated ``EncryptedFieldConfig``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
-A call to a driver helper ``Collection.Drop()`` must check if the collection namespace (``<databaseName>.<collectionName>``) is in ``AutoEncryptionOpts.EncryptedFieldConfigMap``.
-If it is, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
-
 - Drop the collection ``collectionName``.
 - Drop the collection with name ``EncryptedFieldConfig["escCollection"]``.
   If ``EncryptedFieldConfig["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
