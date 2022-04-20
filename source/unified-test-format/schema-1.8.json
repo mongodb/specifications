@@ -162,6 +162,22 @@
             }
           }
         },
+        "encryptedClient": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "clientEncryptionOpts"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "clientEncryptionOpts": {
+              "$ref": "#/definitions/clientEncryptionOpts"
+            }
+          }
+        },
         "database": {
           "type": "object",
           "additionalProperties": false,
@@ -243,6 +259,110 @@
             },
             "bucketOptions": {
               "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "clientEncryptionOpts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "keyVaultClient",
+        "keyVaultNamespace",
+        "kmsProviders"
+      ],
+      "properties": {
+        "keyVaultClient": {
+          "type": "string"
+        },
+        "keyVaultNamespace": {
+          "type": "string"
+        },
+        "kmsProviders": {
+          "$ref": "#/definitions/kmsProviders"
+        }
+      }
+    },
+    "kmsProviders": {
+      "$defs": {
+        "stringOrEmpty": {
+          "oneOf": [
+            {
+              "const": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "aws": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "accessKeyId": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            },
+            "secretAccessKey": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            },
+            "sessionToken": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            }
+          }
+        },
+        "azure": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tenantId": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            },
+            "clientId": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            },
+            "clientSecret": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            },
+            "identityPlatformEndpoint": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            }
+          }
+        },
+        "gcp": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "email": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            },
+            "privateKey": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            },
+            "endpoint": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            }
+          }
+        },
+        "kmip": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "endpoint": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
+            }
+          }
+        },
+        "local": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
             }
           }
         }
