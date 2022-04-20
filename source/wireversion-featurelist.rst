@@ -71,7 +71,7 @@ Server Wire version and Feature List
 
    * - 5.0
      - 13
-       | $out and $merge on secondaries (technically FCV 4.4+)
+     - | $out and $merge on secondaries (technically FCV 4.4+)
        
    * - 5.1
      - 14
