@@ -93,7 +93,7 @@ Each YAML file has the following keys:
 
       - ``bypassAutoEncryption``: Optional, a boolean to indicate whether or not auto encryption should be bypassed. Defaults to ``false``.
       
-      - ``encryptedFieldConfigMap`` An optional document. The document maps collection namespace to ``EncryptedFieldConfig`` documents.
+      - ``encryptedFieldsMap`` An optional document. The document maps collection namespace to ``EncryptedFields`` documents.
 
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
