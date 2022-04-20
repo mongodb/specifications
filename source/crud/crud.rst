@@ -765,6 +765,11 @@ Stable API are recommended to upgrade their server version to 5.0.8+ or set
 ``apiStrict: false`` to avoid encountering errors when using
 estimatedDocumentCount.
 
+Drivers MUST document that estimatedDocumentCount will perform a slower but
+correct count of the documents when performed against a view. In future server
+versions, this will be updated to provide a fast but estimated count instead,
+matching the behavior of the command on regular collections.
+
 The 5.0-compat versions of many drivers were changed to use ``$collStats`` in
 their implementations of estimatedDocumentCount due to the ``count`` command
 being omitted from v1 of the Stable API. This had the unintended consequence of
