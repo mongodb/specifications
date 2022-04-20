@@ -402,6 +402,8 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldConfigMap:
+          # encryptedCollection has encryptedCollection.esc as the escCollection.
+          # encryptedCollection.esc has encryptedCollection as the escCollection.
           default.encryptedCollection: {
                 "escCollection": "encryptedCollection.esc",
                 "eccCollection": "encryptedCollection.ecc",
