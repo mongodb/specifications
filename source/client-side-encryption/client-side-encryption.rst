@@ -325,7 +325,7 @@ MongoClient Changes
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
       tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
-      encryptedFieldConfigMap: Map<String, Map<String, Document>>; // Maps namespace to EncryptedFieldConfig.
+      encryptedFieldConfigMap: Optional<Map<String, Document>>; // Maps namespace to EncryptedFieldConfig.
    }
 
 A MongoClient can be configured to automatically encrypt collection
