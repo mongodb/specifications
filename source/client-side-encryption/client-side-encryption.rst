@@ -649,8 +649,14 @@ FLE 2 ``CreateCollection()`` and ``Collection.Drop()``
 
 A collection supporting FLE 2 requires an index and three additional collections.
 
-A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) is in ``AutoEncryptionOpts.EncryptedFieldConfigMap``.
-If it is, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
+Drivers MUST add a new BSON document option named ``EncryptedFieldConfig`` to ``CreateCollection()``.
+
+A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``EncryptedFieldConfig``. Check for an associated ``EncryptedFieldConfig`` from the following:
+
+- The ``EncryptedFieldConfig`` option passed in ``collectionOptions``.
+- The value of ``AutoEncryptionOpts.EncryptedFieldConfigMap[<databaseName>.<collectionName>]``.
+
+If the collection namespace has an associated ``EncryptedFieldConfig``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 :
 
 - Create the collection with name ``EncryptedFieldConfig["escCollection"]`` using default options.
@@ -665,6 +671,15 @@ If it is, then do the following operations. If any of the following operations e
 - Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``EncryptedFieldConfig``.
 - Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
 
+Drivers MUST add a new BSON document option named ``EncryptedFieldConfig`` to ``Collection.Drop()``.
+
+A call to a driver helper ``Collection.Drop()`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``EncryptedFieldConfig``. Check for an associated ``EncryptedFieldConfig`` from the following:
+
+- The ``EncryptedFieldConfig`` option passed in ``collectionOptions``.
+- The value of ``AutoEncryptionOpts.EncryptedFieldConfigMap[<databaseName>.<collectionName>]``.
+- Run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option. The value of ``encryptedFields`` is the ``EncryptedFieldConfig``.
+
+If the collection namespace has an associated ``EncryptedFieldConfig``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
 A call to a driver helper ``Collection.Drop()`` must check if the collection namespace (``<databaseName>.<collectionName>``) is in ``AutoEncryptionOpts.EncryptedFieldConfigMap``.
 If it is, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
