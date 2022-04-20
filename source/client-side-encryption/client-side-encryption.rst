@@ -915,8 +915,11 @@ Setting Search Paths
 --------------------
 
 For the user-facing API the driver MUST append the literal string
-:ts:`"$SYSTEM"` to the search paths for the `libmongocrypt_handle`. For purposes
-of testing, a driver may use a different set of search paths.
+:ts:`"$SYSTEM"` to the search paths for the `libmongocrypt_handle` if
+`bypassAutoEncryption` is not set to |true|, and MUST NOT append to the search
+path if it is set to |true| or if the libmongocrypt_ instance is used
+for explicit encryption only (i.e. on the ClientEncryption class).
+For purposes of testing, a driver may use a different set of search paths.
 
 
 .. rubric:: Explaination
