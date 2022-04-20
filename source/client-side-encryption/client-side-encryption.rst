@@ -672,9 +672,9 @@ If the collection namespace has an associated ``EncryptedFieldConfig``, then do 
 
 Drivers MUST add a new BSON document option named ``EncryptedFieldConfig`` to ``Collection.Drop()``.
 
-A call to a driver helper ``Collection.Drop()`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``EncryptedFieldConfig``. Check for an associated ``EncryptedFieldConfig`` from the following:
+A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``EncryptedFieldConfig``. Check for an associated ``EncryptedFieldConfig`` from the following:
 
-- The ``EncryptedFieldConfig`` option passed in ``collectionOptions``.
+- The ``EncryptedFieldConfig`` option passed in ``dropOptions``.
 - The value of ``AutoEncryptionOpts.EncryptedFieldConfigMap[<databaseName>.<collectionName>]``.
 - Run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option. The value of ``encryptedFields`` is the ``EncryptedFieldConfig``.
 
