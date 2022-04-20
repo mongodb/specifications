@@ -650,7 +650,8 @@ FLE 2 ``CreateCollection()`` and ``Collection.Drop()``
 A collection supporting FLE 2 requires an index and three additional collections.
 
 A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) is in ``AutoEncryptionOpts.EncryptedFieldConfigMap``.
-If it is, then do the following:
+If it is, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
+:
 
 - Create the collection with name ``EncryptedFieldConfig["escCollection"]`` using default options.
   If ``EncryptedFieldConfig["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
@@ -667,7 +668,7 @@ If it is, then do the following:
 Drivers MUST NOT add a public option to directly set the ``encryptedFields`` option in the ``CreateCollection`` helper.
 
 A call to a driver helper ``Collection.Drop()`` must check if the collection namespace (``<databaseName>.<collectionName>``) is in ``AutoEncryptionOpts.EncryptedFieldConfigMap``.
-If it is, then do the following:
+If it is, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
 - Drop the collection ``collectionName``.
 - Drop the collection with name ``EncryptedFieldConfig["escCollection"]``.
