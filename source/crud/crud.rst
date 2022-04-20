@@ -179,7 +179,8 @@ Read
     /**
      * Gets an estimate of the count of documents in a collection using collection metadata.
      *
-     * See "Count API Details" section below.
+     * See "Count API Details" section below for implementation and documentation
+     * requirements.
      */
     estimatedDocumentCount(options: Optional<EstimatedDocumentCountOptions>): Int64;
 
@@ -758,22 +759,27 @@ The estimatedDocumentCount function is implemented using the ``count`` command
 with no query filter, skip, limit, or other options that would alter the
 results. Once again, the only supported option is maxTimeMS.
 
-Drivers MUST document that due to a bug in versions 5.0.0-5.0.7 of MongoDB,
-estimatedDocumentCount was not included in the Stable API, and that users of the
+Drivers MUST document that, due to a bug in versions 5.0.0-5.0.7 of MongoDB,
+estimatedDocumentCount was not included in v1 of the Stable API, so users of the
 Stable API are recommended to upgrade their server version to 5.0.8+ or set
 ``apiStrict: false`` to avoid encountering errors when using
 estimatedDocumentCount.
 
-The 5.0-compat releases of many drivers were changed to use ``$collStats`` in
+The 5.0-compat versions of many drivers were changed to use ``$collStats`` in
 their implementations of estimatedDocumentCount due to the ``count`` command
-being omitted from the V1 Stable API. This had the unintended consequence of
+being omitted from v1 of the Stable API. This had the unintended consequence of
 breaking estimatedDocumentCount on views, so this change was reverted as it was
-seen as a bug / regression. Drivers that revert this change MUST include in
-their release notes that users of the Stable API with ``apiStrict: true`` will
-start seeing errors when using estimatedDocumentCount due to a bug in server
-versions 5.0.0-5.0.7 and recommend that they upgrade their server version to
-5.0.8 or set ``apiStrict: false``. They MUST also document that
-estimatedDocumentCount can now be used with views.
+seen as a bug / regression. The release notes for the drivers versions that
+revert this change MUST document that users of the Stable API with ``apiStrict:
+true`` will start seeing errors when using estimatedDocumentCount against server
+versions 5.0.0 - 5.0.7 / 5.1.0 - 5.3.1 due to a bug in the server. The release
+notes MUST recommend that such users upgrade their deployments to 5.0.8 or 5.3.1
+(if on Atlas) or set ``apiStrict: false`` when constructing their
+MongoClients. This change is not seen as requiring a major version bump in
+drivers due to it being considered a bug fix and the relative rarity of users
+using estimatedDocumentCount with ``apiStrict: true``. The release notes MUST
+also document that estimatedDocumentCount can now be used to perform
+slow-but-accurate counts with views. 
 
 ~~~~~~~~~~~~~~
 countDocuments
