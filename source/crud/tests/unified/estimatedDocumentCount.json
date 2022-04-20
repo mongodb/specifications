@@ -234,12 +234,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount uses count on less than 4.9.0",
-      "runOnRequirements": [
-        {
-          "maxServerVersion": "4.8.99"
-        }
-      ],
+      "description": "estimatedDocumentCount uses count",
       "operations": [
         {
           "name": "estimatedDocumentCount",
@@ -265,12 +260,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount with maxTimeMS on less than 4.9.0",
-      "runOnRequirements": [
-        {
-          "maxServerVersion": "4.8.99"
-        }
-      ],
+      "description": "estimatedDocumentCount with maxTimeMS",
       "operations": [
         {
           "name": "estimatedDocumentCount",
@@ -300,12 +290,7 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount on non-existent collection on less than 4.9.0",
-      "runOnRequirements": [
-        {
-          "maxServerVersion": "4.8.99"
-        }
-      ],
+      "description": "estimatedDocumentCount on non-existent collection",
       "operations": [
         {
           "name": "estimatedDocumentCount",
@@ -331,11 +316,10 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount errors correctly on less than 4.9.0--command error",
+      "description": "estimatedDocumentCount errors correctly--command error",
       "runOnRequirements": [
         {
           "minServerVersion": "4.0.0",
-          "maxServerVersion": "4.8.99",
           "topologies": [
             "single",
             "replicaset"
@@ -343,7 +327,6 @@
         },
         {
           "minServerVersion": "4.2.0",
-          "maxServerVersion": "4.8.99",
           "topologies": [
             "sharded"
           ]
@@ -395,11 +378,10 @@
       ]
     },
     {
-      "description": "estimatedDocumentCount errors correctly on less than 4.9.0--socket error",
+      "description": "estimatedDocumentCount errors correctly--socket error",
       "runOnRequirements": [
         {
           "minServerVersion": "4.0.0",
-          "maxServerVersion": "4.8.99",
           "topologies": [
             "single",
             "replicaset"
@@ -407,7 +389,6 @@
         },
         {
           "minServerVersion": "4.2.0",
-          "maxServerVersion": "4.8.99",
           "topologies": [
             "sharded"
           ]
