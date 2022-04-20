@@ -41,7 +41,7 @@
         },
         "data": {
           "failCommands": [
-            "aggregate"
+            "count"
           ],
           "closeConnection": true
         }
@@ -84,7 +84,7 @@
         },
         "data": {
           "failCommands": [
-            "aggregate"
+            "count"
           ],
           "closeConnection": true
         }
@@ -116,7 +116,7 @@
         },
         "data": {
           "failCommands": [
-            "aggregate"
+            "count"
           ],
           "closeConnection": true
         }
