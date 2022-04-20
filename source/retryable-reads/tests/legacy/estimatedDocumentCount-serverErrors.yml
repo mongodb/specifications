@@ -1,3 +1,11 @@
+runOn:
+    -
+        minServerVersion: "4.0"
+        topology: ["single", "replicaset"]
+    -
+        minServerVersion: "4.1.7"
+        topology: ["sharded"]
+
 database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
@@ -22,7 +30,7 @@ tests:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                      count: *collection_name
+                        count: *collection_name
                     database_name: *database_name
             - *retryable_command_started_event
     -
