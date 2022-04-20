@@ -665,7 +665,6 @@ If it is, then do the following operations. If any of the following operations e
 - Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``EncryptedFieldConfig``.
 - Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
 
-Drivers MUST NOT add a public option to directly set the ``encryptedFields`` option in the ``CreateCollection`` helper.
 
 A call to a driver helper ``Collection.Drop()`` must check if the collection namespace (``<databaseName>.<collectionName>``) is in ``AutoEncryptionOpts.EncryptedFieldConfigMap``.
 If it is, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
