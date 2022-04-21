@@ -104,8 +104,8 @@ FLE 1
 FLE 2
    FLE 2 the second version of Client-Side Field Level Encryption. Data is encrypted client-side. FLE 2 supports indexed encrypted fields, which are further processed server-side.
 
-EncryptedFields
-   A BSON document describing the FLE 2 encrypted fields. This is analogous to the JSON Schema in FLE 1. The following is an example EncryptedFields in extended canonical JSON:
+encryptedFields
+   A BSON document describing the FLE 2 encrypted fields. This is analogous to the JSON Schema in FLE 1. The following is an example encryptedFields in extended canonical JSON:
 
    .. code::
 
@@ -325,7 +325,7 @@ MongoClient Changes
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
       tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
-      EncryptedFieldsMap: Optional<Map<String, Document>>; // Maps namespace to EncryptedFields.
+      encryptedFieldsMap: Optional<Map<String, Document>>; // Maps namespace to encryptedFields.
    }
 
 A MongoClient can be configured to automatically encrypt collection
@@ -623,24 +623,24 @@ the user. Refer:
 - `Managing mongocryptd`_
 - `Detecting csfle Availability`_
 
-EncryptedFieldsMap
+encryptedFieldsMap
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-``EncryptedFieldsMap`` maps a collection namespace to an ``EncryptedFields``.
+``encryptedFieldsMap`` maps a collection namespace to an ``encryptedFields``.
 
-``EncryptedFieldsMap`` only applies to FLE 2.
+``encryptedFieldsMap`` only applies to FLE 2.
 
-If a collection is present on both the ``EncryptedFieldsMap`` and ``schemaMap``, libmongocrypt_ will error on initialization. See :ref:`fle2-and-fle1-error`.
+If a collection is present on both the ``encryptedFieldsMap`` and ``schemaMap``, libmongocrypt_ will error on initialization. See :ref:`fle2-and-fle1-error`.
 
-If a collection is present on the ``EncryptedFieldsMap``, the behavior of ``CreateCollection()`` and ``Collection.Drop()`` is altered. See :ref:`fle2-createcollection-drop`.
+If a collection is present on the ``encryptedFieldsMap``, the behavior of ``CreateCollection()`` and ``Collection.Drop()`` is altered. See :ref:`fle2-createcollection-drop`.
 
-Automatic encryption in FLE 2 is configured with the ``EncryptedFields``.
+Automatic encryption in FLE 2 is configured with the ``encryptedFields``.
 
-If a collection is not present on the ``EncryptedFields`` a server-side collection ``EncryptedFields`` may be used by libmongocrypt_.
+If a collection is not present on the ``encryptedFields`` a server-side collection ``encryptedFields`` may be used by libmongocrypt_.
 Drivers MUST include the following in the documentation for MongoClient:
 
-   Supplying an ``EncryptedFieldsMap`` provides more security than relying on an ``EncryptedFields`` obtained from the server.
-   It protects against a malicious server advertising a false ``EncryptedFields``.
+   Supplying an ``encryptedFieldsMap`` provides more security than relying on an ``encryptedFields`` obtained from the server.
+   It protects against a malicious server advertising a false ``encryptedFields``.
 
 .. _fle2-createcollection-drop:
 
@@ -649,44 +649,44 @@ FLE 2 ``CreateCollection()`` and ``Collection.Drop()``
 
 A collection supporting FLE 2 requires an index and three additional collections.
 
-Drivers MUST have a BSON document option named ``EncryptedFields`` in ``CreateCollection()``.
+Drivers MUST have a BSON document option named ``encryptedFields`` in ``CreateCollection()``.
 
-A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``EncryptedFields``. Check for an associated ``EncryptedFields`` from the following:
+A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
 
-- The ``EncryptedFields`` option passed in ``collectionOptions``.
-- The value of ``AutoEncryptionOpts.EncryptedFieldsMap[<databaseName>.<collectionName>]``.
+- The ``encryptedFields`` option passed in ``collectionOptions``.
+- The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
 
-If the collection namespace has an associated ``EncryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
+If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
-- Create the collection with name ``EncryptedFields["escCollection"]`` using default options.
-  If ``EncryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.EncryptedFieldsMap``.
-- Create the collection with name ``EncryptedFields["eccCollection"]`` using default options.
-  If ``EncryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.EncryptedFieldsMap``.
-- Create the collection with name ``EncryptedFields["ecocCollection"]`` using default options.
-  If ``EncryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.EncryptedFieldsMap``.
-- Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``EncryptedFields``.
+- Create the collection with name ``encryptedFields["escCollection"]`` using default options.
+  If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
+  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection with name ``encryptedFields["eccCollection"]`` using default options.
+  If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
+  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection with name ``encryptedFields["ecocCollection"]`` using default options.
+  If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
+  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``encryptedFields``.
 - Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
 
-Drivers MUST have a BSON document option named ``EncryptedFields`` in ``Collection.Drop()``.
+Drivers MUST have a BSON document option named ``encryptedFields`` in ``Collection.Drop()``.
 
-A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``EncryptedFields``. Check for an associated ``EncryptedFields`` from the following:
+A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
 
-- The ``EncryptedFields`` option passed in ``dropOptions``.
-- The value of ``AutoEncryptionOpts.EncryptedFieldsMap[<databaseName>.<collectionName>]``.
-- Run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option. The value of ``encryptedFields`` is the ``EncryptedFields``.
+- The ``encryptedFields`` option passed in ``dropOptions``.
+- The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
+- Run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option. The value of ``encryptedFields`` is the ``encryptedFields``.
 
-If the collection namespace has an associated ``EncryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
+If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
 - Drop the collection ``collectionName``.
-- Drop the collection with name ``EncryptedFields["escCollection"]``.
-  If ``EncryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
-- Drop the collection with name ``EncryptedFields["eccCollection"]``.
-  If ``EncryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
-- Drop the collection with name ``EncryptedFields["ecocCollection"]``.
-  If ``EncryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
+- Drop the collection with name ``encryptedFields["escCollection"]``.
+  If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
+- Drop the collection with name ``encryptedFields["eccCollection"]``.
+  If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
+- Drop the collection with name ``encryptedFields["ecocCollection"]``.
+  If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
 
 ClientEncryption
 ----------------
@@ -1987,9 +1987,9 @@ Why is it an error to have an FLE 1 and FLE 2 field in the same collection?
 ---------------------------------------------------------------------------
 There is no technical limitation to having a separate FLE 1 field and FLE 2 field in the same collection. Prohibiting FLE 1 and FLE 2 in the same collection reduces complexity. From the product perspective, a random FLE 1 field and a non-queryable FLE 2 field have the same behavior and similar security guarantees. A deterministic FLE 1 field leaks more information then a deterministic FLE 2 field. There is not a compelling use case to use both FLE 1 and FLE 2 in the same collection.
 
-Is it an error to set schemaMap and EncryptedFieldsMap?
+Is it an error to set schemaMap and encryptedFieldsMap?
 ------------------------------------------------------------
-No. FLE 1 and FLE 2 fields can coexist in different collections. The same collection cannot be in the ``EncryptedFieldsMap`` and ``schemaMap``. libmongocrypt_ will error if the same collection is specified in a ``schemaMap`` and ``EncryptedFieldsMap``.
+No. FLE 1 and FLE 2 fields can coexist in different collections. The same collection cannot be in the ``encryptedFieldsMap`` and ``schemaMap``. libmongocrypt_ will error if the same collection is specified in a ``schemaMap`` and ``encryptedFieldsMap``.
 
 Future work
 ===========
