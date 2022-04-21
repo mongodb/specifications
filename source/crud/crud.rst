@@ -413,9 +413,8 @@ Read
      * The comment can be any valid BSON type for server versions 4.4.14 and above.
      * For server versions between 4.4.0 and 4.4.14 string comment is supported.
      * Servers versions below 4.4.0 do not support comment for count command,
-     * which is used to implement estimatedDocumentCount for server versions
-     * versions less than 4.9.0. Therefore, providing a comment may result
-     * in a server-side error.
+     * which is used to implement estimatedDocumentCount. Therefore, providing a
+     * comment may result in a server-side error.
      */
     comment: Optional<any>;
   }
@@ -757,7 +756,8 @@ estimatedDocumentCount
 
 The estimatedDocumentCount function is implemented using the ``count`` command
 with no query filter, skip, limit, or other options that would alter the
-results. The only supported option is maxTimeMS.
+results. The only supported options are listed in the
+``EstimatedDocumentCountOptions`` type defined above.
 
 Drivers MUST document that, due to a bug in versions 5.0.0-5.0.7 of MongoDB,
 estimatedDocumentCount was not included in v1 of the Stable API, so users of the
