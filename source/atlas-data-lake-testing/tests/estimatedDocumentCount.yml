@@ -14,5 +14,5 @@ tests:
         command_started_event:
           command:
             count: *collection_name
-          command_name: aggregate
+          command_name: count
           database_name: *database_name

@@ -17,7 +17,7 @@
             "command": {
               "count": "driverdata"
             },
-            "command_name": "aggregate",
+            "command_name": "count",
             "database_name": "test"
           }
         }
