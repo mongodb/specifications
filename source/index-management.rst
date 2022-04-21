@@ -824,6 +824,8 @@ Common API Components
 
     /**
      * Optionally specifies that this index is clustered.
+     *
+     * This options is only supported by servers >= 6.0.
      */
      clustered: Boolean;
   }
