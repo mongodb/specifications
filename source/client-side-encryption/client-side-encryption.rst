@@ -676,7 +676,7 @@ A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the col
 
 - The ``encryptedFields`` option passed in ``dropOptions``.
 - The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
-- Run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option. The value of ``encryptedFields`` is the ``encryptedFields``.
+- If ``AutoEncryptionOpts.encryptedFieldsMap`` is not null, run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option. The value of ``encryptedFields`` is the ``encryptedFields``.
 
 If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
