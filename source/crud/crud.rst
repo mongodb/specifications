@@ -11,7 +11,7 @@ Driver CRUD API
 :Advisors: Jeremy Mikola, Jeff Yemin
 :Status: Approved
 :Type: Standards
-:Minimum Server Version: 2.6
+:Minimum Server Version: 2.7
 :Last Modified: 2022-02-10
 
 .. contents::
@@ -2365,6 +2365,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2022-04-21: Revert to using the ``count`` command for ``estimatedDocumentCount``
 * 2022-02-18: Add let to BulkWriteOptions.
 * 2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.
 * 2022-02-01: Add comment attribute to all helpers.
