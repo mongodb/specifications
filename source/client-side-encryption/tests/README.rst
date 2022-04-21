@@ -92,6 +92,8 @@ Each YAML file has the following keys:
       - ``keyVaultNamespace``: Optional, a namespace to the key vault collection. Defaults to "keyvault.datakeys".
 
       - ``bypassAutoEncryption``: Optional, a boolean to indicate whether or not auto encryption should be bypassed. Defaults to ``false``.
+      
+      - ``encryptedFieldsMap`` An optional document. The document maps collection namespace to ``EncryptedFields`` documents.
 
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
