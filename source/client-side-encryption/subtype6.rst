@@ -31,7 +31,7 @@ META
 ====
 The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
 “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this
-document are to be interpreted as described in \`RFC 2119
+document are to be interpreted as described in `RFC 2119
 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
 Specification
@@ -64,6 +64,8 @@ subtype          uint8    Type of blob format.
 1        AEAD_AES_CBC_HMAC_SHA512 deterministic ciphertext. The metadata and encrypted data for deterministic encrypted data.
 2        AEAD_AES_CBC_HMAC_SHA512 randomized ciphertext.    The metadata and encrypted data for random encrypted data.
 ======== ================================================== =====================================================================================================================
+
+.. _subtype6.intent-to-encrypt:
 
 Type 0: Intent-to-encrypt marking
 ---------------------------------

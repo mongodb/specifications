@@ -312,7 +312,9 @@ Read
      * and providing one will result in a server-side error.
      *
      * If a comment is provided, drivers MUST attach this comment to all
-     * subsequent getMore commands run on the same cursor.
+     * subsequent getMore commands run on the same cursor for server
+     * versions 4.4 and above. For server versions below 4.4 drivers MUST NOT
+     * attach a comment to getMore commands.
      */
     comment: Optional<any>;
 
@@ -402,6 +404,19 @@ Read
      * NOTE: This option is deprecated in favor of timeoutMS.
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4.14 and above.
+     * For server versions between 4.4.0 and 4.4.14 string comment is supported.
+     * Servers versions below 4.4.0 do not support comment for count command,
+     * which is used to implement estimatedDocumentCount for server versions
+     * versions less than 4.9.0. Therefore, providing a comment may result
+     * in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class DistinctOptions {
@@ -523,7 +538,9 @@ Read
      * and providing a non-string type will result in a server-side error.
      *
      * If a comment is provided, drivers MUST attach this comment to all
-     * subsequent getMore commands run on the same cursor.
+     * subsequent getMore commands run on the same cursor for server
+     * versions 4.4 and above. For server versions below 4.4 drivers MUST NOT
+     * attach a comment to getMore commands.
      */
     comment: Optional<any>;
 

@@ -699,6 +699,14 @@ Otherwise, the `Connection <#connection>`_ is marked as available.
 Clearing a Connection Pool
 --------------------------
 
+Clearing the pool involves different steps depending on whether the pool is in
+load balanced mode or not. The traditional / non-load balanced clearing behavior
+MUST NOT be used by pools in load balanced mode, and the load balanced pool
+clearing behavior MUST NOT be used in non-load balanced pools.
+
+Clearing a non-load balanced pool
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 A Pool MUST have a method of clearing all `Connections <#connection>`_ when
 instructed. Rather than iterating through every `Connection <#connection>`_,
 this method should simply increment the generation of the Pool, implicitly
@@ -710,13 +718,6 @@ to Connection Monitoring events, a PoolClearedEvent MUST be emitted after
 incrementing the generation / marking the pool as "paused". If the pool is
 already "paused" when it is cleared, then the pool MUST NOT emit a PoolCleared
 event.
-This method MUST NOT be used in load balancer mode.
-
-A Pool MUST also have a method of clearing all `Connections <#connection>`_ for a
-specific ``serviceId`` for use when in load balancer mode. This method increments
-the generation of the pool for that specific ``serviceId`` in the generation map.
-Note that this method MUST NOT transition the pool to the "paused" state and
-MUST NOT clear the WaitQueue.
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
@@ -726,6 +727,16 @@ an error that marks the SDAM state unknown. Clearing the WaitQueue MUST happen
 eagerly so that any operations waiting on `Connections <#connection>`_ can retry
 as soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear
 requests from the WaitQueue.
+
+Clearning a load balanced pool
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A Pool MUST also have a method of clearing all `Connections <#connection>`_ for
+a specific ``serviceId`` for use when in load balancer mode. This method
+increments the generation of the pool for that specific ``serviceId`` in the
+generation map. A PoolClearedEvent MUST be emitted after incrementing the
+generation. Note that this method MUST NOT transition the pool to the "paused"
+state and MUST NOT clear the WaitQueue.
 
 Load Balancer Mode
 ------------------

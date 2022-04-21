@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.6.1
+:Spec Version: 1.7
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-02-24
+:Last Modified: 2022-03-01
 
 .. contents::
 
@@ -1005,6 +1005,12 @@ The structure of each object is as follows:
   are expected to be observed (in this order) on the corresponding client while
   executing `operations`_. If the array is empty, the test runner MUST assert
   that no events were observed on the client (excluding ignored events).
+
+- ``ignoreExtraEvents``: Optional boolean.  Specifies how the ``events`` array
+  is matched against the observed events.  If ``false``, observed events after
+  all specified events have matched MUST cause a test failure; if ``true``,
+  observed events after all specified events have been matched MUST NOT cause a
+  test failure.  Defaults to ``false``.
 
 
 expectedEvent
@@ -3280,6 +3286,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-03-01: Add ``ignoreExtraEvents`` field to ``expectedEventsForClient``.
 
 :2022-02-24: Rename Versioned API to Stable API
 

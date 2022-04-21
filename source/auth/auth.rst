@@ -794,12 +794,12 @@ Client Second
 
 .. code:: javascript
 
-   { 
+   {
        "a" : "AWS4-HMAC-SHA256 Credential=AKIAICGVLKOKZVY3X3DA/20191107/us-east-1/sts/aws4_request, SignedHeaders=content-length;content-type;host;x-amz-date;x-mongodb-gs2-cb-flag;x-mongodb-server-nonce, Signature=ab62ce1c75f19c4c8b918b2ed63b46512765ed9b8bb5d79b374ae83eeac11f55",
        "d" : "20191107T002607Z"
        "t" : "<security_token>"
    }
-|
+
 Note that `X-AMZ-Security-Token` is required when using temporary credentials. When using regular credentials, it
 MUST be omitted. Each message above will be encoded as BSON V1.1 objects and sent to the peer as the value of
 ``payload``. Therefore, the SASL conversation would appear as:
@@ -813,7 +813,7 @@ Client First
        "mechanism" : "MONGODB-AWS" 
        "payload" : new BinData(0, "NAAAAAVyACAAAAAAWj0lSjp8M0BMKGU+QVAzRSpWfk0hJigqO1V+b0FaVz4QcABuAAAAAA==")
    }
-|
+
 Server First
 
 .. code:: javascript
@@ -824,7 +824,7 @@ Server First
        "payload" : new BinData(0, "ZgAAAAVzAEAAAAAAWj0lSjp8M0BMKGU+QVAzRSpWfk0hJigqO1V+b0FaVz5Rj7x9UOBHJLvPgvgPS9sSzZUWgAPTy8HBbI1cG1WJ9gJoABIAAABzdHMuYW1hem9uYXdzLmNvbQAA"),
        "ok" : 1.0
    }
-|
+
 Client Second:
 
 .. code:: javascript
@@ -834,10 +834,9 @@ Client Second:
        "conversationId" : 1,
        "payload" : new BinData(0, "LQEAAAJhAAkBAABBV1M0LUhNQUMtU0hBMjU2IENyZWRlbnRpYWw9QUtJQUlDR1ZMS09LWlZZM1gzREEvMjAxOTExMTIvdXMtZWFzdC0xL3N0cy9hd3M0X3JlcXVlc3QsIFNpZ25lZEhlYWRlcnM9Y29udGVudC1sZW5ndGg7Y29udGVudC10eXBlO2hvc3Q7eC1hbXotZGF0ZTt4LW1vbmdvZGItZ3MyLWNiLWZsYWc7eC1tb25nb2RiLXNlcnZlci1ub25jZSwgU2lnbmF0dXJlPThhMTI0NGZjODYyZTI5YjZiZjc0OTFmMmYwNDE5NDY2ZGNjOTFmZWU1MTJhYTViM2ZmZjQ1NDY3NDEwMjJiMmUAAmQAEQAAADIwMTkxMTEyVDIxMDEyMloAAA==")
    }
-|
 
 In response to the Server First message, drivers MUST send an ``authorization header``. Drivers MUST follow the
-`Signature Version 4 Signing Process <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_ to
+`Signature Version 4 Signing Process <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`__ to
 calculate the signature for the ``authorization header``. The required and optional headers and their associated
 values drivers MUST use for the canonical request (see `Summary of Signing Steps
 <https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html>`_) are specified in the table
@@ -846,19 +845,17 @@ below. The following pseudocode shows the construction of the Authorization head
 .. code:: javascript
 
     Authorization: algorithm Credential=access key ID/credential scope, SignedHeaders=SignedHeaders, Signature=signature
-|
 
 The following example shows a finished Authorization header.
 
 .. code:: javascript
 
     Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7    
-|
 
 The following diagram is a summary of the steps drivers MUST follow to calculate the signature.
 
 .. image:: includes/calculating_a_signature.png
-|
+
 ======================== ======================================================================================================
 Name                     Value       
 ======================== ======================================================================================================
@@ -868,8 +865,8 @@ Content-Type*            application/x-www-form-urlencoded
 Content-Length*          43
 Host*                    Host field from Server First Message
 Region                   Derived from Host - see `Region Calculation`_ below
-X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`_
-X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`__
+X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`__
 X-MongoDB-Server-Nonce*  Base64 string of server nonce
 X-MongoDB-GS2-CB-Flag*   ASCII lower-case character ‘n’ or ‘y’ or ‘p’
 X-MongoDB-Optional-Data* Optional data, base64 encoded representation of the optional object provided by the client
@@ -952,14 +949,14 @@ An example URI for authentication with MONGODB-AWS using AWS IAM credentials pas
 .. code:: javascript
 
    "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS"
-|
-Users MAY have obtained temporary credentials through an `AssumeRole <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ 
-request. If so, then in addition to a username and password, users MAY also provide an ``AWS_SESSION_TOKEN`` as a ``mechanism_property``. 
+
+Users MAY have obtained temporary credentials through an `AssumeRole <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_
+request. If so, then in addition to a username and password, users MAY also provide an ``AWS_SESSION_TOKEN`` as a ``mechanism_property``.
 
 .. code:: javascript
 
    "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
-|
+
 Environment variables
 _____________________
 AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
@@ -990,22 +987,26 @@ If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is unset,
 .. code:: html
 
     http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>
+
 with the required header,
 
 .. code:: html
 
     X-aws-ec2-metadata-token: <secret-token>
+
 to access the EC2 instance's metadata. Drivers MUST obtain the role name from querying the URI
 
 .. code:: html
 
     http://169.254.169.254/latest/meta-data/iam/security-credentials/
+
 The role name request also requires the header ``X-aws-ec2-metadata-token``. Drivers MUST use v2 of the EC2 Instance Metadata Service (`IMDSv2 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_) to access the secret token. In other words, Drivers MUST
 
 * Start a session with a simple HTTP PUT request to IMDSv2.
 	* The URL is ``http://169.254.169.254/latest/api/token``.
 	* The required header is ``X-aws-ec2-metadata-token-ttl-seconds``. Its value is the number of seconds the secret token should remain valid with a max of six hours (`21600` seconds).
 * Capture the secret token IMDSv2 returned as a response to the PUT request. This token is the value for the header ``X-aws-ec2-metadata-token``.
+
 The curl recipe below demonstrates the above. It retrieves a secret token that's valid for 30 seconds. It then uses that token to access the EC2 instance's credentials:
 
 .. code:: shell-session
@@ -1013,11 +1014,13 @@ The curl recipe below demonstrates the above. It retrieves a secret token that's
     $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
     $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
     $ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
+
 Drivers can test this process using the mock EC2 server in `mongo-enterprise-modules <https://github.com/10gen/mongo-enterprise-modules/blob/master/jstests/external_auth/lib/ec2_metadata_http_server.py>`_. The script must be run with `python3`:
 
 .. code:: shell-session
 
 	python3 ec2_metadata_http_server.py
+
 To re-direct queries from the EC2 endpoint to the mock server, replace the link-local address (``http://169.254.169.254``) with the IP and port of the mock server (by default, ``http://localhost:8000``). For example, the curl script above becomes:
 
 .. code:: shell-session

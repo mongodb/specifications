@@ -61,7 +61,7 @@ tests:
 
   - description: "BulkWrite updateMany with let option unsupported (server-side error)"
     runOnRequirements:
-      - minServerVersion: "3.6.0"
+      - minServerVersion: "4.2.0"
         maxServerVersion: "4.9"
     operations:
       - object: *collection0
@@ -85,8 +85,7 @@ tests:
                   - q: *filter
                     u: *update
                     multi: true
-                    upsert:
-                      $$unsetOrMatches: false
+                    upsert: { $$unsetOrMatches: false }
                 let: *let
 
     outcome:

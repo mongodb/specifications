@@ -1,3 +1,4 @@
+=============
 Bulk API Spec
 =============
 
@@ -9,37 +10,37 @@ Bulk API Spec
 .. contents::
 
 Changes from previous versions
-------------------------------
+==============================
 
 Deprecated in favor of the *Driver CRUD API*.
 
 v0.8
-~~~~
+----
 * Removed "Test Case 3: Key validation, no $-prefixed keys allowed" for insert.
 
 v0.7
-~~~~
+----
 * Clarify that "writeConcernErrors" field is plural
 
 v0.6
-~~~~
+----
 * First public version of the specification.
 * Merged in Test Cases from QA tickets
 * Specification cleanup and increased precision
 
 v0.5
-~~~~
+----
 * Specification cleanup and increased precision
 * Suggested Error handling for languages using commonly raising exceptions
 * Narrowed writeConcern reporting requirement
 
 v0.4
-~~~~
+----
 * Renamed nUpdated to nMatched as to reflect that it's the number of matched documents not the number of modified documents.
 
 
 Bulk Operation Builder
-----------------------
+======================
 
 Starting a bulk operation can be done in two ways.
 
@@ -49,7 +50,7 @@ Starting a bulk operation can be done in two ways.
     initializeOrderedBulkOp()       -> Bulk   - Initialize an ordered bulk
 
 Operations Possible On Bulk Instance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 Available operations follow the fluent API for insert, update and
 remove.
 
@@ -122,7 +123,7 @@ remove.
     bulk.execute(writeConcern);
 
 Current shell implementation
-----------------------------
+============================
 The shell implementation serves as a guide only. One main difference between the shell implementation and a proper driver implementation 
 is that unordered bulk operations are not optimized by re-ordering the writes; only the execution semantics are kept correct. 
 You can find it here:
@@ -804,6 +805,8 @@ The driver algorithm for merging results, when using write commands, in pseudoco
         "upserted": [],
     }
 
+::
+
     for each server response in all bulk operations' responses:
         if the operation is an update:
             if the response has a non-NULL nModified:
@@ -1237,7 +1240,7 @@ Test Case 2:
         
         .. code:: javascript
 
-            var bigstring = “string of length 16 MiB - 30 bytes”
+            var bigstring = "string of length 16 MiB - 30 bytes"
             batch = initializeUnorderedBulkOp()
             batch.find({key: 1}).upsert().update({$set: {x: bigstring}})
             batch.execute() succeeds.
