@@ -9,7 +9,7 @@ Some things to make sure you have completed:
 - [ ] Make sure there are generated JSON files from the YAML test files.
 - [ ] Test changes in at least one language driver.
 
-Please review the [spec process wiki page](https://wiki.corp.mongodb.com/pages/viewpage.action?pageId=80806719) for additional information.
+<!-- See also: https://wiki.corp.mongodb.com/pages/viewpage.action?pageId=80806719 -->
 
 <!--
 Thanks again!
