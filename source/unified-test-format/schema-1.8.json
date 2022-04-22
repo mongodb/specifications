@@ -114,7 +114,8 @@
               "minItems": 1,
               "items": { "$ref": "#/definitions/storeEventsAsEntity" }
             },
-            "serverApi": { "$ref":  "#/definitions/serverApi" }
+            "serverApi": { "$ref":  "#/definitions/serverApi" },
+            "observeSensitiveCommands": { "type": "boolean" }
           }
         },
         "database": {
@@ -233,7 +234,8 @@
           "type": "string",
           "enum": ["command", "cmap"]
         },
-        "events": { "type": "array" }
+        "events": { "type": "array" },
+        "ignoreExtraEvents": { "type": "boolean" }
       },
       "oneOf": [
         {
@@ -263,7 +265,8 @@
             "events": {
               "type": "array",
               "items": { "$ref": "#/definitions/expectedCommandEvent" }
-            }
+            },
+            "ignoreExtraEvents": { "type": "boolean" }
           }
         }
       ]
@@ -282,7 +285,8 @@
             "command": { "type": "object" },
             "commandName": { "type": "string" },
             "databaseName": { "type": "string" },
-            "hasServiceId": { "type": "boolean" }
+            "hasServiceId": { "type": "boolean" },
+            "hasServerConnectionId": { "type": "boolean" }
           }
         },
         "commandSucceededEvent": {
@@ -291,7 +295,8 @@
           "properties": {
             "reply": { "type": "object" },
             "commandName": { "type": "string" },
-            "hasServiceId": { "type": "boolean" }
+            "hasServiceId": { "type": "boolean" },
+            "hasServerConnectionId": { "type": "boolean" }
           }
         },
         "commandFailedEvent": {
@@ -299,7 +304,8 @@
           "additionalProperties": false,
           "properties": {
             "commandName": { "type": "string" },
-            "hasServiceId": { "type": "boolean" }
+            "hasServiceId": { "type": "boolean" },
+            "hasServerConnectionId": { "type": "boolean" }
           }
         }
       }
@@ -429,6 +435,7 @@
           "const": true
         },
         "isClientError": { "type": "boolean" },
+        "isTimeoutError": { "type": "boolean" },
         "errorContains": { "type": "string" },
         "errorCode": { "type": "integer" },
         "errorCodeName": { "type": "string" },
@@ -442,8 +449,7 @@
           "minItems": 1,
           "items": { "type": "string" }
         },
-        "expectResult": {},
-        "isTimeoutError": { "type": "boolean" }
+        "expectResult": {}
       }
     },
 
@@ -465,6 +471,7 @@
         },
         "expectEvents": {
           "type": "array",
+          "minItems": 1,
           "items": { "$ref": "#/definitions/expectedEventsForClient" }
         },
         "outcome": {
