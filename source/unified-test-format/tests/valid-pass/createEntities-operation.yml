@@ -28,6 +28,7 @@ tests:
           entities:
             - client:
                 id: client1
+                observeEvents: [ commandStartedEvent ]
             - database:
                 id: database1
                 client: client1
@@ -36,17 +37,18 @@ tests:
                 id: collection1
                 database: database1
                 collectionName: collection1
-      - name: insertOne
+      - name: deleteOne
         object: collection1
         arguments:
-          document: { _id : 1 }
+          filter: { _id : 1 }
     expectEvents:
       - client: client1
         events:
           - commandStartedEvent:
               command:
-                insert: collection1
-                documents:
-                  - { _id: 1 }
-              commandName: insert
+                delete: collection1
+                deletes:
+                  - q: { _id: 1 }
+                    limit: 1
+              commandName: delete
               databaseName: database1

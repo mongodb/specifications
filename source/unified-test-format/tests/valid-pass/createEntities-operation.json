@@ -40,7 +40,10 @@
             "entities": [
               {
                 "client": {
-                  "id": "client1"
+                  "id": "client1",
+                  "observeEvents": [
+                    "commandStartedEvent"
+                  ]
                 }
               },
               {
@@ -61,10 +64,10 @@
           }
         },
         {
-          "name": "insertOne",
+          "name": "deleteOne",
           "object": "collection1",
           "arguments": {
-            "document": {
+            "filter": {
               "_id": 1
             }
           }
@@ -77,14 +80,17 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "collection1",
-                  "documents": [
+                  "delete": "collection1",
+                  "deletes": [
                     {
-                      "_id": 1
+                      "q": {
+                        "_id": 1
+                      },
+                      "limit": 1
                     }
                   ]
                 },
-                "commandName": "insert",
+                "commandName": "delete",
                 "databaseName": "database1"
               }
             }
