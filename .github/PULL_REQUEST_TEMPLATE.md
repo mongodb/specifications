@@ -3,8 +3,7 @@ Thanks for contributing!
 -->
 
 Some things to make sure you have completed:
-- [ ] Bump Spec version.
-- [ ] Update last modified date.
+- [ ] Bump spec version and last modified date.
 - [ ] Update changelog.
 - [ ] Make sure there are generated JSON files from the YAML test files.
 - [ ] Test changes in at least one language driver.
