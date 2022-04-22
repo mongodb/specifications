@@ -2,7 +2,7 @@
 Thanks for contributing!
 -->
 
-Some things to make sure you have completed:
+Please complete the following before merging:
 - [ ] Bump spec version and last modified date.
 - [ ] Update changelog.
 - [ ] Make sure there are generated JSON files from the YAML test files.
