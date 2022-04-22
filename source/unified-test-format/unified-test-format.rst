@@ -597,6 +597,10 @@ The structure of this object is as follows:
     `ClientEncryptionOpts
     <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
 
+    Note: the ``tlsOptions`` document is intentionally omitted from the test
+    format. However, drivers MAY internally configure TLS options as needed to
+    satisfy the requirements of configured KMS providers.
+
     The structure of this document is as follows:
 
     - ``keyVaultClient``: Required string. Client entity from which this
@@ -631,9 +635,6 @@ The structure of this object is as follows:
       ``kmsProviders: { aws: { accessKeyId: abc, secretAccessKey: def } }``).
       This is to permit testing conditions where invalid KMS credentials are
       provided.
-    
-    - ``tlsOptions``: Not supported. Drivers MAY internally configure TLS
-      options as needed to satisfy the requirements of certain KMS providers.
 
 .. _entity_database:
 
