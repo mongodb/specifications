@@ -599,7 +599,7 @@ The structure of this object is as follows:
 
     The structure of this document is as follows:
 
-    - ``keyVaultClient``: Required string. MongoClient entity from which this
+    - ``keyVaultClient``: Required string. Client entity from which this
       encryptedClient will be created. The YAML file SHOULD use an `alias
       node`_ for a client entity's ``id`` field (e.g.
       ``keyVaultClient: *client0``).
