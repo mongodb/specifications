@@ -1,0 +1,17 @@
+description: kmsProviders-invalid_provider
+
+schemaVersion: "1.8"
+
+createEntities:
+  - client:
+      id: &client0 client0
+  - clientEncryption:
+      id: &clientEncryption0 clientEncryption0
+      clientEncryptionOpts:
+        keyVaultNamespace: keyvault.datakeys
+        kmsProviders:
+          invalid: {}
+
+tests:
+  - description: ""
+    operations: []

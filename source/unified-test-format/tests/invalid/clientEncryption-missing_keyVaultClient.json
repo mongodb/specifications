@@ -1,0 +1,25 @@
+{
+  "description": "clientEncryption-missing_keyVaultClient",
+  "schemaVersion": "1.8",
+  "createEntities": [
+    {
+      "clientEncryption": {
+        "id": "clientEncryption0",
+        "clientEncryptionOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
+          "kmsProviders": {
+            "local": {
+              "$$placeholder": {}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "",
+      "operations": []
+    }
+  ]
+}
