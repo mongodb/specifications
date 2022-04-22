@@ -10,6 +10,3 @@ Please complete the following before merging:
 
 <!-- See also: https://wiki.corp.mongodb.com/pages/viewpage.action?pageId=80806719 -->
 
-<!--
-Thanks again!
--->
