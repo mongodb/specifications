@@ -232,7 +232,7 @@ Supported Entity Types
 Test runners MUST support the following types of entities:
 
 - MongoClient. See `entity_client`_ and `Client Operations`_.
-- ClientEncryption. See `entity_encryptedClient`__.
+- ClientEncryption. See `entity_clientEncryption`__.
 - Database. See `entity_database`_ and `Database Operations`_.
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
@@ -583,15 +583,15 @@ The structure of this object is as follows:
 
   - ``serverApi``: Optional `serverApi`_ object.
 
-.. _entity_encryptedClient:
+.. _entity_clientEncryption:
 
-- ``encryptedClient``: Optional object. Defines a ClientEncryption object.
+- ``clientEncryption``: Optional object. Defines a ClientEncryption object.
 
   The structure of this object is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g.
-    ``id: &encryptedClient0 encryptedClient0``).
+    ``id: &clientEncryption0 clientEncryption0``).
 
   - ``clientEncryptionOpts``: Required document. A value corresponding to a
     `ClientEncryptionOpts
@@ -600,12 +600,12 @@ The structure of this object is as follows:
     The structure of this document is as follows:
 
     - ``keyVaultClient``: Required string. Client entity from which this
-      encryptedClient will be created. The YAML file SHOULD use an `alias
+      clientEncryption will be created. The YAML file SHOULD use an `alias
       node`_ for a client entity's ``id`` field (e.g.
       ``keyVaultClient: *client0``).
 
     - ``keyVaultNamespace``: Required string. The database and collection to use
-      as the key vault collection for this encryptedClient. The namespace takes
+      as the key vault collection for this clientEncryption. The namespace takes
       the form ``database.collection`` (e.g.
       ``keyVaultNamespace: keyvault.datakeys``).
 
