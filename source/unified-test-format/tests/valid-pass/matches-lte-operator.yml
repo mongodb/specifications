@@ -1,6 +1,6 @@
 description: matches-lte-operator
 
-schemaVersion: '1.5'
+schemaVersion: "1.8"
 
 createEntities:
   - client:

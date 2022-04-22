@@ -1,0 +1,52 @@
+description: createEntities-operation
+
+schemaVersion: "1.8"
+
+createEntities:
+  - client:
+      id: client0
+  - database:
+      id: database0
+      client: client0
+      databaseName: database0
+  - collection:
+      id: collection0
+      database: database0
+      collectionName: collection0
+
+initialData:
+  - collectionName: collection0
+    databaseName: database0
+    documents: []
+
+tests:
+  - description: createEntities operation
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: client1
+            - database:
+                id: database1
+                client: client1
+                databaseName: database1
+            - collection:
+                id: collection1
+                database: database1
+                collectionName: collection1
+      - name: insertOne
+        object: collection1
+        arguments:
+          document: { _id : 1 }
+    expectEvents:
+      - client: client1
+        events:
+          - commandStartedEvent:
+              command:
+                insert: collection1
+                documents:
+                  - { _id: 1 }
+              commandName: insert
+              databaseName: database1

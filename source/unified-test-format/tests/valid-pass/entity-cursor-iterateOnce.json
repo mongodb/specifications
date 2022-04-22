@@ -1,6 +1,6 @@
 {
   "description": "entity-cursor-iterateOnce",
-  "schemaVersion": "1.5",
+  "schemaVersion": "1.8",
   "createEntities": [
     {
       "client": {
