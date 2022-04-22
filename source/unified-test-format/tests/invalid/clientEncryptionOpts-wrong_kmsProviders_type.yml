@@ -1,14 +1,16 @@
-description: clientEncryption-missing_client
+description: clientEncryptionOpts-wrong_kmsProviders_type
 
 schemaVersion: "1.8"
 
 createEntities:
+  - client:
+      id: &client0 client0
   - clientEncryption:
-      id: &clientEncryption0 clientEncryption0
+      id: *client0
+      client: *client0
       clientEncryptionOpts:
         keyVaultNamespace: keyvault.datakeys
-        kmsProviders:
-          aws: {}
+        kmsProviders: 0
 
 tests:
   - description: ""

@@ -1,5 +1,5 @@
 {
-  "description": "clientEncryptionOpts-tlsOptions_not_supported",
+  "description": "clientEncryption-wrong_client_type",
   "schemaVersion": "1.8",
   "createEntities": [
     {
@@ -10,13 +10,12 @@
     {
       "clientEncryption": {
         "id": "clientEncryption0",
-        "client": "client0",
+        "client": 0,
         "clientEncryptionOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {}
-          },
-          "tlsOptions": {}
+          }
         }
       }
     }

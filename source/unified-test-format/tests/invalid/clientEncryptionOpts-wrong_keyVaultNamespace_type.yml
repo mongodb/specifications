@@ -1,12 +1,15 @@
-description: clientEncryption-missing_client
+description: clientEncryptionOpts-wrong_keyVaultNamespace_type
 
 schemaVersion: "1.8"
 
 createEntities:
+  - client:
+      id: &client0 client0
   - clientEncryption:
-      id: &clientEncryption0 clientEncryption0
+      id: *client0
+      client: *client0
       clientEncryptionOpts:
-        keyVaultNamespace: keyvault.datakeys
+        keyVaultNamespace: 0
         kmsProviders:
           aws: {}
 

@@ -1,5 +1,5 @@
 {
-  "description": "clientEncryption-missing_keyVaultNamespace",
+  "description": "clientEncryption-wrong_id_type",
   "schemaVersion": "1.8",
   "createEntities": [
     {
@@ -9,13 +9,12 @@
     },
     {
       "clientEncryption": {
-        "id": "clientEncryption0",
+        "id": 0,
         "client": "client0",
         "clientEncryptionOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "local": {
-              "$$placeholder": {}
-            }
+            "aws": {}
           }
         }
       }

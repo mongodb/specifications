@@ -13,9 +13,7 @@
         "clientEncryptionOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "local": {
-              "$$placeholder": {}
-            }
+            "aws": {}
           }
         }
       }

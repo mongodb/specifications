@@ -1,5 +1,5 @@
 {
-  "description": "clientEncryptionOpts-tlsOptions_not_supported",
+  "description": "kmsProviders-wrong_azure_type",
   "schemaVersion": "1.8",
   "createEntities": [
     {
@@ -14,9 +14,8 @@
         "clientEncryptionOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "aws": {}
-          },
-          "tlsOptions": {}
+            "azure": 0
+          }
         }
       }
     }

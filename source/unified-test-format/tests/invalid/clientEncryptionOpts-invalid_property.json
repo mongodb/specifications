@@ -1,5 +1,5 @@
 {
-  "description": "clientEncryptionOpts-tlsOptions_not_supported",
+  "description": "clientEncryptionOpts-invalid_property",
   "schemaVersion": "1.8",
   "createEntities": [
     {
@@ -16,7 +16,7 @@
           "kmsProviders": {
             "aws": {}
           },
-          "tlsOptions": {}
+          "invalid": {}
         }
       }
     }

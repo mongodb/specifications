@@ -1,14 +1,17 @@
-description: clientEncryption-missing_client
+description: kmsProviders-wrong_azure_type
 
 schemaVersion: "1.8"
 
 createEntities:
+  - client:
+      id: &client0 client0
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
+      client: *client0
       clientEncryptionOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: {}
+          azure: 0
 
 tests:
   - description: ""

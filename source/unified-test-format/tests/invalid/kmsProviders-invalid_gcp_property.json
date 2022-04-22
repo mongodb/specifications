@@ -1,5 +1,5 @@
 {
-  "description": "clientEncryptionOpts-tlsOptions_not_supported",
+  "description": "kmsProviders-invalid_gcp_property",
   "schemaVersion": "1.8",
   "createEntities": [
     {
@@ -14,9 +14,10 @@
         "clientEncryptionOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "aws": {}
-          },
-          "tlsOptions": {}
+            "gcp": {
+              "invalid": {}
+            }
+          }
         }
       }
     }
