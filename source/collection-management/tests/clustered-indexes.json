@@ -113,7 +113,12 @@
                   },
                   "unique": true,
                   "name": "test index",
-                  "v": 2
+                  "v": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  }
                 }
               }
             }
@@ -156,7 +161,12 @@
               "name": "test index",
               "clustered": true,
               "unique": true,
-              "v": 2
+              "v": {
+                "$$type": [
+                  "int",
+                  "long"
+                ]
+              }
             }
           ]
         }

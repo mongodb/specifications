@@ -68,7 +68,7 @@ tests:
                 key: { _id: 1 }
                 unique: true
                 name: *index0Name
-                v: 2
+                v: { $$type: [ int, long ] }
 
   - description: "listIndexes returns the index"
     operations:
@@ -91,4 +91,4 @@ tests:
             name: *index0Name
             clustered: true
             unique: true
-            v: 2
+            v: { $$type: [ int, long ] }
