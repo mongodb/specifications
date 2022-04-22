@@ -185,8 +185,8 @@
 
     "kmsProviders": {
       "$defs": {
-        "stringOrEmpty": {
-          "oneOf": [{ "const": {} }, { "type": "string" }]
+        "stringOrPlaceholder": {
+          "oneOf": [{ "const": { "$$placeholder": {} } }, { "type": "string" }]
         }
       },
       "type": "object",

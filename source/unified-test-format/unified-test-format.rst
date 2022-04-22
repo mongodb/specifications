@@ -614,20 +614,20 @@ The structure of this object is as follows:
       required KMS provider is not configured. If a KMS provider is given as an
       empty document (e.g. ``kmsProviders: { aws: {} }``), drivers MUST
       configure the KMS provider without credentials to permit testing
-      conditions where KMS credentials are needed. If a KMS credentials field is
-      given as an empty document (e.g.
-      ``kmsProviders: { aws: { accessKeyId: {}, secretAccessKey: {} } }``),
+      conditions where KMS credentials are needed. If a KMS credentials field
+      has a placeholder value (e.g.
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: {} }, secretAccessKey: { $$placeholder: {} } } }``),
       drivers MUST replace the field with credentials that satisfy the
       operations required by the unified test files. Drivers MAY load the
       credentials from the environment or a configuration file as needed to
       satisfy the requirements of the given KMS provider and tests. If a KMS
       credentials field is not given (e.g. the required field
       ``secretAccessKey`` is omitted in:
-      ``kmsProviders: { aws: { accessKeyId: {} } }``), Drivers MUST NOT include
-      the field during KMS configuration. This is to permit testing conditions
-      where required KMS credentials fields are not provided. Otherwise, Drivers
-      MUST configure the KMS provider with the explicit value of KMS credentials
-      field given in the test file (e.g.
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: {} } }``), drivers
+      MUST NOT include the field during KMS configuration. This is to permit
+      testing conditions where required KMS credentials fields are not provided.
+      Otherwise, drivers MUST configure the KMS provider with the explicit value
+      of KMS credentials field given in the test file (e.g.
       ``kmsProviders: { aws: { accessKeyId: abc, secretAccessKey: def } }``).
       This is to permit testing conditions where invalid KMS credentials are
       provided.
@@ -2406,6 +2406,34 @@ An example of this operation follows::
       arguments:
         client: *client0
         connections: 1
+
+
+Special Key for Placeholder Values
+---------------------------------------
+
+$$placeholder
+`````````````
+
+Syntax::
+
+  { field: { $$placeholder: {} } }
+
+This reserved key-value pair (not an operator!) can be used anywhere the value
+for a key might be specified in an test file. It is intended to act as a
+placeholder value in contexts where the test runner cannot provide a definite
+value or may be expected to replace the placeholder with a value that cannot be
+specified by the test file (e.g. loading KMS credentials from the environment).
+The test runner MUST raise an error if the placeholder operator is used in an
+unexpected context (as part of test format schema validation).
+
+An example of this operator acting as a placeholder follows::
+
+    kmsProviders:
+      aws: { $$placeholder: {} }
+
+Note that ``field: { $$placeholder: {} }`` is not equivalent to ``field: {}``.
+The former indicates ``field`` has an unspecified value, whereas the latter
+indicates ``field`` has the value ``{}`` (an empty document).
 
 
 Evaluating Matches
