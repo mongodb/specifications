@@ -8,7 +8,7 @@ Server Discovery And Monitoring -- Test Plan
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: September 8, 2014
+:Last Modified: June 21, 2021
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -33,29 +33,25 @@ Outcome: The former primary's ServerType MUST become Unknown.
 The TopologyType MUST change to ReplicaSetNoPrimary.
 The client MUST NOT immediately re-check the former primary.
 
-"Not master" error when reading without SlaveOkay bit
------------------------------------------------------
+"Not writable primary" error when reading without SecondaryOk bit
+-----------------------------------------------------------------
 
 Scenario: With TopologyType ReplicaSetWithPrimary, we read from a server we
-thought was RSPrimary. Thus the slaveOk bit is not set.
+thought was RSPrimary. Thus the SecondaryOk bit is not set.
 
-The response's QueryFailure bit is set and the response document is:
-
-    {$err: "not master and slaveOk=false"}
+The server response should indicate an error due to the server not being a primary.
 
 Outcome: The former primary's ServerType MUST become Unknown.
 The TopologyType MUST change to ReplicaSetNoPrimary.
 The client MUST NOT immediately re-check the former primary.
 
-"Node is recovering" error reading with SlaveOkay bit
------------------------------------------------------
+"Node is recovering" error reading with SecondaryOk bit
+-------------------------------------------------------
 
 Scenario: With TopologyType ReplicaSetWithPrimary, we read from a server we
-thought was RSSecondary. Thus the slaveOk bit *is* set.
+thought was RSSecondary. Thus the SecondaryOk bit *is* set.
 
-The response's QueryFailure bit is set and the response document is:
-
-    {$err: "not master or secondary; cannot currently read from this replSet member"}
+The server response should indicate an error due to the server being in recovering state.
 
 Outcome: The former secondary's ServerType MUST become Unknown.
 The TopologyType MUST remain ReplicaSetWithPrimary.
@@ -75,8 +71,8 @@ The TopologyType MUST change to ReplicaSetNoPrimary.
 A multi-threaded client MUST immediately re-check the former secondary,
 a single-threaded client MUST NOT.
 
-Parsing "not master" and "node is recovering" errors
-----------------------------------------------------
+Parsing "not writable primary" and "node is recovering" errors
+--------------------------------------------------------------
 
 For all these example responses,
 the client MUST mark the server "Unknown"
@@ -87,10 +83,9 @@ Clients MUST NOT depend on any particular field order in these responses.
 getLastError
 ''''''''''''
 
-GLE response after OP_INSERT on an arbiter, secondary, slave,
-recovering member, or ghost:
+GLE response after OP_INSERT on an arbiter, secondary, recovering member, or ghost:
 
-    {ok: 1, err: "not master"}
+    {ok: 1, err: "not writable primary"}
 
 `Possible GLE response in MongoDB 2.6`_ during failover:
 
@@ -103,46 +98,45 @@ Note that this error message contains "not master" but does not start with it.
 Write command
 '''''''''''''
 
-Response to an "insert" command on an arbiter, secondary, slave,
-recovering member, or ghost:
+Response to an "insert" command on an arbiter, secondary, recovering member, or ghost:
 
-    {ok: 0, errmsg: "not master"}
+    {ok: 0, errmsg: "not writable primary"}
 
-Query with slaveOk bit
-''''''''''''''''''''''
+Query with SecondaryOk bit
+''''''''''''''''''''''''''
 
 Response from an arbiter, recovering member, or ghost
-when slaveOk is true:
+when SecondaryOk is true:
 
-    {$err: "not master or secondary; cannot currently read from this replSet member"}
+    {$err: "not primary or secondary; cannot currently read from this replSet member"}
 
 The QueryFailure bit is set in responseFlags.
 
-Query without slaveOk bit
-'''''''''''''''''''''''''
+Query without SecondaryOk bit
+'''''''''''''''''''''''''''''
 
 Response from an arbiter, recovering member, ghost, or secondary
-when slaveOk is false:
+when SecondaryOk is false:
 
-    {$err: "not master and slaveOk=false"}
+    {$err: "not writable primary and SecondaryOk=false"}
 
 The QueryFailure bit is set in responseFlags.
 
-Count with slaveOk bit
-''''''''''''''''''''''
+Count with SecondaryOk bit
+''''''''''''''''''''''''''
 
 Command response on an arbiter, recovering member, or ghost
-when slaveOk is true:
+when SecondaryOk is true:
 
     {ok: 0, errmsg: "node is recovering"}
 
-Count without slaveOk bit
-'''''''''''''''''''''''''
+Count without SecondaryOk bit
+'''''''''''''''''''''''''''''
 
 Command response on an arbiter, recovering member, ghost, or secondary
-when slaveOk is false:
+when SecondaryOk is false:
 
-    {ok: 0, errmsg: "not master"}
+    {ok: 0, errmsg: "not writable primary"}
 
 
 Topology discovery and direct connection
@@ -166,7 +160,7 @@ is the address of the secondary, create a MongoClient using
 ``mongodb://HOST/?directConnection=true`` as the URI.
 Attempt a write to a collection.
 
-Outcome: Verify that the write failed with a NotMaster error.
+Outcome: Verify that the write failed with a NotWritablePrimary error.
 
 Existing behavior
 '''''''''''''''''
@@ -194,7 +188,7 @@ This test requires MongoDB 4.9.0+.
          configureFailPoint: "failCommand",
          mode: { times: 5 },
          data: {
-             failCommands: ["isMaster"],
+             failCommands: ["hello"], // or legacy hello command
              errorCode: 1234,
              appName: "SDAMMinHeartbeatFrequencyTest"
          }
@@ -231,7 +225,7 @@ MongoDB 4.2.9+.
          configureFailPoint: "failCommand",
          mode: { times: 2 },
          data: {
-             failCommands: ["isMaster"],
+             failCommands: ["hello"], // or legacy hello command
              errorCode: 1234,
              appName: "SDAMPoolManagementTest"
          }

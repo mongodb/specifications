@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Apr 16, 2018
-:Version: 1.8
+:Last Modified: 2021-08-30
+:Version: 1.10.0
 
 .. contents::
 
@@ -250,11 +250,17 @@ value MUST be replaced with an empty BSON document. The list is as follows:
    * - ``copydbgetnonce``
    * - ``copydbsaslstart``
    * - ``copydb``
-   * - ``isMaster`` or ``ismaster`` when ``speculativeAuthenticate`` is present
+   * - ``hello`` (or legacy hello) when ``speculativeAuthenticate`` is present
+
+See the `MongoDB Handshake spec <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_
+for more information on ``hello`` and legacy hello. Note that legacy hello has two different letter casings that must be taken
+into account. See the previously mentioned MongoDB Handshake spec for details.
 
 ---
 API
 ---
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
 
 .. code:: typescript
 
@@ -292,6 +298,21 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the server connection id for the command. The server connection id is distinct from
+     * the connection id and is returned by the hello or legacy hello response as "connectionId"
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
+     */
+    serverConnectionId: Optional<Int32>;
+
+    /**
+     * Returns the service id for the command when the driver is in load balancer mode.
+     * For drivers that wish to include this in their ConnectionId object, this field is
+     * optional.
+     */
+    serviceId: Optional<ObjectId>;
   }
 
   interface CommandSucceededEvent {
@@ -331,6 +352,21 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the server connection id for the command. The server connection id is distinct from
+     * the connection id and is returned by the hello or legacy hello response as "connectionId"
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
+     */
+    serverConnectionId: Optional<Int32>;
+
+    /**
+     * Returns the service id for the command when the driver is in load balancer mode.
+     * For drivers that wish to include this in their ConnectionId object, this field is
+     * optional.
+     */
+    serviceId: Optional<ObjectId>;
   }
 
   interface CommandFailedEvent {
@@ -371,6 +407,21 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the server connection id for the command. The server connection id is distinct from
+     * the connection id and is returned by the hello or legacy hello response as "connectionId"
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
+     */
+    serverConnectionId: Optional<Int32>;
+
+    /**
+     * Returns the service id for the command when the driver is in load balancer mode.
+     * For drivers that wish to include this in their ConnectionId object, this field is
+     * optional.
+     */
+    serviceId: Optional<ObjectId>;
   }
 
 
@@ -449,4 +500,14 @@ Changelog
     to be optional.
 
 12 FEB 2020:
-  - Added ``isMaster.speculativeAuthenticate`` to the list of values that should be redacted.
+  - Added legacy hello ``speculativeAuthenticate`` to the list of values that should be redacted.
+
+15 APR 2021:
+  - Added ``serviceId`` field to events.
+
+5 MAY 2021
+  - Updated to use hello and legacy hello.
+
+30 AUG 2021:
+  - Added ``serverConnectionId`` field to ``CommandStartedEvent``, ``CommandSucceededEvent`` and
+    ``CommandFailedEvent``.

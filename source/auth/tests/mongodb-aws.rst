@@ -17,7 +17,7 @@ For brevity, this section gives the values ``<AccessKeyId>``, ``<SecretAccessKey
   AccessKeyId=AKIAI44QH8DHBEXAMPLE
   SecretAccessKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
   Token=AQoDYXdzEJr...<remainder of security token>
-|
+
 .. sectnum::
 
 Regular credentials
@@ -28,7 +28,7 @@ Drivers MUST be able to authenticate by providing a valid access key id and secr
 .. code-block:: 
 
   mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS
-|
+
 EC2 Credentials
 ===============
 
@@ -37,8 +37,8 @@ Drivers MUST be able to authenticate from an EC2 instance via temporary credenti
 .. code-block::
   
   mongodb://localhost/?authMechanism=MONGODB-AWS
-|
-.. note:: No username, password or session token is passed into the URI. Drivers MUST query the EC2 instance endpoint to obtain these credentials. 
+
+.. note:: No username, password or session token is passed into the URI. Drivers MUST query the EC2 instance endpoint to obtain these credentials.
 
 ECS instance
 ============
@@ -48,8 +48,8 @@ Drivers MUST be able to authenticate from an ECS container via temporary credent
 .. code-block::
 
   mongodb://localhost/?authMechanism=MONGODB-AWS
-|
-.. note:: No username, password or session token is passed into the URI. Drivers MUST query the ECS container endpoint to obtain these credentials. 
+
+.. note:: No username, password or session token is passed into the URI. Drivers MUST query the ECS container endpoint to obtain these credentials.
 
 AssumeRole
 ==========
@@ -59,7 +59,7 @@ Drivers MUST be able to authenticate using temporary credentials returned from a
 .. code-block::
 
   mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<Token>
-|
+
 AWS Lambda
 ==========
 
@@ -70,7 +70,6 @@ Drivers MUST be able to authenticate via an access key ID, secret access key and
   AWS_ACCESS_KEY_ID
   AWS_SECRET_ACCESS_KEY 
   AWS_SESSION_TOKEN
-|
 
 Sample URIs both with and without optional session tokens set are shown below. Drivers MUST test both cases.
 
@@ -81,7 +80,7 @@ Sample URIs both with and without optional session tokens set are shown below. D
   export AWS_SECRET_ACCESS_KEY="<SecretAccessKey>"
 
   URI="mongodb://localhost/?authMechanism=MONGODB-AWS"
-|
+
 .. code-block:: bash
 
   # with a session token
@@ -90,5 +89,5 @@ Sample URIs both with and without optional session tokens set are shown below. D
   export AWS_SESSION_TOKEN="<Token>"
 
   URI="mongodb://localhost/?authMechanism=MONGODB-AWS"
-|
+
 .. note:: No username, password or session token is passed into the URI. Drivers MUST check the environment variables listed above for these values. If the session token is set Drivers MUST use it.

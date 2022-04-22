@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: April 6, 2021
-:Version: 0.6.1
+:Last Modified: 2022-02-01
+:Version: 0.9.0
 
 .. contents::
 
@@ -130,6 +130,19 @@ document::
 
     $ db.runCommand( { listCollections: 1, cursor : { batchSize: 25 } } );
 
+MongoDB 4.4 introduced a ``comment``  option to the ``listCollections``
+database command. This option enables users to specify a comment as an arbitrary
+BSON type to help trace the operation through the database profiler, currentOp
+and logs. The default is to not send a value.
+
+Example of usage of the comment option::
+
+    $ db.runCommand({"listCollections": 1, "comment": "hi there"})
+
+Any comment set on a ``listCollections`` command is inherited by any subsequent
+``getMore`` commands run on the same ``cursor.id`` returned from the
+``listCollections`` command. Therefore, drivers MUST NOT attach the comment
+to subsequent getMore commands on a cursor.
 
 Filters
 -------
@@ -257,8 +270,16 @@ All methods:
 - SHOULD be on the database object.
 - MUST allow a filter to be passed to include only requested collections.
 - MAY allow the ``cursor.batchSize`` option to be passed.
+- SHOULD allow the ``comment`` option to be passed.
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
+- MUST apply timeouts per the `Client Side Operations Timeout
+  <client-side-operations-timeout/client-side-operations-timeout.rst>`__
+  specification.
+
+All methods that return cursors MUST support the timeout options documented
+in `Client Side Operations Timeout: Cursors
+<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__.
 
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -284,11 +305,16 @@ Example return::
 
 
 Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support
-the ``nameOnly`` option for the ``listCollections`` command and will ignore it 
-without raising an error. Therefore, drivers MUST always specify the ``nameOnly`` 
-option when they only intend to access collection names from the ``listCollections`` 
+the ``nameOnly`` option for the ``listCollections`` command and will ignore it
+without raising an error. Therefore, drivers MUST always specify the ``nameOnly``
+option when they only intend to access collection names from the ``listCollections``
 command result, except drivers MUST NOT set ``nameOnly`` if a filter
 specifies any keys other than ``name``.
+
+MongoDB 4.0 also added an ``authorizedCollections`` boolean option to the ``listCollections``
+command, which can be used to limit the command result to only include collections
+the user is authorized to use. Drivers MAY allow users to set the ``authorizedCollections``
+option on the ``listCollectionNames`` method.
 
 Getting Full Collection Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,7 +368,8 @@ Example return (a cursor which returns documents, not a simple array)::
 When returning this information as a cursor, a driver SHOULD use the
 method name ``listCollections`` or an idiomatic variant.
 
-Drivers MAY allow ``nameOnly`` option to be passed when executing the ``listCollections`` command for this method.
+Drivers MAY allow the ``nameOnly`` and ``authorizedCollections`` options
+to be passed when executing the ``listCollections`` command for this method.
 
 Returning a List of Collection Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -362,8 +389,12 @@ Example return (in PHP, but abbreviated)::
       [5] => class MongoCollection#11 { }
     }
 
-Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method,
-except drivers MUST NOT set ``nameOnly`` if a filter specifies any keys other than ``name``.
+Drivers MUST specify true for the ``nameOnly`` option when executing the
+``listCollections`` command for this method, except drivers MUST NOT set
+``nameOnly`` if a filter specifies any keys other than ``name``.
+
+Drivers MAY allow the ``authorizedCollections`` option to be passed when
+executing the ``listCollections`` command for this method
 
 Replica Sets
 ~~~~~~~~~~~~
@@ -433,6 +464,16 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+Version 0.9.0 Changes
+    Add ``comment`` option to ``listCollections`` command.
+
+Version 0.8.0 Changes
+    - Require that timeouts be applied per the client-side operations timeout spec.
+
+Version 0.7.0 Changes
+    - Support ``authorizedCollections`` option in ``listCollections`` command.
+
 Version 0.6.1 Changes
     - Update to use secondaryOk.
 
@@ -449,7 +490,7 @@ Version 0.5 Changes
     - Clarify that ``nameOnly`` must not be used with filters other than ``name``.
 
 Version 0.4 Changes
-    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command. 
+    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command.
 
 Version 0.3.1 Changes
 

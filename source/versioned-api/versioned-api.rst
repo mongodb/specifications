@@ -1,15 +1,15 @@
-=========================
-Versioned API For Drivers
-=========================
+======================
+Stable API For Drivers
+======================
 
-:Spec Title: Versioned API For Drivers
-:Spec Version: 1.0.1
+:Spec Title: Stable API For Drivers (previously: Versioned API)
+:Spec Version: 1.2.2
 :Author: Andreas Braun
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Patrick Freed, Oleg Pudeyev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-10
+:Last Modified: 2022-02-24
 
 .. contents::
 
@@ -21,7 +21,7 @@ Abstract
 As MongoDB moves toward more frequent releases (a.k.a. continuous delivery), we
 want to enable users to take advantage of our rapidly released features, without
 exposing applications to incompatible server changes due to automatic server
-upgrades. A versioned API will help accomplish that goal.
+upgrades. A stable API will help accomplish that goal.
 
 
 META
@@ -89,8 +89,8 @@ declare an API version:
 
 Drivers SHOULD group the ``serverApi`` option with other similar client options
 like ``autoEncryptionOpts``. Drivers MUST NOT allow specification of any
-versioned API options via the connection string. See the
-`design rationale <_rationale_no_uri_options>`_ for more details.
+stable API options via the connection string. See the
+`Design Rationale`_ for more details.
 
 
 ServerApiVersion enumeration
@@ -137,16 +137,14 @@ Sending Declared API Version to the Server
 
 The declared API version MUST be sent to the server as part of every command
 request, with the exception of the cases listed below. Drivers MUST NOT use a
-server's reported ``maxWireVersion`` to decide whether it supports the versioned
+server's reported ``maxWireVersion`` to decide whether it supports the stable
 API. The server will reply with an error if the declared API version is not
 supported, or if the command does not support API versioning options. If the
 user does not declare an API version, the driver MUST NOT send any API
 versioning options to the server.
 
-This requirement applies to all command requests, regardless of whether they are
-sent using ``OP_MSG`` or ``OP_QUERY`` (e.g. during the initial handshake). For
-all other opcodes, including pre-command usage of ``OP_QUERY``, drivers MUST NOT
-attempt to send API version parameters to the server.
+If an API version is declared then the driver MUST use
+``OP_MSG`` for all messages, including the initial handshake.
 
 
 Command Syntax
@@ -167,25 +165,37 @@ every command that is sent to a server. Drivers MUST add the ``apiStrict`` and
 ``apiDeprecationErrors`` options if they were specified by the user, even when
 the specified value is equal to the server default. Drivers MUST NOT add any
 API versioning options if the user did not specify them.
+This includes the ``getMore`` command as well as all commands that are part of a
+transaction. A previous version of this specification excluded those commands,
+but that has since changed in the server.
+
+
+Handshake behavior
+~~~~~~~~~~~~~~~~~~
+
+If an API version was declared, drivers MUST NOT use the legacy hello command
+during the initial handshake or afterwards. Instead, drivers MUST use the
+``hello`` command exclusively and use the ``OP_MSG`` protocol.
+If the server does not support ``hello``, the server description MUST
+reflect this with an ``Unknown`` server type.
 
 
 Cursors
 ~~~~~~~
 
-The ``getMore`` command does not accept API parameters; cursors inherit their
-API parameters from the initiating command. Drivers MUST NOT include API
-parameters when sending ``getMore`` commands to the server.
-
-In contrast, the ``killCursors`` command accepts API parameters and drivers MUST
-include them as they would with all other commands.
+For ``getMore``, drivers MUST submit API parameters. If the values given do not
+match the API parameters given in the cursor-initiating command, the server will
+reply with an error.
 
 
 Transactions
 ~~~~~~~~~~~~
 
-When running commands as part of a transaction, drivers MUST NOT send API
-parameters after the initial command that includes the ``startTransaction``
-option.
+When running commands as part of a transaction, drivers MUST send API
+parameters with all commands that are part of a transaction, including
+``commitTransaction`` and ``abortTransaction``. If the API parameters for a
+command in a transaction do not match those of the transaction-starting command,
+the server will reply with an error.
 
 
 Generic command helper
@@ -201,8 +211,6 @@ that the behaviour of the command helper is undefined in this case.
 
 Design Rationale
 ================
-
-.. _rationale_no_uri_options:
 
 No URI Options
 --------------
@@ -276,14 +284,21 @@ However, this is not necessary until there is a different API version and we
 have data on why and how users would want to override the declared API version.
 
 
-Versioned CRUD API
-------------------
+Stable CRUD API
+---------------
 
-Drivers may also want to provide versioned ``MongoClient``, ``MongoDatabase``,
+Drivers may also want to provide specialized ``MongoClient``, ``MongoDatabase``,
 and ``MongoCollection`` classes to only include features that are part of the
-versioned API. This is not covered in this specification.
+stable API. This is not covered in this specification.
 
 
 Change Log
 ==========
+
+* 2022-02-24: Rename Versioned API to Stable API
+* 2022-01-14: Require ``OP_MSG`` for all messages including the initial step
+  of the handshake when using stable API.
+* 2021-05-05: Require sending stable API parameters with ``getMore`` and
+  transaction-continuing commands.
+* 2021-04-20: Require using ``hello`` when using the stable API.
 * 2021-04-10: Replaced usages of ``acceptAPIVersion2`` with ``acceptApiVersion2``.

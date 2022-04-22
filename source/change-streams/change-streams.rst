@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: April 23, 2021
-:Version: 1.9.2
+:Last Modified: 2022-04-13
+:Version: 1.14
 
 .. contents::
 
@@ -132,14 +132,28 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *
      * @note: Whether a change is reported as an event of the operation type
      * `update` or `replace` is a server implementation detail.
+     *
+     * @note: The server will add new `operationType` values in the future and drivers
+     * MUST NOT err when they encounter a new `operationType`. Unknown `operationType`
+     * values may be represented by "unknown" or the literal string value.
      */
     operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename";
 
     /**
-     * Contains two fields: “db” and “coll” containing the database and
+     * Contains two fields: "db" and "coll" containing the database and
      * collection name in which the change happened.
+     *
+     * @note: Drivers MUST NOT err when extra fields are encountered in the `ns` document
+     * as the server may add new fields in the future such as `viewOn`.
      */
     ns: Document;
+
+    /**
+     * Only present for ops of type 'rename'.
+     *
+     * The namespace, in the same format as `ns`, that a collection has been renamed to.
+     */
+    to: Optional<Document>;
 
     /**
      * Only present for ops of type ‘insert’, ‘update’, ‘replace’, and
@@ -161,20 +175,34 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     updateDescription: Optional<UpdateDescription>;
 
     /**
-     * Always present for operations of type ‘insert’ and ‘replace’. Also
-     * present for operations of type ‘update’ if the user has specified ‘updateLookup’
-     * in the ‘fullDocument’ arguments to the ‘$changeStream’ stage.
+     * Always present for operations of type 'insert' and 'replace'. Also
+     * present for operations of type 'update' if the user has specified
+     * 'updateLookup' for the 'fullDocument' option when creating the change
+     * stream.
      *
-     * For operations of type ‘insert’ and ‘replace’, this key will contain the
-     * document being inserted, or the new version of the document that is replacing
-     * the existing document, respectively.
+     * For operations of type 'insert' and 'replace', this key will contain the
+     * document being inserted or the new version of the document that is
+     * replacing the existing document, respectively.
      *
-     * For operations of type ‘update’, this key will contain a copy of the full
+     * For operations of type 'update', this key will contain a copy of the full
      * version of the document from some point after the update occurred. If the
      * document was deleted since the updated happened, it will be null.
+     *
+     * Contains the point-in-time post-image of the modified document if the
+     * post-image is available and either 'required' or 'whenAvailable' was
+     * specified for the 'fullDocument' option when creating the change stream.
+     * A post-image is always available for 'insert' and 'replace' events.
      */
     fullDocument: Document | null;
 
+    /**
+     * Contains the pre-image of the modified or deleted document if the
+     * pre-image is available for the change event and either 'required' or
+     * 'whenAvailable' was specified for the 'fullDocumentBeforeChange' option
+     * when creating the change stream. If 'whenAvailable' was specified but the
+     * pre-image is unavailable, this will be explicitly set to null.
+     */
+    fullDocumentBeforeChange: Document | null;
   }
 
   class UpdateDescription {
@@ -333,15 +361,51 @@ Driver API
 
   class ChangeStreamOptions {
     /**
-     * Allowed values: ‘updateLookup’.  When set to ‘updateLookup’, the change notification
-     * for partial updates will include both a delta describing the changes to the document,
-     * as well as a copy of the entire document that was changed from some time after the 
-     * change occurred. The default is to not send a value. 
-     * For forward compatibility, a driver MUST NOT raise an error when a user provides an
-     * unknown value. The driver relies on the server to validate this option.
+     * Allowed values: 'default', 'updateLookup', 'whenAvailable', 'required'.
+     *
+     * The default is to not send a value, which is equivalent to 'default'. By
+     * default, the change notification for partial updates will include a delta
+     * describing the changes to the document.
+     *
+     * When set to 'updateLookup', the change notification for partial updates
+     * will include both a delta describing the changes to the document as well
+     * as a copy of the entire document that was changed from some time after
+     * the change occurred.
+     *
+     * When set to 'whenAvailable', configures the change stream to return the
+     * post-image of the modified document for replace and update change events
+     * if the post-image for this event is available.
+     *
+     * When set to 'required', the same behavior as 'whenAvailable' except that
+     * an error is raised if the post-image is not available.
+     *
+     * For forward compatibility, a driver MUST NOT raise an error when a user
+     * provides an unknown value. The driver relies on the server to validate
+     * this option.
+     *
      * @note this is an option of the `$changeStream` pipeline stage.
      */
     fullDocument: Optional<String>;
+
+    /**
+     * Allowed values: 'whenAvailable', 'required', 'off'.
+     *
+     * The default is to not send a value, which is equivalent to 'off'.
+     *
+     * When set to 'whenAvailable', configures the change stream to return the
+     * pre-image of the modified document for replace, update, and delete change
+     * events if it is available.
+     *
+     * When set to 'required', the same behavior as 'whenAvailable' except that
+     * an error is raised if the pre-image is not available.
+     *
+     * For forward compatibility, a driver MUST NOT raise an error when a user
+     * provides an unknown value. The driver relies on the server to validate
+     * this option.
+     *
+     * @note this is an option of the `$changeStream` pipeline stage.
+     */
+    fullDocumentBeforeChange: Optional<String>;
 
     /**
      * Specifies the logical starting point for the new change stream.
@@ -408,6 +472,24 @@ Driver API
      * @note this is an option of the `$changeStream` pipeline stage.
      */
      startAfter: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
+     *
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor for server
+     * versions 4.4 and above. For server versions below 4.4 drivers MUST NOT
+     * attach a comment to getMore commands.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/aggregate
+     * @note this is an aggregation command option
+     */
+    comment: Optional<any>
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -445,6 +527,11 @@ Presently change streams support only a subset of available aggregation stages:
 - ``$redact``
 
 A driver MUST NOT throw an exception if any unsupported stage is provided, but instead depend on the server to return an error.
+
+A driver MUST NOT throw an exception if a user adds, removes, or modifies fields using ``$project``. The server will produce an error if ``_id``
+is projected out, but a user should otherwise be able to modify the shape of the change stream event as desired. This may require the result
+to be deserialized to a ``BsonDocument`` or custom-defined type rather than a ``ChangeStreamDocument``. It is the responsiblity of the
+user to ensure that the deserialized type is compatible with the specified ``$project`` stage.
 
 The aggregate helper methods MUST have no new logic related to the ``$changeStream`` stage. Drivers MUST be capable of handling `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_  cursors from the aggregate command in the same way they handle such cursors from find.
 
@@ -506,7 +593,7 @@ Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``c
 ChangeStream
 ------------
 
-A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method. 
+A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method.
 
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
@@ -514,7 +601,7 @@ Drivers MUST raise an error on the first document received without a resume toke
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error per `Resumable Error`_.  A change stream MUST NOT attempt to resume on any other type of error.
 
-In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference before attempting to resume.
+In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference using the `rules for server selection <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#rules-for-server-selection>`_ before attempting to resume.
 
 Single Server Topologies
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -660,6 +747,11 @@ Although the implementation of tailable awaitData cursors is not specified, this
 
 All drivers MUST document how users can iterate a change stream and receive *all* resume token updates. `Why do we allow access to the resume token to users`_ shows an example. The documentation MUST state that users intending to store the resume token should use this method to get the most up to date resume token.
 
+Timeouts
+^^^^^^^^
+
+Drivers MUST apply timeouts to change stream establishment, iteration, and resume attempts per `Client Side Operations Timeout: Change Streams <../client-side-operations-timeout/client-side-operations-timeout.rst#Change-Streams>`__.
+
 Notes and Restrictions
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -781,7 +873,7 @@ For example:
 
 - A client creates a ``ChangeStream``, and calls ``watch``
 - The ``ChangeStream`` sends out the initial ``aggregate`` call, and receives a response
-with no initial values. Because there are no initial values, there is no latest resumeToken.
+  with no initial values. Because there are no initial values, there is no latest resumeToken.
 - The client's network is partitioned from the server, causing the client's ``getMore`` to time out
 - Changes occur on the server.
 - The network is unpartitioned
@@ -888,4 +980,22 @@ Changelog
 | 2021-04-23 | Updated to use modern terminology                          |
 +------------+------------------------------------------------------------+
 | 2021-04-29 | Added ``load-balanced`` to test topology requirements      |
++------------+------------------------------------------------------------+
+| 2021-09-01 | Clarified that server selection during resumption should   |
+|            | respect normal server selection rules.                     |
++------------+------------------------------------------------------------+
+| 2022-01-19 | Require that timeouts be applied per the client-side       |
+|            | operations timeout specification                           |
++------------+------------------------------------------------------------+
+| 2022-02-01 | Added ``comment`` to ``ChangeStreamOptions``.              |
++------------+------------------------------------------------------------+
+| 2022-02-10 | Specified that ``getMore`` command must explicitly send    |
+|            | inherited ``comment``.                                     |
++------------+------------------------------------------------------------+
+| 2022-02-28 | Added ``to`` to ``ChangeStreamDocument``.                  |
++------------+------------------------------------------------------------+
+| 2022-03-25 | Do not error when parsing change stream event documents.   |
++------------+------------------------------------------------------------+
+| 2022-04-13 | Support returning point-in-time pre and post-images with   |
+|            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
 +------------+------------------------------------------------------------+

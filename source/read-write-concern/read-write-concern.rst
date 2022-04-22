@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2021-04-07
-:Version: 1.5.5
+:Last Modified: 2022-01-19
+:Version: 1.7
 
 .. contents::
 
@@ -56,7 +56,7 @@ Read Concern
 ------------
 
 For naming and deviation guidance, see the `CRUD specification
-<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_.
+<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`__.
 Defined below are the constructs for drivers.
 
 .. code:: typescript
@@ -75,12 +75,17 @@ Defined below are the constructs for drivers.
       /**
        * This is rendered as "linearizable" (lower-case) on the wire.
        */
-      linearizable
+      linearizable,
 
       /**
        * This is rendered as "available" (lower-case) on the wire.
        */
-      available
+      available,
+
+      /**
+       * This is rendered as "snapshot" (lower-case) on the wire.
+       */
+      snapshot
   }
 
   class ReadConcern {
@@ -90,7 +95,7 @@ Defined below are the constructs for drivers.
     level: Optional<ReadConcernLevel | String>
   }
 
-The read concern option is available for the following operations: 
+The read concern option is available for the following operations:
 
 - ``aggregate`` command
 - ``count`` command
@@ -131,6 +136,14 @@ considered the server’s default ``ReadConcern``.
 default ``ReadConcern`` while the latter is the user explicitly specifying a
 ``ReadConcern`` with a ``level`` of “local”.
 
+Snapshot Read Concern
+---------------------
+
+When a ``ReadConcern`` ``level`` ``snapshot`` is used, ``atClusterTime`` may be specified to indicate
+the desired point in time for reading. ``find``, ``aggregate`` and ``distinct`` operations executed with ``ReadConcern`` ``snapshot`` but without ``atClusterTime``
+will return ``atClusterTime`` timestamp in the server response. The obtained ``atClusterTime`` timestamp can be used for subsequent
+read operations.
+``ReadConcern`` ``level`` ``snapshot`` with ``clusterTime`` is supported in ``find``, ``aggregate`` and ``distinct`` operations.
 
 On the Wire
 -----------
@@ -140,7 +153,7 @@ Read Commands
 
 Read commands that support ``ReadConcern`` take a named parameter spelled
 (case-sensitively) ``readConcern``. See command documentation for further
-examples. 
+examples.
 
 If the ``Client``, ``Database``, or ``Collection`` being operated on either
 has no ``ReadConcern`` set, or has the server default ``ReadConcern``
@@ -188,7 +201,7 @@ Via Code
 ``Collection`` levels. Unless specified, the value MUST be inherited from its
 parent and SHOULD NOT be modifiable on an existing ``Client``, ``Database``
 or ``Collection``. In addition, a driver MAY allow it to be specified on a
-per-operation basis in accordance with the CRUD specification. 
+per-operation basis in accordance with the CRUD specification.
 
 For example:
 
@@ -220,7 +233,7 @@ Options
 
 For example:
 
-.. code:: 
+.. code::
 
     mongodb://server:27017/db?readConcernLevel=majority
 
@@ -247,7 +260,7 @@ When a driver sends a write concern document to the server, the structure
 of the write concern document MUST be as follows:
 
 .. code:: typescript
-  
+
   class WriteConcern {
     /**
      * If true, wait for the the write operation to get committed to the
@@ -260,7 +273,7 @@ of the write concern document MUST be as follows:
     /**
      * When an integer, specifies the number of nodes that should acknowledge
      * the write and MUST be greater than or equal to 0.
-     * When a string, indicates tags. "majority" is defined, but users 
+     * When a string, indicates tags. "majority" is defined, but users
      * could specify other custom error modes.
      * When not specified, a driver MUST NOT send "w".
      */
@@ -281,10 +294,10 @@ of the write concern document MUST be as follows:
 When a driver provides a way for the application to specify the write concern,
 the following data structure SHOULD be used. For acceptable naming and
 deviation guidance, see the `CRUD specification
-<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_.
+<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`__.
 
 .. code:: typescript
-  
+
   class WriteConcern {
     /**
      * Corresponds to the "j" field in the WriteConcern document sent to
@@ -301,6 +314,8 @@ deviation guidance, see the `CRUD specification
     /**
      * Corresponds to the "wtimeout" field in the WriteConcern document sent to
      * the server.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     wtimeoutMS: Optional<Int64>
   }
@@ -315,6 +330,13 @@ consistency with ``w`` and whether a ``WriteConcern`` that specifies ``fsync``
 is acknowledged or unacknowledged.
 
 
+wtimeoutMS
+----------
+
+``wtimeoutMS`` MUST be considered deprecated in favor of `timeoutMS
+<client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`__.
+
+
 Server’s Default WriteConcern
 -----------------------------
 
@@ -327,7 +349,7 @@ this, :javascript:`writeConcern: { }` is not the same as
 :javascript:`writeConcern: {w: 1}`. Sending :javascript:`{w:1}` overrides
 that default. As another example, :javascript:`writeConcern: { }` is not the
 same as :javascript:`writeConcern: {journal: false}`.
-    
+
 
 Inconsistent WriteConcern
 -------------------------
@@ -344,7 +366,7 @@ Unacknowledged WriteConcern
 ---------------------------
 
 An ``Unacknowledged WriteConcern`` is when (``w`` equals 0) AND (``journal``
-is not set or is ``false``). 
+is not set or is ``false``).
 
 These criteria indicates that the user does not care about errors from the server.
 
@@ -354,7 +376,7 @@ Examples:
 
    writeConcern = { w: 0 }; // Unacknowledged
    writeConcern = { w: 0, journal: false }; // Unacknowledged
-   writeConcern = { w: 0, wtimeoutMS: 100 }; // Unacknowledged 
+   writeConcern = { w: 0, wtimeoutMS: 100 }; // Unacknowledged
 
 
 On the Wire
@@ -363,7 +385,7 @@ On the Wire
 OP_INSERT, OP_DELETE, OP_UPDATE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``WriteConcern`` is implemented by sending the ``getLastError``(GLE) command
+``WriteConcern`` is implemented by sending the ``getLastError`` (GLE) command
 directly after the operation. Drivers SHOULD piggy-back the GLE onto the same
 buffer as the operation. Regardless, GLE MUST be sent on the same connection
 as the initial write operation.
@@ -509,7 +531,7 @@ Drivers SHOULD report writeConcernErrors however they report other server
 errors: by raising an exception, returning "false", or another idiom that is
 consistent with other server errors. Drivers SHOULD report writeConcernErrors
 with a ``WriteConcernError`` defined in the
-`CRUD specification </source/crud/crud.rst#error-handling>`_.
+`CRUD specification </source/crud/crud.rst#error-handling>`__.
 
 Drivers SHOULD NOT parse server replies for "writeConcernError" in generic
 command methods.
@@ -598,7 +620,7 @@ Options
 
 For example:
 
-.. code:: 
+.. code::
 
     mongodb://server:27017/db?w=3
 
@@ -693,11 +715,14 @@ Version History
   - 2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns
     an error if writeConcern is included with MongoDB 3.5+. See
     `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.
-  - 2017-11-17 : Added list of commands that support readConcern 
+  - 2017-11-17 : Added list of commands that support readConcern
   - 2017-12-18 : Added "available" to Readconcern level.
-  - 2017-05-29 : Added user management commands to list of commands that write 
+  - 2017-05-29 : Added user management commands to list of commands that write
   - 2019-01-29 : Added section listing all known examples of writeConcernError.
   - 2019-06-07: Clarify language for aggregate and mapReduce commands that write.
   - 2019-10-31: Explicitly define write concern option mappings.
   - 2020-02-13: Inconsistent write concern must be considered an error.
   - 2021-04-07: Updated to use hello command.
+  - 2021-06-15: Added "snapshot" to Readconcern level
+  - 2021-07-12: Add missing commas after ReadConcernLevel enum values
+  - 2022-01-19: Deprecate wTimeoutMS in favor of timeoutMS.

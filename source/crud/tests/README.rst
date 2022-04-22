@@ -21,12 +21,12 @@ Subdirectories for Test Formats
 
 This document describes a legacy format for CRUD tests: legacy-v1, which dates back
 to the first version of the CRUD specification. New CRUD tests should be written
-in the `unified test format <../../../../unified-test-format/unified-test-format.rst>`_
+in the `unified test format <../../unified-test-format/unified-test-format.rst>`_
 and placed under ``unified/``. Until such time that all original tests have been ported
 to the unified test format, tests in each format will be grouped in their own subdirectory:
 
 - ``v1/``: Legacy-v1 format tests
-- ``unified/``: Tests using the `unified test format <../../../../unified-test-format/unified-test-format.rst>`_
+- ``unified/``: Tests using the `unified test format <../../unified-test-format/unified-test-format.rst>`_
 
 Since some drivers may not have a unified test runner capable of executing tests
 in all two formats, segregating tests in this manner will make it easier for
@@ -52,11 +52,13 @@ single operation. Notable differences from the legacy-v2 format are as follows:
   fields.
 
 - Instead of a top-level ``runOn`` field, server requirements are denoted by
-  separate top-level ``minServerVersion`` and ``maxServerVersion`` fields. The
-  minimum server version is an inclusive lower bound for running the test. The
-  maximum server version is an exclusive upper bound for running the test. If a
-  field is not present, it should be assumed that there is no corresponding bound
-  on the required server version.
+  separate top-level ``minServerVersion``, ``maxServerVersion``, and
+  ``serverless`` fields. The minimum server version is an inclusive lower bound
+  for running the test. The maximum server version is an exclusive upper bound
+  for running the test. If a field is not present, it should be assumed that
+  there is no corresponding bound on the required server version. The
+  ``serverless`` requirement behaves the same as the ``serverless`` field of the
+  `unified test format's runOnRequirement <../../unified-test-format/unified-test-format.rst#runonrequirement>`_.
 
 The legacy-v1 format should not conflict with the newer, multi-operation format
 used by other specs (e.g. Transactions). It is possible to create a unified test
@@ -214,9 +216,13 @@ Prose Tests
 
 The following tests have not yet been automated, but MUST still be tested.
 
-"errInfo" is propagated
------------------------
-Test that a writeConcernError "errInfo" is propagated to the user in whatever way is idiomatic to the driver (exception, error object, etc.). Using a 4.0+ server, set the following failpoint:
+1. WriteConcernError.details exposes writeConcernError.errInfo
+--------------------------------------------------------------
+
+Test that ``writeConcernError.errInfo`` in a command response is propagated as
+``WriteConcernError.details`` (or equivalent) in the driver.
+
+Using a 4.0+ server, set the following failpoint:
 
 .. code:: javascript
 
@@ -239,4 +245,34 @@ Test that a writeConcernError "errInfo" is propagated to the user in whatever wa
      },
      "mode": { "times": 1 }
    }
-Then, perform an insert on the same database. Assert that an error occurs and that the "errInfo" is accessible and matches the one set in the failpoint.
+
+Then, perform an insert operation and assert that a WriteConcernError occurs and
+that its ``details`` property is both accessible and matches the ``errInfo``
+object from the failpoint.
+
+2. WriteError.details exposes writeErrors[].errInfo
+---------------------------------------------------
+
+Test that ``writeErrors[].errInfo`` in a command response is propagated as
+``WriteError.details`` (or equivalent) in the driver.
+
+Using a 5.0+ server, create a collection with
+`document validation <https://docs.mongodb.com/manual/core/schema-validation/>`_
+like so:
+
+.. code:: javascript
+
+   {
+     "create": "test",
+     "validator": {
+       "x": { $type: "string" }
+     }
+   }
+
+Enable `command monitoring <../../command-monitoring/command-monitoring.rst>`_
+to observe CommandSucceededEvents. Then, insert an invalid document (e.g.
+``{x: 1}``) and assert that a WriteError occurs, that its code is ``121``
+(i.e. DocumentValidationFailure), and that its ``details`` property is
+accessible. Additionally, assert that a CommandSucceededEvent was observed and
+that the ``writeErrors[0].errInfo`` field in the response document matches the
+WriteError's ``details`` property.

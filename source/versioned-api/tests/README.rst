@@ -1,6 +1,6 @@
-===================
-Versioned API Tests
-===================
+================
+Stable API Tests
+================
 
 .. contents::
 
@@ -9,7 +9,7 @@ Versioned API Tests
 Notes
 =====
 
-This directory contains tests for the Versioned API specification. They are
+This directory contains tests for the Stable API specification. They are
 implemented in the `Unified Test Format <../../unified-test-format/unified-test-format.rst>`__,
 and require schema version 1.1. Note that to run these tests, the server must be
 started with both ``enableTestCommands`` and ``acceptApiVersion2`` parameters
@@ -33,5 +33,5 @@ To run this test, proceed as follows:
 - If the environment variable is set, all clients created in tests MUST declare
   the ``ServerApiVersion`` specified.
 
-No other topologies must be tested until ``mongo-orchestration`` can handle
-servers with ``requireApiVersion`` enabled.
+Only standalone servers must be tested. The tests should run for each server
+version >= 5.0, including ``latest``.
