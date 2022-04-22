@@ -1,5 +1,5 @@
 {
-  "description": "clientEncryptionOpts-missing_aws_kms_credentials",
+  "description": "kmsProviders-unconfigured_kms",
   "schemaVersion": "1.8",
   "createEntities": [
     {
@@ -14,9 +14,11 @@
         "clientEncryptionOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "aws": {
-              "accessKeyId": "accessKeyId"
-            }
+            "aws": {},
+            "azure": {},
+            "gcp": {},
+            "kmip": {},
+            "local": {}
           }
         }
       }

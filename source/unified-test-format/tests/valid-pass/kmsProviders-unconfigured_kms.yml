@@ -1,5 +1,5 @@
-# Missing required KMS credentials should lead to clientEncryption initialization failure.
-description: clientEncryptionOpts-missing_aws_kms_credentials
+# kmsProviders should support request for on-demand KMS credentials.
+description: kmsProviders-unconfigured_kms
 
 schemaVersion: "1.8"
 
@@ -12,7 +12,11 @@ createEntities:
       clientEncryptionOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: { accessKeyId: "accessKeyId" }
+          aws: {}
+          azure: {}
+          gcp: {}
+          kmip: {}
+          local: {}
 
 tests:
   - description: ""
