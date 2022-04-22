@@ -1,6 +1,11 @@
 {
   "description": "initialCollectionData-collectionOptions",
   "schemaVersion": "1.5",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "3.6"
+    }
+  ],
   "createEntities": [
     {
       "client": {
