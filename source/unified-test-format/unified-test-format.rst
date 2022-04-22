@@ -605,7 +605,7 @@ The structure of this object is as follows:
       ``keyVaultClient: *client0``).
 
     - ``keyVaultNamespace``: Required string. The database and collection to use
-      as the keyvault collection for this encryptedClient. The namespace takes
+      as the key vault collection for this encryptedClient. The namespace takes
       the form ``database.collection`` (e.g.
       ``keyVaultNamespace: keyvault.datakeys``).
 
