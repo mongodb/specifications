@@ -223,6 +223,7 @@ tests:
                 <<: *expectedApiVersion
 
   - description: "estimatedDocumentCount appends declared API version"
+    # See: https://jira.mongodb.org/browse/SERVER-63850
     runOnRequirements:
       - minServerVersion: "5.0.8"
         maxServerVersion: "5.0.99"
