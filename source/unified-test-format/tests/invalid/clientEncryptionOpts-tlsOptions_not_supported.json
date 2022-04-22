@@ -10,8 +10,8 @@
     {
       "clientEncryption": {
         "id": "clientEncryption0",
+        "client": "client0",
         "clientEncryptionOpts": {
-          "keyVaultClient": "client0",
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "local": {

@@ -617,7 +617,7 @@ ClientEncryption
    }
 
    class ClientEncryptionOpts {
-      keyVaultClient: MongoClient;
+      keyVaultClient: Optional<MongoClient>;
       keyVaultNamespace: String;
       kmsProviders: Map<String, Map<String, Value>>;
       tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.

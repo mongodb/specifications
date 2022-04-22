@@ -121,9 +121,10 @@
         "clientEncryption": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "clientEncryptionOpts"],
+          "required": ["id", "client", "clientEncryptionOpts"],
           "properties": {
             "id": { "type": "string" },
+            "client": { "type": "string" },
             "clientEncryptionOpts": { "$ref": "#/definitions/clientEncryptionOpts" }
           }
         },
@@ -180,7 +181,7 @@
         "keyVaultNamespace": { "type": "string" },
         "kmsProviders": { "$ref": "#/definitions/kmsProviders" }
       },
-      "required": ["keyVaultClient", "keyVaultNamespace", "kmsProviders"]
+      "required": ["keyVaultNamespace", "kmsProviders"]
     },
 
     "kmsProviders": {

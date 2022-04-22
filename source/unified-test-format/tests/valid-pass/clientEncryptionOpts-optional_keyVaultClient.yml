@@ -1,17 +1,21 @@
-# No configured KMS providers should lead to clientEncryption initialization failure.
-description: clientEncryptionOpts-no_kms
+# clientEncryptionOpts should support using a separate keyVaultClient.
+description: clientEncryptionOpts-optional_keyVaultClient
 
 schemaVersion: "1.8"
 
 createEntities:
   - client:
       id: &client0 client0
+  - client:
+      id: &client1 client1
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       client: *client0
       clientEncryptionOpts:
+        keyVaultClient: *client1
         keyVaultNamespace: keyvault.datakeys
-        kmsProviders: {}
+        kmsProviders:
+          local: { key: { $$placeholder: {} } }
 
 tests:
   - description: ""
