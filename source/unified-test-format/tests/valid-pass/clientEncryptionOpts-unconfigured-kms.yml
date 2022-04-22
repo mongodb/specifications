@@ -1,3 +1,4 @@
+# clientEncryptionOpts should support request for on-demand KMS credentials.
 description: clientEncryptionOpts-unconfigured-kms
 
 schemaVersion: "1.8"

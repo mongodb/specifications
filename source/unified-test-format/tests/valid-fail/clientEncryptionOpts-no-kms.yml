@@ -1,3 +1,4 @@
+# No configured KMS providers should lead to clientEncryption initialization failure.
 description: clientEncryptionOpts-no-kms
 
 schemaVersion: "1.8"
