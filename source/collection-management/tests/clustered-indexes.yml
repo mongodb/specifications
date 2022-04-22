@@ -36,7 +36,7 @@ tests:
           clusteredIndex:
             key: { _id: 1 }
             unique: true
-            name: &index0name "test index"
+            name: &index0Name "test index"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -56,24 +56,19 @@ tests:
           clusteredIndex:
             key: { _id: 1 }
             unique: true
-            name: &index0name "test index"
+            name: &index0Name "test index"
       - name: listCollections
         object: *database0
         arguments:
           filter: { name: { $eq: *collection0Name } }
-        expectResult: [
-          {
-            name: *collection0Name,
-            options: {
-              clusteredIndex: {
-                key: { _id: 1 },
-                unique: true,
-                name: *index0name,
-                v: 2,
-              }
-            }
-          }
-        ]
+        expectResult:
+          - name: *collection0Name
+            options:
+              clusteredIndex:
+                key: { _id: 1 }
+                unique: true
+                name: *index0Name
+                v: 2
 
   - description: "listIndexes returns the index"
     operations:
@@ -88,15 +83,12 @@ tests:
           clusteredIndex:
             key: { _id: 1 }
             unique: true
-            name: &index0name "test index"
+            name: *index0Name
       - name: listIndexes
         object: *collection0
-        expectResult: [
-          {
-            key: { _id: 1 },
-            name: *index0name,
-            clustered: true,
-            unique: true,
-            v: 2,
-          }
-        ]
+        expectResult:
+          - key: { _id: 1 }
+            name: *index0Name
+            clustered: true
+            unique: true
+            v: 2
