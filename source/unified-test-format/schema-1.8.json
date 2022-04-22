@@ -1,100 +1,72 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+
   "title": "Unified Test Format",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "description",
-    "schemaVersion",
-    "tests"
-  ],
+  "required": ["description", "schemaVersion", "tests"],
   "properties": {
-    "description": {
-      "type": "string"
-    },
-    "schemaVersion": {
-      "$ref": "#/definitions/version"
-    },
+    "description": { "type": "string" },
+    "schemaVersion": { "$ref": "#/definitions/version" },
     "runOnRequirements": {
       "type": "array",
       "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/runOnRequirement"
-      }
+      "items": { "$ref": "#/definitions/runOnRequirement" }
     },
     "createEntities": {
       "type": "array",
       "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/entity"
-      }
+      "items": { "$ref": "#/definitions/entity" }
     },
     "initialData": {
       "type": "array",
       "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/collectionData"
-      }
+      "items": { "$ref": "#/definitions/collectionData" }
     },
     "tests": {
       "type": "array",
       "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/test"
-      }
+      "items": { "$ref": "#/definitions/test" }
     },
     "_yamlAnchors": {
       "type": "object",
       "additionalProperties": true
     }
   },
+
   "definitions": {
     "version": {
       "type": "string",
       "pattern": "^[0-9]+(\\.[0-9]+){1,2}$"
     },
+
     "runOnRequirement": {
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
       "properties": {
-        "maxServerVersion": {
-          "$ref": "#/definitions/version"
-        },
-        "minServerVersion": {
-          "$ref": "#/definitions/version"
-        },
+        "maxServerVersion": { "$ref": "#/definitions/version" },
+        "minServerVersion": { "$ref": "#/definitions/version" },
         "topologies": {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [
-              "single",
-              "replicaset",
-              "sharded",
-              "sharded-replicaset",
-              "load-balanced"
-            ]
+            "enum": ["single", "replicaset", "sharded", "sharded-replicaset", "load-balanced"]
           }
         },
         "serverless": {
           "type": "string",
-          "enum": [
-            "require",
-            "forbid",
-            "allow"
-          ]
+          "enum": ["require", "forbid", "allow"]
         },
         "serverParameters": {
           "type": "object",
           "minProperties": 1
         },
-        "auth": {
-          "type": "boolean"
-        }
+        "auth": { "type": "boolean" }
       }
     },
+
     "entity": {
       "type": "object",
       "additionalProperties": false,
@@ -104,19 +76,11 @@
         "client": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "id"
-          ],
+          "required": ["id"],
           "properties": {
-            "id": {
-              "type": "string"
-            },
-            "uriOptions": {
-              "type": "object"
-            },
-            "useMultipleMongoses": {
-              "type": "boolean"
-            },
+            "id": { "type": "string" },
+            "uriOptions": { "type": "object" },
+            "useMultipleMongoses": { "type": "boolean" },
             "observeEvents": {
               "type": "array",
               "minItems": 1,
@@ -143,158 +107,86 @@
             "ignoreCommandMonitoringEvents": {
               "type": "array",
               "minItems": 1,
-              "items": {
-                "type": "string"
-              }
+              "items": { "type": "string" }
             },
             "storeEventsAsEntities": {
               "type": "array",
               "minItems": 1,
-              "items": {
-                "$ref": "#/definitions/storeEventsAsEntity"
-              }
+              "items": { "$ref": "#/definitions/storeEventsAsEntity" }
             },
-            "serverApi": {
-              "$ref": "#/definitions/serverApi"
-            },
-            "observeSensitiveCommands": {
-              "type": "boolean"
-            }
+            "serverApi": { "$ref":  "#/definitions/serverApi" },
+            "observeSensitiveCommands": { "type": "boolean" }
           }
         },
-        "encryptedClient": {
+        "clientEncryption": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "id",
-            "clientEncryptionOpts"
-          ],
+          "required": ["id", "clientEncryptionOpts"],
           "properties": {
-            "id": {
-              "type": "string"
-            },
-            "clientEncryptionOpts": {
-              "$ref": "#/definitions/clientEncryptionOpts"
-            }
+            "id": { "type": "string" },
+            "clientEncryptionOpts": { "$ref": "#/definitions/clientEncryptionOpts" }
           }
         },
         "database": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "id",
-            "client",
-            "databaseName"
-          ],
+          "required": ["id", "client", "databaseName"],
           "properties": {
-            "id": {
-              "type": "string"
-            },
-            "client": {
-              "type": "string"
-            },
-            "databaseName": {
-              "type": "string"
-            },
-            "databaseOptions": {
-              "$ref": "#/definitions/collectionOrDatabaseOptions"
-            }
+            "id": { "type": "string" },
+            "client": { "type": "string" },
+            "databaseName": { "type": "string" },
+            "databaseOptions": { "$ref": "#/definitions/collectionOrDatabaseOptions" }
           }
         },
         "collection": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "id",
-            "database",
-            "collectionName"
-          ],
+          "required": ["id", "database", "collectionName"],
           "properties": {
-            "id": {
-              "type": "string"
-            },
-            "database": {
-              "type": "string"
-            },
-            "collectionName": {
-              "type": "string"
-            },
-            "collectionOptions": {
-              "$ref": "#/definitions/collectionOrDatabaseOptions"
-            }
+            "id": { "type": "string" },
+            "database": { "type": "string" },
+            "collectionName": { "type": "string" },
+            "collectionOptions": { "$ref": "#/definitions/collectionOrDatabaseOptions" }
           }
         },
         "session": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "id",
-            "client"
-          ],
+          "required": ["id", "client"],
           "properties": {
-            "id": {
-              "type": "string"
-            },
-            "client": {
-              "type": "string"
-            },
-            "sessionOptions": {
-              "type": "object"
-            }
+            "id": { "type": "string" },
+            "client": { "type": "string" },
+            "sessionOptions": { "type": "object" }
           }
         },
         "bucket": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "id",
-            "database"
-          ],
+          "required": ["id", "database"],
           "properties": {
-            "id": {
-              "type": "string"
-            },
-            "database": {
-              "type": "string"
-            },
-            "bucketOptions": {
-              "type": "object"
-            }
+            "id": { "type": "string" },
+            "database": { "type": "string" },
+            "bucketOptions": { "type": "object" }
           }
         }
       }
     },
+
     "clientEncryptionOpts": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "keyVaultClient",
-        "keyVaultNamespace",
-        "kmsProviders"
-      ],
       "properties": {
-        "keyVaultClient": {
-          "type": "string"
-        },
-        "keyVaultNamespace": {
-          "type": "string"
-        },
-        "kmsProviders": {
-          "$ref": "#/definitions/kmsProviders"
-        }
-      }
+        "keyVaultClient": { "type": "string" },
+        "keyVaultNamespace": { "type": "string" },
+        "kmsProviders": { "$ref": "#/definitions/kmsProviders" }
+      },
+      "required": ["keyVaultClient", "keyVaultNamespace", "kmsProviders"]
     },
+
     "kmsProviders": {
       "$defs": {
         "stringOrEmpty": {
-          "oneOf": [
-            {
-              "const": {}
-            },
-            {
-              "type": "string"
-            }
-          ]
+          "oneOf": [{ "const": {} }, { "type": "string" }]
         }
       },
       "type": "object",
@@ -304,81 +196,53 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "accessKeyId": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            },
-            "secretAccessKey": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            },
-            "sessionToken": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            }
+            "accessKeyId": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+            "secretAccessKey": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+            "sessionToken": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
           }
         },
         "azure": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "tenantId": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            },
-            "clientId": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            },
-            "clientSecret": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            },
-            "identityPlatformEndpoint": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            }
+            "tenantId": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+            "clientId": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+            "clientSecret": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+            "identityPlatformEndpoint": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
           }
         },
         "gcp": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "email": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            },
-            "privateKey": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            },
-            "endpoint": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            }
+            "email": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+            "privateKey": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+            "endpoint": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
           }
         },
         "kmip": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "endpoint": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            }
+            "endpoint": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
           }
         },
         "local": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "key": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrEmpty"
-            }
+            "key": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
           }
         }
       }
     },
+
     "storeEventsAsEntity": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "events"
-      ],
+      "required": ["id", "events"],
       "properties": {
-        "id": {
-          "type": "string"
-        },
+        "id": { "type": "string" },
         "events": {
           "type": "array",
           "minItems": 1,
@@ -404,106 +268,69 @@
         }
       }
     },
+
     "collectionData": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "collectionName",
-        "databaseName",
-        "documents"
-      ],
+      "required": ["collectionName", "databaseName", "documents"],
       "properties": {
-        "collectionName": {
-          "type": "string"
-        },
-        "databaseName": {
-          "type": "string"
-        },
+        "collectionName": { "type": "string" },
+        "databaseName": { "type": "string" },
         "documents": {
           "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "items": { "type": "object" }
         }
       }
     },
+
     "expectedEventsForClient": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "client",
-        "events"
-      ],
+      "required": ["client", "events"],
       "properties": {
-        "client": {
-          "type": "string"
-        },
+        "client": { "type": "string" },
         "eventType": {
           "type": "string",
-          "enum": [
-            "command",
-            "cmap"
-          ]
+          "enum": ["command", "cmap"]
         },
-        "events": {
-          "type": "array"
-        },
-        "ignoreExtraEvents": {
-          "type": "boolean"
-        }
+        "events": { "type": "array" },
+        "ignoreExtraEvents": { "type": "boolean" }
       },
       "oneOf": [
         {
-          "required": [
-            "eventType"
-          ],
+          "required": ["eventType"],
           "properties": {
-            "eventType": {
-              "const": "command"
-            },
+            "eventType": { "const": "command" },
             "events": {
               "type": "array",
-              "items": {
-                "$ref": "#/definitions/expectedCommandEvent"
-              }
+              "items": { "$ref": "#/definitions/expectedCommandEvent" }
             }
           }
         },
         {
-          "required": [
-            "eventType"
-          ],
+          "required": ["eventType"],
           "properties": {
-            "eventType": {
-              "const": "cmap"
-            },
+            "eventType": { "const": "cmap" },
             "events": {
               "type": "array",
-              "items": {
-                "$ref": "#/definitions/expectedCmapEvent"
-              }
+              "items": { "$ref": "#/definitions/expectedCmapEvent" }
             }
           }
         },
         {
           "additionalProperties": false,
           "properties": {
-            "client": {
-              "type": "string"
-            },
+            "client": { "type": "string" },
             "events": {
               "type": "array",
-              "items": {
-                "$ref": "#/definitions/expectedCommandEvent"
-              }
+              "items": { "$ref": "#/definitions/expectedCommandEvent" }
             },
-            "ignoreExtraEvents": {
-              "type": "boolean"
-            }
+            "ignoreExtraEvents": { "type": "boolean" }
           }
         }
       ]
     },
+
     "expectedCommandEvent": {
       "type": "object",
       "additionalProperties": false,
@@ -514,58 +341,35 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "command": {
-              "type": "object"
-            },
-            "commandName": {
-              "type": "string"
-            },
-            "databaseName": {
-              "type": "string"
-            },
-            "hasServiceId": {
-              "type": "boolean"
-            },
-            "hasServerConnectionId": {
-              "type": "boolean"
-            }
+            "command": { "type": "object" },
+            "commandName": { "type": "string" },
+            "databaseName": { "type": "string" },
+            "hasServiceId": { "type": "boolean" },
+            "hasServerConnectionId": { "type": "boolean" }
           }
         },
         "commandSucceededEvent": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "reply": {
-              "type": "object"
-            },
-            "commandName": {
-              "type": "string"
-            },
-            "hasServiceId": {
-              "type": "boolean"
-            },
-            "hasServerConnectionId": {
-              "type": "boolean"
-            }
+            "reply": { "type": "object" },
+            "commandName": { "type": "string" },
+            "hasServiceId": { "type": "boolean" },
+            "hasServerConnectionId": { "type": "boolean" }
           }
         },
         "commandFailedEvent": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "commandName": {
-              "type": "string"
-            },
-            "hasServiceId": {
-              "type": "boolean"
-            },
-            "hasServerConnectionId": {
-              "type": "boolean"
-            }
+            "commandName": { "type": "string" },
+            "hasServiceId": { "type": "boolean" },
+            "hasServerConnectionId": { "type": "boolean" }
           }
         }
       }
     },
+
     "expectedCmapEvent": {
       "type": "object",
       "additionalProperties": false,
@@ -586,9 +390,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "hasServiceId": {
-              "type": "boolean"
-            }
+            "hasServiceId": { "type": "boolean" }
           }
         },
         "poolClosedEvent": {
@@ -610,9 +412,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "reason": {
-              "type": "string"
-            }
+            "reason": { "type": "string" }
           }
         },
         "connectionCheckOutStartedEvent": {
@@ -624,9 +424,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "reason": {
-              "type": "string"
-            }
+            "reason": { "type": "string" }
           }
         },
         "connectionCheckedOutEvent": {
@@ -641,110 +439,50 @@
         }
       }
     },
+
     "collectionOrDatabaseOptions": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "readConcern": {
-          "type": "object"
-        },
-        "readPreference": {
-          "type": "object"
-        },
-        "writeConcern": {
-          "type": "object"
-        }
+        "readConcern": { "type": "object" },
+        "readPreference": { "type": "object" },
+        "writeConcern": { "type": "object" }
       }
     },
+
     "serverApi": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "version"
-      ],
+      "required": ["version"],
       "properties": {
-        "version": {
-          "type": "string"
-        },
-        "strict": {
-          "type": "boolean"
-        },
-        "deprecationErrors": {
-          "type": "boolean"
-        }
+        "version": { "type": "string" },
+        "strict": { "type":  "boolean" },
+        "deprecationErrors": { "type":  "boolean" }
       }
     },
+
     "operation": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "name",
-        "object"
-      ],
+      "required": ["name", "object"],
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "object": {
-          "type": "string"
-        },
-        "arguments": {
-          "type": "object"
-        },
-        "ignoreResultAndError": {
-          "type": "boolean"
-        },
-        "expectError": {
-          "$ref": "#/definitions/expectedError"
-        },
+        "name": { "type": "string" },
+        "object": { "type": "string" },
+        "arguments": { "type": "object" },
+        "ignoreResultAndError": { "type": "boolean" },
+        "expectError":  { "$ref": "#/definitions/expectedError" },
         "expectResult": {},
-        "saveResultAsEntity": {
-          "type": "string"
-        }
+        "saveResultAsEntity": { "type": "string" }
       },
       "allOf": [
-        {
-          "not": {
-            "required": [
-              "expectError",
-              "expectResult"
-            ]
-          }
-        },
-        {
-          "not": {
-            "required": [
-              "expectError",
-              "saveResultAsEntity"
-            ]
-          }
-        },
-        {
-          "not": {
-            "required": [
-              "ignoreResultAndError",
-              "expectResult"
-            ]
-          }
-        },
-        {
-          "not": {
-            "required": [
-              "ignoreResultAndError",
-              "expectError"
-            ]
-          }
-        },
-        {
-          "not": {
-            "required": [
-              "ignoreResultAndError",
-              "saveResultAsEntity"
-            ]
-          }
-        }
+        { "not": { "required": ["expectError", "expectResult"] } },
+        { "not": { "required": ["expectError", "saveResultAsEntity"] } },
+        { "not": { "required": ["ignoreResultAndError", "expectResult"] } },
+        { "not": { "required": ["ignoreResultAndError", "expectError"] } },
+        { "not": { "required": ["ignoreResultAndError", "saveResultAsEntity"] } }
       ]
     },
+
     "expectedError": {
       "type": "object",
       "additionalProperties": false,
@@ -754,75 +492,49 @@
           "type": "boolean",
           "const": true
         },
-        "isClientError": {
-          "type": "boolean"
-        },
-        "errorContains": {
-          "type": "string"
-        },
-        "errorCode": {
-          "type": "integer"
-        },
-        "errorCodeName": {
-          "type": "string"
-        },
+        "isClientError": { "type": "boolean" },
+        "errorContains": { "type": "string" },
+        "errorCode": { "type": "integer" },
+        "errorCodeName": { "type": "string" },
         "errorLabelsContain": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "type": "string"
-          }
+          "items": { "type": "string" }
         },
         "errorLabelsOmit": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "type": "string"
-          }
+          "items": { "type": "string" }
         },
         "expectResult": {}
       }
     },
+
     "test": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "description",
-        "operations"
-      ],
+      "required": ["description", "operations"],
       "properties": {
-        "description": {
-          "type": "string"
-        },
+        "description": { "type": "string" },
         "runOnRequirements": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/runOnRequirement"
-          }
+          "items": { "$ref": "#/definitions/runOnRequirement" }
         },
-        "skipReason": {
-          "type": "string"
-        },
+        "skipReason": { "type": "string" },
         "operations": {
           "type": "array",
-          "items": {
-            "$ref": "#/definitions/operation"
-          }
+          "items": { "$ref": "#/definitions/operation" }
         },
         "expectEvents": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/expectedEventsForClient"
-          }
+          "items": { "$ref": "#/definitions/expectedEventsForClient" }
         },
         "outcome": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/collectionData"
-          }
+          "items": { "$ref": "#/definitions/collectionData" }
         }
       }
     }
