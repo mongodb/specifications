@@ -2413,8 +2413,8 @@ An example of this operation follows::
         connections: 1
 
 
-Special Key for Placeholder Values
-----------------------------------
+Special Placeholder Value
+-------------------------
 
 $$placeholder
 ~~~~~~~~~~~~~
@@ -2423,18 +2423,19 @@ Syntax::
 
   { field: { $$placeholder: {} } }
 
-This reserved key-value pair (not an operator!) can be used anywhere the value
-for a key might be specified in an test file. It is intended to act as a
-placeholder value in contexts where the test runner cannot provide a definite
-value or may be expected to replace the placeholder with a value that cannot be
-specified by the test file (e.g. loading KMS credentials from the environment).
-The test runner MUST raise an error if the placeholder operator is used in an
-unexpected context (as part of test format schema validation).
+This reserved key-value pair can be used anywhere the value for a key might be
+specified in an test file. It is intended to act as a placeholder value in
+contexts where the test runner cannot provide a definite value or may be
+expected to replace the placeholder with a value that cannot be specified by the
+test file (e.g. KMS provider credentials). The test runner MUST raise an error
+if a placeholder value is used in an unexpected context.
 
-An example of this operator acting as a placeholder follows::
+An example of using this placeholder value follows::
 
     kmsProviders:
-      aws: { $$placeholder: {} }
+      aws:
+        accessKeyId: { $$placeholder: {} }
+        privateAccessKey: { $$placeholder: {} }
 
 Note that ``field: { $$placeholder: {} }`` is not equivalent to ``field: {}``.
 The former indicates ``field`` has an unspecified value, whereas the latter
