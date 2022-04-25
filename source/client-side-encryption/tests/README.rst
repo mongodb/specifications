@@ -22,6 +22,8 @@ The spec tests format is an extension of `transactions spec tests <https://githu
 
 - A ``json_schema`` to set on the collection used for operations.
 
+- An ``encrypted_fields`` to set on the collection used for operations.
+
 - A ``key_vault_data`` of data that should be inserted in the key vault collection before each test.
 
 - Introduction ``autoEncryptOpts`` to `clientOptions`
@@ -59,6 +61,8 @@ Each YAML file has the following keys:
 - ``data`` |txn|
 
 - ``json_schema`` A JSON Schema that should be set on the collection (using ``createCollection``) before each test run.
+
+- ``encrypted_fields`` An encryptedFields option that should be set on the collection (using ``createCollection``) before each test run.
 
 - ``key_vault_data`` The data that should exist in the key vault collection under test before each test run.
 
@@ -146,6 +150,10 @@ Then for each element in ``tests``:
    .. code:: typescript
 
       {"create": <collection>, "validator": {"$jsonSchema": <json_schema>}}
+
+   If ``encrypted_fields`` is defined in the test, the required collections and index described in `FLE 2 CreateCollection() and Collection.Drop() <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-createcollection-and-collection-drop>`_  must be created:
+   - Use the ``dropCollection`` helper with ``encrypted_fields`` as an option and writeConcern "majority".
+   - Use the ``createCollection`` helper with ``encrypted_fields`` as an option.
 
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
