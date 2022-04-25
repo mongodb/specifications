@@ -11,7 +11,7 @@ createEntities:
       clientEncryptionOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: { invalid: {} }
+          kmip: { invalid: {} }
 
 tests:
   - description: ""

@@ -14,7 +14,7 @@
         "clientEncryptionOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "aws": {
+            "kmip": {
               "invalid": {}
             }
           }
