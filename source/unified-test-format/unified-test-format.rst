@@ -2414,10 +2414,10 @@ An example of this operation follows::
 
 
 Special Key for Placeholder Values
----------------------------------------
+----------------------------------
 
 $$placeholder
-`````````````
+~~~~~~~~~~~~~
 
 Syntax::
 
