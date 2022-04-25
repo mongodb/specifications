@@ -823,7 +823,9 @@ Common API Components
     hidden: Boolean;
 
     /**
-     * Optionally specifies that this index is clustered.
+     * Optionally specifies that this index is clustered.  This is not a valid option to provide to
+     * 'createIndexes', but can appear in the options returned for an index via 'listIndexes'.  To
+     * create a clustered index, create a new collection using the 'clusteredIndex' option.
      *
      * This options is only supported by servers >= 6.0.
      */
