@@ -765,10 +765,10 @@ implementation, was not included in v1 of the Stable API, and so users of the
 Stable API with estimatedDocumentCount are recommended to upgrade their server
 version to 5.0.8+ or set ``apiStrict: false`` to avoid encountering errors.
 
-Drivers MUST document that estimatedDocumentCount will perform a slower but
-correct count of the documents when performed against a view. In future server
-versions, this will be updated to provide a fast but estimated count instead,
-matching the behavior of the command on regular collections.
+Drivers MUST document that the ``count`` server command is used to implement
+estimatedDocumentCount and that users can visit `this link
+<https://www.mongodb.com/docs/manual/reference/command/count/#behavior>`_ for
+more information about the command's behavior.
 
 The 5.0-compat versions of many drivers updated their estimatedDocumentCount
 implementations to use the ``$collStats`` aggregation stage instead of the
