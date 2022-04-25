@@ -759,33 +759,35 @@ with no query filter, skip, limit, or other options that would alter the
 results. The only supported options are listed in the
 ``EstimatedDocumentCountOptions`` type defined above.
 
-Drivers MUST document that, due to a bug in versions 5.0.0-5.0.7 of MongoDB,
-estimatedDocumentCount was not included in v1 of the Stable API, so users of the
-Stable API are recommended to upgrade their server version to 5.0.8+ or set
-``apiStrict: false`` to avoid encountering errors when using
-estimatedDocumentCount.
+Drivers MUST document that, due to an oversight in versions 5.0.0-5.0.7 of
+MongoDB, the ``count`` command, which estimatedDocumentCount uses in its
+implementation, was not included in v1 of the Stable API, and so users of the
+Stable API with estimatedDocumentCount are recommended to upgrade their server
+version to 5.0.8+ or set ``apiStrict: false`` to avoid encountering errors.
 
 Drivers MUST document that estimatedDocumentCount will perform a slower but
 correct count of the documents when performed against a view. In future server
 versions, this will be updated to provide a fast but estimated count instead,
 matching the behavior of the command on regular collections.
 
-The 5.0-compat versions of many drivers were changed to use the ``$collStats``
-aggregation stage in their implementations of estimatedDocumentCount due to the
-``count`` command being omitted from v1 of the Stable API. This had the
-unintended consequence of breaking estimatedDocumentCount on views, so this
-change was reverted as it was seen as a bug / regression. The release notes for
-the drivers versions that change from ``$collStats`` back to ``count`` MUST
-document that users of the Stable API with ``apiStrict: true`` will start seeing
-errors when using estimatedDocumentCount against server versions 5.0.0 - 5.0.7 /
-5.1.0 - 5.3.1 due to a bug in the server. The release notes MUST recommend that
-such users upgrade their deployments to 5.0.8 or 5.3.2 (if on Atlas) or set
-``apiStrict: false`` when constructing their MongoClients. This change is not
-seen as requiring a major version bump in drivers due to it being considered a
-bug fix and the relative rarity of users using estimatedDocumentCount with
-``apiStrict: true``. The release notes MUST also document that
-estimatedDocumentCount can once again be used to perform slow-but-accurate
-counts with views.
+The 5.0-compat versions of many drivers updated their estimatedDocumentCount
+implementations to use the ``$collStats`` aggregation stage instead of the
+``count`` command. This had the unintended consequence of breaking
+estimatedDocumentCount on views, and so the change was seen as a
+backwards-incompatible regression and reverted. The release notes for the driver
+versions that include the reversion from ``$collStats`` back to ``count`` MUST
+document the following:
+
+- The 5.0-compat release accidentally broke estimatedDocumentCount on views by
+  changing its implementation to use ``aggregate`` and a ``$collStats`` stage
+  instead of the ``count`` command.
+- The new release is fixing estimatedDocumentCount on views by reverting back to
+  using ``count`` in its implementation.
+- Due to an oversight, the ``count`` command was omitted from the Stable API in
+  server versions 5.0.0 - 5.0.7 and 5.1.0 - 5.3.1, so users of the Stable API
+  with estimatedDocumentCount are recommended to upgrade their MongoDB clusters
+  to 5.0.8 or 5.3.2 (if on Atlas) or set ``apiStrict: false`` when constructing
+  their MongoClients.
 
 ~~~~~~~~~~~~~~
 countDocuments
@@ -2361,6 +2363,11 @@ Q: Where is ``singleBatch`` in FindOptions?
 
 Q: Why are client-side errors raised for some unsupported options?
   Server versions before 3.4 were inconsistent about reporting errors for unrecognized command options and may simply ignore them, which means a client-side error is the only way to inform users that such options are unsupported. For unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a response (even though a 3.6+ server is otherwise capable of reporting errors for unrecognized options). For unacknowledged writes using legacy opcodes (i.e. OP_INSERT, OP_UPDATE, and OP_DELETE), the message body has no field with which to express these options so a client-side error is the only mechanism to inform the user that such options are unsupported. The spec does not explicitly refer to unacknowledged writes using OP_QUERY primarily because a response document is always returned and drivers generally would not consider using OP_QUERY precisely for that reason.
+
+Q: Why does reverting to using ``count`` instead of ``aggregate`` with
+``$collStats`` for estimatedDocumentCount not require a major version bump in
+the drivers, even though it might break users of the Stable API?
+  SemVer `allows <https://semver.org/#what-if-i-inadvertently-alter-the-public-api-in-a-way-that-is-not-compliant-with-the-version-number-change-ie-the-code-incorrectly-introduces-a-major-breaking-change-in-a-patch-release>`_ for a library to include a breaking change in minor or patch version if the change is required to fix another accidental breaking change introduced in a prior version and is not expected to further break a large number of users. Given that the original switching to ``$collStats`` was a breaking change due to it not working on views, the number of users using estimatedDocumentCount with ``apiStrict: true`` is small, and the server is backporting adding ``count`` to the Stable API, we felt that this change was acceptable to make in minor version releases of the drivers per the aforementioned allowance in the SemVer spec.
 
 Changes
 =======
