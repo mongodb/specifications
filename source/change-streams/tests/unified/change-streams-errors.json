@@ -1,6 +1,11 @@
 {
   "description": "change-streams-errors",
   "schemaVersion": "1.7",
+  "runOnRequirements": [
+    {
+      "serverless": "forbid"
+    }
+  ],
   "createEntities": [
     {
       "client": {
@@ -47,6 +52,13 @@
         "database": "globalDatabase0",
         "collectionName": "collection0"
       }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "collection0",
+      "databaseName": "database0",
+      "documents": []
     }
   ],
   "tests": [

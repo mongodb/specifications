@@ -393,16 +393,19 @@ The structure of this object is as follows:
   "sharded" implies "sharded-replicaset", but not vice versa).
 
 - ``serverless``: Optional string. Whether or not the test should be run on
-  serverless instances imitating sharded clusters. Valid values are "require",
-  "forbid", and "allow". If "require", the test MUST only be run on serverless
-  instances. If "forbid", the test MUST NOT be run on serverless instances. If
-  omitted or "allow", this option has no effect.
+  Atlas Serverless instances. Valid values are "require", "forbid", and "allow".
+  If "require", the test MUST only be run on Atlas Serverless instances. If
+  "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted
+  or "allow", this option has no effect.
 
-  The test runner MUST be informed whether or not serverless is being used in
-  order to determine if this requirement is met (e.g. through an environment
-  variable or configuration option). Since the serverless proxy imitates a
-  mongos, the runner is not capable of determining this by issuing a server
-  command such as ``buildInfo`` or ``hello``.
+  The test runner MUST be informed whether or not Atlas Serverless is being used
+  in order to determine if this requirement is met (e.g. through an environment
+  variable or configuration option).
+
+  Note: the Atlas Serverless proxy imitates mongos, so the test runner is not
+  capable of determining if Atlas Serverless is in use by issuing commands such
+  as ``buildInfo`` or ``hello``. Furthermore, connections to Atlas Serverless
+  use a load balancer, so the topology will appear as "load-balanced".
 
 - ``serverParameters``: Optional object of server parameters to check against.
   To check server parameters, drivers send a
@@ -487,17 +490,22 @@ The structure of this object is as follows:
     connection string and any tests using this client SHOULD NOT depend on a
     particular number of mongos hosts.
 
-    This option SHOULD be set to true if the resulting entity is used to
-    conduct transactions against a sharded cluster. This is advised because
-    connecting to multiple mongos servers is necessary to test session
+    This option SHOULD be set to true in test files if the resulting entity is
+    used to conduct transactions against a sharded cluster. This is advised
+    because connecting to multiple mongos servers is necessary to test session
     pinning.
 
-    If the topology type is ``LoadBalanced``, the test runner MUST use one of
-    the two load balancer URIs described in `Initializing the Test Runner`_
-    to configure the MongoClient. If ``useMultipleMongoses`` is true or
-    unset, the test runner MUST use the URI of the load balancer fronting
-    multiple servers. Otherwise, the test runner MUST use the URI of the load
-    balancer fronting a single server.
+    If the topology type is ``LoadBalanced`` and Atlas Serverless is not being
+    used, the test runner MUST use one of the two load balancer URIs described
+    in `Initializing the Test Runner`_ to configure the MongoClient. If
+    ``useMultipleMongoses`` is true or unset, the test runner MUST use the URI
+    of the load balancer fronting multiple servers. Otherwise, the test runner
+    MUST use the URI of the load balancer fronting a single server.
+
+    If the topology type is ``LoadBalanced`` and Atlas Serverless is being used,
+    this option has no effect. This is because provisioning an Atlas Serverless
+    instance yields a single URI (i.e. a load balancer fronting a single Atlas
+    Serverless proxy).
 
     This option has no effect for topologies that are not sharded or load
     balanced.
@@ -2799,10 +2807,11 @@ In addition to the aforementioned connection string, the test runner MUST
 also be configurable with two other connection strings (or equivalent
 configuration) that point to TCP load balancers: one fronting multiple
 servers and one fronting a single server. These will be used to initialize
-client entities when executing tests against a load balanced cluster. If the
-topology type is ``LoadBalanced``, the test runner MUST error if either of
-these URIs is not provided. For all other topology types, these URIs SHOULD NOT
-be provided and MUST be ignored if provided.
+client entities when executing tests against a load balanced sharded cluster. If
+the topology type is ``LoadBalanced`` and Atlas Serverless is not being used,
+the test runner MUST error if either of these URIs is not provided. When testing
+against other topology types or Atlas Serverless, these URIs SHOULD NOT be
+provided and MUST be ignored if provided.
 
 The test runner SHOULD terminate any open transactions (see:
 `Terminating Open Transactions`_) using the internal MongoClient(s) before
@@ -3371,6 +3380,10 @@ Change Log
 ==========
 
 :2022-04-26: Add ``clientEncryption`` entity.
+
+:2020-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
+             for Atlas Serverless URIs using a load balancer fronting a single
+             proxy.
 
 :2022-03-01: Add ``ignoreExtraEvents`` field to ``expectedEventsForClient``.
 
