@@ -2432,7 +2432,8 @@ specified in an test file. It is intended to act as a placeholder value in
 contexts where the test runner cannot provide a definite value or may be
 expected to replace the placeholder with a value that cannot be specified by the
 test file (e.g. KMS provider credentials). The test runner MUST raise an error
-if a placeholder value is used in an unexpected context.
+if a placeholder value is used in an unexpected context or a replacement cannot
+be made.
 
 An example of using this placeholder value follows::
 
