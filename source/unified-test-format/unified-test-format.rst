@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.7
+:Spec Version: 1.8
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-03-01
+:Last Modified: 2022-04-26
 
 .. contents::
 
@@ -3369,6 +3369,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-04-26: Add ``clientEncryption`` entity.
 
 :2022-03-01: Add ``ignoreExtraEvents`` field to ``expectedEventsForClient``.
 
