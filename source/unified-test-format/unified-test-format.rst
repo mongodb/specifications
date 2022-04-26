@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.8
+:Spec Version: 1.9
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-04-22
+:Last Modified: 2022-04-26
 
 .. contents::
 
@@ -3350,7 +3350,7 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2022-04-22: Added ``createOptions`` field to ``initialData``, introduced a
+:2022-04-29: Added ``createOptions`` field to ``initialData``, introduced a
              new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
              added an ``isTimeoutError`` field to ``expectedError``.
 

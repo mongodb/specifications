@@ -1,7 +1,7 @@
 description: entity-cursor-iterateOnce
 
-# Note: iterateOnce is not technically in the 1.8 schema but was introduced at the same time.
-schemaVersion: "1.8"
+# Note: iterateOnce is not technically in the 1.9 schema but was introduced at the same time.
+schemaVersion: "1.9"
 
 createEntities:
   - client:

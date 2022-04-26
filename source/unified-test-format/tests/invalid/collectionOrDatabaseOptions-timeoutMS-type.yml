@@ -1,6 +1,6 @@
 description: "collectionOrDatabaseOptions-timeoutMS-type"
 
-schemaVersion: "1.8"
+schemaVersion: "1.9"
 
 createEntities:
   - client:

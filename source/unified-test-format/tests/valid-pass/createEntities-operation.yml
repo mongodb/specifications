@@ -1,7 +1,7 @@
 description: createEntities-operation
 
-# Note: createEntities is not technically in the 1.8 schema but was introduced at the same time.
-schemaVersion: "1.8"
+# Note: createEntities is not technically in the 1.9 schema but was introduced at the same time.
+schemaVersion: "1.9"
 
 createEntities:
   - client:
