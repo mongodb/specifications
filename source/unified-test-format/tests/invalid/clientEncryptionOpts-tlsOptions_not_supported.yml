@@ -1,3 +1,5 @@
+# Note: tests the same rule as clientEncryptionOpts-additionalProperties, but
+# exists as an independent test because tlsOptions is defined in the CSLE spec.
 description: clientEncryptionOpts-tlsOptions_not_supported
 
 schemaVersion: "1.8"
