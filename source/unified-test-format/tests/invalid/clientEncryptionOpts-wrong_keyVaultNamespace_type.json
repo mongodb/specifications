@@ -10,8 +10,8 @@
     {
       "clientEncryption": {
         "id": "client0",
-        "client": "client0",
         "clientEncryptionOpts": {
+          "keyVaultClient": "client0",
           "keyVaultNamespace": 0,
           "kmsProviders": {
             "aws": {}

@@ -3,14 +3,8 @@
   "schemaVersion": "1.8",
   "createEntities": [
     {
-      "client": {
-        "id": "client0"
-      }
-    },
-    {
       "clientEncryption": {
         "id": "clientEncryption0",
-        "client": "client0",
         "clientEncryptionOpts": 0
       }
     }

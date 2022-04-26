@@ -6,8 +6,8 @@ createEntities:
   - client:
       id: &client0 client0
   - clientEncryption:
-      client: *client0
       clientEncryptionOpts:
+        keyVaultClient: *client0
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           aws: {}

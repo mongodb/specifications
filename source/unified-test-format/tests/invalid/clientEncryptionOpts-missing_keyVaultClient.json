@@ -1,23 +1,11 @@
 {
-  "description": "clientEncryptionOpts-optional_keyVaultClient",
+  "description": "clientEncryption-missing_keyVaultClient",
   "schemaVersion": "1.8",
   "createEntities": [
     {
-      "client": {
-        "id": "client0"
-      }
-    },
-    {
-      "client": {
-        "id": "client1"
-      }
-    },
-    {
       "clientEncryption": {
         "id": "clientEncryption0",
-        "client": "client0",
         "clientEncryptionOpts": {
-          "keyVaultClient": "client1",
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {}

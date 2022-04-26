@@ -3,11 +3,8 @@ description: clientEncryption-wrong_clientEncryptionOpts_type
 schemaVersion: "1.8"
 
 createEntities:
-  - client:
-      id: &client0 client0
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
-      client: *client0
       clientEncryptionOpts: 0
 
 tests:

@@ -593,10 +593,6 @@ The structure of this object is as follows:
     define a `node anchor`_ for this field (e.g.
     ``id: &clientEncryption0 clientEncryption0``).
 
-  - ``client``: Required string. Client entity from which this ClientEncryption
-    will be created. The YAML file SHOULD use an `alias node`_ for a client
-    entity's ``id`` field (e.g. ``client: *client0``).
-
   - ``clientEncryptionOpts``: Required document. A value corresponding to a
     `ClientEncryptionOpts
     <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
@@ -607,10 +603,10 @@ The structure of this object is as follows:
 
     The structure of this document is as follows:
 
-    - ``keyVaultClient``: Optional string. Drivers MUST behave according to the
-      `Client Side Encryption spec for keyVaultClient <../client-side-encryption/client-side-encryption.rst#keyvaultclient>`__.
-      If given, the YAML file SHOULD use an `alias node`_ for a client entity's
-      ``id`` field (e.g. ``keyVaultClient: *client1``).
+    - ``keyVaultClient``: Required string. Client entity from which this
+      ClientEncryption will be created. The YAML file SHOULD use an
+      `alias node`_ for a client entity's ``id`` field (e.g.
+      ``client: *client0``).
 
     - ``keyVaultNamespace``: Required string. The database and collection to use
       as the key vault collection for this clientEncryption. The namespace takes
