@@ -3379,7 +3379,7 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2022-04-26: Add ``clientEncryption`` entity.
+:2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
 
 :2020-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
              for Atlas Serverless URIs using a load balancer fronting a single
