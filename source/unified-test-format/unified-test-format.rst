@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.7
+:Spec Version: 1.8
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-04-22
+:Last Modified: 2022-04-26
 
 .. contents::
 
@@ -232,6 +232,7 @@ Supported Entity Types
 Test runners MUST support the following types of entities:
 
 - MongoClient. See `entity_client`_ and `Client Operations`_.
+- ClientEncryption. See `entity_clientEncryption`__.
 - Database. See `entity_database`_ and `Database Operations`_.
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
@@ -589,6 +590,59 @@ The structure of this object is as follows:
           events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
   - ``serverApi``: Optional `serverApi`_ object.
+
+.. _entity_clientEncryption:
+
+- ``clientEncryption``: Optional object. Defines a ClientEncryption object.
+
+  The structure of this object is as follows:
+
+  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g.
+    ``id: &clientEncryption0 clientEncryption0``).
+
+  - ``clientEncryptionOpts``: Required document. A value corresponding to a
+    `ClientEncryptionOpts
+    <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
+
+    Note: the ``tlsOptions`` document is intentionally omitted from the test
+    format. However, drivers MAY internally configure TLS options as needed to
+    satisfy the requirements of configured KMS providers.
+
+    The structure of this document is as follows:
+
+    - ``keyVaultClient``: Required string. Client entity from which this
+      ClientEncryption will be created. The YAML file SHOULD use an
+      `alias node`_ for a client entity's ``id`` field (e.g.
+      ``client: *client0``).
+
+    - ``keyVaultNamespace``: Required string. The database and collection to use
+      as the key vault collection for this clientEncryption. The namespace takes
+      the form ``database.collection`` (e.g.
+      ``keyVaultNamespace: keyvault.datakeys``).
+
+    - ``kmsProviders``: Required document. Drivers MUST NOT configure a KMS
+      provider if it is not given. This is to permit testing conditions where a
+      required KMS provider is not configured. If a KMS provider is given as an
+      empty document (e.g. ``kmsProviders: { aws: {} }``), drivers MUST
+      configure the KMS provider without credentials to permit testing
+      conditions where KMS credentials are needed. If a KMS credentials field
+      has a placeholder value (e.g.
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } } }``),
+      drivers MUST replace the field with credentials that satisfy the
+      operations required by the unified test files. Drivers MAY load the
+      credentials from the environment or a configuration file as needed to
+      satisfy the requirements of the given KMS provider and tests. If a KMS
+      credentials field is not given (e.g. the required field
+      ``secretAccessKey`` is omitted in:
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 } }``), drivers
+      MUST NOT include the field during KMS configuration. This is to permit
+      testing conditions where required KMS credentials fields are not provided.
+      Otherwise, drivers MUST configure the KMS provider with the explicit value
+      of KMS credentials field given in the test file (e.g.
+      ``kmsProviders: { aws: { accessKeyId: abc, secretAccessKey: def } }``).
+      This is to permit testing conditions where invalid KMS credentials are
+      provided.
 
 .. _entity_database:
 
@@ -2363,6 +2417,35 @@ An example of this operation follows::
         connections: 1
 
 
+Special Placeholder Value
+-------------------------
+
+$$placeholder
+~~~~~~~~~~~~~
+
+Syntax::
+
+  { field: { $$placeholder: 1 } }
+
+This special key-value pair can be used anywhere the value for a key might be
+specified in an test file. It is intended to act as a placeholder value in
+contexts where the test runner cannot provide a definite value or may be
+expected to replace the placeholder with a value that cannot be specified by the
+test file (e.g. KMS provider credentials). The test runner MUST raise an error
+if a placeholder value is used in an unexpected context or a replacement cannot
+be made.
+
+An example of using this placeholder value follows::
+
+    kmsProviders:
+      aws:
+        accessKeyId: { $$placeholder: 1 }
+        privateAccessKey: { $$placeholder: 1 }
+
+Note: the test runner is not required to validate the type or value of a
+``$$placeholder`` field.
+
+
 Evaluating Matches
 ------------------
 
@@ -3295,6 +3378,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
 
 :2020-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
              for Atlas Serverless URIs using a load balancer fronting a single
