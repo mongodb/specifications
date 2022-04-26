@@ -3,6 +3,7 @@ import os
 import sys
 import yaml
 from jinja2 import Template
+from pathlib import Path
 description = """Generates YAML/JSON tests from a template file.
 
 This keeps key documents, JSONSchemas, and ciphertexts out of the
@@ -568,6 +569,12 @@ def local_provider():
         "key": {"$binary": {"base64": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk", "subType": "00"}}
     }
 
+def yamlfile (relative_filepath):
+    filepath = Path("./source/client-side-encryption/etc/data") / Path(relative_filepath)
+    with open(filepath, "r") as file:
+        contents = file.read()
+        return yaml.safe_load (contents)
+
 if sys.version_info < (3, 0):
     print("Use Python 3")
     sys.exit(1)
@@ -597,7 +604,8 @@ for filepath in sys.argv[1:-1]:
         "ciphertext": ciphertext,
         "key": key,
         "local_provider": local_provider,
-        "schema_w_type": schema_w_type
+        "schema_w_type": schema_w_type,
+        "yamlfile": yamlfile,
     }
 
     rendered = template.render(**injections)
