@@ -232,6 +232,7 @@ Supported Entity Types
 Test runners MUST support the following types of entities:
 
 - MongoClient. See `entity_client`_ and `Client Operations`_.
+- ClientEncryption. See `entity_clientEncryption`__.
 - Database. See `entity_database`_ and `Database Operations`_.
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
@@ -387,16 +388,19 @@ The structure of this object is as follows:
   "sharded" implies "sharded-replicaset", but not vice versa).
 
 - ``serverless``: Optional string. Whether or not the test should be run on
-  serverless instances imitating sharded clusters. Valid values are "require",
-  "forbid", and "allow". If "require", the test MUST only be run on serverless
-  instances. If "forbid", the test MUST NOT be run on serverless instances. If
-  omitted or "allow", this option has no effect.
+  Atlas Serverless instances. Valid values are "require", "forbid", and "allow".
+  If "require", the test MUST only be run on Atlas Serverless instances. If
+  "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted
+  or "allow", this option has no effect.
 
-  The test runner MUST be informed whether or not serverless is being used in
-  order to determine if this requirement is met (e.g. through an environment
-  variable or configuration option). Since the serverless proxy imitates a
-  mongos, the runner is not capable of determining this by issuing a server
-  command such as ``buildInfo`` or ``hello``.
+  The test runner MUST be informed whether or not Atlas Serverless is being used
+  in order to determine if this requirement is met (e.g. through an environment
+  variable or configuration option).
+
+  Note: the Atlas Serverless proxy imitates mongos, so the test runner is not
+  capable of determining if Atlas Serverless is in use by issuing commands such
+  as ``buildInfo`` or ``hello``. Furthermore, connections to Atlas Serverless
+  use a load balancer, so the topology will appear as "load-balanced".
 
 - ``serverParameters``: Optional object of server parameters to check against.
   To check server parameters, drivers send a
@@ -481,17 +485,22 @@ The structure of this object is as follows:
     connection string and any tests using this client SHOULD NOT depend on a
     particular number of mongos hosts.
 
-    This option SHOULD be set to true if the resulting entity is used to
-    conduct transactions against a sharded cluster. This is advised because
-    connecting to multiple mongos servers is necessary to test session
+    This option SHOULD be set to true in test files if the resulting entity is
+    used to conduct transactions against a sharded cluster. This is advised
+    because connecting to multiple mongos servers is necessary to test session
     pinning.
 
-    If the topology type is ``LoadBalanced``, the test runner MUST use one of
-    the two load balancer URIs described in `Initializing the Test Runner`_
-    to configure the MongoClient. If ``useMultipleMongoses`` is true or
-    unset, the test runner MUST use the URI of the load balancer fronting
-    multiple servers. Otherwise, the test runner MUST use the URI of the load
-    balancer fronting a single server.
+    If the topology type is ``LoadBalanced`` and Atlas Serverless is not being
+    used, the test runner MUST use one of the two load balancer URIs described
+    in `Initializing the Test Runner`_ to configure the MongoClient. If
+    ``useMultipleMongoses`` is true or unset, the test runner MUST use the URI
+    of the load balancer fronting multiple servers. Otherwise, the test runner
+    MUST use the URI of the load balancer fronting a single server.
+
+    If the topology type is ``LoadBalanced`` and Atlas Serverless is being used,
+    this option has no effect. This is because provisioning an Atlas Serverless
+    instance yields a single URI (i.e. a load balancer fronting a single Atlas
+    Serverless proxy).
 
     This option has no effect for topologies that are not sharded or load
     balanced.
@@ -576,6 +585,59 @@ The structure of this object is as follows:
           events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
   - ``serverApi``: Optional `serverApi`_ object.
+
+.. _entity_clientEncryption:
+
+- ``clientEncryption``: Optional object. Defines a ClientEncryption object.
+
+  The structure of this object is as follows:
+
+  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g.
+    ``id: &clientEncryption0 clientEncryption0``).
+
+  - ``clientEncryptionOpts``: Required document. A value corresponding to a
+    `ClientEncryptionOpts
+    <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
+
+    Note: the ``tlsOptions`` document is intentionally omitted from the test
+    format. However, drivers MAY internally configure TLS options as needed to
+    satisfy the requirements of configured KMS providers.
+
+    The structure of this document is as follows:
+
+    - ``keyVaultClient``: Required string. Client entity from which this
+      ClientEncryption will be created. The YAML file SHOULD use an
+      `alias node`_ for a client entity's ``id`` field (e.g.
+      ``client: *client0``).
+
+    - ``keyVaultNamespace``: Required string. The database and collection to use
+      as the key vault collection for this clientEncryption. The namespace takes
+      the form ``database.collection`` (e.g.
+      ``keyVaultNamespace: keyvault.datakeys``).
+
+    - ``kmsProviders``: Required document. Drivers MUST NOT configure a KMS
+      provider if it is not given. This is to permit testing conditions where a
+      required KMS provider is not configured. If a KMS provider is given as an
+      empty document (e.g. ``kmsProviders: { aws: {} }``), drivers MUST
+      configure the KMS provider without credentials to permit testing
+      conditions where KMS credentials are needed. If a KMS credentials field
+      has a placeholder value (e.g.
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } } }``),
+      drivers MUST replace the field with credentials that satisfy the
+      operations required by the unified test files. Drivers MAY load the
+      credentials from the environment or a configuration file as needed to
+      satisfy the requirements of the given KMS provider and tests. If a KMS
+      credentials field is not given (e.g. the required field
+      ``secretAccessKey`` is omitted in:
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 } }``), drivers
+      MUST NOT include the field during KMS configuration. This is to permit
+      testing conditions where required KMS credentials fields are not provided.
+      Otherwise, drivers MUST configure the KMS provider with the explicit value
+      of KMS credentials field given in the test file (e.g.
+      ``kmsProviders: { aws: { accessKeyId: abc, secretAccessKey: def } }``).
+      This is to permit testing conditions where invalid KMS credentials are
+      provided.
 
 .. _entity_database:
 
@@ -2399,6 +2461,35 @@ An example of this operation follows::
         connections: 1
 
 
+Special Placeholder Value
+-------------------------
+
+$$placeholder
+~~~~~~~~~~~~~
+
+Syntax::
+
+  { field: { $$placeholder: 1 } }
+
+This special key-value pair can be used anywhere the value for a key might be
+specified in an test file. It is intended to act as a placeholder value in
+contexts where the test runner cannot provide a definite value or may be
+expected to replace the placeholder with a value that cannot be specified by the
+test file (e.g. KMS provider credentials). The test runner MUST raise an error
+if a placeholder value is used in an unexpected context or a replacement cannot
+be made.
+
+An example of using this placeholder value follows::
+
+    kmsProviders:
+      aws:
+        accessKeyId: { $$placeholder: 1 }
+        privateAccessKey: { $$placeholder: 1 }
+
+Note: the test runner is not required to validate the type or value of a
+``$$placeholder`` field.
+
+
 Evaluating Matches
 ------------------
 
@@ -2775,10 +2866,11 @@ In addition to the aforementioned connection string, the test runner MUST
 also be configurable with two other connection strings (or equivalent
 configuration) that point to TCP load balancers: one fronting multiple
 servers and one fronting a single server. These will be used to initialize
-client entities when executing tests against a load balanced cluster. If the
-topology type is ``LoadBalanced``, the test runner MUST error if either of
-these URIs is not provided. For all other topology types, these URIs SHOULD NOT
-be provided and MUST be ignored if provided.
+client entities when executing tests against a load balanced sharded cluster. If
+the topology type is ``LoadBalanced`` and Atlas Serverless is not being used,
+the test runner MUST error if either of these URIs is not provided. When testing
+against other topology types or Atlas Serverless, these URIs SHOULD NOT be
+provided and MUST be ignored if provided.
 
 The test runner SHOULD terminate any open transactions (see:
 `Terminating Open Transactions`_) using the internal MongoClient(s) before
@@ -3350,9 +3442,15 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2022-04-29: Added ``createOptions`` field to ``initialData``, introduced a
+:2022-04-26: Added ``createOptions`` field to ``initialData``, introduced a
              new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
              added an ``isTimeoutError`` field to ``expectedError``.
+
+:2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
+
+:2020-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
+             for Atlas Serverless URIs using a load balancer fronting a single
+             proxy.
 
 :2022-03-01: Add ``ignoreExtraEvents`` field to ``expectedEventsForClient``.
 
