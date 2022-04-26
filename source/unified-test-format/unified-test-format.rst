@@ -628,14 +628,14 @@ The structure of this object is as follows:
       configure the KMS provider without credentials to permit testing
       conditions where KMS credentials are needed. If a KMS credentials field
       has a placeholder value (e.g.
-      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: {} }, secretAccessKey: { $$placeholder: {} } } }``),
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } } }``),
       drivers MUST replace the field with credentials that satisfy the
       operations required by the unified test files. Drivers MAY load the
       credentials from the environment or a configuration file as needed to
       satisfy the requirements of the given KMS provider and tests. If a KMS
       credentials field is not given (e.g. the required field
       ``secretAccessKey`` is omitted in:
-      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: {} } }``), drivers
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 } }``), drivers
       MUST NOT include the field during KMS configuration. This is to permit
       testing conditions where required KMS credentials fields are not provided.
       Otherwise, drivers MUST configure the KMS provider with the explicit value
@@ -2425,9 +2425,9 @@ $$placeholder
 
 Syntax::
 
-  { field: { $$placeholder: {} } }
+  { field: { $$placeholder: 1 } }
 
-This reserved key-value pair can be used anywhere the value for a key might be
+This special key-value pair can be used anywhere the value for a key might be
 specified in an test file. It is intended to act as a placeholder value in
 contexts where the test runner cannot provide a definite value or may be
 expected to replace the placeholder with a value that cannot be specified by the
@@ -2439,12 +2439,11 @@ An example of using this placeholder value follows::
 
     kmsProviders:
       aws:
-        accessKeyId: { $$placeholder: {} }
-        privateAccessKey: { $$placeholder: {} }
+        accessKeyId: { $$placeholder: 1 }
+        privateAccessKey: { $$placeholder: 1 }
 
-Note that ``field: { $$placeholder: {} }`` is not equivalent to ``field: {}``.
-The former indicates ``field`` has an unspecified value, whereas the latter
-indicates ``field`` has the value ``{}`` (an empty document).
+Note: the test runner is not required to validate the type or value of a
+``$$placeholder`` field.
 
 
 Evaluating Matches
