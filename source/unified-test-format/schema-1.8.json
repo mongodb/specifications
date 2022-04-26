@@ -21,7 +21,7 @@
     "initialData": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/definitions/initialCollectionData" }
+      "items": { "$ref": "#/definitions/collectionData" }
     },
     "tests": {
       "type": "array",
@@ -195,28 +195,19 @@
       }
     },
 
-    "initialCollectionData": {
+    "collectionData": {
       "type": "object",
       "additionalProperties": false,
       "required": ["collectionName", "databaseName", "documents"],
       "properties": {
         "collectionName": { "type": "string" },
         "databaseName": { "type": "string" },
-        "collectionOptions": { "type": "object" },
-        "documents": {
-          "type": "array",
-          "items": { "type": "object" }
-        }
-      }
-    },
-
-    "outcomeCollectionData": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["collectionName", "databaseName", "documents"],
-      "properties": {
-        "collectionName": { "type": "string" },
-        "databaseName": { "type": "string" },
+        "createOptions": {
+          "type": "object",
+          "properties": {
+            "writeConcern": false
+          }
+        },
         "documents": {
           "type": "array",
           "items": { "type": "object" }
@@ -388,7 +379,7 @@
         "readConcern": { "type": "object" },
         "readPreference": { "type": "object" },
         "writeConcern": { "type": "object" },
-        "timeoutMS": { "type": "number" }
+        "timeoutMS": { "type": "integer" }
       }
     },
 
@@ -477,7 +468,7 @@
         "outcome": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "#/definitions/outcomeCollectionData" }
+          "items": { "$ref": "#/definitions/collectionData" }
         }
       }
     }

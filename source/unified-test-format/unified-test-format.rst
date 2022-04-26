@@ -340,9 +340,8 @@ The top-level fields of a test file are as follows:
 
 .. _initialData:
 
-- ``initialData``: Optional array of one or more `initialCollectionData`_
-  objects. Data that will exist in collections before each test case is
-  executed.
+- ``initialData``: Optional array of one or more `collectionData`_ objects.
+  Data that will exist in collections before each test case is executed.
 
 .. _tests:
 
@@ -750,11 +749,12 @@ See the `Stable API <../versioned-api/versioned-api.rst>`__ spec for more
 details on these fields.
 
 
-initialCollectionData
-~~~~~~~~~~~~~~~~~~~~~
+collectionData
+~~~~~~~~~~~~~~
 
-List of documents corresponding to the contents of a collection. This
-structure is used by `initialData`_.
+List of documents corresponding to the contents of a collection. This structure
+is used by both `initialData`_ and `test.outcome <test_outcome_>`_, which insert
+and read documents, respectively.
 
 The structure of this object is as follows:
 
@@ -762,28 +762,13 @@ The structure of this object is as follows:
 
 - ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
-- ``collectionOptions``: Optional object. Options that MUST be passed to the
+- ``createOptions``: Optional object. When used in `initialData`_, these options
+  MUST be passed to the
   `create <https://docs.mongodb.com/manual/reference/command/create/>`_ command
-  when creating the collection. Test files SHOULD NOT specify ``writeConcern``
+  when creating the collection. Test files MUST NOT specify ``writeConcern``
   in this options document as that could conflict with the use of the
   ``majority`` write concern when the collection is created during test
   execution.
-
-- ``documents``: Required array of objects. List of documents corresponding to
-  the contents of the collection. This list may be empty.
-
-
-outcomeCollectionData
-~~~~~~~~~~~~~~~~~~~~~
-
-List of documents corresponding to the contents of a collection. This
-structure is used by `test.outcome <test_outcome_>`_.
-
-The structure of this object is as follows:
-
-- ``collectionName``: Required string. See `commonOptions_collectionName`_.
-
-- ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
 - ``documents``: Required array of objects. List of documents corresponding to
   the contents of the collection. This list may be empty.
@@ -842,9 +827,8 @@ The structure of this object is as follows:
 
 .. _test_outcome:
 
-- ``outcome``: Optional array of one or more `outcomeCollectionData`_
-  objects. Data that is expected to exist in collections after each test case
-  is executed.
+- ``outcome``: Optional array of one or more `collectionData`_ objects. Data
+  that is expected to exist in collections after each test case is executed.
 
   The list of documents herein SHOULD be sorted ascendingly by the ``_id`` field
   to allow for deterministic comparisons. The procedure for asserting collection
@@ -2241,7 +2225,7 @@ An example of this operation follows::
           - database:
               id: &database0 database0
               client: *client0
-              databaseName: &databaseName test
+              databaseName: &database0Name test
 
 loop
 ~~~~
@@ -2847,13 +2831,13 @@ If `test.runOnRequirements <test_runOnRequirements_>`_ is specified, the test
 runner MUST skip the test unless one or more `runOnRequirement`_ objects are
 satisfied.
 
-If `initialData`_ is specified, for each `initialCollectionData`_ therein the
-test runner MUST set up the collection. All setup operations MUST use the
+If `initialData`_ is specified, for each `collectionData`_ therein the test
+runner MUST set up the collection. All setup operations MUST use the
 internal MongoClient and a "majority" write concern. The test runner MUST
-first drop the collection. If a ``collectionOptions`` document is present,
+first drop the collection. If a ``createOptions`` document is present,
 the test runner MUST execute a ``create`` command to create the collection
 with the specified options. The test runner MUST then insert the specified
-documents (if any). If no documents are present and ``collectionOptions`` is
+documents (if any). If no documents are present and ``createOptions`` is
 not set, the test runner MUST create the collection. If the topology is
 sharded, the test runner SHOULD use a single mongos for handling `initialData`_
 to avoid possible runtime errors.
@@ -2923,16 +2907,15 @@ client. If the list of expected events is empty, the test runner MUST assert
 that no events were observed on the client. The process for matching events is
 described in `expectedEvent`_.
 
-If `test.outcome <test_outcome_>`_ is specified, for each
-`outcomeCollectionData`_ therein the test runner MUST assert that the
-collection contains exactly the expected data. The test runner MUST query
-each collection using the internal MongoClient, an ascending sort order on
-the ``_id`` field (i.e. ``{ _id: 1 }``), a "primary" read preference, and a
-"local" read concern. When comparing collection data, the rules in
-`Evaluating Matches`_ do not apply and the documents MUST match exactly;
-however, test runners MUST permit variations in document key order or
-otherwise normalize the documents before comparison. If the list of documents
-is empty, the test runner MUST assert that the collection is empty.
+If `test.outcome <test_outcome_>`_ is specified, for each `collectionData`_
+therein the test runner MUST assert that the collection contains exactly the
+expected data. The test runner MUST query each collection using the internal
+MongoClient, an ascending sort order on the ``_id`` field (i.e. ``{ _id: 1 }``),
+a "primary" read preference, and a "local" read concern. When comparing collection
+data, the rules in `Evaluating Matches`_ do not apply and the documents MUST
+match exactly; however, test runners MUST permit variations in document key
+order or otherwise normalize the documents before comparison. If the list of
+documents is empty, the test runner MUST assert that the collection is empty.
 
 Before clearing the entity map at the end of each test, the test runner
 MUST allow its entities to be accessed externally. The exact mechanism for
@@ -3367,7 +3350,7 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2022-04-22: Added ``collectionOptions`` field to ``initialData``, introduced a
+:2022-04-22: Added ``createOptions`` field to ``initialData``, introduced a
              new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
              added an ``isTimeoutError`` field to ``expectedError``.
 

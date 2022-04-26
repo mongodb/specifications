@@ -1,4 +1,4 @@
-description: initialCollectionData-collectionOptions
+description: initialCollectionData-createOptions
 
 schemaVersion: "1.8"
 
@@ -20,7 +20,7 @@ createEntities:
 initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
-    collectionOptions:
+    createOptions:
       capped: true
       size: &cappedSize 512
     documents:

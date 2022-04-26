@@ -13,7 +13,7 @@
         "client": "client0",
         "databaseName": "foo",
         "databaseOptions": {
-          "timeoutMS": {}
+          "timeoutMS": 4.5
         }
       }
     }

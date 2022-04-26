@@ -1,5 +1,6 @@
 description: matches-lte-operator
 
+# Note: $$lte is not technically in the 1.8 schema but was introduced at the same time.
 schemaVersion: "1.8"
 
 createEntities:

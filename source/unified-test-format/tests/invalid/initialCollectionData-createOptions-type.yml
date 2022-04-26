@@ -1,4 +1,4 @@
-description: "initialCollectionData-collectionOptions-type"
+description: "initialCollectionData-createOptions-type"
 
 schemaVersion: "1.8"
 
@@ -17,7 +17,7 @@ createEntities:
 initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
-    collectionOptions: 0
+    createOptions: 0
     documents: []
 
 tests:

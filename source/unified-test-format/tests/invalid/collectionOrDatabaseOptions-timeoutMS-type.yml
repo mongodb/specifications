@@ -10,7 +10,7 @@ createEntities:
       client: *client0
       databaseName: "foo"
       databaseOptions:
-        timeoutMS: {}
+        timeoutMS: 4.5  # Must be an integer, not a float.
 
 tests:
   - description: "foo"

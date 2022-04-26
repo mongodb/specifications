@@ -1,5 +1,5 @@
 {
-  "description": "initialCollectionData-collectionOptions",
+  "description": "initialCollectionData-createOptions",
   "schemaVersion": "1.8",
   "runOnRequirements": [
     {
@@ -31,7 +31,7 @@
     {
       "collectionName": "coll0",
       "databaseName": "database0",
-      "collectionOptions": {
+      "createOptions": {
         "capped": true,
         "size": 512
       },
