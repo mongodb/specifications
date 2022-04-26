@@ -179,7 +179,8 @@ Read
     /**
      * Gets an estimate of the count of documents in a collection using collection metadata.
      *
-     * See "Count API Details" section below.
+     * See "Count API Details" section below for implementation and documentation
+     * requirements.
      */
     estimatedDocumentCount(options: Optional<EstimatedDocumentCountOptions>): Int64;
 
@@ -412,9 +413,8 @@ Read
      * The comment can be any valid BSON type for server versions 4.4.14 and above.
      * For server versions between 4.4.0 and 4.4.14 string comment is supported.
      * Servers versions below 4.4.0 do not support comment for count command,
-     * which is used to implement estimatedDocumentCount for server versions
-     * versions less than 4.9.0. Therefore, providing a comment may result
-     * in a server-side error.
+     * which is used to implement estimatedDocumentCount. Therefore, providing a
+     * comment may result in a server-side error.
      */
     comment: Optional<any>;
   }
@@ -754,30 +754,39 @@ older sharded clusters.
 estimatedDocumentCount
 ~~~~~~~~~~~~~~~~~~~~~~
 
-On server versions greater than or equal to 4.9.0 (wire version 12 or higher),
-the estimatedDocumentCount function is implemented using the ``$collStats``
-aggregate pipeline stage with ``$group`` to gather results from multiple shards.
-As documented above, the only supported option is maxTimeMS::
+The estimatedDocumentCount function is implemented using the ``count`` command
+with no query filter, skip, limit, or other options that would alter the
+results. The only supported options are listed in the
+``EstimatedDocumentCountOptions`` type defined above.
 
-  pipeline = [
-    { '$collStats': { 'count': {} } },
-    { '$group': { '_id': 1, 'n': { '$sum': '$count' } } }
-  ]
+Drivers MUST document that, due to an oversight in versions 5.0.0-5.0.7 of
+MongoDB, the ``count`` command, which estimatedDocumentCount uses in its
+implementation, was not included in v1 of the Stable API, and so users of the
+Stable API with estimatedDocumentCount are recommended to upgrade their server
+version to 5.0.8+ or set ``apiStrict: false`` to avoid encountering errors.
 
-Similar to the count command, the estimated count of documents is returned
-in the ``n`` field. Implementations can assume that the document containing
-the single result of the aggregation pipeline is contained in the first batch of
-the server's reply to the aggregate command. It is not necessary to execute a getMore
-operation to ensure that the result is available.
+Drivers MUST document that the ``count`` server command is used to implement
+estimatedDocumentCount and that users can find more information via
+`Count: Behavior <https://www.mongodb.com/docs/manual/reference/command/count/#behavior>`_.
 
-In the event this aggregation is run against a non-existent namespace, a NamespaceNotFound(26)
-error will be returned during execution. Drivers MUST interpret the server error code 26 as
-a ``0`` count.
+The 5.0-compat versions of many drivers updated their estimatedDocumentCount
+implementations to use the ``$collStats`` aggregation stage instead of the
+``count`` command. This had the unintended consequence of breaking
+estimatedDocumentCount on views, and so the change was seen as a
+backwards-incompatible regression and reverted. The release notes for the driver
+versions that include the reversion from ``$collStats`` back to ``count`` MUST
+document the following:
 
-For server versions less than 4.9.0 (wire version 11 or under), the estimatedDocumentCount
-function is implemented using the ``count`` command with no query filter, skip,
-limit, or other options that would alter the results. Once again, the only supported
-option is maxTimeMS.
+- The 5.0-compat release accidentally broke estimatedDocumentCount on views by
+  changing its implementation to use ``aggregate`` and a ``$collStats`` stage
+  instead of the ``count`` command.
+- The new release is fixing estimatedDocumentCount on views by reverting back to
+  using ``count`` in its implementation.
+- Due to an oversight, the ``count`` command was omitted from the Stable API in
+  server versions 5.0.0 - 5.0.7 and 5.1.0 - 5.3.1, so users of the Stable API
+  with estimatedDocumentCount are recommended to upgrade their MongoDB clusters
+  to 5.0.8 or 5.3.2 (if on Atlas) or set ``apiStrict: false`` when constructing
+  their MongoClients.
 
 ~~~~~~~~~~~~~~
 countDocuments
@@ -2354,9 +2363,13 @@ Q: Where is ``singleBatch`` in FindOptions?
 Q: Why are client-side errors raised for some unsupported options?
   Server versions before 3.4 were inconsistent about reporting errors for unrecognized command options and may simply ignore them, which means a client-side error is the only way to inform users that such options are unsupported. For unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a response (even though a 3.6+ server is otherwise capable of reporting errors for unrecognized options). For unacknowledged writes using legacy opcodes (i.e. OP_INSERT, OP_UPDATE, and OP_DELETE), the message body has no field with which to express these options so a client-side error is the only mechanism to inform the user that such options are unsupported. The spec does not explicitly refer to unacknowledged writes using OP_QUERY primarily because a response document is always returned and drivers generally would not consider using OP_QUERY precisely for that reason.
 
+Q: Why does reverting to using ``count`` instead of ``aggregate`` with ``$collStats`` for estimatedDocumentCount not require a major version bump in the drivers, even though it might break users of the Stable API?
+  SemVer `allows <https://semver.org/#what-if-i-inadvertently-alter-the-public-api-in-a-way-that-is-not-compliant-with-the-version-number-change-ie-the-code-incorrectly-introduces-a-major-breaking-change-in-a-patch-release>`_ for a library to include a breaking change in a minor or patch version if the change is required to fix another accidental breaking change introduced in a prior version and is not expected to further break a large number of users. Given that the original switch to ``$collStats`` was a breaking change due to it not working on views, the number of users using estimatedDocumentCount with ``apiStrict: true`` is small, and the server is back-porting the addition of ``count`` to the Stable API, it was decided that this change was acceptable to make in minor version releases of the drivers per the aforementioned allowance in the SemVer spec.
+
 Changes
 =======
 
+* 2022-04-21: Revert to using the ``count`` command for ``estimatedDocumentCount``
 * 2022-02-18: Add let to BulkWriteOptions.
 * 2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.
 * 2022-02-01: Add comment attribute to all helpers.
