@@ -1,0 +1,32 @@
+{
+  "fields": [
+      {
+        "keyId": {
+            "$binary": {
+              # Key 1
+              "base64": "EjRWeBI0mHYSNBI0VniQEg==",
+              "subType": "04"
+            }
+        },
+        "path": "encryptedIndexed",
+        "bsonType": "string",
+        "queries": {
+            "queryType": "equality",
+            "contention": {
+              "$numberLong": "0"
+            }
+        }
+      },
+      {
+        "keyId": {
+            # Key 2
+            "$binary": {
+                "base64": "q83vqxI0mHYSNBI0VniQEg==",
+                "subType": "04"
+            }
+        },
+        "path": "encryptedUnindexed",
+        "bsonType": "string"
+      }
+  ]
+}
