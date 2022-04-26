@@ -766,9 +766,8 @@ Stable API with estimatedDocumentCount are recommended to upgrade their server
 version to 5.0.8+ or set ``apiStrict: false`` to avoid encountering errors.
 
 Drivers MUST document that the ``count`` server command is used to implement
-estimatedDocumentCount and that users can visit `this link
-<https://www.mongodb.com/docs/manual/reference/command/count/#behavior>`_ for
-more information about the command's behavior.
+estimatedDocumentCount and that users can find more information via
+`Count: Behavior <https://www.mongodb.com/docs/manual/reference/command/count/#behavior>`_.
 
 The 5.0-compat versions of many drivers updated their estimatedDocumentCount
 implementations to use the ``$collStats`` aggregation stage instead of the
