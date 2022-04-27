@@ -3383,7 +3383,7 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2022-04-27: Add ``runOnRequirements.csfle``.
+:2022-04-27: Add ``runOnRequirement.csfle``.
 
 :2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
 
