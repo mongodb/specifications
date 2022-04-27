@@ -12,7 +12,7 @@ Index Management
 :Type: Standards
 :Minimum Server Version: 2.4
 :Last Modified: 2022-02-10
-:Version: 1.9
+:Version: 1.10
 
 .. contents::
 
@@ -821,6 +821,15 @@ Common API Components
      * This option is only supported by servers >= 4.4.
      */
     hidden: Boolean;
+
+    /**
+     * Optionally specifies that this index is clustered.  This is not a valid option to provide to
+     * 'createIndexes', but can appear in the options returned for an index via 'listIndexes'.  To
+     * create a clustered index, create a new collection using the 'clusteredIndex' option.
+     *
+     * This options is only supported by servers >= 6.0.
+     */
+     clustered: Boolean;
   }
 
   interface ListIndexesOptions {
@@ -899,3 +908,5 @@ Changelog
   - Added comment field to helper methods.
 10 FEB 2022:
   - Specified that ``getMore`` command must explicitly send inherited comment.
+18 APR 2022:
+  - Added the ``clustered`` attribute to ``IndexOptions`` in order to support clustered collections.
