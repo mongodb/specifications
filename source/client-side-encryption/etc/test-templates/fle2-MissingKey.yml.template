@@ -1,0 +1,39 @@
+runOn:
+  - minServerVersion: "6.0.0"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+data: [
+  &doc0 {
+    "encryptedUnindexed": {
+      "$binary": {
+          "base64": "BqvN76sSNJh2EjQSNFZ4kBICTQaVZPWgXp41I7mPV1rLFTtw1tXzjcdSEyxpKKqujlko5TeizkB9hHQ009dVY1+fgIiDcefh+eQrm3CkhQ==",
+          "subType": "06"
+      }
+    }
+  }
+]
+encrypted_fields: {{ yamlfile("encryptedFields.yml") }}
+key_vault_data: []
+tests:
+  - description: "FLE2 encrypt fails with mising key"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+    operations:
+      - name: insertOne
+        arguments:
+          document: { _id: 1, encryptedIndexed: "123" }
+        result:
+          errorContains: "not all keys requested were satisfied"
+  - description: "FLE2 decrypt fails with mising key"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+    operations:
+      - name: find
+        arguments:
+          filter: { }
+        result:
+          errorContains: "not all keys requested were satisfied"

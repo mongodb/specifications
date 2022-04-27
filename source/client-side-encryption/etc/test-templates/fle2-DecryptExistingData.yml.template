@@ -1,0 +1,62 @@
+runOn:
+  - minServerVersion: "6.0.0"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+data: [
+  &doc0 {
+    "_id": 1,
+    "encryptedUnindexed": {
+      "$binary": {
+          "base64": "BqvN76sSNJh2EjQSNFZ4kBICTQaVZPWgXp41I7mPV1rLFTtw1tXzjcdSEyxpKKqujlko5TeizkB9hHQ009dVY1+fgIiDcefh+eQrm3CkhQ==",
+          "subType": "06"
+      }
+    }
+  }
+]
+key_vault_data: [ {{ yamlfile("keys/key2-document.json") }}]
+tests:
+  - description: "FLE2 decrypt of existing data succeeds"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+    operations:
+      - name: find
+        arguments:
+          filter: { _id: 1 }
+        result:
+          [{ "_id": 1, "encryptedUnindexed": "value123" }]
+    expectations:
+      - command_started_event:
+          command:
+            listCollections: 1
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: { "_id": 1 }
+          command_name: find
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: {
+                  "$or": [
+                      {
+                          "_id": {
+                              "$in": [
+                                  {{ yamlfile ("keys/key2-id.json") }}
+                              ]
+                          }
+                      },
+                      {
+                          "keyAltNames": {
+                              "$in": []
+                          }
+                      }
+                  ]
+              }
+            $db: keyvault
+            readConcern: { level: "majority" }
+          command_name: find

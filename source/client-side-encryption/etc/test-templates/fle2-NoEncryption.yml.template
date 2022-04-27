@@ -1,0 +1,40 @@
+runOn:
+  - minServerVersion: "6.0.0"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+data: []
+key_vault_data: []
+encrypted_fields: {
+  "fields": []
+}
+tests:
+  - description: "insert with no encryption succeeds"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc0 {
+            _id: 1,
+            foo: "bar"
+          }
+    expectations:
+      - command_started_event:
+          command:
+            listCollections: 1
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - *doc0
+            ordered: true
+          command_name: insert
+    outcome:
+      collection:
+        data:
+          - *doc0
