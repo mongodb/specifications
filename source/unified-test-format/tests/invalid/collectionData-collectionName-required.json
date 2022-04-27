@@ -1,5 +1,5 @@
 {
-  "description": "initialCollectionData-documents-items",
+  "description": "collectionData-collectionName-required",
   "schemaVersion": "1.0",
   "createEntities": [
     {
@@ -24,11 +24,8 @@
   ],
   "initialData": [
     {
-      "collectionName": "foo",
       "databaseName": "foo",
-      "documents": [
-        0
-      ]
+      "documents": []
     }
   ],
   "tests": [

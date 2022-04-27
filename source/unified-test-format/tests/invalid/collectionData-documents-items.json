@@ -1,6 +1,6 @@
 {
-  "description": "initialCollectionData-createOptions-type",
-  "schemaVersion": "1.9",
+  "description": "collectionData-documents-items",
+  "schemaVersion": "1.0",
   "createEntities": [
     {
       "client": {
@@ -26,8 +26,9 @@
     {
       "collectionName": "foo",
       "databaseName": "foo",
-      "createOptions": 0,
-      "documents": []
+      "documents": [
+        0
+      ]
     }
   ],
   "tests": [

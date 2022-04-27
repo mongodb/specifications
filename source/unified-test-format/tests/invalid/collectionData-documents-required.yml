@@ -1,4 +1,4 @@
-description: "initialCollectionData-collectionName-required"
+description: "collectionData-documents-required"
 
 schemaVersion: "1.0"
 
@@ -15,8 +15,8 @@ createEntities:
       collectionName: &collection0Name "foo"
 
 initialData:
-  - databaseName: *database0Name
-    documents: []
+  - collectionName: *collection0Name
+    databaseName: *database0Name
 
 tests:
   - description: "foo"

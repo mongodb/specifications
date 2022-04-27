@@ -1,4 +1,4 @@
-description: "initialCollectionData-databaseName-type"
+description: "collectionData-documents-type"
 
 schemaVersion: "1.0"
 
@@ -16,8 +16,8 @@ createEntities:
 
 initialData:
   - collectionName: *collection0Name
-    databaseName: 0
-    documents: []
+    databaseName: *database0Name
+    documents: 0
 
 tests:
   - description: "foo"

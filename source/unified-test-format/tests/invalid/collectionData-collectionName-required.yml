@@ -1,6 +1,6 @@
-description: "initialCollectionData-createOptions-type"
+description: "collectionData-collectionName-required"
 
-schemaVersion: "1.9"
+schemaVersion: "1.0"
 
 createEntities:
   - client:
@@ -15,9 +15,7 @@ createEntities:
       collectionName: &collection0Name "foo"
 
 initialData:
-  - collectionName: *collection0Name
-    databaseName: *database0Name
-    createOptions: 0
+  - databaseName: *database0Name
     documents: []
 
 tests:

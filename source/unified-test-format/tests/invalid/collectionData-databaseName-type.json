@@ -1,5 +1,5 @@
 {
-  "description": "outcomeCollectionData-collectionName-type",
+  "description": "collectionData-databaseName-type",
   "schemaVersion": "1.0",
   "createEntities": [
     {
@@ -22,17 +22,17 @@
       }
     }
   ],
+  "initialData": [
+    {
+      "collectionName": "foo",
+      "databaseName": 0,
+      "documents": []
+    }
+  ],
   "tests": [
     {
       "description": "foo",
-      "operations": [],
-      "outcome": [
-        {
-          "collectionName": 0,
-          "databaseName": "foo",
-          "documents": []
-        }
-      ]
+      "operations": []
     }
   ]
 }
