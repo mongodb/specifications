@@ -3,23 +3,6 @@ description: createEntities-operation
 # Note: createEntities is not technically in the 1.9 schema but was introduced at the same time.
 schemaVersion: "1.9"
 
-createEntities:
-  - client:
-      id: &client0 client0
-  - database:
-      id: &database0 database0
-      client: *client0
-      databaseName: &database0Name database0
-  - collection:
-      id: &collection0 collection0
-      database: *database0
-      collectionName: &collection0Name coll0
-
-initialData:
-  - collectionName: *collection0Name
-    databaseName: *database0Name
-    documents: []
-
 tests:
   - description: createEntities operation
     operations:
