@@ -63,7 +63,8 @@
           "type": "object",
           "minProperties": 1
         },
-        "auth": { "type": "boolean" }
+        "auth": { "type": "boolean" },
+        "csfle": { "type": "boolean" }
       }
     },
 
