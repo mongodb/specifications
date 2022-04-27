@@ -752,6 +752,7 @@ DataKeyOpts
    class DataKeyOpts {
       masterKey: Optional<Document>
       keyAltNames: Optional<Array[String]> // An alternative to \_id to reference a key.
+      keyMaterial: Optional<BinData>
    }
 
 masterKey
@@ -827,6 +828,13 @@ example shows creating and referring to a data key by alternate name:
    # reference the key with the alternate name
    opts = EncryptOpts(keyAltName="name1", algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Random")
    clientencryption.encrypt("457-55-5462", opts)
+
+keyMaterial
+~~~~~~~~~~~
+An optional BinData of 96 bytes to use as custom key material for the data key
+being created. If ``keyMaterial`` is given, the custom key material is used for
+encrypting and decrypting data. Otherwise, the key material for the new data key
+is generated from a cryptographically secure random device.
 
 RewrapManyDataKeyOpts
 ---------------------
