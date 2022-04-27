@@ -1,11 +1,6 @@
 {
   "description": "entity-clientEncryption-clientEncryptionOpts-required",
   "schemaVersion": "1.8",
-  "runOnRequirements": [
-    {
-      "csfle": true
-    }
-  ],
   "createEntities": [
     {
       "clientEncryption": {

@@ -1,11 +1,6 @@
 {
   "description": "clientEncryptionOpts-kmsProviders-kmip-type",
   "schemaVersion": "1.8",
-  "runOnRequirements": [
-    {
-      "csfle": true
-    }
-  ],
   "createEntities": [
     {
       "client": {

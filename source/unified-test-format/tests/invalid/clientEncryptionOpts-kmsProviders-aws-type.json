@@ -1,11 +1,6 @@
 {
   "description": "clientEncryptionOpts-kmsProviders-aws-type",
   "schemaVersion": "1.8",
-  "runOnRequirements": [
-    {
-      "csfle": true
-    }
-  ],
   "createEntities": [
     {
       "client": {

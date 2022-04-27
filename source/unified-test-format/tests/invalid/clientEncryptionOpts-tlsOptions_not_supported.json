@@ -1,11 +1,6 @@
 {
   "description": "clientEncryptionOpts-tlsOptions_not_supported",
   "schemaVersion": "1.8",
-  "runOnRequirements": [
-    {
-      "csfle": true
-    }
-  ],
   "createEntities": [
     {
       "client": {
