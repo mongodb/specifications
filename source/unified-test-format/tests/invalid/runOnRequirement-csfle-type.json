@@ -1,0 +1,15 @@
+{
+  "description": "runOnRequirement-topologies-type",
+  "schemaVersion": "1.0",
+  "runOnRequirements": [
+    {
+      "csfle": "foo"
+    }
+  ],
+  "tests": [
+    {
+      "description": "foo",
+      "operations": []
+    }
+  ]
+}

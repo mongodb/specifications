@@ -1,6 +1,11 @@
 {
   "description": "entity-clientEncryption-id-required",
   "schemaVersion": "1.8",
+  "runOnRequirements": [
+    {
+      "csfle": true
+    }
+  ],
   "createEntities": [
     {
       "client": {

@@ -1,6 +1,11 @@
 {
   "description": "clientEncryptionOpts-keyVaultNamespace-type",
   "schemaVersion": "1.8",
+  "runOnRequirements": [
+    {
+      "csfle": true
+    }
+  ],
   "createEntities": [
     {
       "client": {
