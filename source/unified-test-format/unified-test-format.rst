@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.8
+:Spec Version: 1.9
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
@@ -341,13 +341,8 @@ The top-level fields of a test file are as follows:
 
 .. _initialData:
 
-- ``initialData``: Optional array of one or more `collectionData`_ objects. Data
-  that will exist in collections before each test case is executed.
-
-  Before each test and for each `collectionData`_, the test runner MUST drop the
-  collection and insert the specified documents (if any) using a "majority"
-  write concern. If no documents are specified, the test runner MUST create the
-  collection with a "majority" write concern.
+- ``initialData``: Optional array of one or more `collectionData`_ objects.
+  Data that will exist in collections before each test case is executed.
 
 .. _tests:
 
@@ -833,6 +828,14 @@ The structure of this object is as follows:
 
 - ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
+- ``createOptions``: Optional object. When used in `initialData`_, these options
+  MUST be passed to the
+  `create <https://docs.mongodb.com/manual/reference/command/create/>`_ command
+  when creating the collection. Test files MUST NOT specify ``writeConcern``
+  in this options document as that could conflict with the use of the
+  ``majority`` write concern when the collection is created during test
+  execution.
+
 - ``documents``: Required array of objects. List of documents corresponding to
   the contents of the collection. This list may be empty.
 
@@ -996,6 +999,11 @@ The structure of this object is as follows:
 
   Client errors include, but are not limited to: parameter validation errors
   before a command is sent to the server; network errors.
+
+- ``isTimeoutError``: Optional boolean. If true, the test runner MUST assert
+  that the error represents a timeout due to use of the ``timeoutMS`` option.
+  If false, the test runner MUST assert that the error does not represent a
+  timeout.
 
 - ``errorContains``: Optional string. A substring of the expected error message
   (e.g. "errmsg" field in a server error document). The test runner MUST assert
@@ -1848,6 +1856,14 @@ mechanisms for iteration may differ between synchronous and asynchronous
 drivers. To account for this, this section explicitly defines the supported
 operations for the ``ChangeStream`` and ``FindCursor`` entity types.
 
+Test runners MUST ensure that the iteration operations defined in this
+section will not inadvertently skip the first document for a cursor. Albeit
+rare, this could happen if an operation were to blindly invoke ``next`` (or
+equivalent) on a cursor in a driver where newly created cursors are already
+positioned at their first element and the cursor had a non-empty
+``firstBatch``. Alternatively, some drivers may use a different iterator
+method for advancing a cursor to its first position (e.g. ``rewind`` in PHP).
+
 iterateUntilDocumentOrError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1863,14 +1879,19 @@ to block indefinitely. This should not be a concern for
 ``iterateUntilDocumentOrError`` as iteration only continues until either a
 document or error is encountered.
 
-Test runners MUST ensure that this operation will not inadvertently skip the
-first document in a cursor. Albeit rare, this could happen if
-``iterateUntilDocumentOrError`` were to blindly invoke ``next`` (or
-equivalent) on a cursor in a driver where newly created cursors are already
-positioned at their first element and the cursor had a non-empty
-``firstBatch`` (i.e. ``resumeAfter`` or ``startAfter`` used). Alternatively,
-some drivers may use a different iterator method for advancing a cursor to
-its first position (e.g. ``rewind`` in PHP).
+iterateOnce
+~~~~~~~~~~~
+
+Performs a single iteration of the cursor. If the cursor's current batch is
+empty, one ``getMore`` MUST be attempted to get more results. This operation
+takes no arguments. If `expectResult <operation_expectResult_>`_ is
+specified, it SHOULD be a single document.
+
+Due to the non-deterministic nature of some cursor types (e.g. change streams
+on sharded clusters), test files SHOULD only use this operation to perform
+command monitoring assertions on the ``getMore`` command. Tests that perform
+assertions about the result of iteration should use
+`iterateUntilDocumentOrError`_ instead.
 
 close
 ~~~~~
@@ -2248,6 +2269,29 @@ An example of this operation follows::
 Use a ``listIndexes`` command to check whether the index exists. Note that it is
 currently not possible to run ``listIndexes`` from within a transaction.
 
+createEntities
+~~~~~~~~~~~~~~
+
+The ``createEntities`` operation instructs the test runner to create the
+provided entities and store them in the current test's `Entity Map`_.
+
+- ``entities``: Required array of one or more `entity`_ objects. As with the
+  file-level `createEntities`_ directive, test files SHOULD declare entities in
+  dependency order, such that all referenced entities are defined before any of
+  their dependent entities.
+
+An example of this operation follows::
+
+    - name: createEntities
+      object: testRunner
+      arguments:
+        entities:
+          - client:
+              id: &client0 client0
+          - database:
+              id: &database0 database0
+              client: *client0
+              databaseName: &database0Name test
 
 loop
 ~~~~
@@ -2777,6 +2821,21 @@ An example of this operator follows::
       lsid: { $$sessionLsid: *session0 }
 
 
+$$lte
+`````
+
+Syntax::
+
+    { $$lte: 5 }
+
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_). The test runner MUST assert that
+the actual value is less than or equal to the specified value. Test runners
+MUST also apply the rules specified in `Flexible Numeric Comparisons`_ for
+this operator. For example, an expected value of ``1`` would match an actual
+value of ``1.0`` and ``0.0`` but would not match ``1.1``.
+
+
 Test Runner Implementation
 --------------------------
 
@@ -2869,10 +2928,13 @@ runner MUST skip the test unless one or more `runOnRequirement`_ objects are
 satisfied.
 
 If `initialData`_ is specified, for each `collectionData`_ therein the test
-runner MUST drop the collection and insert the specified documents (if any)
-using a "majority" write concern. If no documents are specified, the test runner
-MUST create the collection with a "majority" write concern. The test runner
-MUST use an internal MongoClient for these operations. If the topology is
+runner MUST set up the collection. All setup operations MUST use the
+internal MongoClient and a "majority" write concern. The test runner MUST
+first drop the collection. If a ``createOptions`` document is present,
+the test runner MUST execute a ``create`` command to create the collection
+with the specified options. The test runner MUST then insert the specified
+documents (if any). If no documents are present and ``createOptions`` is
+not set, the test runner MUST create the collection. If the topology is
 sharded, the test runner SHOULD use a single mongos for handling `initialData`_
 to avoid possible runtime errors.
 
@@ -2943,9 +3005,9 @@ described in `expectedEvent`_.
 
 If `test.outcome <test_outcome_>`_ is specified, for each `collectionData`_
 therein the test runner MUST assert that the collection contains exactly the
-expected data. The test runner MUST query each collection using an internal
+expected data. The test runner MUST query each collection using the internal
 MongoClient, an ascending sort order on the ``_id`` field (i.e. ``{ _id: 1 }``),
-a "primary" read preference, a "local" read concern. When comparing collection
+a "primary" read preference, and a "local" read concern. When comparing collection
 data, the rules in `Evaluating Matches`_ do not apply and the documents MUST
 match exactly; however, test runners MUST permit variations in document key
 order or otherwise normalize the documents before comparison. If the list of
@@ -2965,7 +3027,8 @@ the test runner MUST end the session (e.g. call `endSession
 <../sessions/driver-sessions.rst#endsession>`_). For each ChangeStream and
 FindCursor in the entity map, the test runner MUST close the cursor.
 
-If the test started a transaction, the test runner MUST terminate any open
+If the test started a transaction (i.e. executed a ``startTransaction`` or
+``withTransaction`` operation), the test runner MUST terminate any open
 transactions (see: `Terminating Open Transactions`_).
 
 Proceed to the subsequent test.
@@ -3382,6 +3445,10 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-04-27: Added ``createOptions`` field to ``initialData``, introduced a
+             new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
+             added an ``isTimeoutError`` field to ``expectedError``.
 
 :2022-04-27: Add ``runOnRequirement.csfle``.
 
