@@ -3,6 +3,9 @@ description: clientEncryptionOpts-no_kms
 
 schemaVersion: "1.8"
 
+runOnRequirements:
+  - csfle: true
+
 createEntities:
   - client:
       id: &client0 client0

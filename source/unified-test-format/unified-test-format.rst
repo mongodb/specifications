@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-04-26
+:Last Modified: 2022-04-27
 
 .. contents::
 
@@ -423,6 +423,10 @@ The structure of this object is as follows:
 - ``auth``: Optional boolean. If true, the tests MUST only run if authentication
   is enabled. If false, tests MUST only run if authentication is not enabled.
   If this field is omitted, there is no authentication requirement.
+
+- ``csfle``: Optional boolean. If true, the tests MUST only run if the driver
+  supports Client-Side Field Level Encryption. If false, tests MUST only run if
+  CSFLE is not enabled. If this field is omitted, there is no CSFLE requirement.
 
 Test runners MAY evaluate these conditions in any order. For example, it may be
 more efficient to evaluate ``serverless`` or ``auth`` before communicating with
@@ -3378,6 +3382,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-04-27: Add ``runOnRequirement.csfle``.
 
 :2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
 
