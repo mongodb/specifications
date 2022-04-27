@@ -18,13 +18,13 @@
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "collection0"
+        "collectionName": "coll0"
       }
     }
   ],
   "initialData": [
     {
-      "collectionName": "collection0",
+      "collectionName": "coll0",
       "databaseName": "database0",
       "documents": []
     }
@@ -57,7 +57,7 @@
                 "collection": {
                   "id": "collection1",
                   "database": "database1",
-                  "collectionName": "collection1"
+                  "collectionName": "coll1"
                 }
               }
             ]
@@ -80,7 +80,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "delete": "collection1",
+                  "delete": "coll1",
                   "deletes": [
                     {
                       "q": {

@@ -5,19 +5,19 @@ schemaVersion: "1.9"
 
 createEntities:
   - client:
-      id: client0
+      id: &client0 client0
   - database:
-      id: database0
-      client: client0
-      databaseName: database0
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name database0
   - collection:
-      id: collection0
-      database: database0
-      collectionName: collection0
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
 
 initialData:
-  - collectionName: collection0
-    databaseName: database0
+  - collectionName: *collection0Name
+    databaseName: *database0Name
     documents: []
 
 tests:
@@ -28,28 +28,28 @@ tests:
         arguments:
           entities:
             - client:
-                id: client1
+                id: &client1 client1
                 observeEvents: [ commandStartedEvent ]
             - database:
-                id: database1
-                client: client1
-                databaseName: database1
+                id: &database1 database1
+                client: *client1
+                databaseName: &database1Name database1
             - collection:
-                id: collection1
-                database: database1
-                collectionName: collection1
+                id: &collection1 collection1
+                database: *database1
+                collectionName: &collection1Name coll1
       - name: deleteOne
-        object: collection1
+        object: *collection1
         arguments:
           filter: { _id : 1 }
     expectEvents:
-      - client: client1
+      - client: *client1
         events:
           - commandStartedEvent:
               command:
-                delete: collection1
+                delete: *collection1Name
                 deletes:
                   - q: { _id: 1 }
                     limit: 1
               commandName: delete
-              databaseName: database1
+              databaseName: *database1Name
