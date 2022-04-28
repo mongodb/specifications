@@ -850,6 +850,11 @@ One of the strings:
 - "IndexedEquality"
 - "Unindexed"
 
+The result of explicit encryption with the "IndexedEquality" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
+
+   To insert or query with an "IndexedEquality" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
+   ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
+
 contentionFactor
 ^^^^^^^^^^^^^^^^
 contentionFactor only applies when algorithm is "IndexedEquality".
