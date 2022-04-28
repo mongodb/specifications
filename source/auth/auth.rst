@@ -1164,7 +1164,7 @@ To test SASLprep behavior, create two users:
 #. username: "\\u2168" (ROMAN NUMERAL NINE), password "\\u2163" (ROMAN NUMERAL FOUR)
 
 To create the users, use the exact bytes for username and password without
-SASLprep or other normalization and specify SCRAM-SHA-256 credentials:
+SASLprep or other normalization and specify SCRAM-SHA-256 credentials::
 
     db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
     db.runCommand({createUser: '\\u2168', pwd: '\\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
