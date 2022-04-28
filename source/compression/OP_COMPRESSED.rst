@@ -444,7 +444,7 @@ Q & A
 =====
 * Statistics?
    * See `serverStatus
-     <https://docs.mongodb.com/manual/reference/command/serverStatus/>`_ in the
+     <https://www.mongodb.com/docs/manual/reference/command/serverStatus/>`_ in the
      server
 
 * How to try this/enable it?

@@ -231,7 +231,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *       ]
      *     }
      *
-     * Modifications to array elements are expressed via the dot notation (https://docs.mongodb.com/manual/core/document/#document-dot-notation).
+     * Modifications to array elements are expressed via the dot notation (https://www.mongodb.com/docs/manual/core/document/#document-dot-notation).
      * Example: an `update` which sets the element with index 0 in the array field named arrayField to 7 is reported as
      *   "updatedFields": {"arrayField.0": 7}
      */
@@ -342,7 +342,7 @@ Driver API
      * Excludes system collections.
      * @returns a change stream on all collections in a database
      * @since 4.0
-     * @see https://docs.mongodb.com/manual/reference/system-collections/
+     * @see https://www.mongodb.com/docs/manual/reference/system-collections/
      */
     watch(pipeline: Document[], options: Optional<ChangeStreamOptions>): ChangeStream;
   }
@@ -354,7 +354,7 @@ Driver API
      * Excludes the "config", "local", and "admin" databases.
      * @since 4.0
      * @returns a change stream on all collections in all databases in a cluster
-     * @see https://docs.mongodb.com/manual/reference/system-collections/
+     * @see https://www.mongodb.com/docs/manual/reference/system-collections/
      */
     watch(pipeline: Document[], options: Optional<ChangeStreamOptions>): ChangeStream;
   }
@@ -432,7 +432,7 @@ Driver API
      * This option is sent only if the caller explicitly provides a value. The
      * default is to not send a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/aggregate
+     * @see https://www.mongodb.com/docs/manual/reference/command/aggregate
      * @note this is an aggregation command option
      */
     batchSize: Optional<Int32>;
@@ -443,7 +443,7 @@ Driver API
      * This option is sent only if the caller explicitly provides a value. The
      * default is to not send a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/aggregate
+     * @see https://www.mongodb.com/docs/manual/reference/command/aggregate
      * @note this is an aggregation command option
      */
     collation: Optional<Document>;
@@ -454,7 +454,7 @@ Driver API
      * an operation time that can be used here.
      *
      * @since 4.0
-     * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
+     * @see https://www.mongodb.com/docs/manual/reference/method/db.runCommand/
      * @note this is an option of the `$changeStream` pipeline stage.
      */
     startAtOperationTime: Optional<Timestamp>;
@@ -468,7 +468,7 @@ Driver API
      * The server will report an error if `startAfter` and `resumeAfter` are both specified.
      *
      * @since 4.1.1
-     * @see https://docs.mongodb.com/manual/changeStreams/#change-stream-start-after
+     * @see https://www.mongodb.com/docs/manual/changeStreams/#change-stream-start-after
      * @note this is an option of the `$changeStream` pipeline stage.
      */
      startAfter: Optional<Document>;
@@ -486,7 +486,7 @@ Driver API
      * versions 4.4 and above. For server versions below 4.4 drivers MUST NOT
      * attach a comment to getMore commands.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/aggregate
+     * @see https://www.mongodb.com/docs/manual/reference/command/aggregate
      * @note this is an aggregation command option
      */
     comment: Optional<any>

@@ -2616,7 +2616,7 @@ expected document. If true, the test runner MUST assert that the key exists in
 the actual document, irrespective of its value (e.g. a key with a ``null`` value
 would match). If false, the test runner MUST assert that the key does not exist
 in the actual document. This operator is modeled after the
-`$exists <https://docs.mongodb.com/manual/reference/operator/query/exists/>`__
+`$exists <https://www.mongodb.com/docs/manual/reference/operator/query/exists/>`__
 query operator.
 
 An example of this operator checking for a field's presence follows::
@@ -2647,7 +2647,7 @@ This operator can be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_). The test runner MUST assert that the
 actual value exists and matches one of the expected types, which correspond to
 the documented string types for the
-`$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
+`$type <https://www.mongodb.com/docs/manual/reference/operator/query/type/>`__
 query operator.
 
 An example of this operator follows::
@@ -2659,7 +2659,7 @@ An example of this operator follows::
 When the actual value is an array, test runners MUST NOT examine types of the
 array's elements. Only the type of actual field SHALL be checked. This is
 admittedly inconsistent with the behavior of the
-`$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
+`$type <https://www.mongodb.com/docs/manual/reference/operator/query/type/>`__
 query operator, but there is presently no need for this behavior in tests.
 
 
@@ -3152,10 +3152,10 @@ The ``data`` option is an object that may be used to specify any options that
 control the particular fail point's behavior.
 
 In order to use ``configureFailPoint``, the undocumented ``enableTestCommands``
-`server parameter <https://docs.mongodb.com/manual/reference/parameters/>`_ must
+`server parameter <https://www.mongodb.com/docs/manual/reference/parameters/>`_ must
 be enabled by either the configuration file or command line option (e.g.
 ``--setParameter enableTestCommands=1``). It cannot be enabled at runtime via
-the `setParameter <https://docs.mongodb.com/manual/reference/command/setParameter/>`_
+the `setParameter <https://www.mongodb.com/docs/manual/reference/command/setParameter/>`_
 command). This parameter should already be enabled for most configuration files
 in `mongo-orchestration <https://github.com/10gen/mongo-orchestration>`_.
 
@@ -3227,7 +3227,7 @@ Determining if a Sharded Cluster Uses Replica Sets
 --------------------------------------------------
 
 When connected to a mongos server, the test runner can query the
-`config.shards <https://docs.mongodb.com/manual/reference/config-database/#config.shards>`__
+`config.shards <https://www.mongodb.com/docs/manual/reference/config-database/#config.shards>`__
 collection. Each shard in the cluster is represented by a document in this
 collection. If the shard is backed by a single server, the ``host`` field will
 contain a single host. If the shard is backed by a replica set, the ``host``

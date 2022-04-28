@@ -390,7 +390,7 @@ The implementation of withTransaction is based on the original examples for
 callback may be executed any number of times. Drivers are free to encourage
 their users to design idempotent callbacks.
 
-.. _Retry Transactions and Commit Operation: https://docs.mongodb.com/manual/core/transactions/#retry-transaction-and-commit-operation
+.. _Retry Transactions and Commit Operation: https://www.mongodb.com/docs/manual/core/transactions/#retry-transaction-and-commit-operation
 
 The commit is retried after a write concern timeout (i.e. wtimeout) error
 -------------------------------------------------------------------------
@@ -458,7 +458,7 @@ seconds). Applications that desire longer retry periods may call
 ``withTransaction`` additional times as needed. Applications that desire shorter
 retry periods should not use this method.
 
-.. _transactionLifetimeLimitSeconds: https://docs.mongodb.com/manual/reference/parameters/#param.transactionLifetimeLimitSeconds
+.. _transactionLifetimeLimitSeconds: https://www.mongodb.com/docs/manual/reference/parameters/#param.transactionLifetimeLimitSeconds
 
 Backwards Compatibility
 =======================
