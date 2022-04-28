@@ -1204,7 +1204,7 @@ Drivers may need to remove support for association of more than one credential w
 	* Deprecation and removal of MongoClient constructors that take as an argument more than a single credential
 	* Deprecation and removal of methods that allow lazy authentication (i.e post-MongoClient construction)
 
-Drivers need to support both the shorter and longer SCRAM-SHA-1 and SCRAM-SHA-256 conversations over MongoDB's SASL implementation. Earlier versions of the server required an extra round trip due to an implementation decision. This was accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip italicized):
+Drivers need to support both the shorter and longer SCRAM-SHA-1 and SCRAM-SHA-256 conversations over MongoDB's SASL implementation. Earlier versions of the server required an extra round trip due to an implementation decision. This was accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip emphasized):
 
 | C: :javascript:`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: {skipEmptyExchange: true}}`
 | S: :javascript:`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`
