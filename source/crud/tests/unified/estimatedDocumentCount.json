@@ -34,6 +34,13 @@
         "database": "database0",
         "collectionName": "coll1"
       }
+    },
+    {
+      "collection": {
+        "id": "collection0View",
+        "database": "database0",
+        "collectionName": "coll0view"
+      }
     }
   ],
   "initialData": [
@@ -54,6 +61,23 @@
           "x": 33
         }
       ]
+    },
+    {
+      "collectionName": "coll0view",
+      "databaseName": "edc-tests",
+      "documents": [],
+      "createOptions": {
+        "viewOn": "coll0",
+        "pipeline": [
+          {
+            "$match": {
+              "_id": {
+                "$gt": 1
+              }
+            }
+          }
+        ]
+      }
     }
   ],
   "tests": [
@@ -254,6 +278,32 @@
               "commandStartedEvent": {
                 "command": {
                   "count": "coll0"
+                },
+                "commandName": "count",
+                "databaseName": "edc-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "estimatedDocumentCount works correctly on views",
+      "operations": [
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection0View",
+          "expectResult": 2
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "count": "coll0view"
                 },
                 "commandName": "count",
                 "databaseName": "edc-tests"
