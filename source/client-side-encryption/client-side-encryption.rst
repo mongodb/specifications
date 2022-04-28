@@ -819,10 +819,16 @@ EncryptOpts
 
 .. code:: typescript
 
+   enum QueryType {
+      QueryTypeEquality
+   }
+
    class EncryptOpts {
       keyId : Optional<Binary>
       keyAltName: Optional<String>
-      algorithm: String
+      algorithm: String,
+      contentionFactor: Optional<Int64>,
+      queryType: Optional<QueryType>
    }
 
 Explicit encryption requires a key and algorithm. Keys are either
@@ -838,8 +844,22 @@ Identifies a key vault collection document by 'keyAltName'.
 
 algorithm
 ^^^^^^^^^
-The string "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic" or
-"AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+One of the strings:
+- "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+- "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+- "IndexedEquality"
+- "Unindexed"
+
+contentionFactor
+^^^^^^^^^^^^^^^^
+contentionFactor only applies when algorithm is "IndexedEquality".
+It is an error to set contentionFactor when algorithm is not "IndexedEquality".
+Setting a higher contentionFactor adds randomization. It is useful when values being encrypted have low cardinality.
+
+queryType
+^^^^^^^^^
+queryType only applies when algorithm is "IndexedEquality".
+It is an error to set queryType when algorithm is not "IndexedEquality".
 
 User facing API: When Auto Encryption Fails
 ===========================================
