@@ -1608,6 +1608,13 @@ Test Plan
 =========
 See the `README.rst <../client-side-encryption/tests/README.rst>`_ in the test directory.
 
+
+.. toctree::
+   :maxdepth: 2
+
+   ./tests/README
+
+
 Rationale
 =========
 
