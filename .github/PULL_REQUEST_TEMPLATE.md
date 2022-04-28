@@ -1,6 +1,4 @@
-<!--
-Thanks for contributing!
--->
+<!-- Thanks for contributing! -->
 
 Please complete the following before merging:
 - [ ] Bump spec version and last modified date.
