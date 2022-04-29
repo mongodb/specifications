@@ -859,7 +859,7 @@ contentionFactor
 ^^^^^^^^^^^^^^^^
 contentionFactor only applies when algorithm is "IndexedEquality".
 It is an error to set contentionFactor when algorithm is not "IndexedEquality".
-Setting a higher contentionFactor adds randomization. It is useful when values being encrypted have low cardinality.
+If contentionFactor is not supplied, it defaults to a value of 0.
 
 queryType
 ^^^^^^^^^
