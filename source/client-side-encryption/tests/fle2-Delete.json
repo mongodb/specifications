@@ -1,7 +1,11 @@
 {
   "runOn": [
     {
-      "minServerVersion": "6.0.0"
+      "minServerVersion": "6.0.0",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ]
     }
   ],
   "database_name": "default",
