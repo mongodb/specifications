@@ -12,7 +12,7 @@ data: [
     }
   }
 ]
-encrypted_fields: {{ yamlfile("encryptedFields.yml") }}
+encrypted_fields: {{ yamlfile("encryptedFields.json") }}
 key_vault_data: []
 tests:
   - description: "FLE2 encrypt fails with mising key"

@@ -15,7 +15,7 @@ json_schema: {
     },
     "bsonType": "object"
 }
-encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.yml") }}
+encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.json") }}
 key_vault_data: [ {{ yamlfile ("keys/key1-document.json") }} ]
 tests:
   - description: "encryptedFields is preferred over jsonSchema"

@@ -3,7 +3,7 @@ runOn:
 database_name: &database_name "default"
 collection_name: &collection_name "default"
 data: []
-encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.yml") }}
+encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.json") }}
 key_vault_data: [ {{ yamlfile ("keys/key1-document.json") }} ]
 tests:
   - description: "findOneAndUpdate can query an FLE2 indexed field"
