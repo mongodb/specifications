@@ -1164,7 +1164,7 @@ To test SASLprep behavior, create two users:
 #. username: "\\u2168" (ROMAN NUMERAL NINE), password "\\u2163" (ROMAN NUMERAL FOUR)
 
 To create the users, use the exact bytes for username and password without
-SASLprep or other normalization and specify SCRAM-SHA-256 credentials:
+SASLprep or other normalization and specify SCRAM-SHA-256 credentials::
 
     db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
     db.runCommand({createUser: '\\u2168', pwd: '\\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
@@ -1201,17 +1201,17 @@ Backwards Compatibility
 
 Drivers may need to remove support for association of more than one credential with a MongoClient, including
 
-	* Deprecation and removal of MongoClient constructors that take as an argument more than a single credential
-	* Deprecation and removal of methods that allow lazy authentication (i.e post-MongoClient construction)
+* Deprecation and removal of MongoClient constructors that take as an argument more than a single credential
+* Deprecation and removal of methods that allow lazy authentication (i.e post-MongoClient construction)
 
-Drivers need to support both the shorter and longer SCRAM-SHA-1 and SCRAM-SHA-256 conversations over MongoDB's SASL implementation. Earlier versions of the server required an extra round trip due to an implementation decision. This was accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip italicized):
+Drivers need to support both the shorter and longer SCRAM-SHA-1 and SCRAM-SHA-256 conversations over MongoDB's SASL implementation. Earlier versions of the server required an extra round trip due to an implementation decision. This was accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip emphasized):
 
 | C: :javascript:`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: {skipEmptyExchange: true}}`
 | S: :javascript:`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`
 | C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`
 | S: :javascript:`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: false, ok: 1}`
-| *C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "")}`*
-| *S: :javascript:`{conversationId: 1, payload: BinData(0,""), done: true, ok: 1}`*
+| **C**: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "")}`
+| **S**: :javascript:`{conversationId: 1, payload: BinData(0,""), done: true, ok: 1}`
 
 The extra round trip will be removed in server version 4.4 when ``options: { skipEmptyExchange: true }`` is specified during ``saslStart``.
 
