@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-04-11
-:Version: 1.4.1
+:Last Modified: 2022-04-29
+:Version: 1.5.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2111,6 +2111,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
    22-02-24, Rename Versioned API to Stable API
    22-01-19, Require that timeouts be applied per the CSOT spec
