@@ -1566,12 +1566,14 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
    class EncryptOpts {
       keyId : <key1ID>
       algorithm: "IndexedEquality",
-      contentionFactor: 1
+      contentionFactor: 10
    }
 
 Store the result in ``insertPayload``.
 
 Use ``encryptedClient`` to insert the document ``{ "encryptedIndexed": <insertPayload> }`` into ``db.explicit_encryption``.
+
+Repeat the above steps 10 times to insert 10 total documents. The ``insertPayload`` must be regenerated each iteration.
 
 Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
 
@@ -1587,7 +1589,7 @@ Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload> }``.
 
-Assert zero documents are returned.
+Assert less than 10 documents are returned. 0 documents may be returned. Assert each returned document contains the field ``{ "encryptedIndexed": "encrypted indexed value" }``.
 
 Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
 
@@ -1597,14 +1599,14 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
       keyId : <key1ID>
       algorithm: "IndexedEquality",
       queryType: QueryTypeEquality,
-      contentionFactor: 1
+      contentionFactor: 10
    }
 
 Store the result in ``findPayload2``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload2> }``.
 
-Assert one document is returned containing the field ``{ "encryptedIndexed": "encrypted indexed value" }``.
+Assert 10 documents are returned. Assert each returned document contains the field ``{ "encryptedIndexed": "encrypted indexed value" }``.
 
 Case 3: can insert encrypted unindexed
 ``````````````````````````````````````
