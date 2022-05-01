@@ -1533,7 +1533,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "IndexedEquality",
+      algorithm: "Indexed",
    }
 
 Store the result in ``insertPayload``.
@@ -1546,7 +1546,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "IndexedEquality",
+      algorithm: "Indexed",
       queryType: QueryTypeEquality
    }
 
@@ -1565,7 +1565,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "IndexedEquality",
+      algorithm: "Indexed",
       contentionFactor: 10
    }
 
@@ -1581,7 +1581,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "IndexedEquality",
+      algorithm: "Indexed",
       queryType: QueryTypeEquality
    }
 
@@ -1597,7 +1597,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "IndexedEquality",
+      algorithm: "Indexed",
       queryType: QueryTypeEquality,
       contentionFactor: 10
    }
@@ -1637,7 +1637,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "IndexedEquality",
+      algorithm: "Indexed",
    }
 
 Store the result in ``payload``.
@@ -1653,7 +1653,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "UnindexedEquality",
+      algorithm: "UnIndexed",
    }
 
 Store the result in ``payload``.
