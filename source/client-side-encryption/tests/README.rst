@@ -1653,7 +1653,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "UnIndexed",
+      algorithm: "Unindexed",
    }
 
 Store the result in ``payload``.
