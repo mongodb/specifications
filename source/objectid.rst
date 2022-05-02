@@ -58,7 +58,7 @@ portions (fields):
     [----|----|----|----|----|----|----|----|----|----|----|----]
     0                   4                   8                   12
 
-.. _ObjectID: https://docs.mongodb.com/manual/reference/method/ObjectId/
+.. _ObjectID: https://www.mongodb.com/docs/manual/reference/method/ObjectId/
 
 Timestamp Field
 ---------------

@@ -88,7 +88,7 @@ find
 
 The `find`_ command replaces the query functionality of the OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire protocol message, the **find** command cannot be used to execute other commands.
 
-.. _find: https://docs.mongodb.com/manual/reference/command/find/
+.. _find: https://www.mongodb.com/docs/manual/reference/command/find/
 
 For a successful command, the document returned from the server has the following format:
 
@@ -300,7 +300,7 @@ The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=tru
 when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
 **find** and **killCursors** commands.
 
-.. _getMore: https://docs.mongodb.com/manual/reference/command/getMore/
+.. _getMore: https://www.mongodb.com/docs/manual/reference/command/getMore/
 
 The **batchSize** option of **getMore** command MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
@@ -324,7 +324,7 @@ killCursors
 
 The `killCursors`_ command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
 
-.. _killCursors: https://docs.mongodb.com/manual/reference/command/killCursors/
+.. _killCursors: https://www.mongodb.com/docs/manual/reference/command/killCursors/
 
 The command response will be as follows:
 
@@ -436,7 +436,7 @@ The **find** and **getMore** commands will report errors using the standard mech
 
 Like other commands, the find and getMore commands will not use the OP_REPLY response flags. `OP_REPLY Documentation`_
 
-.. _OP_REPLY Documentation: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply
+.. _OP_REPLY Documentation: https://www.mongodb.com/docs/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply
 
 FAQ
 ===
@@ -451,7 +451,7 @@ Explain command
 
 There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found in the `Explain command reference`_.
 
-.. _Explain command reference: http://docs.mongodb.org/manual/reference/command/explain/
+.. _Explain command reference: https://www.mongodb.com/docs/manual/reference/command/explain/
 
 ReadPreference and Mongos
 -------------------------

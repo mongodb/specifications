@@ -207,7 +207,7 @@ appropriate, data sets will be stored on disk as `extended strict JSON`_. For
 drivers that don't support extended JSON, a BSON analogue will be provided as
 well.
 
-.. _extended strict JSON: https://docs.mongodb.org/manual/reference/mongodb-extended-json
+.. _extended strict JSON: https://www.mongodb.com/docs/manual/reference/mongodb-extended-json
 
 BSON micro-benchmarks include:
 

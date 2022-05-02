@@ -67,7 +67,7 @@ database command. The ``filter`` option is a query predicate that determines whi
 databases are listed in the command result. You can specify a condition on any of the
 database fields returned in the command output:
 
-.. _listDatabases: https://docs.mongodb.com/manual/reference/command/listDatabases/
+.. _listDatabases: https://www.mongodb.com/docs/manual/reference/command/listDatabases/
 
 - ``name``
 - ``sizeOnDisk``
@@ -129,7 +129,7 @@ which contains information about a database on the MongoDB server. Additionally,
 the command reports the aggregate sum of all database sizes (in bytes). Consider
 the following example:
 
-.. _listDatabases: https://docs.mongodb.com/manual/reference/command/listDatabases/
+.. _listDatabases: https://www.mongodb.com/docs/manual/reference/command/listDatabases/
 
 ::
 

@@ -174,5 +174,5 @@ server communication.
 
 .. _CMAP: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _PoolClearedEvent: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events
-.. _serverStatus: https://docs.mongodb.com/manual/reference/command/serverStatus
-.. _connections.totalCreated: https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated
+.. _serverStatus: https://www.mongodb.com/docs/manual/reference/command/serverStatus
+.. _connections.totalCreated: https://www.mongodb.com/docs/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated

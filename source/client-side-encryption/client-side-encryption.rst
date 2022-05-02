@@ -73,7 +73,7 @@ schema
    the server or client-side) which may include metadata about encrypted
    fields. This is a JSON Schema based on draft 4 of the JSON Schema
    specification, `as documented in the MongoDB
-   manual. <https://docs.mongodb.com/manual/reference/operator/query/jsonSchema/>`_.
+   manual. <https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/>`_.
 
 libmongocrypt_
    A library, written in C, that coordinates communication,
@@ -357,7 +357,7 @@ following in the driver documentation for MongoClient.
 
    Automatic encryption requires the authenticated user to have the
    `listCollections privilege
-   action <https://docs.mongodb.com/manual/reference/command/listCollections/#dbcmd.listCollections>`__.
+   action <https://www.mongodb.com/docs/manual/reference/command/listCollections/#dbcmd.listCollections>`__.
 
 See `Why is client side encryption configured on a MongoClient?`_
 
@@ -1987,7 +1987,7 @@ different TLS options than TLS connections to MongoDB servers.
 KMIP support in the MongoDB server is a precedent. The server supports
 ``--kmipServerCAFile`` and ``--kmipClientCertificateFile`` to configure the
 encrypted storage engine KMIP. See
-https://docs.mongodb.com/manual/tutorial/configure-encryption/.
+https://www.mongodb.com/docs/manual/tutorial/configure-encryption/.
 
 TLS options may be useful for the AWS, Azure, and GCP KMS providers in
 a case where the default trust store does not include the needed CA

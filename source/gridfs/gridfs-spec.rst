@@ -755,7 +755,7 @@ Generic Find on Files Collection
      * is to not send a value. For servers < 3.2, this option is ignored and not sent
      * as allowDiskUse does not exist in the OP_QUERY wire protocol.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/find/
+     * @see https://www.mongodb.com/docs/manual/reference/command/find/
      */
     allowDiskUse: Optional<Boolean>;
 
@@ -973,7 +973,7 @@ TBD
 Motivation for Change
 =====================
 
-The `existing GridFS documentation <http://docs.mongodb.org/manual/reference/gridfs/>`__ is
+The `existing GridFS documentation <https://www.mongodb.com/docs/manual/reference/gridfs/>`__ is
 only concerned with the underlying data model for this feature, and does
 not specify what basic set of features an implementation of GridFS
 should or should not provide. As a result, GridFS is currently

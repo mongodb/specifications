@@ -206,14 +206,14 @@ Conversion table
 
 .. [#] BSON Regular Expression options MUST be in alphabetical order.
 
-.. [#] See https://docs.mongodb.com/manual/reference/glossary/#term-namespace
+.. [#] See https://www.mongodb.com/docs/manual/reference/glossary/#term-namespace
 
 .. [#] See https://tools.ietf.org/html/rfc3339#section-5.6
 
 .. [#] Fractional seconds SHOULD have exactly 3 decimal places if the fractional part
    is non-zero.  Otherwise, fractional seconds SHOULD be omitted if zero.
 
-.. [#] See https://docs.mongodb.com/manual/reference/database-references/#dbrefs
+.. [#] See https://www.mongodb.com/docs/manual/reference/database-references/#dbrefs
 
 .. _Decimal128 specification: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst#writing-to-extended-json
 
@@ -321,9 +321,9 @@ in which case it SHOULD follow these rules:
   Conversion table, the parser MUST NOT raise an error and MUST leave the value
   as-is. See `Restrictions and limitations`_ for additional information.
 
-.. _regex: https://docs.mongodb.com/manual/reference/operator/query/regex/
+.. _regex: https://www.mongodb.com/docs/manual/reference/operator/query/regex/
 
-.. _type: https://docs.mongodb.com/manual/reference/operator/query/type/
+.. _type: https://www.mongodb.com/docs/manual/reference/operator/query/type/
 
 .. _section 9: https://tools.ietf.org/html/rfc7159#section-9
 

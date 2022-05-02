@@ -132,7 +132,7 @@ constituent parts. If so:
 
 - Drivers MAY solicit extra, optional fields.
 
-.. _naming restrictions: https://docs.mongodb.com/manual/reference/limits/#naming-restrictions
+.. _naming restrictions: https://www.mongodb.com/docs/manual/reference/limits/#naming-restrictions
 
 Decoding a BSON document to a DBRef model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

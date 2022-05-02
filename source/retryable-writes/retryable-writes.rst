@@ -190,8 +190,8 @@ these commands if they fail to return a response. With regard to
 ``bulkWrite()``, drivers MUST evaluate eligibility for each write command sent
 as part of the ``bulkWrite()`` (after order and batch splitting) individually.
 
-.. _update: https://docs.mongodb.com/manual/reference/command/update/
-.. _delete: https://docs.mongodb.com/manual/reference/command/delete/
+.. _update: https://www.mongodb.com/docs/manual/reference/command/update/
+.. _delete: https://www.mongodb.com/docs/manual/reference/command/delete/
 
 Write commands other than `insert`_, `update`_, `delete`_, or `findAndModify`_
 will not be initially supported by MongoDB 3.6, although this may change in the
@@ -200,9 +200,9 @@ write stage (e.g. ``$out``, ``$merge``). Drivers MUST NOT add a transaction ID
 to these commands and MUST NOT retry these commands if they fail to return a
 response.
 
-.. _insert: https://docs.mongodb.com/manual/reference/command/insert/
-.. _findAndModify: https://docs.mongodb.com/manual/reference/command/findAndModify/
-.. _aggregate: https://docs.mongodb.com/manual/reference/command/aggregate/
+.. _insert: https://www.mongodb.com/docs/manual/reference/command/insert/
+.. _findAndModify: https://www.mongodb.com/docs/manual/reference/command/findAndModify/
+.. _aggregate: https://www.mongodb.com/docs/manual/reference/command/aggregate/
 
 Implementing Retryable Writes
 -----------------------------
