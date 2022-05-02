@@ -1,6 +1,6 @@
 description: "estimatedDocumentCount"
 
-schemaVersion: "1.9"
+schemaVersion: "1.0"
 
 createEntities:
   - client:
@@ -33,13 +33,6 @@ initialData:
       - { _id: 1, x: 11 }
       - { _id: 2, x: 22 }
       - { _id: 3, x: 33 }
-  - collectionName: *collection0ViewName
-    databaseName: *database0Name
-    documents: []
-    createOptions:
-      viewOn: *collection0Name
-      pipeline:
-        - { $match: { _id: { $gt: 1 } } }
 
 tests:
   - description: "estimatedDocumentCount always uses count"
@@ -148,13 +141,39 @@ tests:
               databaseName: *database0Name
 
   - description: "estimatedDocumentCount works correctly on views"
+    # viewOn option was added to the create command in 3.4
+    runOnRequirements:
+      - minServerVersion: "3.4.0"
     operations:
+      - name: dropCollection
+        object: *database0
+        arguments:
+          collection: *collection0ViewName
+      - name: createCollection
+        object: *database0
+        arguments:
+          collection: *collection0ViewName
+          viewOn: *collection0Name
+          pipeline: &pipeline
+            - { $match: { _id: { $gt: 1 } } }
       - name: estimatedDocumentCount
         object: *collection0View
         expectResult: 2
     expectEvents:
       - client: *client0
         events:
+          - commandStartedEvent:
+              command:
+                drop: *collection0ViewName
+              commandName: drop
+              databaseName: *database0Name
+          - commandStartedEvent:
+              command:
+                create: *collection0ViewName
+                viewOn: *collection0Name
+                pipeline: *pipeline
+              commandName: create
+              databaseName: *database0Name
           - commandStartedEvent:
               command:
                 count: *collection0ViewName

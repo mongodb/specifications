@@ -1,6 +1,6 @@
 {
   "description": "estimatedDocumentCount",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.0",
   "createEntities": [
     {
       "client": {
@@ -61,23 +61,6 @@
           "x": 33
         }
       ]
-    },
-    {
-      "collectionName": "coll0view",
-      "databaseName": "edc-tests",
-      "documents": [],
-      "createOptions": {
-        "viewOn": "coll0",
-        "pipeline": [
-          {
-            "$match": {
-              "_id": {
-                "$gt": 1
-              }
-            }
-          }
-        ]
-      }
     }
   ],
   "tests": [
@@ -289,7 +272,36 @@
     },
     {
       "description": "estimatedDocumentCount works correctly on views",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "3.4.0"
+        }
+      ],
       "operations": [
+        {
+          "name": "dropCollection",
+          "object": "database0",
+          "arguments": {
+            "collection": "coll0view"
+          }
+        },
+        {
+          "name": "createCollection",
+          "object": "database0",
+          "arguments": {
+            "collection": "coll0view",
+            "viewOn": "coll0",
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              }
+            ]
+          }
+        },
         {
           "name": "estimatedDocumentCount",
           "object": "collection0View",
@@ -300,6 +312,34 @@
         {
           "client": "client0",
           "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "drop": "coll0view"
+                },
+                "commandName": "drop",
+                "databaseName": "edc-tests"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "create": "coll0view",
+                  "viewOn": "coll0",
+                  "pipeline": [
+                    {
+                      "$match": {
+                        "_id": {
+                          "$gt": 1
+                        }
+                      }
+                    }
+                  ]
+                },
+                "commandName": "create",
+                "databaseName": "edc-tests"
+              }
+            },
             {
               "commandStartedEvent": {
                 "command": {
