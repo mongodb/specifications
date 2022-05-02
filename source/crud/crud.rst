@@ -759,11 +759,11 @@ with no query filter, skip, limit, or other options that would alter the
 results. The only supported options are listed in the
 ``EstimatedDocumentCountOptions`` type defined above.
 
-Drivers MUST document that, due to an oversight in versions 5.0.0-5.0.7 of
+Drivers MUST document that, due to an oversight in versions 5.0.0-5.0.8 of
 MongoDB, the ``count`` command, which estimatedDocumentCount uses in its
 implementation, was not included in v1 of the Stable API, and so users of the
 Stable API with estimatedDocumentCount are recommended to upgrade their server
-version to 5.0.8+ or set ``apiStrict: false`` to avoid encountering errors.
+version to 5.0.9+ or set ``apiStrict: false`` to avoid encountering errors.
 
 Drivers MUST document that the ``count`` server command is used to implement
 estimatedDocumentCount and that users can find more information via
@@ -783,9 +783,9 @@ document the following:
 - The new release is fixing estimatedDocumentCount on views by reverting back to
   using ``count`` in its implementation.
 - Due to an oversight, the ``count`` command was omitted from the Stable API in
-  server versions 5.0.0 - 5.0.7 and 5.1.0 - 5.3.1, so users of the Stable API
+  server versions 5.0.0 - 5.0.8 and 5.1.0 - 5.3.1, so users of the Stable API
   with estimatedDocumentCount are recommended to upgrade their MongoDB clusters
-  to 5.0.8 or 5.3.2 (if on Atlas) or set ``apiStrict: false`` when constructing
+  to 5.0.9 or 5.3.2 (if on Atlas) or set ``apiStrict: false`` when constructing
   their MongoClients.
 
 ~~~~~~~~~~~~~~
