@@ -943,7 +943,24 @@
           "name": "createCollection",
           "object": "database",
           "arguments": {
-            "collection": "encryptedCollection"
+            "collection": "encryptedCollection",
+            "encryptedFields": {
+              "escCollection": "encryptedCollection.esc",
+              "eccCollection": "encryptedCollection.ecc",
+              "ecocCollection": "encryptedCollection.ecoc",
+              "fields": [
+                {
+                  "path": "firstName",
+                  "bsonType": "string",
+                  "keyId": {
+                    "$binary": {
+                      "subType": "04",
+                      "base64": "AAAAAAAAAAAAAAAAAAAAAA=="
+                    }
+                  }
+                }
+              ]
+            }
           }
         },
         {
