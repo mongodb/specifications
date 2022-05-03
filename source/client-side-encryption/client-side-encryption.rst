@@ -820,7 +820,7 @@ EncryptOpts
 .. code:: typescript
 
    enum QueryType {
-      QueryTypeEquality
+      Equality
    }
 
    class EncryptOpts {
