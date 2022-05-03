@@ -251,7 +251,7 @@ Standard API
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/createIndexes/
+     * @see https://www.mongodb.com/docs/manual/reference/command/createIndexes/
      *
      * @since MongoDB 4.4
      */
@@ -274,7 +274,7 @@ Standard API
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/dropIndexes/
+     * @see https://www.mongodb.com/docs/manual/reference/command/dropIndexes/
      *
      * @since MongoDB 4.4
      */
@@ -696,7 +696,7 @@ Common API Components
      * other tasks.
      *
      * @note Starting in MongoDB 4.2, this option is ignored by the server.
-     * @see https://docs.mongodb.com/manual/reference/command/createIndexes/
+     * @see https://www.mongodb.com/docs/manual/reference/command/createIndexes/
      * @deprecated 4.2
      */
     background: Boolean;
@@ -840,7 +840,7 @@ Common API Components
      * If a comment is provided, drivers MUST attach this comment to all
      * subsequent getMore commands run on the same cursor.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/listIndexes/
+     * @see https://www.mongodb.com/docs/manual/reference/command/listIndexes/
      *
      * @since MongoDB 4.4
      */
@@ -864,7 +864,7 @@ Q: What does the commitQuorum option do?
   The server-default value for ``commitQuorum`` is "votingMembers", which means the primary will wait for all voting data-bearing nodes to complete building the index before it commits it.
 
 Q: Why would a user want to specify a non-default ``commitQuorum``?
-  Like ``w: "majority"``, ``commitQuorum: "votingMembers"`` doesn't consider non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>`_ (e.g. ``commitQuorum: <custom getLastErrorMode name>``).
+  Like ``w: "majority"``, ``commitQuorum: "votingMembers"`` doesn't consider non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://www.mongodb.com/docs/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>`_ (e.g. ``commitQuorum: <custom getLastErrorMode name>``).
 
   Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind.
 

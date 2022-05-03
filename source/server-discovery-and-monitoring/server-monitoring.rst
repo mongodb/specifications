@@ -112,7 +112,7 @@ driver must use the `hello` command for monitoring. If the response does not con
 `helloOk: true`, then the driver must use the legacy hello command for monitoring.
 
 The socket used to check a server MUST use the same
-`connectTimeoutMS <http://docs.mongodb.org/manual/reference/connection-string/>`_
+`connectTimeoutMS <https://www.mongodb.com/docs/manual/reference/connection-string/>`_
 as regular sockets.
 Multi-threaded clients SHOULD set monitoring sockets' socketTimeoutMS to the
 connectTimeoutMS.

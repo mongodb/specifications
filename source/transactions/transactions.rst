@@ -1409,9 +1409,9 @@ concerns. Excluding the edge case where `writeConcernMajorityJournalDefault`_
 has been disabled, drivers can readily trust that a majority write concern is
 durable, which achieves the primary objective of avoiding duplicate commits.
 
-.. _custom write concern: https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#tag-sets-and-custom-write-concern-behavior
+.. _custom write concern: https://www.mongodb.com/docs/manual/tutorial/configure-replica-set-tag-sets/#tag-sets-and-custom-write-concern-behavior
 
-.. _writeConcernMajorityJournalDefault: https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.writeConcernMajorityJournalDefault
+.. _writeConcernMajorityJournalDefault: https://www.mongodb.com/docs/manual/reference/replica-configuration/#rsconf.writeConcernMajorityJournalDefault
 
 **Changelog**
 -------------

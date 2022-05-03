@@ -383,7 +383,7 @@ Note that how these options are provided to a driver is left up to the implement
 
 If provided, these options MUST NOT replace the values used for metadata generation.
 The provided options MUST be appended to their respective fields, and be delimited by
-a ``|`` character. For example, when `Motor <https://docs.mongodb.com/ecosystem/drivers/motor/>`_
+a ``|`` character. For example, when `Motor <https://www.mongodb.com/docs/ecosystem/drivers/motor/>`_
 wraps PyMongo, the following fields are updated to include Motor's "driver info":
 
 .. code:: typescript
