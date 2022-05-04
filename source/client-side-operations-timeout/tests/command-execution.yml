@@ -1,6 +1,6 @@
 description: "timeoutMS behaves correctly during command execution"
 
-schemaVersion: "1.5"
+schemaVersion: "1.9"
 
 runOnRequirements:
   # The appName filter cannot be used to set a fail point on connection handshakes until server version 4.9 due to

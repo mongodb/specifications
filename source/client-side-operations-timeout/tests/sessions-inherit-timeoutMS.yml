@@ -1,6 +1,6 @@
 description: "sessions inherit timeoutMS from their parent MongoClient"
 
-schemaVersion: "1.5"
+schemaVersion: "1.9"
 
 runOnRequirements:
   - minServerVersion: "4.4"

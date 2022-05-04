@@ -1,6 +1,6 @@
 {
   "description": "timeoutMS can be overridden for a MongoDatabase",
-  "schemaVersion": "1.5",
+  "schemaVersion": "1.9",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4",

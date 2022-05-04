@@ -1,6 +1,6 @@
 {
   "description": "operations ignore deprected timeout options if timeoutMS is set",
-  "schemaVersion": "1.5",
+  "schemaVersion": "1.9",
   "runOnRequirements": [
     {
       "minServerVersion": "4.2",

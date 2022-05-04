@@ -1,6 +1,6 @@
 description: "operations ignore deprected timeout options if timeoutMS is set"
 
-schemaVersion: "1.5"
+schemaVersion: "1.9"
 
 # Most tests in this file can be executed against any server version, but some tests execute operations that are only
 # available on higher server versions (e.g. abortTransaction). To avoid too many special cases in templated tests, the
