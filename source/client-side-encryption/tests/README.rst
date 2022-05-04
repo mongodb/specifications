@@ -304,6 +304,19 @@ Some tests will require *not* using csfle_. For such tests, one should ensure
 that csfle will not be loaded. Refer to the client-side-encryption documentation
 for information on "disabling" csfle and setting csfle search paths.
 
+.. note::
+
+   The ``csfle`` dynamic library can be obtained using the mongodl_ Python
+   script from drivers-evergreen-tools_:
+
+   .. code-block:: shell
+
+      $ python3 mongodl.py --component=csfle --version=5.3.1 --out=csfle
+
+.. _mongodl: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/mongodl.py
+.. _drivers-evergreen-tools: https://github.com/mongodb-labs/drivers-evergreen-tools/
+
+
 
 Prose Tests
 ===========
@@ -892,6 +905,7 @@ Bypass spawning mongocryptd
    load the csfle library instead of consulting mongocryptd. For these tests, it
    is required that libmongocrypt *not* load csfle. Refer to the
    client-side-encryption document for more information on "disabling" csfle.
+
 
 Via mongocryptdBypassSpawn
 ``````````````````````````
