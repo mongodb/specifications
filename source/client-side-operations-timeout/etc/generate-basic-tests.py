@@ -29,7 +29,7 @@ BULK_WRITE_ARGUMENTS = '''requests:
             - insertOne:
                 document: { _id: 1 }'''
 
-COLLECTION_OPERATIONS = [
+COLLECTION_READ_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'collection', ['pipeline: []']),
     Operation('count', 'count', 'collection', ['filter: {}']),
     Operation('countDocuments', 'aggregate', 'collection', ['filter: {}']),
@@ -40,6 +40,8 @@ COLLECTION_OPERATIONS = [
     Operation('listIndexes', 'listIndexes', 'collection', []),
     Operation('listIndexNames', 'listIndexes', 'collection', []),
     Operation('createChangeStream', 'aggregate', 'collection', ['pipeline: []']),
+]
+COLLECTION_WRITE_OPERATIONS = [
     Operation('insertOne', 'insert', 'collection', ['document: { x: 1 }']),
     Operation('insertMany', 'insert', 'collection', [INSERT_MANY_ARGUMENTS]),
     Operation('deleteOne', 'delete', 'collection', ['filter: {}']),
@@ -55,6 +57,7 @@ COLLECTION_OPERATIONS = [
     Operation('dropIndex', 'dropIndexes', 'collection', ['name: "x_1"']),
     Operation('dropIndexes', 'dropIndexes', 'collection', []),
 ]
+COLLECTION_OPERATIONS = COLLECTION_READ_OPERATIONS + COLLECTION_WRITE_OPERATIONS
 
 # Session and GridFS operations are generally tested in other files, so they're not included in the list of all
 # operations. Individual generation functions can choose to include them if needed.
