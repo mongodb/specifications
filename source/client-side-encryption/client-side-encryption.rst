@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-04-29
+:Last Modified: 2022-05-03
 :Version: 1.5.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -828,10 +828,16 @@ EncryptOpts
 
 .. code:: typescript
 
+   enum QueryType {
+      Equality
+   }
+
    class EncryptOpts {
       keyId : Optional<Binary>
       keyAltName: Optional<String>
-      algorithm: String
+      algorithm: String,
+      contentionFactor: Optional<Int64>,
+      queryType: Optional<QueryType>
    }
 
 Explicit encryption requires a key and algorithm. Keys are either
@@ -847,8 +853,27 @@ Identifies a key vault collection document by 'keyAltName'.
 
 algorithm
 ^^^^^^^^^
-The string "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic" or
-"AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+One of the strings:
+- "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+- "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+- "Indexed"
+- "Unindexed"
+
+The result of explicit encryption with the "Indexed" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
+
+   To insert or query with an "Indexed" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
+   ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
+
+contentionFactor
+^^^^^^^^^^^^^^^^
+contentionFactor only applies when algorithm is "Indexed".
+It is an error to set contentionFactor when algorithm is not "Indexed".
+If contentionFactor is not supplied, it defaults to a value of 0.
+
+queryType
+^^^^^^^^^
+queryType only applies when algorithm is "Indexed".
+It is an error to set queryType when algorithm is not "Indexed".
 
 User facing API: When Auto Encryption Fails
 ===========================================
@@ -2111,6 +2136,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
    22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
    22-02-24, Rename Versioned API to Stable API

@@ -1488,3 +1488,182 @@ Call `client_encryption_invalid_hostname.createDataKey()` with "kmip" as the pro
 the same masterKey.
 
 Expect an error indicating TLS handshake failed due to an invalid hostname.
+
+Explicit Encryption
+~~~~~~~~~~~~~~~~~~~
+
+The Explicit Encryption tests require MongoDB server 6.0+. The tests must not run against a standalone.
+
+Before running each of the following test cases, perform the following Test Setup.
+
+Test Setup
+``````````
+
+Load the file `encryptedFields.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields.json>`_ as ``encryptedFields``.
+
+Load the file `key1-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json>`_ as ``key1Document``.
+
+Read the ``"_id"`` field of ``key1Document`` as ``key1ID``.
+
+Drop and create the collection ``db.explicit_encryption`` using ``encryptedFields`` as an option. See `FLE 2 CreateCollection() and Collection.Drop() <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-createcollection-and-collection-drop>`_.
+
+Drop and create the collection ``keyvault.datakeys``.
+
+Create a MongoClient named ``keyVaultClient``.
+
+Create a ClientEncryption object named ``clientEncryption`` with these options:
+
+.. code:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <keyVaultClient>;
+      keyVaultNamespace: "keyvault.datakeys";
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   }
+
+Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``:
+
+.. code:: typescript
+
+   AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys";
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+      bypassQueryAnalysis: true
+   }
+
+
+Case 1: can insert encrypted indexed and find
+`````````````````````````````````````````````
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+   }
+
+Store the result in ``insertPayload``.
+
+Use ``encryptedClient`` to insert the document ``{ "encryptedIndexed": <insertPayload> }`` into ``db.explicit_encryption``.
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+      queryType: Equality
+   }
+
+Store the result in ``findPayload``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload> }``.
+
+Assert one document is returned containing the field ``{ "encryptedIndexed": "encrypted indexed value" }``.
+
+Case 2: can insert encrypted indexed and find with non-zero contention
+```````````````````````````````````````````````````````````````````````
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+      contentionFactor: 10
+   }
+
+Store the result in ``insertPayload``.
+
+Use ``encryptedClient`` to insert the document ``{ "encryptedIndexed": <insertPayload> }`` into ``db.explicit_encryption``.
+
+Repeat the above steps 10 times to insert 10 total documents. The ``insertPayload`` must be regenerated each iteration.
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+      queryType: Equality
+   }
+
+Store the result in ``findPayload``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload> }``.
+
+Assert less than 10 documents are returned. 0 documents may be returned. Assert each returned document contains the field ``{ "encryptedIndexed": "encrypted indexed value" }``.
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+      queryType: Equality,
+      contentionFactor: 10
+   }
+
+Store the result in ``findPayload2``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload2> }``.
+
+Assert 10 documents are returned. Assert each returned document contains the field ``{ "encryptedIndexed": "encrypted indexed value" }``.
+
+Case 3: can insert encrypted unindexed
+``````````````````````````````````````
+
+Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Unindexed"
+   }
+
+Store the result in ``insertPayload``.
+
+Use ``encryptedClient`` to insert the document ``{ "_id": 1, "encryptedUnindexed": <insertPayload> }`` into ``db.explicit_encryption``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "_id": 1 }``.
+
+Assert one document is returned containing the field ``{ "encryptedUnindexed": "encrypted unindexed value" }``.
+
+Case 4: can roundtrip encrypted indexed
+```````````````````````````````````````
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+   }
+
+Store the result in ``payload``.
+
+Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted indexed value".
+
+Case 5: can roundtrip encrypted unindexed
+`````````````````````````````````````````
+
+Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Unindexed",
+   }
+
+Store the result in ``payload``.
+
+Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted unindexed value".
