@@ -1,6 +1,6 @@
 # Tests in this file are generated from override-operation-timeoutMS.yml.template.
 
-description: "timeoutMS can be overriden for an operation"
+description: "timeoutMS can be overridden for an operation"
 
 schemaVersion: "1.0"
 
@@ -39,7 +39,7 @@ tests:
   # For each level operation, we execute two tests:
   #
   # 1. timeoutMS can be overridden to a non-zero value for an operation. Each test executes an operation using one of
-  # the entities defined above with an overriden timeoutMS=1000 and configures a fail point to block the operation for
+  # the entities defined above with an overridden timeoutMS=1000 and configures a fail point to block the operation for
   # 15ms so the operation succeeds.
   #
   # 2. timeoutMS can be overridden to 0 for an operation. Each test executes an operation using the entities defined

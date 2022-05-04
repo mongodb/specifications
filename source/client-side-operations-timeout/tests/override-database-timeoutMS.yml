@@ -1,6 +1,6 @@
 # Tests in this file are generated from override-database-timeoutMS.yml.template.
 
-description: "timeoutMS can be overriden for a MongoDatabase"
+description: "timeoutMS can be overridden for a MongoDatabase"
 
 schemaVersion: "1.5"
 

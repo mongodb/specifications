@@ -41,7 +41,7 @@ initialData:
     documents: []
 
 tests:
-  - description: "timeoutMS can be overriden for a find"
+  - description: "timeoutMS can be overridden for a find"
     operations:
       - name: failPoint
         object: testRunner

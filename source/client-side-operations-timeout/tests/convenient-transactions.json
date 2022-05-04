@@ -59,7 +59,7 @@
   ],
   "tests": [
     {
-      "description": "withTransaction raises a client-side error if timeoutMS is overriden inside the callback",
+      "description": "withTransaction raises a client-side error if timeoutMS is overridden inside the callback",
       "operations": [
         {
           "name": "withTransaction",

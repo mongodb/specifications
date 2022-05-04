@@ -1,5 +1,5 @@
 {
-  "description": "timeoutMS can be overriden for an operation",
+  "description": "timeoutMS can be overridden for an operation",
   "schemaVersion": "1.0",
   "runOnRequirements": [
     {
