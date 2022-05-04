@@ -1,0 +1,101 @@
+runOn:
+  - minServerVersion: "6.0.0"
+    # FLE 2 Encrypted collections are not supported on standalone.
+    topology: [ "replicaset", "sharded" ]
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+data: []
+encrypted_fields: &encrypted_fields {{ yamlfile("encryptedFields.json") }}
+key_vault_data: [{{ yamlfile("keys/key1-document.json") }}, {{ yamlfile("keys/key2-document.json") }} ]
+
+tests:
+  - description: "BypassQueryAnalysis decrypts"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+        bypassQueryAnalysis: true
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc0_encrypted { 
+              "_id": 1,
+              "encryptedIndexed": {
+                "$binary": {
+                  # Payload has an IndexKey of key1 and UserKey of key2.
+                  "base64": "BHEBAAAFZAAgAAAAAHb62aV7+mqmaGcotPLdG3KP7S8diFwWMLM/5rYtqLrEBXMAIAAAAAAVJ6OWHRv3OtCozHpt3ZzfBhaxZirLv3B+G8PuaaO4EgVjACAAAAAAsZXWOWA+UiCBbrJNB6bHflB/cn7pWSvwWN2jw4FPeIUFcABQAAAAAMdD1nV2nqeI1eXEQNskDflCy8I7/HvvqDKJ6XxjhrPQWdLqjz+8GosGUsB7A8ee/uG9/guENuL25XD+Fxxkv1LLXtavHOlLF7iW0u9yabqqBXUAEAAAAAQSNFZ4EjSYdhI0EjRWeJASEHQAAgAAAAV2AE0AAAAAq83vqxI0mHYSNBI0VniQEkzZZBBDgeZh+h+gXEmOrSFtVvkUcnHWj/rfPW7iJ0G3UJ8zpuBmUM/VjOMJCY4+eDqdTiPIwX+/vNXegc8FZQAgAAAAAOuac/eRLYakKX6B0vZ1r3QodOQFfjqJD+xlGiPu4/PsAA==",
+                  "subType": "06"
+                }
+              }
+            }
+      - name: find
+        arguments:
+          filter: { "_id": 1 }
+        result: [{"_id": 1, "encryptedIndexed": "value123" }]
+    expectations:
+      - command_started_event:
+          command:
+            listCollections: 1
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - *doc0_encrypted
+            ordered: true
+          command_name: insert
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: { "_id": 1 }
+          command_name: find
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: {
+                  "$or": [
+                      {
+                          "_id": {
+                              "$in": [
+                                  {{ yamlfile ("keys/key1-id.json") }}
+                              ]
+                          }
+                      },
+                      {
+                          "keyAltNames": {
+                              "$in": []
+                          }
+                      }
+                  ]
+              }
+            $db: keyvault
+            readConcern: { level: "majority" }
+          command_name: find
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: {
+                  "$or": [
+                      {
+                          "_id": {
+                              "$in": [
+                                  {{ yamlfile ("keys/key2-id.json") }}
+                              ]
+                          }
+                      },
+                      {
+                          "keyAltNames": {
+                              "$in": []
+                          }
+                      }
+                  ]
+              }
+            $db: keyvault
+            readConcern: { level: "majority" }
+          command_name: find
+    outcome:
+      collection:
+        data:
+          - {"_id": 1, "encryptedIndexed": { "$$type": "binData" } }

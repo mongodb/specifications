@@ -574,7 +574,7 @@ type
 The new ServerDescription's type field is set to a `ServerType`_.
 Note that these states do **not** exactly correspond to
 `replica set member states
-<http://docs.mongodb.org/manual/reference/replica-states/>`_.
+<https://www.mongodb.com/docs/manual/reference/replica-states/>`_.
 For example, some replica set member states like STARTUP and RECOVERING
 are identical from the client's perspective, so they are merged into "RSOther".
 Additionally, states like Standalone and Mongos
@@ -650,7 +650,7 @@ See `only support replica set members running MongoDB 1.6.2 or later`_.
 They cannot be queried, but their hosts lists are useful
 for discovering the current replica set configuration.
 
-If a `hidden member <http://docs.mongodb.org/manual/core/replica-set-hidden-member/>`_
+If a `hidden member <https://www.mongodb.com/docs/manual/core/replica-set-hidden-member/>`_
 is provided as a seed,
 the client can use it to find the primary.
 Since the hidden member does not appear in the primary's host list,
@@ -2534,7 +2534,7 @@ mark the server Unknown and clear the pool.
 .. Section for links.
 
 .. _hello or legacy hello: /source/mongodb-handshake/handshake.rst#terms
-.. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
+.. _connection string: https://www.mongodb.com/docs/manual/reference/connection-string/
 .. _Server Monitoring spec: server-monitoring.rst
 .. _SDAM Monitoring Specification: server-discovery-and-monitoring-monitoring.rst
 .. _requesting an immediate check: server-monitoring.rst#requesting-an-immediate-check

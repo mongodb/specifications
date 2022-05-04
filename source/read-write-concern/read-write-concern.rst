@@ -266,7 +266,7 @@ of the write concern document MUST be as follows:
      * If true, wait for the the write operation to get committed to the
      * journal. When unspecified, a driver MUST NOT send "j".
      *
-     * @see http://docs.mongodb.org/manual/core/write-concern/#journaled
+     * @see https://www.mongodb.com/docs/manual/core/write-concern/#journaled
      */
     j: Optional<Boolean>,
 
@@ -286,7 +286,7 @@ of the write concern document MUST be as follows:
      *
      * The value, if provided, MUST be greater than or equal to 0.
      *
-     * @see http://docs.mongodb.org/manual/core/write-concern/#timeouts
+     * @see https://www.mongodb.com/docs/manual/core/write-concern/#timeouts
      */
     wtimeout: Optional<Int64>
   }

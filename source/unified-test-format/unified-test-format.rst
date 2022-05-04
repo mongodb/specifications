@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.7
+:Spec Version: 1.9
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-03-01
+:Last Modified: 2022-04-27
 
 .. contents::
 
@@ -232,6 +232,7 @@ Supported Entity Types
 Test runners MUST support the following types of entities:
 
 - MongoClient. See `entity_client`_ and `Client Operations`_.
+- ClientEncryption. See `entity_clientEncryption`__.
 - Database. See `entity_database`_ and `Database Operations`_.
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
@@ -340,13 +341,8 @@ The top-level fields of a test file are as follows:
 
 .. _initialData:
 
-- ``initialData``: Optional array of one or more `collectionData`_ objects. Data
-  that will exist in collections before each test case is executed.
-
-  Before each test and for each `collectionData`_, the test runner MUST drop the
-  collection and insert the specified documents (if any) using a "majority"
-  write concern. If no documents are specified, the test runner MUST create the
-  collection with a "majority" write concern.
+- ``initialData``: Optional array of one or more `collectionData`_ objects.
+  Data that will exist in collections before each test case is executed.
 
 .. _tests:
 
@@ -392,16 +388,19 @@ The structure of this object is as follows:
   "sharded" implies "sharded-replicaset", but not vice versa).
 
 - ``serverless``: Optional string. Whether or not the test should be run on
-  serverless instances imitating sharded clusters. Valid values are "require",
-  "forbid", and "allow". If "require", the test MUST only be run on serverless
-  instances. If "forbid", the test MUST NOT be run on serverless instances. If
-  omitted or "allow", this option has no effect.
+  Atlas Serverless instances. Valid values are "require", "forbid", and "allow".
+  If "require", the test MUST only be run on Atlas Serverless instances. If
+  "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted
+  or "allow", this option has no effect.
 
-  The test runner MUST be informed whether or not serverless is being used in
-  order to determine if this requirement is met (e.g. through an environment
-  variable or configuration option). Since the serverless proxy imitates a
-  mongos, the runner is not capable of determining this by issuing a server
-  command such as ``buildInfo`` or ``hello``.
+  The test runner MUST be informed whether or not Atlas Serverless is being used
+  in order to determine if this requirement is met (e.g. through an environment
+  variable or configuration option).
+
+  Note: the Atlas Serverless proxy imitates mongos, so the test runner is not
+  capable of determining if Atlas Serverless is in use by issuing commands such
+  as ``buildInfo`` or ``hello``. Furthermore, connections to Atlas Serverless
+  use a load balancer, so the topology will appear as "load-balanced".
 
 - ``serverParameters``: Optional object of server parameters to check against.
   To check server parameters, drivers send a
@@ -419,6 +418,10 @@ The structure of this object is as follows:
 - ``auth``: Optional boolean. If true, the tests MUST only run if authentication
   is enabled. If false, tests MUST only run if authentication is not enabled.
   If this field is omitted, there is no authentication requirement.
+
+- ``csfle``: Optional boolean. If true, the tests MUST only run if the driver
+  supports Client-Side Field Level Encryption. If false, tests MUST only run if
+  CSFLE is not enabled. If this field is omitted, there is no CSFLE requirement.
 
 Test runners MAY evaluate these conditions in any order. For example, it may be
 more efficient to evaluate ``serverless`` or ``auth`` before communicating with
@@ -486,17 +489,22 @@ The structure of this object is as follows:
     connection string and any tests using this client SHOULD NOT depend on a
     particular number of mongos hosts.
 
-    This option SHOULD be set to true if the resulting entity is used to
-    conduct transactions against a sharded cluster. This is advised because
-    connecting to multiple mongos servers is necessary to test session
+    This option SHOULD be set to true in test files if the resulting entity is
+    used to conduct transactions against a sharded cluster. This is advised
+    because connecting to multiple mongos servers is necessary to test session
     pinning.
 
-    If the topology type is ``LoadBalanced``, the test runner MUST use one of
-    the two load balancer URIs described in `Initializing the Test Runner`_
-    to configure the MongoClient. If ``useMultipleMongoses`` is true or
-    unset, the test runner MUST use the URI of the load balancer fronting
-    multiple servers. Otherwise, the test runner MUST use the URI of the load
-    balancer fronting a single server.
+    If the topology type is ``LoadBalanced`` and Atlas Serverless is not being
+    used, the test runner MUST use one of the two load balancer URIs described
+    in `Initializing the Test Runner`_ to configure the MongoClient. If
+    ``useMultipleMongoses`` is true or unset, the test runner MUST use the URI
+    of the load balancer fronting multiple servers. Otherwise, the test runner
+    MUST use the URI of the load balancer fronting a single server.
+
+    If the topology type is ``LoadBalanced`` and Atlas Serverless is being used,
+    this option has no effect. This is because provisioning an Atlas Serverless
+    instance yields a single URI (i.e. a load balancer fronting a single Atlas
+    Serverless proxy).
 
     This option has no effect for topologies that are not sharded or load
     balanced.
@@ -581,6 +589,59 @@ The structure of this object is as follows:
           events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
   - ``serverApi``: Optional `serverApi`_ object.
+
+.. _entity_clientEncryption:
+
+- ``clientEncryption``: Optional object. Defines a ClientEncryption object.
+
+  The structure of this object is as follows:
+
+  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g.
+    ``id: &clientEncryption0 clientEncryption0``).
+
+  - ``clientEncryptionOpts``: Required document. A value corresponding to a
+    `ClientEncryptionOpts
+    <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
+
+    Note: the ``tlsOptions`` document is intentionally omitted from the test
+    format. However, drivers MAY internally configure TLS options as needed to
+    satisfy the requirements of configured KMS providers.
+
+    The structure of this document is as follows:
+
+    - ``keyVaultClient``: Required string. Client entity from which this
+      ClientEncryption will be created. The YAML file SHOULD use an
+      `alias node`_ for a client entity's ``id`` field (e.g.
+      ``client: *client0``).
+
+    - ``keyVaultNamespace``: Required string. The database and collection to use
+      as the key vault collection for this clientEncryption. The namespace takes
+      the form ``database.collection`` (e.g.
+      ``keyVaultNamespace: keyvault.datakeys``).
+
+    - ``kmsProviders``: Required document. Drivers MUST NOT configure a KMS
+      provider if it is not given. This is to permit testing conditions where a
+      required KMS provider is not configured. If a KMS provider is given as an
+      empty document (e.g. ``kmsProviders: { aws: {} }``), drivers MUST
+      configure the KMS provider without credentials to permit testing
+      conditions where KMS credentials are needed. If a KMS credentials field
+      has a placeholder value (e.g.
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } } }``),
+      drivers MUST replace the field with credentials that satisfy the
+      operations required by the unified test files. Drivers MAY load the
+      credentials from the environment or a configuration file as needed to
+      satisfy the requirements of the given KMS provider and tests. If a KMS
+      credentials field is not given (e.g. the required field
+      ``secretAccessKey`` is omitted in:
+      ``kmsProviders: { aws: { accessKeyId: { $$placeholder: 1 } }``), drivers
+      MUST NOT include the field during KMS configuration. This is to permit
+      testing conditions where required KMS credentials fields are not provided.
+      Otherwise, drivers MUST configure the KMS provider with the explicit value
+      of KMS credentials field given in the test file (e.g.
+      ``kmsProviders: { aws: { accessKeyId: abc, secretAccessKey: def } }``).
+      This is to permit testing conditions where invalid KMS credentials are
+      provided.
 
 .. _entity_database:
 
@@ -767,6 +828,14 @@ The structure of this object is as follows:
 
 - ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
+- ``createOptions``: Optional object. When used in `initialData`_, these options
+  MUST be passed to the
+  `create <https://docs.mongodb.com/manual/reference/command/create/>`_ command
+  when creating the collection. Test files MUST NOT specify ``writeConcern``
+  in this options document as that could conflict with the use of the
+  ``majority`` write concern when the collection is created during test
+  execution.
+
 - ``documents``: Required array of objects. List of documents corresponding to
   the contents of the collection. This list may be empty.
 
@@ -930,6 +999,11 @@ The structure of this object is as follows:
 
   Client errors include, but are not limited to: parameter validation errors
   before a command is sent to the server; network errors.
+
+- ``isTimeoutError``: Optional boolean. If true, the test runner MUST assert
+  that the error represents a timeout due to use of the ``timeoutMS`` option.
+  If false, the test runner MUST assert that the error does not represent a
+  timeout.
 
 - ``errorContains``: Optional string. A substring of the expected error message
   (e.g. "errmsg" field in a server error document). The test runner MUST assert
@@ -1782,6 +1856,14 @@ mechanisms for iteration may differ between synchronous and asynchronous
 drivers. To account for this, this section explicitly defines the supported
 operations for the ``ChangeStream`` and ``FindCursor`` entity types.
 
+Test runners MUST ensure that the iteration operations defined in this
+section will not inadvertently skip the first document for a cursor. Albeit
+rare, this could happen if an operation were to blindly invoke ``next`` (or
+equivalent) on a cursor in a driver where newly created cursors are already
+positioned at their first element and the cursor had a non-empty
+``firstBatch``. Alternatively, some drivers may use a different iterator
+method for advancing a cursor to its first position (e.g. ``rewind`` in PHP).
+
 iterateUntilDocumentOrError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1797,14 +1879,19 @@ to block indefinitely. This should not be a concern for
 ``iterateUntilDocumentOrError`` as iteration only continues until either a
 document or error is encountered.
 
-Test runners MUST ensure that this operation will not inadvertently skip the
-first document in a cursor. Albeit rare, this could happen if
-``iterateUntilDocumentOrError`` were to blindly invoke ``next`` (or
-equivalent) on a cursor in a driver where newly created cursors are already
-positioned at their first element and the cursor had a non-empty
-``firstBatch`` (i.e. ``resumeAfter`` or ``startAfter`` used). Alternatively,
-some drivers may use a different iterator method for advancing a cursor to
-its first position (e.g. ``rewind`` in PHP).
+iterateOnce
+~~~~~~~~~~~
+
+Performs a single iteration of the cursor. If the cursor's current batch is
+empty, one ``getMore`` MUST be attempted to get more results. This operation
+takes no arguments. If `expectResult <operation_expectResult_>`_ is
+specified, it SHOULD be a single document.
+
+Due to the non-deterministic nature of some cursor types (e.g. change streams
+on sharded clusters), test files SHOULD only use this operation to perform
+command monitoring assertions on the ``getMore`` command. Tests that perform
+assertions about the result of iteration should use
+`iterateUntilDocumentOrError`_ instead.
 
 close
 ~~~~~
@@ -2182,6 +2269,29 @@ An example of this operation follows::
 Use a ``listIndexes`` command to check whether the index exists. Note that it is
 currently not possible to run ``listIndexes`` from within a transaction.
 
+createEntities
+~~~~~~~~~~~~~~
+
+The ``createEntities`` operation instructs the test runner to create the
+provided entities and store them in the current test's `Entity Map`_.
+
+- ``entities``: Required array of one or more `entity`_ objects. As with the
+  file-level `createEntities`_ directive, test files SHOULD declare entities in
+  dependency order, such that all referenced entities are defined before any of
+  their dependent entities.
+
+An example of this operation follows::
+
+    - name: createEntities
+      object: testRunner
+      arguments:
+        entities:
+          - client:
+              id: &client0 client0
+          - database:
+              id: &database0 database0
+              client: *client0
+              databaseName: &database0Name test
 
 loop
 ~~~~
@@ -2355,6 +2465,35 @@ An example of this operation follows::
         connections: 1
 
 
+Special Placeholder Value
+-------------------------
+
+$$placeholder
+~~~~~~~~~~~~~
+
+Syntax::
+
+  { field: { $$placeholder: 1 } }
+
+This special key-value pair can be used anywhere the value for a key might be
+specified in an test file. It is intended to act as a placeholder value in
+contexts where the test runner cannot provide a definite value or may be
+expected to replace the placeholder with a value that cannot be specified by the
+test file (e.g. KMS provider credentials). The test runner MUST raise an error
+if a placeholder value is used in an unexpected context or a replacement cannot
+be made.
+
+An example of using this placeholder value follows::
+
+    kmsProviders:
+      aws:
+        accessKeyId: { $$placeholder: 1 }
+        privateAccessKey: { $$placeholder: 1 }
+
+Note: the test runner is not required to validate the type or value of a
+``$$placeholder`` field.
+
+
 Evaluating Matches
 ------------------
 
@@ -2525,7 +2664,7 @@ expected document. If true, the test runner MUST assert that the key exists in
 the actual document, irrespective of its value (e.g. a key with a ``null`` value
 would match). If false, the test runner MUST assert that the key does not exist
 in the actual document. This operator is modeled after the
-`$exists <https://docs.mongodb.com/manual/reference/operator/query/exists/>`__
+`$exists <https://www.mongodb.com/docs/manual/reference/operator/query/exists/>`__
 query operator.
 
 An example of this operator checking for a field's presence follows::
@@ -2556,7 +2695,7 @@ This operator can be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_). The test runner MUST assert that the
 actual value exists and matches one of the expected types, which correspond to
 the documented string types for the
-`$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
+`$type <https://www.mongodb.com/docs/manual/reference/operator/query/type/>`__
 query operator.
 
 An example of this operator follows::
@@ -2568,7 +2707,7 @@ An example of this operator follows::
 When the actual value is an array, test runners MUST NOT examine types of the
 array's elements. Only the type of actual field SHALL be checked. This is
 admittedly inconsistent with the behavior of the
-`$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
+`$type <https://www.mongodb.com/docs/manual/reference/operator/query/type/>`__
 query operator, but there is presently no need for this behavior in tests.
 
 
@@ -2682,6 +2821,21 @@ An example of this operator follows::
       lsid: { $$sessionLsid: *session0 }
 
 
+$$lte
+`````
+
+Syntax::
+
+    { $$lte: 5 }
+
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_). The test runner MUST assert that
+the actual value is less than or equal to the specified value. Test runners
+MUST also apply the rules specified in `Flexible Numeric Comparisons`_ for
+this operator. For example, an expected value of ``1`` would match an actual
+value of ``1.0`` and ``0.0`` but would not match ``1.1``.
+
+
 Test Runner Implementation
 --------------------------
 
@@ -2716,10 +2870,11 @@ In addition to the aforementioned connection string, the test runner MUST
 also be configurable with two other connection strings (or equivalent
 configuration) that point to TCP load balancers: one fronting multiple
 servers and one fronting a single server. These will be used to initialize
-client entities when executing tests against a load balanced cluster. If the
-topology type is ``LoadBalanced``, the test runner MUST error if either of
-these URIs is not provided. For all other topology types, these URIs SHOULD NOT
-be provided and MUST be ignored if provided.
+client entities when executing tests against a load balanced sharded cluster. If
+the topology type is ``LoadBalanced`` and Atlas Serverless is not being used,
+the test runner MUST error if either of these URIs is not provided. When testing
+against other topology types or Atlas Serverless, these URIs SHOULD NOT be
+provided and MUST be ignored if provided.
 
 The test runner SHOULD terminate any open transactions (see:
 `Terminating Open Transactions`_) using the internal MongoClient(s) before
@@ -2773,10 +2928,13 @@ runner MUST skip the test unless one or more `runOnRequirement`_ objects are
 satisfied.
 
 If `initialData`_ is specified, for each `collectionData`_ therein the test
-runner MUST drop the collection and insert the specified documents (if any)
-using a "majority" write concern. If no documents are specified, the test runner
-MUST create the collection with a "majority" write concern. The test runner
-MUST use an internal MongoClient for these operations. If the topology is
+runner MUST set up the collection. All setup operations MUST use the
+internal MongoClient and a "majority" write concern. The test runner MUST
+first drop the collection. If a ``createOptions`` document is present,
+the test runner MUST execute a ``create`` command to create the collection
+with the specified options. The test runner MUST then insert the specified
+documents (if any). If no documents are present and ``createOptions`` is
+not set, the test runner MUST create the collection. If the topology is
 sharded, the test runner SHOULD use a single mongos for handling `initialData`_
 to avoid possible runtime errors.
 
@@ -2847,9 +3005,9 @@ described in `expectedEvent`_.
 
 If `test.outcome <test_outcome_>`_ is specified, for each `collectionData`_
 therein the test runner MUST assert that the collection contains exactly the
-expected data. The test runner MUST query each collection using an internal
+expected data. The test runner MUST query each collection using the internal
 MongoClient, an ascending sort order on the ``_id`` field (i.e. ``{ _id: 1 }``),
-a "primary" read preference, a "local" read concern. When comparing collection
+a "primary" read preference, and a "local" read concern. When comparing collection
 data, the rules in `Evaluating Matches`_ do not apply and the documents MUST
 match exactly; however, test runners MUST permit variations in document key
 order or otherwise normalize the documents before comparison. If the list of
@@ -2869,7 +3027,8 @@ the test runner MUST end the session (e.g. call `endSession
 <../sessions/driver-sessions.rst#endsession>`_). For each ChangeStream and
 FindCursor in the entity map, the test runner MUST close the cursor.
 
-If the test started a transaction, the test runner MUST terminate any open
+If the test started a transaction (i.e. executed a ``startTransaction`` or
+``withTransaction`` operation), the test runner MUST terminate any open
 transactions (see: `Terminating Open Transactions`_).
 
 Proceed to the subsequent test.
@@ -3060,10 +3219,10 @@ The ``data`` option is an object that may be used to specify any options that
 control the particular fail point's behavior.
 
 In order to use ``configureFailPoint``, the undocumented ``enableTestCommands``
-`server parameter <https://docs.mongodb.com/manual/reference/parameters/>`_ must
+`server parameter <https://www.mongodb.com/docs/manual/reference/parameters/>`_ must
 be enabled by either the configuration file or command line option (e.g.
 ``--setParameter enableTestCommands=1``). It cannot be enabled at runtime via
-the `setParameter <https://docs.mongodb.com/manual/reference/command/setParameter/>`_
+the `setParameter <https://www.mongodb.com/docs/manual/reference/command/setParameter/>`_
 command). This parameter should already be enabled for most configuration files
 in `mongo-orchestration <https://github.com/10gen/mongo-orchestration>`_.
 
@@ -3135,7 +3294,7 @@ Determining if a Sharded Cluster Uses Replica Sets
 --------------------------------------------------
 
 When connected to a mongos server, the test runner can query the
-`config.shards <https://docs.mongodb.com/manual/reference/config-database/#config.shards>`__
+`config.shards <https://www.mongodb.com/docs/manual/reference/config-database/#config.shards>`__
 collection. Each shard in the cluster is represented by a document in this
 collection. If the shard is backed by a single server, the ``host`` field will
 contain a single host. If the shard is backed by a replica set, the ``host``
@@ -3286,6 +3445,18 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-04-27: Added ``createOptions`` field to ``initialData``, introduced a
+             new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
+             added an ``isTimeoutError`` field to ``expectedError``.
+
+:2022-04-27: Add ``runOnRequirement.csfle``.
+
+:2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
+
+:2020-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
+             for Atlas Serverless URIs using a load balancer fronting a single
+             proxy.
 
 :2022-03-01: Add ``ignoreExtraEvents`` field to ``expectedEventsForClient``.
 

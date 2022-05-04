@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-04-11
-:Version: 1.4.1
+:Last Modified: 2022-04-29
+:Version: 1.5.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -73,7 +73,7 @@ schema
    the server or client-side) which may include metadata about encrypted
    fields. This is a JSON Schema based on draft 4 of the JSON Schema
    specification, `as documented in the MongoDB
-   manual. <https://docs.mongodb.com/manual/reference/operator/query/jsonSchema/>`_.
+   manual. <https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/>`_.
 
 libmongocrypt_
    A library, written in C, that coordinates communication,
@@ -326,6 +326,10 @@ MongoClient Changes
       extraOptions: Optional<Map<String, Value>>;
       tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
       encryptedFieldsMap: Optional<Map<String, Document>>; // Maps namespace to encryptedFields.
+      // bypassQueryAnalysis disables automatic analysis of outgoing commands.
+      // Set bypassQueryAnalysis to true to use explicit encryption on indexed fields
+      // without the MongoDB Enterprise Advanced licensed csfle shared library.
+      bypassQueryAnalysis: Optional<Boolean>; // Default false.
    }
 
 A MongoClient can be configured to automatically encrypt collection
@@ -353,7 +357,7 @@ following in the driver documentation for MongoClient.
 
    Automatic encryption requires the authenticated user to have the
    `listCollections privilege
-   action <https://docs.mongodb.com/manual/reference/command/listCollections/#dbcmd.listCollections>`__.
+   action <https://www.mongodb.com/docs/manual/reference/command/listCollections/#dbcmd.listCollections>`__.
 
 See `Why is client side encryption configured on a MongoClient?`_
 
@@ -641,6 +645,11 @@ Drivers MUST include the following in the documentation for MongoClient:
 
    Supplying an ``encryptedFieldsMap`` provides more security than relying on an ``encryptedFields`` obtained from the server.
    It protects against a malicious server advertising a false ``encryptedFields``.
+
+bypassQueryAnalysis
+^^^^^^^^^^^^^^^^^^^
+
+See `Why is bypassQueryAnalysis needed?`_.
 
 .. _fle2-createcollection-drop:
 
@@ -1978,7 +1987,7 @@ different TLS options than TLS connections to MongoDB servers.
 KMIP support in the MongoDB server is a precedent. The server supports
 ``--kmipServerCAFile`` and ``--kmipClientCertificateFile`` to configure the
 encrypted storage engine KMIP. See
-https://docs.mongodb.com/manual/tutorial/configure-encryption/.
+https://www.mongodb.com/docs/manual/tutorial/configure-encryption/.
 
 TLS options may be useful for the AWS, Azure, and GCP KMS providers in
 a case where the default trust store does not include the needed CA
@@ -1993,6 +2002,45 @@ There is no technical limitation to having a separate FLE 1 field and FLE 2 fiel
 Is it an error to set schemaMap and encryptedFieldsMap?
 ------------------------------------------------------------
 No. FLE 1 and FLE 2 fields can coexist in different collections. The same collection cannot be in the ``encryptedFieldsMap`` and ``schemaMap``. libmongocrypt_ will error if the same collection is specified in a ``schemaMap`` and ``encryptedFieldsMap``.
+
+Why is bypassQueryAnalysis needed?
+----------------------------------
+
+Commands containing payloads for encrypted indexed fields require a top-level "encryptionInformation" field for the server processing. ``bypassQueryAnalysis`` enables the use case of Explicit Encryption without the MongoDB Enterprise Advanced licensed csfle shared library or mongocryptd process.
+
+Here is an example:
+
+.. code:: go
+
+   // No MongoDB Enterprise Advanced licensed 'csfle' shared library.
+   aeo := options.AutoEncryption().
+      SetKeyVaultNamespace("keyvault.datakeys").
+      SetEncryptedFieldsMap(efcMap).
+      SetKmsProviders(kmsProviders).
+      SetBypassQueryAnalysis(true)
+
+   co := options.Client().
+      ApplyURI(uri).
+      SetAutoEncryptionOptions(aeo)
+
+   encryptedClient, err := mongo.Connect(ctx, co)
+   defer encryptedClient.Disconnect(ctx)
+   if err != nil {
+      log.Fatalf("error in Connect: %v", err)
+   }
+
+   coll := encryptedClient.Database("foo").Collection("bar")
+   // Explicit Encrypt an FLE 2 Indexed Field.
+   eo := options.Encrypt().
+      SetEncryptIndexType(options.EncryptIndexEquality)
+   ciphertext, err := ce.Encrypt(ctx, val, eo)
+   // In InsertOne, libmongocrypt appends "encryptionInformation" to the insert command.
+   _, err = coll.InsertOne(ctx, bson.D{{"encryptedIndexed", ciphertext}})
+   if err != nil {
+      log.Fatalf("error in InsertOne: %v", err)
+   }
+
+A rejected alternative to adding ``bypassQueryAnalysis`` is to change the behavior of ``bypassAutoEncryption``. ``bypassQueryAnalysis`` is distinct from ``bypassAutoEncryption``. ``bypassAutoEncryption`` bypasses all of libmongocrypt for commands. Changing the behavior of ``bypassAutoEncryption`` could harm performance (e.g. by serializing as smaller documents).
 
 Future work
 ===========
@@ -2063,6 +2111,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
    22-02-24, Rename Versioned API to Stable API
    22-01-19, Require that timeouts be applied per the CSOT spec
