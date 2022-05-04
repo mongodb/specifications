@@ -856,24 +856,24 @@ algorithm
 One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-- "IndexedEquality"
+- "Indexed"
 - "Unindexed"
 
-The result of explicit encryption with the "IndexedEquality" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
 
-   To insert or query with an "IndexedEquality" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
+   To insert or query with an "Indexed" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
    ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
 
 contentionFactor
 ^^^^^^^^^^^^^^^^
-contentionFactor only applies when algorithm is "IndexedEquality".
-It is an error to set contentionFactor when algorithm is not "IndexedEquality".
+contentionFactor only applies when algorithm is "Indexed".
+It is an error to set contentionFactor when algorithm is not "Indexed".
 If contentionFactor is not supplied, it defaults to a value of 0.
 
 queryType
 ^^^^^^^^^
-queryType only applies when algorithm is "IndexedEquality".
-It is an error to set queryType when algorithm is not "IndexedEquality".
+queryType only applies when algorithm is "Indexed".
+It is an error to set queryType when algorithm is not "Indexed".
 
 User facing API: When Auto Encryption Fails
 ===========================================
@@ -2136,7 +2136,7 @@ Changelog
    :align: left
 
    Date, Description
-   22-05-03, Add queryType, contentionFactor, and "IndexedEquality" and "Unindexed" to algorithm.
+   22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
    22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
    22-02-24, Rename Versioned API to Stable API
