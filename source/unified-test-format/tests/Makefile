@@ -1,8 +1,8 @@
 SCHEMA=../schema-1.9.json
 
-.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions crud collection-management sessions command-monitoring HAS_AJV
+.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions crud collection-management sessions command-monitoring client-side-operations-timeout HAS_AJV
 
-all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions change-streams crud collection-management sessions command-monitoring
+all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions change-streams crud collection-management sessions command-monitoring client-side-operations-timeout
 
 invalid: HAS_AJV
 	@# Redirect stdout to hide expected validation errors
