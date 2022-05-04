@@ -3386,7 +3386,6 @@
             "name": "x_1"
           },
           "expectError": {
-            "isClientError": false,
             "isTimeoutError": false
           }
         }
@@ -3445,7 +3444,6 @@
             "name": "x_1"
           },
           "expectError": {
-            "isClientError": false,
             "isTimeoutError": false
           }
         }

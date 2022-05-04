@@ -1819,8 +1819,7 @@ tests:
           name: "x_1"
           
         expectError:
-          isClientError: false
-          isTimeoutError: false
+          isTimeoutError: false  # IndexNotFound
     expectEvents:
       - client: *client
         events:
@@ -1850,8 +1849,7 @@ tests:
           name: "x_1"
           
         expectError:
-          isClientError: false
-          isTimeoutError: false
+          isTimeoutError: false  # IndexNotFound
     expectEvents:
       - client: *client
         events:

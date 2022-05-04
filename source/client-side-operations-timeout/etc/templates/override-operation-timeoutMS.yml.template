@@ -68,8 +68,7 @@ tests:
           {% endfor %}
         {% if operation.operation_name == "dropIndex" -%}
         expectError:
-          isClientError: false
-          isTimeoutError: false
+          isTimeoutError: false  # IndexNotFound
         {%- endif %}
     expectEvents:
       - client: *client
@@ -102,8 +101,7 @@ tests:
           {% endfor %}
         {% if operation.operation_name == "dropIndex" -%}
         expectError:
-          isClientError: false
-          isTimeoutError: false
+          isTimeoutError: false  # IndexNotFound
         {%- endif %}
     expectEvents:
       - client: *client
