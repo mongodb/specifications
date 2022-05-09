@@ -624,7 +624,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "3.6",
-          "maxServerVersion": "5.2"
+          "maxServerVersion": "5.2.99"
         },
         {
           "minServerVersion": "6.0"
