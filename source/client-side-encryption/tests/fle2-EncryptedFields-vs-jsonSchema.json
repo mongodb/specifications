@@ -237,40 +237,40 @@
                     }
                   }
                 }
-              }
-            },
-            "encryptionInformation": {
-              "type": 1,
-              "schema": {
-                "default.default": {
-                  "fields": [
-                    {
-                      "keyId": {
-                        "$binary": {
-                          "base64": "EjRWeBI0mHYSNBI0VniQEg==",
-                          "subType": "04"
+              },
+              "encryptionInformation": {
+                "type": 1,
+                "schema": {
+                  "default.default": {
+                    "fields": [
+                      {
+                        "keyId": {
+                          "$binary": {
+                            "base64": "EjRWeBI0mHYSNBI0VniQEg==",
+                            "subType": "04"
+                          }
+                        },
+                        "path": "encryptedIndexed",
+                        "bsonType": "string",
+                        "queries": {
+                          "queryType": "equality",
+                          "contention": {
+                            "$numberLong": "0"
+                          }
                         }
                       },
-                      "path": "encryptedIndexed",
-                      "bsonType": "string",
-                      "queries": {
-                        "queryType": "equality",
-                        "contention": {
-                          "$numberLong": "0"
-                        }
+                      {
+                        "keyId": {
+                          "$binary": {
+                            "base64": "q83vqxI0mHYSNBI0VniQEg==",
+                            "subType": "04"
+                          }
+                        },
+                        "path": "encryptedUnindexed",
+                        "bsonType": "string"
                       }
-                    },
-                    {
-                      "keyId": {
-                        "$binary": {
-                          "base64": "q83vqxI0mHYSNBI0VniQEg==",
-                          "subType": "04"
-                        }
-                      },
-                      "path": "encryptedUnindexed",
-                      "bsonType": "string"
-                    }
-                  ]
+                    ]
+                  }
                 }
               }
             },

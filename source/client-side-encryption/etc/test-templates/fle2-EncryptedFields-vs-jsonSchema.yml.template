@@ -86,10 +86,10 @@ tests:
                   }
                 }
               }
-          encryptionInformation:
-              type: 1
-              schema:
-                "default.default": *encrypted_fields
+            encryptionInformation:
+                type: 1
+                schema:
+                  "default.default": *encrypted_fields
           command_name: find
     outcome:
       collection:
