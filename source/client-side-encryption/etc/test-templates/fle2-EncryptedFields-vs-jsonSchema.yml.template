@@ -6,15 +6,7 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 data: []
 json_schema: {
-    "properties": {
-        "encryptedIndexed": {
-            "encrypt": {
-                "keyId": "/altname",
-                "bsonType": "string",
-                "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-            }
-        }
-    },
+    "properties": {},
     "bsonType": "object"
 }
 encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.json") }}
