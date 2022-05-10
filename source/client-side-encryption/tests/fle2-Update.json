@@ -317,7 +317,10 @@
               "foo": "bar",
               "__safeContent__": [
                 {
-                  "$$type": "binData"
+                  "$binary": {
+                    "base64": "ThpoKfQ8AkOzkFfNC1+9PF0pY2nIzfXvRdxQgjkNbBw=",
+                    "subType": "00"
+                  }
                 }
               ]
             }
@@ -592,7 +595,10 @@
               },
               "__safeContent__": [
                 {
-                  "$$type": "binData"
+                  "$binary": {
+                    "base64": "rhe7/w8Ob8Unl44rGr/moScx6m5VODQnscDhF4Nkn6g=",
+                    "subType": "00"
+                  }
                 }
               ]
             }

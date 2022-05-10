@@ -285,7 +285,10 @@
               },
               "__safeContent__": [
                 {
-                  "$$type": "binData"
+                  "$binary": {
+                    "base64": "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=",
+                    "subType": "00"
+                  }
                 }
               ]
             }
