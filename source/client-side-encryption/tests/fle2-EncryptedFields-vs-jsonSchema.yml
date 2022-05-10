@@ -87,4 +87,4 @@ tests:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - { "_id": 1, "encryptedIndexed": { $$type: "binData" } }
+          - { "_id": 1, "encryptedIndexed": { $$type: "binData" }, "__safeContent__": { "$$type": "array" } }

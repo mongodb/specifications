@@ -310,7 +310,10 @@
               "encryptedIndexed": {
                 "$$type": "binData"
               },
-              "foo": "bar"
+              "foo": "bar",
+              "__safeContent__": {
+                "$$type": "array"
+              }
             }
           ]
         }
@@ -576,6 +579,9 @@
               "_id": 1,
               "encryptedIndexed": {
                 "$$type": "binData"
+              },
+              "__safeContent__": {
+                "$$type": "array"
               }
             }
           ]
