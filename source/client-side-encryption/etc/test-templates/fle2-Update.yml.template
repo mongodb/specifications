@@ -107,7 +107,7 @@ tests:
     outcome:
       collection:
         data:
-          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" }, "foo": "bar" }
+          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" }, "foo": "bar", "__safeContent__": [{ "$binary" : { "base64" : "ThpoKfQ8AkOzkFfNC1+9PF0pY2nIzfXvRdxQgjkNbBw=", "subType" : "00" } }] }
   - description: "Update can modify an FLE2 indexed field"
     clientOptions:
       autoEncryptOpts:
@@ -218,4 +218,4 @@ tests:
     outcome:
       collection:
         data:
-          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" } }
+          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" }, "__safeContent__": [{ "$binary" : { "base64" : "rhe7/w8Ob8Unl44rGr/moScx6m5VODQnscDhF4Nkn6g=", "subType" : "00" } }] }

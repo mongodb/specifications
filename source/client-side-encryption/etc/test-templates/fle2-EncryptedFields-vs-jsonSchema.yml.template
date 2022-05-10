@@ -6,15 +6,7 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 data: []
 json_schema: {
-    "properties": {
-        "encryptedIndexed": {
-            "encrypt": {
-                "keyId": "/altname",
-                "bsonType": "string",
-                "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-            }
-        }
-    },
+    "properties": {},
     "bsonType": "object"
 }
 encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.json") }}
@@ -86,13 +78,13 @@ tests:
                   }
                 }
               }
-          encryptionInformation:
-              type: 1
-              schema:
-                "default.default": *encrypted_fields
+            encryptionInformation:
+                type: 1
+                schema:
+                  "default.default": *encrypted_fields
           command_name: find
     outcome:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - { "_id": 1, "encryptedIndexed": { $$type: "binData" } }
+          - { "_id": 1, "encryptedIndexed": { $$type: "binData" }, "__safeContent__": [{ "$binary" : { "base64" : "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=", "subType" : "00" } }] }

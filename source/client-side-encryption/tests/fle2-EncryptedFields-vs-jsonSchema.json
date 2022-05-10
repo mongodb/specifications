@@ -12,18 +12,13 @@
   "collection_name": "default",
   "data": [],
   "json_schema": {
-    "properties": {
-      "encryptedIndexed": {
-        "encrypt": {
-          "keyId": "/altname",
-          "bsonType": "string",
-          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-        }
-      }
-    },
+    "properties": {},
     "bsonType": "object"
   },
   "encrypted_fields": {
+    "escCollection": "enxcol_.default.esc",
+    "eccCollection": "enxcol_.default.ecc",
+    "ecocCollection": "enxcol_.default.ecoc",
     "fields": [
       {
         "keyId": {
@@ -189,6 +184,9 @@
                 "type": 1,
                 "schema": {
                   "default.default": {
+                    "escCollection": "enxcol_.default.esc",
+                    "eccCollection": "enxcol_.default.ecc",
+                    "ecocCollection": "enxcol_.default.ecoc",
                     "fields": [
                       {
                         "keyId": {
@@ -237,40 +235,43 @@
                     }
                   }
                 }
-              }
-            },
-            "encryptionInformation": {
-              "type": 1,
-              "schema": {
-                "default.default": {
-                  "fields": [
-                    {
-                      "keyId": {
-                        "$binary": {
-                          "base64": "EjRWeBI0mHYSNBI0VniQEg==",
-                          "subType": "04"
+              },
+              "encryptionInformation": {
+                "type": 1,
+                "schema": {
+                  "default.default": {
+                    "escCollection": "enxcol_.default.esc",
+                    "eccCollection": "enxcol_.default.ecc",
+                    "ecocCollection": "enxcol_.default.ecoc",
+                    "fields": [
+                      {
+                        "keyId": {
+                          "$binary": {
+                            "base64": "EjRWeBI0mHYSNBI0VniQEg==",
+                            "subType": "04"
+                          }
+                        },
+                        "path": "encryptedIndexed",
+                        "bsonType": "string",
+                        "queries": {
+                          "queryType": "equality",
+                          "contention": {
+                            "$numberLong": "0"
+                          }
                         }
                       },
-                      "path": "encryptedIndexed",
-                      "bsonType": "string",
-                      "queries": {
-                        "queryType": "equality",
-                        "contention": {
-                          "$numberLong": "0"
-                        }
+                      {
+                        "keyId": {
+                          "$binary": {
+                            "base64": "q83vqxI0mHYSNBI0VniQEg==",
+                            "subType": "04"
+                          }
+                        },
+                        "path": "encryptedUnindexed",
+                        "bsonType": "string"
                       }
-                    },
-                    {
-                      "keyId": {
-                        "$binary": {
-                          "base64": "q83vqxI0mHYSNBI0VniQEg==",
-                          "subType": "04"
-                        }
-                      },
-                      "path": "encryptedUnindexed",
-                      "bsonType": "string"
-                    }
-                  ]
+                    ]
+                  }
                 }
               }
             },
@@ -285,7 +286,15 @@
               "_id": 1,
               "encryptedIndexed": {
                 "$$type": "binData"
-              }
+              },
+              "__safeContent__": [
+                {
+                  "$binary": {
+                    "base64": "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=",
+                    "subType": "00"
+                  }
+                }
+              ]
             }
           ]
         }

@@ -12,6 +12,9 @@
   "collection_name": "default",
   "data": [],
   "encrypted_fields": {
+    "escCollection": "enxcol_.default.esc",
+    "eccCollection": "enxcol_.default.ecc",
+    "ecocCollection": "enxcol_.default.ecoc",
     "fields": [
       {
         "keyId": {
@@ -155,6 +158,39 @@
               "find": "default",
               "filter": {
                 "_id": 1
+              }
+            },
+            "command_name": "find"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "datakeys",
+              "filter": {
+                "$or": [
+                  {
+                    "_id": {
+                      "$in": [
+                        {
+                          "$binary": {
+                            "base64": "q83vqxI0mHYSNBI0VniQEg==",
+                            "subType": "04"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "keyAltNames": {
+                      "$in": []
+                    }
+                  }
+                ]
+              },
+              "$db": "keyvault",
+              "readConcern": {
+                "level": "majority"
               }
             },
             "command_name": "find"

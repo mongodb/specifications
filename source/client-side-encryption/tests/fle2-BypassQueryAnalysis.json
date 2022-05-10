@@ -12,6 +12,9 @@
   "collection_name": "default",
   "data": [],
   "encrypted_fields": {
+    "escCollection": "enxcol_.default.esc",
+    "eccCollection": "enxcol_.default.ecc",
+    "ecocCollection": "enxcol_.default.ecoc",
     "fields": [
       {
         "keyId": {
@@ -268,7 +271,15 @@
               "_id": 1,
               "encryptedIndexed": {
                 "$$type": "binData"
-              }
+              },
+              "__safeContent__": [
+                {
+                  "$binary": {
+                    "base64": "ThpoKfQ8AkOzkFfNC1+9PF0pY2nIzfXvRdxQgjkNbBw=",
+                    "subType": "00"
+                  }
+                }
+              ]
             }
           ]
         }
