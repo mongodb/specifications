@@ -315,9 +315,11 @@
                 "$$type": "binData"
               },
               "foo": "bar",
-              "__safeContent__": {
-                "$$type": "array"
-              }
+              "__safeContent__": [
+                {
+                  "$$type": "binData"
+                }
+              ]
             }
           ]
         }
@@ -588,9 +590,11 @@
               "encryptedIndexed": {
                 "$$type": "binData"
               },
-              "__safeContent__": {
-                "$$type": "array"
-              }
+              "__safeContent__": [
+                {
+                  "$$type": "binData"
+                }
+              ]
             }
           ]
         }

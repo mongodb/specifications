@@ -102,7 +102,7 @@ tests:
     outcome:
       collection:
         data:
-          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" }, "foo": "bar", "__safeContent__": { "$$type": "array" } }
+          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" }, "foo": "bar", "__safeContent__": [{ "$$type": "binData" }] }
 
   - description: "findOneAndUpdate can modify an FLE2 indexed field"
     clientOptions:
@@ -210,4 +210,4 @@ tests:
     outcome:
       collection:
         data:
-          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" }, "__safeContent__": { "$$type": "array" } }
+          - { "_id": 1, "encryptedIndexed": { "$$type": "binData" }, "__safeContent__": [{ "$$type": "binData" }] }

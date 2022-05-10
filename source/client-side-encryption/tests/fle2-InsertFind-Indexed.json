@@ -283,9 +283,11 @@
               "encryptedIndexed": {
                 "$$type": "binData"
               },
-              "__safeContent__": {
-                "$$type": "array"
-              }
+              "__safeContent__": [
+                {
+                  "$$type": "binData"
+                }
+              ]
             }
           ]
         }
