@@ -20,7 +20,7 @@ createEntities:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           kmip:
-            endpoint: {}
+            endpoint: { $$placeholder: 1 }
   - database:
       id: &database0 database0
       client: *client0

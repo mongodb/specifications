@@ -20,8 +20,8 @@ createEntities:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           aws:
-            accessKeyId: {}
-            secretAccessKey: {}
+            accessKeyId: { $$placeholder: 1 }
+            secretAccessKey: { $$placeholder: 1 }
   - database:
       id: &database0 database0
       client: *client0

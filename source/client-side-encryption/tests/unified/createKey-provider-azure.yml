@@ -20,9 +20,9 @@ createEntities:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           azure:
-            tenantId: {}
-            clientId: {}
-            clientSecret: {}
+            tenantId: { $$placeholder: 1 }
+            clientId: { $$placeholder: 1 }
+            clientSecret: { $$placeholder: 1 }
   - database:
       id: &database0 database0
       client: *client0
