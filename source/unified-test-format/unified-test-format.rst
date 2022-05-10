@@ -1492,7 +1492,7 @@ specifications:
 
 - `Client Side Encryption <../client-side-encryption/client-side-encryption.rst>`__
 
-Operations that require sending and recieving KMS requests to encrypt or decrypt
+Operations that require sending and receiving KMS requests to encrypt or decrypt
 data keys may require appropriate KMS credentials to be loaded by the driver.
 Drivers MUST load appropriate KMS credentials (i.e. from the environment or a
 configuration file) when prompted by a test providing a placeholder value in a

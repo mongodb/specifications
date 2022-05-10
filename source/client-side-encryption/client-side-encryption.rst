@@ -1333,11 +1333,11 @@ containing encrypted data keys. There is no default collection (user
 must specify). The key vault collection is used for automatic and
 explicit encryption/decryption as well as key management functions.
 
-For key management functions that requires updating key documents in the key
+For key management functions that require updating key documents in the key
 vault collection, the corresponding create, update, or delete operations MUST be
 done with write concern majority.
 
-For encryption/decryption and key management functions that requires reading
+For encryption/decryption and key management functions that require reading
 key documents from the key vault collection, the find operation MUST be done
 with read concern majority.
 
