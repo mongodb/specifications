@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-04-27
+:Last Modified: 2022-05-10
 
 .. contents::
 
@@ -232,7 +232,7 @@ Supported Entity Types
 Test runners MUST support the following types of entities:
 
 - MongoClient. See `entity_client`_ and `Client Operations`_.
-- ClientEncryption. See `entity_clientEncryption`__.
+- ClientEncryption. See `entity_clientEncryption`__ and `ClientEncryption Operations`_.
 - Database. See `entity_database`_ and `Database Operations`_.
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
@@ -1482,6 +1482,27 @@ watch
 
 This operation SHOULD NOT be used in test files. See
 `client_createChangeStream`_.
+
+
+ClientEncryption Operations
+---------------------------
+
+These operations and their arguments may be documented in the following
+specifications:
+
+- `Client Side Encryption <../client-side-encryption/client-side-encryption.rst>`__
+
+Operations that require sending and recieving KMS requests to encrypt or decrypt
+data keys may require appropriate KMS credentials to be loaded by the driver.
+Drivers MUST load appropriate KMS credentials (i.e. from the environment or a
+configuration file) when prompted by a test providing a placeholder value in a
+corresponding ``kmsProviders`` field as described under `entity.clientEncryption
+<_entity_clientEncryption>`_.
+
+Drivers MUST be running the mock `KMS KMIP server
+<https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_
+when evaluating tests that require KMS requests to a KMIP KMS provider.
+
 
 
 Database Operations
@@ -3445,6 +3466,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-05-10: Add reference to Client Side Encryption spec under
+             `ClientEncryption Operations`_.
 
 :2022-04-27: Added ``createOptions`` field to ``initialData``, introduced a
              new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
