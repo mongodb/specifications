@@ -91,16 +91,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         # Data collection is created after.
@@ -207,16 +210,19 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         # Data collection is created after.
@@ -348,16 +354,19 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         # Data collection is created after.
@@ -495,16 +504,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         # Data collection is created after.
@@ -661,16 +673,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         # Data collection is created after.
@@ -784,16 +799,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         # Data collection is created after.
@@ -989,16 +1007,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
@@ -1159,16 +1180,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection.esc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
             command:
               create: "encryptedCollection.ecoc"
+              clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
         - command_started_event:
