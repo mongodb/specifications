@@ -137,7 +137,8 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * MUST NOT err when they encounter a new `operationType`. Unknown `operationType`
      * values may be represented by "unknown" or the literal string value.
      */
-    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename";
+    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename" | "createIndex"
+        | "dropIndex" | "collMod" | "create" | "shardCollection" | "refineCollectionShardKey" | "reshardCollection" | "chunkMigrated";
 
     /**
      * Contains two fields: "db" and "coll" containing the database and
@@ -152,8 +153,21 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * Only present for ops of type 'rename'.
      *
      * The namespace, in the same format as `ns`, that a collection has been renamed to.
+     * 
+     * This field is also present in the `operationDescription` field for `rename` events
+     * but has been left for backwards compatibility.
      */
     to: Optional<Document>;
+
+    /**
+     * Only present for ops of type 'rename', 'createIndexes', 'dropIndexes', 'shardCollection', 'reshardCollection', 'refineCollectionShardKey'.
+     * Only present when the `showExpandedEvents` change stream option is enabled.
+     *
+     * An description of the operation.
+     * 
+     * @since 6.1.0
+     */
+    operationDescription: Optional<Document>
 
     /**
      * Only present for ops of type ‘insert’, ‘update’, ‘replace’, and
@@ -169,10 +183,15 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     /**
      * Only present for ops of type ‘update’.
      *
-     * Contains a description of updated and removed fields in this
-     * operation.
+     * When the `showRawUpdateDescription` change stream pipeline stage option is set,
+     * this field contains the raw oplog entry corresponding to the update event.  The
+     * format of the oplog is internal and subject to change, and drivers should pass
+     * the data through.  
+     * 
+     * When the `showRawUpdateDescription` change stream pipeline stage option is not set,
+     * this field contains a description of updated and removed fields in this operation.
      */
-    updateDescription: Optional<UpdateDescription>;
+    updateDescription: Optional<UpdateDescription | Document>;
 
     /**
      * Always present for operations of type 'insert' and 'replace'. Also
@@ -203,6 +222,35 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * pre-image is unavailable, this will be explicitly set to null.
      */
     fullDocumentBeforeChange: Document | null;
+
+    /**
+     * The `wall` time from the oplog entry corresponding to the change event.
+     *
+     * Only present when the `showExpandedEvents` change stream option is enabled.
+     *  
+     * @since 6.0.0
+     */
+    wallTime: Date;
+
+    /**
+     * The `ui` field from the oplog entry corresponding to the change event.
+     * 
+     * Only present when the `showExpandedEvents` change stream option is enabled and for the following events
+     *  - 'insert'
+     *  - 'update'
+     *  - 'delete'
+     *  - 'createIndexes'
+     *  - 'dropIndexes'
+     *  - 'modify'
+     *  - 'drop'
+     *  - 'create'
+     *  - 'shardCollection'
+     *  - 'reshardCollection'
+     *  - 'refineCollectionShardKey'
+     *  
+     * @since 6.0.0
+     */
+    collectionUUID: UUID;
   }
 
   class UpdateDescription {
@@ -490,6 +538,22 @@ Driver API
      * @note this is an aggregation command option
      */
     comment: Optional<any>
+
+    /**
+     * Enables the server to send the 'expanded' list of change stream events.
+     * The list of events included with this flag set are
+     * - createIndexes
+     * - dropIndexes
+     * - modify
+     * - create
+     * - shardCollection
+     * - reshardCollection
+     * - refineCollectionShardKey
+     * 
+     * @since 6.0.0 // todo - confirm this date
+     * @note this is an option of the change stream pipeline stage
+     */
+    showExpandedEvents: Optional<Boolean>
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -998,4 +1062,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2022-04-13 | Support returning point-in-time pre and post-images with   |
 |            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
++------------+------------------------------------------------------------+
+| 2022-05-18 | Support new change stream events for C2C replication       |
 +------------+------------------------------------------------------------+
