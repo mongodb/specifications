@@ -67,11 +67,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -83,6 +78,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -186,11 +186,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -202,6 +197,11 @@ tests:
         - command_started_event:
             command:
               drop: "enxcol_.encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -330,11 +330,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -346,6 +341,11 @@ tests:
         - command_started_event:
             command:
               drop: "enxcol_.encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -389,11 +389,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -405,6 +400,11 @@ tests:
         - command_started_event:
             command:
               drop: "enxcol_.encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -480,11 +480,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -496,6 +491,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -649,11 +649,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -665,6 +660,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -775,11 +775,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -791,6 +786,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -859,11 +859,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -875,6 +870,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -984,11 +984,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -1000,6 +995,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -1041,11 +1041,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -1057,6 +1052,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -1157,11 +1157,6 @@ tests:
         # events from dropCollection ... begin
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -1173,6 +1168,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
@@ -1220,11 +1220,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "encryptedCollection"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "encryptedCollection.esc"
             command_name: drop
             database_name: *database_name
@@ -1236,6 +1231,11 @@ tests:
         - command_started_event:
             command:
               drop: "encryptedCollection.ecoc"
+            command_name: drop
+            database_name: *database_name
+        - command_started_event:
+            command:
+              drop: "encryptedCollection"
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end

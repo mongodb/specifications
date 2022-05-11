@@ -689,13 +689,13 @@ A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the col
 
 If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
-- Drop the collection ``collectionName``.
 - Drop the collection with name ``encryptedFields["escCollection"]``.
   If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
 - Drop the collection with name ``encryptedFields["eccCollection"]``.
   If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
 - Drop the collection with name ``encryptedFields["ecocCollection"]``.
   If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
+- Drop the collection ``collectionName``.
 
 ClientEncryption
 ----------------
