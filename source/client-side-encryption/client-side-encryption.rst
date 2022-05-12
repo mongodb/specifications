@@ -1316,8 +1316,8 @@ selection error is propagated to the user.
 ClientEncryption
 ================
 The new ClientEncryption type interacts uses libmongocrypt to perform
-ClientEncryption.createKey() and ClientEncryption.rewrapManyDataKey(). See the
-`libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_
+ClientEncryption.createDataKey() and ClientEncryption.rewrapManyDataKey(). See
+the `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_
 for more information.
 
 The ClientEncryption contains a MongoClient connected to the MongoDB
