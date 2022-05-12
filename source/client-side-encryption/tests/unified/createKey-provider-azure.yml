@@ -8,7 +8,6 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      useMultipleMongoses: true
       observeEvents:
         - commandStartedEvent
         - commandSucceededEvent
