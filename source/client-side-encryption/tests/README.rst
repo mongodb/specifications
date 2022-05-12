@@ -1007,6 +1007,12 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 
 #. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run a handshake command and ensure it fails with a server selection timeout.
 
+Via bypassQueryAnalysis
+```````````````````````
+
+Repeat the steps from the "Via bypassAutoEncryption" test, replacing "bypassAutoEncryption=true" with "bypassQueryAnalysis=true".
+
+
 Deadlock tests
 ~~~~~~~~~~~~~~
 
