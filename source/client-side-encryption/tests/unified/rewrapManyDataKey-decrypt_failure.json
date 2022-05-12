@@ -121,7 +121,7 @@
   ],
   "tests": [
     {
-      "description": "rewrap data key that fails during decryption",
+      "description": "rewrap data key that fails during decryption due to invalid masterKey",
       "operations": [
         {
           "name": "rewrapManyDataKey",
