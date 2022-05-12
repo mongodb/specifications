@@ -85,7 +85,7 @@ initialData:
           provider: local
 
 tests:
-  - description: "rewrap with new AWS KMS provider"
+  - description: "rewrap with current KMS provider"
     operations:
       - name: rewrapManyDataKey
         object: *clientEncryption0
