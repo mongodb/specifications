@@ -127,6 +127,7 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                   - q:
                       _id: *azure_key_id
                     u:
@@ -135,6 +136,7 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                   - q:
                       _id: *gcp_key_id
                     u:
@@ -143,6 +145,7 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                   - q:
                       _id: *kmip_key_id
                     u:
@@ -151,6 +154,7 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                   - q:
                       _id: *local_key_id
                     u:
@@ -159,4 +163,5 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }

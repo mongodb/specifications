@@ -146,6 +146,7 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                   - q:
                       _id: *local_key_id
                     u:
@@ -154,6 +155,7 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
   - description: "rewrap keys matching filter by KMS provider"
     operations:
@@ -196,6 +198,7 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                   - q:
                       _id: *local_key_id
                     u:
@@ -204,4 +207,5 @@ tests:
                         keyMaterial: { $$type: binData }
                       $currentDate: { updateDate: true }
                     upsert: { $$unsetOrMatches: false }
+                    multi: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
