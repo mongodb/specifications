@@ -349,7 +349,9 @@ for information on "disabling" csfle and setting csfle search paths.
 
    .. code-block:: shell
 
-      $ python3 mongodl.py --component=csfle --version=5.3.1 --out=./csfle/
+      $ python3 mongodl.py --component=csfle --version=6.0.0-rc4 --out=./csfle/
+
+   Other versions of `csfle` are available. Please use the `--list` option to see versions.
 
 .. _mongodl: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/mongodl.py
 .. _drivers-evergreen-tools: https://github.com/mongodb-labs/drivers-evergreen-tools/
