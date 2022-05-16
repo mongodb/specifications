@@ -371,6 +371,31 @@ In the prose tests LOCAL_MASTERKEY refers to the following base64:
 
 Perform all applicable operations on key vault collections (e.g. inserting an example data key, or running a find command) with readConcern/writeConcern "majority".
 
+Custom Key Material Test
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+#. Create a ``MongoClient`` object (referred to as ``client``).
+
+#. Using ``client``, drop the collection ``keyvault.datakeys``.
+
+#. Create a ``ClientEncryption`` object (referred to as ``client_encryption``) with ``keyvault.datakeys`` as the ``keyVaultClient``.
+
+#. Using ``client_encryption``, create a data key with a ``local`` KMS provider and the following custom key material (given as base64):
+
+.. code:: javascript
+
+  xPTAjBRG5JiPm+d3fj6XLi2q5DMXUS/f1f+SMAlhhwkhDRL0kr8r9GDLIGTAGlvC+HVjSIgdL+RKwZCvpXSyxTICWSXTUYsWYPyu3IoHbuBZdmw2faM3WhcRIgbMReU5
+
+#. Find the resulting key document in ``keyvault.datakeys``, save a copy of the key document, then remove the key document from the collection.
+
+#. Replace the ``_id`` field in the copied key document with a UUID with base64 value ``AAAAAAAAAAAAAAAAAAAAAA==`` (16 bytes all equal to ``0x00``) and insert the modified key document into ``keyvault.datakeys``.
+
+#. Using ``client_encryption``, encrypt the string ``"test"`` with the modified data key using the ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic`` algorithm and assert the resulting value is equal to the following (given as base64):
+
+.. code:: javascript
+
+  AQAAAAAAAAAAAAAAAAAAAAACz0ZOLuuhEYi807ZXTdhbqhLaS2/t9wLifJnnNYwiw79d75QYIZ6M/aYC1h9nCzCjZ7pGUpAuNnkUhnIXM3PjrA==
+
 Data key and double encryption
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
