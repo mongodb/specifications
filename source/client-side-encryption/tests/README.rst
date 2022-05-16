@@ -351,7 +351,9 @@ for information on "disabling" csfle and setting csfle search paths.
 
    .. code-block:: shell
 
-      $ python3 mongodl.py --component=csfle --version=5.3.1 --out=./csfle/
+      $ python3 mongodl.py --component=csfle --version=6.0.0-rc4 --out=./csfle/
+
+   Other versions of `csfle` are available. Please use the `--list` option to see versions.
 
 .. _mongodl: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/mongodl.py
 .. _drivers-evergreen-tools: https://github.com/mongodb-labs/drivers-evergreen-tools/
@@ -1033,6 +1035,12 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 #. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. Expect this to succeed.
 
 #. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run a handshake command and ensure it fails with a server selection timeout.
+
+Via bypassQueryAnalysis
+```````````````````````
+
+Repeat the steps from the "Via bypassAutoEncryption" test, replacing "bypassAutoEncryption=true" with "bypassQueryAnalysis=true".
+
 
 Deadlock tests
 ~~~~~~~~~~~~~~
