@@ -708,6 +708,9 @@ ClientEncryption
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
+      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+
+      // Equivalent to createKey.
       createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
@@ -1317,8 +1320,8 @@ selection error is propagated to the user.
 ClientEncryption
 ================
 The new ClientEncryption type interacts uses libmongocrypt to perform
-ClientEncryption.createDataKey() and ClientEncryption.rewrapManyDataKey(). See
-the `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_
+ClientEncryption.createKey() and ClientEncryption.rewrapManyDataKey(). See the
+`libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_
 for more information.
 
 The ClientEncryption contains a MongoClient connected to the MongoDB
@@ -2133,6 +2136,13 @@ key vault collection. Using ``RewrapManyDataKeyResult`` allows new fields to be
 added in the future and more easily deprecate the wrapped ``BulkWriteResult`` if
 necessary.
 
+Why is there both a createKey and a createDataKey function in ClientEncryption?
+-------------------------------------------------------------------------------
+
+``createDataKey`` existed before ``createKey``, but ``createKey`` was added for
+parity with the mongosh interface. ``createDataKey`` remains for backwards
+compatibility.
+
 Future work
 ===========
 
@@ -2211,6 +2221,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-16, Add createKey and rewrapManyDataKey
    22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
    22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
