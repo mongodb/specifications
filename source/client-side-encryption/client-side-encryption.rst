@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2
 :Last Modified: 2022-05-11
-:Version: 1.6.0
+:Version: 1.5.2
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -231,11 +231,12 @@ csfle_ library is used. It speaks the MongoDB wire protocol and the driver uses
 mongocryptd_ by connecting with a MongoClient. By default, if csfle_ is
 unavailable, the driver should attempt to automatically spawn mongocryptd_. If
 the MongoClient is configured with `extraOptions.mongocryptdBypassSpawn` set to
-|true|, OR `bypassAutoEncryption` is set to |true| then the driver will not
-attempt to spawn mongocryptd_. The mongocryptd_ process is responsible for self
-terminating after idling for a time period. If |opt-csfle-required| is set to
-|true|, the driver will not connect to mongocryptd_ and instead rely on csfle_
-being available.
+|true|, OR `bypassAutoEncryption` is set to |true|, OR `bypassQueryAnalysis` is
+set to |true| then the driver will not attempt to spawn mongocryptd_.
+
+The mongocryptd_ process is responsible for self terminating after idling for a
+time period. If |opt-csfle-required| is set to |true|, the driver will not
+connect to mongocryptd_ and instead rely on csfle_ being available.
 
 
 csfle
