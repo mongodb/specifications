@@ -4,7 +4,7 @@ schemaVersion: "1.7"
 
 runOnRequirements:
   - minServerVersion: "3.6"
-    # TODO(DRIVERS-XXXX): Run all possible tests against sharded clusters once we know the
+    # TODO(DRIVERS-2323): Run all possible tests against sharded clusters once we know the
     # cause of unexpected command monitoring events.
     topologies: [ replicaset ]
     serverless: forbid
