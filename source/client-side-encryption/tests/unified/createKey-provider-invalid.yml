@@ -8,6 +8,10 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      observeEvents:
+        - commandStartedEvent
+        - commandSucceededEvent
+        - commandFailedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -29,6 +33,9 @@ tests:
             masterKey: {}
         expectError:
           isClientError: true
+    expectEvents:
+      - client: *client0
+        events: []
   - description: create data key with invalid master key field
     operations:
       - name: createKey
@@ -40,6 +47,9 @@ tests:
               invalid: 1
         expectError:
           isClientError: true
+    expectEvents:
+      - client: *client0
+        events: []
   - description: create data key with invalid master key
     operations:
       - name: createKey
@@ -52,3 +62,6 @@ tests:
               region: invalid
         expectError:
           isClientError: true
+    expectEvents:
+      - client: *client0
+        events: []
