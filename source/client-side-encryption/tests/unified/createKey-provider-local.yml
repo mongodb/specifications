@@ -42,7 +42,7 @@ tests:
         arguments:
           kmsProvider: local
         expectResult:
-          id: { $$type: binData }
+          { $$type: binData }
     expectEvents:
       - client: *client0
         events:

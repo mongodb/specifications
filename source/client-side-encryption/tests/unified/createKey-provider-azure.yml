@@ -48,7 +48,7 @@ tests:
               keyVaultEndpoint: key-vault-csfle.vault.azure.net
               keyName: key-name-csfle
         expectResult:
-          id: { $$type: binData }
+          { $$type: binData }
     expectEvents:
       - client: *client0
         events:

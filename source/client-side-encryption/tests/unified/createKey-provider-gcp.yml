@@ -49,7 +49,7 @@ tests:
               keyRing: key-ring-csfle
               keyName: key-name-csfle
         expectResult:
-          id: { $$type: binData }
+          { $$type: binData }
     expectEvents:
       - client: *client0
         events:
