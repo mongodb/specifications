@@ -391,7 +391,7 @@ Perform all applicable operations on key vault collections (e.g. inserting an ex
 
 #. Find the resulting key document in ``keyvault.datakeys``, save a copy of the key document, then remove the key document from the collection.
 
-#. Replace the ``_id`` field in the copied key document with a UUID with base64 value ``AAAAAAAAAAAAAAAAAAAAAA==`` (16 bytes all equal to ``0x00``) and insert the modified key document into ``keyvault.datakeys``.
+#. Replace the ``_id`` field in the copied key document with a UUID with base64 value ``AAAAAAAAAAAAAAAAAAAAAA==`` (16 bytes all equal to ``0x00``) and insert the modified key document into ``keyvault.datakeys`` with majority write concern.
 
 #. Using ``client_encryption``, encrypt the string ``"test"`` with the modified data key using the ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic`` algorithm and assert the resulting value is equal to the following (given as base64):
 
