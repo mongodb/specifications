@@ -118,6 +118,7 @@ tests:
         arguments:
           filter: {}
           projection: { masterKey: 1 }
+          sort: { keyAltNames: 1 }
         expectResult:
           - { _id: *aws_key_id, masterKey: *aws_masterkey }
           - { _id: *azure_key_id, masterKey: { provider: aws, <<: *new_aws_masterkey } }
@@ -148,6 +149,7 @@ tests:
         arguments:
           filter: {}
           projection: { masterKey: 1 }
+          sort: { keyAltNames: 1 }
         expectResult:
           - { _id: *aws_key_id, masterKey: { provider: azure, <<: *new_azure_masterkey } }
           - { _id: *azure_key_id, masterKey: *azure_masterkey }
@@ -180,6 +182,7 @@ tests:
         arguments:
           filter: {}
           projection: { masterKey: 1 }
+          sort: { keyAltNames: 1 }
         expectResult:
           - { _id: *aws_key_id, masterKey: { provider: gcp, <<: *new_gcp_masterkey } }
           - { _id: *azure_key_id, masterKey: { provider: gcp, <<: *new_gcp_masterkey } }
@@ -207,6 +210,7 @@ tests:
         arguments:
           filter: {}
           projection: { masterKey: 1 }
+          sort: { keyAltNames: 1 }
         expectResult:
           - { _id: *aws_key_id, masterKey: &new_kmip_masterkey { provider: kmip, keyId: { $$type: string } } }
           - { _id: *azure_key_id, masterKey: *new_kmip_masterkey }
@@ -234,6 +238,7 @@ tests:
         arguments:
           filter: {}
           projection: { masterKey: 1 }
+          sort: { keyAltNames: 1 }
         expectResult:
           - { _id: *aws_key_id, masterKey: &new_local_masterkey { provider: local } }
           - { _id: *azure_key_id, masterKey: *new_local_masterkey }
@@ -259,6 +264,7 @@ tests:
         arguments:
           filter: {}
           projection: { masterKey: 1 }
+          sort: { keyAltNames: 1 }
         expectResult:
           - { _id: *aws_key_id, masterKey: *aws_masterkey }
           - { _id: *azure_key_id, masterKey: *azure_masterkey }

@@ -306,6 +306,9 @@
             "filter": {},
             "projection": {
               "masterKey": 1
+            },
+            "sort": {
+              "keyAltNames": 1
             }
           },
           "expectResult": [
@@ -416,6 +419,9 @@
             "filter": {},
             "projection": {
               "masterKey": 1
+            },
+            "sort": {
+              "keyAltNames": 1
             }
           },
           "expectResult": [
@@ -528,6 +534,9 @@
             "filter": {},
             "projection": {
               "masterKey": 1
+            },
+            "sort": {
+              "keyAltNames": 1
             }
           },
           "expectResult": [
@@ -644,6 +653,9 @@
             "filter": {},
             "projection": {
               "masterKey": 1
+            },
+            "sort": {
+              "keyAltNames": 1
             }
           },
           "expectResult": [
@@ -753,6 +765,9 @@
             "filter": {},
             "projection": {
               "masterKey": 1
+            },
+            "sort": {
+              "keyAltNames": 1
             }
           },
           "expectResult": [
@@ -842,6 +857,9 @@
             "filter": {},
             "projection": {
               "masterKey": 1
+            },
+            "sort": {
+              "keyAltNames": 1
             }
           },
           "expectResult": [
