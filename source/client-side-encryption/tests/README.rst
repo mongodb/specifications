@@ -381,7 +381,7 @@ Custom Key Material Test
 
 #. Using ``client``, drop the collection ``keyvault.datakeys``.
 
-#. Create a ``ClientEncryption`` object (referred to as ``client_encryption``) with ``keyvault.datakeys`` as the ``keyVaultClient``.
+#. Create a ``ClientEncryption`` object (referred to as ``client_encryption``) with ``client`` set as the ``keyVaultClient``.
 
 #. Using ``client_encryption``, create a data key with a ``local`` KMS provider and the following custom key material (given as base64):
 
