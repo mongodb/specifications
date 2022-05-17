@@ -374,8 +374,8 @@ In the prose tests LOCAL_MASTERKEY refers to the following base64:
 
 Perform all applicable operations on key vault collections (e.g. inserting an example data key, or running a find command) with readConcern/writeConcern "majority".
 
-Custom Key Material Test
-~~~~~~~~~~~~~~~~~~~~~~~~
+1. Custom Key Material Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #. Create a ``MongoClient`` object (referred to as ``client``).
 
@@ -399,8 +399,8 @@ Custom Key Material Test
 
   AQAAAAAAAAAAAAAAAAAAAAACz0ZOLuuhEYi807ZXTdhbqhLaS2/t9wLifJnnNYwiw79d75QYIZ6M/aYC1h9nCzCjZ7pGUpAuNnkUhnIXM3PjrA==
 
-Data key and double encryption
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2. Data Key and Double Encryption
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, perform the setup.
 
@@ -530,8 +530,8 @@ For each KMS provider (``aws``, ``azure``, ``gcp``, ``local``, and ``kmip``), re
 
 
 
-External Key Vault Test
-~~~~~~~~~~~~~~~~~~~~~~~
+3. External Key Vault Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Run the following tests twice, parameterized by a boolean ``withExternalKeyVault``.
 
@@ -565,8 +565,8 @@ Run the following tests twice, parameterized by a boolean ``withExternalKeyVault
    If ``withExternalKeyVault == true``, expect an authentication exception to be thrown. Otherwise, expect the insert to succeed.
 
 
-BSON size limits and batch splitting
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4. BSON Size Limits and Batch Splitting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First, perform the setup.
 
@@ -625,8 +625,8 @@ Using ``client_encrypted`` perform the following operations:
 Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that setting maxWriteBatchSize=1 and inserting the two documents ``{ "_id": "a" }, { "_id": "b" }`` with ``client_encrypted`` splits the operation into two inserts.
 
 
-Views are prohibited
-~~~~~~~~~~~~~~~~~~~~
+5. Views Are Prohibited
+~~~~~~~~~~~~~~~~~~~~~~~
 
 #. Create a MongoClient without encryption enabled (referred to as ``client``).
 
@@ -645,8 +645,8 @@ Views are prohibited
 #. Using ``client_encrypted``, attempt to insert a document into ``db.view``. Expect an exception to be thrown containing the message: "cannot auto encrypt a view".
 
 
-Corpus Test
-~~~~~~~~~~~
+6. Corpus Test
+~~~~~~~~~~~~~~
 
 The corpus test exhaustively enumerates all ways to encrypt all BSON value types. Note, the test data includes BSON binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtype 4. Run the test as follows.
 
@@ -742,8 +742,8 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
 9. Repeat steps 1-8 with a local JSON schema. I.e. amend step 4 to configure the schema on ``client_encrypted`` with the ``schema_map`` option.
 
-Custom Endpoint Test
-~~~~~~~~~~~~~~~~~~~~
+7. Custom Endpoint Test
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Setup
 `````
@@ -962,8 +962,8 @@ Test cases
 
     Expect this to fail with a network exception indicating failure to resolve "doesnotexist.local".
 
-Bypass spawning mongocryptd
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+8. Bypass Spawning mongocryptd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::
 
@@ -1042,9 +1042,8 @@ Via bypassQueryAnalysis
 
 Repeat the steps from the "Via bypassAutoEncryption" test, replacing "bypassAutoEncryption=true" with "bypassQueryAnalysis=true".
 
-
-Deadlock tests
-~~~~~~~~~~~~~~
+9. Deadlock Tests
+~~~~~~~~~~~~~~~~~
 
 .. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 
@@ -1217,8 +1216,8 @@ Drivers that do not support an unlimited maximum pool size MUST skip this test.
       - a find on "keyvault".
 - ExpectedNumberOfClients: 1
 
-KMS TLS Tests
-~~~~~~~~~~~~~
+10. KMS TLS Tests
+~~~~~~~~~~~~~~~~~
 
 .. _ca.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem
 .. _expired.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem
@@ -1291,8 +1290,8 @@ Invalid Hostname in KMS Certificate
    is "cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs". If the language of implementation has a single, generic
    error message for all certificate validation errors, drivers may inspect other fields of the error to verify its meaning.
 
-KMS TLS Options Tests
-~~~~~~~~~~~~~~~~~~~~~
+11. KMS TLS Options Tests
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Setup
 `````
@@ -1600,8 +1599,8 @@ the same masterKey.
 
 Expect an error indicating TLS handshake failed due to an invalid hostname.
 
-Explicit Encryption
-~~~~~~~~~~~~~~~~~~~
+12. Explicit Encryption
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The Explicit Encryption tests require MongoDB server 6.0+. The tests must not run against a standalone.
 
