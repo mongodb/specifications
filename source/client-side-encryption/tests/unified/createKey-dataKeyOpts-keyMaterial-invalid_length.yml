@@ -8,10 +8,6 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents:
-        - commandStartedEvent
-        - commandSucceededEvent
-        - commandFailedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
