@@ -43,7 +43,7 @@ tests:
           kmsProvider: local
           opts:
             # "key_material" repeated 8 times.
-            keyMaterial: { $binary: { base64: "a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs", subType: "00" } }
+            keyMaterial: { $binary: { base64: a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs, subType: "00" } }
         expectResult:
           id: { $$type: binData }
     expectEvents:
