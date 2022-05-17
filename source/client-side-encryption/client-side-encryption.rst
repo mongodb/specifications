@@ -710,7 +710,7 @@ ClientEncryption
       // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
       createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
-      // Equivalent to createKey.
+      // An alias function equivalent to createKey.
       createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
