@@ -688,7 +688,7 @@ A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the col
 - The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
 - If ``AutoEncryptionOpts.encryptedFieldsMap`` is not null, run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option.
 
-If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
+If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted. A ``namespace not found`` error returned from the server (server error code 26) MUST be ignored:
 
 - Drop the collection with name ``encryptedFields["escCollection"]``.
   If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
