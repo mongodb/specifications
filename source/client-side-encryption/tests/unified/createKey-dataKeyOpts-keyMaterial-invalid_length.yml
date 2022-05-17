@@ -23,15 +23,15 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: &keyvault keyvault
+      databaseName: &database0Name keyvault
   - collection:
       id: &collection0 collection0
       database: *database0
-      collectionName: &datakeys datakeys
+      collectionName: &collection0Name datakeys
 
 initialData:
-  - databaseName: *keyvault
-    collectionName: *datakeys
+  - databaseName: *database0Name
+    collectionName: *collection0Name
     documents: []
 
 tests:

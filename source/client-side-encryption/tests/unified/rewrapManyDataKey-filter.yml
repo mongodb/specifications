@@ -24,15 +24,15 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: &keyvault keyvault
+      databaseName: &database0Name keyvault
   - collection:
       id: &collection0 collection0
       database: *database0
-      collectionName: &datakeys datakeys
+      collectionName: &collection0Name datakeys
 
 initialData:
-  - databaseName: *keyvault
-    collectionName: *datakeys
+  - databaseName: *database0Name
+    collectionName: *collection0Name
     documents:
       - _id: &aws_key_id { $binary: { base64: "YXdzYXdzYXdzYXdzYXdzYQ==", subType: "04" } }
         keyAltNames: ["aws_key"]
@@ -100,9 +100,9 @@ tests:
         events:
           - commandStartedEvent:
               commandName: find
-              databaseName: *keyvault
+              databaseName: *database0Name
               command:
-                find: *datakeys
+                find: *collection0Name
                 filter: {}
                 readConcern: { level: majority }
   - description: "rewrap keys matching filter by keyAltNames"
@@ -126,16 +126,16 @@ tests:
         events:
           - commandStartedEvent:
               commandName: find
-              databaseName: *keyvault
+              databaseName: *database0Name
               command:
-                find: *datakeys
+                find: *collection0Name
                 filter: {}
                 readConcern: { level: majority }
           - commandStartedEvent:
               commandName: update
-              databaseName: *keyvault
+              databaseName: *database0Name
               command:
-                update: *datakeys
+                update: *collection0Name
                 ordered: true
                 updates:
                   - q:
@@ -178,16 +178,16 @@ tests:
         events:
           - commandStartedEvent:
               commandName: find
-              databaseName: *keyvault
+              databaseName: *database0Name
               command:
-                find: *datakeys
+                find: *collection0Name
                 filter: {}
                 readConcern: { level: majority }
           - commandStartedEvent:
               commandName: update
-              databaseName: *keyvault
+              databaseName: *database0Name
               command:
-                update: *datakeys
+                update: *collection0Name
                 ordered: true
                 updates:
                   - q:
