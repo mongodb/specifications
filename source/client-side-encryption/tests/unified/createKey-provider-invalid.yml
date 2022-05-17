@@ -8,10 +8,6 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents:
-        - commandStartedEvent
-        - commandSucceededEvent
-        - commandFailedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -21,19 +17,6 @@ createEntities:
           aws:
             accessKeyId: { $$placeholder: 1 }
             secretAccessKey: { $$placeholder: 1 }
-  - database:
-      id: &database0 database0
-      client: *client0
-      databaseName: &database0Name keyvault
-  - collection:
-      id: &collection0 collection0
-      database: *database0
-      collectionName: &collection0Name datakeys
-
-initialData:
-  - databaseName: *database0Name
-    collectionName: *collection0Name
-    documents: []
 
 tests:
   - description: create data key without required master key fields
