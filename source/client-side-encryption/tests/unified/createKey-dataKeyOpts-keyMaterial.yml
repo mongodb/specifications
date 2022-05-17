@@ -8,10 +8,6 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents:
-        - commandStartedEvent
-        - commandSucceededEvent
-        - commandFailedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -45,20 +41,10 @@ tests:
             # "key_material" repeated 8 times.
             keyMaterial: { $binary: { base64: a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs, subType: "00" } }
         expectResult: { $$type: binData }
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *database0Name
-              command:
-                insert: *collection0Name
-                documents:
-                  - masterKey:
-                      provider: local
-                writeConcern: { w: "majority" }
-          - commandSucceededEvent:
-              commandName: insert
-              reply:
-                ok: 1
-                n: 1
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          projection: { _id: 0, masterKey: 1 }
+        expectResult:
+          - { masterKey: { provider: local } }

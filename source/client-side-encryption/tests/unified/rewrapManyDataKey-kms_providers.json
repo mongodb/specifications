@@ -9,10 +9,7 @@
   "createEntities": [
     {
       "client": {
-        "id": "client0",
-        "observeEvents": [
-          "commandStartedEvent"
-        ]
+        "id": "client0"
       }
     },
     {
@@ -258,11 +255,15 @@
           "name": "rewrapManyDataKey",
           "object": "clientEncryption0",
           "arguments": {
-            "filter": {},
+            "filter": {
+              "keyAltNames": {
+                "$ne": "aws_key"
+              }
+            },
             "opts": {
               "provider": "aws",
               "masterKey": {
-                "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d",
                 "region": "us-east-1"
               }
             }
@@ -270,195 +271,87 @@
           "expectResult": {
             "bulkWriteResult": {
               "insertedCount": 0,
-              "matchedCount": 5,
-              "modifiedCount": 5,
+              "matchedCount": 4,
+              "modifiedCount": 4,
               "deletedCount": 0,
               "upsertedCount": 0,
               "upsertedIds": {}
             }
           }
-        }
-      ],
-      "expectEvents": [
+        },
         {
-          "client": "client0",
-          "events": [
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "projection": {
+              "masterKey": 1
+            }
+          },
+          "expectResult": [
             {
-              "commandStartedEvent": {
-                "commandName": "find",
-                "databaseName": "keyvault",
-                "command": {
-                  "find": "datakeys",
-                  "filter": {},
-                  "readConcern": {
-                    "level": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "aws",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+                "region": "us-east-1"
               }
             },
             {
-              "commandStartedEvent": {
-                "commandName": "update",
-                "databaseName": "keyvault",
-                "command": {
-                  "update": "datakeys",
-                  "ordered": true,
-                  "updates": [
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-                            "region": "us-east-1"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-                            "region": "us-east-1"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-                            "region": "us-east-1"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "a21pcGttaXBrbWlwa21pcA==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-                            "region": "us-east-1"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-                            "region": "us-east-1"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    }
-                  ],
-                  "writeConcern": {
-                    "w": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "aws",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d",
+                "region": "us-east-1"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "aws",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d",
+                "region": "us-east-1"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "a21pcGttaXBrbWlwa21pcA==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "aws",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d",
+                "region": "us-east-1"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "aws",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d",
+                "region": "us-east-1"
               }
             }
           ]
@@ -472,7 +365,11 @@
           "name": "rewrapManyDataKey",
           "object": "clientEncryption0",
           "arguments": {
-            "filter": {},
+            "filter": {
+              "keyAltNames": {
+                "$ne": "azure_key"
+              }
+            },
             "opts": {
               "provider": "azure",
               "masterKey": {
@@ -484,195 +381,87 @@
           "expectResult": {
             "bulkWriteResult": {
               "insertedCount": 0,
-              "matchedCount": 5,
-              "modifiedCount": 5,
+              "matchedCount": 4,
+              "modifiedCount": 4,
               "deletedCount": 0,
               "upsertedCount": 0,
               "upsertedIds": {}
             }
           }
-        }
-      ],
-      "expectEvents": [
+        },
         {
-          "client": "client0",
-          "events": [
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "projection": {
+              "masterKey": 1
+            }
+          },
+          "expectResult": [
             {
-              "commandStartedEvent": {
-                "commandName": "find",
-                "databaseName": "keyvault",
-                "command": {
-                  "find": "datakeys",
-                  "filter": {},
-                  "readConcern": {
-                    "level": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "azure",
+                "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+                "keyName": "key-name-csfle"
               }
             },
             {
-              "commandStartedEvent": {
-                "commandName": "update",
-                "databaseName": "keyvault",
-                "command": {
-                  "update": "datakeys",
-                  "ordered": true,
-                  "updates": [
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "a21pcGttaXBrbWlwa21pcA==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    }
-                  ],
-                  "writeConcern": {
-                    "w": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "azure",
+                "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "azure",
+                "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "a21pcGttaXBrbWlwa21pcA==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "azure",
+                "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "azure",
+                "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+                "keyName": "key-name-csfle"
               }
             }
           ]
@@ -686,7 +475,11 @@
           "name": "rewrapManyDataKey",
           "object": "clientEncryption0",
           "arguments": {
-            "filter": {},
+            "filter": {
+              "keyAltNames": {
+                "$ne": "gcp_key"
+              }
+            },
             "opts": {
               "provider": "gcp",
               "masterKey": {
@@ -700,205 +493,97 @@
           "expectResult": {
             "bulkWriteResult": {
               "insertedCount": 0,
-              "matchedCount": 5,
-              "modifiedCount": 5,
+              "matchedCount": 4,
+              "modifiedCount": 4,
               "deletedCount": 0,
               "upsertedCount": 0,
               "upsertedIds": {}
             }
           }
-        }
-      ],
-      "expectEvents": [
+        },
         {
-          "client": "client0",
-          "events": [
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "projection": {
+              "masterKey": 1
+            }
+          },
+          "expectResult": [
             {
-              "commandStartedEvent": {
-                "commandName": "find",
-                "databaseName": "keyvault",
-                "command": {
-                  "find": "datakeys",
-                  "filter": {},
-                  "readConcern": {
-                    "level": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "gcp",
+                "projectId": "devprod-drivers",
+                "location": "global",
+                "keyRing": "key-ring-csfle",
+                "keyName": "key-name-csfle"
               }
             },
             {
-              "commandStartedEvent": {
-                "commandName": "update",
-                "databaseName": "keyvault",
-                "command": {
-                  "update": "datakeys",
-                  "ordered": true,
-                  "updates": [
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "projectId": "devprod-drivers",
-                            "location": "global",
-                            "keyRing": "key-ring-csfle",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "projectId": "devprod-drivers",
-                            "location": "global",
-                            "keyRing": "key-ring-csfle",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "projectId": "devprod-drivers",
-                            "location": "global",
-                            "keyRing": "key-ring-csfle",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "a21pcGttaXBrbWlwa21pcA==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "projectId": "devprod-drivers",
-                            "location": "global",
-                            "keyRing": "key-ring-csfle",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "projectId": "devprod-drivers",
-                            "location": "global",
-                            "keyRing": "key-ring-csfle",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    }
-                  ],
-                  "writeConcern": {
-                    "w": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "gcp",
+                "projectId": "devprod-drivers",
+                "location": "global",
+                "keyRing": "key-ring-csfle",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "gcp",
+                "projectId": "devprod-drivers",
+                "location": "global",
+                "keyRing": "key-ring-csfle",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "a21pcGttaXBrbWlwa21pcA==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "gcp",
+                "projectId": "devprod-drivers",
+                "location": "global",
+                "keyRing": "key-ring-csfle",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "gcp",
+                "projectId": "devprod-drivers",
+                "location": "global",
+                "keyRing": "key-ring-csfle",
+                "keyName": "key-name-csfle"
               }
             }
           ]
@@ -912,188 +597,101 @@
           "name": "rewrapManyDataKey",
           "object": "clientEncryption0",
           "arguments": {
-            "filter": {},
+            "filter": {
+              "keyAltNames": {
+                "$ne": "kmip_key"
+              }
+            },
             "opts": {
-              "provider": "kmip",
-              "masterKey": {}
+              "provider": "kmip"
             }
           },
           "expectResult": {
             "bulkWriteResult": {
               "insertedCount": 0,
-              "matchedCount": 5,
-              "modifiedCount": 5,
+              "matchedCount": 4,
+              "modifiedCount": 4,
               "deletedCount": 0,
               "upsertedCount": 0,
               "upsertedIds": {}
             }
           }
-        }
-      ],
-      "expectEvents": [
+        },
         {
-          "client": "client0",
-          "events": [
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "projection": {
+              "masterKey": 1
+            }
+          },
+          "expectResult": [
             {
-              "commandStartedEvent": {
-                "commandName": "find",
-                "databaseName": "keyvault",
-                "command": {
-                  "find": "datakeys",
-                  "filter": {},
-                  "readConcern": {
-                    "level": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "kmip",
+                "keyId": {
+                  "$$type": "string"
                 }
               }
             },
             {
-              "commandStartedEvent": {
-                "commandName": "update",
-                "databaseName": "keyvault",
-                "command": {
-                  "update": "datakeys",
-                  "ordered": true,
-                  "updates": [
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {},
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {},
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {},
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "a21pcGttaXBrbWlwa21pcA==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {},
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {},
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    }
-                  ],
-                  "writeConcern": {
-                    "w": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "kmip",
+                "keyId": {
+                  "$$type": "string"
+                }
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "kmip",
+                "keyId": {
+                  "$$type": "string"
+                }
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "a21pcGttaXBrbWlwa21pcA==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "kmip",
+                "keyId": "1"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "kmip",
+                "keyId": {
+                  "$$type": "string"
                 }
               }
             }
@@ -1108,7 +706,11 @@
           "name": "rewrapManyDataKey",
           "object": "clientEncryption0",
           "arguments": {
-            "filter": {},
+            "filter": {
+              "keyAltNames": {
+                "$ne": "local_key"
+              }
+            },
             "opts": {
               "provider": "local"
             }
@@ -1116,190 +718,77 @@
           "expectResult": {
             "bulkWriteResult": {
               "insertedCount": 0,
-              "matchedCount": 5,
-              "modifiedCount": 5,
+              "matchedCount": 4,
+              "modifiedCount": 4,
               "deletedCount": 0,
               "upsertedCount": 0,
               "upsertedIds": {}
             }
           }
-        }
-      ],
-      "expectEvents": [
+        },
         {
-          "client": "client0",
-          "events": [
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "projection": {
+              "masterKey": 1
+            }
+          },
+          "expectResult": [
             {
-              "commandStartedEvent": {
-                "commandName": "find",
-                "databaseName": "keyvault",
-                "command": {
-                  "find": "datakeys",
-                  "filter": {},
-                  "readConcern": {
-                    "level": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "local"
               }
             },
             {
-              "commandStartedEvent": {
-                "commandName": "update",
-                "databaseName": "keyvault",
-                "command": {
-                  "update": "datakeys",
-                  "ordered": true,
-                  "updates": [
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "local"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "local"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "local"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "a21pcGttaXBrbWlwa21pcA==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "local"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "local"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    }
-                  ],
-                  "writeConcern": {
-                    "w": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "local"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "local"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "a21pcGttaXBrbWlwa21pcA==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "local"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "local"
               }
             }
           ]
@@ -1325,192 +814,79 @@
               "upsertedIds": {}
             }
           }
-        }
-      ],
-      "expectEvents": [
+        },
         {
-          "client": "client0",
-          "events": [
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "projection": {
+              "masterKey": 1
+            }
+          },
+          "expectResult": [
             {
-              "commandStartedEvent": {
-                "commandName": "find",
-                "databaseName": "keyvault",
-                "command": {
-                  "find": "datakeys",
-                  "filter": {},
-                  "readConcern": {
-                    "level": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "aws",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+                "region": "us-east-1"
               }
             },
             {
-              "commandStartedEvent": {
-                "commandName": "update",
-                "databaseName": "keyvault",
-                "command": {
-                  "update": "datakeys",
-                  "ordered": true,
-                  "updates": [
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXdzYXdzYXdzYXdzYXdzYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "aws",
-                            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-                            "region": "us-east-1"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "azure",
-                            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "gcp",
-                            "projectId": "devprod-drivers",
-                            "location": "global",
-                            "keyRing": "key-ring-csfle",
-                            "keyName": "key-name-csfle"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "a21pcGttaXBrbWlwa21pcA==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "kmip",
-                            "keyId": "1"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    },
-                    {
-                      "q": {
-                        "_id": {
-                          "$binary": {
-                            "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
-                            "subType": "04"
-                          }
-                        }
-                      },
-                      "u": {
-                        "$set": {
-                          "masterKey": {
-                            "provider": "local"
-                          },
-                          "keyMaterial": {
-                            "$$type": "binData"
-                          }
-                        },
-                        "$currentDate": {
-                          "updateDate": true
-                        }
-                      },
-                      "upsert": {
-                        "$$unsetOrMatches": false
-                      },
-                      "multi": {
-                        "$$unsetOrMatches": false
-                      }
-                    }
-                  ],
-                  "writeConcern": {
-                    "w": "majority"
-                  }
+              "_id": {
+                "$binary": {
+                  "base64": "YXp1cmVhenVyZWF6dXJlYQ==",
+                  "subType": "04"
                 }
+              },
+              "masterKey": {
+                "provider": "azure",
+                "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "Z2NwZ2NwZ2NwZ2NwZ2NwZw==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "gcp",
+                "projectId": "devprod-drivers",
+                "location": "global",
+                "keyRing": "key-ring-csfle",
+                "keyName": "key-name-csfle"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "a21pcGttaXBrbWlwa21pcA==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "kmip",
+                "keyId": "1"
+              }
+            },
+            {
+              "_id": {
+                "$binary": {
+                  "base64": "bG9jYWxrZXlsb2NhbGtleQ==",
+                  "subType": "04"
+                }
+              },
+              "masterKey": {
+                "provider": "local"
               }
             }
           ]

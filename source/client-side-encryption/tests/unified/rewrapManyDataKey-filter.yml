@@ -8,8 +8,6 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents:
-        - commandStartedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -95,22 +93,12 @@ tests:
             provider: local
         expectResult:
           bulkWriteResult: {}
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *database0Name
-              command:
-                find: *collection0Name
-                filter: {}
-                readConcern: { level: majority }
   - description: "rewrap keys matching filter by keyAltNames"
     operations:
       - name: rewrapManyDataKey
         object: *clientEncryption0
         arguments:
-          filter: { keyAltNames: { $in: [aws_key, local_key] } }
+          filter: { keyAltNames: { $in: [aws_key, gcp_key] } }
           opts:
             provider: local
         expectResult:
@@ -121,48 +109,23 @@ tests:
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *database0Name
-              command:
-                find: *collection0Name
-                filter: {}
-                readConcern: { level: majority }
-          - commandStartedEvent:
-              commandName: update
-              databaseName: *database0Name
-              command:
-                update: *collection0Name
-                ordered: true
-                updates:
-                  - q:
-                      _id: *aws_key_id
-                    u:
-                      $set:
-                        masterKey: { provider: local }
-                        keyMaterial: { $$type: binData }
-                      $currentDate: { updateDate: true }
-                    upsert: { $$unsetOrMatches: false }
-                    multi: { $$unsetOrMatches: false }
-                  - q:
-                      _id: *local_key_id
-                    u:
-                      $set:
-                        masterKey: { provider: local }
-                        keyMaterial: { $$type: binData }
-                      $currentDate: { updateDate: true }
-                    upsert: { $$unsetOrMatches: false }
-                    multi: { $$unsetOrMatches: false }
-                writeConcern: { w: majority }
+      - name: aggregate
+        object: *collection0
+        arguments:
+          pipeline:
+            - $project: { provider: $masterKey.provider }
+        expectResult:
+          - { _id: *aws_key_id, provider: local }
+          - { _id: *azure_key_id, provider: azure }
+          - { _id: *gcp_key_id, provider: local }
+          - { _id: *kmip_key_id, provider: kmip }
+          - { _id: *local_key_id, provider: local }
   - description: "rewrap keys matching filter by KMS provider"
     operations:
       - name: rewrapManyDataKey
         object: *clientEncryption0
         arguments:
-          filter: { masterKey.provider: { $in: [aws, local] } }
+          filter: { masterKey.provider: { $in: [aws, gcp] } }
           opts:
             provider: local
         expectResult:
@@ -173,39 +136,14 @@ tests:
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *database0Name
-              command:
-                find: *collection0Name
-                filter: {}
-                readConcern: { level: majority }
-          - commandStartedEvent:
-              commandName: update
-              databaseName: *database0Name
-              command:
-                update: *collection0Name
-                ordered: true
-                updates:
-                  - q:
-                      _id: *aws_key_id
-                    u:
-                      $set:
-                        masterKey: { provider: local }
-                        keyMaterial: { $$type: binData }
-                      $currentDate: { updateDate: true }
-                    upsert: { $$unsetOrMatches: false }
-                    multi: { $$unsetOrMatches: false }
-                  - q:
-                      _id: *local_key_id
-                    u:
-                      $set:
-                        masterKey: { provider: local }
-                        keyMaterial: { $$type: binData }
-                      $currentDate: { updateDate: true }
-                    upsert: { $$unsetOrMatches: false }
-                    multi: { $$unsetOrMatches: false }
-                writeConcern: { w: majority }
+      - name: aggregate
+        object: *collection0
+        arguments:
+          pipeline:
+            - $project: { provider: $masterKey.provider }
+        expectResult:
+          - { _id: *aws_key_id, provider: local }
+          - { _id: *azure_key_id, provider: azure }
+          - { _id: *gcp_key_id, provider: local }
+          - { _id: *kmip_key_id, provider: kmip }
+          - { _id: *local_key_id, provider: local }

@@ -8,10 +8,6 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents:
-        - commandStartedEvent
-        - commandSucceededEvent
-        - commandFailedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -50,25 +46,16 @@ tests:
               region: us-east-1
         expectResult:
           { $$type: binData }
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *database0Name
-              command:
-                insert: *collection0Name
-                documents:
-                  - masterKey:
-                      provider: aws
-                      key: arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0
-                      region: us-east-1
-                writeConcern: { w: "majority" }
-          - commandSucceededEvent:
-              commandName: insert
-              reply:
-                ok: 1
-                n: 1
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          projection: { _id: 0, masterKey: 1 }
+        expectResult:
+          - masterKey:
+              provider: aws
+              key: arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0
+              region: us-east-1
   - description: create datakey with Azure KMS provider
     operations:
       - name: createKey
@@ -81,25 +68,16 @@ tests:
               keyName: key-name-csfle
         expectResult:
           { $$type: binData }
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *database0Name
-              command:
-                insert: *collection0Name
-                documents:
-                  - masterKey:
-                      provider: azure
-                      keyVaultEndpoint: key-vault-csfle.vault.azure.net
-                      keyName: key-name-csfle
-                writeConcern: { w: "majority" }
-          - commandSucceededEvent:
-              commandName: insert
-              reply:
-                ok: 1
-                n: 1
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          projection: { _id: 0, masterKey: 1 }
+        expectResult:
+          - masterKey:
+              provider: azure
+              keyVaultEndpoint: key-vault-csfle.vault.azure.net
+              keyName: key-name-csfle
   - description: create datakey with GCP KMS provider
     operations:
       - name: createKey
@@ -114,27 +92,18 @@ tests:
               keyName: key-name-csfle
         expectResult:
           { $$type: binData }
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *database0Name
-              command:
-                insert: *collection0Name
-                documents:
-                  - masterKey:
-                      provider: gcp
-                      projectId: devprod-drivers
-                      location: global
-                      keyRing: key-ring-csfle
-                      keyName: key-name-csfle
-                writeConcern: { w: "majority" }
-          - commandSucceededEvent:
-              commandName: insert
-              reply:
-                ok: 1
-                n: 1
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          projection: { _id: 0, masterKey: 1 }
+        expectResult:
+          - masterKey:
+              provider: gcp
+              projectId: devprod-drivers
+              location: global
+              keyRing: key-ring-csfle
+              keyName: key-name-csfle
   - description: create datakey with KMIP KMS provider
     operations:
       - name: createKey
@@ -143,23 +112,15 @@ tests:
           kmsProvider: kmip
         expectResult:
           { $$type: binData }
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *database0Name
-              command:
-                insert: *collection0Name
-                documents:
-                  - masterKey:
-                      provider: kmip
-                writeConcern: { w: "majority" }
-          - commandSucceededEvent:
-              commandName: insert
-              reply:
-                ok: 1
-                n: 1
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          projection: { _id: 0, masterKey: 1 }
+        expectResult:
+          - masterKey:
+              provider: kmip
+              keyId: { $$type: string }
   - description: create datakey with local KMS provider
     operations:
       - name: createKey
@@ -168,20 +129,11 @@ tests:
           kmsProvider: local
         expectResult:
           { $$type: binData }
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *database0Name
-              command:
-                insert: *collection0Name
-                documents:
-                  - masterKey:
-                      provider: local
-                writeConcern: { w: "majority" }
-          - commandSucceededEvent:
-              commandName: insert
-              reply:
-                ok: 1
-                n: 1
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          projection: { _id: 0, masterKey: 1 }
+        expectResult:
+          - masterKey:
+              provider: local
