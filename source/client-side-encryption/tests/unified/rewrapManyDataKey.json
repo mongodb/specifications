@@ -249,6 +249,26 @@
   ],
   "tests": [
     {
+      "description": "no keys to rewrap due to no filter matches",
+      "operations": [
+        {
+          "name": "rewrapManyDataKey",
+          "object": "clientEncryption0",
+          "arguments": {
+            "filter": {
+              "keyAltNames": "no_matching_keys"
+            },
+            "opts": {
+              "provider": "local"
+            }
+          },
+          "expectResult": {
+            "bulkWriteResult": {}
+          }
+        }
+      ]
+    },
+    {
       "description": "rewrap with new AWS KMS provider",
       "operations": [
         {
