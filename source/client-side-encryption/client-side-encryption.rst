@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-16
-:Version: 1.5.2
+:Last Modified: 2022-05-17
+:Version: 1.6.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2221,7 +2221,7 @@ Changelog
    :align: left
 
    Date, Description
-   22-05-16, Add createKey and rewrapManyDataKey
+   22-05-17, Add createKey and rewrapManyDataKey
    22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
    22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
