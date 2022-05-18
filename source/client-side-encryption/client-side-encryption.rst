@@ -915,7 +915,6 @@ contentionFactor
 ^^^^^^^^^^^^^^^^
 contentionFactor only applies when algorithm is "Indexed".
 It is an error to set contentionFactor when algorithm is not "Indexed".
-If contentionFactor is not supplied, it defaults to a value of 0.
 
 queryType
 ^^^^^^^^^
