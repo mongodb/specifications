@@ -47,4 +47,4 @@ tests:
           filter: {}
           projection: { _id: 0, masterKey: 1 }
         expectResult:
-          - { masterKey: { provider: local } }
+          - masterKey: { provider: local }
