@@ -34,6 +34,7 @@ tests:
     expectEvents:
       - client: *client0
         events: []
+
   - description: create data key with invalid master key field
     operations:
       - name: createKey
@@ -48,6 +49,7 @@ tests:
     expectEvents:
       - client: *client0
         events: []
+
   - description: create data key with invalid master key
     operations:
       - name: createKey

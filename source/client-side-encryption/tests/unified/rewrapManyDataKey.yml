@@ -93,6 +93,7 @@ tests:
             provider: local
         expectResult:
           bulkWriteResult: {}
+
   - description: "rewrap with new AWS KMS provider"
     operations:
       - name: rewrapManyDataKey
@@ -125,6 +126,7 @@ tests:
           - { _id: *gcp_key_id, masterKey: { provider: aws, <<: *new_aws_masterkey } }
           - { _id: *kmip_key_id, masterKey: { provider: aws, <<: *new_aws_masterkey } }
           - { _id: *local_key_id, masterKey: { provider: aws, <<: *new_aws_masterkey } }
+
   - description: "rewrap with new Azure KMS provider"
     operations:
       - name: rewrapManyDataKey
@@ -156,6 +158,7 @@ tests:
           - { _id: *gcp_key_id, masterKey: { provider: azure, <<: *new_azure_masterkey } }
           - { _id: *kmip_key_id, masterKey: { provider: azure, <<: *new_azure_masterkey } }
           - { _id: *local_key_id, masterKey: { provider: azure, <<: *new_azure_masterkey } }
+
   - description: "rewrap with new GCP KMS provider"
     operations:
       - name: rewrapManyDataKey
@@ -189,6 +192,7 @@ tests:
           - { _id: *gcp_key_id, masterKey: *gcp_masterkey }
           - { _id: *kmip_key_id, masterKey: { provider: gcp, <<: *new_gcp_masterkey } }
           - { _id: *local_key_id, masterKey: { provider: gcp, <<: *new_gcp_masterkey } }
+
   - description: "rewrap with new KMIP KMS provider"
     operations:
       - name: rewrapManyDataKey
@@ -217,6 +221,7 @@ tests:
           - { _id: *gcp_key_id, masterKey: *new_kmip_masterkey }
           - { _id: *kmip_key_id, masterKey: *kmip_masterkey }
           - { _id: *local_key_id, masterKey: *new_kmip_masterkey }
+
   - description: "rewrap with new local KMS provider"
     operations:
       - name: rewrapManyDataKey
@@ -245,6 +250,7 @@ tests:
           - { _id: *gcp_key_id, masterKey: *new_local_masterkey }
           - { _id: *kmip_key_id, masterKey: *new_local_masterkey }
           - { _id: *local_key_id, masterKey: *local_masterkey }
+
   - description: "rewrap with current KMS provider"
     operations:
       - name: rewrapManyDataKey

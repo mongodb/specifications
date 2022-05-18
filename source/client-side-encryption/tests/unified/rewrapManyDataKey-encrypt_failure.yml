@@ -68,6 +68,7 @@ tests:
                 find: *collection0Name
                 filter: {}
                 readConcern: { level: majority }
+
   - description: "rewrap with invalid masterKey for Azure KMS provider"
     operations:
       - name: rewrapManyDataKey
@@ -92,6 +93,7 @@ tests:
                 find: *collection0Name
                 filter: {}
                 readConcern: { level: majority }
+
   - description: "rewrap with invalid masterKey for GCP KMS provider"
     operations:
       - name: rewrapManyDataKey
