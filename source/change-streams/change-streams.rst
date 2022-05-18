@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-04-13
-:Version: 1.14
+:Last Modified: 2022-05-17
+:Version: 1.15
 
 .. contents::
 
@@ -137,8 +137,22 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * MUST NOT err when they encounter a new `operationType`. Unknown `operationType`
      * values may be represented by "unknown" or the literal string value.
      */
-    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename" | "createIndex"
-        | "dropIndex" | "collMod" | "create" | "shardCollection" | "refineCollectionShardKey" | "reshardCollection" | "chunkMigrated";
+    operationType: "insert" 
+                  | "update" 
+                  | "replace" 
+                  | "delete" 
+                  | "invalidate" 
+                  | "drop" 
+                  | "dropDatabase" 
+                  | "rename" 
+                  | "createIndex"
+                  | "dropIndex" 
+                  | "modify"
+                  | "create" 
+                  | "shardCollection" 
+                  | "refineCollectionShardKey" 
+                  | "reshardCollection" 
+                  | "chunkMigrated";
 
     /**
      * Contains two fields: "db" and "coll" containing the database and
