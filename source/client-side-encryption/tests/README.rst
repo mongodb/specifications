@@ -1619,6 +1619,8 @@ Drop and create the collection ``db.explicit_encryption`` using ``encryptedField
 
 Drop and create the collection ``keyvault.datakeys``.
 
+Insert ``key1Document`` in ``keyvault.datakeys`` with majority write concern.
+
 Create a MongoClient named ``keyVaultClient``.
 
 Create a ClientEncryption object named ``clientEncryption`` with these options:
