@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2
 :Last Modified: 2022-05-11
-:Version: 1.5.1
+:Version: 1.5.2
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -668,13 +668,13 @@ A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`
 
 If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
 
-- Create the collection with name ``encryptedFields["escCollection"]`` using default options.
+- Create the collection with name ``encryptedFields["escCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
   If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
   Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["eccCollection"]`` using default options.
+- Create the collection with name ``encryptedFields["eccCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
   If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
   Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["ecocCollection"]`` using default options.
+- Create the collection with name ``encryptedFields["ecocCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
   If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
   Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
 - Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``encryptedFields``.
@@ -688,15 +688,15 @@ A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the col
 - The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
 - If ``AutoEncryptionOpts.encryptedFieldsMap`` is not null, run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option.
 
-If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
+If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted. A ``namespace not found`` error returned from the server (server error code 26) MUST be ignored:
 
-- Drop the collection ``collectionName``.
 - Drop the collection with name ``encryptedFields["escCollection"]``.
   If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
 - Drop the collection with name ``encryptedFields["eccCollection"]``.
   If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
 - Drop the collection with name ``encryptedFields["ecocCollection"]``.
   If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
+- Drop the collection ``collectionName``.
 
 ClientEncryption
 ----------------
@@ -2144,6 +2144,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
    22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
    22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
