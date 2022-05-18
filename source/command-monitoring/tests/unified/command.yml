@@ -1,0 +1,94 @@
+description: "commands"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client client
+      observeEvents:
+        - commandStartedEvent
+        - commandSucceededEvent
+        - commandFailedEvent
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName command-monitoring-tests
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName test
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents:
+      - { _id: 1, x: 11 }
+
+tests:
+  - description: "A successful command"
+    operations:
+      - name: distinct
+        object: *collection
+        arguments:
+          fieldName: x
+          filter: {}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                distinct: *collectionName
+                key: x
+              commandName: distinct
+              databaseName: *databaseName
+          - commandSucceededEvent:
+              reply:
+                ok: 1
+                values:
+                  - 11
+              commandName: distinct
+
+  - description: "A failed command"
+    operations:
+      - name: find
+        object: *collection
+        arguments:
+          filter: { $or: true }
+        expectError:
+          isClientError: false
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collectionName
+                filter: { $or: true }
+              commandName: find
+              databaseName: *databaseName
+          - commandFailedEvent:
+              commandName: find
+
+  - description: "A successful command with a non-primary read preference"
+    operations:
+      - name: distinct
+        object: *collection
+        arguments:
+          fieldName: x
+          filter: {}
+          readPreference:
+            mode: primaryPreferred
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                distinct: *collectionName
+                key: x
+              commandName: distinct
+              databaseName: *databaseName
+          - commandSucceededEvent:
+              reply:
+                ok: 1
+                values:
+                  - 11
+              commandName: distinct
