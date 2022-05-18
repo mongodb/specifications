@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-11
-:Version: 1.5.2
+:Last Modified: 2022-05-18
+:Version: 1.6.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -708,7 +708,14 @@ ClientEncryption
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
+      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+
+      // An alias function equivalent to createKey.
       createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+
+      // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
+      // Returns a RewrapManyDataKeyResult.
+      rewrapManyDataKey(filter: Document, opts: Optional<RewrapManyDataKeyOpts>): RewrapManyDataKeyResult;
 
       // Encrypts a BSONValue with a given key and algorithm.
       // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation may return an error for prohibited BSON values.
@@ -733,10 +740,11 @@ The ClientEncryption encapsulates explicit operations on a key vault
 collection that cannot be done directly on a MongoClient. Similar to
 configuring auto encryption on a MongoClient, it is
 constructed with a MongoClient (to a MongoDB cluster containing the key
-vault collection), KMS provider configuration, keyVaultNamespace, and tlsOptions. It
-provides an API for explicitly encrypting and decrypting values, and
-creating data keys. It does not provide an API to query keys from the key
-vault collection, as this can be done directly on the MongoClient.
+vault collection), KMS provider configuration, keyVaultNamespace, and
+tlsOptions. It provides an API for explicitly encrypting and decrypting values,
+creating data keys, and rewrapping data keys. It does not provide an API to
+query keys from the key vault collection, as this can be done directly on the
+MongoClient.
 
 See `Why do we have a separate top level type for ClientEncryption?`_ and `Why do we need to pass a client to create a ClientEncryption?`_.
 
@@ -748,6 +756,7 @@ DataKeyOpts
    class DataKeyOpts {
       masterKey: Optional<Document>
       keyAltNames: Optional<Array[String]> // An alternative to \_id to reference a key.
+      keyMaterial: Optional<BinData>
    }
 
 masterKey
@@ -823,6 +832,43 @@ example shows creating and referring to a data key by alternate name:
    # reference the key with the alternate name
    opts = EncryptOpts(keyAltName="name1", algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Random")
    clientencryption.encrypt("457-55-5462", opts)
+
+keyMaterial
+~~~~~~~~~~~
+
+An optional BinData of 96 bytes to use as custom key material for the data key
+being created. If ``keyMaterial`` is given, the custom key material is used for
+encrypting and decrypting data. Otherwise, the key material for the new data key
+is generated from a cryptographically secure random device.
+
+RewrapManyDataKeyOpts
+---------------------
+
+.. code:: typescript
+
+   class RewrapManyDataKeyOpts {
+      provider: String
+      masterKey: Optional<Document>
+   }
+
+The ``masterKey`` document MUST have the fields corresponding to the given
+``provider`` as specified in `masterKey`_. ``masterKey`` MUST NOT be given if
+it is not applicable for the given ``provider``.
+
+RewrapManyDataKeyResult
+-----------------------
+
+.. code:: typescript
+
+   class RewrapManyDataKeyResult {
+      bulkWriteResult: BulkWriteResult;
+   }
+
+``bulkWriteResult`` is the `result of the bulk write operation
+<../crud/crud.rst##write-results>`_ used to update the key vault collection with
+rewrapped data keys.
+
+See `Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?`_.
 
 EncryptOpts
 -----------
@@ -984,7 +1030,8 @@ users to distinguish when a command fails due to auto encryption limitations.
 All errors from the MongoClient interacting with the key vault
 collection MUST be distinguished in some way (e.g. exception type) to
 make it easier for users to distinguish when a command fails due to
-behind-the-scenes operations required for encryption or decryption.
+behind-the-scenes operations required for encryption, decryption, or key
+management.
 
 Drivers MUST apply timeouts to operations executed as part of client-side encryption per `Client Side Operations
 Timeout: Client Side Encryption
@@ -1275,31 +1322,39 @@ selection error is propagated to the user.
 ClientEncryption
 ================
 The new ClientEncryption type interacts uses libmongocrypt to perform
-encryption and decryption, and to implement
-ClientEncryption.createDataKey(), ClientEncryption.encrypt(), and
-ClientEncryption.decrypt(). See the `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_ for more information.
+ClientEncryption.createKey() and ClientEncryption.rewrapManyDataKey(). See the
+`libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_
+for more information.
 
 The ClientEncryption contains a MongoClient connected to the MongoDB
 cluster containing the key vault collection. It does not contain a
 MongoClient to mongocryptd.
 
-Note, aside from createDataKey(), there is no new API for querying,
-updating, or removing data keys. Much of this can be done with existing
-CRUD operations.
+See `Why does ClientEncryption have key management functions when Drivers can use existing CRUD operations instead?`_.
 
 Key Vault collection
 ====================
 The key vault collection is the specially designated collection
 containing encrypted data keys. There is no default collection (user
 must specify). The key vault collection is used for automatic and
-explicit encryption/decryption as well as
-ClientEncryption.createDataKey().
+explicit encryption/decryption as well as key management functions.
 
-For ClientEncryption.createDataKey(), the new document MUST be inserted
-into the key vault collection with write concern majority.
+For key management functions that require updating key documents in the key
+vault collection, the corresponding create, update, or delete operations MUST be
+done with write concern majority.
 
-For encrytion/decryption that requires keys from the key vault
-collection, the find operation MUST be done with read concern majority.
+For encryption/decryption and key management functions that require reading
+key documents from the key vault collection, the find operation MUST be done
+with read concern majority.
+
+Some key management functions may require multiple commands to complete their
+operation. Key management functions currently assume there is no concurrent
+access of the key vault collection being operated on. Concurrent access to a
+key vault collection being operated on may result in unexpected or undefined
+behavior. Support for concurrent key management may be considered for future
+work.
+
+See `Support sessions in key management functions`_.
 
 Auto encrypt and decrypt
 ========================
@@ -2075,6 +2130,21 @@ Here is an example:
 
 A rejected alternative to adding ``bypassQueryAnalysis`` is to change the behavior of ``bypassAutoEncryption``. ``bypassQueryAnalysis`` is distinct from ``bypassAutoEncryption``. ``bypassAutoEncryption`` bypasses all of libmongocrypt for commands. Changing the behavior of ``bypassAutoEncryption`` could harm performance (e.g. by serializing as smaller documents).
 
+Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?
+-------------------------------------------------------------------------------------
+
+``rewrapManyDataKey`` is risky as it performs both a find and an update on the
+key vault collection. Using ``RewrapManyDataKeyResult`` allows new fields to be
+added in the future and more easily deprecate the wrapped ``BulkWriteResult`` if
+necessary.
+
+Why is there both a createKey and a createDataKey function in ClientEncryption?
+-------------------------------------------------------------------------------
+
+``createDataKey`` existed before ``createKey``, but ``createKey`` was added for
+parity with the mongosh interface. ``createDataKey`` remains for backwards
+compatibility.
+
 Future work
 ===========
 
@@ -2136,6 +2206,15 @@ command with maxMessageSizeBytes=24MB. If after marking we determine
 that's too large, try again with maxMessageSizeBytes=12MB and so on. And
 in the end libmongocrypt would create multiple OP_MSGs to send.
 
+Support sessions in key management functions
+--------------------------------------------
+
+Key management functions currently assume there are no concurrent accesses of
+the key vault collection being operated on. To support concurrent access of the
+key vault collection, the key management functions may be overloaded to take an
+explicit session parameter as described in the
+`Drivers Sessions Specification <../sessions/driver-sessions.rst>`__.
+
 Changelog
 =========
 
@@ -2144,6 +2223,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-18, Add createKey and rewrapManyDataKey
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
    22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
    22-04-29, Add bypassQueryAnalysis option
