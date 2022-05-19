@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-05-17
+:Last Modified: 2022-05-19
 :Version: 1.15
 
 .. contents::
@@ -232,7 +232,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *  
      * @since 6.0.0
      */
-    wallTime: Date;
+    wallTime: Optional<DateTime>;
 
     /**
      * The `ui` field from the oplog entry corresponding to the change event.
@@ -252,7 +252,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *  
      * @since 6.0.0
      */
-    collectionUUID: UUID;
+    collectionUUID: Optional<UUID>;
   }
 
   class UpdateDescription {
@@ -1067,5 +1067,7 @@ Changelog
 | 2022-04-13 | Support returning point-in-time pre and post-images with   |
 |            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
 +------------+------------------------------------------------------------+
-| 2022-05-18 | Support new change stream events for C2C replication       |
+| 2022-05-17 | Added ``wallTime`` to ``ChangeStreamDocument``.            |
++------------+------------------------------------------------------------+
+| 2022-05-19 | Support new change stream events for C2C replication.      |
 +------------+------------------------------------------------------------+
