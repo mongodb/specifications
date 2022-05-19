@@ -834,7 +834,7 @@ example shows creating and referring to a data key by alternate name:
    clientencryption.encrypt("457-55-5462", opts)
 
 keyMaterial
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 An optional BinData of 96 bytes to use as custom key material for the data key
 being created. If ``keyMaterial`` is given, the custom key material is used for
