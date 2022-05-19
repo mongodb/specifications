@@ -34,7 +34,8 @@ tests:
                       {
                           "_id": {
                               "$in": [
-                                {{ yamlfile("keys/key1-id.json") }}
+                                {{ yamlfile("keys/key1-id.json") }},
+                                {{ yamlfile("keys/key2-id.json") }}
                               ]
                           }
                       },

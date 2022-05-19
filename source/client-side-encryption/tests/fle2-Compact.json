@@ -158,6 +158,12 @@
                             "base64": "EjRWeBI0mHYSNBI0VniQEg==",
                             "subType": "04"
                           }
+                        },
+                        {
+                          "$binary": {
+                            "base64": "q83vqxI0mHYSNBI0VniQEg==",
+                            "subType": "04"
+                          }
                         }
                       ]
                     }
