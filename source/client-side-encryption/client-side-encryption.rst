@@ -2224,7 +2224,7 @@ Changelog
    Date, Description
    22-05-18, Add createKey and rewrapManyDataKey
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
-   22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
+   22-05-03, "Add queryType, contentionFactor, and ""Indexed"" and ""Unindexed"" to algorithm."
    22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
    22-02-24, Rename Versioned API to Stable API
