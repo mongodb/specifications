@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-04-13
-:Version: 1.14
+:Last Modified: 2022-05-17
+:Version: 1.15
 
 .. contents::
 
@@ -203,6 +203,12 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * pre-image is unavailable, this will be explicitly set to null.
      */
     fullDocumentBeforeChange: Document | null;
+
+    /**
+     * The wall time from the mongod that the change event originated from.
+     * Populated for server versions 6.0 and above.
+     */
+    wallTime: Optional<Datetime>;
   }
 
   class UpdateDescription {
@@ -998,4 +1004,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2022-04-13 | Support returning point-in-time pre and post-images with   |
 |            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
++------------+------------------------------------------------------------+
+| 2022-05-17 | Added ``wallTime`` to ``ChangeStreamDocument``.            |
 +------------+------------------------------------------------------------+
