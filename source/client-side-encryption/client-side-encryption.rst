@@ -2144,6 +2144,7 @@ Changelog
    :align: left
 
    Date, Description
+
    22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
    22-04-29, Add bypassQueryAnalysis option
    22-04-11, Document the usage of the new csfle_ library
