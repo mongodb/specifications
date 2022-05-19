@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-18
-:Version: 1.6.0
+:Last Modified: 2022-05-24
+:Version: 1.7.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -708,20 +708,44 @@ ClientEncryption
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
-      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): UUID;
 
       // An alias function equivalent to createKey.
-      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): UUID;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
       // Returns a RewrapManyDataKeyResult.
       rewrapManyDataKey(filter: Document, opts: Optional<RewrapManyDataKeyOpts>): RewrapManyDataKeyResult;
 
+      // Removes the key document with the given \_id from the key vault collection.
+      // Returns the result of the internal deleteOne() operation on the key vault collection.
+      deleteKey(id: UUID): DeleteResult;
+
+      // Finds a single key document with the given UUID.
+      // Returns the result of the internal find() operation on the key vault collection.
+      getKey(id: UUID): Iterable<Document>;
+
+      // Finds all documents in the key vault collection.
+      // Returns the result of the internal find() operation on the key vault collection.
+      getKeys(): Iterable<Document>;
+
+      // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given \_id.
+      // Returns the previous version of the key document.
+      addKeyAlternateName(id: UUID, keyAltName: String): Optional<Document>;
+
+      // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given \_id.
+      // Returns the previous version of the key document.
+      removeKeyAlternateName(id: UUID, keyAltName: String): Optional<Document>;
+
+      // Returns a key document in the key vault collection with the given \_id.
+      getKeyByAltName(keyAltName: String): Iterable<Document>;
+
       // Encrypts a BSONValue with a given key and algorithm.
       // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation may return an error for prohibited BSON values.
       encrypt(value: BSONValue, opts: EncryptOpts): Binary;
 
-      // Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value.
+      // Decrypts an encrypted value (BSON binary of subtype 6).
+      // Returns the original BSON value.
       decrypt(value: Binary): BSONValue;
 
       // Implementation details.
@@ -742,11 +766,18 @@ configuring auto encryption on a MongoClient, it is
 constructed with a MongoClient (to a MongoDB cluster containing the key
 vault collection), KMS provider configuration, keyVaultNamespace, and
 tlsOptions. It provides an API for explicitly encrypting and decrypting values,
-creating data keys, and rewrapping data keys. It does not provide an API to
-query keys from the key vault collection, as this can be done directly on the
-MongoClient.
+and managing data keys in the key vault collection.
 
 See `Why do we have a separate top level type for ClientEncryption?`_ and `Why do we need to pass a client to create a ClientEncryption?`_.
+
+When implementing behavior and error handling for key vault functions, Drivers
+SHOULD assume the presence of a unique index in the key vault collection on the
+``keyAltNames`` field with a partial index filter for only documents where
+``keyAltNames`` exists when implementing behavior of key management functions.
+Drivers MAY choose to not validate or enforce the existence of the unique index,
+but MUST still be capable of handling errors that such a unique index may yield.
+
+See `Why aren't we creating a unique index in the key vault collection?`_.
 
 DataKeyOpts
 -----------
@@ -1321,7 +1352,7 @@ selection error is propagated to the user.
 ClientEncryption
 ================
 The new ClientEncryption type interacts uses libmongocrypt to perform
-ClientEncryption.createKey() and ClientEncryption.rewrapManyDataKey(). See the
+ClientEncryption operations. See the
 `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_
 for more information.
 
@@ -1338,13 +1369,13 @@ containing encrypted data keys. There is no default collection (user
 must specify). The key vault collection is used for automatic and
 explicit encryption/decryption as well as key management functions.
 
-For key management functions that require updating key documents in the key
-vault collection, the corresponding create, update, or delete operations MUST be
-done with write concern majority.
+For key management functions that require creating, updating, or deleting key
+documents in the key vault collection, the corresponding operations MUST be done
+with write concern majority.
 
 For encryption/decryption and key management functions that require reading
-key documents from the key vault collection, the find operation MUST be done
-with read concern majority.
+key documents from the key vault collection, the corresponding operations MUST
+be done with read concern majority.
 
 Some key management functions may require multiple commands to complete their
 operation. Key management functions currently assume there is no concurrent
@@ -1938,9 +1969,10 @@ little as possible.
 Why aren't we creating a unique index in the key vault collection?
 ------------------------------------------------------------------
 
-There should be a unique index on keyAltNames. Although GridFS
+There should be a unique index on the ``keyAltNames`` field with a partial index
+filter for only documents where ``keyAltNames`` exists. Although GridFS
 automatically creates indexes as a convenience upon first write, it has
-been problematic before. It requires the createIndex privilege, which a
+been problematic before due to requiring the ``createIndex`` privilege, which a
 user might not have if they are just querying the key vault collection
 with find and adding keys with insert.
 
@@ -2222,6 +2254,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-24, Add key management API functions
    22-05-18, Add createKey and rewrapManyDataKey
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
    22-05-03, "Add queryType, contentionFactor, and ""Indexed"" and ""Unindexed"" to algorithm."
