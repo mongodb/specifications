@@ -175,7 +175,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *
      * An description of the operation.
      * 
-     * @since 6.1.0
+     * @since 6.0.0
      */
     operationDescription: Optional<Document>
 
@@ -552,7 +552,9 @@ Driver API
      * - reshardCollection
      * - refineCollectionShardKey
      * 
-     * @since 6.0.0 
+     * This flag is available in server versions greater than 6.0.0.  `reshardCollection` and
+     * `refineCollectionShardKey` events are not available until server version 6.1.0.
+     * 
      * @note this is an option of the change stream pipeline stage
      */
     showExpandedEvents: Optional<Boolean>
