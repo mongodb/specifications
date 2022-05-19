@@ -864,9 +864,8 @@ RewrapManyDataKeyResult
       bulkWriteResult: BulkWriteResult;
    }
 
-``bulkWriteResult`` is the `result of the bulk write operation
-<../crud/crud.rst##write-results>`_ used to update the key vault collection with
-rewrapped data keys.
+``bulkWriteResult`` is the `result of the bulk write operation <../crud/crud.rst##write-results>`_
+used to update the key vault collection with rewrapped data keys.
 
 See `Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?`_.
 
