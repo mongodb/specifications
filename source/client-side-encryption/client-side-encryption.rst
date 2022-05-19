@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2
 :Last Modified: 2022-05-18
-:Version: 1.6.0
+:Version: 1.6.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2223,6 +2223,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-18, Rename "FLE 2" to "Queryable Encryption"
    22-05-18, Add createKey and rewrapManyDataKey
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
    22-05-03, Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
