@@ -1,7 +1,7 @@
 description: "change-streams-showExpandedEvents"
 schemaVersion: "1.7"
 runOnRequirements:
-  - minServerVersion: "6.0"
+  - minServerVersion: "6.0.0"
     topologies: [ replicaset, sharded-replicaset, sharded ]
 createEntities:
   - client:
@@ -73,8 +73,6 @@ initialData:
 
 tests:
   - description: "when provided, showExpandedEvents is sent as a part of the aggregate command"
-    runOnRequirements:
-      - minServerVersion: "6.0"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -97,8 +95,6 @@ tests:
               databaseName: *database0
 
   - description: "when omitted, showExpandedEvents is not sent as a part of the aggregate command"
-    runOnRequirements:
-      - minServerVersion: "6.0"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -121,8 +117,6 @@ tests:
               databaseName: *database0
 
   - description: "when showExpandedEvents is true, new fields on change stream events are handled appropriately"
-    runOnRequirements:
-      - minServerVersion: "6.0"
     operations:
       - name: dropCollection
         object: *database0
@@ -187,8 +181,6 @@ tests:
               $$exists: true
 
   - description: "when showExpandedEvents is true, createIndex events are reported"
-    runOnRequirements:
-      - minServerVersion: "6.0.0"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -208,8 +200,6 @@ tests:
           operationType: createIndexes
 
   - description: "when showExpandedEvents is true, dropIndexes events are reported"
-    runOnRequirements:
-      - minServerVersion: "6.0.0"
     operations:
       - name: createIndex
         object: *collection0
@@ -233,8 +223,6 @@ tests:
           operationType: dropIndexes
 
   - description: "when showExpandedEvents is true, create events are reported"
-    runOnRequirements:
-      - minServerVersion: "6.0.0"
     operations:
       - name: dropCollection
         object: *database0
@@ -256,8 +244,6 @@ tests:
           operationType: create
 
   - description: "when showExpandedEvents is true, modify events are reported"
-    runOnRequirements:
-      - minServerVersion: "6.0.0"
     operations:
       - name: createIndex
         object: *collection0
@@ -283,8 +269,7 @@ tests:
 
   - description: "when showExpandedEvents is true, shardCollection events are reported"
     runOnRequirements:
-      - minServerVersion: "6.0.0"
-        topologies: [ sharded-replicaset, sharded ]
+      - topologies: [ sharded-replicaset, sharded ]
     operations:
       - name: dropCollection
         object: *shardedDb

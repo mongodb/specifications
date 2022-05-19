@@ -3,7 +3,7 @@
   "schemaVersion": "1.7",
   "runOnRequirements": [
     {
-      "minServerVersion": "6.0",
+      "minServerVersion": "6.0.0",
       "topologies": [
         "replicaset",
         "sharded-replicaset",
@@ -132,11 +132,6 @@
   "tests": [
     {
       "description": "when provided, showExpandedEvents is sent as a part of the aggregate command",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "6.0"
-        }
-      ],
       "operations": [
         {
           "name": "createChangeStream",
@@ -176,11 +171,6 @@
     },
     {
       "description": "when omitted, showExpandedEvents is not sent as a part of the aggregate command",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "6.0"
-        }
-      ],
       "operations": [
         {
           "name": "createChangeStream",
@@ -221,11 +211,6 @@
     },
     {
       "description": "when showExpandedEvents is true, new fields on change stream events are handled appropriately",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "6.0"
-        }
-      ],
       "operations": [
         {
           "name": "dropCollection",
@@ -329,11 +314,6 @@
     },
     {
       "description": "when showExpandedEvents is true, createIndex events are reported",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "6.0.0"
-        }
-      ],
       "operations": [
         {
           "name": "createChangeStream",
@@ -365,11 +345,6 @@
     },
     {
       "description": "when showExpandedEvents is true, dropIndexes events are reported",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "6.0.0"
-        }
-      ],
       "operations": [
         {
           "name": "createIndex",
@@ -408,11 +383,6 @@
     },
     {
       "description": "when showExpandedEvents is true, create events are reported",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "6.0.0"
-        }
-      ],
       "operations": [
         {
           "name": "dropCollection",
@@ -448,11 +418,6 @@
     },
     {
       "description": "when showExpandedEvents is true, modify events are reported",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "6.0.0"
-        }
-      ],
       "operations": [
         {
           "name": "createIndex",
@@ -495,7 +460,6 @@
       "description": "when showExpandedEvents is true, shardCollection events are reported",
       "runOnRequirements": [
         {
-          "minServerVersion": "6.0.0",
           "topologies": [
             "sharded-replicaset",
             "sharded"
@@ -544,6 +508,13 @@
           "object": "changeStream0",
           "expectResult": {
             "operationType": "shardCollection"
+          }
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "changeStream0",
+          "expectResult": {
+            "operationType": "modify"
           }
         }
       ]

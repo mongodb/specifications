@@ -145,14 +145,13 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
                   | "drop" 
                   | "dropDatabase" 
                   | "rename" 
-                  | "createIndex"
-                  | "dropIndex" 
+                  | "createIndexes"
+                  | "dropIndexes" 
                   | "modify"
                   | "create" 
                   | "shardCollection" 
                   | "refineCollectionShardKey" 
-                  | "reshardCollection" 
-                  | "chunkMigrated";
+                  | "reshardCollection";
 
     /**
      * Contains two fields: "db" and "coll" containing the database and
@@ -167,9 +166,6 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * Only present for ops of type 'rename'.
      *
      * The namespace, in the same format as `ns`, that a collection has been renamed to.
-     * 
-     * This field is also present in the `operationDescription` field for `rename` events
-     * but has been left for backwards compatibility.
      */
     to: Optional<Document>;
 
@@ -196,14 +192,6 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
 
     /**
      * Only present for ops of type ‘update’.
-     *
-     * When the `showRawUpdateDescription` change stream pipeline stage option is set,
-     * this field contains the raw oplog entry corresponding to the update event.  The
-     * format of the oplog is internal and subject to change, and drivers should pass
-     * the data through.  
-     * 
-     * When the `showRawUpdateDescription` change stream pipeline stage option is not set,
-     * this field contains a description of updated and removed fields in this operation.
      */
     updateDescription: Optional<UpdateDescription | Document>;
 
@@ -564,7 +552,7 @@ Driver API
      * - reshardCollection
      * - refineCollectionShardKey
      * 
-     * @since 6.0.0 // todo - confirm this date
+     * @since 6.0.0 
      * @note this is an option of the change stream pipeline stage
      */
     showExpandedEvents: Optional<Boolean>
