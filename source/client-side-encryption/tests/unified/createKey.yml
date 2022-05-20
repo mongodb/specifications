@@ -131,3 +131,33 @@ tests:
         expectResult:
           - masterKey:
               provider: local
+
+  - description: create datakey with custom key material
+    operations:
+      - name: createKey
+        object: *clientEncryption0
+        arguments:
+          kmsProvider: local
+          opts:
+            # "key_material" repeated 8 times.
+            keyMaterial: { $binary: { base64: a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs, subType: "00" } }
+        expectResult: { $$type: binData }
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          projection: { _id: 0, masterKey: 1 }
+        expectResult:
+          - masterKey: { provider: local }
+
+  - description: create datakey with invalid custom key material (too short)
+    operations:
+      - name: createKey
+        object: *clientEncryption0
+        arguments:
+          kmsProvider: local
+          opts:
+            # "key_material" repeated only 7 times (key material length == 84).
+            keyMaterial: { $binary: { base64: a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs, subType: "00" } }
+        expectError:
+          isClientError: true
