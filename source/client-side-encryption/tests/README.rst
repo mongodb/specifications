@@ -1779,3 +1779,59 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 Store the result in ``payload``.
 
 Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted unindexed value".
+
+12. Unique Index on keyAltNames
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Setup
+`````
+
+1. Create a ``MongoClient`` object (referred to as ``client``).
+
+2. Using ``client``, drop the collection ``keyvault.datakeys``.
+
+3. Using ``client``, create a unique index on ``keyAltNames`` with a partial index filter for only documents where ``keyAltNames`` exists.
+
+The command should be equivalent to:
+
+.. code:: typescript
+
+   db.runCommand(
+     {
+        createIndexes: "datakeys",
+        indexes: [
+          {
+            key: "keyAltNames",
+            unique: true,
+            partialFilterExpression: { keyAltNames: { $exists: true } }
+          }
+        ],
+        writeConcern: { w: "majority" }
+     }
+   )
+
+4. Create a ``ClientEncryption`` object (referred to as ``client_encryption``) with ``client`` set as the ``keyVaultClient``.
+
+5. Using ``client_encryption``, create a data key with a ``local`` KMS provider and the keyAltName "def".
+
+Case 1: createKey()
+```````````````````
+
+1. Use ``client_encryption`` to create a new local data key with a keyAltName "abc" and assert the operation does not fail.
+
+2. Repeat Step 1 and assert the operation fails due to a duplicate key server error.
+
+3. Use ``client_encryption`` to create a new local data key with a keyAltName "def" and assert the operation fails due to a duplicate key server error.
+
+Case 2: addKeyAlternateName()
+`````````````````````````````
+
+1. Use ``client_encryption`` to create a new local data key and assert the operation does not fail.
+
+2. Use ``client_encryption`` to add a keyAltName "abc" to the key created in Step 1 and assert the operation does not fail.
+
+3. Repeat Step 2 and assert the operation does not fail.
+
+4. Use ``client_encryption`` to add a keyAltName "def" to the key created in Step 1 and assert the operation fails due to a duplicate key server error.
+
+5. Use ``client_encryption`` to add a keyAltName "def" to the existing key and assert the operation does not fail.
