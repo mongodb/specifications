@@ -1066,5 +1066,5 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2022-05-17 | Added ``wallTime`` to ``ChangeStreamDocument``.            |
 +------------+------------------------------------------------------------+
-| 2022-05-19 | Support new change stream events for C2C replication.      |
+| 2022-05-19 | Support new change stream events with showExpandedEvents.  |
 +------------+------------------------------------------------------------+
