@@ -226,13 +226,10 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     fullDocumentBeforeChange: Document | null;
 
     /**
-     * The `wall` time from the oplog entry corresponding to the change event.
-     *
-     * Only present when the `showExpandedEvents` change stream option is enabled.
-     *  
-     * @since 6.0.0
+     * The wall time from the mongod that the change event originated from.
+     * Populated for server versions 6.0 and above.
      */
-    wallTime: Optional<DateTime>;
+    wallTime: DateTime;
 
     /**
      * The `ui` field from the oplog entry corresponding to the change event.
