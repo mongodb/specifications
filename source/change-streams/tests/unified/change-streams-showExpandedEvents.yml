@@ -9,9 +9,6 @@ createEntities:
       observeEvents: [ commandStartedEvent ]
       ignoreCommandMonitoringEvents: [ killCursors ]
       useMultipleMongoses: false
-  - client:
-      id: &globalClient globalClient
-      useMultipleMongoses: false
   - database:
       id: &database0 database0
       client: *client0
@@ -29,22 +26,6 @@ createEntities:
       database: *database1
       collectionName: *collection1
   - database:
-      id: &globalDatabase0 globalDatabase0
-      client: *globalClient
-      databaseName: *database0
-  - collection:
-      id: &globalCollection0 globalCollection0
-      database: *globalDatabase0
-      collectionName: *collection0
-  - database:
-      id: &globalDatabase1 globalDatabase1
-      client: *globalClient
-      databaseName: *database1
-  - collection:
-      id: &globalCollection1 globalCollection1
-      database: *globalDatabase1
-      collectionName: *collection1
-  - database:
       id: &shardedDb shardedDb
       client: *client0
       databaseName: *shardedDb
@@ -56,15 +37,6 @@ createEntities:
       id: &shardedCollection shardedCollection
       database: *shardedDb
       collectionName: *shardedCollection
-  # Some tests run operations against db1.coll0 or db0.coll1
-  - collection:
-      id: &globalDb1Collection0 globalDb1Collection0
-      database: *globalDatabase1
-      collectionName: *collection0
-  - collection:
-      id: &globalDb0Collection1 globalDb0Collection1
-      database: *globalDatabase0
-      collectionName: *collection1
 
 initialData:
   - collectionName: *collection0
@@ -179,6 +151,9 @@ tests:
           operationDescription:
             dropTarget:
               $$exists: true
+            to:
+              db: *database0
+              coll: *existing-collection
 
   - description: "when showExpandedEvents is true, createIndex events are reported"
     operations:
@@ -238,6 +213,28 @@ tests:
         object: *database0
         arguments:
           collection: *collection1
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult:
+          operationType: create
+
+  - description: "when showExpandedEvents is true, create events on views are reported"
+    operations:
+      - name: dropCollection
+        object: *database0
+        arguments:
+          collection: &collection1 foo
+      - name: createChangeStream
+        object: *database0
+        arguments:
+          pipeline: []
+          showExpandedEvents: true
+        saveResultAsEntity: &changeStream0 changeStream0
+      - name: createCollection
+        object: *database0
+        arguments:
+          collection: *collection1
+          viewOn: testName
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
