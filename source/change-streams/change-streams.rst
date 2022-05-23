@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: 2022-05-19
-:Version: 1.15
+:Version: 1.16
 
 .. contents::
 
@@ -170,10 +170,10 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     to: Optional<Document>;
 
     /**
-     * Only present for ops of type 'rename', 'createIndexes', 'dropIndexes', 'shardCollection', 'reshardCollection', 'refineCollectionShardKey'.
+     * Only present for ops of type 'rename', 'create', 'modify', 'createIndexes', 'dropIndexes', 'shardCollection', 'reshardCollection', 'refineCollectionShardKey'.
      * Only present when the `showExpandedEvents` change stream option is enabled.
      *
-     * An description of the operation.
+     * A description of the operation.
      * 
      * @since 6.0.0
      */
@@ -543,7 +543,7 @@ Driver API
 
     /**
      * Enables the server to send the 'expanded' list of change stream events.
-     * The list of events included with this flag set are
+     * The list of additional events included with this flag set are
      * - createIndexes
      * - dropIndexes
      * - modify
@@ -552,7 +552,7 @@ Driver API
      * - reshardCollection
      * - refineCollectionShardKey
      * 
-     * This flag is available in server versions greater than 6.0.0.  `reshardCollection` and
+     * This flag is available in server versions greater than 6.0.0. `reshardCollection` and
      * `refineCollectionShardKey` events are not available until server version 6.1.0.
      * 
      * @note this is an option of the change stream pipeline stage
