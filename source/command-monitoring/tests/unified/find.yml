@@ -72,8 +72,6 @@ tests:
           min: { _id: 0 }
           returnKey: false
           showRecordId: false
-          readPreference:
-            mode: primaryPreferred
     expectEvents:
       - client: *client
         events:

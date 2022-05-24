@@ -138,10 +138,7 @@
               "_id": 0
             },
             "returnKey": false,
-            "showRecordId": false,
-            "readPreference": {
-              "mode": "primaryPreferred"
-            }
+            "showRecordId": false
           }
         }
       ],
@@ -324,7 +321,7 @@
       "description": "A successful find with a getMore and killCursors",
       "runOnRequirements": [
         {
-          "maxServerVersion": "2.6.99"
+          "maxServerVersion": "3.0.99"
         }
       ],
       "operations": [
