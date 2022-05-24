@@ -44,11 +44,13 @@
       "description": "A successful command",
       "operations": [
         {
-          "name": "distinct",
-          "object": "collection",
+          "name": "runCommand",
+          "object": "database",
           "arguments": {
-            "fieldName": "x",
-            "filter": {}
+            "command": {
+              "ping": 1
+            },
+            "commandName": "ping"
           }
         }
       ],
@@ -59,63 +61,18 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "distinct": "test",
-                  "key": "x"
+                  "ping": 1
                 },
-                "commandName": "distinct",
+                "commandName": "ping",
                 "databaseName": "command-monitoring-tests"
               }
             },
             {
               "commandSucceededEvent": {
                 "reply": {
-                  "ok": 1,
-                  "values": [
-                    11
-                  ]
+                  "ok": 1
                 },
-                "commandName": "distinct"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "A failed command",
-      "operations": [
-        {
-          "name": "find",
-          "object": "collection",
-          "arguments": {
-            "filter": {
-              "$or": true
-            }
-          },
-          "expectError": {
-            "isClientError": false
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "test",
-                  "filter": {
-                    "$or": true
-                  }
-                },
-                "commandName": "find",
-                "databaseName": "command-monitoring-tests"
-              }
-            },
-            {
-              "commandFailedEvent": {
-                "commandName": "find"
+                "commandName": "ping"
               }
             }
           ]
