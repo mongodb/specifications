@@ -107,5 +107,12 @@ tests:
               commandName: update
               databaseName: *databaseName
           - commandSucceededEvent:
-              reply: { ok: 1, n: 0 }
+              reply:
+                ok: 1
+                n: 0
+                # The legacy version of this test included an assertion that writeErrors contained a single document
+                # with index=0, a "code" value, and a non-empty "errmsg". However, writeErrors can contain extra fields
+                # beyond these, and the unified format currently does not permit allowing extra fields in sub-documents,
+                # so those assertions are not present here.
+                writeErrors: { $$type: array }
               commandName: update
