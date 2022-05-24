@@ -27,7 +27,6 @@ initialData:
       - { _id: 1, x: 11 }
 
 tests:
-# On a 2.4 server, no GLE is sent and requires a client-side manufactured reply
   - description: "A successful unordered bulk write with an unacknowledged write concern"
     operations:
       - name: bulkWrite
