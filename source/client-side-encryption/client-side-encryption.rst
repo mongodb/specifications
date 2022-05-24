@@ -737,7 +737,7 @@ ClientEncryption
       // Returns the previous version of the key document.
       removeKeyAlternateName(id: Binary, keyAltName: String): Optional<Document>;
 
-      // Returns a key document in the key vault collection with the given _id.
+      // Returns a key document in the key vault collection with the given keyAltName.
       getKeyByAltName(keyAltName: String): Iterable<Document>;
 
       // Encrypts a BSONValue with a given key and algorithm.
