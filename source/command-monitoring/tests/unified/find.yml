@@ -153,7 +153,7 @@ tests:
 
   - description: "A successful find with a getMore and killCursors"
     runOnRequirements:
-      - maxServerVersion: "2.6.99"
+      - maxServerVersion: "3.0.99"
     operations:
       - name: find
         object: *collection
