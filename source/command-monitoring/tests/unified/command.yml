@@ -27,46 +27,27 @@ initialData:
 tests:
   - description: "A successful command"
     operations:
-      - name: distinct
-        object: *collection
+      - name: runCommand
+        object: *database
         arguments:
-          fieldName: x
-          filter: {}
+          command: { ping: 1 }
+          commandName: ping
     expectEvents:
       - client: *client
         events:
           - commandStartedEvent:
               command:
-                distinct: *collectionName
-                key: x
-              commandName: distinct
+                ping: 1
+              commandName: ping
               databaseName: *databaseName
           - commandSucceededEvent:
               reply:
                 ok: 1
-                values:
-                  - 11
-              commandName: distinct
+              commandName: ping
 
-  - description: "A failed command"
-    operations:
-      - name: find
-        object: *collection
-        arguments:
-          filter: { $or: true }
-        expectError:
-          isClientError: false
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              command:
-                find: *collectionName
-                filter: { $or: true }
-              commandName: find
-              databaseName: *databaseName
-          - commandFailedEvent:
-              commandName: find
+# The legacy "A failed command event" test was removed in the test conversion, as the
+# behavior when a command fails is already covered by the test "A failed find event"
+# in find.yml.
 
   - description: "A successful command with a non-primary read preference"
     operations:
