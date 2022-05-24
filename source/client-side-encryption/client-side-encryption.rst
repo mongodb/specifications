@@ -708,34 +708,34 @@ ClientEncryption
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 4).
-      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): UUID;
+      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
       // An alias function equivalent to createKey.
-      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): UUID;
+      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
       // Returns a RewrapManyDataKeyResult.
       rewrapManyDataKey(filter: Document, opts: Optional<RewrapManyDataKeyOpts>): RewrapManyDataKeyResult;
 
-      // Removes the key document with the given _id from the key vault collection.
+      // Removes the key document with the given UUID from the key vault collection.
       // Returns the result of the internal deleteOne() operation on the key vault collection.
-      deleteKey(id: UUID): DeleteResult;
+      deleteKey(id: Binary): DeleteResult;
 
       // Finds a single key document with the given UUID.
       // Returns the result of the internal find() operation on the key vault collection.
-      getKey(id: UUID): Iterable<Document>;
+      getKey(id: Binary): Iterable<Document>;
 
       // Finds all documents in the key vault collection.
       // Returns the result of the internal find() operation on the key vault collection.
       getKeys(): Iterable<Document>;
 
-      // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given _id.
+      // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given UUID.
       // Returns the previous version of the key document.
-      addKeyAlternateName(id: UUID, keyAltName: String): Optional<Document>;
+      addKeyAlternateName(id: Binary, keyAltName: String): Optional<Document>;
 
-      // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given _id.
+      // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given UUID.
       // Returns the previous version of the key document.
-      removeKeyAlternateName(id: UUID, keyAltName: String): Optional<Document>;
+      removeKeyAlternateName(id: Binary, keyAltName: String): Optional<Document>;
 
       // Returns a key document in the key vault collection with the given _id.
       getKeyByAltName(keyAltName: String): Iterable<Document>;
