@@ -53,7 +53,7 @@ tests:
       - name: deleteMany
         object: *collection
         arguments:
-          filter: { _id: { $nothing: 1 } }
+          filter: { _id: { $unsupported: 1 } }
         expectError:
           isClientError: false
     expectEvents:
@@ -63,7 +63,7 @@ tests:
               command:
                 delete: *collectionName
                 deletes:
-                  - { q: { _id: { $nothing: 1 }}, limit: 0 }
+                  - { q: { _id: { $unsupported: 1 }}, limit: 0 }
                 ordered: true
               commandName: delete
               databaseName: *databaseName

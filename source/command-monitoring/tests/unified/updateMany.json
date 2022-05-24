@@ -126,7 +126,7 @@
               }
             },
             "update": {
-              "$nothing": {
+              "$unsupported": {
                 "x": 1
               }
             }
@@ -152,7 +152,7 @@
                         }
                       },
                       "u": {
-                        "$nothing": {
+                        "$unsupported": {
                           "x": 1
                         }
                       },

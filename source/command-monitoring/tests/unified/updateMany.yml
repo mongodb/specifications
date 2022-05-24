@@ -58,7 +58,7 @@ tests:
         object: *collection
         arguments:
           filter: { _id: { $gt: 1 } }
-          update: { $nothing: { x: 1 } }
+          update: { $unsupported: { x: 1 } }
         expectError:
           isClientError: false
     expectEvents:
@@ -69,7 +69,7 @@ tests:
                 update: *collectionName
                 updates:
                   - q: { _id: { $gt: 1 } }
-                    u: { $nothing: { x: 1 } }
+                    u: { $unsupported: { x: 1 } }
                     upsert: { $$unsetOrMatches: false }
                     multi: true
                 ordered: true

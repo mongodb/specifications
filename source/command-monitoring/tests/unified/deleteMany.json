@@ -109,7 +109,7 @@
           "arguments": {
             "filter": {
               "_id": {
-                "$nothing": 1
+                "$unsupported": 1
               }
             }
           },
@@ -130,7 +130,7 @@
                     {
                       "q": {
                         "_id": {
-                          "$nothing": 1
+                          "$unsupported": 1
                         }
                       },
                       "limit": 0
