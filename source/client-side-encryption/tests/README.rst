@@ -1819,9 +1819,9 @@ Case 1: createKey()
 
 1. Use ``client_encryption`` to create a new local data key with a keyAltName "abc" and assert the operation does not fail.
 
-2. Repeat Step 1 and assert the operation fails due to a duplicate key server error.
+2. Repeat Step 1 and assert the operation fails due to a duplicate key server error (error code 11000).
 
-3. Use ``client_encryption`` to create a new local data key with a keyAltName "def" and assert the operation fails due to a duplicate key server error.
+3. Use ``client_encryption`` to create a new local data key with a keyAltName "def" and assert the operation fails due to a duplicate key server error (error code 11000).
 
 Case 2: addKeyAlternateName()
 `````````````````````````````
@@ -1832,6 +1832,6 @@ Case 2: addKeyAlternateName()
 
 3. Repeat Step 2 and assert the operation does not fail.
 
-4. Use ``client_encryption`` to add a keyAltName "def" to the key created in Step 1 and assert the operation fails due to a duplicate key server error.
+4. Use ``client_encryption`` to add a keyAltName "def" to the key created in Step 1 and assert the operation fails due to a duplicate key server error (error code 11000).
 
 5. Use ``client_encryption`` to add a keyAltName "def" to the existing key and assert the operation does not fail.
