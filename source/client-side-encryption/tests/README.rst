@@ -1790,7 +1790,7 @@ Setup
 
 2. Using ``client``, drop the collection ``keyvault.datakeys``.
 
-3. Using ``client``, create a unique index on ``keyAltNames`` with a partial index filter for only documents where ``keyAltNames`` exists.
+3. Using ``client``, create a unique index on ``keyAltNames`` with a partial index filter for only documents where ``keyAltNames`` exists using writeConcern "majority".
 
 The command should be equivalent to:
 
