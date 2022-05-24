@@ -740,13 +740,13 @@ ClientEncryption
       // Returns a key document in the key vault collection with the given keyAltName.
       getKeyByAltName(keyAltName: String): Iterable<Document>;
 
-      // Encrypts a BSONValue with a given key and algorithm.
+      // Encrypts a BsonValue with a given key and algorithm.
       // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
-      encrypt(value: BSONValue, opts: EncryptOpts): Binary;
+      encrypt(value: BsonValue, opts: EncryptOpts): Binary;
 
       // Decrypts an encrypted value (BSON binary of subtype 6).
       // Returns the original BSON value.
-      decrypt(value: Binary): BSONValue;
+      decrypt(value: Binary): BsonValue;
 
       // Implementation details.
       private mongocrypt_t libmongocrypt_handle;
