@@ -741,7 +741,7 @@ ClientEncryption
       getKeyByAltName(keyAltName: String): Iterable<Document>;
 
       // Encrypts a BSONValue with a given key and algorithm.
-      // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation may return an error for prohibited BSON values.
+      // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
       encrypt(value: BSONValue, opts: EncryptOpts): Binary;
 
       // Decrypts an encrypted value (BSON binary of subtype 6).
