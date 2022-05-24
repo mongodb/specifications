@@ -1976,6 +1976,8 @@ been problematic before due to requiring the ``createIndex`` privilege, which a
 user might not have if they are just querying the key vault collection
 with find and adding keys with insert.
 
+See also https://www.mongodb.com/docs/manual/reference/privilege-actions/#mongodb-authaction-createIndex.
+
 Why do operations on views fail?
 --------------------------------
 
