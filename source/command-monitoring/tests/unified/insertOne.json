@@ -1,5 +1,5 @@
 {
-  "description": "insertMany",
+  "description": "insertOne",
   "schemaVersion": "1.0",
   "createEntities": [
     {
