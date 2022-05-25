@@ -78,50 +78,6 @@
           ]
         }
       ]
-    },
-    {
-      "description": "A successful command with a non-primary read preference",
-      "operations": [
-        {
-          "name": "distinct",
-          "object": "collection",
-          "arguments": {
-            "fieldName": "x",
-            "filter": {},
-            "readPreference": {
-              "mode": "primaryPreferred"
-            }
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "distinct": "test",
-                  "key": "x"
-                },
-                "commandName": "distinct",
-                "databaseName": "command-monitoring-tests"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "reply": {
-                  "ok": 1,
-                  "values": [
-                    11
-                  ]
-                },
-                "commandName": "distinct"
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }

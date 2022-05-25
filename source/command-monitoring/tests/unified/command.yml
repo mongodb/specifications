@@ -48,28 +48,3 @@ tests:
 # The legacy "A failed command event" test was removed in the test conversion, as the
 # behavior when a command fails is already covered by the test "A failed find event"
 # in find.yml.
-
-  - description: "A successful command with a non-primary read preference"
-    operations:
-      - name: distinct
-        object: *collection
-        arguments:
-          fieldName: x
-          filter: {}
-          readPreference:
-            mode: primaryPreferred
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              command:
-                distinct: *collectionName
-                key: x
-              commandName: distinct
-              databaseName: *databaseName
-          - commandSucceededEvent:
-              reply:
-                ok: 1
-                values:
-                  - 11
-              commandName: distinct
