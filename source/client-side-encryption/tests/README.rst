@@ -341,12 +341,6 @@ for information on "disabling" csfle and setting csfle search paths.
 
 .. note::
 
-   At time of writing, csfle_ does not properly handle the ``explain``
-   command and will fail to parse it. This will cause the ``explain`` test case
-   to fail if ``csfle`` is in use instead of ``mongocryptd``.
-
-.. note::
-
    The ``csfle`` dynamic library can be obtained using the mongodl_ Python
    script from drivers-evergreen-tools_:
 
