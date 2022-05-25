@@ -57,7 +57,7 @@ tests:
         arguments:
           # *aws_key_id with first three letters replaced with 'A' (value: "3awsawsawsawsa").
           id: { $binary: { base64: AAAzYXdzYXdzYXdzYXdzYQ==, subType: "04" } }
-        expectResult: []
+        expectResult: null
 
   - description: get existing AWS data key
     operations:
@@ -65,8 +65,7 @@ tests:
         object: *clientEncryption0
         arguments:
           id: *aws_key_id
-        expectResult:
-          - *aws_key_doc
+        expectResult: *aws_key_doc
 
   - description: get existing local data key
     operations:
@@ -74,5 +73,4 @@ tests:
         object: *clientEncryption0
         arguments:
           id: *local_key_id
-        expectResult:
-          - *local_key_doc
+        expectResult: *local_key_doc

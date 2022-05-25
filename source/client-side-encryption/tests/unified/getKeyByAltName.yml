@@ -56,7 +56,7 @@ tests:
         object: *clientEncryption0
         arguments:
           keyAltName: does_not_exist
-        expectResult: []
+        expectResult: null
 
   - description: get existing AWS data key
     operations:
@@ -64,8 +64,7 @@ tests:
         object: *clientEncryption0
         arguments:
           keyAltName: aws_key
-        expectResult:
-          - *aws_key_doc
+        expectResult: *aws_key_doc
 
   - description: get existing local data key
     operations:
@@ -73,5 +72,4 @@ tests:
         object: *clientEncryption0
         arguments:
           keyAltName: local_key
-        expectResult:
-          - *local_key_doc
+        expectResult: *local_key_doc

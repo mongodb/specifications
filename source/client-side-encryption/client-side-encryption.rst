@@ -723,7 +723,7 @@ ClientEncryption
 
       // Finds a single key document with the given UUID.
       // Returns the result of the internal find() operation on the key vault collection.
-      getKey(id: Binary): Iterable<Document>;
+      getKey(id: Binary): Optional<Document>;
 
       // Finds all documents in the key vault collection.
       // Returns the result of the internal find() operation on the key vault collection.
@@ -738,7 +738,7 @@ ClientEncryption
       removeKeyAlternateName(id: Binary, keyAltName: String): Optional<Document>;
 
       // Returns a key document in the key vault collection with the given keyAltName.
-      getKeyByAltName(keyAltName: String): Iterable<Document>;
+      getKeyByAltName(keyAltName: String): Optional<Document>;
 
       // Encrypts a BsonValue with a given key and algorithm.
       // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
