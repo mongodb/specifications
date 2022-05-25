@@ -731,11 +731,11 @@ ClientEncryption
 
       // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given UUID.
       // Returns the previous version of the key document.
-      addKeyAlternateName(id: Binary, keyAltName: String): Optional<Document>;
+      addKeyAltName(id: Binary, keyAltName: String): Optional<Document>;
 
       // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given UUID.
       // Returns the previous version of the key document.
-      removeKeyAlternateName(id: Binary, keyAltName: String): Optional<Document>;
+      removeKeyAltName(id: Binary, keyAltName: String): Optional<Document>;
 
       // Returns a key document in the key vault collection with the given keyAltName.
       getKeyByAltName(keyAltName: String): Optional<Document>;

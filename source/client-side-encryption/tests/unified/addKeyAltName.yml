@@ -1,4 +1,4 @@
-description: removeKeyAlternateName
+description: addKeyAltName
 
 schemaVersion: "1.8"
 
@@ -30,7 +30,6 @@ initialData:
     documents:
       - &local_key_doc
         _id: &local_key_id { $binary: { base64: bG9jYWxrZXlsb2NhbGtleQ==, subType: "04" } }
-        keyAltNames: [alternate_name, local_key]
         keyMaterial: { $binary: { base64: ABKBldDEoDW323yejOnIRk6YQmlD9d3eQthd16scKL75nz2LjNL9fgPDZWrFFOlqlhMCFaSrNJfGrFUjYk5JFDO7soG5Syb50k1niJoKg4ilsj0L4mpimFUtTpOr2nzZOeQtvAksEXc7gsFgq8gV7t/U3lsaXPY7I0t42DfSE8EGlPdxRjFdHnxh+OR8h7U9b8Qs5K5UuhgyeyxaBZ1Hgw==, subType: "00" } }
         creationDate: { $date: { $numberLong: "1641024000000" } }
         updateDate: { $date: { $numberLong: "1641024000000" } }
@@ -39,14 +38,14 @@ initialData:
           provider: local
 
 tests:
-  - description: remove keyAltName from non-existent data key
+  - description: add keyAltName to non-existent data key
     operations:
-      - name: removeKeyAlternateName
+      - name: addKeyAltName
         object: *clientEncryption0
         arguments:
           # First 3 letters of local_key_id replaced with 'A' (value: "#alkeylocalkey").
           id: { $binary: { base64: AAAjYWxrZXlsb2NhbGtleQ==, subType: "04" } }
-          keyAltName: does_not_exist
+          keyAltName: new_key_alt_name
         expectResult: null
     outcome:
       - collectionName: *collection0Name
@@ -54,27 +53,13 @@ tests:
         documents:
           - *local_key_doc
 
-  - description: remove non-existent keyAltName from existing data key
+  - description: add new keyAltName to data key with no keyAltNames
     operations:
-      - name: removeKeyAlternateName
+      - name: addKeyAltName
         object: *clientEncryption0
         arguments:
           id: *local_key_id
-          keyAltName: does_not_exist
-        expectResult: *local_key_doc
-    outcome:
-      - collectionName: *collection0Name
-        databaseName: *database0Name
-        documents:
-          - *local_key_doc
-
-  - description: remove an existing keyAltName from an existing data key
-    operations:
-      - name: removeKeyAlternateName
-        object: *clientEncryption0
-        arguments:
-          id: *local_key_id
-          keyAltName: alternate_name
+          keyAltName: local_key
         expectResult: *local_key_doc
       - name: find
         object: *collection0
@@ -84,15 +69,16 @@ tests:
         expectResult:
           - keyAltNames: [local_key]
 
-  - description: remove the last keyAltName from an existing data key
+  - description: add existing keyAltName to existing data key
     operations:
-      - name: removeKeyAlternateName
+      - name: addKeyAltName
         object: *clientEncryption0
         arguments:
           id: *local_key_id
-          keyAltName: alternate_name
+          keyAltName: local_key
         expectResult: *local_key_doc
-      - name: removeKeyAlternateName
+      - name: addKeyAltName
+        # Attempting to add a duplicate keyAltName to the data key should not be an error.
         object: *clientEncryption0
         arguments:
           id: *local_key_id
@@ -112,5 +98,38 @@ tests:
           filter: {}
           projection: { _id: 0, keyAltNames: 1 }
         expectResult:
-          # The keyAltNames field should be unset if it would otherwise be empty to preserve keyAltNames unique index invariants.
-          - keyAltNames: { $$exists: false }
+          - keyAltNames: [local_key]
+
+  - description: add new keyAltName to data key with keyAltNames
+    operations:
+      - name: addKeyAltName
+        object: *clientEncryption0
+        arguments:
+          id: *local_key_id
+          keyAltName: local_key
+        expectResult: *local_key_doc
+      - name: addKeyAltName
+        object: *clientEncryption0
+        arguments:
+          id: *local_key_id
+          keyAltName: another_name
+        expectResult:
+          _id: *local_key_id
+          keyAltNames: [local_key]
+          keyMaterial: { $$type: binData }
+          creationDate: { $$type: date }
+          updateDate: { $$type: date }
+          status: 1
+          masterKey:
+            provider: local
+      - name: aggregate
+        object: *collection0
+        arguments:
+          pipeline:
+            # Ensure keyAltNames are in deterministically sorted order.
+            - $project: { _id: 0, keyAltNames: $keyAltNames }
+            - $unwind: $keyAltNames
+            - $sort: { keyAltNames: 1 }
+        expectResult:
+          - keyAltNames: another_name
+          - keyAltNames: local_key
