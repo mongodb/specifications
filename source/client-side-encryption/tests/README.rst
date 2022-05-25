@@ -1801,6 +1801,7 @@ The command should be equivalent to:
         createIndexes: "datakeys",
         indexes: [
           {
+            name: "keyAltNames_1",
             key: "keyAltNames",
             unique: true,
             partialFilterExpression: { keyAltNames: { $exists: true } }
