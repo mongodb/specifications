@@ -58,7 +58,6 @@ tests:
           # *aws_key_id with first three letters replaced with 'A' (value: "3awsawsawsawsa").
           id: { $binary: { base64: AAAzYXdzYXdzYXdzYXdzYQ==, subType: "04" } }
         expectResult:
-          acknowledged: { $$unsetOrMatches: true }
           deletedCount: 0
     outcome:
       - collectionName: *collection0Name
@@ -74,7 +73,6 @@ tests:
         arguments:
           id: *aws_key_id
         expectResult:
-          acknowledged: { $$unsetOrMatches: true }
           deletedCount: 1
     outcome:
       - collectionName: *collection0Name
@@ -89,7 +87,6 @@ tests:
         arguments:
           id: *local_key_id
         expectResult:
-          acknowledged: { $$unsetOrMatches: true }
           deletedCount: 1
     outcome:
       - collectionName: *collection0Name
@@ -104,14 +101,12 @@ tests:
         arguments:
           id: *aws_key_id
         expectResult:
-          acknowledged: { $$unsetOrMatches: true }
           deletedCount: 1
       - name: deleteKey
         object: *clientEncryption0
         arguments:
           id: *aws_key_id
         expectResult:
-          acknowledged: { $$unsetOrMatches: true }
           deletedCount: 0
     outcome:
       - collectionName: *collection0Name
