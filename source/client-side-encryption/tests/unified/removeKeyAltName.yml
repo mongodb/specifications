@@ -8,6 +8,8 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      observeEvents:
+        - commandStartedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -45,9 +47,19 @@ tests:
         object: *clientEncryption0
         arguments:
           # First 3 letters of local_key_id replaced with 'A' (value: "#alkeylocalkey").
-          id: { $binary: { base64: AAAjYWxrZXlsb2NhbGtleQ==, subType: "04" } }
+          id: &non_existent_id { $binary: { base64: AAAjYWxrZXlsb2NhbGtleQ==, subType: "04" } }
           keyAltName: does_not_exist
         expectResult: null
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                findAndModify: *collection0Name
+                query: { _id: *non_existent_id }
+                update: { $pull: { keyAltNames: does_not_exist } }
+                writeConcern: { w: majority }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -62,6 +74,16 @@ tests:
           id: *local_key_id
           keyAltName: does_not_exist
         expectResult: *local_key_doc
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                findAndModify: *collection0Name
+                query: { _id: *local_key_id }
+                update: { $pull: { keyAltNames: does_not_exist } }
+                writeConcern: { w: majority }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -83,6 +105,17 @@ tests:
           projection: { _id: 0, keyAltNames: 1 }
         expectResult:
           - keyAltNames: [local_key]
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                findAndModify: *collection0Name
+                query: { _id: *local_key_id }
+                update: { $pull: { keyAltNames: alternate_name } }
+                writeConcern: { w: majority }
+          - commandStartedEvent: { commandName: find }
 
   - description: remove the last keyAltName from an existing data key
     operations:
@@ -106,11 +139,27 @@ tests:
           status: 1
           masterKey:
             provider: local
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-          projection: { _id: 0, keyAltNames: 1 }
-        expectResult:
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                findAndModify: *collection0Name
+                query: { _id: *local_key_id }
+                update: { $pull: { keyAltNames: alternate_name } }
+                writeConcern: { w: majority }
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                findAndModify: *collection0Name
+                query: { _id: *local_key_id }
+                update: { $pull: { keyAltNames: local_key } }
+                writeConcern: { w: majority }
           # The keyAltNames field should be unset if it would otherwise be empty to preserve keyAltNames unique index invariants.
-          - keyAltNames: { $$exists: false }
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                update: *collection0Name
+                updates: [{ q: { _id: *local_key_id }, u: { $unset: { keyAltNames: true } } }]
+                writeConcern: { w: majority }

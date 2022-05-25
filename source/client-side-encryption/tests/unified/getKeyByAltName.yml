@@ -8,6 +8,8 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      observeEvents:
+        - commandStartedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -57,6 +59,15 @@ tests:
         arguments:
           keyAltName: does_not_exist
         expectResult: null
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: { keyAltNames: does_not_exist }
+                readConcern: { level: majority }
 
   - description: get existing AWS data key
     operations:
@@ -65,6 +76,15 @@ tests:
         arguments:
           keyAltName: aws_key
         expectResult: *aws_key_doc
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: { keyAltNames: aws_key }
+                readConcern: { level: majority }
 
   - description: get existing local data key
     operations:
@@ -73,3 +93,12 @@ tests:
         arguments:
           keyAltName: local_key
         expectResult: *local_key_doc
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: { keyAltNames: local_key }
+                readConcern: { level: majority }

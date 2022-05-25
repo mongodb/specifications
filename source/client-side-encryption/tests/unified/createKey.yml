@@ -8,6 +8,8 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      observeEvents:
+        - commandStartedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -45,15 +47,23 @@ tests:
               key: arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0
               region: us-east-1
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-          projection: { _id: 0, masterKey: 1 }
-        expectResult:
-          - masterKey:
-              provider: aws
-              <<: *new_aws_masterkey
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$exists: true }
+                    masterKey:
+                      provider: aws
+                      <<: *new_aws_masterkey
+                writeConcern: { w: majority }
 
   - description: create datakey with Azure KMS provider
     operations:
@@ -66,15 +76,23 @@ tests:
               keyVaultEndpoint: key-vault-csfle.vault.azure.net
               keyName: key-name-csfle
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-          projection: { _id: 0, masterKey: 1 }
-        expectResult:
-          - masterKey:
-              provider: azure
-              <<: *new_azure_masterkey
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$exists: true }
+                    masterKey:
+                      provider: azure
+                      <<: *new_azure_masterkey
+                writeConcern: { w: majority }
 
   - description: create datakey with GCP KMS provider
     operations:
@@ -89,15 +107,23 @@ tests:
               keyRing: key-ring-csfle
               keyName: key-name-csfle
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-          projection: { _id: 0, masterKey: 1 }
-        expectResult:
-          - masterKey:
-              provider: gcp
-              <<: *new_gcp_masterkey
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$exists: true }
+                    masterKey:
+                      provider: gcp
+                      <<: *new_gcp_masterkey
+                writeConcern: { w: majority }
 
   - description: create datakey with KMIP KMS provider
     operations:
@@ -106,15 +132,23 @@ tests:
         arguments:
           kmsProvider: kmip
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-          projection: { _id: 0, masterKey: 1 }
-        expectResult:
-          - masterKey:
-              provider: kmip
-              keyId: { $$type: string }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$exists: true }
+                    masterKey:
+                      provider: kmip
+                      keyId: { $$type: string }
+                writeConcern: { w: majority }
 
   - description: create datakey with local KMS provider
     operations:
@@ -123,14 +157,22 @@ tests:
         arguments:
           kmsProvider: local
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-          projection: { _id: 0, masterKey: 1 }
-        expectResult:
-          - masterKey:
-              provider: local
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$exists: true }
+                    masterKey:
+                      provider: local
+                writeConcern: { w: majority }
 
   - description: create datakey with no keyAltName
     operations:
@@ -141,19 +183,23 @@ tests:
           opts:
             keyAltNames: []
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-        expectResult:
-          - _id: { $$type: binData }
-            # keyAltNames field should not exist if no keyAltNames are given.
-            keyAltNames: { $$exists: false }
-            keyMaterial: { $$type: binData }
-            creationDate: { $$type: date }
-            updateDate: { $$type: date }
-            status: { $$type: int }
-            masterKey: { $$type: object }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    # keyAltNames field should not exist if no keyAltNames are given.
+                    keyAltNames: { $$exists: false }
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$type: int }
+                    masterKey: { $$type: object }
+                writeConcern: { w: majority }
 
   - description: create datakey with single keyAltName
     operations:
@@ -164,18 +210,22 @@ tests:
           opts:
             keyAltNames: ["local_key"]
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-        expectResult:
-          - _id: { $$type: binData }
-            keyAltNames: [local_key]
-            keyMaterial: { $$type: binData }
-            creationDate: { $$type: date }
-            updateDate: { $$type: date }
-            status: { $$type: int }
-            masterKey: { $$type: object }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    keyAltNames: [local_key]
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$type: int }
+                    masterKey: { $$type: object }
+                writeConcern: { w: majority }
 
   - description: create datakey with multiple keyAltNames
     operations:
@@ -198,6 +248,23 @@ tests:
         expectResult:
           - keyAltNames: abc
           - keyAltNames: def
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    keyAltNames: { $$type: array }
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$type: int }
+                    masterKey: { $$type: object }
+                writeConcern: { w: majority }
+          - commandStartedEvent: { commandName: aggregate }
 
   - description: create datakey with custom key material
     operations:
@@ -207,15 +274,24 @@ tests:
           kmsProvider: local
           opts:
             # "key_material" repeated 8 times.
-            keyMaterial: { $binary: { base64: a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs, subType: "00" } }
+            keyMaterial: &custom_key_material { $binary: { base64: a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs, subType: "00" } }
         expectResult: { $$type: binData }
-      - name: find
-        object: *collection0
-        arguments:
-          filter: {}
-          projection: { _id: 0, masterKey: 1 }
-        expectResult:
-          - masterKey: { provider: local }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                insert: *collection0Name
+                documents:
+                  - _id: { $$type: binData }
+                    # Cannot match exact value of encrypted key material.
+                    keyMaterial: { $$type: binData }
+                    creationDate: { $$type: date }
+                    updateDate: { $$type: date }
+                    status: { $$type: int }
+                    masterKey: { $$type: object }
+                writeConcern: { w: majority }
 
   - description: create datakey with invalid custom key material (too short)
     operations:
@@ -228,3 +304,6 @@ tests:
             keyMaterial: { $binary: { base64: a2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFsa2V5X21hdGVyaWFs, subType: "00" } }
         expectError:
           isClientError: true
+    expectEvents:
+      - client: *client0
+        events: []

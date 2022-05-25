@@ -8,6 +8,8 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      observeEvents:
+        - commandStartedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -35,6 +37,15 @@ tests:
       - name: getKeys
         object: *clientEncryption0
         expectResult: []
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: {}
+                readConcern: { level: majority }
 
   - description: getKeys with single key documents
     operations:
@@ -55,6 +66,17 @@ tests:
             updateDate: { $$type: date }
             status: { $$type: int }
             masterKey: { $$type: object }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: {}
+                readConcern: { level: majority }
 
   - description: getKeys with many key documents
     operations:
@@ -85,3 +107,16 @@ tests:
             updateDate: { $$type: date }
             status: { $$type: int }
             masterKey: { $$type: object }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: insert
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: {}
+                readConcern: { level: majority }

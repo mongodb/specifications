@@ -8,6 +8,8 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      observeEvents:
+        - commandStartedEvent
   - clientEncryption:
       id: &clientEncryption0 clientEncryption0
       clientEncryptionOpts:
@@ -56,9 +58,18 @@ tests:
         object: *clientEncryption0
         arguments:
           # *aws_key_id with first three letters replaced with 'A' (value: "3awsawsawsawsa").
-          id: { $binary: { base64: AAAzYXdzYXdzYXdzYXdzYQ==, subType: "04" } }
+          id: &non_existent_id { $binary: { base64: AAAzYXdzYXdzYXdzYXdzYQ==, subType: "04" } }
         expectResult:
           deletedCount: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                delete: *collection0Name
+                deletes: [{ q: { _id: *non_existent_id }, limit: 1 }]
+                writeConcern: { w: majority }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -74,6 +85,15 @@ tests:
           id: *aws_key_id
         expectResult:
           deletedCount: 1
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                delete: *collection0Name
+                deletes: [{ q: { _id: *aws_key_id }, limit: 1 }]
+                writeConcern: { w: majority }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -88,6 +108,15 @@ tests:
           id: *local_key_id
         expectResult:
           deletedCount: 1
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                delete: *collection0Name
+                deletes: [{ q: { _id: *local_key_id }, limit: 1 }]
+                writeConcern: { w: majority }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -108,6 +137,21 @@ tests:
           id: *aws_key_id
         expectResult:
           deletedCount: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                delete: *collection0Name
+                deletes: [{ q: { _id: *aws_key_id }, limit: 1 }]
+                writeConcern: { w: majority }
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                delete: *collection0Name
+                deletes: [{ q: { _id: *aws_key_id }, limit: 1 }]
+                writeConcern: { w: majority }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
