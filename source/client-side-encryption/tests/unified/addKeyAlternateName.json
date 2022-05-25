@@ -297,7 +297,7 @@
       ]
     },
     {
-      "description": "add new keyAltName to data key with keyAltnames",
+      "description": "add new keyAltName to data key with keyAltNames",
       "operations": [
         {
           "name": "addKeyAlternateName",
