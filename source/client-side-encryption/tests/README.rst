@@ -1780,7 +1780,7 @@ Store the result in ``payload``.
 
 Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted unindexed value".
 
-12. Unique Index on keyAltNames
+13. Unique Index on keyAltNames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Setup
