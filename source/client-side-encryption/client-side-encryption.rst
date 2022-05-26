@@ -302,9 +302,9 @@ Drivers MAY deviate the spelling of option names to conform to their
 language's naming conventions and implement options in an idiomatic way
 (e.g. keyword arguments, builder classes, etc.).
 
-Drivers MAY use a native UUID type in place of a parameter or return types
-specified as a BSON binary with subtype 0x04, but are encouraged to use a BSON
-binary type as described in `Handling of Native UUID Types <../uuid.rst>`.
+Drivers MAY use a native UUID type in place of a parameter or return type
+specified as a BSON binary with subtype 0x04 as described in
+`Handling of Native UUID Types <../uuid.rst>`.
 
 MongoClient Changes
 -------------------
