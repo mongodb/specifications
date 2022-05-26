@@ -667,7 +667,7 @@ A collection supporting FLE 2 requires an index and three additional collections
 .. _drop: https://www.mongodb.com/docs/manual/reference/command/drop
 
 Create Collection Helper
-````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Drivers MUST support a BSON document option named ``encryptedFields`` for any
 `create`_ command helpers (e.g. ``Database.createCollection()``). This option
@@ -694,7 +694,7 @@ If the collection namespace has an associated ``encryptedFields``, then do the f
 - Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
 
 Drop Collection Helper
-``````````````````````
+^^^^^^^^^^^^^^^^^^^^^^
 
 Drivers MUST support a BSON document option named ``encryptedFields`` for any
 `drop`_ command helpers (e.g. ``Database.dropCollection()``,
