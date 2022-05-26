@@ -633,7 +633,7 @@ the user. Refer:
 - `Detecting csfle Availability`_
 
 encryptedFieldsMap
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 ``encryptedFieldsMap`` maps a collection namespace to an ``encryptedFields``.
 
