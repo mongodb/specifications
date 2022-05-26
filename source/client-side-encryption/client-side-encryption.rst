@@ -2197,6 +2197,14 @@ Why is there both a createKey and a createDataKey function in ClientEncryption?
 parity with the mongosh interface. ``createDataKey`` remains for backwards
 compatibility.
 
+Why does ClientEncryption have key management functions when Drivers can use existing CRUD operations instead?
+--------------------------------------------------------------------------------------------------------------
+
+The key management functions are added for parity with mongosh to reduce
+friction between conducting operations using mongosh and a Driver. Their
+inclusion assumes their value for users outweighs their cost of implementation
+and maintenance.
+
 Future work
 ===========
 
