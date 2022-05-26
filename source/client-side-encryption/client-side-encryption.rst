@@ -302,6 +302,10 @@ Drivers MAY deviate the spelling of option names to conform to their
 language's naming conventions and implement options in an idiomatic way
 (e.g. keyword arguments, builder classes, etc.).
 
+Drivers MAY use a native UUID type in place of a parameter or return types
+specified as a BSON binary with subtype 0x04, but are encouraged to use a BSON
+binary type as described in `Handling of Native UUID Types <../uuid.rst>`.
+
 MongoClient Changes
 -------------------
 
@@ -707,7 +711,7 @@ ClientEncryption
       ClientEncryption(opts: ClientEncryptionOpts);
 
       // Creates a new key document and inserts into the key vault collection.
-      // Returns the _id of the created document as a UUID (BSON binary subtype 4).
+      // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
       createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
       // An alias function equivalent to createKey.
@@ -717,11 +721,11 @@ ClientEncryption
       // Returns a RewrapManyDataKeyResult.
       rewrapManyDataKey(filter: Document, opts: Optional<RewrapManyDataKeyOpts>): RewrapManyDataKeyResult;
 
-      // Removes the key document with the given UUID from the key vault collection.
+      // Removes the key document with the given UUID (BSON binary subtype 0x04) from the key vault collection.
       // Returns the result of the internal deleteOne() operation on the key vault collection.
       deleteKey(id: Binary): DeleteResult;
 
-      // Finds a single key document with the given UUID.
+      // Finds a single key document with the given UUID (BSON binary subtype 0x04).
       // Returns the result of the internal find() operation on the key vault collection.
       getKey(id: Binary): Optional<Document>;
 
@@ -729,11 +733,11 @@ ClientEncryption
       // Returns the result of the internal find() operation on the key vault collection.
       getKeys(): Iterable<Document>;
 
-      // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given UUID.
+      // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given UUID (BSON binary subtype 0x04).
       // Returns the previous version of the key document.
       addKeyAltName(id: Binary, keyAltName: String): Optional<Document>;
 
-      // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given UUID.
+      // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given UUID (BSON binary subtype 0x04).
       // Returns the previous version of the key document.
       removeKeyAltName(id: Binary, keyAltName: String): Optional<Document>;
 
