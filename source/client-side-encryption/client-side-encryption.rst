@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-24
-:Version: 1.7.0
+:Last Modified: 2022-05-26
+:Version: 1.7.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -633,7 +633,7 @@ the user. Refer:
 - `Detecting csfle Availability`_
 
 encryptedFieldsMap
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 ``encryptedFieldsMap`` maps a collection namespace to an ``encryptedFields``.
 
@@ -658,12 +658,21 @@ See `Why is bypassQueryAnalysis needed?`_.
 
 .. _fle2-createcollection-drop:
 
-FLE 2 ``CreateCollection()`` and ``Collection.Drop()``
-------------------------------------------------------
+FLE 2 Create and Drop Collection Helpers
+----------------------------------------
 
 A collection supporting FLE 2 requires an index and three additional collections.
 
-Drivers MUST have a BSON document option named ``encryptedFields`` in ``CreateCollection()``.
+.. _create: https://www.mongodb.com/docs/manual/reference/command/create
+.. _drop: https://www.mongodb.com/docs/manual/reference/command/drop
+
+Create Collection Helper
+````````````````````````
+
+Drivers MUST support a BSON document option named ``encryptedFields`` for any
+`create`_ command helpers (e.g. ``Database.createCollection()``). This option
+will be interpreted by the helper method and MUST be passed to the `create`_
+command.
 
 A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
 
@@ -684,7 +693,13 @@ If the collection namespace has an associated ``encryptedFields``, then do the f
 - Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``encryptedFields``.
 - Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
 
-Drivers MUST have a BSON document option named ``encryptedFields`` in ``Collection.Drop()``.
+Drop Collection Helper
+``````````````````````
+
+Drivers MUST support a BSON document option named ``encryptedFields`` for any
+`drop`_ command helpers (e.g. ``Database.dropCollection()``,
+``Collection.drop()``). This option will only be interpreted by the helper
+method and MUST NOT be passed to the `drop`_ command.
 
 A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
 
@@ -2260,6 +2275,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-26, Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
    22-05-24, Add key management API functions
    22-05-18, Add createKey and rewrapManyDataKey
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
