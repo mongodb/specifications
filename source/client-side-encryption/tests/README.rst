@@ -1802,7 +1802,7 @@ The command should be equivalent to:
         indexes: [
           {
             name: "keyAltNames_1",
-            key: "keyAltNames",
+            key: { "keyAltNames": 1 },
             unique: true,
             partialFilterExpression: { keyAltNames: { $exists: true } }
           }
