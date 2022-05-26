@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-18
-:Version: 1.6.0
+:Last Modified: 2022-05-24
+:Version: 1.7.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -301,6 +301,10 @@ defer validation to the underlying implementation.
 Drivers MAY deviate the spelling of option names to conform to their
 language's naming conventions and implement options in an idiomatic way
 (e.g. keyword arguments, builder classes, etc.).
+
+Drivers MAY use a native UUID type in place of a parameter or return type
+specified as a BSON binary with subtype 0x04 as described in
+`Handling of Native UUID Types <../uuid.rst>`.
 
 MongoClient Changes
 -------------------
@@ -707,7 +711,7 @@ ClientEncryption
       ClientEncryption(opts: ClientEncryptionOpts);
 
       // Creates a new key document and inserts into the key vault collection.
-      // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
+      // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
       createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
       // An alias function equivalent to createKey.
@@ -717,12 +721,36 @@ ClientEncryption
       // Returns a RewrapManyDataKeyResult.
       rewrapManyDataKey(filter: Document, opts: Optional<RewrapManyDataKeyOpts>): RewrapManyDataKeyResult;
 
-      // Encrypts a BSONValue with a given key and algorithm.
-      // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation may return an error for prohibited BSON values.
-      encrypt(value: BSONValue, opts: EncryptOpts): Binary;
+      // Removes the key document with the given UUID (BSON binary subtype 0x04) from the key vault collection.
+      // Returns the result of the internal deleteOne() operation on the key vault collection.
+      deleteKey(id: Binary): DeleteResult;
 
-      // Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value.
-      decrypt(value: Binary): BSONValue;
+      // Finds a single key document with the given UUID (BSON binary subtype 0x04).
+      // Returns the result of the internal find() operation on the key vault collection.
+      getKey(id: Binary): Optional<Document>;
+
+      // Finds all documents in the key vault collection.
+      // Returns the result of the internal find() operation on the key vault collection.
+      getKeys(): Iterable<Document>;
+
+      // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given UUID (BSON binary subtype 0x04).
+      // Returns the previous version of the key document.
+      addKeyAltName(id: Binary, keyAltName: String): Optional<Document>;
+
+      // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given UUID (BSON binary subtype 0x04).
+      // Returns the previous version of the key document.
+      removeKeyAltName(id: Binary, keyAltName: String): Optional<Document>;
+
+      // Returns a key document in the key vault collection with the given keyAltName.
+      getKeyByAltName(keyAltName: String): Optional<Document>;
+
+      // Encrypts a BsonValue with a given key and algorithm.
+      // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
+      encrypt(value: BsonValue, opts: EncryptOpts): Binary;
+
+      // Decrypts an encrypted value (BSON binary of subtype 6).
+      // Returns the original BSON value.
+      decrypt(value: Binary): BsonValue;
 
       // Implementation details.
       private mongocrypt_t libmongocrypt_handle;
@@ -742,11 +770,18 @@ configuring auto encryption on a MongoClient, it is
 constructed with a MongoClient (to a MongoDB cluster containing the key
 vault collection), KMS provider configuration, keyVaultNamespace, and
 tlsOptions. It provides an API for explicitly encrypting and decrypting values,
-creating data keys, and rewrapping data keys. It does not provide an API to
-query keys from the key vault collection, as this can be done directly on the
-MongoClient.
+and managing data keys in the key vault collection.
 
 See `Why do we have a separate top level type for ClientEncryption?`_ and `Why do we need to pass a client to create a ClientEncryption?`_.
+
+When implementing behavior and error handling for key vault functions, Drivers
+SHOULD assume the presence of a unique index in the key vault collection on the
+``keyAltNames`` field with a partial index filter for only documents where
+``keyAltNames`` exists when implementing behavior of key management functions.
+Drivers MAY choose to not validate or enforce the existence of the unique index,
+but MUST still be capable of handling errors that such a unique index may yield.
+
+See `Why aren't we creating a unique index in the key vault collection?`_.
 
 DataKeyOpts
 -----------
@@ -1321,7 +1356,7 @@ selection error is propagated to the user.
 ClientEncryption
 ================
 The new ClientEncryption type interacts uses libmongocrypt to perform
-ClientEncryption.createKey() and ClientEncryption.rewrapManyDataKey(). See the
+ClientEncryption operations. See the
 `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_
 for more information.
 
@@ -1338,13 +1373,13 @@ containing encrypted data keys. There is no default collection (user
 must specify). The key vault collection is used for automatic and
 explicit encryption/decryption as well as key management functions.
 
-For key management functions that require updating key documents in the key
-vault collection, the corresponding create, update, or delete operations MUST be
-done with write concern majority.
+For key management functions that require creating, updating, or deleting key
+documents in the key vault collection, the corresponding operations MUST be done
+with write concern majority.
 
 For encryption/decryption and key management functions that require reading
-key documents from the key vault collection, the find operation MUST be done
-with read concern majority.
+key documents from the key vault collection, the corresponding operations MUST
+be done with read concern majority.
 
 Some key management functions may require multiple commands to complete their
 operation. Key management functions currently assume there is no concurrent
@@ -1938,11 +1973,14 @@ little as possible.
 Why aren't we creating a unique index in the key vault collection?
 ------------------------------------------------------------------
 
-There should be a unique index on keyAltNames. Although GridFS
+There should be a unique index on the ``keyAltNames`` field with a partial index
+filter for only documents where ``keyAltNames`` exists. Although GridFS
 automatically creates indexes as a convenience upon first write, it has
-been problematic before. It requires the createIndex privilege, which a
+been problematic before due to requiring the ``createIndex`` privilege, which a
 user might not have if they are just querying the key vault collection
 with find and adding keys with insert.
+
+See also https://www.mongodb.com/docs/manual/reference/privilege-actions/#mongodb-authaction-createIndex.
 
 Why do operations on views fail?
 --------------------------------
@@ -2222,6 +2260,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-24, Add key management API functions
    22-05-18, Add createKey and rewrapManyDataKey
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
    22-05-03, "Add queryType, contentionFactor, and ""Indexed"" and ""Unindexed"" to algorithm."
