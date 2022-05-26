@@ -193,7 +193,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     /**
      * Only present for ops of type ‘update’.
      */
-    updateDescription: Optional<UpdateDescription | Document>;
+    updateDescription: Optional<UpdateDescription>;
 
     /**
      * Always present for operations of type 'insert' and 'replace'. Also
@@ -229,7 +229,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * The wall time from the mongod that the change event originated from.
      * Populated for server versions 6.0 and above.
      */
-    wallTime: DateTime;
+    wallTime: Optional<DateTime>;
 
     /**
      * The `ui` field from the oplog entry corresponding to the change event.
