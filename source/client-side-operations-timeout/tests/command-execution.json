@@ -40,11 +40,12 @@
               "mode": "alwaysOn",
               "data": {
                 "failCommands": [
+                  "hello",
                   "isMaster"
                 ],
                 "appName": "reduceMaxTimeMSTest",
                 "blockConnection": true,
-                "blockTimeMS": 10
+                "blockTimeMS": 20
               }
             }
           }
@@ -59,7 +60,8 @@
                   "id": "client",
                   "useMultipleMongoses": false,
                   "uriOptions": {
-                    "appName": "reduceMaxTimeMSTest"
+                    "appName": "reduceMaxTimeMSTest",
+                    "w": 1
                   },
                   "observeEvents": [
                     "commandStartedEvent"
@@ -86,7 +88,7 @@
                   "database": "database",
                   "collectionName": "timeoutColl",
                   "collectionOptions": {
-                    "timeoutMS": 20
+                    "timeoutMS": 60
                   }
                 }
               }
@@ -135,7 +137,7 @@
                 "command": {
                   "insert": "timeoutColl",
                   "maxTimeMS": {
-                    "$$lte": 20
+                    "$$lte": 60
                   }
                 }
               }
@@ -157,11 +159,12 @@
               "mode": "alwaysOn",
               "data": {
                 "failCommands": [
+                  "hello",
                   "isMaster"
                 ],
                 "appName": "rttTooHighTest",
                 "blockConnection": true,
-                "blockTimeMS": 10
+                "blockTimeMS": 20
               }
             }
           }
@@ -176,7 +179,8 @@
                   "id": "client",
                   "useMultipleMongoses": false,
                   "uriOptions": {
-                    "appName": "rttTooHighTest"
+                    "appName": "rttTooHighTest",
+                    "w": 1
                   },
                   "observeEvents": [
                     "commandStartedEvent"
