@@ -667,7 +667,7 @@ A collection supporting FLE 2 requires an index and three additional collections
 .. _drop: https://www.mongodb.com/docs/manual/reference/command/drop
 
 Create Collection Helper
-````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Drivers MUST support a BSON document option named ``encryptedFields`` for any
 `create`_ command helpers (e.g. ``Database.createCollection()``). This option
@@ -694,7 +694,7 @@ If the collection namespace has an associated ``encryptedFields``, then do the f
 - Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
 
 Drop Collection Helper
-``````````````````````
+^^^^^^^^^^^^^^^^^^^^^^
 
 Drivers MUST support a BSON document option named ``encryptedFields`` for any
 `drop`_ command helpers (e.g. ``Database.dropCollection()``,
@@ -2196,6 +2196,14 @@ Why is there both a createKey and a createDataKey function in ClientEncryption?
 ``createDataKey`` existed before ``createKey``, but ``createKey`` was added for
 parity with the mongosh interface. ``createDataKey`` remains for backwards
 compatibility.
+
+Why does ClientEncryption have key management functions when Drivers can use existing CRUD operations instead?
+--------------------------------------------------------------------------------------------------------------
+
+The key management functions are added for parity with mongosh to reduce
+friction between conducting operations using mongosh and a Driver. Their
+inclusion assumes their value for users outweighs their cost of implementation
+and maintenance.
 
 Future work
 ===========
