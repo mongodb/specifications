@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-26
-:Version: 1.7.1
+:Last Modified: 2022-05-27
+:Version: 1.7.2
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -128,6 +128,11 @@ encryptedFields
           ]
       }
 
+   The acronyms within ``encryptedFields`` are defined as follows: 
+
+   * ECC: Encrypted Cache Collection
+   * ECOC: Encrypted Compaction Collection
+   * ESC: Encrypted State Collection
 
 Introduction
 ============
@@ -2283,6 +2288,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-05-27, Define ECC, ECOC, and ESC acronyms within encryptedFields
    22-05-26, Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
    22-05-24, Add key management API functions
    22-05-18, Add createKey and rewrapManyDataKey
