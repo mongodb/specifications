@@ -341,12 +341,6 @@ for information on "disabling" csfle and setting csfle search paths.
 
 .. note::
 
-   At time of writing, csfle_ does not properly handle the ``explain``
-   command and will fail to parse it. This will cause the ``explain`` test case
-   to fail if ``csfle`` is in use instead of ``mongocryptd``.
-
-.. note::
-
    The ``csfle`` dynamic library can be obtained using the mongodl_ Python
    script from drivers-evergreen-tools_:
 
@@ -1779,3 +1773,60 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 Store the result in ``payload``.
 
 Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted unindexed value".
+
+13. Unique Index on keyAltNames
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Setup
+`````
+
+1. Create a ``MongoClient`` object (referred to as ``client``).
+
+2. Using ``client``, drop the collection ``keyvault.datakeys``.
+
+3. Using ``client``, create a unique index on ``keyAltNames`` with a partial index filter for only documents where ``keyAltNames`` exists using writeConcern "majority".
+
+The command should be equivalent to:
+
+.. code:: typescript
+
+   db.runCommand(
+     {
+        createIndexes: "datakeys",
+        indexes: [
+          {
+            name: "keyAltNames_1",
+            key: { "keyAltNames": 1 },
+            unique: true,
+            partialFilterExpression: { keyAltNames: { $exists: true } }
+          }
+        ],
+        writeConcern: { w: "majority" }
+     }
+   )
+
+4. Create a ``ClientEncryption`` object (referred to as ``client_encryption``) with ``client`` set as the ``keyVaultClient``.
+
+5. Using ``client_encryption``, create a data key with a ``local`` KMS provider and the keyAltName "def".
+
+Case 1: createKey()
+```````````````````
+
+1. Use ``client_encryption`` to create a new local data key with a keyAltName "abc" and assert the operation does not fail.
+
+2. Repeat Step 1 and assert the operation fails due to a duplicate key server error (error code 11000).
+
+3. Use ``client_encryption`` to create a new local data key with a keyAltName "def" and assert the operation fails due to a duplicate key server error (error code 11000).
+
+Case 2: addKeyAltName()
+```````````````````````
+
+1. Use ``client_encryption`` to create a new local data key and assert the operation does not fail.
+
+2. Use ``client_encryption`` to add a keyAltName "abc" to the key created in Step 1 and assert the operation does not fail.
+
+3. Repeat Step 2 and assert the operation does not fail.
+
+4. Use ``client_encryption`` to add a keyAltName "def" to the key created in Step 1 and assert the operation fails due to a duplicate key server error (error code 11000).
+
+5. Use ``client_encryption`` to add a keyAltName "def" to the existing key and assert the operation does not fail.

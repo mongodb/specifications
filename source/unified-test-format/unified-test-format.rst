@@ -1503,7 +1503,13 @@ Drivers MUST be running the mock `KMS KMIP server
 <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_
 when evaluating tests that require KMS requests to a KMIP KMS provider.
 
-
+Drivers MAY enforce a unique index on ``keyAltNames`` as described in the
+`Client Side Field Level Encryption spec <../client-side-encryption/client-side-encryption.rst#why-aren-t-we-creating-a-unique-index-in-the-key-vault-collection>`_
+when running key management operations on the key vault collection. Although
+unified tests are written assuming the existence of the unique index, no unified
+test currently requires its implementation for correctness (e.g. no unified test
+currently attempts to create a data key with an existing keyAltName or add an
+existing keyAltName to a data key).
 
 Database Operations
 -------------------
