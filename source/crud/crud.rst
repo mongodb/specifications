@@ -8,7 +8,7 @@ Driver CRUD API
 :Spec: 110
 :Title: Driver CRUD API
 :Authors: Craig Wilson
-:Advisors: Jeremy Mikola, Jeff Yemin
+:Advisors: Jeremy Mikola, Jeff Yemin, Tyler Brock
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
