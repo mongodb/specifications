@@ -182,7 +182,8 @@ Then for each element in ``tests``:
 
       {"create": <collection>, "validator": {"$jsonSchema": <json_schema>}}
 
-   If ``encrypted_fields`` is defined in the test, the required collections and index described in `FLE 2 CreateCollection() and Collection.Drop() <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-createcollection-and-collection-drop>`_  must be created:
+   If ``encrypted_fields`` is defined in the test, the required collections and index described in `FLE 2 Create and Drop Collection Helpers <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-create-and-drop-collection-helpers>`_  must be created:
+
    - Use the ``dropCollection`` helper with ``encrypted_fields`` as an option and writeConcern "majority".
    - Use the ``createCollection`` helper with ``encrypted_fields`` as an option.
 
