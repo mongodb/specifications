@@ -247,6 +247,8 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *  - 'reshardCollection'
      *  - 'refineCollectionShardKey'
      *  
+     * This field is a value of binary subtype 4 (UUID).
+     *  
      * @since 6.0.0
      */
     collectionUUID: Optional<Binary>;
@@ -306,8 +308,6 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      */
     truncatedArrays: Array<Document>;
   }
-
-The collectionUUID is a value of BSON Binary subtype 4 (UUID).
 
 The responses to a change stream aggregate or getMore have the following structures:
 
