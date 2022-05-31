@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2
 :Last Modified: 2022-05-31
-:Version: 1.7.2
+:Version: 1.7.3
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2302,7 +2302,7 @@ Changelog
    :align: left
 
    Date, Description
-   22-05-31, Rename ``csfle`` to crypt_shared_
+   22-05-31, Rename ``csfle`` to ``crypt_shared``
    22-05-27, Define ECC, ECOC, and ESC acronyms within encryptedFields
    22-05-26, Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
    22-05-24, Add key management API functions
@@ -2310,7 +2310,7 @@ Changelog
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
    22-05-03, "Add queryType, contentionFactor, and ""Indexed"" and ""Unindexed"" to algorithm."
    22-04-29, Add bypassQueryAnalysis option
-   22-04-11, Document the usage of the new `csfle <crypt_shared_>`_ library (Note: Later renamed to crypt_shared_)
+   22-04-11, Document the usage of the new ``csfle`` library (Note: Later renamed to ``crypt_shared``)
    22-02-24, Rename Versioned API to Stable API
    22-01-19, Require that timeouts be applied per the CSOT spec
    21-11-04, Add 'kmip' KMS provider

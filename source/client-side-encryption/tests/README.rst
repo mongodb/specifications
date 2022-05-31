@@ -348,7 +348,7 @@ client-side-encryption documentation for information on "disabling"
 
    .. code-block:: shell
 
-      $ python3 mongodl.py --component=crypt_shared --version=6.0.0-rc4 --out=./crypt_shared/
+      $ python3 mongodl.py --component=crypt_shared --version=<VERSION> --out=./crypt_shared/
 
    Other versions of ``crypt_shared`` are also available. Please use the
    ``--list`` option to see versions.
