@@ -249,7 +249,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *  
      * @since 6.0.0
      */
-    collectionUUID: Optional<UUID>;
+    collectionUUID: Optional<Binary>;
   }
 
   class UpdateDescription {
@@ -306,6 +306,8 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      */
     truncatedArrays: Array<Document>;
   }
+
+The collectionUUID is a value of BSON Binary subtype 4 (UUID).
 
 The responses to a change stream aggregate or getMore have the following structures:
 
