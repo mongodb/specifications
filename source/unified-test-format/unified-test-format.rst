@@ -232,7 +232,7 @@ Supported Entity Types
 Test runners MUST support the following types of entities:
 
 - MongoClient. See `entity_client`_ and `Client Operations`_.
-- ClientEncryption. See `entity_clientEncryption`__ and `ClientEncryption Operations`_.
+- ClientEncryption. See `entity_clientEncryption`_ and `ClientEncryption Operations`_.
 - Database. See `entity_database`_ and `Database Operations`_.
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
