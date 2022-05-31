@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-05-17
-:Version: 1.15
+:Last Modified: 2022-05-19
+:Version: 1.16
 
 .. contents::
 
@@ -137,7 +137,21 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * MUST NOT err when they encounter a new `operationType`. Unknown `operationType`
      * values may be represented by "unknown" or the literal string value.
      */
-    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename";
+    operationType: "insert" 
+                  | "update" 
+                  | "replace" 
+                  | "delete" 
+                  | "invalidate" 
+                  | "drop" 
+                  | "dropDatabase" 
+                  | "rename" 
+                  | "createIndexes"
+                  | "dropIndexes" 
+                  | "modify"
+                  | "create" 
+                  | "shardCollection" 
+                  | "refineCollectionShardKey" 
+                  | "reshardCollection";
 
     /**
      * Contains two fields: "db" and "coll" containing the database and
@@ -156,6 +170,16 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     to: Optional<Document>;
 
     /**
+     * Only present for ops of type 'rename', 'create', 'modify', 'createIndexes', 'dropIndexes', 'shardCollection', 'reshardCollection', 'refineCollectionShardKey'.
+     * Only present when the `showExpandedEvents` change stream option is enabled.
+     *
+     * A description of the operation.
+     * 
+     * @since 6.0.0
+     */
+    operationDescription: Optional<Document>
+
+    /**
      * Only present for ops of type ‘insert’, ‘update’, ‘replace’, and
      * ‘delete’.
      *
@@ -168,9 +192,6 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
 
     /**
      * Only present for ops of type ‘update’.
-     *
-     * Contains a description of updated and removed fields in this
-     * operation.
      */
     updateDescription: Optional<UpdateDescription>;
 
@@ -208,7 +229,29 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * The wall time from the mongod that the change event originated from.
      * Populated for server versions 6.0 and above.
      */
-    wallTime: Optional<Datetime>;
+    wallTime: Optional<DateTime>;
+
+    /**
+     * The `ui` field from the oplog entry corresponding to the change event.
+     * 
+     * Only present when the `showExpandedEvents` change stream option is enabled and for the following events
+     *  - 'insert'
+     *  - 'update'
+     *  - 'delete'
+     *  - 'createIndexes'
+     *  - 'dropIndexes'
+     *  - 'modify'
+     *  - 'drop'
+     *  - 'create'
+     *  - 'shardCollection'
+     *  - 'reshardCollection'
+     *  - 'refineCollectionShardKey'
+     *  
+     * This field is a value of binary subtype 4 (UUID).
+     *  
+     * @since 6.0.0
+     */
+    collectionUUID: Optional<Binary>;
   }
 
   class UpdateDescription {
@@ -496,6 +539,24 @@ Driver API
      * @note this is an aggregation command option
      */
     comment: Optional<any>
+
+    /**
+     * Enables the server to send the 'expanded' list of change stream events.
+     * The list of additional events included with this flag set are
+     * - createIndexes
+     * - dropIndexes
+     * - modify
+     * - create
+     * - shardCollection
+     * - reshardCollection
+     * - refineCollectionShardKey
+     * 
+     * This flag is available in server versions greater than 6.0.0. `reshardCollection` and
+     * `refineCollectionShardKey` events are not available until server version 6.1.0.
+     * 
+     * @note this is an option of the change stream pipeline stage
+     */
+    showExpandedEvents: Optional<Boolean>
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -1006,4 +1067,6 @@ Changelog
 |            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
 +------------+------------------------------------------------------------+
 | 2022-05-17 | Added ``wallTime`` to ``ChangeStreamDocument``.            |
++------------+------------------------------------------------------------+
+| 2022-05-19 | Support new change stream events with showExpandedEvents.  |
 +------------+------------------------------------------------------------+
