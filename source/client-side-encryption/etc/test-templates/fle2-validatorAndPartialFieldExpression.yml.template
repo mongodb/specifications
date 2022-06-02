@@ -166,3 +166,29 @@ tests:
                 encryptedIndexed: "foo"
       result:
         errorContains: "Comparison to encrypted fields not supported"
+  - description: "create with bypassQueryAnalysis is OK"
+    # Regression test for MONGOCRYPT-435
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+        encryptedFieldsMap:
+          "default.encryptedCollection": {{ yamlfile ("encryptedFields.json") }}
+        bypassQueryAnalysis: true
+    operations:
+    # Drop to remove a collection that may exist from previous test runs.
+    - name: dropCollection
+      object: database
+      arguments:
+        collection: "encryptedCollection"
+    - name: createCollection
+      object: database
+      arguments:
+        collection: "encryptedCollection"
+        validator:
+          unencrypted_string: "foo"
+    - name: assertCollectionExists
+      object: testRunner
+      arguments:
+        database: *database_name
+        collection: "encryptedCollection"
