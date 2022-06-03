@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-31
+:Last Modified: 2022-06-02
 :Version: 1.7.3
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -98,14 +98,17 @@ ciphertext
    One of the data formats of `BSON binary subtype 6 <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst>`_, representing an encoded BSON document containing
    encrypted ciphertext and metadata.
 
-FLE 1
-   FLE 1 is the first version of Client-Side Field Level Encryption. FLE 1 is almost entirely client-side with the exception of server-side JSON schema.
+FLE
+   FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the exception of server-side JSON schema.
 
-FLE 2
-   FLE 2 the second version of Client-Side Field Level Encryption. Data is encrypted client-side. FLE 2 supports indexed encrypted fields, which are further processed server-side.
+Queryable Encryption
+   Queryable Encryption the second version of Client-Side Field Level Encryption. Data is encrypted client-side. Queryable Encryption supports indexed encrypted fields, which are further processed server-side.
+
+In-Use Encryption
+   Is an umbrella term describing the both FLE and Queryable Encryption.
 
 encryptedFields
-   A BSON document describing the FLE 2 encrypted fields. This is analogous to the JSON Schema in FLE 1. The following is an example encryptedFields in extended canonical JSON:
+   A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON Schema in FLE. The following is an example encryptedFields in extended canonical JSON:
 
    .. code::
 
@@ -642,13 +645,13 @@ encryptedFieldsMap
 
 ``encryptedFieldsMap`` maps a collection namespace to an ``encryptedFields``.
 
-``encryptedFieldsMap`` only applies to FLE 2.
+``encryptedFieldsMap`` only applies to Queryable Encryption.
 
 If a collection is present on both the ``encryptedFieldsMap`` and ``schemaMap``, libmongocrypt_ will error on initialization. See :ref:`fle2-and-fle1-error`.
 
 If a collection is present on the ``encryptedFieldsMap``, the behavior of ``CreateCollection()`` and ``Collection.Drop()`` is altered. See :ref:`fle2-createcollection-drop`.
 
-Automatic encryption in FLE 2 is configured with the ``encryptedFields``.
+Automatic encryption in Queryable Encryption is configured with the ``encryptedFields``.
 
 If a collection is not present on the ``encryptedFields`` a server-side collection ``encryptedFields`` may be used by libmongocrypt_.
 Drivers MUST include the following in the documentation for MongoClient:
@@ -663,10 +666,10 @@ See `Why is bypassQueryAnalysis needed?`_.
 
 .. _fle2-createcollection-drop:
 
-FLE 2 Create and Drop Collection Helpers
-----------------------------------------
+Queryable Encryption Create and Drop Collection Helpers
+-------------------------------------------------------
 
-A collection supporting FLE 2 requires an index and three additional collections.
+A collection supporting Queryable Encryption requires an index and three additional collections.
 
 .. _create: https://www.mongodb.com/docs/manual/reference/command/create
 .. _drop: https://www.mongodb.com/docs/manual/reference/command/drop
@@ -2142,19 +2145,19 @@ certificates.
 
 .. _fle2-and-fle1-error:
 
-Why is it an error to have an FLE 1 and FLE 2 field in the same collection?
----------------------------------------------------------------------------
-There is no technical limitation to having a separate FLE 1 field and FLE 2
-field in the same collection. Prohibiting FLE 1 and FLE 2 in the same collection
-reduces complexity. From the product perspective, a random FLE 1 field and a
-non-queryable FLE 2 field have the same behavior and similar security
-guarantees. A deterministic FLE 1 field leaks more information then a
-deterministic FLE 2 field. There is not a compelling use case to use both FLE 1
-and FLE 2 in the same collection.
+Why is it an error to have an FLE 1 and Queryable Encryption field in the same collection?
+------------------------------------------------------------------------------------------
+There is no technical limitation to having a separate FLE field and Queryable Encryption
+field in the same collection. Prohibiting FLE and Queryable Encryption in the same collection
+reduces complexity. From the product perspective, a random FLE field and a
+non-queryable Queryable Encryption field have the same behavior and similar security
+guarantees. A deterministic FLE field leaks more information then a
+deterministic Queryable Encryption field. There is not a compelling use case to use both FLE
+and Queryable Encryption in the same collection.
 
 Is it an error to set schemaMap and encryptedFieldsMap?
 ------------------------------------------------------------
-No. FLE 1 and FLE 2 fields can coexist in different collections. The same
+No. FLE and Queryable Encryption fields can coexist in different collections. The same
 collection cannot be in the ``encryptedFieldsMap`` and ``schemaMap``.
 libmongocrypt_ will error if the same collection is specified in a ``schemaMap``
 and ``encryptedFieldsMap``.
@@ -2189,7 +2192,7 @@ Here is an example:
    }
 
    coll := encryptedClient.Database("foo").Collection("bar")
-   // Explicit Encrypt an FLE 2 Indexed Field.
+   // Explicit Encrypt an Queryable Encryption Indexed Field.
    eo := options.Encrypt().
       SetEncryptIndexType(options.EncryptIndexEquality)
    ciphertext, err := ce.Encrypt(ctx, val, eo)
@@ -2302,6 +2305,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
    22-05-31, Rename ``csfle`` to ``crypt_shared``
    22-05-27, Define ECC, ECOC, and ESC acronyms within encryptedFields
    22-05-26, Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
