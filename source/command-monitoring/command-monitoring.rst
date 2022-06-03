@@ -11,7 +11,7 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 2021-08-30
+:Last Modified: 2022-05-18
 :Version: 1.10.0
 
 .. contents::
@@ -505,9 +505,12 @@ Changelog
 15 APR 2021:
   - Added ``serviceId`` field to events.
 
-5 MAY 2021
+5 MAY 2021:
   - Updated to use hello and legacy hello.
 
 30 AUG 2021:
   - Added ``serverConnectionId`` field to ``CommandStartedEvent``, ``CommandSucceededEvent`` and
     ``CommandFailedEvent``.
+
+18 MAY 2022:
+  - Converted legacy tests to the unified test format.

@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-05-27
+:Last Modified: 2022-06-02
 :Version: 1.7.3
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -83,16 +83,16 @@ mongocryptd_
    A local process the driver communicates with to determine
    how to encrypt values in a command.
 
-csfle_
-   This initialism, spelled in all-lowercase, refers to the *client-side
-   field-level-encryption* dynamic library provided as part of a MongoDB
-   Enterprise distribution. It replaces mongocryptd_ as the method of
+crypt_shared_
+   This term, spelled in all-lowercase with an underscore, refers to the
+   client-side field-level-encryption dynamic library provided as part of a
+   MongoDB Enterprise distribution. It replaces mongocryptd_ as the method of
    :ref:`marking-up a database command for encryption <subtype6.intent-to-encrypt>`.
 
    See also:
 
-      - `Introduction on csfle <csfle_>`_
-      - `Enabling csfle`_
+      - `Introduction on crypt_shared <crypt_shared_>`_
+      - `Enabling crypt_shared`_
 
 ciphertext
    One of the data formats of `BSON binary subtype 6 <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst>`_, representing an encoded BSON document containing
@@ -131,7 +131,7 @@ encryptedFields
           ]
       }
 
-   The acronyms within ``encryptedFields`` are defined as follows: 
+   The acronyms within ``encryptedFields`` are defined as follows:
 
    * ECC: Encrypted Cache Collection
    * ECOC: Encrypted Compaction Collection
@@ -209,7 +209,7 @@ The driver communicates with…
    keys.
 -  **A KMS Provider** to decrypt fetched data keys and encrypt new data keys.
 -  **mongocryptd** to ask what values in BSON commands must be encrypted (unless
-   csfle_ is in use).
+   crypt_shared_ is in use).
 
 The MongoDB key vault may be the same as the MongoDB cluster. Users may
 choose to have data key stored on a separate MongoDB cluster, or
@@ -235,31 +235,32 @@ encrypt newly created data keys.
 mongocryptd
 -----------
 `mongocryptd` is a singleton local process needed for auto-encryption when no
-csfle_ library is used. It speaks the MongoDB wire protocol and the driver uses
-mongocryptd_ by connecting with a MongoClient. By default, if csfle_ is
-unavailable, the driver should attempt to automatically spawn mongocryptd_. If
-the MongoClient is configured with `extraOptions.mongocryptdBypassSpawn` set to
-|true|, OR `bypassAutoEncryption` is set to |true|, OR `bypassQueryAnalysis` is
-set to |true| then the driver will not attempt to spawn mongocryptd_.
+crypt_shared_ library is used. It speaks the MongoDB wire protocol and the
+driver uses mongocryptd_ by connecting with a MongoClient. By default, if
+crypt_shared_ is unavailable, the driver should attempt to automatically spawn
+mongocryptd_. If the MongoClient is configured with
+`extraOptions.mongocryptdBypassSpawn` set to |true|, OR `bypassAutoEncryption`
+is set to |true|, OR `bypassQueryAnalysis` is set to |true| then the driver will
+not attempt to spawn mongocryptd_.
 
 The mongocryptd_ process is responsible for self terminating after idling for a
-time period. If |opt-csfle-required| is set to |true|, the driver will not
-connect to mongocryptd_ and instead rely on csfle_ being available.
+time period. If |opt-crypt_shared-required| is set to |true|, the driver will
+not connect to mongocryptd_ and instead rely on crypt_shared_ being available.
 
 
-csfle
------
+crypt_shared
+------------
 
-csfle_ is a dynamically-loaded C++ library providing query analysis for
+crypt_shared_ is a dynamically-loaded C++ library providing query analysis for
 auto-encryption. It replaces mongocryptd_ for performing query analysis to
 :ref:`mark-up sensitive fields within a command <subtype6.intent-to-encrypt>`.
 
-Drivers are not required to load and interact with csfle_ directly. Instead,
-they inform libmongocrypt_ where to find csfle_ and libmongocrypt_ will handle
-csfle_ communication automatically.
+Drivers are not required to load and interact with crypt_shared_ directly.
+Instead, they inform libmongocrypt_ where to find crypt_shared_ and
+libmongocrypt_ will handle crypt_shared_ communication automatically.
 
-See also: `Enabling csfle`_ for information on using enabling the csfle_
-library.
+See also: `Enabling crypt_shared`_ for information on using enabling the
+crypt_shared_ library.
 
 
 libmongocrypt
@@ -283,7 +284,7 @@ external components. `Located here <https://github.com/mongodb/libmongocrypt>`_.
 
 -  performing all I/O needed at every state:
 
-   -  speaking to mongocryptd_ to mark commands (unless csfle_ is used).
+   -  speaking to mongocryptd_ to mark commands (unless crypt_shared_ is used).
 
    -  fetching encrypted data keys from key vault collection (mongod).
 
@@ -341,7 +342,7 @@ MongoClient Changes
       encryptedFieldsMap: Optional<Map<String, Document>>; // Maps namespace to encryptedFields.
       // bypassQueryAnalysis disables automatic analysis of outgoing commands.
       // Set bypassQueryAnalysis to true to use explicit encryption on indexed fields
-      // without the MongoDB Enterprise Advanced licensed csfle shared library.
+      // without the MongoDB Enterprise Advanced licensed crypt_shared library.
       bypassQueryAnalysis: Optional<Boolean>; // Default false.
    }
 
@@ -592,11 +593,11 @@ detail described in the `Implementation`_ section:
       // Passed when spawning mongocryptd. If omitted, this defaults to ["--idleShutdownTimeoutSecs=60"]
       mongocryptdSpawnArgs: Optional<Array[String]>
 
-      // Override the path used to load the csfle library
-      csflePath: Optional<string>;
+      // Override the path used to load the crypt_shared library
+      cryptSharedLibPath: Optional<string>;
 
-      // If 'true', refuse to continue encryption without a csfle library
-      csfleRequired: boolean;
+      // If 'true', refuse to continue encryption without a crypt_shared library
+      cryptSharedLibRequired: boolean;
    }
 
 Drivers MUST implement extraOptions in a way that allows
@@ -604,41 +605,40 @@ deprecating/removing options in the future without an API break, such as
 with a BSON document or map type instead of a struct type with fixed
 fields. See `Why are extraOptions and kmsProviders maps?`_.
 
-``extraOptions.csflePath``
-``````````````````````````
+``extraOptions.cryptSharedLibPath``
+```````````````````````````````````
 
 :type: :ts:`undefined | string`
 :default: :ts:`undefined`
 
-.. |opt-path-override| replace:: `extraOptions.csflePath`_
+.. |opt-path-override| replace:: `extraOptions.cryptSharedLibPath`_
 
-Allow the user to specify an absolute path to a csfle_ dynamic library to
+Allow the user to specify an absolute path to a crypt_shared_ dynamic library to
 load. Refer:
 
-- `Overriding the csfle Library Path`_
+- `Overriding the crypt_shared Library Path`_
 - `Path Resolution Behavior`_
-- `Enabling csfle`_
+- `Enabling crypt_shared`_
 
 
-``extraOptions.csfleRequired``
-``````````````````````````````
+``extraOptions.cryptSharedRequired``
+````````````````````````````````````
 
 :type: :ts:`boolean`
 :default: |false|
 
-.. |opt-csfle-required| replace:: `extraOptions.csfleRequired`_
+.. |opt-crypt_shared-required| replace:: `extraOptions.cryptSharedRequired`_
 
-If |true|, the driver MUST refuse to continue unless csfle_ was loaded
+If |true|, the driver MUST refuse to continue unless crypt_shared_ was loaded
 successfully.
 
-If, after initializing a `libmongocrypt_handle`, csfle_ is detected to be
-unavailable AND |opt-csfle-required| is |true|, the driver
-MUST consider the `libmongocrypt_handle` to be invalid and return an error to
-the user. Refer:
+If, after initializing a `libmongocrypt_handle`, crypt_shared_ is detected to be
+unavailable AND |opt-crypt_shared-required| is |true|, the driver MUST consider
+the `libmongocrypt_handle` to be invalid and return an error to the user. Refer:
 
-- `Enabling csfle`_
+- `Enabling crypt_shared`_
 - `Managing mongocryptd`_
-- `Detecting csfle Availability`_
+- `Detecting crypt_shared Availability`_
 
 encryptedFieldsMap
 ^^^^^^^^^^^^^^^^^^
@@ -983,7 +983,7 @@ User facing API: When Auto Encryption Fails
 ===========================================
 
 Auto encryption requires parsing the MongoDB query language client side (with
-the mongocryptd_ process or csfle_ library). For unsupported operations, an
+the mongocryptd_ process or crypt_shared_ library). For unsupported operations, an
 exception will propagate to prevent the possibility of the client sending
 unencrypted data that should be encrypted. Drivers MUST include the following in
 the documentation for MongoClient:
@@ -993,7 +993,7 @@ the documentation for MongoClient:
    ClientEncryption.encrypt() to manually encrypt values.
 
 For example, currently an aggregate with $lookup into a foreign collection is
-unsupported (mongocryptd_ and csfle_ return errors):
+unsupported (mongocryptd_ and crypt_shared_ return errors):
 
 .. code:: python
 
@@ -1080,7 +1080,7 @@ Drivers SHOULD take a best-effort approach to store sensitive data
 securely when interacting with KMS since responses may include decrypted
 data key material (e.g. use secure malloc if available).
 
-All errors from the MongoClient to mongocryptd_ or the csfle_ error category
+All errors from the MongoClient to mongocryptd_ or the crypt_shared_ error category
 MUST be distinguished in some way (e.g. exception type) to make it easier for
 users to distinguish when a command fails due to auto encryption limitations.
 
@@ -1117,28 +1117,28 @@ easier for users to distinguish when a command fails due to client side
 encryption.
 
 
-.. index:: csfle
-.. _Enabling csfle:
+.. index:: crypt_shared
+.. _Enabling crypt_shared:
 
-Enabling Command Marking with the csfle_ Library
-=================================================
+Enabling Command Marking with the crypt_shared_ Library
+=======================================================
 
 The MongoDB Enterprise distribution includes a dynamic library named
-``mongo_csfle_v1`` (with the appropriate file extension or filename suffix for
+``mongo_crypt_v1`` (with the appropriate file extension or filename suffix for
 the host platform). This library will be loaded by libmongocrypt_ when the
 ``mongocrypt_init`` function is invoked
 `(from the libmongocrypt C API) <lmc-c-api_>`_ based on the search criteria that
 are provided by the driver.
 
 libmongocrypt_ allows the driver to specify an arbitrary list of directory
-`search paths`_ in which to search for the csfle_ dynamic library. The
+`search paths`_ in which to search for the crypt_shared_ dynamic library. The
 user-facing API does not expose this full search path functionality. This
 extended search path customization is intended to facilitate driver testing with
-csfle_ (Refer: `Search Paths for Testing`_ and `Path Resolution Behavior`).
+crypt_shared_ (Refer: `Search Paths for Testing`_ and `Path Resolution Behavior`).
 
 .. note::
 
-   The driver MUST NOT manipulate or do any validation on the csfle_ path
+   The driver MUST NOT manipulate or do any validation on the crypt_shared_ path
    options provided in extraOptions_. They should be passed through to
    libmongocrypt_ unchanged.
 
@@ -1160,8 +1160,8 @@ For purposes of testing, a driver may use a different set of search paths.
 .. rubric:: Explaination
 
 The `search paths`_ array in libmongocrypt_ allows the driver to customize the
-way that libmongocrypt_ searches and loads the csfle_ library. For testing
-purposes, the driver may change the paths that it appends for csfle_ searching
+way that libmongocrypt_ searches and loads the crypt_shared_ library. For testing
+purposes, the driver may change the paths that it appends for crypt_shared_ searching
 to better isolate the test execution from the ambient state of the host system.
 
 Refer to: `Path Resolution Behavior`_ and `Search Paths for Testing`_
@@ -1169,16 +1169,16 @@ Refer to: `Path Resolution Behavior`_ and `Search Paths for Testing`_
 
 .. _override path:
 
-Overriding the csfle_ Library Path
-----------------------------------
+Overriding the crypt_shared_ Library Path
+-----------------------------------------
 
 If |opt-path-override| was specified by the user, the driver MUST set the
-csfle_ path override on the `libmongocrypt_handle`.
+crypt_shared_ path override on the `libmongocrypt_handle`.
 
 .. note::
 
    If a path override is set on a `libmongocrypt_handle` and libmongocrypt_
-   fails to load csfle_ from that filepath, then that will result in a
+   fails to load crypt_shared_ from that filepath, then that will result in a
    hard-error when initializing libmongocrypt_.
 
 
@@ -1186,32 +1186,32 @@ Path Resolution Behavior
 ------------------------
 
 Drivers should include and note the following information regarding the behavior
-of csfle_ path options in extraOptions_:
+of crypt_shared_ path options in extraOptions_:
 
-- If used, the `override path`_ must be given as a path to the csfle_ dynamic
+- If used, the `override path`_ must be given as a path to the crypt_shared_ dynamic
   library file *itself*, and not simply the directory that contains it.
 
 - If the given `override path`_ is a relative path and the first path component
   is the literal string :ts:`"$ORIGIN"`, the :ts:`"$ORIGIN"` component will be
   replaced by the absolute path to the directory containing the libmongocrypt_
-  library that is performing the csfle_ search. This behavior mimics the
+  library that is performing the crypt_shared_ search. This behavior mimics the
   ``$ORIGIN`` behavior of the ``RUNPATH``/``RPATH`` properties of ELF executable
-  files. This permits bundling the csfle_ library along with libmongocrypt_ for
+  files. This permits bundling the crypt_shared_ library along with libmongocrypt_ for
   creating portable application distributions without relying on a
-  externally/globally available csfle_ library.
+  externally/globally available crypt_shared_ library.
 
   .. note:: No other ``RPATH``/``RUNPATH``-style substitutions are available.
 
 - If the `override path`_ is given as a relative path, that path will be
   resolved relative to the working directory of the operating system process.
 
-- If an `override path`_ was specified and libmongocrypt_ fails to load csfle_
+- If an `override path`_ was specified and libmongocrypt_ fails to load crypt_shared_
   from that filepath, libmongocrypt_ will fail to initialize with a hard-error.
-  libmongocrypt_ will not attempt to search for csfle_ in any other locations.
+  libmongocrypt_ will not attempt to search for crypt_shared_ in any other locations.
 
-- If libmongocrypt_ fails to load the csfle_ library after searching the system
+- If libmongocrypt_ fails to load the crypt_shared_ library after searching the system
   (and no `override path`_ is specified), libmongocrypt_ will proceed without
-  error and presume that csfle_ is unavailable.
+  error and presume that crypt_shared_ is unavailable.
 
 
 Search Paths for Testing
@@ -1222,89 +1222,91 @@ Search Paths for Testing
 Drivers can make use of different `search paths`_ settings for testing purposes.
 These search paths use the following behavior:
 
-- For csfle_ `search paths`_, if a search path string is :ts:`"$SYSTEM"`, then
-  |---| instead of libmongocrypt_ searching for csfle_ in a directory named
-  "``$SYSTEM``" |---| libmongocrypt_ will defer to the operating system's own
-  dynamic-library resolution mechanism when processing that search-path. For
-  this reason, :ts:`"$SYSTEM"` is the only search path appended when the driver
-  is used via the user-facing API.
+- For crypt_shared_ `search paths`_, if a search path string is :ts:`"$SYSTEM"`,
+  then |---| instead of libmongocrypt_ searching for crypt_shared_ in a
+  directory named "``$SYSTEM``" |---| libmongocrypt_ will defer to the operating
+  system's own dynamic-library resolution mechanism when processing that
+  search-path. For this reason, :ts:`"$SYSTEM"` is the only search path appended
+  when the driver is used via the user-facing API.
 - The `search paths`_ also support the ``$ORIGIN`` substitution string.
 - Like with the `override path`_, if a `search path`_ is given as a relative
   path, that path will be resolved relative to the working directory of the
   operating system process.
 - If no `search paths`_ are appended to the `libmongocrypt_handle`, the
-  resulting search paths will be an empty array, effectively `disabling csfle`_
-  searching.
+  resulting search paths will be an empty array, effectively
+  `disabling crypt_shared`_ searching.
 
   In this case, unless an `override path`_ is specified, libmongocrypt_ is
-  guaranteed not to load csfle_.
+  guaranteed not to load crypt_shared_.
 
 
-Detecting csfle_ Availability
-------------------------------
+Detecting crypt_shared_ Availability
+------------------------------------
 
-csfle_ availability can only be reliably detected *after* initializing the
-`libmongocrypt_handle`.
+crypt_shared_ availability can only be reliably detected *after* initializing
+the `libmongocrypt_handle`.
 
 After initializing the `libmongocrypt_handle`, the driver can detect whether
-csfle_ was successfully loaded by asking libmongocrypt_ for the csfle_
-version string. If the result is an empty string, libmongocrypt_ did not load
-csfle_ and the driver must rely on mongocryptd_ to mark command documents for
-encryption.
+crypt_shared_ was successfully loaded by asking libmongocrypt_ for the
+crypt_shared_ version string. If the result is an empty string, libmongocrypt_
+did not load crypt_shared_ and the driver must rely on mongocryptd_ to mark
+command documents for encryption.
 
 
-.. _disabling csfle:
+.. _disabling crypt_shared:
 
-"Disabling" csfle_
-------------------
+"Disabling" crypt_shared_
+-------------------------
 
-For purposes of testing, a driver can "disable" csfle_ searching to ensure that
-mongocryptd_ is used instead, even if a csfle_ library would be available.
+For purposes of testing, a driver can "disable" crypt_shared_ searching to
+ensure that mongocryptd_ is used instead, even if a crypt_shared_ library would
+be available.
 
-As noted in `Path Resolution Behavior`_, csfle_ can be "disabled" on a
+As noted in `Path Resolution Behavior`_, crypt_shared_ can be "disabled" on a
 `libmongocrypt_handle` by omission:
 
 1. Do not specify any `search paths`_,
-2. AND do not specify a csfle_ library `override path`_ (|opt-path-override|).
+2. AND do not specify a crypt_shared_ library `override path`_
+   (|opt-path-override|).
 
 This will have the effect that libmongocrypt_ will not attempt to search or load
-csfle_ during initialization.
+crypt_shared_ during initialization.
 
 At the current time, no user-facing API is exposed that allows users to opt-out
-of csfle_.
+of crypt_shared_.
 
 
-Loading csfle_ Multiple Times
-------------------------------
+Loading crypt_shared_ Multiple Times
+------------------------------------
 
-Due to implementation restrictions, there must not be more than one csfle_
-dynamic library loaded simultaneously in a single operating system process.
-`libmongocrypt` will do its best to enforce this at the time that it loads
-csfle_ while initializing a `libmongocrypt_handle`. `libmongocrypt` will keep
-track of the open csfle_ library globally, and any subsequent attempt to use a
-csfle_ library that does not exactly match the filepath of the already-loaded
-csfle_ will result in an error.
+Due to implementation restrictions, there must not be more than one
+crypt_shared_ dynamic library loaded simultaneously in a single operating system
+process. `libmongocrypt` will do its best to enforce this at the time that it
+loads crypt_shared_ while initializing a `libmongocrypt_handle`. `libmongocrypt`
+will keep track of the open crypt_shared_ library globally, and any subsequent
+attempt to use a crypt_shared_ library that does not exactly match the filepath
+of the already-loaded crypt_shared_ will result in an error.
 
 If at least one `libmongocrypt_handle` exists in an operating system process
-that has an open handle to a csfle_ library, subsequent attempts to initialize
-an additional `libmongocrypt_handle` will fail if:
+that has an open handle to a crypt_shared_ library, subsequent attempts to
+initialize an additional `libmongocrypt_handle` will fail if:
 
-1. The new `libmongocrypt_handle` wants csfle_ (i.e. at least one `search path`_
-   was specified or an `override path`_ was specified).
+1. The new `libmongocrypt_handle` wants crypt_shared_ (i.e. at least one
+   `search path`_ was specified or an `override path`_ was specified).
 2. AND the initialization of that `libmongocrypt_handle` does not successfully
-   find and load the same csfle_ library that was loaded by the existing
-   `libmongocrypt_handle` that is already using csfle_.
+   find and load the same crypt_shared_ library that was loaded by the existing
+   `libmongocrypt_handle` that is already using crypt_shared_.
 
 Drivers MUST document this limitation for users along with the documentation on
-the ``csfle*`` options in extraOptions_ by including the following:
+the ``cryptShared*`` options in extraOptions_ by including the following:
 
    All `MongoClient` objects in the same process should use the same setting for
-   |opt-path-override|, as it is an error to load more that one csfle_ dynamic
-   library simultaneously in a single operating system process.
+   |opt-path-override|, as it is an error to load more that one crypt_shared_
+   dynamic library simultaneously in a single operating system process.
 
-Once all open handles to a csfle_ library are closed, it is possible to load a
-different csfle_ library than was previously loaded. The restriction only
-applies to simultaneous open handles within a single process.
+Once all open handles to a crypt_shared_ library are closed, it is possible to
+load a different crypt_shared_ library than was previously loaded. The
+restriction only applies to simultaneous open handles within a single process.
 
 
 Managing mongocryptd
@@ -1316,22 +1318,22 @@ If the following conditions are met:
   `bypassAutoEncryption` is not |false|)
 - **AND** the user has not disabled `mongocryptd` spawning (i.e. by setting
   `extraOptions.mongocryptdBypassSpawn` to |true|),
-- **AND** the csfle_ library is unavailable (Refer:
-  `Detecting csfle Availability`_),
-- **AND** the |opt-csfle-required| option is |false|.
+- **AND** the crypt_shared_ library is unavailable (Refer:
+  `Detecting crypt_shared Availability`_),
+- **AND** the |opt-crypt_shared-required| option is |false|.
 
 **then** ``mongocryptd`` MUST be spawned by the driver.
 
-If the |opt-csfle-required| option is |true| then the driver MUST NOT attempt to
+If the |opt-crypt_shared-required| option is |true| then the driver MUST NOT attempt to
 spawn or connect to `mongocryptd`.
 
 .. note::
 
-   Since spawning mongocryptd_ requires checking whether csfle_ is loaded, and
-   checking whether csfle_ is available can only be done *after* having
+   Since spawning mongocryptd_ requires checking whether crypt_shared_ is loaded, and
+   checking whether crypt_shared_ is available can only be done *after* having
    initialized the `libmongocrypt_handle`, drivers will need to defer spawning
    mongocryptd_ until *after* initializing libmongocrypt_ and checking for
-   csfle_.
+   crypt_shared_.
 
 Spawning mongocryptd_
 ---------------------
@@ -1374,7 +1376,7 @@ selection error is propagated to the user.
 .. note::
 
    A correctly-behaving driver will never attempt to connect to mongocryptd_
-   when |opt-csfle-required| is set to |true|.
+   when |opt-crypt_shared-required| is set to |true|.
 
 ClientEncryption
 ================
@@ -1864,16 +1866,16 @@ Why are extraOptions and kmsProviders maps?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Because we don't want AWS as part of the public types and we don't want
-to put mongocryptd_ and csfle_ options as types since mongocryptd is an
+to put mongocryptd_ and crypt_shared_ options as types since mongocryptd is an
 implementation detail we'd like to hide as much as possible.
 
 Why is there a bypassAutoEncryption?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 bypassAutoEncryption still supports auto decryption. In cases where
-mongocryptd_ or csfle_ cannot analyze a query, it's still useful to provide auto
+mongocryptd_ or crypt_shared_ cannot analyze a query, it's still useful to provide auto
 decryption. Just like static program analysis cannot always prove that a
-runtime invariant holds, mongocryptd_/csfle_ cannot always prove that a query
+runtime invariant holds, mongocryptd_/crypt_shared_ cannot always prove that a query
 will be safe with respect to encryption at runtime.
 
 Why not require compatibility between mongocryptd and the server?
@@ -1923,9 +1925,9 @@ Why limit to one top-level $jsonSchema?
 -  If we allow siblings, we can run into cases where the user specifies
    a top-level $and/$or or any arbitrary match-expression that could
    have nested $jsonSchema's.
--  Furthermore, the initial versions of mongocryptd_ and csfle_ are only
+-  Furthermore, the initial versions of mongocryptd_ and crypt_shared_ are only
    implementing query analysis when the validator consists of a single
-   $jsonSchema predicate. This helps to simplify the mongocryptd_ and csfle_
+   $jsonSchema predicate. This helps to simplify the mongocryptd_ and crypt_shared_
    logic, and unifies it with the case where users configure their schemas
    directly in the driver.
 
@@ -2143,24 +2145,36 @@ certificates.
 
 .. _fle2-and-fle1-error:
 
-Why is it an error to have an FLE and Queryable Encryption field in the same collection?
+Why is it an error to have an FLE 1 and Queryable Encryption field in the same collection?
 ------------------------------------------------------------------------------------------
-There is no technical limitation to having a separate FLE field and Queryable Encryption field in the same collection. Prohibiting FLE and Queryable Encryption in the same collection reduces complexity. From the product perspective, a random FLE field and a non-queryable Queryable Encryption field have the same behavior and similar security guarantees. A deterministic FLE field leaks more information then a deterministic Queryable Encryption field. There is not a compelling use case to use both FLE and Queryable Encryption in the same collection.
+There is no technical limitation to having a separate FLE field and Queryable Encryption
+field in the same collection. Prohibiting FLE and Queryable Encryption in the same collection
+reduces complexity. From the product perspective, a random FLE field and a
+non-queryable Queryable Encryption field have the same behavior and similar security
+guarantees. A deterministic FLE field leaks more information then a
+deterministic Queryable Encryption field. There is not a compelling use case to use both FLE
+and Queryable Encryption in the same collection.
 
 Is it an error to set schemaMap and encryptedFieldsMap?
 ------------------------------------------------------------
-No. FLE and Queryable Encryption fields can coexist in different collections. The same collection cannot be in the ``encryptedFieldsMap`` and ``schemaMap``. libmongocrypt_ will error if the same collection is specified in a ``schemaMap`` and ``encryptedFieldsMap``.
+No. FLE and Queryable Encryption fields can coexist in different collections. The same
+collection cannot be in the ``encryptedFieldsMap`` and ``schemaMap``.
+libmongocrypt_ will error if the same collection is specified in a ``schemaMap``
+and ``encryptedFieldsMap``.
 
 Why is bypassQueryAnalysis needed?
 ----------------------------------
 
-Commands containing payloads for encrypted indexed fields require a top-level "encryptionInformation" field for the server processing. ``bypassQueryAnalysis`` enables the use case of Explicit Encryption without the MongoDB Enterprise Advanced licensed csfle shared library or mongocryptd process.
+Commands containing payloads for encrypted indexed fields require a top-level
+"encryptionInformation" field for the server processing. ``bypassQueryAnalysis``
+enables the use case of Explicit Encryption without the MongoDB Enterprise
+Advanced licensed crypt_shared_ library or mongocryptd process.
 
 Here is an example:
 
 .. code:: go
 
-   // No MongoDB Enterprise Advanced licensed 'csfle' shared library.
+   // No MongoDB Enterprise Advanced licensed 'crypt_shared' shared library.
    aeo := options.AutoEncryption().
       SetKeyVaultNamespace("keyvault.datakeys").
       SetEncryptedFieldsMap(efcMap).
@@ -2236,7 +2250,7 @@ with the key service.
 Remove mongocryptd
 ------------------
 A future version plans to remove the mongocryptd_ process and fold the logic
-into `libmongocrypt` using the csfle_ library. Therefore, this spec mandates
+into `libmongocrypt` using the crypt_shared_ library. Therefore, this spec mandates
 that drivers use `libmongocrypt` to abstract encryption logic, deduplicate work,
 and to provide a simpler future path to removing mongocryptd_.
 
@@ -2291,7 +2305,8 @@ Changelog
    :align: left
 
    Date, Description
-   22-05-30, Rename ``FLE 2`` to ``Queryable Encryption``
+   22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
+   22-05-31, Rename ``csfle`` to ``crypt_shared``
    22-05-27, Define ECC, ECOC, and ESC acronyms within encryptedFields
    22-05-26, Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
    22-05-24, Add key management API functions
@@ -2299,7 +2314,7 @@ Changelog
    22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
    22-05-03, "Add queryType, contentionFactor, and ""Indexed"" and ""Unindexed"" to algorithm."
    22-04-29, Add bypassQueryAnalysis option
-   22-04-11, Document the usage of the new csfle_ library
+   22-04-11, Document the usage of the new ``csfle`` library (Note: Later renamed to ``crypt_shared``)
    22-02-24, Rename Versioned API to Stable API
    22-01-19, Require that timeouts be applied per the CSOT spec
    21-11-04, Add 'kmip' KMS provider
