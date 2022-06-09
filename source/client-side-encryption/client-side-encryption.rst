@@ -9,9 +9,9 @@ Client Side Encryption
 :Advisory Group: A\. Jesse Jiryu Davis, Kenn White, Scott L'Hommedieu, Mark Benvenuto, Bernie Hackett, Samantha Ritter, Matt Broadstone
 :Status: Accepted
 :Type: Standards
-:Minimum Server Version: 4.2
-:Last Modified: 2022-06-02
-:Version: 1.7.3
+:Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
+:Last Modified: 2022-06-09
+:Version: 1.7.4
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -37,7 +37,12 @@ MongoDB 4.2 introduced support for client side encryption, guaranteeing
 that sensitive data can only be encrypted and decrypted with access to both
 MongoDB and a separate key management provider (supporting AWS, Azure, GCP,
 a local provider, and KMIP). Once enabled, data can be seamlessly encrypted
-and decrypted with minimal application code changes.
+and decrypted with minimal application code changes. 6.0 introduced the
+next generation of client side encryption based on a Structured Encryption
+framework which allows expressive encrypted search operations. This spec
+covers both capabilities - 1st generation, "Client Side Field Level
+Encryption" and generation 2, "Queryable Encryption" - as the associated
+core cryptographic library and supporting drivers share a common codebase.
 
 
 META
@@ -2305,6 +2310,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-08, Add ``Queryable Encryption`` to abstract.
    22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
    22-05-31, Rename ``csfle`` to ``crypt_shared``
    22-05-27, Define ECC, ECOC, and ESC acronyms within encryptedFields
