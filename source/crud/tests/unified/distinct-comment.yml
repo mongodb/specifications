@@ -27,7 +27,7 @@ tests:
   - description: "distinct with document comment"
     runOnRequirements:
       # https://jira.mongodb.org/browse/SERVER-44847
-      # Server supports count with comment of any type for comment starting from 4.4.14.
+      # Server supports distinct with comment of any type for comment starting from 4.4.14.
       - minServerVersion: "4.4.14"
     operations:
       - name: distinct
