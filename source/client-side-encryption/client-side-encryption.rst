@@ -2310,6 +2310,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-08, Add ``Queryable Encryption`` to abstract.
    22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
    22-05-31, Rename ``csfle`` to ``crypt_shared``
    22-05-27, Define ECC, ECOC, and ESC acronyms within encryptedFields
