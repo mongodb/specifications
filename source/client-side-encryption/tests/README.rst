@@ -1613,15 +1613,16 @@ Test Setup
 
 Load the file `encryptedFields.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields.json>`_ as ``encryptedFields``.
 
-Load the file `key1-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json>`_ as ``key1Document``.
+Load the file `key1-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json>`_ as ``key1Document``
+and `key2-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key2-document.json>`_ as ``key2Document``.
 
-Read the ``"_id"`` field of ``key1Document`` as ``key1ID``.
+Read the ``"_id"`` field of ``key1Document`` as ``key1ID`` and the ``"_id"`` field of ``key2Document`` as ``key2ID``.
 
 Drop and create the collection ``db.explicit_encryption`` using ``encryptedFields`` as an option. See `FLE 2 CreateCollection() and Collection.Drop() <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-createcollection-and-collection-drop>`_.
 
 Drop and create the collection ``keyvault.datakeys``.
 
-Insert ``key1Document`` in ``keyvault.datakeys`` with majority write concern.
+Insert ``key1Document`` and ``key2Document`` in ``keyvault.datakeys`` with majority write concern.
 
 Create a MongoClient named ``keyVaultClient``.
 
@@ -1781,6 +1782,39 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 Store the result in ``payload``.
 
 Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted unindexed value".
+
+Case 6: IndexKeyId works
+````````````````````````
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key2ID>,
+      indexKeyId : <key1ID>
+      algorithm: "Indexed",
+   }
+
+Store the result in ``insertPayload``.
+
+Use ``encryptedClient`` to insert the document ``{ "encryptedIndexed": <insertPayload> }`` into ``db.explicit_encryption``.
+
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+      queryType: Equality
+   }
+
+Store the result in ``findPayload``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload> }``.
+
+Assert one document is returned containing the field ``{ "encryptedIndexed": "encrypted indexed value" }``.
 
 13. Unique Index on keyAltNames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
