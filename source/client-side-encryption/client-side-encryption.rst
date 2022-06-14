@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
 :Last Modified: 2022-06-09
-:Version: 1.7.4
+:Version: 1.8.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -944,6 +944,7 @@ EncryptOpts
 
    class EncryptOpts {
       keyId : Optional<Binary>
+      indexKeyId : Optional<Binary>
       keyAltName: Optional<String>
       algorithm: String,
       contentionFactor: Optional<Int64>,
@@ -956,6 +957,14 @@ identified by \_id or by alternate name. Exactly one is required.
 keyId
 ^^^^^
 Identifies a data key by \_id. The value is a UUID (binary subtype 4).
+
+indexKeyId
+^^^^^^^^^^
+Identifies a data key by \_id. The value is a UUID (binary subtype 4).
+It is an error to set indexKeyId when algorithm is not "Indexed".
+If indexKeyId is not set, it defaults to the value of keyId.
+The IndexKeyId must match the keyId set in encryptedFields for correctness.
+See `Why is IndexKeyId needed?`_.
 
 keyAltName
 ^^^^^^^^^^
@@ -2302,6 +2311,15 @@ key vault collection, the key management functions may be overloaded to take an
 explicit session parameter as described in the
 `Drivers Sessions Specification <../sessions/driver-sessions.rst>`__.
 
+Why is IndexKeyId needed?
+-------------------------
+
+Queryable Encryption supports two keys for an encrypted value: UserKey and IndexKey.
+- The UserKey encrypts user data. 
+- The IndexKey is used to derive tokens for indexing. It must match the "keyId" in encryptedFields for correct query results.
+
+Adding an EncryptOpts.indexKeyId enables multiple values with different UserKey to be inserted on the same field.
+
 Changelog
 =========
 
@@ -2310,6 +2328,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-14, Add ``IndexKeyId``.
    22-06-08, Add ``Queryable Encryption`` to abstract.
    22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
    22-05-31, Rename ``csfle`` to ``crypt_shared``
