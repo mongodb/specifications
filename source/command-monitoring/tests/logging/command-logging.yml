@@ -1,0 +1,97 @@
+description: "command-logging"
+
+schemaVersion: "1.10"
+
+createEntities:
+  - client:
+      id: &client client
+      observeLogMessages:
+        command: debug
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName logging-tests
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName logging-tests-collection
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents:
+      - { _id: 1, x: 11 }
+
+tests:
+  - description: "A successful command"
+    operations:
+      - name: runCommand
+        object: *database
+        arguments:
+          command: { ping: 1 }
+          commandName: &commandName ping
+    expectLogMessages:
+      - client: *client
+        messages:
+          - component: command
+            level: debug
+            data:
+              message: "Command started"
+              databaseName: *databaseName
+              commandName: *commandName
+              command: { $$type: string }
+              requestId: { $$type: [int, long] }
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+              clientId: { $$exists: true }
+
+          - component: command
+            level: debug
+            data:
+              message: "Command succeeded"
+              commandName: *commandName
+              reply: { $$type: string }
+              requestId: { $$type: [int, long] }
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort: { $$exists: true }
+              durationMS: { $$type: [double, int, long] }
+              clientId: { $$exists: true }
+        
+  - description: "A failed command"
+    operations:
+      - name: &commandName find
+        object: *collection
+        arguments:
+          filter: { $or: true }
+        expectError:
+          isClientError: false
+    expectLogMessages:
+      - client: *client
+        messages:
+          - component: command
+            level: debug
+            data:
+              message: "Command started"
+              databaseName: *databaseName
+              commandName: *commandName
+              command: { $$type: string }
+              requestId: { $$type: [int, long] }
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+              clientId: { $$exists: true }
+
+          - component: command
+            level: debug
+            data:
+              message: "Command failed"
+              commandName: *commandName
+              failure: { $$exists: true }
+              requestId:  { $$type: [int, long] }
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+              durationMS: { $$type: [double, int, long] }
+              clientId: { $$exists: true }

@@ -1,0 +1,220 @@
+{
+  "description": "command-logging",
+  "schemaVersion": "1.10",
+  "createEntities": [
+    {
+      "client": {
+        "id": "client",
+        "observeLogMessages": {
+          "command": "debug"
+        }
+      }
+    },
+    {
+      "database": {
+        "id": "database",
+        "client": "client",
+        "databaseName": "logging-tests"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection",
+        "database": "database",
+        "collectionName": "logging-tests-collection"
+      }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "logging-tests-collection",
+      "databaseName": "logging-tests",
+      "documents": [
+        {
+          "_id": 1,
+          "x": 11
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "description": "A successful command",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "command": {
+              "ping": 1
+            },
+            "commandName": "ping"
+          }
+        }
+      ],
+      "expectLogMessages": [
+        {
+          "client": "client",
+          "messages": [
+            {
+              "component": "command",
+              "level": "debug",
+              "data": {
+                "message": "Command started",
+                "databaseName": "logging-tests",
+                "commandName": "ping",
+                "command": {
+                  "$$type": "string"
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "driverConnectionId": {
+                  "$$exists": true
+                },
+                "serverHost": {
+                  "$$exists": true
+                },
+                "serverPort": {
+                  "$$exists": true
+                },
+                "clientId": {
+                  "$$exists": true
+                }
+              }
+            },
+            {
+              "component": "command",
+              "level": "debug",
+              "data": {
+                "message": "Command succeeded",
+                "commandName": "ping",
+                "reply": {
+                  "$$type": "string"
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "driverConnectionId": {
+                  "$$exists": true
+                },
+                "serverHost": {
+                  "$$exists": true
+                },
+                "serverPort": {
+                  "$$exists": true
+                },
+                "durationMS": {
+                  "$$type": [
+                    "double",
+                    "int",
+                    "long"
+                  ]
+                },
+                "clientId": {
+                  "$$exists": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "A failed command",
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "$or": true
+            }
+          },
+          "expectError": {
+            "isClientError": false
+          }
+        }
+      ],
+      "expectLogMessages": [
+        {
+          "client": "client",
+          "messages": [
+            {
+              "component": "command",
+              "level": "debug",
+              "data": {
+                "message": "Command started",
+                "databaseName": "logging-tests",
+                "commandName": "find",
+                "command": {
+                  "$$type": "string"
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "driverConnectionId": {
+                  "$$exists": true
+                },
+                "serverHost": {
+                  "$$exists": true
+                },
+                "serverPort": {
+                  "$$exists": true
+                },
+                "clientId": {
+                  "$$exists": true
+                }
+              }
+            },
+            {
+              "component": "command",
+              "level": "debug",
+              "data": {
+                "message": "Command failed",
+                "commandName": "find",
+                "failure": {
+                  "$$exists": true
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "driverConnectionId": {
+                  "$$exists": true
+                },
+                "serverHost": {
+                  "$$exists": true
+                },
+                "serverPort": {
+                  "$$exists": true
+                },
+                "durationMS": {
+                  "$$type": [
+                    "double",
+                    "int",
+                    "long"
+                  ]
+                },
+                "clientId": {
+                  "$$exists": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
