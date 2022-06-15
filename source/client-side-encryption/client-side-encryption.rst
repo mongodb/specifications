@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-09
-:Version: 1.7.4
+:Last Modified: 2022-06-15
+:Version: 1.7.5
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -1505,8 +1505,8 @@ Data keys are stored in the MongoDB key vault collection with the following sche
 version      Int64            A numeric identifier for the schema version of this document. Implicitly 0 if unset.
 keyAltNames  Array of strings Alternate names to search for keys by. Used for a per-document key scenario in support of GDPR scenarios.
 keyMaterial  BinData          Encrypted data key material, BinData type General
-creationDate Date             The datetime the wrapped key was imported into the Key Database.
-updateDate   Date             The datetime the wrapped key was last modified. On initial import, this value will be set to creationDate.
+creationDate Date             The datetime the wrapped data key material was imported into the Key Database.
+updateDate   Date             The datetime the wrapped data key material was last modified. On initial import, this value will be set to creationDate.
 status       Int              0 = enabled, 1 = disabled
 masterKey    Document         Per provider master key definition, see below
 ============ ================ ==========================================================================================================
@@ -2310,6 +2310,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-15, Clarify description of date fields in key documents.
    22-06-08, Add ``Queryable Encryption`` to abstract.
    22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
    22-05-31, Rename ``csfle`` to ``crypt_shared``
