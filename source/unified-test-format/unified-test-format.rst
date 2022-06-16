@@ -420,9 +420,9 @@ The structure of this object is as follows:
   If this field is omitted, there is no authentication requirement.
 
 - ``csfle``: Optional boolean. If true, the tests MUST only run if the driver
-  supports Client-Side Field Level Encryption and the server is version 4.2.0
-  or higher. If false, tests MUST only run if CSFLE is not enabled. If this
-  field is omitted, there is no CSFLE requirement.
+  and server support Client-Side Field Level Encryption. A server supports
+  CSFLE if it is version 4.2.0 or higher. If false, tests MUST only run if
+  CSFLE is not enabled. If this field is omitted, there is no CSFLE requirement.
 
 Test runners MAY evaluate these conditions in any order. For example, it may be
 more efficient to evaluate ``serverless`` or ``auth`` before communicating with
