@@ -1833,8 +1833,129 @@ Case 2: addKeyAltName()
 
 2. Use ``client_encryption`` to add a keyAltName "abc" to the key created in Step 1 and assert the operation does not fail.
 
-3. Repeat Step 2 and assert the operation does not fail.
+3. Repeat Step 2, assert the operation does not fail, and assert the returned key document contains the keyAltName "abc" added in Step 2.
 
 4. Use ``client_encryption`` to add a keyAltName "def" to the key created in Step 1 and assert the operation fails due to a duplicate key server error (error code 11000).
 
-5. Use ``client_encryption`` to add a keyAltName "def" to the existing key and assert the operation does not fail.
+5. Use ``client_encryption`` to add a keyAltName "def" to the existing key, assert the operation does not fail, and assert the returned key document contains the keyAltName "def" added during Setup.
+
+14. Decryption Events
+~~~~~~~~~~~~~~~~~~~~~
+
+Before running each of the following test cases, perform the following Test Setup.
+
+Test Setup
+``````````
+
+Create a MongoClient named ``setupClient``.
+
+Drop and create the collection ``db.decryption_events``.
+
+Create a ClientEncryption object named ``clientEncryption`` with these options:
+
+.. code:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <setupClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   }
+
+Create a data key with the "local" KMS provider. Storing the result in a variable named ``keyID``.
+
+Use ``clientEncryption`` to encrypt the string "hello" with the following ``EncryptOpts``:
+
+.. code:: typescript
+
+   EncryptOpts {
+      keyId: <keyID>,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+   }
+
+Store the result in a variable named ``ciphertext``.
+
+Copy ``ciphertext`` into a variable named ``malformedCiphertext``.
+Change the last byte to 0. This will produce an invalid HMAC tag.
+
+Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``:
+
+.. code:: typescript
+
+   AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys";
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   }
+
+Configure ``encryptedClient`` with "retryReads=false".
+Register a listener for CommandSucceeded events on ``encryptedClient``.
+The listener must store the most recent CommandStartedEvent reply for the "aggregate" command.
+The listener must store the most recent CommandFailedEvent error for the "aggregate" command.
+
+Case 1: Command Error
+`````````````````````
+
+Use ``setupClient`` to configure the following failpoint:
+
+.. code:: typescript
+
+   {
+       "configureFailPoint": "failCommand",
+       "mode": {
+           "times": 1
+       },
+       "data": {
+           "errorCode": 123,
+           "failCommands": [
+               "aggregate"
+           ]
+       }
+   }
+
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+
+Expect an exception to be thrown from the command error. Expect a CommandFailedEvent.
+
+Case 2: Network Error
+`````````````````````
+
+Use ``setupClient`` to configure the following failpoint:
+
+.. code:: typescript
+
+   {
+       "configureFailPoint": "failCommand",
+       "mode": {
+           "times": 1
+       },
+       "data": {
+           "errorCode": 123,
+           "closeConnection": true,
+           "failCommands": [
+               "aggregate"
+           ]
+       }
+   }
+
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+
+Expect an exception to be thrown from the network error. Expect a CommandFailedEvent.
+
+Case 3: Decrypt Error
+`````````````````````
+
+Use ``encryptedClient`` to insert the document ``{ "encrypted": <malformedCiphertext> }`` into ``db.decryption_events``.
+
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+
+Expect an exception to be thrown from the decryption error.
+Expect a CommandSucceededEvent. Expect the CommandSucceededEvent.reply to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
+
+Case 4: Decrypt Success
+```````````````````````
+
+Use ``encryptedClient`` to insert the document ``{ "encrypted": <ciphertext> }`` into ``db.decryption_events``.
+
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+
+Expect no exception.
+Expect a CommandSucceededEvent. Expect the CommandSucceededEvent.reply to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
