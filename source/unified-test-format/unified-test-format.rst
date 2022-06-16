@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.9
+:Spec Version: 1.9.1
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-05-16
+:Last Modified: 2022-06-16
 
 .. contents::
 
@@ -420,8 +420,9 @@ The structure of this object is as follows:
   If this field is omitted, there is no authentication requirement.
 
 - ``csfle``: Optional boolean. If true, the tests MUST only run if the driver
-  supports Client-Side Field Level Encryption. If false, tests MUST only run if
-  CSFLE is not enabled. If this field is omitted, there is no CSFLE requirement.
+  supports Client-Side Field Level Encryption and the server is version 4.2.0
+  or higher. If false, tests MUST only run if CSFLE is not enabled. If this
+  field is omitted, there is no CSFLE requirement.
 
 Test runners MAY evaluate these conditions in any order. For example, it may be
 more efficient to evaluate ``serverless`` or ``auth`` before communicating with
@@ -3472,6 +3473,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-06-16: Require server 4.2+ for ``csfle: true``.
 
 :2022-05-10: Add reference to Client Side Encryption spec under
              `ClientEncryption Operations`_.
