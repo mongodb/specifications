@@ -1833,11 +1833,11 @@ Case 2: addKeyAltName()
 
 2. Use ``client_encryption`` to add a keyAltName "abc" to the key created in Step 1 and assert the operation does not fail.
 
-3. Repeat Step 2 and assert the operation does not fail.
+3. Repeat Step 2, assert the operation does not fail, and assert the returned key document contains the keyAltName "abc" added in Step 2.
 
 4. Use ``client_encryption`` to add a keyAltName "def" to the key created in Step 1 and assert the operation fails due to a duplicate key server error (error code 11000).
 
-5. Use ``client_encryption`` to add a keyAltName "def" to the existing key and assert the operation does not fail.
+5. Use ``client_encryption`` to add a keyAltName "def" to the existing key, assert the operation does not fail, and assert the returned key document contains the keyAltName "def" added during Setup.
 
 14. Decryption Events
 ~~~~~~~~~~~~~~~~~~~~~
