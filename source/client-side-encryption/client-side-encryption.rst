@@ -318,7 +318,7 @@ language's naming conventions and implement options in an idiomatic way
 
 Drivers MAY use a native UUID type in place of a parameter or return type
 specified as a BSON binary with subtype 0x04 as described in
-`Handling of Native UUID Types <../uuid.rst>`.
+`Handling of Native UUID Types <../uuid.rst>`_.
 
 MongoClient Changes
 -------------------
