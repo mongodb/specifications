@@ -1888,7 +1888,7 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
 
 Configure ``encryptedClient`` with "retryReads=false".
 Register a listener for CommandSucceeded events on ``encryptedClient``.
-The listener must store the most recent ``CommandStartedEvent`` reply for the "aggregate" command.
+The listener must store the most recent ``CommandSucceededEvent`` reply for the "aggregate" command.
 The listener must store the most recent ``CommandFailedEvent`` error for the "aggregate" command.
 
 Case 1: Command Error
