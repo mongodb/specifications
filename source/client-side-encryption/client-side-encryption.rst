@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-15
-:Version: 1.7.5
+:Last Modified: 2022-06-16
+:Version: 1.8.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -938,16 +938,12 @@ EncryptOpts
 
 .. code:: typescript
 
-   enum QueryType {
-      Equality
-   }
-
    class EncryptOpts {
       keyId : Optional<Binary>
       keyAltName: Optional<String>
       algorithm: String,
       contentionFactor: Optional<Int64>,
-      queryType: Optional<QueryType>
+      queryType: Optional<String>
    }
 
 Explicit encryption requires a key and algorithm. Keys are either
@@ -981,6 +977,9 @@ It is an error to set contentionFactor when algorithm is not "Indexed".
 
 queryType
 ^^^^^^^^^
+One of the strings:
+- "equality"
+
 queryType only applies when algorithm is "Indexed".
 It is an error to set queryType when algorithm is not "Indexed".
 
@@ -2232,6 +2231,16 @@ friction between conducting operations using mongosh and a Driver. Their
 inclusion assumes their value for users outweighs their cost of implementation
 and maintenance.
 
+Why are the QueryType and Algorithm options a String?
+-----------------------------------------------------
+
+Using an enum to represent QueryType was considered and rejected in
+`DRIVERS-2352 <https://jira.mongodb.org/browse/DRIVERS-2352>`_.
+
+A string value helps with future compatibility. When new values of QueryType
+and IndexType are added in libmongocrypt, users would only need to upgrade
+libmongocrypt, and not the driver, to use the new values.
+
 Future work
 ===========
 
@@ -2310,6 +2319,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-16, Change ``QueryType`` to a string.
    22-06-15, Clarify description of date fields in key documents.
    22-06-08, Add ``Queryable Encryption`` to abstract.
    22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
