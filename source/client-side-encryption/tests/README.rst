@@ -1945,7 +1945,7 @@ Case 3: Decrypt Error
 
 Use ``encryptedClient`` to insert the document ``{ "encrypted": <malformedCiphertext> }`` into ``db.decryption_events``.
 
-Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events`` with an empty pipeline.
 
 Expect an exception to be thrown from the decryption error.
 Expect a CommandSucceededEvent. Expect the CommandSucceededEvent.reply to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
@@ -1955,7 +1955,7 @@ Case 4: Decrypt Success
 
 Use ``encryptedClient`` to insert the document ``{ "encrypted": <ciphertext> }`` into ``db.decryption_events``.
 
-Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events`` with an empty pipeline.
 
 Expect no exception.
 Expect a CommandSucceededEvent. Expect the CommandSucceededEvent.reply to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
