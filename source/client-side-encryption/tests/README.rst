@@ -1888,8 +1888,8 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
 
 Configure ``encryptedClient`` with "retryReads=false".
 Register a listener for CommandSucceeded events on ``encryptedClient``.
-The listener must store the most recent CommandStartedEvent reply for the "aggregate" command.
-The listener must store the most recent CommandFailedEvent error for the "aggregate" command.
+The listener must store the most recent ``CommandSucceededEvent`` reply for the "aggregate" command.
+The listener must store the most recent ``CommandFailedEvent`` error for the "aggregate" command.
 
 Case 1: Command Error
 `````````````````````
@@ -1913,7 +1913,7 @@ Use ``setupClient`` to configure the following failpoint:
 
 Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
 
-Expect an exception to be thrown from the command error. Expect a CommandFailedEvent.
+Expect an exception to be thrown from the command error. Expect a ``CommandFailedEvent``.
 
 Case 2: Network Error
 `````````````````````
@@ -1938,24 +1938,24 @@ Use ``setupClient`` to configure the following failpoint:
 
 Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
 
-Expect an exception to be thrown from the network error. Expect a CommandFailedEvent.
+Expect an exception to be thrown from the network error. Expect a ``CommandFailedEvent``.
 
 Case 3: Decrypt Error
 `````````````````````
 
 Use ``encryptedClient`` to insert the document ``{ "encrypted": <malformedCiphertext> }`` into ``db.decryption_events``.
 
-Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events`` with an empty pipeline.
 
 Expect an exception to be thrown from the decryption error.
-Expect a CommandSucceededEvent. Expect the CommandSucceededEvent.reply to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
+Expect a ``CommandSucceededEvent``. Expect the ``CommandSucceededEvent.reply`` to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
 
 Case 4: Decrypt Success
 ```````````````````````
 
 Use ``encryptedClient`` to insert the document ``{ "encrypted": <ciphertext> }`` into ``db.decryption_events``.
 
-Use ``encryptedClient`` to run an aggregate on ``db.decryption_events``.
+Use ``encryptedClient`` to run an aggregate on ``db.decryption_events`` with an empty pipeline.
 
 Expect no exception.
-Expect a CommandSucceededEvent. Expect the CommandSucceededEvent.reply to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
+Expect a ``CommandSucceededEvent``. Expect the ``CommandSucceededEvent.reply`` to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
