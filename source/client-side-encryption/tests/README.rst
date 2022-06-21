@@ -1874,8 +1874,8 @@ Use ``clientEncryption`` to encrypt the string "hello" with the following ``Encr
 
 Store the result in a variable named ``ciphertext``.
 
-Copy ``ciphertext`` into a variable named ``malformedCiphertext``.
-Change the last byte to 0. This will produce an invalid HMAC tag.
+Copy ``ciphertext`` into a variable named ``malformedCiphertext``. Change the
+last byte to a different value. This will produce an invalid HMAC tag.
 
 Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``:
 
