@@ -1,0 +1,108 @@
+description: "auth-error"
+
+schemaVersion: "1.0"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+    auth: true
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent, serverDescriptionChanged ]
+      uriOptions:
+        retryWrites: false
+        appName: &appName authErrorTest
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name sdam-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name auth-error
+  - client:
+      id: &setupClient setupClient
+
+initialData: &initialData
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - { _id: 1 }
+      - { _id: 2 }
+
+tests:
+  - description: "Reset server and pool after AuthenticationFailure error"
+    runOnRequirements:
+      - minServerVersion: "5.0"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands: ["saslContinue"]
+                appName: *appName
+                errorCode: 18  # AuthenticationFailure
+      - name: insertMany
+        object: *collection0
+        arguments:
+          documents:
+            - { _id: 3 }
+            - { _id: 4 }
+        expectError: { isError: true } # AuthenticationFailure
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client0
+          event: ServerMarkedUnknownEvent
+          count: 1
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client0
+          event: PoolClearedEvent
+          count: 1
+      # Perform another operation to ensure the node is rediscovered.
+      - name: insertMany
+        object: *collection0
+        arguments:
+          documents:
+            - { _id: 5 }
+            - { _id: 6 }
+      # Assert the server was marked Unknown and pool was cleared exactly once.
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client0
+          event: ServerMarkedUnknownEvent
+          count: 1
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client0
+          event: PoolClearedEvent
+          count: 1
+    expectEvents:
+      - client: *client0
+        eventType: command
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents:
+                  - { _id: 5 }
+                  - { _id: 6 }
+                commandName: insert
+                databaseName: *database0Name
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 5 }
+          - { _id: 6 }
