@@ -927,6 +927,8 @@ mechanism_properties
 		Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
 
 
+.. _obtaining-credentials:
+
 Obtaining Credentials
 `````````````````````
 Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete the steps in the `Signature Version 4 Signing Process 

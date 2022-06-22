@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-16
-:Version: 1.8.0
+:Last Modified: 2022-06-22
+:Version: 1.9.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -234,7 +234,8 @@ KMS Provider
 ------------
 A KMS provider (AWS KMS, Azure Key Vault, GCP KMS, the local provider, or KMIP)
 is used to decrypt data keys after fetching from the MongoDB Key Vault, and
-encrypt newly created data keys.
+encrypt newly created data keys. Refer to KMSProvidersMap_ for the shape of the
+KMS provider options.
 
 
 mongocryptd
@@ -336,10 +337,14 @@ MongoClient Changes
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
    }
 
+.. _AutoEncryptionOpts:
+
+.. code-block:: typescript
+
    class AutoEncryptionOpts {
       keyVaultClient: Optional<MongoClient>;
       keyVaultNamespace: String;
-      kmsProviders: Map<String, Map<String, Value>>;
+      kmsProviders: KMSProvidersMap;
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
@@ -453,45 +458,99 @@ the following as a template:
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
+.. _AWSKMSOptions:
+.. _KMSProvidersMap:
+
 kmsProviders
 ^^^^^^^^^^^^
-Multiple KMS providers may be specified. The kmsProviders map values differ by
-provider ("aws", "azure", "gcp", "local", and "kmip"). The "local" provider is
-configured with master key material. The external providers are configured with
-credentials to authenticate.
+
+The ``kmsProviders`` property may be specified on ClientEncryptionOpts_ or
+AutoEncryptionOpts_. Multiple KMS providers may be specified, each using a
+specific property on the KMSProvidersMap_ object. The options for each type of
+provider differ by the provider name ("aws", "azure", "gcp", "local", and
+"kmip"). The "local" provider is configured with master key material. The
+external providers are configured with credentials to authenticate.
 
 .. code:: typescript
 
-   aws: {
-      accessKeyId: String,
-      secretAccessKey: String,
-      sessionToken: Optional<String> // Required for temporary AWS credentials.
-   }
+   interface KMSProvidersMap {
+      aws?: AWSKMSOptions | { /* Empty (See: "Automatic AWS credentials") */ },
+      azure?: AzureKMSOptions,
+      gcp?: GCPKMSOptions,
+      local?: LocalKMSOptions,
+      kmip?: KMIPKMSOptions,
+   };
 
-   azure: {
-      tenantId: String,
-      clientId: String,
-      clientSecret: String,
-      identityPlatformEndpoint: Optional<String> // Defaults to login.microsoftonline.com
-   }
+   type KMSProviderName = keyof KMSProvidersMap;
 
-   gcp: {
-      email: String,
-      privateKey: byte[] or String, // May be passed as a base64 encoded string.
-      endpoint: Optional<String> // Defaults to oauth2.googleapis.com
-   }
+   interface AWSKMSOptions {
+      accessKeyId: string,
+      secretAccessKey: string,
+      sessionToken? string // Required for temporary AWS credentials.
+   };
 
-   local: {
-      key: byte[96] or String // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
-   }
+   interface AzureKMSOptions {
+      tenantId: string,
+      clientId: string,
+      clientSecret: string,
+      identityPlatformEndpoint?: string // Defaults to login.microsoftonline.com
+   };
 
-   kmip: {
-      endpoint: String
-   }
+   interface GCPKMSOptions {
+      email: string,
+      privateKey: byte[] | string, // May be passed as a base64 encoded string.
+      endpoint?: string // Defaults to oauth2.googleapis.com
+   };
+
+   interface LocalKMSOptions {
+      key: byte[96] | string // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
+   };
+
+   interface KMIPKMSOptions {
+      endpoint: string
+   };
 
 See `Why are extraOptions and kmsProviders maps?`_
 
 Drivers MUST enable TLS for all KMS connections.
+
+
+Automatic AWS Credentials
+`````````````````````````
+
+.. versionadded:: 1.9.0 2022/06/22
+
+If the ``aws`` provider property of a KMSProvidersMap_ is present and is an
+empty map/object, the driver MUST be able to populate an AWSKMSOptions_ object
+on-demand if-and-only-if AWS credentials are needed.
+
+.. note:: Drivers SHOULD NOT eagerly fill an empty ``aws`` map property.
+
+libmongocrypt_ will interpret an empty KMSProvidersMap_ map properties as a
+request by the user to lazily load the credentials for the respective `KMS
+provider`_. libmongocrypt_ will call back to the driver to fill an empty KMS
+provider property only once the associated credentials are needed.
+
+Once requested, drivers MUST create a new KMSProvidersMap_ :math:`P` according
+to the following process:
+
+1. Initialize :math:`P` to an empty KMSProvidersMap_ object.
+2. If the user-provided kmsProviders_ (from ClientEncryptionOpts_ or
+   AutoEncryptionOpts_) contains an ``aws`` property, and that property is an
+   empty map:
+
+   1. Attempt to obtain credentials :math:`C` from the environment using similar
+      logic as is detailed in `the obtaining-AWS-credentials section from the
+      Driver Authentication specification`__, but ignoring the case of loading
+      the credentials from a URI
+   2. If credentials :math:`C` were successfully loaded, create a new
+      AWSKMSOptions_ map from :math:`C` and insert that map onto :math:`P` as
+      the ``aws`` property.
+
+3. Return :math:`P` as the additional KMS providers to libmongocrypt_.
+
+__ ../auth/auth.html#obtaining-credentials
+
 
 KMS provider TLS options
 ````````````````````````
@@ -730,6 +789,7 @@ If the collection namespace has an associated ``encryptedFields``, then do the f
   If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
 - Drop the collection ``collectionName``.
 
+
 ClientEncryption
 ----------------
 
@@ -785,10 +845,13 @@ ClientEncryption
       private MongoClient keyvault_client;
    }
 
-   class ClientEncryptionOpts {
+.. _ClientEncryptionOpts:
+.. code-block:: typescript
+
+   interface ClientEncryptionOpts {
       keyVaultClient: MongoClient;
       keyVaultNamespace: String;
-      kmsProviders: Map<String, Map<String, Value>>;
+      kmsProviders: KMSProvidersMap;
       tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
    }
 
@@ -2319,6 +2382,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-22, Add behavior for automatic AWS credential loading in ``kmsProviders``.
    22-06-16, Change ``QueryType`` to a string.
    22-06-15, Clarify description of date fields in key documents.
    22-06-08, Add ``Queryable Encryption`` to abstract.
