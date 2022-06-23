@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-16
-:Version: 1.8.0
+:Last Modified: 2022-06-23
+:Version: 1.8.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -924,12 +924,15 @@ RewrapManyDataKeyResult
 .. code:: typescript
 
    class RewrapManyDataKeyResult {
-      bulkWriteResult: BulkWriteResult;
+      bulkWriteResult: Optional<BulkWriteResult>;
    }
 
 ``bulkWriteResult`` is the `result of the bulk write operation
 <../crud/crud.rst##write-results>`_ used to update the key vault collection with
-rewrapped data keys.
+one or more rewrapped data keys. If ``rewrapManyDataKey()`` does not find any
+matching keys to rewrap, no bulk write operation will be executed and this field
+will be unset. This field may also be unset if the bulk write operation is
+unacknowledged as permitted by the `CRUD API Spec <../crud/crud.rst#write-results>`_.
 
 See `Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?`_.
 
@@ -2319,6 +2322,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-23, Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
    22-06-16, Change ``QueryType`` to a string.
    22-06-15, Clarify description of date fields in key documents.
    22-06-08, Add ``Queryable Encryption`` to abstract.
