@@ -1716,7 +1716,8 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
    class EncryptOpts {
       keyId : <key1ID>
       algorithm: "Indexed",
-      queryType: "equality"
+      queryType: "equality",
+      contentionFactor: 0
    }
 
 Store the result in ``findPayload``.
