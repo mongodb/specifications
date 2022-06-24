@@ -1645,6 +1645,14 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
       bypassQueryAnalysis: true
    }
 
+Create a MongoClient named ``autoEncryptedClient`` with these ``AutoEncryptionOpts``:
+
+.. code:: typescript
+
+   AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys";
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   }
 
 Case 1: can insert encrypted indexed and find
 `````````````````````````````````````````````
@@ -1781,6 +1789,27 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 Store the result in ``payload``.
 
 Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted unindexed value".
+
+Case 5: can find with default contention
+````````````````````````````````````````
+
+Use ``autoEncryptedClient`` to insert the document ``{ "encryptedIndexed": "with default contention" }`` 10 times into ``db.explicit_encryption``.
+
+Use ``clientEncryption`` to encrypt the value "with default contention" with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "Indexed",
+      queryType: "equality"
+   }
+
+Store the result in ``findPayload``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload> }``.
+
+Assert 10 documents are returned. Assert each returned document contains the field ``{ "encryptedIndexed": "with default contention" }``.
 
 13. Unique Index on keyAltNames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
