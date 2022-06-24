@@ -45,6 +45,19 @@
         },
         "path": "encryptedUnindexed",
         "bsonType": "string"
+      },
+      {
+        "keyId": {
+          "$binary": {
+            "base64": "os4DSnsTQcm5ZxSKgZDnqA==",
+            "subType": "04"
+          }
+        },
+        "path": "defaultContention",
+        "bsonType": "string",
+        "queries": {
+          "queryType": "equality"
+        }
       }
     ]
   },
@@ -213,6 +226,19 @@
                         },
                         "path": "encryptedUnindexed",
                         "bsonType": "string"
+                      },
+                      {
+                        "keyId": {
+                          "$binary": {
+                            "base64": "os4DSnsTQcm5ZxSKgZDnqA==",
+                            "subType": "04"
+                          }
+                        },
+                        "path": "defaultContention",
+                        "bsonType": "string",
+                        "queries": {
+                          "queryType": "equality"
+                        }
                       }
                     ]
                   }
@@ -269,6 +295,19 @@
                         },
                         "path": "encryptedUnindexed",
                         "bsonType": "string"
+                      },
+                      {
+                        "keyId": {
+                          "$binary": {
+                            "base64": "os4DSnsTQcm5ZxSKgZDnqA==",
+                            "subType": "04"
+                          }
+                        },
+                        "path": "defaultContention",
+                        "bsonType": "string",
+                        "queries": {
+                          "queryType": "equality"
+                        }
                       }
                     ]
                   }
