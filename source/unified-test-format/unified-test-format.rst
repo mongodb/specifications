@@ -273,6 +273,12 @@ Test runners MUST support the following types of entities:
   not be supported by all drivers and could yield runtime errors (e.g. while
   loading a test file with an Extended JSON parser).
 
+- Test runner thread. An entity representing a "thread" used to execute
+  operations concurrently with those executed by the main test runner
+  thread. The "thread" the handle is dispatching to can be any type of
+  concurrent execution context (e.g. actual threads, goroutines, async tasks,
+  etc). See `Thread Operations`_ for a list of operations.
+
 This is an exhaustive list of supported types for the entity map. Test runners
 MUST raise an error if an attempt is made to store an unsupported type in the
 entity map.
@@ -729,6 +735,18 @@ The structure of this object is as follows:
     `GridFS <../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
+
+.. _entity_thread:
+
+- ``thread``: Optional object. Defines a test runner "thread" that can be used
+  to execute operations concurrently. Once the "thread" has been created, it
+  should be idle and waiting for operations to be dispatched to it later on by
+  `runOnThread`_ operations.
+
+  The structure of this object is as follows:
+
+  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g. ``id: &thread0 thread0``).
 
 
 storeEventsAsEntity
@@ -2492,7 +2510,59 @@ An example of this operation follows::
         client: *client0
         connections: 1
 
+runOnThread
+~~~~~~~~~~~
 
+The "runOnThread" operation instructs the test runner to schedule an operation
+to be run on the given thread. runOnThread MUST NOT wait for the scheduled
+operation to complete. If any of the operation's test assertions fail, the
+entire test case MUST fail as well.
+
+The following arguments are supported:
+
+- ``thread``: Required string. Thread entity on which this operation should be
+  scheduled.
+
+- ``operation``: Required `operation`_ object. The operation to schedule on the
+  thread. This object must be a valid operation as described in `Entity Test
+  Operations`_. This operation MUST NOT be a ``runOnThread`` operation.
+
+An example of this operation follows::
+
+     - name: runOnThread
+       object: testRunner
+       arguments:
+         thread: *thread0
+         operation:
+           name: insertOne
+           object: *collection0
+           arguments:
+             document: { _id: 2 }
+           expectResult:
+             $$unsetOrMatches:
+               insertedId: { $$unsetOrMatches: 2 }
+
+
+waitForThread
+~~~~~~~~~~~~~
+
+The "waitForThread" operation instructs the test runner to notify the given
+thread that no more operations are forthcoming, wait for it to complete its last
+operation, and assert that the thread exited without any errors.
+
+The following arguments are supported:
+
+- ``thread``: Required string. Thread entity that should be stopped and waited
+  for.
+
+An example of this operation follows::
+
+    - name: waitForThread
+      object: testRunner
+      arguments:
+        thread: *thread0
+  
+        
 Special Placeholder Value
 -------------------------
 
