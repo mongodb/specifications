@@ -1617,11 +1617,15 @@ Load the file `key1-document.json <https://github.com/mongodb/specifications/tre
 
 Read the ``"_id"`` field of ``key1Document`` as ``key1ID``.
 
+Load the file `key3-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key3-document.json>`_ as ``key3Document``.
+
+Read the ``"_id"`` field of ``key1Document`` as ``key3ID``.
+
 Drop and create the collection ``db.explicit_encryption`` using ``encryptedFields`` as an option. See `FLE 2 CreateCollection() and Collection.Drop() <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-createcollection-and-collection-drop>`_.
 
 Drop and create the collection ``keyvault.datakeys``.
 
-Insert ``key1Document`` in ``keyvault.datakeys`` with majority write concern.
+Insert ``key1Document`` and ``key3Document`` in ``keyvault.datakeys`` with majority write concern.
 
 Create a MongoClient named ``keyVaultClient``.
 
@@ -1790,26 +1794,26 @@ Store the result in ``payload``.
 
 Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equals "encrypted unindexed value".
 
-Case 5: can find with default contention
+Case 6: can find with default contention
 ````````````````````````````````````````
 
-Use ``autoEncryptedClient`` to insert the document ``{ "encryptedIndexed": "with default contention" }`` 10 times into ``db.explicit_encryption``.
+Use ``autoEncryptedClient`` to insert the document ``{ "defaultContention": "encrypted indexed value" }`` 10 times into ``db.explicit_encryption``.
 
-Use ``clientEncryption`` to encrypt the value "with default contention" with these ``EncryptOpts``:
+Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with these ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key3ID>
       algorithm: "Indexed",
       queryType: "equality"
    }
 
 Store the result in ``findPayload``.
 
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encryptedIndexed": <findPayload> }``.
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "defaultContention": <findPayload> }``.
 
-Assert 10 documents are returned. Assert each returned document contains the field ``{ "encryptedIndexed": "with default contention" }``.
+Assert 10 documents are returned. Assert each returned document contains the field ``{ "defaultContention": "encrypted indexed value" }``.
 
 13. Unique Index on keyAltNames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
