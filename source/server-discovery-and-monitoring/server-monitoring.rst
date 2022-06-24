@@ -1138,6 +1138,8 @@ awaitable hello or legacy hello heartbeat in the new protocol.
 Changelog
 ---------
 
+- 2021-06-24: Remove optimization mention that no longer applies
+
 - 2021-06-21: Added support for hello/helloOk to handshake and monitoring.
 
 - 2020-12-17: Mark the pool for a server as "ready" after performing a successful
