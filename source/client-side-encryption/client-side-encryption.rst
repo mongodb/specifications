@@ -336,14 +336,17 @@ MongoClient Changes
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
    }
 
+.. _AutoEncryptionOpts:
+.. code-block:: typescript
+
    class AutoEncryptionOpts {
       keyVaultClient: Optional<MongoClient>;
       keyVaultNamespace: String;
-      kmsProviders: Map<String, Map<String, Value>>;
+      kmsProviders: KMSProvidersMap;
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
-      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
+      tlsOptions?: KMSProviderTLSOptions; // Maps KMS provider to TLS options.
       encryptedFieldsMap: Optional<Map<String, Document>>; // Maps namespace to encryptedFields.
       // bypassQueryAnalysis disables automatic analysis of outgoing commands.
       // Set bypassQueryAnalysis to true to use explicit encryption on indexed fields
@@ -453,41 +456,59 @@ the following as a template:
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
+.. _KMSProvidersMap:
+.. _KMSProviderName:
+
 kmsProviders
 ^^^^^^^^^^^^
-Multiple KMS providers may be specified. The kmsProviders map values differ by
-provider ("aws", "azure", "gcp", "local", and "kmip"). The "local" provider is
-configured with master key material. The external providers are configured with
-credentials to authenticate.
+
+The ``kmsProviders`` property may be specified on ClientEncryptionOpts_ or
+AutoEncryptionOpts_. Multiple KMS providers may be specified, each using a
+specific property on the KMSProvidersMap_ object. The options for each type of
+provider differ by the provider name (:ts:`"aws"`, :ts:`"azure"`, :ts:`"gcp"`,
+:ts:`"local"`, and :ts:`"kmip"`) (Referred to as a :ts:`KMSProviderName`). The
+"local" provider is configured with master key material. The external providers
+are configured with credentials to authenticate.
 
 .. code:: typescript
 
-   aws: {
-      accessKeyId: String,
-      secretAccessKey: String,
-      sessionToken: Optional<String> // Required for temporary AWS credentials.
-   }
+   interface KMSProvidersMap {
+      aws?: AWSKMSOptions;
+      azure?: AzureKMSOptions;
+      gcp?: GCPKMSOptions;
+      local?: LocalKMSOptions;
+      kmip?: KMIPKMSOptions;
+   };
 
-   azure: {
-      tenantId: String,
-      clientId: String,
-      clientSecret: String,
-      identityPlatformEndpoint: Optional<String> // Defaults to login.microsoftonline.com
-   }
+   // KMSProviderName is a string name of any of the providers
+   type KMSProviderName = keyof KMSProvidersMap;
 
-   gcp: {
-      email: String,
-      privateKey: byte[] or String, // May be passed as a base64 encoded string.
-      endpoint: Optional<String> // Defaults to oauth2.googleapis.com
-   }
+   interface AWSKMSOptions {
+      accessKeyId: string;
+      secretAccessKey: string;
+      sessionToken?: string; // Required for temporary AWS credentials.
+   };
 
-   local: {
-      key: byte[96] or String // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
-   }
+   interface AzureKMSOptions {
+      tenantId: string;
+      clientId: string;
+      clientSecret: string;
+      identityPlatformEndpoint?: string; // Defaults to login.microsoftonline.com
+   };
 
-   kmip: {
-      endpoint: String
-   }
+   interface GCPKMSOptions {
+      email: string;
+      privateKey: byte[] | string; // May be passed as a base64 encoded string.
+      endpoint?: string; // Defaults to oauth2.googleapis.com
+   };
+
+   interface LocalKMSOptions {
+      key: byte[96] | string; // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
+   };
+
+   interface KMIPKMSOptions {
+      endpoint: string;
+   };
 
 See `Why are extraOptions and kmsProviders maps?`_
 
@@ -513,14 +534,14 @@ example:
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
-      setTLSOptions (opts Map<String, TLSOptions>)
+      setTLSOptions (opts: KMSProviderTLSOptions)
    }
 
    class ClientEncryptionOpts {
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
-      setTLSOptions (opts Map<String, TLSOptions>)
+      setTLSOptions (opts: KMSProviderTLSOptions)
    }
 
 Drivers MUST raise an error if the TLS options are set to disable TLS.
@@ -740,14 +761,14 @@ ClientEncryption
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
-      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+      createKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
 
       // An alias function equivalent to createKey.
-      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+      createDataKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
       // Returns a RewrapManyDataKeyResult.
-      rewrapManyDataKey(filter: Document, opts: Optional<RewrapManyDataKeyOpts>): RewrapManyDataKeyResult;
+      rewrapManyDataKey(filter: Document, opts: RewrapManyDataKeyOpts | null): RewrapManyDataKeyResult;
 
       // Removes the key document with the given UUID (BSON binary subtype 0x04) from the key vault collection.
       // Returns the result of the internal deleteOne() operation on the key vault collection.
@@ -785,12 +806,22 @@ ClientEncryption
       private MongoClient keyvault_client;
    }
 
-   class ClientEncryptionOpts {
+.. _ClientEncryptionOpts:
+.. _KMSProviderTLSOptions:
+
+.. code-block:: typescript
+
+   interface ClientEncryptionOpts {
       keyVaultClient: MongoClient;
       keyVaultNamespace: String;
-      kmsProviders: Map<String, Map<String, Value>>;
-      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
-   }
+      kmsProviders: KMSProvidersMap;
+      tlsOptions?: KMSProviderTLSOptions; // Maps KMS provider to TLS options.
+   };
+
+   interface KMSProviderTLSOptions {
+      // Map the KMS providers (by name) to a set of TLS options
+      [provider: KMSProviderName]: TLSOptionsMap;
+   };
 
 The ClientEncryption encapsulates explicit operations on a key vault
 collection that cannot be done directly on a MongoClient. Similar to
