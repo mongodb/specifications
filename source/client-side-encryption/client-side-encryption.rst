@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-23
-:Version: 1.8.1
+:Last Modified: 2022-06-24
+:Version: 1.8.2
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2353,6 +2353,7 @@ Changelog
    :align: left
 
    Date, Description
+   24-06-22, Clean up kmsProviders to use more TypeScript-like type definitions.
    22-06-23, Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
    22-06-16, Change ``QueryType`` to a string.
    22-06-15, Clarify description of date fields in key documents.
