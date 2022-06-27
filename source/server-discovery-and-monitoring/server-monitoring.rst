@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2022-02-24
+:Last Modified: 2022-06-24
 
 .. contents::
 
@@ -189,11 +189,6 @@ Application operations are unblocked when a server is found
 Each time a check completes, threads waiting for a `suitable`_ server
 are unblocked. Each unblocked thread MUST proceed if the new TopologyDescription
 now contains a suitable server.
-
-As an optimization, the client MAY leave threads blocked
-if a check completes without detecting any change besides
-roundTripTime: no operation that was blocked will
-be able to proceed anyway.
 
 Clients update the topology from each handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1142,6 +1137,8 @@ awaitable hello or legacy hello heartbeat in the new protocol.
 
 Changelog
 ---------
+
+- 2021-06-24: Remove optimization mention that no longer applies
 
 - 2021-06-21: Added support for hello/helloOk to handshake and monitoring.
 
