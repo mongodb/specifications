@@ -1820,7 +1820,7 @@ The command should be equivalent to:
 5. Using ``client_encryption``, create a data key with a ``local`` KMS provider and the keyAltName "def".
 
 Case 1: createDataKey()
-```````````````````
+```````````````````````
 
 1. Use ``client_encryption`` to create a new local data key with a keyAltName "abc" and assert the operation does not fail.
 
