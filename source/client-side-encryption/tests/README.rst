@@ -1785,6 +1785,8 @@ Use ``clientEncryption`` to decrypt ``payload``. Assert the returned value equal
 13. Unique Index on keyAltNames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The following setup must occur before running each of the following test cases.
+
 Setup
 `````
 
@@ -1817,8 +1819,8 @@ The command should be equivalent to:
 
 5. Using ``client_encryption``, create a data key with a ``local`` KMS provider and the keyAltName "def".
 
-Case 1: createKey()
-```````````````````
+Case 1: createDataKey()
+```````````````````````
 
 1. Use ``client_encryption`` to create a new local data key with a keyAltName "abc" and assert the operation does not fail.
 
