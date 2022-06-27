@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
 :Last Modified: 2022-06-27
-:Version: 1.9.0
+:Version: 1.10.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -803,9 +803,6 @@ ClientEncryption
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
-      createKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
-
-      // An alias function equivalent to createKey.
       createDataKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
@@ -2292,13 +2289,6 @@ key vault collection. Using ``RewrapManyDataKeyResult`` allows new fields to be
 added in the future and more easily deprecate the wrapped ``BulkWriteResult`` if
 necessary.
 
-Why is there both a createKey and a createDataKey function in ClientEncryption?
--------------------------------------------------------------------------------
-
-``createDataKey`` existed before ``createKey``, but ``createKey`` was added for
-parity with the mongosh interface. ``createDataKey`` remains for backwards
-compatibility.
-
 Why does ClientEncryption have key management functions when Drivers can use existing CRUD operations instead?
 --------------------------------------------------------------------------------------------------------------
 
@@ -2396,7 +2386,8 @@ Changelog
 
    Date, Description
    22-06-27, Add behavior for automatic AWS credential loading in ``kmsProviders``.
-   24-06-22, Clean up kmsProviders to use more TypeScript-like type definitions.
+   22-06-27, Remove ``createKey``.
+   22-06-24, Clean up kmsProviders to use more TypeScript-like type definitions.
    22-06-23, Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
    22-06-16, Change ``QueryType`` to a string.
    22-06-15, Clarify description of date fields in key documents.
