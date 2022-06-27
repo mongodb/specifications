@@ -2349,7 +2349,7 @@ Changelog
 
    Date, Description
    22-06-27, Remove ``createKey``.
-   24-06-22, Clean up kmsProviders to use more TypeScript-like type definitions.
+   22-06-24, Clean up kmsProviders to use more TypeScript-like type definitions.
    22-06-23, Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
    22-06-16, Change ``QueryType`` to a string.
    22-06-15, Clarify description of date fields in key documents.
