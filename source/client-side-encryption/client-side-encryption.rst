@@ -342,11 +342,11 @@ MongoClient Changes
    class AutoEncryptionOpts {
       keyVaultClient: Optional<MongoClient>;
       keyVaultNamespace: String;
-      kmsProviders: KMSProvidersMap;
+      kmsProviders: KMSProviders;
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
-      tlsOptions?: KMSProviderTLSOptions; // Maps KMS provider to TLS options.
+      tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
       encryptedFieldsMap: Optional<Map<String, Document>>; // Maps namespace to encryptedFields.
       // bypassQueryAnalysis disables automatic analysis of outgoing commands.
       // Set bypassQueryAnalysis to true to use explicit encryption on indexed fields
@@ -456,7 +456,7 @@ the following as a template:
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
-.. _KMSProvidersMap:
+.. _KMSProviders:
 .. _KMSProviderName:
 
 kmsProviders
@@ -464,15 +464,19 @@ kmsProviders
 
 The ``kmsProviders`` property may be specified on ClientEncryptionOpts_ or
 AutoEncryptionOpts_. Multiple KMS providers may be specified, each using a
-specific property on the KMSProvidersMap_ object. The options for each type of
+specific property on the KMSProviders_ object. The options for each type of
 provider differ by the provider name (:ts:`"aws"`, :ts:`"azure"`, :ts:`"gcp"`,
-:ts:`"local"`, and :ts:`"kmip"`) (Referred to as a :ts:`KMSProviderName`). The
-"local" provider is configured with master key material. The external providers
-are configured with credentials to authenticate.
+:ts:`"local"`, and :ts:`"kmip"`). The "local" provider is configured with master
+key material. The external providers are configured with credentials to
+authenticate.
+
+Throughout this document, the provider name is annotated as
+:ts:`KMSProviderName`, but this name is for *exposition only*: drivers MUST
+accept arbitrary strings at runtime for forward-compatibility.
 
 .. code:: typescript
 
-   interface KMSProvidersMap {
+   interface KMSProviders {
       aws?: AWSKMSOptions;
       azure?: AzureKMSOptions;
       gcp?: GCPKMSOptions;
@@ -480,8 +484,9 @@ are configured with credentials to authenticate.
       kmip?: KMIPKMSOptions;
    };
 
-   // KMSProviderName is a string name of any of the providers
-   type KMSProviderName = keyof KMSProvidersMap;
+   // KMSProviderName is a string name of any of the providers. Note: For forward
+   // compatibility, any string should be accepted.
+   type KMSProviderName = keyof KMSProviders | string;
 
    interface AWSKMSOptions {
       accessKeyId: string;
@@ -534,14 +539,14 @@ example:
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
-      setTLSOptions (opts: KMSProviderTLSOptions)
+      setTLSOptions (opts: KMSProvidersTLSOptions)
    }
 
    class ClientEncryptionOpts {
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
-      setTLSOptions (opts: KMSProviderTLSOptions)
+      setTLSOptions (opts: KMSProvidersTLSOptions)
    }
 
 Drivers MUST raise an error if the TLS options are set to disable TLS.
@@ -807,18 +812,18 @@ ClientEncryption
    }
 
 .. _ClientEncryptionOpts:
-.. _KMSProviderTLSOptions:
+.. _KMSProvidersTLSOptions:
 
 .. code-block:: typescript
 
    interface ClientEncryptionOpts {
       keyVaultClient: MongoClient;
       keyVaultNamespace: String;
-      kmsProviders: KMSProvidersMap;
-      tlsOptions?: KMSProviderTLSOptions; // Maps KMS provider to TLS options.
+      kmsProviders: KMSProviders;
+      tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
    };
 
-   interface KMSProviderTLSOptions {
+   interface KMSProvidersTLSOptions {
       // Map the KMS providers (by name) to a set of TLS options
       [provider: KMSProviderName]: TLSOptionsMap;
    };
