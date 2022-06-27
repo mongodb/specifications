@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-22
+:Last Modified: 2022-06-27
 :Version: 1.9.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -234,7 +234,7 @@ KMS Provider
 ------------
 A KMS provider (AWS KMS, Azure Key Vault, GCP KMS, the local provider, or KMIP)
 is used to decrypt data keys after fetching from the MongoDB Key Vault, and
-encrypt newly created data keys. Refer to KMSProvidersMap_ for the shape of the
+encrypt newly created data keys. Refer to KMSProviders_ for the shape of the
 KMS provider options.
 
 
@@ -338,17 +338,16 @@ MongoClient Changes
    }
 
 .. _AutoEncryptionOpts:
-
 .. code-block:: typescript
 
    class AutoEncryptionOpts {
       keyVaultClient: Optional<MongoClient>;
       keyVaultNamespace: String;
-      kmsProviders: KMSProvidersMap;
+      kmsProviders: KMSProviders;
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
-      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
+      tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
       encryptedFieldsMap: Optional<Map<String, Document>>; // Maps namespace to encryptedFields.
       // bypassQueryAnalysis disables automatic analysis of outgoing commands.
       // Set bypassQueryAnalysis to true to use explicit encryption on indexed fields
@@ -458,61 +457,65 @@ the following as a template:
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
+.. _KMSProviders:
+.. _KMSProviderName:
 .. _AWSKMSOptions:
-.. _KMSProvidersMap:
 
 kmsProviders
 ^^^^^^^^^^^^
 
 The ``kmsProviders`` property may be specified on ClientEncryptionOpts_ or
 AutoEncryptionOpts_. Multiple KMS providers may be specified, each using a
-specific property on the KMSProvidersMap_ object. The options for each type of
-provider differ by the provider name ("aws", "azure", "gcp", "local", and
-"kmip"). The "local" provider is configured with master key material. The
-external providers are configured with credentials to authenticate.
+specific property on the KMSProviders_ object. The options for each type of
+provider differ by the provider name (:ts:`"aws"`, :ts:`"azure"`, :ts:`"gcp"`,
+:ts:`"local"`, and :ts:`"kmip"`). The "local" provider is configured with master
+key material. The external providers are configured with credentials to
+authenticate.
+
+Throughout this document, the provider name is annotated as
+:ts:`KMSProviderName`, but this name is for *exposition only*: drivers MUST
+accept arbitrary strings at runtime for forward-compatibility.
 
 .. code:: typescript
 
-   interface KMSProvidersMap {
-      aws?: AWSKMSOptions | { /* Empty (See: "Automatic AWS credentials") */ },
-      azure?: AzureKMSOptions,
-      gcp?: GCPKMSOptions,
-      local?: LocalKMSOptions,
-      kmip?: KMIPKMSOptions,
+   interface KMSProviders {
+      aws?: AWSKMSOptions | { /* Empty. (See "Automatic AWS Credentials") */ };
+      azure?: AzureKMSOptions;
+      gcp?: GCPKMSOptions;
+      local?: LocalKMSOptions;
+      kmip?: KMIPKMSOptions;
    };
 
-   type KMSProviderName = keyof KMSProvidersMap;
+   // KMSProviderName is a string name of any of the providers. Note: For forward
+   // compatibility, any string should be accepted.
+   type KMSProviderName = keyof KMSProviders | string;
 
    interface AWSKMSOptions {
-      accessKeyId: string,
-      secretAccessKey: string,
-      sessionToken? string // Required for temporary AWS credentials.
+      accessKeyId: string;
+      secretAccessKey: string;
+      sessionToken?: string; // Required for temporary AWS credentials.
    };
 
    interface AzureKMSOptions {
-      tenantId: string,
-      clientId: string,
-      clientSecret: string,
-      identityPlatformEndpoint?: string // Defaults to login.microsoftonline.com
+      tenantId: string;
+      clientId: string;
+      clientSecret: string;
+      identityPlatformEndpoint?: string; // Defaults to login.microsoftonline.com
    };
 
    interface GCPKMSOptions {
-      email: string,
-      privateKey: byte[] | string, // May be passed as a base64 encoded string.
-      endpoint?: string // Defaults to oauth2.googleapis.com
+      email: string;
+      privateKey: byte[] | string; // May be passed as a base64 encoded string.
+      endpoint?: string; // Defaults to oauth2.googleapis.com
    };
 
    interface LocalKMSOptions {
-      key: byte[96] | string // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
+      key: byte[96] | string; // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
    };
 
    interface KMIPKMSOptions {
-      endpoint: string
+      endpoint: string;
    };
-
-See `Why are extraOptions and kmsProviders maps?`_
-
-Drivers MUST enable TLS for all KMS connections.
 
 
 Automatic AWS Credentials
@@ -520,21 +523,21 @@ Automatic AWS Credentials
 
 .. versionadded:: 1.9.0 2022/06/22
 
-If the ``aws`` provider property of a KMSProvidersMap_ is present and is an
-empty map/object, the driver MUST be able to populate an AWSKMSOptions_ object
+If the ``aws`` provider property of a KMSProviders_ is present and is an empty
+map/object, the driver MUST be able to populate an AWSKMSOptions_ object
 on-demand if-and-only-if AWS credentials are needed.
 
 .. note:: Drivers SHOULD NOT eagerly fill an empty ``aws`` map property.
 
-libmongocrypt_ will interpret an empty KMSProvidersMap_ map properties as a
-request by the user to lazily load the credentials for the respective `KMS
-provider`_. libmongocrypt_ will call back to the driver to fill an empty KMS
-provider property only once the associated credentials are needed.
+libmongocrypt_ will interpret an empty KMSProviders_ map properties as a request
+by the user to lazily load the credentials for the respective `KMS provider`_.
+libmongocrypt_ will call back to the driver to fill an empty KMS provider
+property only once the associated credentials are needed.
 
-Once requested, drivers MUST create a new KMSProvidersMap_ :math:`P` according
-to the following process:
+Once requested, drivers MUST create a new KMSProviders_ :math:`P` according to
+the following process:
 
-1. Initialize :math:`P` to an empty KMSProvidersMap_ object.
+1. Initialize :math:`P` to an empty KMSProviders_ object.
 2. If the user-provided kmsProviders_ (from ClientEncryptionOpts_ or
    AutoEncryptionOpts_) contains an ``aws`` property, and that property is an
    empty map:
@@ -572,14 +575,14 @@ example:
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
-      setTLSOptions (opts Map<String, TLSOptions>)
+      setTLSOptions (opts: KMSProvidersTLSOptions)
    }
 
    class ClientEncryptionOpts {
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
-      setTLSOptions (opts Map<String, TLSOptions>)
+      setTLSOptions (opts: KMSProvidersTLSOptions)
    }
 
 Drivers MUST raise an error if the TLS options are set to disable TLS.
@@ -800,14 +803,14 @@ ClientEncryption
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
-      createKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+      createKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
 
       // An alias function equivalent to createKey.
-      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
+      createDataKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
       // Returns a RewrapManyDataKeyResult.
-      rewrapManyDataKey(filter: Document, opts: Optional<RewrapManyDataKeyOpts>): RewrapManyDataKeyResult;
+      rewrapManyDataKey(filter: Document, opts: RewrapManyDataKeyOpts | null): RewrapManyDataKeyResult;
 
       // Removes the key document with the given UUID (BSON binary subtype 0x04) from the key vault collection.
       // Returns the result of the internal deleteOne() operation on the key vault collection.
@@ -846,14 +849,21 @@ ClientEncryption
    }
 
 .. _ClientEncryptionOpts:
+.. _KMSProvidersTLSOptions:
+
 .. code-block:: typescript
 
    interface ClientEncryptionOpts {
       keyVaultClient: MongoClient;
       keyVaultNamespace: String;
-      kmsProviders: KMSProvidersMap;
-      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
-   }
+      kmsProviders: KMSProviders;
+      tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
+   };
+
+   interface KMSProvidersTLSOptions {
+      // Map the KMS providers (by name) to a set of TLS options
+      [provider: KMSProviderName]: TLSOptionsMap;
+   };
 
 The ClientEncryption encapsulates explicit operations on a key vault
 collection that cannot be done directly on a MongoClient. Similar to
@@ -987,12 +997,15 @@ RewrapManyDataKeyResult
 .. code:: typescript
 
    class RewrapManyDataKeyResult {
-      bulkWriteResult: BulkWriteResult;
+      bulkWriteResult: Optional<BulkWriteResult>;
    }
 
 ``bulkWriteResult`` is the `result of the bulk write operation
 <../crud/crud.rst##write-results>`_ used to update the key vault collection with
-rewrapped data keys.
+one or more rewrapped data keys. If ``rewrapManyDataKey()`` does not find any
+matching keys to rewrap, no bulk write operation will be executed and this field
+will be unset. This field may also be unset if the bulk write operation is
+unacknowledged as permitted by the `CRUD API Spec <../crud/crud.rst#write-results>`_.
 
 See `Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?`_.
 
@@ -2382,7 +2395,9 @@ Changelog
    :align: left
 
    Date, Description
-   22-06-22, Add behavior for automatic AWS credential loading in ``kmsProviders``.
+   22-06-27, Add behavior for automatic AWS credential loading in ``kmsProviders``.
+   24-06-22, Clean up kmsProviders to use more TypeScript-like type definitions.
+   22-06-23, Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
    22-06-16, Change ``QueryType`` to a string.
    22-06-15, Clarify description of date fields in key documents.
    22-06-08, Add ``Queryable Encryption`` to abstract.
