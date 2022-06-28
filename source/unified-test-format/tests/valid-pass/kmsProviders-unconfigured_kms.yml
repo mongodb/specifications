@@ -5,7 +5,6 @@ schemaVersion: "1.8"
 
 runOnRequirements:
   - csfle: true
-  - skipReason: "DRIVERS-2280: waiting on driver support for on-demand credentials"
 
 createEntities:
   - client:
@@ -24,4 +23,5 @@ createEntities:
 
 tests:
   - description: ""
+    skipReason: "DRIVERS-2280: waiting on driver support for on-demand credentials"
     operations: []
