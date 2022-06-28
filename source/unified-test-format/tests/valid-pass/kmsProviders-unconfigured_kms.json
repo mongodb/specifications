@@ -4,6 +4,9 @@
   "runOnRequirements": [
     {
       "csfle": true
+    },
+    {
+      "skipReason": "DRIVERS-2280: waiting on driver support for on-demand credentials"
     }
   ],
   "createEntities": [
