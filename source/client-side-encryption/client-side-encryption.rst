@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-27
-:Version: 1.9.0
+:Last Modified: 2022-06-29
+:Version: 1.9.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -769,6 +769,8 @@ ClientEncryption
       createDataKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
+      // The updated fields of each rewrapped data key is updated in the key vault collection as part of a single bulk write operation.
+      // If no data key matches the given filter, no bulk write operation is executed.
       // Returns a RewrapManyDataKeyResult.
       rewrapManyDataKey(filter: Document, opts: RewrapManyDataKeyOpts | null): RewrapManyDataKeyResult;
 
@@ -2348,6 +2350,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-29, Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
    22-06-27, Remove ``createKey``.
    22-06-24, Clean up kmsProviders to use more TypeScript-like type definitions.
    22-06-23, Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
