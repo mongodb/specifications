@@ -279,6 +279,13 @@ Test runners MUST support the following types of entities:
   concurrent execution context (e.g. actual threads, goroutines, async tasks,
   etc). See `Thread Operations`_ for a list of operations.
 
+- TopologyDescription. An entity representing a client's TopologyDescription at
+  a certain point in time. These entities are not defined in `createEntities`_
+  but are instaed created via `recordTopologyDescription`_ test runner
+  operations. 
+
+  See `TopologyDescription Operations`_ for a list of operations.
+
 This is an exhaustive list of supported types for the entity map. Test runners
 MUST raise an error if an attempt is made to store an unsupported type in the
 entity map.
@@ -1377,6 +1384,7 @@ these types and their parameters may be found in the following specifications:
 
 - `Read and Write Concern <../read-write-concern/read-write-concern.rst>`__.
 - `Server Selection: Read Preference <../server-selection/server-selection.rst#read-preference>`__.
+- `Server Discovery and Monitoring: TopologyDescription <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription`__
 
 The structure of these common options is as follows:
 
@@ -1438,6 +1446,14 @@ The structure of these common options is as follows:
   - ``w``: Optional integer or string.
 
   - ``wtimeoutMS``: Optional integer.
+
+
+.. _commonOptions_topologyDescription:
+
+- ``topologyDescription``: String. TopologyDescription entity name, which the
+  test runner MUST resolve to a TopologyDescription object. The YAML file SHOULD
+  use an `alias node`_ for a session entity's ``id`` field
+  (e.g. ``topologyDescription: *postInsertTopology``).
 
 
 Version String
@@ -2659,6 +2675,84 @@ poolClearedEvent to be published::
         event:
           poolClearedEvent: {}
         count: 1
+
+recordTopologyDescription
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The "recordTopologyDescription" operation instructs the test runner to retrieve
+the specified MongoClient's current TopologyDescription and store it as an
+entity.
+
+The following arguments are suported:
+
+- ``client``: Required string. Client entity whose TopologyDescription will be recorded.
+
+- ``id``: Required string. The name with which the TopologyDescription will be
+  stored in the `Entity Map`_.
+
+For example::
+
+    - name: recordTopologyDescription
+      object: testRunner
+      arguments:
+        client: *client0
+        id: &postInsertTopology postInsertTopology
+
+assertTopologyType
+~~~~~~~~~~~~~~~~~~
+
+The ``assertTopologyType`` operation instructs the test runner to assert that
+the given `TopologyDescription`_ has a particular TopologyType.
+
+The following arguments are supported:
+
+- ``topologyDescription``: Required string. See
+  `commonOptions_topologyDescription`_.
+
+- ``topologyType``: Required string. Expected TopologyType for the
+  TopologyDescription. See `SDAM: TopologyType
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologytype>`__
+  for a list of possible values.
+
+For example::
+
+  - name: assertTopologyType
+    object: testRunner
+    arguments:
+      topologyDescription: *postInsertTopology
+      topologyType: ReplicaSetWithPrimary
+
+waitForPrimaryChange
+~~~~~~~~~~~~~~~~~~~~
+
+The ``waitForPrimaryChange`` operation instructs the test runner to wait until
+the provided MongoClient discovers a different primary from the one in the
+provided `TopologyDescription`_. If the provided `TopologyDescription`_ does not
+include a primary, then this operation will wait until the client discovers any
+primary.
+
+The following arguments are supported:
+
+- ``client``: Required string. See `commonOptions_client`_.
+
+  The clienty entity MUST the same one from which ``topologyDescription`` was
+  derived. Test runners do not need to ensure this.
+
+- ``topologyDescription``: Required string. See
+  `commonOptions_topologyDescription`_.
+
+- ``timeoutMS``: Optional integer. The number of milliseconds to wait for the
+  primary change before timing out and failing the test. If unspecified, a
+  default timeout of 10 seconds MUST be used.
+
+For example::
+
+  - name: waitForPrimaryChange
+    object: testRunner
+    arguments:
+      client: *client0
+      topologyDescription: *postInsertTopology
+      timeoutMS: 1000
 
         
 Special Placeholder Value

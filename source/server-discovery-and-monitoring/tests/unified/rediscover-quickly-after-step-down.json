@@ -1,0 +1,210 @@
+{
+  "description": "rediscovery-quickly-after-step-down",
+  "schemaVersion": "1.0",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "4.4",
+      "topology": [
+        "replicaset"
+      ]
+    }
+  ],
+  "database_name": "sdam-tests",
+  "collection_name": "test-replSetStepDown",
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "observeEvents": [
+          "commandStartedEvent",
+          "serverDescriptionChangedEvent"
+        ],
+        "uriOptions": {
+          "appName": "replSetStepDownTest",
+          "heartbeatFrequencyMS": 60000,
+          "serverSelectionTimeoutMS": 5000,
+          "w": "majority"
+        }
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "sdam-tests"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection0",
+        "database": "database0",
+        "collectionName": "test-replSetStepDown"
+      }
+    },
+    {
+      "client": {
+        "id": "client1"
+      }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "test-replSetStepDown",
+      "databaseName": "sdam-tests",
+      "documents": [
+        {
+          "_id": 1
+        },
+        {
+          "_id": 2
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "description": "Rediscover quickly after replSetStepDown",
+      "operations": [
+        {
+          "name": "insertMany",
+          "object": "collection",
+          "arguments": {
+            "documents": [
+              {
+                "_id": 3
+              },
+              {
+                "_id": 4
+              }
+            ]
+          }
+        },
+        {
+          "name": "recordTopologyDescription",
+          "object": "client0",
+          "arguments": {
+            "id": "topology0"
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "client1",
+          "arguments": {
+            "commandName": "replSetFreeze",
+            "command": {
+              "replSetFreeze": 0
+            },
+            "readPreference": {
+              "mode": "Secondary"
+            }
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "client1",
+          "arguments": {
+            "commandName": "replSetStepDown",
+            "command": {
+              "replSetStepDown": 30,
+              "secondaryCatchUpPeriodSecs": 30,
+              "force": false
+            }
+          }
+        },
+        {
+          "name": "waitForPrimaryChange",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "priorTopologyDescription": "topology0",
+            "timeoutMS": 15000
+          }
+        },
+        {
+          "name": "insertMany",
+          "object": "collection0",
+          "arguments": {
+            "documents": [
+              {
+                "_id": 5
+              },
+              {
+                "_id": 6
+              }
+            ]
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "event": {
+              "poolClearedEvent": {}
+            },
+            "count": 0
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "commandStartedEvent": {
+            "command": {
+              "insert": "test-replSetStepDown",
+              "documents": [
+                {
+                  "_id": 3
+                },
+                {
+                  "_id": 4
+                }
+              ]
+            },
+            "commandName": "insert",
+            "databaseName": "sdam-tests"
+          }
+        },
+        {
+          "commandStartedEvent": {
+            "command": {
+              "insert": "test-replSetStepDown",
+              "documents": [
+                {
+                  "_id": 5
+                },
+                {
+                  "_id": 6
+                }
+              ]
+            },
+            "commandName": "insert",
+            "databaseName": "sdam-tests"
+          }
+        }
+      ],
+      "outcome": {
+        "collectionName": "test-replSetStepDown",
+        "databaseName": "sdam-tests",
+        "documents": [
+          {
+            "_id": 1
+          },
+          {
+            "_id": 2
+          },
+          {
+            "_id": 3
+          },
+          {
+            "_id": 4
+          },
+          {
+            "_id": 5
+          },
+          {
+            "_id": 6
+          }
+        ]
+      }
+    }
+  ]
+}
