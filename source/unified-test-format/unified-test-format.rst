@@ -554,6 +554,8 @@ The structure of this object is as follows:
 
     - `connectionCheckedInEvent <expectedEvent_connectionCheckedInEvent_>`_
 
+    - `serverDescriptionChangedEvent <expectedEvent_serverDescriptionChangedEvent_>`_
+
   .. _entity_client_ignoreCommandMonitoringEvents:
 
   - ``ignoreCommandMonitoringEvents``: Optional array of one or more strings.
@@ -1267,6 +1269,69 @@ expectedCmapEvent
 
 - ``connectionCheckedInEvent``: Optional object. If present, this object
   MUST be an empty document as all fields in this event are non-deterministic.
+
+
+expectedSdamEvent
+`````````````````
+
+The structure of this object is as follows:
+
+.. _expectedEvent_serverDescriptionChangedEvent:
+
+- ``serverDescriptionChangedEvent``: Optional object. Assertions for one or more
+  `ServerDescriptionChangedEvent
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`__
+  fields.
+
+  The structure of this object is as follows:
+
+  - ``previousDescription``: Optional object. A value corresponding to the server
+    description as it was before the change that triggered this event.  Test
+    runners MUST follow the rules in `Evaluating Matches`_ when processing this
+    assertion.
+
+  - ``newDescription``: Optional object. A value corresponding to the server
+    description as it was after the change that triggered this event. Test
+    runners MUST follow the rules in `Evaluating Matches`_ when processing this
+    assertion.
+
+  The structure of a server description object (which the ``previousDescription``
+  and ``newDescription`` fields contain) is as follows:
+
+  - ``error``: Optional `expectedError`_ object. One or more assertions for an
+    error expected to be present in the server description.
+
+  - ``type``: Optional string. The type of the server in the
+    description. Support values are as follows:
+
+    - ``Standalone``
+
+    - ``Mongos``
+
+    - ``PossiblePrimary``
+
+    - ``RSPrimary``
+
+    - ``RSSecondary``
+
+    - ``RSArbiter``
+
+    - ``RSOther``
+
+    - ``RSGhost``
+
+    - ``LoadBalancer``
+
+    - ``Unknown``
+
+  - ``minWireVersion``: Optional integer. The minWireVersion reported by the
+    server in its hello response.
+
+  - ``maxWireVersion``: Optional integer. The minWireVersion reported by the
+    server in its hello response.
+
+  - ``topologyVersion``: Optional document. The topologyVersion document
+    reported by the server in its hello response, if any.
 
 
 hasServiceId
@@ -2514,7 +2579,7 @@ runOnThread
 ~~~~~~~~~~~
 
 The "runOnThread" operation instructs the test runner to schedule an operation
-to be run on the given thread. runOnThread MUST NOT wait for the scheduled
+to be run on a given thread. runOnThread MUST NOT wait for the scheduled
 operation to complete. If any of the operation's test assertions fail, the
 entire test case MUST fail as well.
 
@@ -2525,7 +2590,7 @@ The following arguments are supported:
 
 - ``operation``: Required `operation`_ object. The operation to schedule on the
   thread. This object must be a valid operation as described in `Entity Test
-  Operations`_. This operation MUST NOT be a ``runOnThread`` operation.
+  Operations`_.
 
 An example of this operation follows::
 
@@ -2548,7 +2613,7 @@ waitForThread
 
 The "waitForThread" operation instructs the test runner to notify the given
 thread that no more operations are forthcoming, wait for it to complete its last
-operation, and assert that the thread exited without any errors.
+operation, and assert that it exited without any errors.
 
 The following arguments are supported:
 
@@ -2562,6 +2627,39 @@ An example of this operation follows::
       arguments:
         thread: *thread0
   
+
+waitForEvent
+~~~~~~~~~~~~
+
+The "waitForEvent" operation instructs the test runner to wait until the
+specified MongoClient has published a specific event a given number of
+times. Note that this includes any events published before the waitForEvent
+operation started.
+
+The following arguments are suported:
+
+- ``client``: Required string. Client entity whose events the runner will be
+  waiting for.
+
+- ``event``: Required `expectedEvent`_ object. The event which the test runner
+  is waiting to be observed on the corresponding client. The assertions laid out
+  in `expectedEvent`_ MUST be used to determine if an observed event matches
+  ``event``.
+
+- ``count``: Required integer. The number of matching events to wait for before
+  resuming execution of subsequent operations.
+
+For example, the following instructs the test runner to wait for at least one
+poolClearedEvent to be published::
+
+    - name: waitForEvent
+      object: testRunner
+      arguments:
+        client: *client0
+        event:
+          poolClearedEvent: {}
+        count: 1
+
         
 Special Placeholder Value
 -------------------------

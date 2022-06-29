@@ -1,10 +1,9 @@
 {
-  "description": "auth-error",
+  "description": "find-shutdown-error",
   "schemaVersion": "1.0",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.4",
-      "auth": true
+      "minServerVersion": "4.4"
     }
   ],
   "createEntities": [
@@ -17,7 +16,9 @@
         ],
         "uriOptions": {
           "retryWrites": false,
-          "appName": "authErrorTest"
+          "retryReads": false,
+          "heartbeatFrequencyMS": 500,
+          "appName": "shutdownErrorFindTest"
         }
       }
     },
@@ -32,73 +33,112 @@
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "auth-error"
+        "collectionName": "find-shutdown-error"
       }
     },
     {
-      "client": {
-        "id": "setupClient"
+      "thread": {
+        "id": "thread0"
+      }
+    },
+    {
+      "thread": {
+        "id": "thread1"
       }
     }
   ],
   "initialData": [
     {
-      "collectionName": "auth-error",
+      "collectionName": "find-shutdown-error",
       "databaseName": "sdam-tests",
-      "documents": [
-        {
-          "_id": 1
-        },
-        {
-          "_id": 2
-        }
-      ]
+      "documents": []
     }
   ],
   "tests": [
     {
-      "description": "Reset server and pool after AuthenticationFailure error",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "5.0"
-        }
-      ],
+      "description": "Concurrent shutdown error on find",
       "operations": [
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "document": {
+              "_id": 1
+            }
+          }
+        },
         {
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "setupClient",
+            "client": "client0",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 1
+                "times": 2
               },
               "data": {
                 "failCommands": [
-                  "saslContinue"
+                  "find"
                 ],
-                "appName": "authErrorTest",
-                "errorCode": 18
+                "appName": "shutdownErrorFindTest",
+                "errorCode": 91,
+                "blockConnection": true,
+                "blockTimeMS": 500
               }
             }
           }
         },
         {
-          "name": "insertMany",
-          "object": "collection0",
+          "name": "runOnThread",
+          "object": "testRunner",
           "arguments": {
-            "documents": [
-              {
-                "_id": 3
+            "thread": "thread0",
+            "operation": {
+              "name": "find",
+              "object": "collection0",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                }
               },
-              {
-                "_id": 4
+              "expectError": {
+                "isError": true
               }
-            ]
-          },
-          "expectError": {
-            "isError": true
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1",
+            "operation": {
+              "name": "find",
+              "object": "collection0",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                }
+              },
+              "expectError": {
+                "isError": true
+              }
+            }
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread0"
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1"
           }
         },
         {
@@ -128,17 +168,12 @@
           }
         },
         {
-          "name": "insertMany",
+          "name": "insertOne",
           "object": "collection0",
           "arguments": {
-            "documents": [
-              {
-                "_id": 5
-              },
-              {
-                "_id": 6
-              }
-            ]
+            "document": {
+              "_id": 4
+            }
           }
         },
         {
@@ -166,49 +201,18 @@
             },
             "count": 1
           }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client0",
-          "eventType": "command",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "insert": "auth-error",
-                  "documents": [
-                    {
-                      "_id": 5
-                    },
-                    {
-                      "_id": 6
-                    }
-                  ]
-                },
-                "commandName": "insert",
-                "databaseName": "sdam-tests"
-              }
-            }
-          ]
         }
       ],
       "outcome": [
         {
-          "collectionName": "auth-error",
+          "collectionName": "find-shutdown-error",
           "databaseName": "sdam-tests",
           "documents": [
             {
               "_id": 1
             },
             {
-              "_id": 2
-            },
-            {
-              "_id": 5
-            },
-            {
-              "_id": 6
+              "_id": 4
             }
           ]
         }

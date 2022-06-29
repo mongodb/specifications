@@ -9,7 +9,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents: [ commandStartedEvent, serverDescriptionChanged ]
+      observeEvents: [ commandStartedEvent, serverDescriptionChangedEvent ]
       uriOptions:
         retryWrites: false
         appName: &appName authErrorTest
@@ -58,13 +58,17 @@ tests:
         object: testRunner
         arguments:
           client: *client0
-          event: ServerMarkedUnknownEvent
+          event:
+            serverDescriptionChangedEvent:
+              newDescription:
+                type: Unknown
           count: 1
       - name: waitForEvent
         object: testRunner
         arguments:
           client: *client0
-          event: PoolClearedEvent
+          event:
+            poolClearedEvent: {}
           count: 1
       # Perform another operation to ensure the node is rediscovered.
       - name: insertMany
@@ -78,13 +82,17 @@ tests:
         object: testRunner
         arguments:
           client: *client0
-          event: ServerMarkedUnknownEvent
+          event:
+            serverDescriptionChangedEvent:
+              newDescription:
+                type: Unknown
           count: 1
       - name: assertEventCount
         object: testRunner
         arguments:
           client: *client0
-          event: PoolClearedEvent
+          event:
+            poolClearedEvent: {}
           count: 1
     expectEvents:
       - client: *client0
@@ -96,8 +104,8 @@ tests:
                 documents:
                   - { _id: 5 }
                   - { _id: 6 }
-                commandName: insert
-                databaseName: *database0Name
+              commandName: insert
+              databaseName: *database0Name
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
