@@ -527,7 +527,7 @@ If the ``aws`` provider property of a KMSProviders_ is present and is an empty
 map/object, the driver MUST be able to populate an AWSKMSOptions_ object
 on-demand if-and-only-if AWS credentials are needed.
 
-.. note:: Drivers SHOULD NOT eagerly fill an empty ``aws`` map property.
+.. note:: Drivers MUST NOT eagerly fill an empty ``aws`` map property.
 
 libmongocrypt_ will interpret an empty KMSProviders_ map properties as a request
 by the user to lazily load the credentials for the respective `KMS provider`_.
