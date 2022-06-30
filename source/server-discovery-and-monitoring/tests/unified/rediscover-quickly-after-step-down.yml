@@ -6,15 +6,12 @@ runOnRequirements:
     # 4.4 is required for streaming.
     # A replica set is required for replSetStepDown.
     - minServerVersion: "4.4"
-      topology: ["replicaset"]
-
-database_name: &database_name "sdam-tests"
-collection_name: &collection_name "test-replSetStepDown"
+      topologies: ["replicaset"]
 
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents: [ commandStartedEvent, serverDescriptionChangedEvent ]
+      observeEvents: [ commandStartedEvent, serverDescriptionChangedEvent, poolClearedEvent ]
       uriOptions:
         appName: &appName replSetStepDownTest
         # Configure a large heartbeatFrequencyMS
@@ -33,6 +30,10 @@ createEntities:
       collectionName: &collection0Name test-replSetStepDown
   - client:
       id: &adminClient client1
+  - database:
+      id: &adminDatabase database1
+      client: *adminClient
+      databaseName: admin
 
 initialData:
   - collectionName: *collection0Name
@@ -46,18 +47,19 @@ tests:
     operations:
       # Discover the primary.
       - name: insertMany
-        object: collection
+        object: *collection0
         arguments:
           documents:
             - { _id: 3 }
             - { _id: 4 }
       - name: recordTopologyDescription
-        object: *client0
+        object: testRunner
         arguments:
+          client: *client0
           id: &postInsertTopology topology0
       # Unfreeze a secondary with replSetFreeze:0 to ensure a speedy election.
       - name: runCommand
-        object: *adminClient
+        object: *adminDatabase
         arguments:
           commandName: replSetFreeze
           command:
@@ -66,7 +68,7 @@ tests:
             mode: Secondary
       # Run replSetStepDown on the meta client.
       - name: runCommand
-        object: *adminClient
+        object: *adminDatabase
         arguments:
           commandName: replSetStepDown
           command:
@@ -92,35 +94,39 @@ tests:
       - name: assertEventCount
         object: testRunner
         arguments:
+          client: *client0
           event:
             poolClearedEvent: { }
           count: 0
 
-    expectations:
-      - commandStartedEvent:
-          command:
-            insert: *collection0Name
-            documents:
-              - { _id: 3 }
-              - { _id: 4 }
-          commandName: insert
-          databaseName: *database0Name
-      - commandStartedEvent:
-          command:
-            insert: *collection0Name
-            documents:
-              - { _id: 5 }
-              - { _id: 6 }
-          commandName: insert
-          databaseName: *database0Name
+    expectEvents:
+      - client: *client0
+        eventType: command
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents:
+                  - { _id: 3 }
+                  - { _id: 4 }
+              commandName: insert
+              databaseName: *database0Name
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents:
+                  - { _id: 5 }
+                  - { _id: 6 }
+              commandName: insert
+              databaseName: *database0Name
 
     outcome:
-      collectionName: *collection0Name
-      databaseName: *database0Name
-      documents:
-        - { _id: 1 }
-        - { _id: 2 }
-        - { _id: 3 }
-        - { _id: 4 }
-        - { _id: 5 }
-        - { _id: 6 }
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
+          - { _id: 4 }
+          - { _id: 5 }
+          - { _id: 6 }

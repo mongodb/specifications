@@ -4,20 +4,19 @@
   "runOnRequirements": [
     {
       "minServerVersion": "4.4",
-      "topology": [
+      "topologies": [
         "replicaset"
       ]
     }
   ],
-  "database_name": "sdam-tests",
-  "collection_name": "test-replSetStepDown",
   "createEntities": [
     {
       "client": {
         "id": "client0",
         "observeEvents": [
           "commandStartedEvent",
-          "serverDescriptionChangedEvent"
+          "serverDescriptionChangedEvent",
+          "poolClearedEvent"
         ],
         "uriOptions": {
           "appName": "replSetStepDownTest",
@@ -45,6 +44,13 @@
       "client": {
         "id": "client1"
       }
+    },
+    {
+      "database": {
+        "id": "database1",
+        "client": "client1",
+        "databaseName": "admin"
+      }
     }
   ],
   "initialData": [
@@ -67,7 +73,7 @@
       "operations": [
         {
           "name": "insertMany",
-          "object": "collection",
+          "object": "collection0",
           "arguments": {
             "documents": [
               {
@@ -81,14 +87,15 @@
         },
         {
           "name": "recordTopologyDescription",
-          "object": "client0",
+          "object": "testRunner",
           "arguments": {
+            "client": "client0",
             "id": "topology0"
           }
         },
         {
           "name": "runCommand",
-          "object": "client1",
+          "object": "database1",
           "arguments": {
             "commandName": "replSetFreeze",
             "command": {
@@ -101,7 +108,7 @@
         },
         {
           "name": "runCommand",
-          "object": "client1",
+          "object": "database1",
           "arguments": {
             "commandName": "replSetStepDown",
             "command": {
@@ -138,6 +145,7 @@
           "name": "assertEventCount",
           "object": "testRunner",
           "arguments": {
+            "client": "client0",
             "event": {
               "poolClearedEvent": {}
             },
@@ -145,66 +153,74 @@
           }
         }
       ],
-      "expectations": [
+      "expectEvents": [
         {
-          "commandStartedEvent": {
-            "command": {
-              "insert": "test-replSetStepDown",
-              "documents": [
-                {
-                  "_id": 3
+          "client": "client0",
+          "eventType": "command",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "insert": "test-replSetStepDown",
+                  "documents": [
+                    {
+                      "_id": 3
+                    },
+                    {
+                      "_id": 4
+                    }
+                  ]
                 },
-                {
-                  "_id": 4
-                }
-              ]
+                "commandName": "insert",
+                "databaseName": "sdam-tests"
+              }
             },
-            "commandName": "insert",
-            "databaseName": "sdam-tests"
-          }
-        },
-        {
-          "commandStartedEvent": {
-            "command": {
-              "insert": "test-replSetStepDown",
-              "documents": [
-                {
-                  "_id": 5
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "insert": "test-replSetStepDown",
+                  "documents": [
+                    {
+                      "_id": 5
+                    },
+                    {
+                      "_id": 6
+                    }
+                  ]
                 },
-                {
-                  "_id": 6
-                }
-              ]
-            },
-            "commandName": "insert",
-            "databaseName": "sdam-tests"
-          }
+                "commandName": "insert",
+                "databaseName": "sdam-tests"
+              }
+            }
+          ]
         }
       ],
-      "outcome": {
-        "collectionName": "test-replSetStepDown",
-        "databaseName": "sdam-tests",
-        "documents": [
-          {
-            "_id": 1
-          },
-          {
-            "_id": 2
-          },
-          {
-            "_id": 3
-          },
-          {
-            "_id": 4
-          },
-          {
-            "_id": 5
-          },
-          {
-            "_id": 6
-          }
-        ]
-      }
+      "outcome": [
+        {
+          "collectionName": "test-replSetStepDown",
+          "databaseName": "sdam-tests",
+          "documents": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
+            },
+            {
+              "_id": 3
+            },
+            {
+              "_id": 4
+            },
+            {
+              "_id": 5
+            },
+            {
+              "_id": 6
+            }
+          ]
+        }
+      ]
     }
   ]
 }

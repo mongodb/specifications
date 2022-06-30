@@ -279,12 +279,12 @@ Test runners MUST support the following types of entities:
   concurrent execution context (e.g. actual threads, goroutines, async tasks,
   etc). See `Thread Operations`_ for a list of operations.
 
+.. _entity_topologydescription:
+
 - TopologyDescription. An entity representing a client's TopologyDescription at
   a certain point in time. These entities are not defined in `createEntities`_
-  but are instaed created via `recordTopologyDescription`_ test runner
+  but are instead created via `recordTopologyDescription`_ test runner
   operations. 
-
-  See `TopologyDescription Operations`_ for a list of operations.
 
 This is an exhaustive list of supported types for the entity map. Test runners
 MUST raise an error if an attempt is made to store an unsupported type in the
@@ -1450,10 +1450,11 @@ The structure of these common options is as follows:
 
 .. _commonOptions_topologyDescription:
 
-- ``topologyDescription``: String. TopologyDescription entity name, which the
-  test runner MUST resolve to a TopologyDescription object. The YAML file SHOULD
-  use an `alias node`_ for a session entity's ``id`` field
-  (e.g. ``topologyDescription: *postInsertTopology``).
+- ``topologyDescription``: String. `TopologyDescription
+  <entity_topologydescription>`_ entity name, which the test runner MUST resolve
+  to a TopologyDescription object. The YAML file SHOULD use an `alias node`_ for
+  a session entity's ``id`` field (e.g. ``topologyDescription:
+  *postInsertTopology``).
 
 
 Version String
@@ -2680,8 +2681,8 @@ recordTopologyDescription
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The "recordTopologyDescription" operation instructs the test runner to retrieve
-the specified MongoClient's current TopologyDescription and store it as an
-entity.
+the specified MongoClient's current `TopologyDescription <entity_topologydescription_>`_ and store it in
+the `Entity Map`_.
 
 The following arguments are suported:
 
@@ -2702,7 +2703,7 @@ assertTopologyType
 ~~~~~~~~~~~~~~~~~~
 
 The ``assertTopologyType`` operation instructs the test runner to assert that
-the given `TopologyDescription`_ has a particular TopologyType.
+the given `TopologyDescription <entity_topologydescription_>`_ has a particular TopologyType.
 
 The following arguments are supported:
 
@@ -2727,19 +2728,20 @@ waitForPrimaryChange
 
 The ``waitForPrimaryChange`` operation instructs the test runner to wait until
 the provided MongoClient discovers a different primary from the one in the
-provided `TopologyDescription`_. If the provided `TopologyDescription`_ does not
-include a primary, then this operation will wait until the client discovers any
-primary.
+provided `TopologyDescription <entity_topologydescription_>`_. If the provided
+TopologyDescription does not include a primary, then this operation will wait
+until the client discovers any primary.
 
 The following arguments are supported:
 
 - ``client``: Required string. See `commonOptions_client`_.
 
   The clienty entity MUST the same one from which ``topologyDescription`` was
-  derived. Test runners do not need to ensure this.
+  derived. Test runners do not need to verify this.
 
-- ``topologyDescription``: Required string. See
-  `commonOptions_topologyDescription`_.
+- ``priorTopologyDescription``: Required string. The name of a
+  `TopologyDescription <entity_topologydescription_>`_ entity which will be used
+  to determine if the primary has changed or not.
 
 - ``timeoutMS``: Optional integer. The number of milliseconds to wait for the
   primary change before timing out and failing the test. If unspecified, a
@@ -2751,8 +2753,26 @@ For example::
     object: testRunner
     arguments:
       client: *client0
-      topologyDescription: *postInsertTopology
+      priorTopologyDescription: *postInsertTopology
       timeoutMS: 1000
+
+wait
+~~~~
+
+The ``wait`` operation instaructs the test runner to sleep for a provided number
+of milliseconds.
+
+The following arguments are supported:
+
+- ``ms``: Required integer. The number of milliseconds the test runner should
+  sleep for.
+
+For example::
+
+  - name: wait
+    object: testRunner
+    arguments:
+      ms: 1000
 
         
 Special Placeholder Value
