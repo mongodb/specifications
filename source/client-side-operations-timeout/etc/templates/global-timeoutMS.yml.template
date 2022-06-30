@@ -57,6 +57,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["{{operation.command_name}}"]

@@ -56,6 +56,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["listDatabases"]
@@ -153,6 +156,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["listDatabases"]
@@ -246,6 +252,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
@@ -343,6 +352,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
@@ -440,6 +452,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["listCollections"]
@@ -537,6 +552,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["listCollections"]
@@ -634,6 +652,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["ping"]
@@ -733,6 +754,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
@@ -830,6 +854,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
@@ -927,6 +954,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["count"]
@@ -1024,6 +1054,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
@@ -1121,6 +1154,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["count"]
@@ -1214,6 +1250,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["distinct"]
@@ -1313,6 +1352,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["find"]
@@ -1410,6 +1452,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["find"]
@@ -1507,6 +1552,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["listIndexes"]
@@ -1600,6 +1648,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["listIndexes"]
@@ -1693,6 +1744,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
@@ -1790,6 +1844,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["insert"]
@@ -1887,6 +1944,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["insert"]
@@ -1986,6 +2046,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["delete"]
@@ -2083,6 +2146,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["delete"]
@@ -2180,6 +2246,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["update"]
@@ -2279,6 +2348,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["update"]
@@ -2378,6 +2450,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["update"]
@@ -2477,6 +2552,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["findAndModify"]
@@ -2574,6 +2652,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["findAndModify"]
@@ -2673,6 +2754,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["findAndModify"]
@@ -2772,6 +2856,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["insert"]
@@ -2873,6 +2960,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["createIndexes"]
@@ -2972,6 +3062,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["dropIndexes"]
@@ -3071,6 +3164,9 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
             mode: { times: 2 }
             data:
               failCommands: ["dropIndexes"]
