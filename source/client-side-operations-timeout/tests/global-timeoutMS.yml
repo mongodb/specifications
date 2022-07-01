@@ -22,7 +22,7 @@ tests:
   # For each operation, we execute two tests:
   #
   # 1. timeoutMS can be configured to a non-zero value on a MongoClient and is inherited by the operation. Each test
-  # constructs a client entity with timeoutMS=50 and configures a fail point to block the operation for 60ms so
+  # constructs a client entity with timeoutMS=250 and configures a fail point to block the operation for 350ms so
   # execution results in a timeout error.
   #
   # 2. timeoutMS can be set to 0 for a MongoClient. Each test constructs a client entity with timeoutMS=0 and
@@ -38,7 +38,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -56,11 +56,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: listDatabases
         object: *client
         arguments:
@@ -135,7 +138,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -153,11 +156,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: listDatabaseNames
         object: *client
         
@@ -228,7 +234,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -246,11 +252,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: createChangeStream
         object: *client
         arguments:
@@ -325,7 +334,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -343,11 +352,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: aggregate
         object: *database
         arguments:
@@ -422,7 +434,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -440,11 +452,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: listCollections
         object: *database
         arguments:
@@ -519,7 +534,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -537,11 +552,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: listCollectionNames
         object: *database
         arguments:
@@ -616,7 +634,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -634,11 +652,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["ping"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: runCommand
         object: *database
         arguments:
@@ -715,7 +736,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -733,11 +754,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: createChangeStream
         object: *database
         arguments:
@@ -812,7 +836,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -830,11 +854,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: aggregate
         object: *collection
         arguments:
@@ -909,7 +936,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -927,11 +954,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: count
         object: *collection
         arguments:
@@ -1006,7 +1036,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1024,11 +1054,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: countDocuments
         object: *collection
         arguments:
@@ -1103,7 +1136,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1121,11 +1154,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: estimatedDocumentCount
         object: *collection
         
@@ -1196,7 +1232,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1214,11 +1250,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["distinct"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: distinct
         object: *collection
         arguments:
@@ -1295,7 +1334,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1313,11 +1352,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: find
         object: *collection
         arguments:
@@ -1392,7 +1434,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1410,11 +1452,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: findOne
         object: *collection
         arguments:
@@ -1489,7 +1534,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1507,11 +1552,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: listIndexes
         object: *collection
         
@@ -1582,7 +1630,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1600,11 +1648,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: listIndexNames
         object: *collection
         
@@ -1675,7 +1726,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1693,11 +1744,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: createChangeStream
         object: *collection
         arguments:
@@ -1772,7 +1826,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1790,11 +1844,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: insertOne
         object: *collection
         arguments:
@@ -1869,7 +1926,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1887,11 +1944,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: insertMany
         object: *collection
         arguments:
@@ -1968,7 +2028,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1986,11 +2046,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: deleteOne
         object: *collection
         arguments:
@@ -2065,7 +2128,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2083,11 +2146,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: deleteMany
         object: *collection
         arguments:
@@ -2162,7 +2228,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2180,11 +2246,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: replaceOne
         object: *collection
         arguments:
@@ -2261,7 +2330,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2279,11 +2348,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: updateOne
         object: *collection
         arguments:
@@ -2360,7 +2432,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2378,11 +2450,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: updateMany
         object: *collection
         arguments:
@@ -2459,7 +2534,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2477,11 +2552,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -2556,7 +2634,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2574,11 +2652,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -2655,7 +2736,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2673,11 +2754,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -2754,7 +2838,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2772,11 +2856,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: bulkWrite
         object: *collection
         arguments:
@@ -2855,7 +2942,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2873,11 +2960,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: createIndex
         object: *collection
         arguments:
@@ -2954,7 +3044,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2972,11 +3062,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["dropIndexes"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: dropIndex
         object: *collection
         arguments:
@@ -3053,7 +3146,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 50
+                  timeoutMS: 250
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -3071,11 +3164,14 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Use "times: 2" to workaround a quirk in Python on Windows where
+            # socket I/O can timeout ~20ms earlier than expected. With
+            # "times: 1" the retry would succeed within the remaining ~20ms.
+            mode: { times: 2 }
             data:
               failCommands: ["dropIndexes"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 350
       - name: dropIndexes
         object: *collection
         

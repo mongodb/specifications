@@ -27,7 +27,7 @@
       "client": {
         "id": "client",
         "uriOptions": {
-          "timeoutMS": 50
+          "timeoutMS": 250
         },
         "useMultipleMongoses": false,
         "observeEvents": [

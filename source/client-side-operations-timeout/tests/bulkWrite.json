@@ -64,8 +64,17 @@
                   "update"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 60
+                "blockTimeMS": 120
               }
+            }
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": 1
             }
           }
         },
@@ -92,7 +101,7 @@
                 }
               }
             ],
-            "timeoutMS": 100
+            "timeoutMS": 200
           },
           "expectError": {
             "isTimeoutError": true
@@ -103,6 +112,15 @@
         {
           "client": "client",
           "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "databaseName": "test",
+                "command": {
+                  "find": "coll"
+                }
+              }
+            },
             {
               "commandStartedEvent": {
                 "commandName": "insert",

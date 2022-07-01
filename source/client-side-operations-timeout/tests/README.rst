@@ -229,7 +229,7 @@ timeoutMS is refreshed for each handshake command
            configureFailPoint: "failCommand",
            mode: "alwaysOn",
            data: {
-               failCommands: ["isMaster", "saslContinue"],
+               failCommands: ["hello", "isMaster", "saslContinue"],
                blockConnection: true,
                blockTimeMS: 15,
                appName: "refreshTimeoutBackgroundPoolTest"

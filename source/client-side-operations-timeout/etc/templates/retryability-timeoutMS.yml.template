@@ -46,7 +46,7 @@ tests:
   # because the second attempt should take it over the 100ms limit. This test only runs on 4.4+ because it uses the
   # blockConnection option in failCommand.
   #
-  # 2. operation is retried multiple times if timeoutMS is set to a non-zero value - Client timeoutMS=20 and the
+  # 2. operation is retried multiple times if timeoutMS is set to a non-zero value - Client timeoutMS=100 and the
   # operation fails with a retryable error twice. Drivers should send the original operation and two retries, the
   # second of which should succeed.
   #
@@ -70,7 +70,7 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 2 }
+            mode: { times: 4 }
             data:
               failCommands: ["{{operation.command_name}}"]
               blockConnection: true
@@ -104,7 +104,7 @@ tests:
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         arguments:
-          timeoutMS: 250
+          timeoutMS: 500
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}

@@ -77,7 +77,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -137,7 +137,7 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "document": {
               "x": 1
             }
@@ -294,7 +294,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -356,7 +356,7 @@
           "name": "insertMany",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "documents": [
               {
                 "x": 1
@@ -517,7 +517,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -575,7 +575,7 @@
           "name": "deleteOne",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -728,7 +728,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -789,7 +789,7 @@
           "name": "replaceOne",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {},
             "replacement": {
               "x": 1
@@ -948,7 +948,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -1011,7 +1011,7 @@
           "name": "updateOne",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {},
             "update": {
               "$set": {
@@ -1174,7 +1174,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -1232,7 +1232,7 @@
           "name": "findOneAndDelete",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -1385,7 +1385,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -1446,7 +1446,7 @@
           "name": "findOneAndReplace",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {},
             "replacement": {
               "x": 1
@@ -1605,7 +1605,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -1668,7 +1668,7 @@
           "name": "findOneAndUpdate",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {},
             "update": {
               "$set": {
@@ -1831,7 +1831,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -1897,7 +1897,7 @@
           "name": "bulkWrite",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "requests": [
               {
                 "insertOne": {
@@ -2066,7 +2066,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -2124,7 +2124,7 @@
           "name": "listDatabases",
           "object": "client",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -2277,7 +2277,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -2332,7 +2332,7 @@
           "name": "listDatabaseNames",
           "object": "client",
           "arguments": {
-            "timeoutMS": 250
+            "timeoutMS": 500
           }
         }
       ],
@@ -2483,7 +2483,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -2541,7 +2541,7 @@
           "name": "createChangeStream",
           "object": "client",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "pipeline": []
           }
         }
@@ -2694,7 +2694,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -2759,7 +2759,7 @@
           "name": "aggregate",
           "object": "database",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "pipeline": [
               {
                 "$listLocalSessions": {}
@@ -2926,7 +2926,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -2984,7 +2984,7 @@
           "name": "listCollections",
           "object": "database",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -3137,7 +3137,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -3195,7 +3195,7 @@
           "name": "listCollectionNames",
           "object": "database",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -3348,7 +3348,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -3406,7 +3406,7 @@
           "name": "createChangeStream",
           "object": "database",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "pipeline": []
           }
         }
@@ -3559,7 +3559,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -3617,7 +3617,7 @@
           "name": "aggregate",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "pipeline": []
           }
         }
@@ -3770,7 +3770,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -3828,7 +3828,7 @@
           "name": "count",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -3981,7 +3981,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -4039,7 +4039,7 @@
           "name": "countDocuments",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -4192,7 +4192,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -4247,7 +4247,7 @@
           "name": "estimatedDocumentCount",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250
+            "timeoutMS": 500
           }
         }
       ],
@@ -4398,7 +4398,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -4457,7 +4457,7 @@
           "name": "distinct",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "fieldName": "x",
             "filter": {}
           }
@@ -4612,7 +4612,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -4670,7 +4670,7 @@
           "name": "find",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -4823,7 +4823,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -4881,7 +4881,7 @@
           "name": "findOne",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "filter": {}
           }
         }
@@ -5034,7 +5034,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -5089,7 +5089,7 @@
           "name": "listIndexes",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250
+            "timeoutMS": 500
           }
         }
       ],
@@ -5240,7 +5240,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -5298,7 +5298,7 @@
           "name": "createChangeStream",
           "object": "collection",
           "arguments": {
-            "timeoutMS": 250,
+            "timeoutMS": 500,
             "pipeline": []
           }
         }

@@ -27,7 +27,7 @@ initialData:
 tests:
   - description: "maxTimeMS value in the command is less than timeoutMS"
     operations:
-      # Artificially increase the server RTT to ~10ms.
+      # Artificially increase the server RTT to ~20ms.
       - name: failPoint
         object: testRunner
         arguments:
@@ -36,10 +36,10 @@ tests:
             configureFailPoint: failCommand
             mode: "alwaysOn"
             data:
-              failCommands: ["isMaster"]
+              failCommands: ["hello", "isMaster"]
               appName: &appName reduceMaxTimeMSTest
               blockConnection: true
-              blockTimeMS: 10
+              blockTimeMS: 20
       # Create a client with the app name specified in the fail point. Also create database and collection entities
       # derived from the new client. There are two collection entities: one with no timeoutMS, which is used to run
       # an initial operation, and one with a timeoutMS higher than the fail point's blockTimeMS value.
@@ -52,6 +52,7 @@ tests:
                 useMultipleMongoses: false
                 uriOptions:
                   appName: *appName
+                  w: 1  # Override server's w:majority default to speed up the test.
                 observeEvents:
                   - commandStartedEvent
             - database:
@@ -67,7 +68,7 @@ tests:
                 database: *database
                 collectionName: *timeoutCollectionName
                 collectionOptions:
-                  timeoutMS: &timeoutMS 20
+                  timeoutMS: &timeoutMS 60
       # Do an operation with regularCollection to ensure the servers are discovered.
       - name: insertOne
         object: *regularCollection
@@ -96,7 +97,7 @@ tests:
 
   - description: "command is not sent if RTT is greater than timeoutMS"
     operations:
-      # Artificially increase the server RTT to ~10ms.
+      # Artificially increase the server RTT to ~20ms.
       - name: failPoint
         object: testRunner
         arguments:
@@ -105,10 +106,10 @@ tests:
             configureFailPoint: failCommand
             mode: "alwaysOn"
             data:
-              failCommands: ["isMaster"]
+              failCommands: ["hello", "isMaster"]
               appName: &appName rttTooHighTest
               blockConnection: true
-              blockTimeMS: 10
+              blockTimeMS: 20
       # Create a client with the app name specified in the fail point. Also create database and collection entities
       # derived from the new client. There is one collection entity with no timeoutMS and another with a timeoutMS
       # that's lower than the fail point's blockTimeMS value.
@@ -121,6 +122,7 @@ tests:
                 useMultipleMongoses: false
                 uriOptions:
                   appName: *appName
+                  w: 1  # Override server's w:majority default to speed up the test.
                 observeEvents:
                   - commandStartedEvent
             - database:
