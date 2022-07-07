@@ -24,7 +24,8 @@ initialData:
     databaseName: *database0Name
     createOptions:
       capped: true
-      size: &cappedSize 512
+      # With MMAPv1, the size field cannot be less than 4096.
+      size: &cappedSize 4096
     documents:
       - { _id: 1, x: 11 }
 
