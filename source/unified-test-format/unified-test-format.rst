@@ -3487,7 +3487,7 @@ Change Log
 
 :2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
 
-:2020-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
+:2022-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
              for Atlas Serverless URIs using a load balancer fronting a single
              proxy.
 
