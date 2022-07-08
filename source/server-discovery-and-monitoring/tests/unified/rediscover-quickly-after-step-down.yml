@@ -1,6 +1,6 @@
 ---
 description: rediscover-quickly-after-step-down
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.4"
     topologies:
@@ -28,8 +28,8 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - commandStartedEvent
                   - poolClearedEvent
+                  - commandStartedEvent
                 uriOptions:
                   appname: replSetStepDownTest
                   heartbeatFrequencyMS: 60000

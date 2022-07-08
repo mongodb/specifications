@@ -1,6 +1,6 @@
 ---
 description: find-network-error
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.4"
 createEntities:
@@ -36,8 +36,8 @@ tests:
                 id: &client client
                 observeEvents:
                   - commandStartedEvent
-                  - serverDescriptionChangedEvent
                   - poolClearedEvent
+                  - serverDescriptionChangedEvent
                 uriOptions:
                   retryWrites: false
                   retryReads: false

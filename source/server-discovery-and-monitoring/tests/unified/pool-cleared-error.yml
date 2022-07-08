@@ -1,6 +1,6 @@
 ---
 description: pool-cleared-error
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.9"
     topologies:
@@ -23,8 +23,8 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - poolClearedEvent
                   - serverDescriptionChangedEvent
+                  - poolClearedEvent
                 uriOptions:
                   retryWrites: true
                   maxPoolSize: 1

@@ -1,6 +1,6 @@
 ---
 description: hello-command-error
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.9"
 createEntities:
@@ -92,9 +92,9 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - poolClearedEvent
-                  - serverDescriptionChangedEvent
                   - commandStartedEvent
+                  - serverDescriptionChangedEvent
+                  - poolClearedEvent
                 uriOptions:
                   retryWrites: false
                   connectTimeoutMS: 1000

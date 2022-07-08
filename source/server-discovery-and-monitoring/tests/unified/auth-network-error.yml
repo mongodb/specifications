@@ -1,6 +1,6 @@
 ---
 description: auth-network-error
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.4"
     auth: true
@@ -36,9 +36,9 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - commandStartedEvent
                   - serverDescriptionChangedEvent
                   - poolClearedEvent
+                  - commandStartedEvent
                 uriOptions:
                   retryWrites: false
                   appname: authNetworkErrorTest

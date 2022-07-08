@@ -1,6 +1,6 @@
 ---
 description: hello-timeout
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.4"
 createEntities:
@@ -92,9 +92,9 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - poolClearedEvent
                   - commandStartedEvent
                   - serverDescriptionChangedEvent
+                  - poolClearedEvent
                 uriOptions:
                   retryWrites: false
                   connectTimeoutMS: 750
@@ -204,8 +204,8 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - commandStartedEvent
+                  - serverDescriptionChangedEvent
                   - poolClearedEvent
                 uriOptions:
                   retryWrites: false

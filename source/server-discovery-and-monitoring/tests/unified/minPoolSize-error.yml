@@ -1,6 +1,6 @@
 ---
 description: minPoolSize-error
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.9"
     topologies:
@@ -37,8 +37,8 @@ tests:
                 id: &client client
                 observeEvents:
                   - serverDescriptionChangedEvent
-                  - poolReadyEvent
                   - poolClearedEvent
+                  - poolReadyEvent
                 uriOptions:
                   heartbeatFrequencyMS: 10000
                   appname: SDAMminPoolSizeError

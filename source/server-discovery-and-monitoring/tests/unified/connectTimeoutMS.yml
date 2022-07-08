@@ -1,6 +1,6 @@
 ---
 description: connectTimeoutMS
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.4"
 createEntities:

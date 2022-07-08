@@ -1,6 +1,6 @@
 ---
 description: find-network-timeout-error
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.4"
 createEntities:
@@ -36,9 +36,9 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - commandStartedEvent
                   - poolClearedEvent
                   - serverDescriptionChangedEvent
+                  - commandStartedEvent
                 uriOptions:
                   retryWrites: false
                   retryReads: false

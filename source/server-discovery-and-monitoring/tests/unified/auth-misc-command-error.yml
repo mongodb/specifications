@@ -1,6 +1,6 @@
 ---
 description: auth-misc-command-error
-schemaVersion: "1.9"
+schemaVersion: "1.10"
 runOnRequirements:
   - minServerVersion: "4.4"
     auth: true
@@ -36,8 +36,8 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - poolClearedEvent
+                  - serverDescriptionChangedEvent
                   - commandStartedEvent
                 uriOptions:
                   retryWrites: false
