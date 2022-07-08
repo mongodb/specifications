@@ -1,5 +1,5 @@
 ---
-description: auth-error
+description: auth-network-error
 schemaVersion: "1.9"
 runOnRequirements:
   - minServerVersion: "4.4"
@@ -8,13 +8,13 @@ createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName auth-error
+  - collectionName: &collectionName auth-network-error
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
 tests:
-  - description: Reset server and pool after AuthenticationFailure error
+  - description: Reset server and pool after network error during authentication
     operations:
       - name: failPoint
         object: testRunner
@@ -27,8 +27,8 @@ tests:
             data:
               failCommands:
                 - saslContinue
-              appName: authErrorTest
-              errorCode: 18
+              closeConnection: true
+              appName: authNetworkErrorTest
       - name: createEntities
         object: testRunner
         arguments:
@@ -36,12 +36,12 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - poolClearedEvent
                   - commandStartedEvent
                   - serverDescriptionChangedEvent
+                  - poolClearedEvent
                 uriOptions:
                   retryWrites: false
-                  appname: authErrorTest
+                  appname: authNetworkErrorTest
             - database:
                 id: &database database
                 client: *client
@@ -102,7 +102,7 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                insert: auth-error
+                insert: auth-network-error
                 documents:
                   - _id: 5
                   - _id: 6

@@ -1,5 +1,5 @@
 {
-  "description": "find-shutdown-error",
+  "description": "insert-shutdown-error",
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
@@ -15,14 +15,14 @@
   ],
   "initialData": [
     {
-      "collectionName": "find-shutdown-error",
+      "collectionName": "insert-shutdown-error",
       "databaseName": "sdam-tests",
       "documents": []
     }
   ],
   "tests": [
     {
-      "description": "Concurrent shutdown error on find",
+      "description": "Concurrent shutdown error on insert",
       "operations": [
         {
           "name": "createEntities",
@@ -38,9 +38,8 @@
                   ],
                   "uriOptions": {
                     "retryWrites": false,
-                    "retryReads": false,
                     "heartbeatFrequencyMS": 500,
-                    "appname": "shutdownErrorFindTest"
+                    "appname": "shutdownErrorInsertTest"
                   }
                 }
               },
@@ -55,7 +54,7 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "find-shutdown-error"
+                  "collectionName": "insert-shutdown-error"
                 }
               }
             ]
@@ -81,9 +80,9 @@
               },
               "data": {
                 "failCommands": [
-                  "find"
+                  "insert"
                 ],
-                "appName": "shutdownErrorFindTest",
+                "appName": "shutdownErrorInsertTest",
                 "errorCode": 91,
                 "blockConnection": true,
                 "blockTimeMS": 500
@@ -124,11 +123,11 @@
           "arguments": {
             "thread": "thread0",
             "operation": {
-              "name": "find",
+              "name": "insertOne",
               "object": "collection",
               "arguments": {
-                "filter": {
-                  "_id": 1
+                "document": {
+                  "_id": 2
                 }
               },
               "expectError": {
@@ -143,11 +142,11 @@
           "arguments": {
             "thread": "thread1",
             "operation": {
-              "name": "find",
+              "name": "insertOne",
               "object": "collection",
               "arguments": {
-                "filter": {
-                  "_id": 1
+                "document": {
+                  "_id": 3
                 }
               },
               "expectError": {
@@ -234,7 +233,7 @@
       ],
       "outcome": [
         {
-          "collectionName": "find-shutdown-error",
+          "collectionName": "insert-shutdown-error",
           "databaseName": "sdam-tests",
           "documents": [
             {

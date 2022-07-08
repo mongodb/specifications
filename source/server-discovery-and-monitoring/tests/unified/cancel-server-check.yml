@@ -1,17 +1,22 @@
 ---
-description: find-shutdown-error
+description: cancel-server-check
 schemaVersion: "1.9"
 runOnRequirements:
-  - minServerVersion: "4.4"
+  - minServerVersion: "4.0"
+    topologies:
+      - replicaset
+  - minServerVersion: "4.2"
+    topologies:
+      - sharded
 createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName find-shutdown-error
+  - collectionName: &collectionName cancel-server-check
     databaseName: &databaseName sdam-tests
     documents: []
 tests:
-  - description: Concurrent shutdown error on find
+  - description: Cancel server check
     operations:
       - name: createEntities
         object: testRunner
@@ -20,13 +25,13 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - poolClearedEvent
+                  - serverDescriptionChangedEvent
                 uriOptions:
-                  retryWrites: false
-                  retryReads: false
-                  heartbeatFrequencyMS: 500
-                  appname: shutdownErrorFindTest
+                  retryWrites: true
+                  heartbeatFrequencyMS: 10000
+                  serverSelectionTimeoutMS: 5000
+                  appname: cancelServerCheckTest
             - database:
                 id: &database database
                 client: *client
@@ -46,59 +51,19 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              times: 2
+              times: 1
             data:
               failCommands:
-                - find
-              appName: shutdownErrorFindTest
-              errorCode: 91
-              blockConnection: true
-              blockTimeMS: 500
+                - insert
+              closeConnection: true
           client: *setupClient
-      - name: createEntities
-        object: testRunner
+      - name: insertOne
+        object: *collection
         arguments:
-          entities:
-            - thread:
-                id: &thread0 thread0
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
-            - thread:
-                id: &thread1 thread1
-      - name: runOnThread
-        object: testRunner
-        arguments:
-          thread: *thread0
-          operation:
-            name: find
-            object: *collection
-            arguments:
-              filter:
-                _id: 1
-            expectError:
-              isError: true
-      - name: runOnThread
-        object: testRunner
-        arguments:
-          thread: *thread1
-          operation:
-            name: find
-            object: *collection
-            arguments:
-              filter:
-                _id: 1
-            expectError:
-              isError: true
-      - name: waitForThread
-        object: testRunner
-        arguments:
-          thread: *thread0
-      - name: waitForThread
-        object: testRunner
-        arguments:
-          thread: *thread1
+          document:
+            _id: 2
+        expectResult:
+          insertedId: 2
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -119,7 +84,9 @@ tests:
         object: *collection
         arguments:
           document:
-            _id: 4
+            _id: 3
+        expectResult:
+          insertedId: 3
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -141,4 +108,5 @@ tests:
         databaseName: *databaseName
         documents:
           - _id: 1
-          - _id: 4
+          - _id: 2
+          - _id: 3

@@ -1,12 +1,9 @@
 {
-  "description": "rediscover-quickly-after-step-down",
+  "description": "find-network-error",
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.4",
-      "topologies": [
-        "replicaset"
-      ]
+      "minServerVersion": "4.4"
     }
   ],
   "createEntities": [
@@ -14,18 +11,11 @@
       "client": {
         "id": "setupClient"
       }
-    },
-    {
-      "database": {
-        "id": "adminDatabase",
-        "client": "setupClient",
-        "databaseName": "admin"
-      }
     }
   ],
   "initialData": [
     {
-      "collectionName": "test-replSetStepDown",
+      "collectionName": "find-network-error",
       "databaseName": "sdam-tests",
       "documents": [
         {
@@ -39,8 +29,28 @@
   ],
   "tests": [
     {
-      "description": "Rediscover quickly after replSetStepDown",
+      "description": "Reset server and pool after network error on find",
       "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "setupClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "find"
+                ],
+                "closeConnection": true,
+                "appName": "findNetworkErrorTest"
+              }
+            }
+          }
+        },
         {
           "name": "createEntities",
           "object": "testRunner",
@@ -51,13 +61,13 @@
                   "id": "client",
                   "observeEvents": [
                     "commandStartedEvent",
+                    "serverDescriptionChangedEvent",
                     "poolClearedEvent"
                   ],
                   "uriOptions": {
-                    "appname": "replSetStepDownTest",
-                    "heartbeatFrequencyMS": 60000,
-                    "serverSelectionTimeoutMS": 5000,
-                    "w": "majority"
+                    "retryWrites": false,
+                    "retryReads": false,
+                    "appname": "findNetworkErrorTest"
                   }
                 }
               },
@@ -72,66 +82,48 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "test-replSetStepDown"
+                  "collectionName": "find-network-error"
                 }
               }
             ]
           }
         },
         {
-          "name": "insertMany",
+          "name": "find",
           "object": "collection",
           "arguments": {
-            "documents": [
-              {
-                "_id": 3
-              },
-              {
-                "_id": 4
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Unknown"
+                }
               }
-            ]
+            },
+            "count": 1
           }
         },
         {
-          "name": "recordTopologyDescription",
+          "name": "waitForEvent",
           "object": "testRunner",
           "arguments": {
             "client": "client",
-            "id": "topologyDescription"
-          }
-        },
-        {
-          "name": "runCommand",
-          "object": "adminDatabase",
-          "arguments": {
-            "command": {
-              "replSetFreeze": 0
+            "event": {
+              "poolClearedEvent": {}
             },
-            "readPreference": {
-              "mode": "Secondary"
-            },
-            "commandName": "replSetFreeze"
-          }
-        },
-        {
-          "name": "runCommand",
-          "object": "adminDatabase",
-          "arguments": {
-            "command": {
-              "replSetStepDown": 30,
-              "secondaryCatchUpPeriodSecs": 30,
-              "force": false
-            },
-            "commandName": "replSetStepDown"
-          }
-        },
-        {
-          "name": "waitForPrimaryChange",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "priorTopologyDescription": "topologyDescription",
-            "timeoutMS": 15000
+            "count": 1
           }
         },
         {
@@ -154,9 +146,24 @@
           "arguments": {
             "client": "client",
             "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Unknown"
+                }
+              }
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
               "poolClearedEvent": {}
             },
-            "count": 0
+            "count": 1
           }
         }
       ],
@@ -168,24 +175,16 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "test-replSetStepDown",
-                  "documents": [
-                    {
-                      "_id": 3
-                    },
-                    {
-                      "_id": 4
-                    }
-                  ]
+                  "find": "find-network-error"
                 },
-                "commandName": "insert",
+                "commandName": "find",
                 "databaseName": "sdam-tests"
               }
             },
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "test-replSetStepDown",
+                  "insert": "find-network-error",
                   "documents": [
                     {
                       "_id": 5
@@ -204,7 +203,7 @@
       ],
       "outcome": [
         {
-          "collectionName": "test-replSetStepDown",
+          "collectionName": "find-network-error",
           "databaseName": "sdam-tests",
           "documents": [
             {
@@ -212,12 +211,6 @@
             },
             {
               "_id": 2
-            },
-            {
-              "_id": 3
-            },
-            {
-              "_id": 4
             },
             {
               "_id": 5

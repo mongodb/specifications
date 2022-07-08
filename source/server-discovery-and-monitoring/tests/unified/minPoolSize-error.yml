@@ -1,20 +1,19 @@
 ---
-description: auth-error
+description: minPoolSize-error
 schemaVersion: "1.9"
 runOnRequirements:
-  - minServerVersion: "4.4"
-    auth: true
+  - minServerVersion: "4.9"
+    topologies:
+      - single
 createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName auth-error
+  - collectionName: &collectionName sdam-minPoolSize-error
     databaseName: &databaseName sdam-tests
-    documents:
-      - _id: 1
-      - _id: 2
+    documents: []
 tests:
-  - description: Reset server and pool after AuthenticationFailure error
+  - description: Network error on minPoolSize background creation
     operations:
       - name: failPoint
         object: testRunner
@@ -23,12 +22,13 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              times: 1
+              skip: 3
             data:
               failCommands:
-                - saslContinue
-              appName: authErrorTest
-              errorCode: 18
+                - hello
+                - isMaster
+              appName: SDAMminPoolSizeError
+              closeConnection: true
       - name: createEntities
         object: testRunner
         arguments:
@@ -36,12 +36,14 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - poolClearedEvent
-                  - commandStartedEvent
                   - serverDescriptionChangedEvent
+                  - poolReadyEvent
+                  - poolClearedEvent
                 uriOptions:
-                  retryWrites: false
-                  appname: authErrorTest
+                  heartbeatFrequencyMS: 10000
+                  appname: SDAMminPoolSizeError
+                  minPoolSize: 10
+                  serverSelectionTimeoutMS: 1000
             - database:
                 id: &database database
                 client: *client
@@ -50,69 +52,54 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
-      - name: insertMany
-        object: *collection
+      - name: waitForEvent
+        object: testRunner
         arguments:
-          documents:
-            - _id: 3
-            - _id: 4
+          client: *client
+          event:
+            poolReadyEvent: {}
+          count: 1
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolClearedEvent: {}
+          count: 1
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            serverDescriptionChangedEvent:
+              newDescription:
+                type: Unknown
+          count: 1
+      - name: runCommand
+        object: database
+        arguments:
+          command:
+            ping: {}
+          commandName: ping
         expectError:
           isError: true
-      - name: waitForEvent
+      - name: failPoint
         object: testRunner
         arguments:
-          client: *client
-          event:
-            serverDescriptionChangedEvent:
-              newDescription:
-                type: Unknown
-          count: 1
-      - name: waitForEvent
-        object: testRunner
+          failPoint:
+            configureFailPoint: failCommand
+            mode: "off"
+          client: *setupClient
+      - name: runCommand
+        object: database
         arguments:
-          client: *client
-          event:
-            poolClearedEvent: {}
-          count: 1
-      - name: insertMany
-        object: *collection
-        arguments:
-          documents:
-            - _id: 5
-            - _id: 6
+          command:
+            ping: 1
+          commandName: ping
       - name: assertEventCount
         object: testRunner
         arguments:
           client: *client
           event:
-            serverDescriptionChangedEvent:
-              newDescription:
-                type: Unknown
-          count: 1
-      - name: assertEventCount
-        object: testRunner
-        arguments:
-          client: *client
-          event:
-            poolClearedEvent: {}
-          count: 1
-    expectEvents:
-      - client: *client
-        eventType: command
-        events:
-          - commandStartedEvent:
-              command:
-                insert: auth-error
-                documents:
-                  - _id: 5
-                  - _id: 6
-              commandName: insert
-              databaseName: *databaseName
-    outcome:
-      - collectionName: *collectionName
-        databaseName: *databaseName
-        documents:
-          - _id: 1
-          - _id: 2
-          - _id: 5
-          - _id: 6
+            poolReadyEvent: {}
+          count: 2

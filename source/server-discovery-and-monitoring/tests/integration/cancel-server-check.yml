@@ -48,7 +48,7 @@ tests:
             mode: { times: 1 }
             data:
                 failCommands: ["insert"]
-                closeConnection: True
+                closeConnection: true
       - name: insertOne
         object: collection
         arguments:

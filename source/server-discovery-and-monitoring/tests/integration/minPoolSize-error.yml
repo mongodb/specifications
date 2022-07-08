@@ -2,6 +2,7 @@
 runOn:
     # failCommand appName requirements
     - minServerVersion: "4.9"
+      topology: ["single"]
 
 database_name: &database_name "sdam-tests"
 collection_name: &collection_name "sdam-minPoolSize-error"
@@ -24,7 +25,6 @@ tests:
       appname: SDAMminPoolSizeError
       minPoolSize: 10
       serverSelectionTimeoutMS: 1000
-      directConnection: true
     operations:
       # Wait for monitor to succeed handshake and mark the pool as ready.
       - name: waitForEvent

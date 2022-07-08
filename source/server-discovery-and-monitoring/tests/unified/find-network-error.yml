@@ -1,5 +1,5 @@
 ---
-description: find-shutdown-error
+description: find-network-error
 schemaVersion: "1.9"
 runOnRequirements:
   - minServerVersion: "4.4"
@@ -7,12 +7,27 @@ createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName find-shutdown-error
+  - collectionName: &collectionName find-network-error
     databaseName: &databaseName sdam-tests
-    documents: []
+    documents:
+      - _id: 1
+      - _id: 2
 tests:
-  - description: Concurrent shutdown error on find
+  - description: Reset server and pool after network error on find
     operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - find
+              closeConnection: true
+              appName: findNetworkErrorTest
       - name: createEntities
         object: testRunner
         arguments:
@@ -20,13 +35,13 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
+                  - commandStartedEvent
                   - serverDescriptionChangedEvent
                   - poolClearedEvent
                 uriOptions:
                   retryWrites: false
                   retryReads: false
-                  heartbeatFrequencyMS: 500
-                  appname: shutdownErrorFindTest
+                  appname: findNetworkErrorTest
             - database:
                 id: &database database
                 client: *client
@@ -35,70 +50,13 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
-      - name: insertOne
+      - name: find
         object: *collection
         arguments:
-          document:
+          filter:
             _id: 1
-      - name: failPoint
-        object: testRunner
-        arguments:
-          failPoint:
-            configureFailPoint: failCommand
-            mode:
-              times: 2
-            data:
-              failCommands:
-                - find
-              appName: shutdownErrorFindTest
-              errorCode: 91
-              blockConnection: true
-              blockTimeMS: 500
-          client: *setupClient
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
-            - thread:
-                id: &thread0 thread0
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
-            - thread:
-                id: &thread1 thread1
-      - name: runOnThread
-        object: testRunner
-        arguments:
-          thread: *thread0
-          operation:
-            name: find
-            object: *collection
-            arguments:
-              filter:
-                _id: 1
-            expectError:
-              isError: true
-      - name: runOnThread
-        object: testRunner
-        arguments:
-          thread: *thread1
-          operation:
-            name: find
-            object: *collection
-            arguments:
-              filter:
-                _id: 1
-            expectError:
-              isError: true
-      - name: waitForThread
-        object: testRunner
-        arguments:
-          thread: *thread0
-      - name: waitForThread
-        object: testRunner
-        arguments:
-          thread: *thread1
+        expectError:
+          isError: true
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -115,11 +73,12 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
-      - name: insertOne
+      - name: insertMany
         object: *collection
         arguments:
-          document:
-            _id: 4
+          documents:
+            - _id: 5
+            - _id: 6
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -136,9 +95,28 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+    expectEvents:
+      - client: *client
+        eventType: command
+        events:
+          - commandStartedEvent:
+              command:
+                find: find-network-error
+              commandName: find
+              databaseName: *databaseName
+          - commandStartedEvent:
+              command:
+                insert: find-network-error
+                documents:
+                  - _id: 5
+                  - _id: 6
+              commandName: insert
+              databaseName: *databaseName
     outcome:
       - collectionName: *collectionName
         databaseName: *databaseName
         documents:
           - _id: 1
-          - _id: 4
+          - _id: 2
+          - _id: 5
+          - _id: 6

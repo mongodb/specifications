@@ -1,132 +1,121 @@
-description: "rediscovery-quickly-after-step-down"
-
-schemaVersion: "1.0"
-
+---
+description: rediscover-quickly-after-step-down
+schemaVersion: "1.9"
 runOnRequirements:
-    # 4.4 is required for streaming.
-    # A replica set is required for replSetStepDown.
-    - minServerVersion: "4.4"
-      topologies: ["replicaset"]
-
+  - minServerVersion: "4.4"
+    topologies:
+      - replicaset
 createEntities:
   - client:
-      id: &client0 client0
-      observeEvents: [ commandStartedEvent, serverDescriptionChangedEvent, poolClearedEvent ]
-      uriOptions:
-        appName: &appName replSetStepDownTest
-        # Configure a large heartbeatFrequencyMS
-        heartbeatFrequencyMS: 60000
-        # Configure a much smaller server selection timeout so that the test
-        # will error when it cannot discover the new primary soon.
-        serverSelectionTimeoutMS: 5000
-        w: majority
+      id: &setupClient setupClient
   - database:
-      id: &database0 database0
-      client: *client0
-      databaseName: &database0Name sdam-tests
-  - collection:
-      id: &collection0 collection0
-      database: *database0
-      collectionName: &collection0Name test-replSetStepDown
-  - client:
-      id: &adminClient client1
-  - database:
-      id: &adminDatabase database1
-      client: *adminClient
+      id: &adminDatabase adminDatabase
+      client: *setupClient
       databaseName: admin
-
-initialData:
-  - collectionName: *collection0Name
-    databaseName: *database0Name
-    documents: &collection0Data
-      - { _id: 1 }
-      - { _id: 2 }
-
+initialData: &initialData
+  - collectionName: &collectionName test-replSetStepDown
+    databaseName: &databaseName sdam-tests
+    documents:
+      - _id: 1
+      - _id: 2
 tests:
   - description: Rediscover quickly after replSetStepDown
     operations:
-      # Discover the primary.
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                observeEvents:
+                  - commandStartedEvent
+                  - poolClearedEvent
+                uriOptions:
+                  appname: replSetStepDownTest
+                  heartbeatFrequencyMS: 60000
+                  serverSelectionTimeoutMS: 5000
+                  w: majority
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
       - name: insertMany
-        object: *collection0
+        object: *collection
         arguments:
           documents:
-            - { _id: 3 }
-            - { _id: 4 }
+            - _id: 3
+            - _id: 4
       - name: recordTopologyDescription
         object: testRunner
         arguments:
-          client: *client0
-          id: &postInsertTopology topology0
-      # Unfreeze a secondary with replSetFreeze:0 to ensure a speedy election.
+          client: *client
+          id: &topologyDescription topologyDescription
       - name: runCommand
         object: *adminDatabase
         arguments:
-          commandName: replSetFreeze
           command:
             replSetFreeze: 0
           readPreference:
             mode: Secondary
-      # Run replSetStepDown on the meta client.
+          commandName: replSetFreeze
       - name: runCommand
         object: *adminDatabase
         arguments:
-          commandName: replSetStepDown
           command:
             replSetStepDown: 30
             secondaryCatchUpPeriodSecs: 30
             force: false
+          commandName: replSetStepDown
       - name: waitForPrimaryChange
         object: testRunner
         arguments:
-          client: *client0
-          priorTopologyDescription: *postInsertTopology
-          # We use a relatively large timeout here to workaround slow
-          # elections on Windows, possibly caused by SERVER-48154.
+          client: *client
+          priorTopologyDescription: *topologyDescription
           timeoutMS: 15000
-      # Rediscover the new primary.
       - name: insertMany
-        object: *collection0
+        object: *collection
         arguments:
           documents:
-            - { _id: 5 }
-            - { _id: 6 }
-      # Assert that no pools were cleared.
+            - _id: 5
+            - _id: 6
       - name: assertEventCount
         object: testRunner
         arguments:
-          client: *client0
+          client: *client
           event:
-            poolClearedEvent: { }
+            poolClearedEvent: {}
           count: 0
-
     expectEvents:
-      - client: *client0
+      - client: *client
         eventType: command
         events:
           - commandStartedEvent:
               command:
-                insert: *collection0Name
+                insert: test-replSetStepDown
                 documents:
-                  - { _id: 3 }
-                  - { _id: 4 }
+                  - _id: 3
+                  - _id: 4
               commandName: insert
-              databaseName: *database0Name
+              databaseName: *databaseName
           - commandStartedEvent:
               command:
-                insert: *collection0Name
+                insert: test-replSetStepDown
                 documents:
-                  - { _id: 5 }
-                  - { _id: 6 }
+                  - _id: 5
+                  - _id: 6
               commandName: insert
-              databaseName: *database0Name
-
+              databaseName: *databaseName
     outcome:
-      - collectionName: *collection0Name
-        databaseName: *database0Name
+      - collectionName: *collectionName
+        databaseName: *databaseName
         documents:
-          - { _id: 1 }
-          - { _id: 2 }
-          - { _id: 3 }
-          - { _id: 4 }
-          - { _id: 5 }
-          - { _id: 6 }
+          - _id: 1
+          - _id: 2
+          - _id: 3
+          - _id: 4
+          - _id: 5
+          - _id: 6

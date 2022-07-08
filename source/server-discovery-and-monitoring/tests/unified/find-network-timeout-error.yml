@@ -1,20 +1,19 @@
 ---
-description: auth-error
+description: find-network-timeout-error
 schemaVersion: "1.9"
 runOnRequirements:
   - minServerVersion: "4.4"
-    auth: true
 createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName auth-error
+  - collectionName: &collectionName find-network-timeout-error
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
 tests:
-  - description: Reset server and pool after AuthenticationFailure error
+  - description: Ignore network timeout error on find
     operations:
       - name: failPoint
         object: testRunner
@@ -26,9 +25,10 @@ tests:
               times: 1
             data:
               failCommands:
-                - saslContinue
-              appName: authErrorTest
-              errorCode: 18
+                - find
+              blockConnection: true
+              blockTimeMS: 500
+              appName: findNetworkTimeoutErrorTest
       - name: createEntities
         object: testRunner
         arguments:
@@ -36,12 +36,14 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - poolClearedEvent
                   - commandStartedEvent
+                  - poolClearedEvent
                   - serverDescriptionChangedEvent
                 uriOptions:
                   retryWrites: false
-                  appname: authErrorTest
+                  retryReads: false
+                  appname: findNetworkTimeoutErrorTest
+                  socketTimeoutMS: 250
             - database:
                 id: &database database
                 client: *client
@@ -50,36 +52,18 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
-      - name: insertMany
+      - name: find
         object: *collection
         arguments:
-          documents:
-            - _id: 3
-            - _id: 4
+          filter:
+            _id: 1
         expectError:
           isError: true
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: *client
-          event:
-            serverDescriptionChangedEvent:
-              newDescription:
-                type: Unknown
-          count: 1
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: *client
-          event:
-            poolClearedEvent: {}
-          count: 1
-      - name: insertMany
+      - name: insertOne
         object: *collection
         arguments:
-          documents:
-            - _id: 5
-            - _id: 6
+          document:
+            _id: 3
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -88,24 +72,28 @@ tests:
             serverDescriptionChangedEvent:
               newDescription:
                 type: Unknown
-          count: 1
+          count: 0
       - name: assertEventCount
         object: testRunner
         arguments:
           client: *client
           event:
             poolClearedEvent: {}
-          count: 1
+          count: 0
     expectEvents:
       - client: *client
         eventType: command
         events:
           - commandStartedEvent:
               command:
-                insert: auth-error
+                find: find-network-timeout-error
+              commandName: find
+              databaseName: *databaseName
+          - commandStartedEvent:
+              command:
+                insert: find-network-timeout-error
                 documents:
-                  - _id: 5
-                  - _id: 6
+                  - _id: 3
               commandName: insert
               databaseName: *databaseName
     outcome:
@@ -114,5 +102,4 @@ tests:
         documents:
           - _id: 1
           - _id: 2
-          - _id: 5
-          - _id: 6
+          - _id: 3

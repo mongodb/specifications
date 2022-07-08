@@ -1,12 +1,10 @@
 {
-  "description": "rediscover-quickly-after-step-down",
+  "description": "auth-network-timeout-error",
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4",
-      "topologies": [
-        "replicaset"
-      ]
+      "auth": true
     }
   ],
   "createEntities": [
@@ -14,18 +12,11 @@
       "client": {
         "id": "setupClient"
       }
-    },
-    {
-      "database": {
-        "id": "adminDatabase",
-        "client": "setupClient",
-        "databaseName": "admin"
-      }
     }
   ],
   "initialData": [
     {
-      "collectionName": "test-replSetStepDown",
+      "collectionName": "auth-network-timeout-error",
       "databaseName": "sdam-tests",
       "documents": [
         {
@@ -39,8 +30,29 @@
   ],
   "tests": [
     {
-      "description": "Rediscover quickly after replSetStepDown",
+      "description": "Reset server and pool after network timeout error during authentication",
       "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "setupClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "saslContinue"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 500,
+                "appName": "authNetworkTimeoutErrorTest"
+              }
+            }
+          }
+        },
         {
           "name": "createEntities",
           "object": "testRunner",
@@ -50,14 +62,15 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "commandStartedEvent",
-                    "poolClearedEvent"
+                    "serverDescriptionChangedEvent",
+                    "poolClearedEvent",
+                    "commandStartedEvent"
                   ],
                   "uriOptions": {
-                    "appname": "replSetStepDownTest",
-                    "heartbeatFrequencyMS": 60000,
-                    "serverSelectionTimeoutMS": 5000,
-                    "w": "majority"
+                    "retryWrites": false,
+                    "appname": "authNetworkTimeoutErrorTest",
+                    "connectTimeoutMS": 250,
+                    "socketTimeoutMS": 250
                   }
                 }
               },
@@ -72,7 +85,7 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "test-replSetStepDown"
+                  "collectionName": "auth-network-timeout-error"
                 }
               }
             ]
@@ -90,48 +103,35 @@
                 "_id": 4
               }
             ]
+          },
+          "expectError": {
+            "isError": true
           }
         },
         {
-          "name": "recordTopologyDescription",
+          "name": "waitForEvent",
           "object": "testRunner",
           "arguments": {
             "client": "client",
-            "id": "topologyDescription"
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Unknown"
+                }
+              }
+            },
+            "count": 1
           }
         },
         {
-          "name": "runCommand",
-          "object": "adminDatabase",
-          "arguments": {
-            "command": {
-              "replSetFreeze": 0
-            },
-            "readPreference": {
-              "mode": "Secondary"
-            },
-            "commandName": "replSetFreeze"
-          }
-        },
-        {
-          "name": "runCommand",
-          "object": "adminDatabase",
-          "arguments": {
-            "command": {
-              "replSetStepDown": 30,
-              "secondaryCatchUpPeriodSecs": 30,
-              "force": false
-            },
-            "commandName": "replSetStepDown"
-          }
-        },
-        {
-          "name": "waitForPrimaryChange",
+          "name": "waitForEvent",
           "object": "testRunner",
           "arguments": {
             "client": "client",
-            "priorTopologyDescription": "topologyDescription",
-            "timeoutMS": 15000
+            "event": {
+              "poolClearedEvent": {}
+            },
+            "count": 1
           }
         },
         {
@@ -154,9 +154,24 @@
           "arguments": {
             "client": "client",
             "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Unknown"
+                }
+              }
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
               "poolClearedEvent": {}
             },
-            "count": 0
+            "count": 1
           }
         }
       ],
@@ -168,24 +183,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "test-replSetStepDown",
-                  "documents": [
-                    {
-                      "_id": 3
-                    },
-                    {
-                      "_id": 4
-                    }
-                  ]
-                },
-                "commandName": "insert",
-                "databaseName": "sdam-tests"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "insert": "test-replSetStepDown",
+                  "insert": "auth-network-timeout-error",
                   "documents": [
                     {
                       "_id": 5
@@ -204,7 +202,7 @@
       ],
       "outcome": [
         {
-          "collectionName": "test-replSetStepDown",
+          "collectionName": "auth-network-timeout-error",
           "databaseName": "sdam-tests",
           "documents": [
             {
@@ -212,12 +210,6 @@
             },
             {
               "_id": 2
-            },
-            {
-              "_id": 3
-            },
-            {
-              "_id": 4
             },
             {
               "_id": 5

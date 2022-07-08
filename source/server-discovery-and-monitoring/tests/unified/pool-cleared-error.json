@@ -1,9 +1,13 @@
 {
-  "description": "find-shutdown-error",
+  "description": "pool-cleared-error",
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.4"
+      "minServerVersion": "4.9",
+      "topologies": [
+        "replicaset",
+        "sharded"
+      ]
     }
   ],
   "createEntities": [
@@ -15,14 +19,14 @@
   ],
   "initialData": [
     {
-      "collectionName": "find-shutdown-error",
+      "collectionName": "pool-cleared-error",
       "databaseName": "sdam-tests",
       "documents": []
     }
   ],
   "tests": [
     {
-      "description": "Concurrent shutdown error on find",
+      "description": "PoolClearedError does not mark server unknown",
       "operations": [
         {
           "name": "createEntities",
@@ -33,14 +37,13 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
-                    "poolClearedEvent"
+                    "poolClearedEvent",
+                    "serverDescriptionChangedEvent"
                   ],
                   "uriOptions": {
-                    "retryWrites": false,
-                    "retryReads": false,
-                    "heartbeatFrequencyMS": 500,
-                    "appname": "shutdownErrorFindTest"
+                    "retryWrites": true,
+                    "maxPoolSize": 1,
+                    "appname": "poolClearedErrorTest"
                   }
                 }
               },
@@ -55,7 +58,7 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "find-shutdown-error"
+                  "collectionName": "pool-cleared-error"
                 }
               }
             ]
@@ -77,16 +80,16 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 1
               },
               "data": {
                 "failCommands": [
-                  "find"
+                  "insert"
                 ],
-                "appName": "shutdownErrorFindTest",
-                "errorCode": 91,
                 "blockConnection": true,
-                "blockTimeMS": 500
+                "blockTimeMS": 100,
+                "closeConnection": true,
+                "appName": "poolClearedErrorTest"
               }
             },
             "client": "setupClient"
@@ -119,20 +122,69 @@
           }
         },
         {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "thread": {
+                  "id": "thread2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "thread": {
+                  "id": "thread3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "thread": {
+                  "id": "thread4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "thread": {
+                  "id": "thread5"
+                }
+              }
+            ]
+          }
+        },
+        {
           "name": "runOnThread",
           "object": "testRunner",
           "arguments": {
             "thread": "thread0",
             "operation": {
-              "name": "find",
+              "name": "insertOne",
               "object": "collection",
               "arguments": {
-                "filter": {
-                  "_id": 1
+                "document": {
+                  "_id": 2
                 }
-              },
-              "expectError": {
-                "isError": true
               }
             }
           }
@@ -143,15 +195,76 @@
           "arguments": {
             "thread": "thread1",
             "operation": {
-              "name": "find",
+              "name": "insertOne",
               "object": "collection",
               "arguments": {
-                "filter": {
-                  "_id": 1
+                "document": {
+                  "_id": 3
                 }
-              },
-              "expectError": {
-                "isError": true
+              }
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread2",
+            "operation": {
+              "name": "insertOne",
+              "object": "collection",
+              "arguments": {
+                "document": {
+                  "_id": 4
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread3",
+            "operation": {
+              "name": "insertOne",
+              "object": "collection",
+              "arguments": {
+                "document": {
+                  "_id": 5
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread4",
+            "operation": {
+              "name": "insertOne",
+              "object": "collection",
+              "arguments": {
+                "document": {
+                  "_id": 6
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread5",
+            "operation": {
+              "name": "insertOne",
+              "object": "collection",
+              "arguments": {
+                "document": {
+                  "_id": 7
+                }
               }
             }
           }
@@ -168,6 +281,34 @@
           "object": "testRunner",
           "arguments": {
             "thread": "thread1"
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread2"
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread3"
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread4"
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread5"
           }
         },
         {
@@ -201,7 +342,7 @@
           "object": "collection",
           "arguments": {
             "document": {
-              "_id": 4
+              "_id": 8
             }
           }
         },
@@ -234,14 +375,32 @@
       ],
       "outcome": [
         {
-          "collectionName": "find-shutdown-error",
+          "collectionName": "pool-cleared-error",
           "databaseName": "sdam-tests",
           "documents": [
             {
               "_id": 1
             },
             {
+              "_id": 2
+            },
+            {
+              "_id": 3
+            },
+            {
               "_id": 4
+            },
+            {
+              "_id": 5
+            },
+            {
+              "_id": 6
+            },
+            {
+              "_id": 7
+            },
+            {
+              "_id": 8
             }
           ]
         }

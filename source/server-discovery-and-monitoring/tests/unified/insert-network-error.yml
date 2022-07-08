@@ -1,20 +1,19 @@
 ---
-description: auth-error
+description: insert-network-error
 schemaVersion: "1.9"
 runOnRequirements:
   - minServerVersion: "4.4"
-    auth: true
 createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName auth-error
+  - collectionName: &collectionName insert-network-error
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
 tests:
-  - description: Reset server and pool after AuthenticationFailure error
+  - description: Reset server and pool after network error on insert
     operations:
       - name: failPoint
         object: testRunner
@@ -26,9 +25,9 @@ tests:
               times: 1
             data:
               failCommands:
-                - saslContinue
-              appName: authErrorTest
-              errorCode: 18
+                - insert
+              closeConnection: true
+              appName: insertNetworkErrorTest
       - name: createEntities
         object: testRunner
         arguments:
@@ -36,12 +35,12 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - poolClearedEvent
                   - commandStartedEvent
+                  - poolClearedEvent
                   - serverDescriptionChangedEvent
                 uriOptions:
                   retryWrites: false
-                  appname: authErrorTest
+                  appname: insertNetworkErrorTest
             - database:
                 id: &database database
                 client: *client
@@ -102,7 +101,15 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                insert: auth-error
+                insert: insert-network-error
+                documents:
+                  - _id: 3
+                  - _id: 4
+              commandName: insert
+              databaseName: *databaseName
+          - commandStartedEvent:
+              command:
+                insert: insert-network-error
                 documents:
                   - _id: 5
                   - _id: 6

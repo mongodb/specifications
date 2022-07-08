@@ -1,9 +1,18 @@
 {
-  "description": "find-shutdown-error",
+  "description": "cancel-server-check",
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.4"
+      "minServerVersion": "4.0",
+      "topologies": [
+        "replicaset"
+      ]
+    },
+    {
+      "minServerVersion": "4.2",
+      "topologies": [
+        "sharded"
+      ]
     }
   ],
   "createEntities": [
@@ -15,14 +24,14 @@
   ],
   "initialData": [
     {
-      "collectionName": "find-shutdown-error",
+      "collectionName": "cancel-server-check",
       "databaseName": "sdam-tests",
       "documents": []
     }
   ],
   "tests": [
     {
-      "description": "Concurrent shutdown error on find",
+      "description": "Cancel server check",
       "operations": [
         {
           "name": "createEntities",
@@ -33,14 +42,14 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
-                    "poolClearedEvent"
+                    "poolClearedEvent",
+                    "serverDescriptionChangedEvent"
                   ],
                   "uriOptions": {
-                    "retryWrites": false,
-                    "retryReads": false,
-                    "heartbeatFrequencyMS": 500,
-                    "appname": "shutdownErrorFindTest"
+                    "retryWrites": true,
+                    "heartbeatFrequencyMS": 10000,
+                    "serverSelectionTimeoutMS": 5000,
+                    "appname": "cancelServerCheckTest"
                   }
                 }
               },
@@ -55,7 +64,7 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "find-shutdown-error"
+                  "collectionName": "cancel-server-check"
                 }
               }
             ]
@@ -77,97 +86,28 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 1
               },
               "data": {
                 "failCommands": [
-                  "find"
+                  "insert"
                 ],
-                "appName": "shutdownErrorFindTest",
-                "errorCode": 91,
-                "blockConnection": true,
-                "blockTimeMS": 500
+                "closeConnection": true
               }
             },
             "client": "setupClient"
           }
         },
         {
-          "name": "createEntities",
-          "object": "testRunner",
+          "name": "insertOne",
+          "object": "collection",
           "arguments": {
-            "entities": [
-              {
-                "thread": {
-                  "id": "thread0"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
-              {
-                "thread": {
-                  "id": "thread1"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "runOnThread",
-          "object": "testRunner",
-          "arguments": {
-            "thread": "thread0",
-            "operation": {
-              "name": "find",
-              "object": "collection",
-              "arguments": {
-                "filter": {
-                  "_id": 1
-                }
-              },
-              "expectError": {
-                "isError": true
-              }
+            "document": {
+              "_id": 2
             }
-          }
-        },
-        {
-          "name": "runOnThread",
-          "object": "testRunner",
-          "arguments": {
-            "thread": "thread1",
-            "operation": {
-              "name": "find",
-              "object": "collection",
-              "arguments": {
-                "filter": {
-                  "_id": 1
-                }
-              },
-              "expectError": {
-                "isError": true
-              }
-            }
-          }
-        },
-        {
-          "name": "waitForThread",
-          "object": "testRunner",
-          "arguments": {
-            "thread": "thread0"
-          }
-        },
-        {
-          "name": "waitForThread",
-          "object": "testRunner",
-          "arguments": {
-            "thread": "thread1"
+          },
+          "expectResult": {
+            "insertedId": 2
           }
         },
         {
@@ -201,8 +141,11 @@
           "object": "collection",
           "arguments": {
             "document": {
-              "_id": 4
+              "_id": 3
             }
+          },
+          "expectResult": {
+            "insertedId": 3
           }
         },
         {
@@ -234,14 +177,17 @@
       ],
       "outcome": [
         {
-          "collectionName": "find-shutdown-error",
+          "collectionName": "cancel-server-check",
           "databaseName": "sdam-tests",
           "documents": [
             {
               "_id": 1
             },
             {
-              "_id": 4
+              "_id": 2
+            },
+            {
+              "_id": 3
             }
           ]
         }

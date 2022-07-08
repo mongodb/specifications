@@ -1,5 +1,5 @@
 ---
-description: auth-error
+description: auth-shutdown-error
 schemaVersion: "1.9"
 runOnRequirements:
   - minServerVersion: "4.4"
@@ -8,13 +8,13 @@ createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName auth-error
+  - collectionName: &collectionName auth-shutdown-error
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
 tests:
-  - description: Reset server and pool after AuthenticationFailure error
+  - description: Reset server and pool after shutdown error during authentication
     operations:
       - name: failPoint
         object: testRunner
@@ -27,8 +27,8 @@ tests:
             data:
               failCommands:
                 - saslContinue
-              appName: authErrorTest
-              errorCode: 18
+              appName: authShutdownErrorTest
+              errorCode: 91
       - name: createEntities
         object: testRunner
         arguments:
@@ -37,11 +37,11 @@ tests:
                 id: &client client
                 observeEvents:
                   - poolClearedEvent
-                  - commandStartedEvent
                   - serverDescriptionChangedEvent
+                  - commandStartedEvent
                 uriOptions:
                   retryWrites: false
-                  appname: authErrorTest
+                  appname: authShutdownErrorTest
             - database:
                 id: &database database
                 client: *client
@@ -102,7 +102,7 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                insert: auth-error
+                insert: auth-shutdown-error
                 documents:
                   - _id: 5
                   - _id: 6

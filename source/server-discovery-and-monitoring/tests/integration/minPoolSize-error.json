@@ -1,7 +1,10 @@
 {
   "runOn": [
     {
-      "minServerVersion": "4.9"
+      "minServerVersion": "4.9",
+      "topology": [
+        "single"
+      ]
     }
   ],
   "database_name": "sdam-tests",
@@ -28,8 +31,7 @@
         "heartbeatFrequencyMS": 10000,
         "appname": "SDAMminPoolSizeError",
         "minPoolSize": 10,
-        "serverSelectionTimeoutMS": 1000,
-        "directConnection": true
+        "serverSelectionTimeoutMS": 1000
       },
       "operations": [
         {

@@ -1,5 +1,5 @@
 ---
-description: find-shutdown-error
+description: insert-shutdown-error
 schemaVersion: "1.9"
 runOnRequirements:
   - minServerVersion: "4.4"
@@ -7,11 +7,11 @@ createEntities:
   - client:
       id: &setupClient setupClient
 initialData: &initialData
-  - collectionName: &collectionName find-shutdown-error
+  - collectionName: &collectionName insert-shutdown-error
     databaseName: &databaseName sdam-tests
     documents: []
 tests:
-  - description: Concurrent shutdown error on find
+  - description: Concurrent shutdown error on insert
     operations:
       - name: createEntities
         object: testRunner
@@ -24,9 +24,8 @@ tests:
                   - poolClearedEvent
                 uriOptions:
                   retryWrites: false
-                  retryReads: false
                   heartbeatFrequencyMS: 500
-                  appname: shutdownErrorFindTest
+                  appname: shutdownErrorInsertTest
             - database:
                 id: &database database
                 client: *client
@@ -49,8 +48,8 @@ tests:
               times: 2
             data:
               failCommands:
-                - find
-              appName: shutdownErrorFindTest
+                - insert
+              appName: shutdownErrorInsertTest
               errorCode: 91
               blockConnection: true
               blockTimeMS: 500
@@ -72,11 +71,11 @@ tests:
         arguments:
           thread: *thread0
           operation:
-            name: find
+            name: insertOne
             object: *collection
             arguments:
-              filter:
-                _id: 1
+              document:
+                _id: 2
             expectError:
               isError: true
       - name: runOnThread
@@ -84,11 +83,11 @@ tests:
         arguments:
           thread: *thread1
           operation:
-            name: find
+            name: insertOne
             object: *collection
             arguments:
-              filter:
-                _id: 1
+              document:
+                _id: 3
             expectError:
               isError: true
       - name: waitForThread
