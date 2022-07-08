@@ -1,0 +1,132 @@
+description: "rediscovery-quickly-after-step-down"
+
+schemaVersion: "1.0"
+
+runOnRequirements:
+    # 4.4 is required for streaming.
+    # A replica set is required for replSetStepDown.
+    - minServerVersion: "4.4"
+      topologies: ["replicaset"]
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent, serverDescriptionChangedEvent, poolClearedEvent ]
+      uriOptions:
+        appName: &appName replSetStepDownTest
+        # Configure a large heartbeatFrequencyMS
+        heartbeatFrequencyMS: 60000
+        # Configure a much smaller server selection timeout so that the test
+        # will error when it cannot discover the new primary soon.
+        serverSelectionTimeoutMS: 5000
+        w: majority
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name sdam-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name test-replSetStepDown
+  - client:
+      id: &adminClient client1
+  - database:
+      id: &adminDatabase database1
+      client: *adminClient
+      databaseName: admin
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents: &collection0Data
+      - { _id: 1 }
+      - { _id: 2 }
+
+tests:
+  - description: Rediscover quickly after replSetStepDown
+    operations:
+      # Discover the primary.
+      - name: insertMany
+        object: *collection0
+        arguments:
+          documents:
+            - { _id: 3 }
+            - { _id: 4 }
+      - name: recordTopologyDescription
+        object: testRunner
+        arguments:
+          client: *client0
+          id: &postInsertTopology topology0
+      # Unfreeze a secondary with replSetFreeze:0 to ensure a speedy election.
+      - name: runCommand
+        object: *adminDatabase
+        arguments:
+          commandName: replSetFreeze
+          command:
+            replSetFreeze: 0
+          readPreference:
+            mode: Secondary
+      # Run replSetStepDown on the meta client.
+      - name: runCommand
+        object: *adminDatabase
+        arguments:
+          commandName: replSetStepDown
+          command:
+            replSetStepDown: 30
+            secondaryCatchUpPeriodSecs: 30
+            force: false
+      - name: waitForPrimaryChange
+        object: testRunner
+        arguments:
+          client: *client0
+          priorTopologyDescription: *postInsertTopology
+          # We use a relatively large timeout here to workaround slow
+          # elections on Windows, possibly caused by SERVER-48154.
+          timeoutMS: 15000
+      # Rediscover the new primary.
+      - name: insertMany
+        object: *collection0
+        arguments:
+          documents:
+            - { _id: 5 }
+            - { _id: 6 }
+      # Assert that no pools were cleared.
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client0
+          event:
+            poolClearedEvent: { }
+          count: 0
+
+    expectEvents:
+      - client: *client0
+        eventType: command
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents:
+                  - { _id: 3 }
+                  - { _id: 4 }
+              commandName: insert
+              databaseName: *database0Name
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents:
+                  - { _id: 5 }
+                  - { _id: 6 }
+              commandName: insert
+              databaseName: *database0Name
+
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
+          - { _id: 4 }
+          - { _id: 5 }
+          - { _id: 6 }
