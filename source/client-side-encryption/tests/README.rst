@@ -1965,3 +1965,27 @@ Use ``encryptedClient`` to run an aggregate on ``db.decryption_events`` with an 
 
 Expect no exception.
 Expect a ``CommandSucceededEvent``. Expect the ``CommandSucceededEvent.reply`` to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
+
+
+15. On-demand AWS Credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This test requires valid AWS credentials.
+
+For this test, the environment variables ``AWS_ACCESS_KEY_ID`` and
+``AWS_SECRET_ACCESS_KEY`` must be defined and set to a valid set of AWS
+credentials.
+
+Within the test, create a ClientEncryption object with the following options:
+
+.. code-block:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <setupClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "aws": {} },
+   }
+
+Use the client encryption to create a datakey using the ``"aws"`` KMS provider.
+This should successfully load and use the AWS credentials that were defined in
+the environment.
