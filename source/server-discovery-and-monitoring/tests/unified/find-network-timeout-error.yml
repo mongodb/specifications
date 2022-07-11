@@ -1,17 +1,23 @@
 ---
 description: find-network-timeout-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # failCommand appName requirements
   - minServerVersion: "4.4"
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName find-network-timeout-error
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
+
 tests:
   - description: Ignore network timeout error on find
     operations:
@@ -43,6 +49,7 @@ tests:
                   retryWrites: false
                   retryReads: false
                   appname: findNetworkTimeoutErrorTest
+                  # Set a short socket timeout to ensure the find command times out.
                   socketTimeoutMS: 250
             - database:
                 id: &database database
@@ -59,11 +66,13 @@ tests:
             _id: 1
         expectError:
           isError: true
+      # Perform another operation to ensure the node is still usable.
       - name: insertOne
         object: *collection
         arguments:
           document:
             _id: 3
+      # Assert the server was not marked Unknown and the pool was not cleared.
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -96,6 +105,7 @@ tests:
                   - _id: 3
               commandName: insert
               databaseName: *databaseName
+
     outcome:
       - collectionName: *collectionName
         databaseName: *databaseName
