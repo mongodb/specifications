@@ -3382,7 +3382,7 @@ When drivers support standardized logging, the test format may need to support
 assertions for messages expected to be logged while executing operations. Since
 log messages are strings, this may require an operator to match regex patterns
 within strings. Additionally, the test runner may need to support ignoring extra
-log output, similar to `Allow extra observed events to be ignored`_.
+log output, similar to ``ignoreExtraEvents``.
 
 
 Target failPoint by read preference
