@@ -3375,19 +3375,6 @@ shorter description that may be added to the `Change Log`_.
 Future Work
 ===========
 
-
-Allow extra observed events to be ignored
------------------------------------------
-
-While command monitoring events for specific commands can be ignored (e.g.
-killCursors for change streams), the sequence of observed events must otherwise
-match the sequence of expected events (including length). The present design
-would not support expecting an event for a command while also ignoring extra
-events for the same command (e.g. change stream iteration on a sharded cluster
-where multiple getMore commands may be issued). No spec tests currently require
-this functionality, but that may change in the future.
-
-
 Assert expected log messages
 ----------------------------
 
@@ -3473,6 +3460,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:20222-07-11: Update `Future Work`_ to reflect that support for ignoring extra
+              observed events was added in schema version 1.7.
 
 :2022-06-16: Require server 4.2+ for ``csfle: true``.
 
