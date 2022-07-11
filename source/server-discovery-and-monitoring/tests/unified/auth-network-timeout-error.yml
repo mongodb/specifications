@@ -1,18 +1,24 @@
 ---
 description: auth-network-timeout-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+  # failCommand appName requirements
   - minServerVersion: "4.4"
     auth: true
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName auth-network-timeout-error
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
+
 tests:
   - description: Reset server and pool after network timeout error during authentication
     operations:
@@ -43,6 +49,8 @@ tests:
                 uriOptions:
                   retryWrites: false
                   appname: authNetworkTimeoutErrorTest
+                  # Set a short connect/socket timeout to ensure the fail point causes the
+                  # connection establishment to timeout.
                   connectTimeoutMS: 250
                   socketTimeoutMS: 250
             - database:
@@ -77,12 +85,14 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # Perform another operation to ensure the node is rediscovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 5
             - _id: 6
+      # Assert the server was marked Unknown and pool was cleared exactly once.
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -100,6 +110,8 @@ tests:
             poolClearedEvent: {}
           count: 1
     expectEvents:
+      # Note: The first insert command is never attempted because connection
+      # checkout fails.
       - client: *client
         eventType: command
         events:
@@ -111,6 +123,7 @@ tests:
                   - _id: 6
               commandName: insert
               databaseName: *databaseName
+
     outcome:
       - collectionName: *collectionName
         databaseName: *databaseName
