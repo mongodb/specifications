@@ -1,6 +1,6 @@
 {
   "description": "hello-command-error",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.10",
   "runOnRequirements": [
     {
       "minServerVersion": "4.9"
@@ -165,9 +165,9 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "poolClearedEvent",
+                    "commandStartedEvent",
                     "serverDescriptionChangedEvent",
-                    "commandStartedEvent"
+                    "poolClearedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,
