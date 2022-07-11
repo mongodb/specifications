@@ -1,15 +1,21 @@
 ---
 description: find-shutdown-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+  # failCommand appName requirements
   - minServerVersion: "4.4"
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName find-shutdown-error
     databaseName: &databaseName sdam-tests
     documents: []
+
 tests:
   - description: Concurrent shutdown error on find
     operations:
@@ -35,11 +41,15 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # Perform an operation to ensure the node is discovered.
       - name: insertOne
         object: *collection
         arguments:
           document:
             _id: 1
+      # Configure the next two finds to fail with a non-timeout shutdown
+      # errors. Block the connection for 500ms to ensure both operations check
+      # out connections from the same pool generation.
       - name: failPoint
         object: testRunner
         arguments:
@@ -55,18 +65,16 @@ tests:
               blockConnection: true
               blockTimeMS: 500
           client: *setupClient
+      # Start threads.
       - name: createEntities
         object: testRunner
         arguments:
           entities:
             - thread:
                 id: &thread0 thread0
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
             - thread:
                 id: &thread1 thread1
+      # Perform concurrent find operations. Both fail with shutdown errors.
       - name: runOnThread
         object: testRunner
         arguments:
@@ -91,6 +99,7 @@ tests:
                 _id: 1
             expectError:
               isError: true
+      # Stop threads.
       - name: waitForThread
         object: testRunner
         arguments:
@@ -99,6 +108,8 @@ tests:
         object: testRunner
         arguments:
           thread: *thread1
+      # The first shutdown error should mark the server Unknown and then clear
+      # the pool.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -115,11 +126,13 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # Perform an operation to ensure the node is rediscovered.
       - name: insertOne
         object: *collection
         arguments:
           document:
             _id: 4
+      # Assert the server was marked Unknown and pool was cleared exactly once.
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -136,6 +149,8 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+
+    # Order of operations is non-deterministic so we cannot check events.
     outcome:
       - collectionName: *collectionName
         databaseName: *databaseName
