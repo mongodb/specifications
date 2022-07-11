@@ -1,18 +1,26 @@
 ---
 description: hello-timeout
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # failCommand appName requirements
   - minServerVersion: "4.4"
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName hello-timeout
     databaseName: &databaseName sdam-tests
     documents: []
+
 tests:
   - description: Network timeout on Monitor handshake
     operations:
+      # Configure the initial handshake to fail with a timeout.
+      # Use times: 2 so that the RTT hello is blocked as well.
       - name: failPoint
         object: testRunner
         arguments:
@@ -50,6 +58,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # The network error on the initial handshake should mark the server
+      # Unknown (emitting a ServerDescriptionChangedEvent) and clear the pool.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -59,12 +69,26 @@ tests:
               newDescription:
                 type: Unknown
           count: 1
+      # Perform an operation to ensure the node is discovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 1
             - _id: 2
+      # We cannot assert the server was marked Unknown and pool was cleared an
+      # exact number of times because the RTT hello may or may not have
+      # triggered this failpoint as well.
+      # - name: assertEventCount
+      #   object: testRunner
+      #   arguments:
+      #     event: ServerMarkedUnknownEvent
+      #     count: 1
+      # - name: assertEventCount
+      #   object: testRunner
+      #   arguments:
+      #     event: PoolClearedEvent
+      #     count: 1
     expectEvents:
       - client: *client
         eventType: command
@@ -83,6 +107,7 @@ tests:
         documents:
           - _id: 1
           - _id: 2
+
   - description: Network timeout on Monitor check
     operations:
       - name: createEntities
@@ -108,12 +133,15 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # Perform an operation to ensure the node is discovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 1
             - _id: 2
+      # Configure the next streaming hello check to fail with a timeout
+      # Use times: 2 so that the RTT hello is blocked as well.
       - name: failPoint
         object: testRunner
         arguments:
@@ -127,6 +155,9 @@ tests:
                 - isMaster
               appName: timeoutMonitorCheckTest
               blockConnection: true
+              # blockTimeMS is evaluated after the waiting for heartbeatFrequencyMS server-side, so this value only
+              # needs to be greater than connectTimeoutMS. The driver will wait for (500+750)ms and the server will
+              # respond after (500+1000)ms.
               blockTimeMS: 1000
           client: *setupClient
       - name: waitForEvent
@@ -138,6 +169,8 @@ tests:
               newDescription:
                 type: Unknown
           count: 1
+      # The network error on the next check should mark the server Unknown and
+      # clear the pool.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -145,12 +178,14 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # Perform an operation to ensure the node is rediscovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 3
             - _id: 4
+      # Assert the server was marked Unknown and pool was cleared exactly once.
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -195,6 +230,7 @@ tests:
           - _id: 2
           - _id: 3
           - _id: 4
+
   - description: Driver extends timeout while streaming
     operations:
       - name: createEntities
@@ -220,22 +256,27 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # Perform an operation to ensure the node is discovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 1
             - _id: 2
+      # Wait for multiple monitor checks to complete.
       - name: wait
         object: testRunner
         arguments:
           ms: 2000
+      # Perform an operation to ensure the node is still selectable.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 3
             - _id: 4
+      # Assert that the server was never marked Unknown and the pool was never
+      # cleared.
       - name: assertEventCount
         object: testRunner
         arguments:
