@@ -1,20 +1,28 @@
 ---
 description: minPoolSize-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # failCommand appName requirements
   - minServerVersion: "4.9"
     topologies:
       - single
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName sdam-minPoolSize-error
     databaseName: &databaseName sdam-tests
     documents: []
+
 tests:
   - description: Network error on minPoolSize background creation
     operations:
+      # Configure the initial monitor handshake to succeed but the
+      # first or second background minPoolSize establishments to fail.
       - name: failPoint
         object: testRunner
         arguments:
@@ -36,9 +44,9 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - poolClearedEvent
                   - poolReadyEvent
+                  - serverDescriptionChangedEvent
                 uriOptions:
                   heartbeatFrequencyMS: 10000
                   appname: SDAMminPoolSizeError
@@ -52,6 +60,7 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # Wait for monitor to succeed handshake and mark the pool as ready.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -59,6 +68,8 @@ tests:
           event:
             poolReadyEvent: {}
           count: 1
+      # Background connection establishment ensuring minPoolSize should fail,
+      # causing the pool to be cleared.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -66,6 +77,7 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # The server should be marked as Unknown as part of this.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -75,14 +87,17 @@ tests:
               newDescription:
                 type: Unknown
           count: 1
+      # Executing a command should fail server selection due to not being able
+      # to find the primary.
       - name: runCommand
-        object: database
+        object: *database
         arguments:
           command:
             ping: {}
           commandName: ping
         expectError:
           isError: true
+      # Disable the failpoint, allowing the monitor to discover the primary again.
       - name: failPoint
         object: testRunner
         arguments:
@@ -90,12 +105,14 @@ tests:
             configureFailPoint: failCommand
             mode: "off"
           client: *setupClient
+      # Perform an operation to ensure the node is discovered.
       - name: runCommand
-        object: database
+        object: *database
         arguments:
           command:
             ping: 1
           commandName: ping
+      # Assert that the monitor discovered the primary and mark the pool as ready again.
       - name: assertEventCount
         object: testRunner
         arguments:

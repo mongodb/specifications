@@ -57,9 +57,9 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
                     "poolClearedEvent",
-                    "poolReadyEvent"
+                    "poolReadyEvent",
+                    "serverDescriptionChangedEvent"
                   ],
                   "uriOptions": {
                     "heartbeatFrequencyMS": 10000,
