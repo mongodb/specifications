@@ -1,6 +1,6 @@
 {
   "description": "insert-shutdown-error",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.10",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4"
@@ -33,8 +33,8 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
-                    "poolClearedEvent"
+                    "poolClearedEvent",
+                    "serverDescriptionChangedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,
@@ -100,15 +100,7 @@
                 "thread": {
                   "id": "thread0"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
+              },
               {
                 "thread": {
                   "id": "thread1"
