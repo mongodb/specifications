@@ -1,12 +1,16 @@
----
 description: auth-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # failCommand appName requirements
   - minServerVersion: "4.4"
     auth: true
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName auth-error
     databaseName: &databaseName sdam-tests
@@ -74,12 +78,14 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # Perform another operation to ensure the node is rediscovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 5
             - _id: 6
+      # Assert the server was marked Unknown and pool was cleared exactly once.
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -97,6 +103,8 @@ tests:
             poolClearedEvent: {}
           count: 1
     expectEvents:
+      # Note: The first insert command is never attempted because connection
+      # checkout fails.
       - client: *client
         eventType: command
         events:
