@@ -1,6 +1,6 @@
 {
   "description": "find-network-error",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.10",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4"
@@ -61,8 +61,8 @@
                   "id": "client",
                   "observeEvents": [
                     "commandStartedEvent",
-                    "serverDescriptionChangedEvent",
-                    "poolClearedEvent"
+                    "poolClearedEvent",
+                    "serverDescriptionChangedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,

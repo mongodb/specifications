@@ -1,6 +1,6 @@
 {
   "description": "minPoolSize-error",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.10",
   "runOnRequirements": [
     {
       "minServerVersion": "4.9",
@@ -58,8 +58,8 @@
                   "id": "client",
                   "observeEvents": [
                     "serverDescriptionChangedEvent",
-                    "poolReadyEvent",
-                    "poolClearedEvent"
+                    "poolClearedEvent",
+                    "poolReadyEvent"
                   ],
                   "uriOptions": {
                     "heartbeatFrequencyMS": 10000,

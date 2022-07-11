@@ -1,6 +1,6 @@
 {
   "description": "cancel-server-check",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.10",
   "runOnRequirements": [
     {
       "minServerVersion": "4.0",
@@ -42,8 +42,8 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "poolClearedEvent",
-                    "serverDescriptionChangedEvent"
+                    "serverDescriptionChangedEvent",
+                    "poolClearedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": true,

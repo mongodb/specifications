@@ -1,6 +1,6 @@
 {
   "description": "rediscover-quickly-after-step-down",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.10",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4",
@@ -50,8 +50,8 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "commandStartedEvent",
-                    "poolClearedEvent"
+                    "poolClearedEvent",
+                    "commandStartedEvent"
                   ],
                   "uriOptions": {
                     "appname": "replSetStepDownTest",

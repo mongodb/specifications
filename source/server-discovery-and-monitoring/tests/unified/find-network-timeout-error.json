@@ -1,6 +1,6 @@
 {
   "description": "find-network-timeout-error",
-  "schemaVersion": "1.9",
+  "schemaVersion": "1.10",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4"
@@ -61,9 +61,9 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "commandStartedEvent",
                     "poolClearedEvent",
-                    "serverDescriptionChangedEvent"
+                    "serverDescriptionChangedEvent",
+                    "commandStartedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,
