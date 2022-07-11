@@ -1,17 +1,23 @@
 ---
 description: insert-network-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # failCommand appName requirements
   - minServerVersion: "4.4"
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName insert-network-error
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
+
 tests:
   - description: Reset server and pool after network error on insert
     operations:
@@ -73,12 +79,14 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # Perform another operation to ensure the node is rediscovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 5
             - _id: 6
+      # Assert the server was marked Unknown and pool was cleared exactly once.
       - name: assertEventCount
         object: testRunner
         arguments:
