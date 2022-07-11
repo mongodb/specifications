@@ -1,10 +1,15 @@
 ---
 description: rediscover-quickly-after-step-down
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # 4.4 is required for streaming.
+    # A replica set is required for replSetStepDown.
   - minServerVersion: "4.4"
     topologies:
       - replicaset
+
 createEntities:
   - client:
       id: &setupClient setupClient
@@ -12,12 +17,14 @@ createEntities:
       id: &adminDatabase adminDatabase
       client: *setupClient
       databaseName: admin
+
 initialData: &initialData
   - collectionName: &collectionName test-replSetStepDown
     databaseName: &databaseName sdam-tests
     documents:
       - _id: 1
       - _id: 2
+
 tests:
   - description: Rediscover quickly after replSetStepDown
     operations:
@@ -32,7 +39,10 @@ tests:
                   - commandStartedEvent
                 uriOptions:
                   appname: replSetStepDownTest
+                  # Configure a large heartbeatFrequencyMS
                   heartbeatFrequencyMS: 60000
+                  # Configure a much smaller server selection timeout so that the test
+                  # will error when it cannot discover the new primary soon.
                   serverSelectionTimeoutMS: 5000
                   w: majority
             - database:
@@ -43,6 +53,7 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # Discover the primary.
       - name: insertMany
         object: *collection
         arguments:
@@ -54,6 +65,7 @@ tests:
         arguments:
           client: *client
           id: &topologyDescription topologyDescription
+      # Unfreeze a secondary with replSetFreeze:0 to ensure a speedy election.
       - name: runCommand
         object: *adminDatabase
         arguments:
@@ -62,6 +74,7 @@ tests:
           readPreference:
             mode: Secondary
           commandName: replSetFreeze
+      # Run replSetStepDown on the meta client.
       - name: runCommand
         object: *adminDatabase
         arguments:
@@ -75,13 +88,17 @@ tests:
         arguments:
           client: *client
           priorTopologyDescription: *topologyDescription
+          # We use a relatively large timeout here to workaround slow
+          # elections on Windows, possibly caused by SERVER-48154.
           timeoutMS: 15000
+      # Rediscover the new primary.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 5
             - _id: 6
+      # Assert that no pools were cleared.
       - name: assertEventCount
         object: testRunner
         arguments:
