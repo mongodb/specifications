@@ -104,67 +104,27 @@
                 "thread": {
                   "id": "thread0"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
+              },
               {
                 "thread": {
                   "id": "thread1"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
+              },
               {
                 "thread": {
                   "id": "thread2"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
+              },
               {
                 "thread": {
                   "id": "thread3"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
+              },
               {
                 "thread": {
                   "id": "thread4"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
+              },
               {
                 "thread": {
                   "id": "thread5"

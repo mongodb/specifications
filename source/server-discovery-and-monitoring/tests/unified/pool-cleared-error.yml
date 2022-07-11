@@ -1,18 +1,25 @@
 ---
 description: pool-cleared-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # This test requires retryable writes, failCommand appName, and
+    # failCommand blockConnection with closeConnection:true (SERVER-53512).
   - minServerVersion: "4.9"
     topologies:
       - replicaset
       - sharded
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName pool-cleared-error
     databaseName: &databaseName sdam-tests
     documents: []
+
 tests:
   - description: PoolClearedError does not mark server unknown
     operations:
@@ -37,11 +44,14 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # Perform an operation to ensure the node is discovered.
       - name: insertOne
         object: *collection
         arguments:
           document:
             _id: 1
+      # Configure the next insert to fail with a network error which will
+      # clear the pool leaving it paused until the server is rediscovered.
       - name: failPoint
         object: testRunner
         arguments:
@@ -57,42 +67,33 @@ tests:
               closeConnection: true
               appName: poolClearedErrorTest
           client: *setupClient
+      # Start threads.
       - name: createEntities
         object: testRunner
         arguments:
           entities:
             - thread:
                 id: &thread0 thread0
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
             - thread:
                 id: &thread1 thread1
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
             - thread:
                 id: &thread2 thread2
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
             - thread:
                 id: &thread3 thread3
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
             - thread:
                 id: &thread4 thread4
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
             - thread:
                 id: &thread5 thread5
+      # Perform concurrent insert operations. The first one to execute will
+      # fail with a network error, mark the server Unknown, clear the pool,
+      # and retry.
+      # The other operations will either:
+      # - Notice the pool is paused, fail with a PoolClearedError, and retry.
+      # - Or block waiting in server selection until the server is
+      #   rediscovered.
+      #
+      # Note that this test does not guarantee that a PoolClearedError will be
+      # raised but it is likely since the initial insert is delayed.
       - name: runOnThread
         object: testRunner
         arguments:
@@ -153,6 +154,7 @@ tests:
             arguments:
               document:
                 _id: 7
+      # Stop threads.
       - name: waitForThread
         object: testRunner
         arguments:
@@ -177,6 +179,8 @@ tests:
         object: testRunner
         arguments:
           thread: *thread5
+      # The first shutdown error should mark the server Unknown and then clear
+      # the pool.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -193,11 +197,13 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # Perform an operation to ensure the node still useable.
       - name: insertOne
         object: *collection
         arguments:
           document:
             _id: 8
+      # Assert the server was marked Unknown and pool was cleared exactly once.
       - name: assertEventCount
         object: testRunner
         arguments:
@@ -214,6 +220,8 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+
+    # Order of operations is non-deterministic so we cannot check events.
     outcome:
       - collectionName: *collectionName
         databaseName: *databaseName
