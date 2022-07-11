@@ -1,17 +1,25 @@
 ---
 description: hello-network-error
+
 schemaVersion: "1.10"
+
 runOnRequirements:
+    # failCommand appName requirements
   - minServerVersion: "4.9"
+
 createEntities:
   - client:
       id: &setupClient setupClient
+
 initialData: &initialData
   - collectionName: &collectionName hello-network-error
     databaseName: &databaseName sdam-tests
     documents: []
+
 tests:
   - description: Network error on Monitor handshake
+    # Configure the initial handshake to fail with a network error.
+    # Use times: 2 so that the RTT hello fails as well.
     operations:
       - name: failPoint
         object: testRunner
@@ -49,6 +57,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # The network error on the initial handshake should mark the server
+      # Unknown (emitting a ServerDescriptionChangedEvent) and clear the pool.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -58,12 +68,31 @@ tests:
               newDescription:
                 type: Unknown
           count: 1
+      # Perform an operation to ensure the node is discovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 1
             - _id: 2
+      # We cannot assert the server was marked Unknown and pool was cleared an
+      # exact number of times because the RTT hello may or may not have
+      # triggered this failpoint as well.
+      # - name: assertEventCount
+      #   object: testRunner
+      #   arguments:
+      #     client: *client
+      #     event:
+      #       serverDescriptionChangedEvent:
+      #         newDescription:
+      #           type: Unknown
+      #     count: 1
+      # - name: assertEventCount
+      #   object: testRunner
+      #   arguments:
+      #     event:
+      #       poolClearedEvent: {}
+      #     count: 1
     expectEvents:
       - client: *client
         eventType: command
@@ -107,12 +136,16 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # Perform an operation to ensure the node is discovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 1
             - _id: 2
+      # Configure the next streaming hello check to fail with a non-timeout
+      # network error. Use times: 2 to ensure that the the Monitor check fails
+      # since the RTT hello may trigger this failpoint as well.
       - name: failPoint
         object: testRunner
         arguments:
@@ -127,6 +160,8 @@ tests:
               appName: networkErrorCheckTest
               closeConnection: true
           client: *setupClient
+      # The network error on the next check should mark the server Unknown and
+      # clear the pool.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -143,12 +178,31 @@ tests:
           event:
             poolClearedEvent: {}
           count: 1
+      # Perform an operation to ensure the node is rediscovered.
       - name: insertMany
         object: *collection
         arguments:
           documents:
             - _id: 3
             - _id: 4
+      # We cannot assert the server was marked Unknown and pool was cleared an
+      # exact number of times because the RTT hello may or may not have
+      # triggered this failpoint as well.
+      # - name: assertEventCount
+      #   object: testRunner
+      #   arguments:
+      #     client: *client
+      #     event:
+      #       serverDescriptionChangedEvent:
+      #         newDescription:
+      #           type: Unknown
+      #     count: 1
+      # - name: assertEventCount
+      #   object: testRunner
+      #   arguments:
+      #     event:
+      #       poolClearedEvent: {}
+      #     count: 1
     expectEvents:
       - client: *client
         eventType: command
