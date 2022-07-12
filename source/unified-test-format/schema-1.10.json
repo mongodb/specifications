@@ -174,7 +174,7 @@
         "thread": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["id"]
+          "required": ["id"],
           "properties": {
             "id": { "type": "string" }
           }
@@ -490,7 +490,7 @@
           "additionalProperties": false,
           "properties": {
             "previousDescription": { "$ref": "#/definitions/serverDescription" },
-            "newDescription": { "$ref": "#/definitions/serverDescription" },
+            "newDescription": { "$ref": "#/definitions/serverDescription" }
           }
         }
       }
@@ -518,9 +518,9 @@
         "error": { "$ref": "#/definitions/expectedError" },
         "minWireVersion": { "type": "integer" },
         "maxWireVersion": { "type": "integer" },
-        "topologyVersion": { "type": "object" },
+        "topologyVersion": { "type": "object" }
       }
-    }
+    },
 
     "collectionOrDatabaseOptions": {
       "type": "object",
