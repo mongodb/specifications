@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.9.1
+:Spec Version: 1.10.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-06-16
+:Last Modified: 2022-07-11
 
 .. contents::
 
@@ -51,6 +51,8 @@ This test format can be used to define tests for the following specifications:
 - `Sessions <../sessions/driver-sessions.rst>`__
 - `Transactions <../transactions/transactions.rst>`__
 - `Convenient API for Transactions <../transactions-convenient-api/transactions-convenient-api.rst>`__
+- `Server Discovery and Monitoring
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
 
 This is not an exhaustive list. Specifications that are known to not be
 supported by this format may be discussed under `Future Work`_.
@@ -3754,17 +3756,6 @@ to the test format:
 
 The process for executing tests should not require significant changes, but test
 files will need to express a dependency on mongocryptd.
-
-
-Support SDAM integration tests
-------------------------------
-
-SDAM integration tests should not require test format changes, but will
-introduce several new special test operations for the "testRunner" object. While
-the tests themselves only define expectations for command monitoring events,
-some special operations may require observing additional event types. There are
-also special operations for defining threads and executing operations within
-threads, which may warrant introducing a new "thread" entity type.
 
 
 Incorporate referenced entity operations into the schema version
