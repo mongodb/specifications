@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-06-16
+:Last Modified: 2022-07-12
 
 .. contents::
 
@@ -3461,7 +3461,7 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:20222-07-11: Update `Future Work`_ to reflect that support for ignoring extra
+:2022-07-11: Update `Future Work`_ to reflect that support for ignoring extra
               observed events was added in schema version 1.7.
 
 :2022-06-16: Require server 4.2+ for ``csfle: true``.
