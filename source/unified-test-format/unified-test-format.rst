@@ -283,10 +283,11 @@ Test runners MUST support the following types of entities:
 
 .. _entity_topologydescription:
 
-- TopologyDescription. An entity representing a client's TopologyDescription at
-  a certain point in time. These entities are not defined in `createEntities`_
-  but are instead created via `recordTopologyDescription`_ test runner
-  operations. 
+- TopologyDescription. An entity representing a client's `TopologyDescription
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`__
+  at a certain point in time. These entities are not defined in
+  `createEntities`_ but are instead created via `recordTopologyDescription`_
+  test runner operations. 
 
 This is an exhaustive list of supported types for the entity map. Test runners
 MUST raise an error if an attempt is made to store an unsupported type in the
@@ -1450,7 +1451,7 @@ The structure of these common options is as follows:
 .. _commonOptions_topologyDescription:
 
 - ``topologyDescription``: String. `TopologyDescription
-  <entity_topologydescription>`_ entity name, which the test runner MUST resolve
+  <entity_topologydescription_>`_ entity name, which the test runner MUST resolve
   to a TopologyDescription object. The YAML file SHOULD use an `alias node`_ for
   a session entity's ``id`` field (e.g. ``topologyDescription:
   *postInsertTopology``).
@@ -2660,7 +2661,7 @@ The following arguments are suported:
 - ``event``: Required `expectedEvent`_ object. The event which the test runner
   is waiting to be observed on the provided client. The assertions laid out in
   `expectedEvent`_ MUST be used to determine if an observed event matches
-  ``event``. ``event`` MAY be an event type that was not included in the
+  ``event``. ``event`` MAY have an event type that was not included in the
   ``client``'s ``observeEvents`` field.
 
 - ``count``: Required integer. The number of matching events to wait for before
@@ -2693,7 +2694,7 @@ The following arguments are supported:
 - ``event``: Required `expectedEvent`_ object. The event which the test runner
   will be counting on the provided client. The assertions laid out in
   `expectedEvent`_ MUST be used to determine if an observed event matches
-  ``event``. ``event`` MAY be an event type that was not included in the
+  ``event``. ``event`` MAY have an event type that was not included in the
   ``client``'s ``observeEvents`` field.
 
 - ``count``: Required integer. The exact number of matching events that
