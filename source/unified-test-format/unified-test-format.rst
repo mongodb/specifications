@@ -3790,6 +3790,13 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
+:2022-07-11: Add support for ``thread`` entities (``runOnThread``,
+             ``waitForThread``), TopologyDescription entities
+             (``recordTopologyDescription``, ``waitForPrimaryChange``),
+             testRunner event assertion operations (``waitForEvent``,
+             ``assertEventCount``), expected SDAM events, and the ``wait``
+             operation.
+
 :2022-06-16: Require server 4.2+ for ``csfle: true``.
 
 :2022-05-10: Add reference to Client Side Encryption spec under
