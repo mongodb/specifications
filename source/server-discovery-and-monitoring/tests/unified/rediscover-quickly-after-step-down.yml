@@ -65,6 +65,11 @@ tests:
         arguments:
           client: *client
           id: &topologyDescription topologyDescription
+      - name: assertTopologyType
+        object: testRunner
+        arguments:
+          topologyDescription: *topologyDescription
+          topologyType: ReplicaSetWithPrimary
       # Unfreeze a secondary with replSetFreeze:0 to ensure a speedy election.
       - name: runCommand
         object: *adminDatabase

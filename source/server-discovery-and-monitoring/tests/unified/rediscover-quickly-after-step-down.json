@@ -101,6 +101,14 @@
           }
         },
         {
+          "name": "assertTopologyType",
+          "object": "testRunner",
+          "arguments": {
+            "topologyDescription": "topologyDescription",
+            "topologyType": "ReplicaSetWithPrimary"
+          }
+        },
+        {
           "name": "runCommand",
           "object": "adminDatabase",
           "arguments": {
