@@ -274,10 +274,11 @@ Test runners MUST support the following types of entities:
   loading a test file with an Extended JSON parser).
 
 - Test runner thread. An entity representing a "thread" used to execute
-  operations concurrently with those executed by the main test runner
-  thread. The "thread" the handle is dispatching to can be any type of
-  concurrent execution context (e.g. actual threads, goroutines, async tasks,
-  etc). See `Thread Operations`_ for a list of operations.
+  operations concurrently with the operations being executed by the main test
+  runner thread. The "thread" MUST be able to execute concurrently with the main
+  thread, but it does not have to be implemented as an actual OS thread (e.g. it
+  can be a goroutine or async task). See `Thread Operations`_ for a list of
+  operations.
 
 .. _entity_topologydescription:
 
