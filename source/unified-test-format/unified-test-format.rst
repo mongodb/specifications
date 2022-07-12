@@ -273,12 +273,12 @@ Test runners MUST support the following types of entities:
   not be supported by all drivers and could yield runtime errors (e.g. while
   loading a test file with an Extended JSON parser).
 
-- Test runner thread. An entity representing a "thread" used to execute
-  operations concurrently with the operations being executed by the main test
-  runner thread. The "thread" MUST be able to execute concurrently with the main
-  thread, but it does not have to be implemented as an actual OS thread (e.g. it
-  can be a goroutine or async task). See `Thread Operations`_ for a list of
-  operations.
+- Test runner thread. An entity representing a "thread" that can be used to
+  concurrently execute operations. Thread entities MUST be able to run
+  concurrently with the main test runner thread and other thread entities, but
+  they do not have to be implemented as actual OS threads (e.g. they can be
+  goroutines or async tasks). See `entity_thread`_ for more information on how
+  they are created.
 
 .. _entity_topologydescription:
 
@@ -748,10 +748,9 @@ The structure of this object is as follows:
 
 .. _entity_thread:
 
-- ``thread``: Optional object. Defines a test runner "thread" that can be used
-  to execute operations concurrently. Once the "thread" has been created, it
-  should be idle and waiting for operations to be dispatched to it later on by
-  `runOnThread`_ operations.
+- ``thread``: Optional object. Defines a test runner "thread". Once the "thread"
+  has been created, it should be idle and waiting for operations to be
+  dispatched to it later on by `runOnThread`_ operations.
 
   The structure of this object is as follows:
 
