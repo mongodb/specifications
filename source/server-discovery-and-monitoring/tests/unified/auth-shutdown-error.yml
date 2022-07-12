@@ -42,9 +42,7 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - commandStartedEvent
-                  - poolClearedEvent
                 uriOptions:
                   retryWrites: false
                   appname: authShutdownErrorTest

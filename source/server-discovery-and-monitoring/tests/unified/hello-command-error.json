@@ -55,7 +55,6 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
                     "commandStartedEvent"
                   ],
                   "uriOptions": {
@@ -165,9 +164,7 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "commandStartedEvent",
-                    "serverDescriptionChangedEvent",
-                    "poolClearedEvent"
+                    "commandStartedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,

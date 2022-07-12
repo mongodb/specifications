@@ -43,7 +43,6 @@ tests:
                 id: &client client
                 observeEvents:
                   - commandStartedEvent
-                  - serverDescriptionChangedEvent
                 uriOptions:
                   retryWrites: false
                   connectTimeoutMS: 250
@@ -120,9 +119,7 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - commandStartedEvent
-                  - poolClearedEvent
                 uriOptions:
                   retryWrites: false
                   connectTimeoutMS: 250

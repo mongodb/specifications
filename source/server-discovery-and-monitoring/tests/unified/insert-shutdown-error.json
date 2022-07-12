@@ -32,10 +32,6 @@
               {
                 "client": {
                   "id": "client",
-                  "observeEvents": [
-                    "poolClearedEvent",
-                    "serverDescriptionChangedEvent"
-                  ],
                   "uriOptions": {
                     "retryWrites": false,
                     "heartbeatFrequencyMS": 500,

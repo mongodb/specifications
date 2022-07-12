@@ -36,10 +36,6 @@
               {
                 "client": {
                   "id": "client",
-                  "observeEvents": [
-                    "serverDescriptionChangedEvent",
-                    "poolClearedEvent"
-                  ],
                   "uriOptions": {
                     "retryWrites": true,
                     "maxPoolSize": 1,

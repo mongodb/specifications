@@ -56,11 +56,6 @@
               {
                 "client": {
                   "id": "client",
-                  "observeEvents": [
-                    "poolClearedEvent",
-                    "poolReadyEvent",
-                    "serverDescriptionChangedEvent"
-                  ],
                   "uriOptions": {
                     "heartbeatFrequencyMS": 10000,
                     "appname": "SDAMminPoolSizeError",

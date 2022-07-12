@@ -42,8 +42,6 @@ tests:
             - client:
                 id: &client client
                 observeEvents:
-                  - serverDescriptionChangedEvent
-                  - poolClearedEvent
                   - commandStartedEvent
                 uriOptions:
                   retryWrites: false

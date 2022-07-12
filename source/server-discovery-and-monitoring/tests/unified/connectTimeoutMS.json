@@ -33,9 +33,7 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "commandStartedEvent",
-                    "poolClearedEvent",
-                    "serverDescriptionChangedEvent"
+                    "commandStartedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,

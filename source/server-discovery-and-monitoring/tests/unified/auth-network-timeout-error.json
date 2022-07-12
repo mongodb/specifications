@@ -62,8 +62,6 @@
                 "client": {
                   "id": "client",
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
-                    "poolClearedEvent",
                     "commandStartedEvent"
                   ],
                   "uriOptions": {

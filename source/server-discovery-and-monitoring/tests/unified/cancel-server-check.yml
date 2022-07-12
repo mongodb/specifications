@@ -31,9 +31,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                observeEvents:
-                  - serverDescriptionChangedEvent
-                  - poolClearedEvent
                 uriOptions:
                   retryWrites: true
                   heartbeatFrequencyMS: 10000
