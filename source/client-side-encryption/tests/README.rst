@@ -1965,3 +1965,45 @@ Use ``encryptedClient`` to run an aggregate on ``db.decryption_events`` with an 
 
 Expect no exception.
 Expect a ``CommandSucceededEvent``. Expect the ``CommandSucceededEvent.reply`` to contain BSON binary for the field ``cursor.firstBatch.encrypted``.
+
+
+15. On-demand AWS Credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These tests require valid AWS credentials. Refer: `Automatic AWS Credentials`_.
+
+For these cases, create a ClientEncryption_ object :math:`C` with the following
+options:
+
+.. code-block:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <setupClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "aws": {} },
+   }
+
+Case 1: Failure
+```````````````
+
+Do not run this test case in an environment where AWS credentials are available
+(e.g. via environment variables or a metadata URL). (Refer:
+`Obtaining credentials for AWS <auth-aws_>`_)
+
+Attempt to create a datakey with :math:`C` using the ``"aws"`` KMS provider.
+Expect this to fail due to a lack of KMS provider credentials.
+
+Case 2: Success
+```````````````
+
+For this test case, the environment variables ``AWS_ACCESS_KEY_ID`` and
+``AWS_SECRET_ACCESS_KEY`` must be defined and set to a valid set of AWS
+credentials.
+
+Use the client encryption to create a datakey using the ``"aws"`` KMS provider.
+This should successfully load and use the AWS credentials that were defined in
+the environment.
+
+.. _Automatic AWS Credentials: ../client-side-encryption.rst#automatic-aws-credentials
+.. _ClientEncryption: ../client-side-encryption.rst#clientencryption
+.. _auth-aws: ../../auth/auth.rst#obtaining-credentials
