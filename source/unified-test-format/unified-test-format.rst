@@ -51,8 +51,7 @@ This test format can be used to define tests for the following specifications:
 - `Sessions <../sessions/driver-sessions.rst>`__
 - `Transactions <../transactions/transactions.rst>`__
 - `Convenient API for Transactions <../transactions-convenient-api/transactions-convenient-api.rst>`__
-- `Server Discovery and Monitoring
-  <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
+- `Server Discovery and Monitoring <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
 
 This is not an exhaustive list. Specifications that are known to not be
 supported by this format may be discussed under `Future Work`_.
@@ -1288,9 +1287,7 @@ The structure of this object is as follows:
 .. _expectedEvent_serverDescriptionChangedEvent:
 
 - ``serverDescriptionChangedEvent``: Optional object. Assertions for one or more
-  `ServerDescriptionChangedEvent
-  <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`__
-  fields.
+  `ServerDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
 
   The structure of this object is as follows:
 
@@ -1386,7 +1383,7 @@ these types and their parameters may be found in the following specifications:
 
 - `Read and Write Concern <../read-write-concern/read-write-concern.rst>`__.
 - `Server Selection: Read Preference <../server-selection/server-selection.rst#read-preference>`__.
-- `Server Discovery and Monitoring: TopologyDescription <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription`__
+- `Server Discovery and Monitoring: TopologyDescription <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`__.
 
 The structure of these common options is as follows:
 
