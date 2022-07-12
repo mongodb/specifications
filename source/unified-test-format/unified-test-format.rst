@@ -2678,6 +2678,39 @@ poolClearedEvent to be published::
           poolClearedEvent: {}
         count: 1
 
+
+assertEventCount
+~~~~~~~~~~~~~~~~
+
+The "assertEventCount" operation instructs the test runner to assert the
+specified MongoClient has published a specific event a given number of times so
+far in the test.
+
+The following arguments are supported:
+
+- ``client``: Required string. Client entity whose events the runner will be
+  counting.
+
+- ``event``: Required `expectedEvent`_ object. The event which the test runner
+  will be counting on the provided client. The assertions laid out in
+  `expectedEvent`_ MUST be used to determine if an observed event matches
+  ``event``. ``event`` MAY be an event type that was not included in the
+  ``client``'s ``observeEvents`` field.
+
+- ``count``: Required integer. The exact number of matching events that
+  ``client`` should have seen so far.
+
+For example, the following instructs the test runner to assert that
+a single PoolClearedEvent was published::
+
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client0
+          event:
+            poolClearedEvent: {}
+          count: 1
+
 recordTopologyDescription
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
