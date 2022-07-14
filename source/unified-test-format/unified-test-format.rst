@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-06-16
+:Last Modified: 2022-07-12
 
 .. contents::
 
@@ -3375,19 +3375,6 @@ shorter description that may be added to the `Change Log`_.
 Future Work
 ===========
 
-
-Allow extra observed events to be ignored
------------------------------------------
-
-While command monitoring events for specific commands can be ignored (e.g.
-killCursors for change streams), the sequence of observed events must otherwise
-match the sequence of expected events (including length). The present design
-would not support expecting an event for a command while also ignoring extra
-events for the same command (e.g. change stream iteration on a sharded cluster
-where multiple getMore commands may be issued). No spec tests currently require
-this functionality, but that may change in the future.
-
-
 Assert expected log messages
 ----------------------------
 
@@ -3395,7 +3382,7 @@ When drivers support standardized logging, the test format may need to support
 assertions for messages expected to be logged while executing operations. Since
 log messages are strings, this may require an operator to match regex patterns
 within strings. Additionally, the test runner may need to support ignoring extra
-log output, similar to `Allow extra observed events to be ignored`_.
+log output, similar to ``ignoreExtraEvents``.
 
 
 Target failPoint by read preference
@@ -3473,6 +3460,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-07-11: Update `Future Work`_ to reflect that support for ignoring extra
+              observed events was added in schema version 1.7.
 
 :2022-06-16: Require server 4.2+ for ``csfle: true``.
 
