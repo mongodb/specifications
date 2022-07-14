@@ -330,6 +330,11 @@ Using ``crypt_shared``
 On platforms where crypt_shared_ is available, drivers should prefer to test
 with the ``crypt_shared`` library instead of spawning mongocryptd.
 
+crypt_shared_ is released alongside the server.
+crypt_shared_ is only available in versions 6.0 and above.
+Drivers SHOULD prefer testing a version of crypt_shared_ that matches the server version being tested.
+Driver tests on server versions less than 6.0 SHOULD use mongocryptd.
+
 Drivers MUST continue to run all tests with mongocryptd on at least one
 platform for all tested server versions.
 
