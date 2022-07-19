@@ -7,6 +7,9 @@
         "id": "client",
         "observeLogMessages": {
           "command": "debug"
+        },
+        "uriOptions": {
+          "appName": "loggingTestClient"
         }
       }
     },
@@ -55,10 +58,11 @@
       "expectLogMessages": [
         {
           "client": "client",
+          "appName": "loggingTestClient",
           "messages": [
             {
-              "component": "command",
               "level": "debug",
+              "component": "command",
               "data": {
                 "message": "Command started",
                 "databaseName": "logging-tests",
@@ -81,14 +85,12 @@
                 "serverPort": {
                   "$$exists": true
                 },
-                "clientId": {
-                  "$$exists": true
-                }
+                "appName": "loggingTestClient"
               }
             },
             {
-              "component": "command",
               "level": "debug",
+              "component": "command",
               "data": {
                 "message": "Command succeeded",
                 "commandName": "ping",
@@ -111,15 +113,9 @@
                   "$$exists": true
                 },
                 "durationMS": {
-                  "$$type": [
-                    "double",
-                    "int",
-                    "long"
-                  ]
-                },
-                "clientId": {
                   "$$exists": true
-                }
+                },
+                "appName": "loggingTestClient"
               }
             }
           ]
@@ -145,10 +141,11 @@
       "expectLogMessages": [
         {
           "client": "client",
+          "appName": "loggingTestClient",
           "messages": [
             {
-              "component": "command",
               "level": "debug",
+              "component": "command",
               "data": {
                 "message": "Command started",
                 "databaseName": "logging-tests",
@@ -171,14 +168,12 @@
                 "serverPort": {
                   "$$exists": true
                 },
-                "clientId": {
-                  "$$exists": true
-                }
+                "appName": "loggingTestClient"
               }
             },
             {
-              "component": "command",
               "level": "debug",
+              "component": "command",
               "data": {
                 "message": "Command failed",
                 "commandName": "find",
@@ -201,15 +196,9 @@
                   "$$exists": true
                 },
                 "durationMS": {
-                  "$$type": [
-                    "double",
-                    "int",
-                    "long"
-                  ]
-                },
-                "clientId": {
                   "$$exists": true
-                }
+                },
+                "appName": "loggingTestClient"
               }
             }
           ]

@@ -7,6 +7,8 @@ createEntities:
       id: &client client
       observeLogMessages:
         command: debug
+      uriOptions:
+        appName: &clientAppName loggingTestClient
   - database:
       id: &database database
       client: *client
@@ -32,9 +34,10 @@ tests:
           commandName: &commandName ping
     expectLogMessages:
       - client: *client
+        appName: *clientAppName
         messages:
-          - component: command
-            level: debug
+          - level: debug
+            component: command
             data:
               message: "Command started"
               databaseName: *databaseName
@@ -44,10 +47,10 @@ tests:
               driverConnectionId: { $$exists: true }
               serverHost: { $$exists: true }
               serverPort:  { $$exists: true }
-              clientId: { $$exists: true }
+              appName: *clientAppName
 
-          - component: command
-            level: debug
+          - level: debug
+            component: command
             data:
               message: "Command succeeded"
               commandName: *commandName
@@ -56,8 +59,8 @@ tests:
               driverConnectionId: { $$exists: true }
               serverHost: { $$exists: true }
               serverPort: { $$exists: true }
-              durationMS: { $$type: [double, int, long] }
-              clientId: { $$exists: true }
+              durationMS: { $$exists: true }
+              appName: *clientAppName
         
   - description: "A failed command"
     operations:
@@ -69,9 +72,10 @@ tests:
           isClientError: false
     expectLogMessages:
       - client: *client
+        appName: *clientAppName
         messages:
-          - component: command
-            level: debug
+          - level: debug
+            component: command
             data:
               message: "Command started"
               databaseName: *databaseName
@@ -81,10 +85,10 @@ tests:
               driverConnectionId: { $$exists: true }
               serverHost: { $$exists: true }
               serverPort:  { $$exists: true }
-              clientId: { $$exists: true }
+              appName: *clientAppName
 
-          - component: command
-            level: debug
+          - level: debug
+            component: command
             data:
               message: "Command failed"
               commandName: *commandName
@@ -93,5 +97,5 @@ tests:
               driverConnectionId: { $$exists: true }
               serverHost: { $$exists: true }
               serverPort:  { $$exists: true }
-              durationMS: { $$type: [double, int, long] }
-              clientId: { $$exists: true }
+              durationMS: { $$exists: true }
+              appName: *clientAppName
