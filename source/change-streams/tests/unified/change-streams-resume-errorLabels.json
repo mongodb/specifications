@@ -1478,6 +1478,11 @@
     },
     {
       "description": "change stream resumes after StaleShardVersion",
+      "runOnRequirements": [
+        {
+          "maxServerVersion": "5.99"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",

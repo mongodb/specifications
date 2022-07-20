@@ -743,6 +743,9 @@ tests:
               databaseName: *database0
 
   - description: change stream resumes after StaleShardVersion
+    runOnRequirements:
+      # StaleShardVersion is obsolete as of 6.0 and is no longer marked as resumable.
+      - maxServerVersion: "5.99"
     operations:
       - name: failPoint
         object: testRunner
