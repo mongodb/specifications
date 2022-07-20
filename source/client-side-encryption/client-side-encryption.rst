@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-30
-:Version: 1.10.0
+:Last Modified: 2022-07-20
+:Version: 1.11.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -460,6 +460,7 @@ See `What's the deal with metadataClient, keyVaultClient, and the internal clien
 .. _KMSProviders:
 .. _KMSProviderName:
 .. _AWSKMSOptions:
+.. _GCPKMSOptions:
 
 kmsProviders
 ^^^^^^^^^^^^
@@ -518,16 +519,17 @@ accept arbitrary strings at runtime for forward-compatibility.
    };
 
 
-Automatic AWS Credentials
-`````````````````````````
+Automatic Credentials
+`````````````````````
 
 .. versionadded:: 1.9.0 2022/06/22
 
-If the ``aws`` provider property of a KMSProviders_ is present and is an empty
-map/object, the driver MUST be able to populate an AWSKMSOptions_ object
-on-demand if-and-only-if AWS credentials are needed.
+If the ``aws`` or ``gcp`` provider properties of a KMSProviders_ are present and
+empty map/object, the driver MUST be able to populate an AWSKMSOptions_ or
+GCPKMSOptions_ object on-demand if-and-only-if AWS or GCP credentials are
+needed.
 
-.. note:: Drivers MUST NOT eagerly fill an empty ``aws`` map property.
+.. note:: Drivers MUST NOT eagerly fill an empty ``aws`` or ``gcp`` map property.
 
 libmongocrypt_ will interpret an empty KMSProviders_ map properties as a request
 by the user to lazily load the credentials for the respective `KMS provider`_.
@@ -550,10 +552,43 @@ the following process:
       AWSKMSOptions_ map from :math:`C` and insert that map onto :math:`P` as
       the ``aws`` property.
 
-3. Return :math:`P` as the additional KMS providers to libmongocrypt_.
+3. If the user-provided kmsProviders_ (from ClientEncryptionOpts_ or
+   AutoEncryptionOpts_) contains an ``gcp`` property, and that property is an
+   empty map:
+
+   1. Attempt to obtain credentials :math:`C` from the environment
+      logic as is detailed in `Obtaining GCP Credentials`_.
+   2. If credentials :math:`C` were successfully loaded, create a new
+      GCPKMSOptions_ map from :math:`C` and insert that map onto :math:`P` as
+      the ``gcp`` property.
+
+4. Return :math:`P` as the additional KMS providers to libmongocrypt_.
 
 __ ../auth/auth.html#obtaining-credentials
 
+Obtaining GCP Credentials
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 1.11.0 2022/07/20
+
+Set ``HOST`` to ``metadata.google.internal``. If the environment variable
+``GCE_METADATA_HOST`` is set, use the value of ``GCE_METADATA_HOST`` as ``HOST``.
+
+Send an HTTP request to the URL
+`http://<HOST>/computeMetadata/v1/instance/service-accounts/default/token` with
+the header ``Metadata-Flavor: Google``.
+
+If the HTTP response code is not 200, return an error including the body of the
+HTTP response in the error message.
+
+Parse the HTTP response body as JSON. If parsing fails, return an error
+including the body of the HTTP response in the error message.
+
+Check the parsed JSON for the field "access_token". If "access_token" is not
+present, return an error including the body of the HTTP response in the error
+message.
+
+Return "access_token" as the credential.
 
 KMS provider TLS options
 ````````````````````````
@@ -2387,6 +2422,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-07-20, Add behavior for automatic GCP credential loading in ``kmsProviders``.
    22-06-30, Add behavior for automatic AWS credential loading in ``kmsProviders``.
    22-06-29, Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
    22-06-27, Remove ``createKey``.
