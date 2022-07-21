@@ -1480,7 +1480,7 @@
       "description": "change stream resumes after StaleShardVersion",
       "runOnRequirements": [
         {
-          "maxServerVersion": "5.99"
+          "maxServerVersion": "6.0.99"
         }
       ],
       "operations": [
