@@ -1,0 +1,69 @@
+description: "pre-42-server-connection-id-logging"
+
+schemaVersion: "1.10"
+
+runOnRequirements:
+  - minServerVersion: "4.2"
+
+createEntities:
+  - client:
+      id: &client client
+      observeLogMessages:
+        command: debug
+      uriOptions:
+        appName: &clientAppName loggingTestClient
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName logging-server-connection-id-tests
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName logging-tests-collection
+
+initialData:
+  - databaseName: *databaseName
+    collectionName: *collectionName
+    documents: []
+
+tests:
+  - description: "command log messages include server connection id"
+    operations:
+      - name: insertOne
+        object: *collection
+        arguments:
+            document: { x: 1 }
+      - name: find
+        object: *collection
+        arguments:
+          filter: { $or: true }
+        expectError:
+          isError: true
+    expectLogMessages:
+      - client: *client
+        appName: *clientAppName
+        messages:
+          - level: debug
+            component: command
+            data:
+              message: "Command started"
+              commandName: insert
+              serverConnectionId: { $$exists: true }
+          - level: debug
+            component: command
+            data:
+              message: "Command succeeded"
+              commandName: insert
+              serverConnectionId: { $$exists: true }
+          - level: debug
+            component: command
+            data:
+              message: "Command started"
+              commandName: find
+              serverConnectionId: { $$exists: true }
+          - level: debug
+            component: command
+            data:
+              message: "Command failed"
+              commandName: find
+              serverConnectionId: { $$exists: true }
