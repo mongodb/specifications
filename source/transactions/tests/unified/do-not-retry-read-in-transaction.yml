@@ -4,7 +4,7 @@ schemaVersion: "1.4"
 
 runOnRequirements:
   - minServerVersion: "4.0.0"
-    topologies: [ single, replicaset ]
+    topologies: [ replicaset ]
   - minServerVersion: "4.2.0"
     topologies: [ sharded, load-balanced ]
 
