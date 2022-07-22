@@ -10,8 +10,6 @@ createEntities:
       id: &client client
       observeLogMessages:
         command: debug
-      uriOptions:
-        appName: &clientAppName loggingTestClient
   - database:
       id: &database database
       client: *client
@@ -41,7 +39,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command

@@ -7,8 +7,6 @@ createEntities:
       id: &client client
       observeLogMessages:
         command: debug
-      uriOptions:
-        appName: &clientAppName loggingTestClient
   - database:
       id: &database database
       client: *client
@@ -34,7 +32,6 @@ tests:
           commandName: &commandName ping
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -51,7 +48,6 @@ tests:
               driverConnectionId: { $$exists: true }
               serverHost: { $$exists: true }
               serverPort:  { $$exists: true }
-              appName: *clientAppName
 
           - level: debug
             component: command
@@ -64,7 +60,6 @@ tests:
               serverHost: { $$exists: true }
               serverPort: { $$exists: true }
               durationMS: { $$exists: true }
-              appName: *clientAppName
         
   - description: "A failed command"
     operations:
@@ -76,7 +71,6 @@ tests:
           isClientError: false
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -89,7 +83,6 @@ tests:
               driverConnectionId: { $$exists: true }
               serverHost: { $$exists: true }
               serverPort:  { $$exists: true }
-              appName: *clientAppName
 
           - level: debug
             component: command
@@ -102,4 +95,3 @@ tests:
               serverHost: { $$exists: true }
               serverPort:  { $$exists: true }
               durationMS: { $$exists: true }
-              appName: *clientAppName

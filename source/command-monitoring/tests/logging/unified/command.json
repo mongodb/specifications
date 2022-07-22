@@ -7,9 +7,6 @@
         "id": "client",
         "observeLogMessages": {
           "command": "debug"
-        },
-        "uriOptions": {
-          "appName": "loggingTestClient"
         }
       }
     },
@@ -58,7 +55,6 @@
       "expectLogMessages": [
         {
           "client": "client",
-          "appName": "loggingTestClient",
           "messages": [
             {
               "level": "debug",
@@ -89,8 +85,7 @@
                 },
                 "serverPort": {
                   "$$exists": true
-                },
-                "appName": "loggingTestClient"
+                }
               }
             },
             {
@@ -119,8 +114,7 @@
                 },
                 "durationMS": {
                   "$$exists": true
-                },
-                "appName": "loggingTestClient"
+                }
               }
             }
           ]
@@ -146,7 +140,6 @@
       "expectLogMessages": [
         {
           "client": "client",
-          "appName": "loggingTestClient",
           "messages": [
             {
               "level": "debug",
@@ -172,8 +165,7 @@
                 },
                 "serverPort": {
                   "$$exists": true
-                },
-                "appName": "loggingTestClient"
+                }
               }
             },
             {
@@ -202,8 +194,7 @@
                 },
                 "durationMS": {
                   "$$exists": true
-                },
-                "appName": "loggingTestClient"
+                }
               }
             }
           ]

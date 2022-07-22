@@ -12,9 +12,6 @@
         "id": "client",
         "observeLogMessages": {
           "command": "debug"
-        },
-        "uriOptions": {
-          "appName": "loggingTestClient"
         }
       }
     },
@@ -69,7 +66,6 @@
       "expectLogMessages": [
         {
           "client": "client",
-          "appName": "loggingTestClient",
           "messages": [
             {
               "level": "debug",

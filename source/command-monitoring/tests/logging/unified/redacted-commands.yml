@@ -11,8 +11,6 @@ createEntities:
       id: &client client
       observeLogMessages:
         command: debug
-      uriOptions:
-        appName: &clientAppName loggingTestClient
   - database:
       id: &database database
       client: *client
@@ -36,7 +34,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -65,7 +62,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -94,7 +90,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -119,7 +114,6 @@ tests:
             getnonce: 1
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -151,7 +145,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -180,7 +173,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -207,7 +199,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -234,7 +225,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -261,7 +251,6 @@ tests:
           isError: true
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -290,7 +279,6 @@ tests:
               saslStart: 1
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -326,7 +314,6 @@ tests:
               saslStart: 1
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -368,7 +355,6 @@ tests:
     
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
@@ -407,7 +393,6 @@ tests:
             isMaster: 1
     expectLogMessages:
       - client: *client
-        appName: *clientAppName
         messages:
           - level: debug
             component: command
