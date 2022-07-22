@@ -51,7 +51,7 @@ tests:
           session: *session0
         expectError:
           isError: true
-
+          errorLabelsContain: ["TransientTransactionError"]
     expectEvents:
       - client: *client0
         events:
