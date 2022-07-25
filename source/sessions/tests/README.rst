@@ -178,7 +178,7 @@ Skip this test if your driver does not allow forking.
 14. Implicit sessions only allocate their server session after a successful connection checkout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Create a MongoClient with the following options: ``maxPoolSize=1`` and ``retryWrites=true``
+* Create a MongoClient with the following options: ``maxPoolSize=1`` and ``retryWrites=true``. If testing against a sharded deployment, be sure to connect to only a single mongos.
 * Attach a command started listener that collects each command's lsid
 * Initiate the following concurrent operations
 
