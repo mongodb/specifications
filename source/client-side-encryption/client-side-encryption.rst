@@ -534,7 +534,8 @@ needed.
 libmongocrypt_ will interpret an empty KMSProviders_ map properties as a request
 by the user to lazily load the credentials for the respective `KMS provider`_.
 libmongocrypt_ will call back to the driver to fill an empty KMS provider
-property only once the associated credentials are needed.
+property only once the associated credentials are needed by entering
+``MONGOCRYPT_CTX_NEED_KMS_CREDENTIALS`` state.
 
 Once requested, drivers MUST create a new KMSProviders_ :math:`P` according to
 the following process:
