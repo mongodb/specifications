@@ -525,7 +525,7 @@ Automatic Credentials
 .. versionadded:: 1.9.0 2022/06/22
 
 If the ``aws`` or ``gcp`` provider properties of a KMSProviders_ are present and
-empty map/object, the driver MUST be able to populate an AWSKMSOptions_ or
+are an empty map/object, the driver MUST be able to populate an AWSKMSOptions_ or
 GCPKMSOptions_ object on-demand if-and-only-if AWS or GCP credentials are
 needed.
 
