@@ -1100,9 +1100,11 @@ The structure of each object is as follows:
 
 - ``eventType``: Optional string. Specifies the type of the monitor which
   captured the events. Valid values are ``command`` for `Command Monitoring
-  <../command-monitoring/command-monitoring.rst#api>`__ events and ``cmap``
-  for `CMAP
+  <../command-monitoring/command-monitoring.rst#api>`__ events, ``cmap`` for
+  `CMAP
   <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  events, and ``sdam`` for `SDAM
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__
   events. Defaults to ``command`` if omitted.
 
 - ``events``: Required array of `expectedEvent`_ objects. List of events, which
@@ -1133,11 +1135,11 @@ cannot be reliably tested. Taking command monitoring events as an example,
 ``connectionId`` and ``failure`` can vary by implementation.
 
 The events allowed in an ``expectedEvent`` object depend on the value of
-``eventType`` in the corresponding `expectedEventsForClient`_ object. There
-are two possible structures. If the value is omitted or is explicitly set to
-``command``, only the event types defined in `expectedCommandEvent`_ are
-allowed. If the value is ``cmap``, only the event types defined in
-`expectedCmapEvent`_ are allowed.
+``eventType`` in the corresponding `expectedEventsForClient`_ object. If the
+value is omitted or is explicitly set to ``command``, only the event types
+defined in `expectedCommandEvent`_ are allowed. If the value is ``cmap``, only
+the event types defined in `expectedCmapEvent`_ are allowed. If the value is
+``sdam``, only the event types defined in `expectedSdamEvent`_ are allowed.
 
 expectedCommandEvent
 ````````````````````
