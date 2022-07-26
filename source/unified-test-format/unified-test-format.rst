@@ -1305,7 +1305,8 @@ The structure of this object is as follows:
 
   - ``type``: Optional string. The type of the server in the description. Test
     runners MUST assert that the type in the published event matches this
-    value. See `SDAM: ServerType <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`_
+    value. See `SDAM: ServerType
+    <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`__
     for a list of valid values. 
 
 hasServiceId
