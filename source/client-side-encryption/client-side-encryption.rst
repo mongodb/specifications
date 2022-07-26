@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-29
-:Version: 1.9.1
+:Last Modified: 2022-06-30
+:Version: 1.10.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -234,7 +234,8 @@ KMS Provider
 ------------
 A KMS provider (AWS KMS, Azure Key Vault, GCP KMS, the local provider, or KMIP)
 is used to decrypt data keys after fetching from the MongoDB Key Vault, and
-encrypt newly created data keys.
+encrypt newly created data keys. Refer to KMSProviders_ for the shape of the
+KMS provider options.
 
 
 mongocryptd
@@ -458,6 +459,7 @@ See `What's the deal with metadataClient, keyVaultClient, and the internal clien
 
 .. _KMSProviders:
 .. _KMSProviderName:
+.. _AWSKMSOptions:
 
 kmsProviders
 ^^^^^^^^^^^^
@@ -477,7 +479,7 @@ accept arbitrary strings at runtime for forward-compatibility.
 .. code:: typescript
 
    interface KMSProviders {
-      aws?: AWSKMSOptions;
+      aws?: AWSKMSOptions | { /* Empty. (See "Automatic AWS Credentials") */ };
       azure?: AzureKMSOptions;
       gcp?: GCPKMSOptions;
       local?: LocalKMSOptions;
@@ -515,9 +517,43 @@ accept arbitrary strings at runtime for forward-compatibility.
       endpoint: string;
    };
 
-See `Why are extraOptions and kmsProviders maps?`_
 
-Drivers MUST enable TLS for all KMS connections.
+Automatic AWS Credentials
+`````````````````````````
+
+.. versionadded:: 1.9.0 2022/06/22
+
+If the ``aws`` provider property of a KMSProviders_ is present and is an empty
+map/object, the driver MUST be able to populate an AWSKMSOptions_ object
+on-demand if-and-only-if AWS credentials are needed.
+
+.. note:: Drivers MUST NOT eagerly fill an empty ``aws`` map property.
+
+libmongocrypt_ will interpret an empty KMSProviders_ map properties as a request
+by the user to lazily load the credentials for the respective `KMS provider`_.
+libmongocrypt_ will call back to the driver to fill an empty KMS provider
+property only once the associated credentials are needed.
+
+Once requested, drivers MUST create a new KMSProviders_ :math:`P` according to
+the following process:
+
+1. Initialize :math:`P` to an empty KMSProviders_ object.
+2. If the user-provided kmsProviders_ (from ClientEncryptionOpts_ or
+   AutoEncryptionOpts_) contains an ``aws`` property, and that property is an
+   empty map:
+
+   1. Attempt to obtain credentials :math:`C` from the environment using similar
+      logic as is detailed in `the obtaining-AWS-credentials section from the
+      Driver Authentication specification`__, but ignoring the case of loading
+      the credentials from a URI
+   2. If credentials :math:`C` were successfully loaded, create a new
+      AWSKMSOptions_ map from :math:`C` and insert that map onto :math:`P` as
+      the ``aws`` property.
+
+3. Return :math:`P` as the additional KMS providers to libmongocrypt_.
+
+__ ../auth/auth.html#obtaining-credentials
+
 
 KMS provider TLS options
 ````````````````````````
@@ -755,6 +791,7 @@ If the collection namespace has an associated ``encryptedFields``, then do the f
 - Drop the collection with name ``encryptedFields["ecocCollection"]``.
   If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
 - Drop the collection ``collectionName``.
+
 
 ClientEncryption
 ----------------
@@ -2350,6 +2387,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-06-30, Add behavior for automatic AWS credential loading in ``kmsProviders``.
    22-06-29, Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
    22-06-27, Remove ``createKey``.
    22-06-24, Clean up kmsProviders to use more TypeScript-like type definitions.

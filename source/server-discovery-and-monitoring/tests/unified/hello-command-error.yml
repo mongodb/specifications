@@ -19,8 +19,10 @@ initialData: &initialData
 tests:
   - description: Command error on Monitor handshake
     operations:
-      # Configure the initial handshake to fail with a command error.
-      # Use times: 2 so that the RTT hello fails as well.
+      # Configure the next streaming hello check to fail with a command error.
+      # Use "times: 4" to increase the probability that the Monitor check fails
+      # since the RTT hello may trigger this failpoint one or many times as
+      # well.
       - name: failPoint
         object: testRunner
         arguments:
@@ -28,7 +30,7 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              times: 2
+              times: 4
             data:
               failCommands:
                 - hello
@@ -78,21 +80,7 @@ tests:
       # We cannot assert the server was marked Unknown and pool was cleared an
       # exact number of times because the RTT hello may or may not have
       # triggered this failpoint as well.
-      # - name: assertEventCount
-      #   object: testRunner
-      #   arguments:
-      #     client: *client
-      #     event:
-      #       serverDescriptionChangedEvent:
-      #         newDescription:
-      #           type: Unknown
-      #     count: 1
-      # - name: assertEventCount
-      #   object: testRunner
-      #   arguments:
-      #     event:
-      #       poolClearedEvent: {}
-      #     count: 1
+
     expectEvents:
       - client: *client
         eventType: command
