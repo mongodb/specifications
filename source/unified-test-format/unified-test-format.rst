@@ -1293,53 +1293,18 @@ The structure of this object is as follows:
   The structure of this object is as follows:
 
   - ``previousDescription``: Optional object. A value corresponding to the server
-    description as it was before the change that triggered this event.  Test
-    runners MUST follow the rules in `Evaluating Matches`_ when processing this
-    assertion.
+    description as it was before the change that triggered this event. 
 
   - ``newDescription``: Optional object. A value corresponding to the server
-    description as it was after the change that triggered this event. Test
-    runners MUST follow the rules in `Evaluating Matches`_ when processing this
-    assertion.
+    description as it was after the change that triggered this event.
 
   The structure of a server description object (which the ``previousDescription``
   and ``newDescription`` fields contain) is as follows:
 
-  - ``error``: Optional `expectedError`_ object. One or more assertions for an
-    error expected to be present in the server description.
-
-  - ``type``: Optional string. The type of the server in the
-    description. Support values are as follows:
-
-    - ``Standalone``
-
-    - ``Mongos``
-
-    - ``PossiblePrimary``
-
-    - ``RSPrimary``
-
-    - ``RSSecondary``
-
-    - ``RSArbiter``
-
-    - ``RSOther``
-
-    - ``RSGhost``
-
-    - ``LoadBalancer``
-
-    - ``Unknown``
-
-  - ``minWireVersion``: Optional integer. The minWireVersion reported by the
-    server in its hello response.
-
-  - ``maxWireVersion``: Optional integer. The minWireVersion reported by the
-    server in its hello response.
-
-  - ``topologyVersion``: Optional document. The topologyVersion document
-    reported by the server in its hello response, if any.
-
+  - ``type``: Optional string. The type of the server in the description. Test
+    runners MUST assert that the type in the published event matches this
+    value. See `SDAM: ServerType <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`_
+    for a list of valid values. 
 
 hasServiceId
 `````````````
