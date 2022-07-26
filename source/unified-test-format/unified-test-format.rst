@@ -2764,8 +2764,8 @@ of milliseconds.
 
 The following arguments are supported:
 
-- ``ms``: Required integer. The number of milliseconds for which the test runner
-  should sleep.
+- ``ms``: Required integer. The number of milliseconds for which the current
+  test runner thread should sleep.
 
 For example::
 
