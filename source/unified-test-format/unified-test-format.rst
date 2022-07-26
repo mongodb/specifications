@@ -2634,8 +2634,8 @@ operation, and assert that it exited without any errors.
 
 The following arguments are supported:
 
-- ``thread``: Required string. Thread entity that should be stopped and waited
-  for.
+- ``thread``: Required string. Thread entity that should be stopped and awaited
+  for completion.
 
 An example of this operation follows::
 
@@ -2649,7 +2649,7 @@ waitForEvent
 ~~~~~~~~~~~~
 
 The "waitForEvent" operation instructs the test runner to wait until the
-specified MongoClient has published a specific event a given number of
+specified MongoClient has published a specific, matching event a given number of
 times. Note that this includes any events published before the waitForEvent
 operation started.
 
@@ -2683,7 +2683,7 @@ assertEventCount
 ~~~~~~~~~~~~~~~~
 
 The "assertEventCount" operation instructs the test runner to assert the
-specified MongoClient has published a specific event a given number of times so
+specified MongoClient has published a specific, matching event a given number of times so
 far in the test.
 
 The following arguments are supported:
@@ -2793,13 +2793,13 @@ For example::
 wait
 ~~~~
 
-The ``wait`` operation instaructs the test runner to sleep for a provided number
+The ``wait`` operation instructs the test runner to sleep for a provided number
 of milliseconds.
 
 The following arguments are supported:
 
-- ``ms``: Required integer. The number of milliseconds the test runner should
-  sleep for.
+- ``ms``: Required integer. The number of milliseconds for which the test
+  runner should sleep.
 
 For example::
 
