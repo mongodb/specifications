@@ -2607,6 +2607,9 @@ The "waitForThread" operation instructs the test runner to notify the given
 thread that no more operations are forthcoming, wait for it to complete its last
 operation, and assert that it exited without any errors.
 
+If the "waitForThread" operation is not satisfied after 10 seconds, this
+operation MUST cause a test failure.
+
 The following arguments are supported:
 
 - ``thread``: Required string. Thread entity that should be stopped and awaited
@@ -2627,6 +2630,9 @@ The "waitForEvent" operation instructs the test runner to wait until the
 specified MongoClient has published a specific, matching event a given number of
 times. Note that this includes any events published before the waitForEvent
 operation started.
+
+If the "waitForEvent" operation is not satisfied after 10 seconds, this operation
+MUST cause a test failure.
 
 The following arguments are suported:
 
