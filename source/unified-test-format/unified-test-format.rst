@@ -1423,15 +1423,6 @@ The structure of these common options is as follows:
   - ``wtimeoutMS``: Optional integer.
 
 
-.. _commonOptions_topologyDescription:
-
-- ``topologyDescription``: String. `TopologyDescription
-  <entity_topologydescription_>`_ entity name, which the test runner MUST resolve
-  to a TopologyDescription object. The YAML file SHOULD use an `alias node`_ for
-  a session entity's ``id`` field (e.g. ``topologyDescription:
-  *postInsertTopology``).
-
-
 Version String
 --------------
 
@@ -2722,8 +2713,8 @@ the given `TopologyDescription <entity_topologydescription_>`_ has a particular 
 
 The following arguments are supported:
 
-- ``topologyDescription``: Required string. See
-  `commonOptions_topologyDescription`_.
+- ``topologyDescription``: Required string. TopologyDescription entity whose
+  TopologyType will be inspected.
 
 - ``topologyType``: Required string. Expected TopologyType for the
   TopologyDescription. See `SDAM: TopologyType
