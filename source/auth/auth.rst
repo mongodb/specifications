@@ -5,8 +5,20 @@
 Driver Authentication
 =====================
 
+<<<<<<< HEAD
+=======
+:Spec: 100
+:Spec Version: 1.12.0
+:Title: Driver Authentication
+:Author: Craig Wilson, David Golden
+:Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
+>>>>>>> a1756248 (update changelog and version)
 :Status: Accepted
 :Minimum Server Version: 2.6
+<<<<<<< HEAD
+=======
+:Last Modified: 2022-07-27
+>>>>>>> a1756248 (update changelog and version)
 
 .. contents::
 
@@ -1342,6 +1354,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2022-10-07: Require caching of AWS credentials fetched by the driver.
 :2022-10-05: Remove spec front matter and convert version history to changelog.
 :2022-09-07: Add support for AWS AssumeRoleWithWebIdentity.
 :2022-01-20: Require that timeouts be applied per the client-side operations timeout spec.
