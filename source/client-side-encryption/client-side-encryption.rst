@@ -480,9 +480,9 @@ accept arbitrary strings at runtime for forward-compatibility.
 .. code:: typescript
 
    interface KMSProviders {
-      aws?: AWSKMSOptions | { /* Empty. (See "Automatic AWS Credentials") */ };
+      aws?: AWSKMSOptions | { /* Empty. (See "Automatic Credentials") */ };
       azure?: AzureKMSOptions;
-      gcp?: GCPKMSOptions;
+      gcp?: GCPKMSOptions | { /* Empty. (See "Automatic Credentials") */ };
       local?: LocalKMSOptions;
       kmip?: KMIPKMSOptions;
    };
@@ -504,11 +504,17 @@ accept arbitrary strings at runtime for forward-compatibility.
       identityPlatformEndpoint?: string; // Defaults to login.microsoftonline.com
    };
 
-   interface GCPKMSOptions {
+   type GCPKMSOptions = GCPKMSCredentials | GCPKMSAccessToken
+
+   interface GCPKMSCredentials {
       email: string;
       privateKey: byte[] | string; // May be passed as a base64 encoded string.
       endpoint?: string; // Defaults to oauth2.googleapis.com
    };
+
+   interface GCPKMSAccessToken {
+      accessToken: string;
+   }
 
    interface LocalKMSOptions {
       key: byte[96] | string; // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
