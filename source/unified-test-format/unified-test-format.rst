@@ -208,6 +208,11 @@ ChangeStream) and only allow access to BSON types (see:
 test runner needs to ensure driver objects in its entity map are properly
 freed/destroyed between tests.
 
+The entity map MUST be implemented in a way that allows for safe concurrent
+access, since a test may include multiple thread entities that all need to
+access the map concurrently. See `entity_thread`_ for more information on test
+runner threads.
+
 Consider the following examples::
 
     # Error due to a duplicate name (client0 was already defined)
@@ -274,12 +279,14 @@ Test runners MUST support the following types of entities:
   not be supported by all drivers and could yield runtime errors (e.g. while
   loading a test file with an Extended JSON parser).
 
+.. _entity_thread:
+
 - Test runner thread. An entity representing a "thread" that can be used to
   concurrently execute operations. Thread entities MUST be able to run
   concurrently with the main test runner thread and other thread entities, but
   they do not have to be implemented as actual OS threads (e.g. they can be
-  goroutines or async tasks). See `entity_thread`_ for more information on how
-  they are created.
+  goroutines or async tasks). See `entity_thread_object`_ for more information
+  on how they are created.
 
 .. _entity_topologydescription:
 
@@ -748,7 +755,7 @@ The structure of this object is as follows:
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
 
-.. _entity_thread:
+.. _entity_thread_object:
 
 - ``thread``: Optional object. Defines a test runner "thread". Once the "thread"
   has been created, it should be idle and waiting for operations to be
