@@ -29,6 +29,9 @@ tests:
                   retryWrites: false
                   heartbeatFrequencyMS: 500
                   appname: shutdownErrorInsertTest
+                observeEvents:
+                  - serverDescriptionChangedEvent
+                  - poolClearedEvent
             - database:
                 id: &database database
                 client: *client

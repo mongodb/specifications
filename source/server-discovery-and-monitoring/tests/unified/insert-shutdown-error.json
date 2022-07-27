@@ -36,7 +36,11 @@
                     "retryWrites": false,
                     "heartbeatFrequencyMS": 500,
                     "appname": "shutdownErrorInsertTest"
-                  }
+                  },
+                  "observeEvents": [
+                    "serverDescriptionChangedEvent",
+                    "poolClearedEvent"
+                  ]
                 }
               },
               {

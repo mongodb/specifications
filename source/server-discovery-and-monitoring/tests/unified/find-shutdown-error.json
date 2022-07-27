@@ -37,7 +37,11 @@
                     "retryReads": false,
                     "heartbeatFrequencyMS": 500,
                     "appname": "shutdownErrorFindTest"
-                  }
+                  },
+                  "observeEvents": [
+                    "serverDescriptionChangedEvent",
+                    "poolClearedEvent"
+                  ]
                 }
               },
               {

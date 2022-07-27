@@ -2629,7 +2629,7 @@ The following arguments are suported:
 - ``event``: Required `expectedEvent`_ object. The event which the test runner
   is waiting to be observed on the provided client. The assertions laid out in
   `expectedEvent`_ MUST be used to determine if an observed event matches
-  ``event``. ``event`` MAY have an event type that was not included in the
+  ``event``. ``event`` SHOULD have an event type that was included in the
   ``client``'s ``observeEvents`` field.
 
 - ``count``: Required integer. The number of matching events to wait for before
@@ -2663,7 +2663,7 @@ The following arguments are supported:
 - ``event``: Required `expectedEvent`_ object. The event which the test runner
   will be counting on the provided client. The assertions laid out in
   `expectedEvent`_ MUST be used to determine if an observed event matches
-  ``event``. ``event`` MAY have an event type that was not included in the
+  ``event``. ``event`` SHOULD have an event type that was included in the
   ``client``'s ``observeEvents`` field.
 
 - ``count``: Required integer. The exact number of matching events that

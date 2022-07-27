@@ -41,6 +41,8 @@ tests:
                 id: &client client
                 observeEvents:
                   - commandStartedEvent
+                  - serverDescriptionChangedEvent
+                  - poolClearedEvent
                 uriOptions:
                   retryWrites: false
                   appname: authErrorTest

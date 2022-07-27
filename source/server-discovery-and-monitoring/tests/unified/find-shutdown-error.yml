@@ -30,6 +30,9 @@ tests:
                   retryReads: false
                   heartbeatFrequencyMS: 500
                   appname: shutdownErrorFindTest
+                observeEvents:
+                  - serverDescriptionChangedEvent
+                  - poolClearedEvent
             - database:
                 id: &database database
                 client: *client
