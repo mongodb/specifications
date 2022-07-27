@@ -1098,6 +1098,14 @@ From the JSON response drivers
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
 
+Caching Credentials
+___________________
+Credentials fetched by the driver using AWS endpoints MUST be cached and reused
+to avoid hitting rate limitations.  The "Expiration" field must be stored and
+used to determine when to clear the cache.  If the "Expiration" is within 5
+minutes of the current UTC time, the cache must be cleared.
+If AWS authentication fails for any reason, the cache must be cleared.
+
 -------------------------
 Connection String Options
 -------------------------
