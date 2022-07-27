@@ -2665,8 +2665,7 @@ assertEventCount
 
 The "assertEventCount" operation instructs the test runner to assert the
 specified MongoClient has published a specific, matching event a given number of
-times so far in the test. Note that this includes any events published before
-the waitForEvent operation started.
+times so far in the test.
 
 The following arguments are supported:
 
