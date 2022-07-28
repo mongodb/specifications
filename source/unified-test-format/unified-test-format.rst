@@ -3738,7 +3738,8 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2022-07-12: Add support for ``thread`` entities (``runOnThread``,
+:2022-07-12: **Schema version 1.10.**
+             Add support for ``thread`` entities (``runOnThread``,
              ``waitForThread``), TopologyDescription entities
              (``recordTopologyDescription``, ``waitForPrimaryChange``,
              ``assertTopologyType``), testRunner event assertion operations
