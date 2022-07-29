@@ -2,7 +2,7 @@
 # commands sort the resulting documents in ascending order by the single-element
 # keyAltNames array to ensure alphabetic order by original KMS provider as
 # defined in initialData.
-description: rewrapManyDataKey-kms_providers
+description: rewrapManyDataKey
 
 schemaVersion: "1.8"
 
