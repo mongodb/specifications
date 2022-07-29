@@ -976,6 +976,13 @@ being created. If ``keyMaterial`` is given, the custom key material is used for
 encrypting and decrypting data. Otherwise, the key material for the new data key
 is generated from a cryptographically secure random device.
 
+rewrapManyDataKey
+-----------------
+
+Drivers MUST document users must upgrade if necessary to avoid being impacted by MONGOCRYPT-464.
+
+Drivers SHOULD return an error if rewrapManyDataKey is called with libmongocrypt 1.5.1 or older.
+
 RewrapManyDataKeyOpts
 ---------------------
 
