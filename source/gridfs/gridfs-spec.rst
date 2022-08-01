@@ -775,7 +775,7 @@ Generic Find on Files Collection
     maxTimeMS: Int64 optional;
 
     /**
-     * The server normally times out idle cursors after an inactivity period (10 minutes)
+     * The server normally times out idle cursors after an inactivity period
      * to prevent excess memory use. Set this option to prevent that.
      */
     noCursorTimeout : Boolean optional;
@@ -783,7 +783,7 @@ Generic Find on Files Collection
     /**
      * The number of documents to skip before returning.
      */
-    skip : Int32;
+    skip : Int32 optional;
 
     /**
      * The order by which to sort results. Defaults to not sorting.
