@@ -2757,7 +2757,7 @@ The following arguments are supported:
 
 - ``client``: Required string. See `commonOptions_client`_.
 
-  The clienty entity MUST the same one from which ``topologyDescription`` was
+  The client entity MUST be the same one from which ``topologyDescription`` was
   derived. Test runners do not need to verify this.
 
 - ``priorTopologyDescription``: Required string. The name of a
