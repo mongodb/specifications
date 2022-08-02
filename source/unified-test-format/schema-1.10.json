@@ -514,11 +514,7 @@
             "LoadBalancer",
             "Unknown"
           ]
-        },
-        "error": { "$ref": "#/definitions/expectedError" },
-        "minWireVersion": { "type": "integer" },
-        "maxWireVersion": { "type": "integer" },
-        "topologyVersion": { "type": "object" }
+        }
       }
     },
 
