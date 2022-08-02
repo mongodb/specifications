@@ -1142,12 +1142,18 @@ cannot be reliably tested. Taking command monitoring events as an example,
 ``requestId`` and ``operationId`` are nondeterministic and types for
 ``connectionId`` and ``failure`` can vary by implementation.
 
-The events allowed in an ``expectedEvent`` object depend on the value of
-``eventType`` in the corresponding `expectedEventsForClient`_ object. If the
-value is omitted or is explicitly set to ``command``, only the event types
-defined in `expectedCommandEvent`_ are allowed. If the value is ``cmap``, only
-the event types defined in `expectedCmapEvent`_ are allowed. If the value is
-``sdam``, only the event types defined in `expectedSdamEvent`_ are allowed.
+The events allowed in an ``expectedEvent`` object depend on the value
+of ``eventType`` in the corresponding `expectedEventsForClient`_
+object, which can have one of the following values:
+
+- ``command`` or omitted: only the event types defined in
+`expectedCommandEvent`_ are allowed.
+
+- ``cmap``: only the event types defined in `expectedCmapEvent`_ are
+allowed.
+
+- ``sdam``: only the event types defined in `expectedSdamEvent`_ are
+allowed.
 
 expectedCommandEvent
 ````````````````````
