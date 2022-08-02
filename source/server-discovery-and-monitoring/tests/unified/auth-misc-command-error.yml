@@ -7,6 +7,8 @@ runOnRequirements:
   # failCommand appName requirements
   - minServerVersion: "4.4"
     auth: true
+    serverless: forbid
+    topologies: [ single, replicaset, sharded ]
 
 createEntities:
   - client:

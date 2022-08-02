@@ -6,6 +6,8 @@ schemaVersion: "1.10"
 runOnRequirements:
     # failCommand appName requirements
   - minServerVersion: "4.9"
+    serverless: forbid
+    topologies: [ single, replicaset, sharded ]
 
 createEntities:
   - client:
