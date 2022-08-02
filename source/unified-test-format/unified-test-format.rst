@@ -2563,9 +2563,9 @@ runOnThread
 ~~~~~~~~~~~
 
 The "runOnThread" operation instructs the test runner to schedule an operation
-to be run on a given thread. runOnThread MUST NOT wait for the scheduled
-operation to complete. If any of the operation's test assertions fail, the
-entire test case MUST fail as well.
+to be run on a given thread. The given thread MUST begin executing the operation
+immediately. runOnThread MUST NOT wait for the operation to complete. If any of
+the operation's test assertions fail, the entire test case MUST fail as well.
 
 The following arguments are supported:
 
