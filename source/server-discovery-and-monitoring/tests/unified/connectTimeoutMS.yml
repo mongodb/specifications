@@ -12,6 +12,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &setupClient setupClient
+      useMultipleMongoses: false
 
 initialData: &initialData
   - collectionName: &collectionName connectTimeoutMS
@@ -36,6 +37,7 @@ tests:
                   connectTimeoutMS: 0
                   heartbeatFrequencyMS: 500
                   appname: connectTimeoutMS=0
+                useMultipleMongoses: false
             - database:
                 id: &database database
                 client: *client

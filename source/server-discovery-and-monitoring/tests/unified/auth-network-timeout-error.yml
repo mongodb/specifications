@@ -13,6 +13,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &setupClient setupClient
+      useMultipleMongoses: false
 
 initialData: &initialData
   - collectionName: &collectionName auth-network-timeout-error
@@ -44,6 +45,7 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
                   - serverDescriptionChangedEvent

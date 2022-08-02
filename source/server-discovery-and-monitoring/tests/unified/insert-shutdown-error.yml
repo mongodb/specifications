@@ -12,6 +12,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &setupClient setupClient
+      useMultipleMongoses: false
 
 initialData: &initialData
   - collectionName: &collectionName insert-shutdown-error
@@ -27,6 +28,7 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
                 uriOptions:
                   retryWrites: false
                   heartbeatFrequencyMS: 500

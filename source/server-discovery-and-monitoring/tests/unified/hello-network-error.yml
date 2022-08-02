@@ -12,6 +12,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &setupClient setupClient
+      useMultipleMongoses: false
 
 initialData: &initialData
   - collectionName: &collectionName hello-network-error
@@ -43,6 +44,7 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
                   - serverDescriptionChangedEvent
@@ -109,6 +111,7 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
                   - serverDescriptionChangedEvent

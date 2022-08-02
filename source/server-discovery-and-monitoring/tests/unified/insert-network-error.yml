@@ -12,6 +12,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &setupClient setupClient
+      useMultipleMongoses: false
 
 initialData: &initialData
   - collectionName: &collectionName insert-network-error
@@ -49,6 +50,7 @@ tests:
                 uriOptions:
                   retryWrites: false
                   appname: insertNetworkErrorTest
+                useMultipleMongoses: false
             - database:
                 id: &database database
                 client: *client

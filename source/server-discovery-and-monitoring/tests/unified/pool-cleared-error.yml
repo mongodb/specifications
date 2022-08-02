@@ -15,6 +15,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &setupClient setupClient
+      useMultipleMongoses: false
 
 initialData: &initialData
   - collectionName: &collectionName pool-cleared-error
@@ -30,6 +31,7 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
                 observeEvents:
                   - serverDescriptionChangedEvent
                   - poolClearedEvent

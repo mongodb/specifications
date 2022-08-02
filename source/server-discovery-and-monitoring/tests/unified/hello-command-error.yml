@@ -12,6 +12,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &setupClient setupClient
+      useMultipleMongoses: false
 
 initialData: &initialData
   - collectionName: &collectionName hello-command-error
@@ -46,6 +47,7 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
                 observeEvents:
                   - serverDescriptionChangedEvent
                   - poolClearedEvent
@@ -113,6 +115,7 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
                   - serverDescriptionChangedEvent
