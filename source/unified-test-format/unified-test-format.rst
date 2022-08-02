@@ -2613,6 +2613,9 @@ operation, and assert that it exited without any errors.
 If the "waitForThread" operation is not satisfied after 10 seconds, this
 operation MUST cause a test failure.
 
+The ``test.operations`` list SHOULD contain a "waitForThread" operation for each
+thread entity that the test creates.
+
 The following arguments are supported:
 
 - ``thread``: Required string. Thread entity that should be stopped and awaited
