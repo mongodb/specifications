@@ -27,6 +27,8 @@ tests:
                 id: &client client
                 observeEvents:
                   - commandStartedEvent
+                  - serverDescriptionChangedEvent
+                  - poolClearedEvent
                 uriOptions:
                   retryWrites: false
                   connectTimeoutMS: 0
