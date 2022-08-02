@@ -2567,6 +2567,11 @@ to be run on a given thread. The given thread MUST begin executing the operation
 immediately. runOnThread MUST NOT wait for the operation to complete. If any of
 the operation's test assertions fail, the entire test case MUST fail as well.
 
+When writing test cases that use runOnThread, it's important to note
+that certain entities are not concurrency-safe (e.g. sessions,
+cursors) and therefore SHOULD NOT be used in operations on multiple
+different threads entities.
+
 The following arguments are supported:
 
 - ``thread``: Required string. Thread entity on which this operation should be
