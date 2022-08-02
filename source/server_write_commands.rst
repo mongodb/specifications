@@ -2,8 +2,8 @@
 Write Commands Specification
 ============================
 
-:date: April 7, 2021
-:version: 0.9.1
+:last modified: July 25, 2022
+:version: 0.9.2
 :status: Approved
 
 .. contents::
@@ -144,7 +144,7 @@ Both of these limits can be found using hello():
   assembled into a write command the total size may exceed ``maxBsonObjectSize`` by a maximum of
   16 KiB, allowing users to insert documents up to ``maxBsonObjectSize``.
 
-* ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that 
+* ``maxWriteBatchSize`` : this is the maximum number of inserts, updates, or deletes that 
   can be included in a write batch.  If more than this number of writes are included, the server cannot
   guarantee space in the response document to reply to the batch.
 
@@ -507,5 +507,9 @@ v0.9
 v0.9.1
 ~~~~~~
 * Updated to use hello command
+
+v0.9.2
+~~~~~~
+* Remove outdated value for ``maxWriteBatchSize``
 
 ..  LocalWords:  boolean ie

@@ -2013,7 +2013,109 @@ the environment.
 .. _ClientEncryption: ../client-side-encryption.rst#clientencryption
 .. _auth-aws: ../../auth/auth.rst#obtaining-credentials
 
-16. On-demand GCP Credentials
+16. Rewrap
+~~~~~~~~~~
+
+Case 1: Rewrap with separate ClientEncryption
+`````````````````````````````````````````````
+
+When the following test case requests setting ``masterKey``, use the following values based on the KMS provider:
+
+For "aws":
+
+.. code:: javascript
+
+   {
+      "region": "us-east-1",
+      "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+   }
+
+For "azure":
+
+.. code:: javascript
+
+   {
+      "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+      "keyName": "key-name-csfle"
+   }
+
+For "gcp":
+
+.. code:: javascript
+
+   {
+      "projectId": "devprod-drivers",
+      "location": "global",
+      "keyRing": "key-ring-csfle",
+      "keyName": "key-name-csfle"
+   }
+
+For "kmip":
+
+.. code:: javascript
+
+   {}
+
+For "local", do not set a masterKey document.
+
+Run the following test case for each pair of KMS providers (referred to as ``srcProvider`` and ``dstProvider``).
+Include pairs where ``srcProvider`` equals ``dstProvider``.
+
+1. Drop the collection ``keyvault.datakeys``. 
+
+2. Create a ``ClientEncryption`` object named ``clientEncryption1`` with these options:
+   .. code:: typescript
+
+      ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>;
+         keyVaultNamespace: "keyvault.datakeys";
+         kmsProviders: <all KMS providers>
+      }
+
+3. Call ``clientEncryption1.createDataKey`` with ``srcProvider`` and these options:
+   .. code:: typescript
+
+      class DataKeyOpts {
+         masterKey: <depends on srcProvider>
+      }
+
+   Store the return value in ``keyID``.
+
+4. Call ``clientEncryption1.encrypt`` with the value "test" and these options:
+   .. code:: typescript
+
+      class EncryptOpts {
+         keyId : keyID,
+         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+      }
+
+   Store the return value in ``ciphertext``.
+
+5. Create a ``ClientEncryption`` object named ``clientEncryption2`` with these options:
+   .. code:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <new MongoClient>;
+      keyVaultNamespace: "keyvault.datakeys";
+      kmsProviders: <all KMS providers>
+   }
+
+6. Call ``clientEncryption2.rewrapManyDataKey`` with an empty ``filter`` and these options:
+
+   .. code:: typescript
+
+      class RewrapManyDataKeyOpts {
+         provider: dstProvider
+         masterKey: <depends on dstProvider>
+      }
+
+   Assert that the returned ``RewrapManyDataKeyResult.bulkWriteResult.modifiedCount`` is 1.
+
+7. Call ``clientEncryption1.decrypt`` with the ``ciphertext``. Assert the return value is "test".
+
+8. Call ``clientEncryption2.decrypt`` with the ``ciphertext``. Assert the return value is "test".
+
+17. On-demand GCP Credentials
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Refer: `Automatic GCP Credentials`_.
