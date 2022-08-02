@@ -2626,7 +2626,7 @@ operation started.
 If the "waitForEvent" operation is not satisfied after 10 seconds, this operation
 MUST cause a test failure.
 
-The following arguments are suported:
+The following arguments are supported:
 
 - ``client``: Required string. Client entity whose events the runner will be
   waiting for.
@@ -2691,7 +2691,7 @@ The "recordTopologyDescription" operation instructs the test runner to retrieve
 the specified MongoClient's current `TopologyDescription <entity_topologydescription_>`_ and store it in
 the `Entity Map`_.
 
-The following arguments are suported:
+The following arguments are supported:
 
 - ``client``: Required string. Client entity whose TopologyDescription will be recorded.
 
