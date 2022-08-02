@@ -979,7 +979,7 @@ is generated from a cryptographically secure random device.
 rewrapManyDataKey
 -----------------
 
-Drivers MUST document users must upgrade if necessary to avoid being impacted by MONGOCRYPT-464.
+Drivers MUST document users must upgrade dependencies if necessary to avoid being impacted by MONGOCRYPT-464.
 
 Drivers SHOULD return an error if rewrapManyDataKey is called with libmongocrypt 1.5.1 or older.
 
