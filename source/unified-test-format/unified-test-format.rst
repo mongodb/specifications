@@ -2568,15 +2568,14 @@ An example of this operation follows::
 runOnThread
 ~~~~~~~~~~~
 
-The "runOnThread" operation instructs the test runner to schedule an operation
+The ``runOnThread`` operation instructs the test runner to schedule an operation
 to be run on a given thread. The given thread MUST begin executing the operation
-immediately. runOnThread MUST NOT wait for the operation to complete. If any of
-the operation's test assertions fail, the entire test case MUST fail as well.
+immediately. ``runOnThread`` MUST NOT wait for the operation to complete. If any
+of the operation's test assertions fail, the entire test case MUST fail as well.
 
-When writing test cases that use runOnThread, it's important to note
-that certain entities are not concurrency-safe (e.g. sessions,
-cursors) and therefore SHOULD NOT be used in operations on multiple
-different threads entities.
+When writing test cases that use ``runOnThread``, it's important to note that
+certain entities are not concurrency-safe (e.g. sessions, cursors) and therefore
+SHOULD NOT be used in operations on multiple different threads entities.
 
 The following arguments are supported:
 
@@ -2606,15 +2605,15 @@ An example of this operation follows::
 waitForThread
 ~~~~~~~~~~~~~
 
-The "waitForThread" operation instructs the test runner to notify the given
+The ``waitForThread`` operation instructs the test runner to notify the given
 thread that no more operations are forthcoming, wait for it to complete its last
 operation, and assert that it exited without any errors.
 
-If the "waitForThread" operation is not satisfied after 10 seconds, this
+If the ``waitForThread`` operation is not satisfied after 10 seconds, this
 operation MUST cause a test failure.
 
-The ``test.operations`` list SHOULD contain a "waitForThread" operation for each
-thread entity that the test creates.
+The ``test.operations`` list SHOULD contain a ``waitForThread`` operation for
+each thread entity that the test creates.
 
 The following arguments are supported:
 
@@ -2632,13 +2631,13 @@ An example of this operation follows::
 waitForEvent
 ~~~~~~~~~~~~
 
-The "waitForEvent" operation instructs the test runner to wait until the
+The ``waitForEvent`` operation instructs the test runner to wait until the
 specified MongoClient has published a specific, matching event a given number of
-times. Note that this includes any events published before the waitForEvent
+times. Note that this includes any events published before the ``waitForEvent``
 operation started.
 
-If the "waitForEvent" operation is not satisfied after 10 seconds, this operation
-MUST cause a test failure.
+If the ``waitForEvent`` operation is not satisfied after 10 seconds, this
+operation MUST cause a test failure.
 
 The following arguments are supported:
 
@@ -2669,7 +2668,7 @@ poolClearedEvent to be published::
 assertEventCount
 ~~~~~~~~~~~~~~~~
 
-The "assertEventCount" operation instructs the test runner to assert the
+The ``assertEventCount`` operation instructs the test runner to assert the
 specified MongoClient has published a specific, matching event a given number of
 times so far in the test.
 
@@ -2701,9 +2700,9 @@ a single PoolClearedEvent was published::
 recordTopologyDescription
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The "recordTopologyDescription" operation instructs the test runner to retrieve
-the specified MongoClient's current `TopologyDescription <entity_topologydescription_>`_ and store it in
-the `Entity Map`_.
+The ``recordTopologyDescription`` operation instructs the test runner to
+retrieve the specified MongoClient's current `TopologyDescription
+<entity_topologydescription_>`_ and store it in the `Entity Map`_.
 
 The following arguments are supported:
 
