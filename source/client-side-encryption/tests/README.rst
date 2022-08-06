@@ -2114,3 +2114,72 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 7. Call ``clientEncryption1.decrypt`` with the ``ciphertext``. Assert the return value is "test".
 
 8. Call ``clientEncryption2.decrypt`` with the ``ciphertext``. Assert the return value is "test".
+
+17. On-demand GCP Credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Refer: `Automatic GCP Credentials`_.
+
+For these cases, create a ClientEncryption_ object :math:`C` with the following
+options:
+
+.. code-block:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <setupClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "gcp": {} },
+   }
+
+Case 1: Failure
+```````````````
+
+Do not run this test case in an environment with a GCP service account is
+attached (e.g. any `GCE equivalent runtime
+<https://google.aip.dev/auth/4115>`_). This may be run in an AWS EC2 instance.
+
+Attempt to create a datakey with :math:`C` using the ``"gcp"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "projectId": "devprod-drivers",
+         "location": "global",
+         "keyRing": "key-ring-csfle",
+         "keyName": "key-name-csfle"
+      }
+   }
+
+Expect the attempt to obtain ``"gcp"`` credentials from the environment to fail.
+
+Case 2: Success
+```````````````
+
+This test case must run in a Google Compute Engine (GCE) Virtual Machine with a
+service account attached. See `drivers-evergreen-tools/.evergreen/csfle/gcpkms
+<https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/gcpkms>`_
+for scripts to create a GCE instance for testing. The Evergreen task SHOULD set a
+``batchtime`` of 14 days to reduce how often this test case runs.
+
+Attempt to create a datakey with :math:`C` using the ``"gcp"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "projectId": "devprod-drivers",
+         "location": "global",
+         "keyRing": "key-ring-csfle",
+         "keyName": "key-name-csfle"
+      }
+   }
+
+This should successfully load and use the GCP credentials of the service account
+attached to the virtual machine.
+
+Expect the key to be successfully created.
+
+.. _Automatic GCP Credentials: ../client-side-encryption.rst#automatic-gcp-credentials
