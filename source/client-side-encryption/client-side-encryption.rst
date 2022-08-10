@@ -578,8 +578,7 @@ Obtaining GCP Credentials
 
 .. versionadded:: 1.11.0 2022/07/20
 
-Set ``HOST`` to ``metadata.google.internal``. If the environment variable
-``GCE_METADATA_HOST`` is set, use the value of ``GCE_METADATA_HOST`` as ``HOST``.
+Set ``HOST`` to ``metadata.google.internal``.
 
 Send an HTTP request to the URL
 `http://<HOST>/computeMetadata/v1/instance/service-accounts/default/token` with
