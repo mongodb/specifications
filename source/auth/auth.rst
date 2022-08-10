@@ -1118,6 +1118,9 @@ used to determine when to clear the cache.  If the "Expiration" is within 5
 minutes of the current UTC time, the cache must be cleared.
 If AWS authentication fails for any reason, the cache must be cleared.
 
+.. note::
+    Five minutes was chosen because based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
+
 -------------------------
 Connection String Options
 -------------------------
