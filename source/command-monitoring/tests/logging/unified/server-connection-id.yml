@@ -1,6 +1,6 @@
 description: "pre-42-server-connection-id-logging"
 
-schemaVersion: "1.10"
+schemaVersion: "1.11"
 
 runOnRequirements:
   - minServerVersion: "4.2"
