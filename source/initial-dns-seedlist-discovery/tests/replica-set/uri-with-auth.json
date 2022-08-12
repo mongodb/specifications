@@ -13,5 +13,6 @@
     "user": "auser",
     "password": "apass"
   },
+  "ping": true,
   "comment": "Should preserve auth credentials"
 }

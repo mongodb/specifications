@@ -114,6 +114,8 @@ These YAML and JSON files contain the following fields:
 - ``error``: indicates that the parsing of the URI, or the resolving or
   contents of the SRV or TXT records included errors.
 - ``comment``: a comment to indicate why a test would fail.
+- ``ping``: if true, the test runner should run a "ping" operation after
+  initializing a MongoClient.
 
 .. _`Connection String`: ../../connection-string/connection-string-spec.rst
 .. _`URI options`: ../../uri-options/uri-options.rst
@@ -122,7 +124,7 @@ For each YAML file:
 
 - Create a MongoClient initialized with the ``mongodb+srv``
   connection string.
-- Run run a ping operation.
+- Run run a ping operation if ``ping`` in the test file is true.
 
 Assertions:
 
@@ -150,3 +152,11 @@ Assertions:
   the MongoClient throws an error. If ``error`` is not specified or is
   ``false``, both initializing the MongoClient and running a ping operation must
   succeed without throwing any errors.
+
+- If ``ping`` is specified and ``true``, drivers MUST verify that running a
+  "ping" operation using the initialized MongoClient succeeds. If ``ping`` is
+  not specified or ``false, drivers MUST NOT run a "ping" operation. Note that
+  these tests are intended to be run against MongoDB databases with and without
+  authentication enabled. The "ping" operation does not require authentication
+  so should succeed, even though the test URIs do not include authentication
+  information.
