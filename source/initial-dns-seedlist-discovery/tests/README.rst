@@ -124,7 +124,7 @@ For each YAML file:
 
 - Create a MongoClient initialized with the ``mongodb+srv``
   connection string.
-- Run run a ping operation if ``ping`` in the test file is true.
+- Run run a "ping" operation if ``ping`` in the test file is true.
 
 Assertions:
 
@@ -155,8 +155,8 @@ Assertions:
 
 - If ``ping`` is specified and ``true``, drivers MUST verify that running a
   "ping" operation using the initialized MongoClient succeeds. If ``ping`` is
-  not specified or ``false, drivers MUST NOT run a "ping" operation. Note that
-  these tests are intended to be run against MongoDB databases with and without
-  authentication enabled. The "ping" operation does not require authentication
-  so should succeed, even though the test URIs do not include authentication
-  information.
+  not specified or is ``false``, drivers MUST NOT run a "ping" operation.
+  **Note:** These tests are expected to be run against MongoDB databases with
+  and without authentication enabled. The "ping" operation does not require
+  authentication so should succeed, even though the test URIs do not have
+  correct authentication information.
