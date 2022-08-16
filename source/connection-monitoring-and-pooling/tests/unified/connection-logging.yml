@@ -1,0 +1,189 @@
+description: "connection-logging"
+
+schemaVersion: "1.11"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+
+tests:
+  - description: "Create a client, run a command, and close the client"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                observeLogMessages:
+                  connection: debug
+      - name: listDatabases
+        object: *client
+        arguments:
+          filter: {}
+      - name: close
+        object: *client
+    expectLogMessages:
+      - client: *client
+        messages:
+          - level: debug
+            component: connection
+            data:
+              message: "Connection pool created"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection pool ready"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checkout started"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection created"
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection ready"
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+          
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checked out"
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checked in"
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection closed"
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+              reason: "Connection pool was closed"
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection pool closed"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+  - description: "Pool is cleared and connection checkout fails"
+    runOnRequirements:
+    # Server version 4.9+ is needed to set a fail point on the initial
+    # connection handshake with the appName filter due to SERVER-49336.
+    - minServerVersion: '4.9'
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                uriOptions:
+                  appname: &clientAppName clientAppName
+                  retryReads: false
+                observeLogMessages:
+                  connection: debug
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [isMaster, hello]
+              closeConnection: true
+              appName: *clientAppName
+      - name: listDatabases
+        object: *client
+        arguments:
+          filter: {}
+        expectError:
+          isClientError: true
+
+    expectLogMessages:
+      - client: *client
+        messages:
+          - level: debug
+            component: connection
+            data:
+              message: "Connection pool created"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection pool ready"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checkout started"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection created"
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection pool cleared"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection closed"
+              driverConnectionId: { $$exists: true }
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+              reason: "An error occurred while using the connection"
+          
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checkout failed"
+              serverHost: { $$exists: true }
+              serverPort:  { $$exists: true }
+              reason: "An error occurred while trying to establish a connection"
