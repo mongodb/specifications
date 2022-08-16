@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-07-20
+:Last Modified: 2022-08-16
 :Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
