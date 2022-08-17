@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-08-18
+:Last Modified: 2022-08-22
 :Version: 1.17
 
 .. contents::
@@ -1097,4 +1097,6 @@ Changelog
 | 2022-05-19 | Support new change stream events with showExpandedEvents.  |
 +------------+------------------------------------------------------------+
 | 2022-08-17 | Support `disambiguatedPaths` in `UpdateDescription`.       |
++------------+------------------------------------------------------------+
+| 2022-08-22 | Added ``clusterTime`` to ``ChangeStreamDocument``.         |
 +------------+------------------------------------------------------------+
