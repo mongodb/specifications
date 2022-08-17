@@ -332,6 +332,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
 The responses to a change stream aggregate or getMore have the following structures:
 
 .. code:: typescript
+
   /**
    * Response to a successful aggregate.
    */
