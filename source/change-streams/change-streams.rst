@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: 2022-05-19
-:Version: 1.16
+:Version: 1.17
 
 .. contents::
 
@@ -1089,4 +1089,6 @@ Changelog
 | 2022-05-17 | Added ``wallTime`` to ``ChangeStreamDocument``.            |
 +------------+------------------------------------------------------------+
 | 2022-05-19 | Support new change stream events with showExpandedEvents.  |
++------------+------------------------------------------------------------+
+| 2022-08-17 | Support `disambiguatedPaths` in `UpdateDescription`.       |
 +------------+------------------------------------------------------------+
