@@ -158,5 +158,7 @@ Assertions:
   not specified or is ``false``, drivers MUST NOT run a "ping" operation.
   **Note:** These tests are expected to be run against MongoDB databases with
   and without authentication enabled. The "ping" operation does not require
-  authentication so should succeed, even though the test URIs do not have
-  correct authentication information.
+  authentication so should succeed with URIs that contain no userinfo (i.e.
+  no username and password). Tests with URIs that contain userinfo always set
+  ``ping`` to ``false`` because some drivers will fail handshake on a connection
+  if userinfo is provided but incorrect.
