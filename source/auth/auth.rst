@@ -1113,10 +1113,23 @@ MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will
 Caching Credentials
 ___________________
 Credentials fetched by the driver using AWS endpoints MUST be cached and reused
-to avoid hitting rate limitations.  The "Expiration" field must be stored and
-used to determine when to clear the cache.  If the "Expiration" is within 5
-minutes of the current UTC time, the cache must be cleared.
-If AWS authentication fails for any reason, the cache must be cleared.
+to avoid hitting AWS rate limitations.  The "Expiration" field MUST be stored
+and used to determine when to clear the cache.  Credentials are considered
+valid if they are more than one minute away from expiring, to the reduce the
+chance of expiration before they are validated by the server.
+
+If there are no current valid cached credentials, the driver MUST initiate a
+credential request.  To avoid adding a bottleneck that would override the
+``maxConnecting`` setting, the driver MUST not place a lock on making a
+request.  The cache MUST be written atomically.
+
+Once valid credentials are received, the driver SHOULD schedule an update of
+the cache within five minutes of the expiration time, unless the driver does not have the ability to schedule background tasks.  The background task MUST
+handle timeouts or errors and retry appropriately.  The purpose of the
+background task is to limit the chance of needing to initiate multiple
+simultaneous requests.
+
+If AWS authentication fails for any reason, the cache MUST be cleared.
 
 .. note::
     Five minutes was chosen because based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
