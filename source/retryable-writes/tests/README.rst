@@ -403,7 +403,7 @@ and sharded clusters.
       sharded deployment, the test runner MUST ensure that the client connects
       to only a single mongos host.
 
-   2. Configure a fail point with error code ``10107`` (NotWritablePrimary) error::
+   2. Configure a fail point with error code ``10107`` (NotWritablePrimary)::
 
          db.adminCommand({
                 configureFailPoint: "failCommand",
@@ -430,7 +430,8 @@ and sharded clusters.
         });
 
    4. Attempt an ``insertOne`` operation on any record for any database and
-      collection and assert that the associated error code is ``10107``.
+      collection. For the resulting error, assert that the associated error code
+      is ``10107``.
 
    5. Disable the fail point::
 
