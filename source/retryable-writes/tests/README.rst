@@ -403,7 +403,7 @@ and sharded clusters.
       sharded deployment, the test runner MUST ensure that the client connects
       to only a single mongos host.
 
-   2. Configure a fail point with error code ``10107`` (``NotWritablePrimary``) error::
+   2. Configure a fail point with error code ``10107`` (NotWritablePrimary) error::
 
          db.adminCommand({
                 configureFailPoint: "failCommand",
@@ -416,7 +416,8 @@ and sharded clusters.
         });
 
    3. Via the command monitoring ``CommandFailedEvent``, configure a fail point
-      for a ``SocketException`` error with a ``NoWritesPerformed`` label::
+      with error code ``9001`` (SocketException) and a NoWritesPerformed
+      label::
 
          db.adminCommand({
                 configureFailPoint: "failCommand",
