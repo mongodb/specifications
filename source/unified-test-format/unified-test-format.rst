@@ -3772,9 +3772,10 @@ Change Log
              `ClientEncryption Operations`_.
 
 :2022-04-27: **Schema version 1.9.**
-             Added ``createOptions`` field to ``initialData``, introduced a
-             new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
-             added an ``isTimeoutError`` field to ``expectedError``.
+             Added ``createOptions`` field to ``initialData``, introduced a new
+             ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and added
+             an ``isTimeoutError`` field to ``expectedError``. Also introduced
+             the ``createEntities`` operation.
 
 :2022-04-27: **Schema version 1.8.**
              Add ``runOnRequirement.csfle``.
