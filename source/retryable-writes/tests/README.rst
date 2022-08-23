@@ -353,7 +353,7 @@ and sharded clusters.
     retryWrites=false to your connection string.
 
    and the error code is 20.
-   
+
    **Note**: Drivers that rely on ``serverStatus`` to determine the storage engine
    in use MAY skip this test for sharded clusters, since ``mongos`` does not report
    this information in its ``serverStatus`` response.
@@ -395,6 +395,49 @@ and sharded clusters.
 
    9. Disable the failpoint.
 
+#. Test that drivers return the original error after encountering an error with
+   label `NoWritesPerformed`. This test MUST be implemented by any driver that
+   implements the Command Monitoring specification.
+
+   1. Create a client with ``maxPoolSize=1`` and ``retryableWrites=true``. If
+      testing against a sharded deployment, the test runner MUST ensure that the
+      client connects to only a single mongos host.
+
+   2. Configure a fail point for a ``NoWritablePrimary`` error::
+
+         db.adminCommand({
+                configureFailPoint: "failCommand",
+                mode: {times: 1},
+                data: {
+                        errorCode: 10107,
+                        errorLabels: ["RetryableWriteError"],
+                        failCommands: ["insert"],
+                },
+        });
+
+   3. Via the command monitoring ``CommandFailedEvent``, configure a fail point
+      for a ``SocketException`` error with a ``NoWritesPerformed`` label::
+
+         db.adminCommand({
+                configureFailPoint: "failCommand",
+                mode: {times: 1},
+                data: {
+                        errorCode: 9001,
+                        errorLabels: ["RetryableWriteError", "NoWritesPerformed],
+                        failCommands: ["insert"],
+                },
+        });
+
+    4. Attempt an ``insertOne`` operation on any record for any database and
+       collection and assert that the associated error code is ``10107`` (i.e.,
+       ``NoWritesPerformed``).
+
+    5. Disable the fail point::
+
+        db.adminCommand({
+                configureFailPoint: "failCommand",
+                mode: "off",
+        })
 
 Changelog
 =========
