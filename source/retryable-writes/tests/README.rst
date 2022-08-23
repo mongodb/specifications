@@ -428,11 +428,11 @@ and sharded clusters.
                 },
         });
 
-    4. Attempt an ``insertOne`` operation on any record for any database and
+   4. Attempt an ``insertOne`` operation on any record for any database and
        collection and assert that the associated error code is ``10107`` (i.e.,
        ``NoWritesPerformed``).
 
-    5. Disable the fail point::
+   5. Disable the fail point::
 
         db.adminCommand({
                 configureFailPoint: "failCommand",
