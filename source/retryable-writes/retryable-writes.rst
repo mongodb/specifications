@@ -409,7 +409,7 @@ error should be raised instead as the caller can infer that an attempt was made
 and the second error is likely more relevant (with respect to the current
 topology state).
 
-If a retry attempt fails with an error labeled `NoWritesPerformed`, drivers MUST
+If a retry attempt fails with an error labeled NoWritesPerformed, drivers MUST
 return the original error.
 
 Drivers MUST NOT attempt to retry a write command with the same transaction ID
