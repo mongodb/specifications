@@ -399,9 +399,9 @@ and sharded clusters.
    label `NoWritesPerformed`. This test MUST be implemented by any driver that
    implements the Command Monitoring specification.
 
-   1. Create a client with ``maxPoolSize=1`` and ``retryableWrites=true``. If
-      testing against a sharded deployment, the test runner MUST ensure that the
-      client connects to only a single mongos host.
+   1. Create a client with ``retryableWrites=true``. If testing against a
+      sharded deployment, the test runner MUST ensure that the client connects
+      to only a single mongos host.
 
    2. Configure a fail point for a ``NoWritablePrimary`` error::
 
