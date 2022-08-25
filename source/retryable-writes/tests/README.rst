@@ -396,10 +396,10 @@ and sharded clusters.
    9. Disable the failpoint.
 
 #. Test that drivers return the original error after encountering an error with
-   label `NoWritesPerformed`. This test MUST be implemented by any driver that
+   label NoWritesPerformed. This test MUST be implemented by any driver that
    implements the Command Monitoring specification. This prose test requires
    drivers to set a fail point after an ``insertOne`` operation but before the
-   subsequent retry. Drivers that are unable to set failCommand after the
+   subsequent retry. Drivers that are unable to set a failCommand after the
    CommandFailedEvent SHOULD use mocking or write a unit test to cover the same
    sequence of events.
 
