@@ -397,7 +397,11 @@ and sharded clusters.
 
 #. Test that drivers return the original error after encountering an error with
    label `NoWritesPerformed`. This test MUST be implemented by any driver that
-   implements the Command Monitoring specification.
+   implements the Command Monitoring specification. This prose test requires
+   drivers to set a fail point after an ``insertOne`` operation but before the
+   subsequent retry. Drivers that are unable to set failCommand after the
+   CommandFailedEvent SHOULD use mocking or write a unit test to cover the same
+   sequence of events.
 
    1. Create a client with ``retryableWrites=true``. If testing against a
       sharded deployment, the test runner MUST ensure that the client connects
@@ -424,10 +428,13 @@ and sharded clusters.
                 mode: {times: 1},
                 data: {
                         errorCode: 9001,
-                        errorLabels: ["RetryableWriteError", "NoWritesPerformed],
+                        errorLabels: ["RetryableWriteError", "NoWritesPerformed"],
                         failCommands: ["insert"],
                 },
         });
+
+      Drivers SHOULD only configure the ``9001`` fail point command if the the
+      fail event is for the ``10107`` error configured in step 2.
 
    4. Attempt an ``insertOne`` operation on any record for any database and
       collection. For the resulting error, assert that the associated error code
