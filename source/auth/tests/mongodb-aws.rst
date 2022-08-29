@@ -7,8 +7,8 @@ There are 6 scenarios drivers MUST test:
 #. ``Regular Credentials``: Auth via an ``ACCESS_KEY_ID`` and ``SECRET_ACCESS_KEY`` pair
 #. ``EC2 Credentials``: Auth from an EC2 instance via temporary credentials assigned to the machine
 #. ``ECS Credentials``: Auth from an ECS instance via temporary credentials assigned to the task
-#. ``Assume Role``: Auth via temporary credentials obtained from an STS AssumeRoleWithWebIdentity request
-#. ``Assume Role with Web Identity``: Auth via temporary credentials obtained from an STS AssumeRole request
+#. ``Assume Role``: Auth via temporary credentials obtained from an STS AssumeRole request
+#. ``Assume Role with Web Identity``: Auth via temporary credentials obtained from an STS AssumeRoleWithWebIdentity request
 #. ``AWS Lambda``: Auth via environment variables ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``.
 
 For brevity, this section gives the values ``<AccessKeyId>``, ``<SecretAccessKey>`` and ``<Token>`` in place of a valid access key ID, secret access key and session token (also known as a security token). Note that if these values are passed into the URI they MUST be URL encoded. Sample values are below.
@@ -77,6 +77,8 @@ A sample URI in for a web identity test would be:
 .. code-block::
 
   mongodb://localhost/?authMechanism=MONGODB-AWS
+
+Drivers MUST test with and without AWS_ROLE_SESSION_NAME set.
 
 .. note:: No username, password or session token is passed into the URI.
 Drivers MUST check the environment variables listed above and make an `AssumeRoleWithWebIdentity request <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html>`_ to obtain
