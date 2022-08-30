@@ -395,50 +395,52 @@ and sharded clusters.
 
    9. Disable the failpoint.
 
-#. Test that drivers return the original error after encountering an error with
-   label NoWritesPerformed. This test MUST be implemented by any driver that
-   implements the Command Monitoring specification. This prose test requires
-   drivers to set a fail point after an ``insertOne`` operation but before the
-   subsequent retry. Drivers that are unable to set a failCommand after the
-   CommandFailedEvent SHOULD use mocking or write a unit test to cover the same
-   sequence of events.
+#. Test that drivers return the original error after encountering a
+   WriteConcernError error with a RetryableWriteError label. This test MUST be
+   implemented by any driver that implements the Command Monitoring
+   specification. This prose test requires drivers to set a fail point after an
+   ``insertOne`` operation but before the subsequent retry. Drivers that are
+   unable to set a failCommand after the CommandSucceededEvent SHOULD use
+   mocking or write a unit test to cover the same sequence of events.
 
    1. Create a client with ``retryableWrites=true``. If testing against a
       sharded deployment, the test runner MUST ensure that the client connects
       to only a single mongos host.
 
-   2. Configure a fail point with error code ``10107`` (NotWritablePrimary)::
+   2. Configure a fail point with error code ``91`` (ShutdownInProgress)::
 
          db.adminCommand({
                 configureFailPoint: "failCommand",
                 mode: {times: 1},
                 data: {
-                        errorCode: 10107,
-                        errorLabels: ["RetryableWriteError"],
+                        writeConcernError: {
+                                code: 91,
+                                errorLabels: ["RetryableWriteError"],
+                        },
                         failCommands: ["insert"],
                 },
         });
 
-   3. Via the command monitoring ``CommandFailedEvent``, configure a fail point
-      with error code ``9001`` (SocketException) and a NoWritesPerformed
+   3. Via the command monitoring ``CommandSucceededEvent``, configure a fail point
+      with error code ``10107`` (NotWritablePrimary) and a NoWritesPerformed
       label::
 
          db.adminCommand({
                 configureFailPoint: "failCommand",
                 mode: {times: 1},
                 data: {
-                        errorCode: 9001,
+                        errorCode: 10107,
                         errorLabels: ["RetryableWriteError", "NoWritesPerformed"],
                         failCommands: ["insert"],
                 },
         });
 
-      Drivers SHOULD only configure the ``9001`` fail point command if the the
-      fail event is for the ``10107`` error configured in step 2.
+      Drivers SHOULD only configure the ``10107`` fail point command if the the
+      succeeded event is for the ``91`` error configured in step 2.
 
    4. Attempt an ``insertOne`` operation on any record for any database and
       collection. For the resulting error, assert that the associated error code
-      is ``10107``.
+      is ``91``.
 
    5. Disable the fail point::
 
@@ -449,6 +451,10 @@ and sharded clusters.
 
 Changelog
 =========
+
+:2022-08-30: Add prose test verifying correct error handling for errors with
+             the NoWritesPerformed label, which is to return the original
+             error.
 
 :2022-04-22: Clarifications to ``serverless`` and ``useMultipleMongoses``.
 
