@@ -500,21 +500,13 @@ accept arbitrary strings at runtime for forward-compatibility.
       sessionToken?: string; // Required for temporary AWS credentials.
    };
 
-   type AzureKMSOptions = AzureKMSCredentials | AzureManagedIdentity | AzureAccessToken;
+   type AzureKMSOptions = AzureKMSCredentials | AzureAccessToken;
 
    interface AzureKMSCredentials {
       tenantId: string;
       clientId: string;
       clientSecret: string;
       identityPlatformEndpoint?: string; // Defaults to login.microsoftonline.com
-   };
-
-   interface AzureManagedIdentity {
-      managedIdentity: {
-         objectId: string;
-         clientId: string;
-         miResId: string;
-      }
    };
 
    interface AzureAccessToken {
@@ -635,7 +627,7 @@ Return "access_token" as the credential.
 Obtaining an Access Token for Azure Key Vault
 `````````````````````````````````````````````
 
-.. versionadded:: 1.12.0 2022/08/16
+.. versionadded:: 1.12.0 2022/08/30
 
 Virtual machines running on the Azure platform have one or more *Managed
 Identities* associated with them. From within the VM, an identity can be used by
@@ -646,40 +638,26 @@ __ https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-az
 
 .. default-role:: math
 
-If an Azure VM has more than one managed identity, requesting an access token
-requires additional query parameters |--| `objectId`, `clientId`, and `miResId`
-|--| that disambiguate the request. We'll refer to these parameters as `M`. If
-the VM only has one managed identity, `M` may be omitted.
-
 The below steps should be taken:
 
 1. Let `U` be a new URL, initialized from the URL string
    :ts:`"http://169.254.169.254/metadata/identity/oauth2/token"`
 2. Add a query parameter ``api-version=2018-02-01`` to `U`.
 3. Add a query parameter ``resource=http://vault.azure.com/`` to `U`.
-4. If managed identity parameters `M` are provided, add query parameters
-   ``object_id``, ``client_id``, and ``mi_res_id`` to `U` with the corresponding
-   values from `M`
-
-5. Prepare an HTTP GET request `Req` based on `U`.
+4. Prepare an HTTP GET request `Req` based on `U`.
 
    .. note:: All query parameters on `U` should be appropriately percent-encoded
 
-6. Add an HTTP header ``Metadata: true`` to `Req`.
-
-7. Let `T` be a duration initialized to `0sec`.
-8. Issue `Req` to the Azure IMDS server ``168.254.169.254:80``. Let `Resp` be
+5. Add HTTP headers ``Metadata: true`` and ``Accept: application/json`` to
+   `Req`.
+6. Issue `Req` to the Azure IMDS server ``168.254.169.254:80``. Let `Resp` be
    the response from the server.
-9. If the `Resp_{status} >= 500`, wait for one second, then go to step ``8``.
-10. If `T < 30sec` AND `Resp_{status} = 404` OR `Resp_{status} = 429`, wait for
-    the duration specified by `T`, then set `T = (T * 2) + 2sec`, then go to
-    step ``8``.
-11. If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the
+7.  If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the
     HTTP response body of `Resp` encodes information about the error that
     occurred. Return an error instead of an access token.
-12. Otherwise, let ``J`` be the JSON document encoded in the HTTP response body
+8.  Otherwise, let ``J`` be the JSON document encoded in the HTTP response body
     of `Resp`.
-13. The result access token `T` is given as the ``access_token`` string property
+9.  The result access token `T` is given as the ``access_token`` string property
     of ``J``. Return `T` as the resulting access token.
 
 .. note::
@@ -687,6 +665,13 @@ The below steps should be taken:
    If JSON decoding of `Resp` fails, or the ``access_token`` property is absent
    from ``J``, this is a protocol error from IMDS. Indicate this error to the
    requester of the access token.
+
+.. note::
+
+   If an Azure VM has more than one managed identity, requesting an access token
+   requires additional query parameters to disambiguate the request. For
+   simplicity, these parameters are omitted, and only VMs that have a single
+   managed identity are support.
 
 .. default-role:: literal
 
@@ -2523,7 +2508,7 @@ Changelog
    :align: left
 
    Date, Description
-   22-08-16, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
+   22-08-30, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
    22-07-20, Add behavior for automatic GCP credential loading in ``kmsProviders``.
    22-06-30, Add behavior for automatic AWS credential loading in ``kmsProviders``.
    22-06-29, Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
