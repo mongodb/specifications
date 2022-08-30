@@ -153,9 +153,9 @@ Assertions:
   ``false``, both initializing the MongoClient and running a ping operation must
   succeed without throwing any errors.
 
-- If ``ping`` is specified and ``true``, drivers MUST verify that running a
+- If ``ping`` is not specified or ``true``, drivers MUST verify that running a
   "ping" operation using the initialized MongoClient succeeds. If ``ping`` is
-  not specified or is ``false``, drivers MUST NOT run a "ping" operation.
+   is ``false``, drivers MUST NOT run a "ping" operation.
   **Note:** These tests are expected to be run against MongoDB databases with
   and without authentication enabled. The "ping" operation does not require
   authentication so should succeed with URIs that contain no userinfo (i.e.
