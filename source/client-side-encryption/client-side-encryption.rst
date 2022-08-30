@@ -631,7 +631,7 @@ Obtaining an Access Token for Azure Key Vault
 
 Virtual machines running on the Azure platform have one or more *Managed
 Identities* associated with them. From within the VM, an identity can be used by
-obtaining a access token via HTTP from the *Azure Instance Metadata Service*
+obtaining an access token via HTTP from the *Azure Instance Metadata Service*
 (IMDS). `See this documentation for more information`__
 
 __ https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
