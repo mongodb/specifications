@@ -421,7 +421,7 @@ and sharded clusters.
                 },
         });
 
-   3. Via the command monitoring ``CommandSucceededEvent``, configure a fail point
+   3. Via the command monitoring CommandSucceededEvent, configure a fail point
       with error code ``10107`` (NotWritablePrimary) and a NoWritesPerformed
       label::
 
