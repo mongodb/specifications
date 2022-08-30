@@ -114,8 +114,7 @@ These YAML and JSON files contain the following fields:
 - ``error``: indicates that the parsing of the URI, or the resolving or
   contents of the SRV or TXT records included errors.
 - ``comment``: a comment to indicate why a test would fail.
-- ``ping``: if true, the test runner should run a "ping" operation after
-  initializing a MongoClient.
+- ``ping``: if false, the test runner should not run a "ping" operation.
 
 .. _`Connection String`: ../../connection-string/connection-string-spec.rst
 .. _`URI options`: ../../uri-options/uri-options.rst
@@ -124,7 +123,7 @@ For each YAML file:
 
 - Create a MongoClient initialized with the ``mongodb+srv``
   connection string.
-- Run run a "ping" operation if ``ping`` in the test file is true.
+- Run a "ping" operation unless ``ping`` is false or ``error`` is true.
 
 Assertions:
 
@@ -155,10 +154,10 @@ Assertions:
 
 - If ``ping`` is not specified or ``true``, drivers MUST verify that running a
   "ping" operation using the initialized MongoClient succeeds. If ``ping`` is
-   is ``false``, drivers MUST NOT run a "ping" operation.
-  **Note:** These tests are expected to be run against MongoDB databases with
-  and without authentication enabled. The "ping" operation does not require
-  authentication so should succeed with URIs that contain no userinfo (i.e.
-  no username and password). Tests with URIs that contain userinfo always set
-  ``ping`` to ``false`` because some drivers will fail handshake on a connection
-  if userinfo is provided but incorrect.
+  ``false``, drivers MUST NOT run a "ping" operation.
+    **Note:** These tests are expected to be run against MongoDB databases with
+    and without authentication enabled. The "ping" operation does not require
+    authentication so should succeed with URIs that contain no userinfo (i.e.
+    no username and password). Tests with URIs that contain userinfo always set
+    ``ping`` to ``false`` because some drivers will fail handshake on a
+    connection if userinfo is provided but incorrect.
