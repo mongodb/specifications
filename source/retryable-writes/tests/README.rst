@@ -409,7 +409,8 @@ and sharded clusters.
    unable to set a failCommand after the CommandSucceededEvent SHOULD use
    mocking or write a unit test to cover the same sequence of events.
 
-   1. Create a client with ``retryWrites=true``.
+
+   1. Create a client with ``retryWrite=true``.
 
    2. Configure a fail point with error code ``91`` (ShutdownInProgress)::
 
