@@ -1113,7 +1113,12 @@ MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will
 Caching Credentials
 ___________________
 Credentials fetched by the driver using AWS endpoints MUST be cached and reused
-to avoid hitting AWS rate limitations.  The "Expiration" field MUST be stored
+to avoid hitting AWS rate limitations.  AWS recommends using a suitable
+Software Development Kit (SDK) for your langauge.  If that SDK supports
+credential fetch and automatic refresh/caching, then that mechanism can
+be used in lieu of manual caching.
+
+If using manual caching, the "Expiration" field MUST be stored
 and used to determine when to clear the cache.  Credentials are considered
 valid if they are more than one minute away from expiring, to the reduce the
 chance of expiration before they are validated by the server.
