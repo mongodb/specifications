@@ -396,20 +396,24 @@ and sharded clusters.
    9. Disable the failpoint.
 
 #. Test that drivers return the original error after encountering a
-   WriteConcernError error with a RetryableWriteError label. This test MUST be
-   implemented by any driver that implements the Command Monitoring
-   specification. This prose test requires drivers to set a fail point after an
+   WriteConcernError with a RetryableWriteError label. This test MUST
+
+   1. be implemented by any driver that implements the Command Monitoring
+      specification,
+
+   2. only be run against replica sets as mongos does not propagate the
+      RetryableWriteError label to the drivers.
+
+   Additionally, this test requires drivers to set a fail point after an
    ``insertOne`` operation but before the subsequent retry. Drivers that are
    unable to set a failCommand after the CommandSucceededEvent SHOULD use
    mocking or write a unit test to cover the same sequence of events.
 
-   1. Create a client with ``retryableWrites=true``. If testing against a
-      sharded deployment, the test runner MUST ensure that the client connects
-      to only a single mongos host.
+   1. Create a client with ``retryWrites=true``.
 
    2. Configure a fail point with error code ``91`` (ShutdownInProgress)::
 
-         db.adminCommand({
+        db.adminCommand({
                 configureFailPoint: "failCommand",
                 mode: {times: 1},
                 data: {
@@ -425,7 +429,7 @@ and sharded clusters.
       with error code ``10107`` (NotWritablePrimary) and a NoWritesPerformed
       label::
 
-         db.adminCommand({
+        db.adminCommand({
                 configureFailPoint: "failCommand",
                 mode: {times: 1},
                 data: {
