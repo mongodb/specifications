@@ -410,7 +410,7 @@ and sharded clusters.
    mocking or write a unit test to cover the same sequence of events.
 
 
-   1. Create a client with ``retryWrite=true``.
+   1. Create a client with ``retryWrites=true``.
 
    2. Configure a fail point with error code ``91`` (ShutdownInProgress)::
 
