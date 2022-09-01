@@ -401,8 +401,8 @@ and sharded clusters.
    1. be implemented by any driver that implements the Command Monitoring
       specification,
 
-   2. only be run against replica sets as mongos does not propagate the
-      RetryableWriteError label to the drivers.
+   2. only run against replica sets as mongos does not propagate the
+      NoWritesPerformed label to the drivers.
 
    Additionally, this test requires drivers to set a fail point after an
    ``insertOne`` operation but before the subsequent retry. Drivers that are
