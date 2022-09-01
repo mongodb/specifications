@@ -1,0 +1,18 @@
+description: "expectedLogMessage-hasFailure-type"
+
+schemaVersion: "1.11"
+
+createEntities:
+  - client:
+      id: &client0 "client0"
+
+tests:
+  - description: "foo"
+    operations: []
+    expectLogMessages:
+      - client: *client0
+        messages:
+          - level: debug
+            component: command
+            hasFailure: 0
+            data: {}
