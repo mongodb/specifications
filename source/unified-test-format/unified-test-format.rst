@@ -1337,7 +1337,7 @@ closeInUseConnections
 `````````````
 
 This field is an optional boolean that specifies whether or not the
-``closeInUseConnections`` field of an event is set. If field is set, test runners MUST assert
+``closeInUseConnections`` field should be asserted. If field is set, test runners MUST assert
 that the field is set and has appropriate value. If not set, test runners MUST ignore asserting.
 
 hasServerConnectionId
