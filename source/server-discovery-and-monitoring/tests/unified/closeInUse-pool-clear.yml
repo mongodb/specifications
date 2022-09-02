@@ -16,7 +16,7 @@ createEntities:
 initialData: &initialData
   - collectionName: &collectionName closeInUse
     databaseName: &databaseName sdam-tests
-    documents:
+    documents: []
 
 tests:
   - description: Connection pool clear uses closeInUseConnections=true after monitor timeout
