@@ -3760,6 +3760,9 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
+:2022-09-02: **Schema version 1.11.**
+             Add support for closeInUseConnections asserting in PoolClearedEvent.
+
 :2022-07-28: **Schema version 1.10.**
              Add support for ``thread`` entities (``runOnThread``,
              ``waitForThread``), TopologyDescription entities
