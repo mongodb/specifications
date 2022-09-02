@@ -51,7 +51,7 @@ tests:
                 database: *database
                 collectionName: *collectionName
             - thread:
-                id: thread1
+                id: &thread1 thread1
       - name: insertOne
         object: *collection
         arguments:
@@ -196,7 +196,7 @@ tests:
                 database: *database
                 collectionName: *collectionName
             - thread:
-                id: thread1
+                id: &thread1 thread1
       - name: insertOne
         object: *collection
         arguments:
