@@ -5,14 +5,9 @@
 Command Monitoring
 ==================
 
-:Spec: 200
 :Title: Command Monitoring
-:Authors: Durran Jordan
 :Status: Approved
-:Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 2022-05-18
-:Version: 1.10.0
 
 .. contents::
 
