@@ -41,3 +41,4 @@ ignore:
   - ConnectionReady
   - ConnectionCheckOutStarted
   - ConnectionPoolCreated
+  - ConnectionCheckedIn

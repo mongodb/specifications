@@ -71,6 +71,7 @@
     "ConnectionPoolReady",
     "ConnectionReady",
     "ConnectionCheckOutStarted",
-    "ConnectionPoolCreated"
+    "ConnectionPoolCreated",
+    "ConnectionCheckedIn"
   ]
 }

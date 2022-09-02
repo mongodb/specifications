@@ -29,7 +29,6 @@ tests:
                 id: &client client
                 useMultipleMongoses: false
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - poolClearedEvent
                   - connectionClosedEvent
                   - commandStartedEvent
@@ -79,7 +78,8 @@ tests:
               times: 2
             data:
               failCommands:
-                - hello, isMaster
+                - hello
+                - isMaster
               blockConnection:  true,
               blockTimeMS: 1500,                
               appName: closeInUse        
@@ -174,7 +174,6 @@ tests:
                 id: &client client
                 useMultipleMongoses: false
                 observeEvents:
-                  - serverDescriptionChangedEvent
                   - poolClearedEvent
                   - connectionClosedEvent
                   - commandStartedEvent
@@ -212,8 +211,6 @@ tests:
             arguments:
               filter:
                 $where : sleep(5000) || true
-            expectError:
-              isError: true
       - name: failPoint
         object: testRunner
         arguments:
@@ -224,7 +221,8 @@ tests:
               times: 2
             data:
               failCommands:
-                - hello, isMaster
+                - hello
+                - isMaster
               blockConnection:  true,
               blockTimeMS: 1500,                
               appName: closeInUseRetryable        

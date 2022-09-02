@@ -43,7 +43,6 @@
                     "minPoolSize": 0
                   },
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
                     "poolClearedEvent",
                     "connectionClosedEvent",
                     "commandStartedEvent",
@@ -269,7 +268,6 @@
                     "minPoolSize": 0
                   },
                   "observeEvents": [
-                    "serverDescriptionChangedEvent",
                     "poolClearedEvent",
                     "connectionClosedEvent",
                     "commandFailedEvent",
