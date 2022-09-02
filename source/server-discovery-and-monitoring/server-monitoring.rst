@@ -618,8 +618,8 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
    pool MUST be synchronized with marking the server as Unknown (see `Why
    synchronize clearing a server's pool with updating the topology?`_). If this 
    was a network timeout error, then the pool MUST be cleared with closeInUseConnections = true 
-   (see Why does the pool need to support closing in use connections as part of 
-   its clear logic?)
+   (see `Why does the pool need to support closing in use connections as part of 
+   its clear logic?`_)
 #. If this was a network error and the server was in a known state before the
    error, the client MUST NOT sleep and MUST begin the next check immediately.
    (See `retry hello or legacy hello calls once`_ and
