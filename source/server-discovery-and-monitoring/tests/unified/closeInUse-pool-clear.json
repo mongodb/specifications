@@ -46,6 +46,7 @@
                     "poolClearedEvent",
                     "connectionClosedEvent",
                     "commandStartedEvent",
+                    "commandSucceededEvent",
                     "commandFailedEvent",
                     "connectionCheckedOutEvent",
                     "connectionCheckedInEvent"
@@ -118,106 +119,14 @@
             },
             "client": "setupClient"
           }
-        },        
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "commandFailedEvent": {}  
-            },
-            "count": 1
-          }
-        },        
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "poolClearedEvent": { "closeInUseConnections" : "true" }  
-            },
-            "count": 1
-          }
-        }, 
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "connectionCheckedInEvent": {}  
-            },
-            "count": 2
-          }
-        }, 
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "connectionClosed": { "reason" : "stale" }  
-            },
-            "count": 1
-          }
-        }, 
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "commandFailedEvent": {}  
-            },
-            "count": 1
-          }
         },
         {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "poolClearedEvent": {}  
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "connectionClosedEvent": {}  
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "connectionCheckedOutEvent": {}  
-            },
-            "count": 2
-          }
-        },
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "connectionCheckedInEvent": {}  
-            },
-            "count": 2
-          }
-        },
+            "name": "waitForThread",
+            "object": "testRunner",
+            "arguments": {
+              "thread": "thread1"
+            }
+        }
       ],
       "expectEvents": [
         {
@@ -226,6 +135,11 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandSucceededEvent": {
                 "commandName": "insert"
               }
             },
@@ -240,7 +154,33 @@
               }
             }
          ]
-       }
+       },
+       {
+          "client": "client",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionCheckedOutEvent": { }
+            },
+            {
+              "connectionCheckedInEvent": { }
+            },
+            {
+              "connectionCheckedOutEvent": { }
+            },
+            {
+              "poolClearedEvent": {
+                "closeInUseConnections": true
+              }
+            },
+            {
+              "connectionClosedEvent": { }
+            },
+            {
+              "connectionCheckedInEvent": {}  
+            }
+         ]
+       }       
       ],
       "outcome": [{
         "collectionName": "closeInUse",
@@ -272,6 +212,7 @@
                     "connectionClosedEvent",
                     "commandFailedEvent",
                     "commandStartedEvent",
+                    "commandSucceededEvent",
                     "connectionCheckedOutEvent",
                     "connectionCheckedInEvent"
                   ]
@@ -342,103 +283,11 @@
           }
         },        
         {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "commandFailedEvent": {}  
-            },
-            "count": 1
-          }
-        },        
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "poolClearedEvent": { "closeInUseConnections" : true }  
-            },
-            "count": 1
-          }
-        }, 
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "connectionCheckedInEvent": {}  
-            },
-            "count": 3
-          }
-        }, 
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "connectionClosed": { "reason" : "stale" }   
-            },
-            "count": 1
-          }
-        }, 
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "commandFailedEvent": {}  
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "poolClearedEvent": {}  
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "connectionClosedEvent": {}  
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "connectionCheckedOutEvent": {}  
-            },
-            "count": 3
-          }
-        },
-        {
-          "name": "assertEventCount",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",  
-            "event": {
-              "connectionCheckedInEvent": {}  
-            },
-            "count": 3
-          }
+            "name": "waitForThread",
+            "object": "testRunner",
+            "arguments": {
+              "thread": "thread1"
+            }
         }
       ],
       "expectEvents": [
@@ -452,9 +301,14 @@
               }
             },
             {
-                "commandStartedEvent": {
-                    "commandName": "find"
-                }
+              "commandSucceededEvent": {
+                "commandName": "insert"
+              }
+            },            
+            {
+              "commandStartedEvent": {
+                "commandName": "find"
+              }
             },
             {
               "commandFailedEvent": {
@@ -465,9 +319,46 @@
               "commandStartedEvent": {
                 "commandName": "find"
               }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "find"
+              }
+            }            
+         ]
+       },
+       {
+          "client": "client",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionCheckedOutEvent": { }
+            },
+            {
+              "connectionCheckedInEvent": { }
+            },
+            {
+              "connectionCheckedOutEvent": { }
+            },
+            {
+              "poolClearedEvent": {
+                "closeInUseConnections": true
+              }
+            },
+            {
+              "connectionClosedEvent": { }
+            },
+            {
+              "connectionCheckedInEvent": {}  
+            },
+            {
+              "connectionCheckedOutEvent": {}  
+            },
+            {
+              "connectionCheckedInEvent": {}  
             }
          ]
-       }
+       }      
       ],
       "outcome": [{
         "collectionName": "closeInUse",
