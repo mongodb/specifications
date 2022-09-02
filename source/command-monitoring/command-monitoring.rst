@@ -443,3 +443,6 @@ Changelog
 
 18 MAY 2022:
   - Converted legacy tests to the unified test format.
+
+2 SEPTEMBER 2022:
+  - Remove material that only applies to MongoDB versions < 3.6.
