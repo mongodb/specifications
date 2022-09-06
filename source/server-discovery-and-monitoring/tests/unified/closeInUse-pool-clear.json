@@ -365,6 +365,164 @@
         "databaseName": "sdam-tests",
         "documents": [{ "_id": 1 }]
       }]
+    },
+    {
+      "description": "Error returned from connection pool clear with closeInUseConnections=true is retryable for write",
+      "operations": [
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "uriOptions": {
+                    "connectTimeoutMS": 500,
+                    "heartbeatFrequencyMS": 500,
+                    "appname": "closeInUseRetryableWrite",
+                    "retryWrites": true,
+                    "minPoolSize": 0
+                  },
+                  "observeEvents": [
+                    "poolClearedEvent",
+                    "connectionClosedEvent",
+                    "commandFailedEvent",
+                    "commandStartedEvent",
+                    "commandSucceededEvent",
+                    "connectionCheckedOutEvent",
+                    "connectionCheckedInEvent"
+                  ]}
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "sdam-tests"
+                }
+              },
+              {
+                "collection": {
+                  "id": "collection",
+                  "database": "database",
+                  "collectionName": "closeInUse"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": { "_id": 1 }
+          }
+        },
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 3
+              },
+              "data": {
+                "failCommands": [
+                  "insert", "hello", "isMaster"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 2000,
+                "appName": "closeInUseRetryableWrite"
+              }
+            },
+            "client": "setupClient"
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": { "_id": 2 }
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "eventType": "command",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "insert"
+              }
+            }
+         ]
+       },
+       {
+          "client": "client",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionCheckedOutEvent": { }
+            },
+            {
+              "connectionCheckedInEvent": { }
+            },
+            {
+              "connectionCheckedOutEvent": { }
+            },
+            {
+              "poolClearedEvent": {
+                "closeInUseConnections": true
+              }
+            },
+            {
+              "connectionClosedEvent": { }
+            },
+            {
+              "connectionCheckedInEvent": {}  
+            },
+            {
+              "connectionCheckedOutEvent": {}  
+            },
+            {
+              "connectionCheckedInEvent": {}  
+            }
+         ]
+       }
+      ],
+      "outcome": [{
+        "collectionName": "closeInUse",
+        "databaseName": "sdam-tests",
+        "documents": [{ "_id": 1 }, { "_id": 2 }]
+      }]
     }
   ]
 }

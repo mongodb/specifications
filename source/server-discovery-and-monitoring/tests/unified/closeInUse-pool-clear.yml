@@ -226,3 +226,95 @@ tests:
         databaseName: *databaseName
         documents:
           - _id: 1
+  - description: Error returned from connection pool clear with closeInUseConnections=true is retryable for write
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - poolClearedEvent
+                  - connectionClosedEvent
+                  - commandStartedEvent
+                  - commandFailedEvent
+                  - commandSucceededEvent
+                  - connectionCheckedOutEvent
+                  - connectionCheckedInEvent
+                uriOptions:
+                  connectTimeoutMS: 500
+                  heartbeatFrequencyMS: 500
+                  appname: closeInUseRetryableWrite
+                  retryWrites: true
+                  minPoolSize: 0
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+      - name: insertOne
+        object: *collection
+        arguments:
+          document:
+            _id: 1
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 3
+            data:
+              failCommands:
+                - hello
+                - isMaster
+                - insert
+              blockConnection:  true,
+              blockTimeMS: 2000,                
+              appName: closeInUseRetryableWrite        
+      - name: insertOne
+        object: *collection
+        arguments:
+          document:
+            _id: 2
+    expectEvents:
+      - client: *client
+        eventType: command
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandSucceededEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: insert
+          - commandFailedEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: insert
+          - commandSucceededEvent:
+              commandName: insert
+      - client: *client
+        eventType: cmap
+        events:
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionCheckedOutEvent: {}
+          - poolClearedEvent:
+              closeInUseConnections: true
+          - connectionClosedEvent:
+          - connectionCheckedInEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+     
+    outcome:
+      - collectionName: *collectionName
+        databaseName: *databaseName
+        documents:
+          - _id: 1
+          - _id: 2
