@@ -1239,7 +1239,7 @@ expectedCmapEvent
   The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
-  - ``closeInUseConnections``: Defined in `closeInUseConnections`_.
+  - ``closeInUseConnections``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
 .. _expectedEvent_poolClosedEvent:
 
