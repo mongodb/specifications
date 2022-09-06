@@ -57,6 +57,7 @@ tests:
         arguments:
           document:
             _id: 1
+      # simulate a long-running query
       - name: runOnThread
         object: testRunner
         arguments:
@@ -69,6 +70,8 @@ tests:
                 $where : sleep(5000) || true
             expectError:
               isError: true
+        # Configure the monitor check to fail with a timeout.
+        # Use times: 2 so that the RTT hello is blocked as well.
       - name: failPoint
         object: testRunner
         arguments:
@@ -155,6 +158,7 @@ tests:
         arguments:
           document:
             _id: 1
+      # simulate a long-running query
       - name: runOnThread
         object: testRunner
         arguments:
@@ -165,6 +169,8 @@ tests:
             arguments:
               filter:
                 $where : sleep(5000) || true
+        # Configure the monitor check to fail with a timeout.
+        # Use times: 2 so that the RTT hello is blocked as well.
       - name: failPoint
         object: testRunner
         arguments:
