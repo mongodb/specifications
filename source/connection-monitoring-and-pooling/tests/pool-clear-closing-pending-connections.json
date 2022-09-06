@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "style": "integration",
+  "description": "clear with closeInUseConnections = true closes pending connections",
+  "runOn": [
+    {
+      "minServerVersion": "4.9.0"
+    }
+  ],
+  "failPoint": {
+    "configureFailPoint": "failCommand",
+    "mode": "alwaysOn",
+    "data": {
+      "failCommands": [
+        "isMaster",
+        "hello"
+      ],
+      "closeConnection": false,
+      "blockConnection": true,
+      "blockTimeMS": 1000
+    }
+  },
+  "poolOptions": {
+    "minPoolSize": 0
+  },
+  "operations": [
+    {
+      "name": "ready"
+    },
+    {
+      "name": "start",
+      "target": "thread1"
+    },
+    {
+      "name": "checkOut",
+      "thread": "thread1"
+    },
+    {
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted",
+      "count": 1
+    },
+    {
+      "name": "wait",
+      "ms":  200
+    },
+    {
+      "name": "clear",
+      "closeInUseConnections": true
+    },
+    {
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutFailed",
+      "count": 1
+    }
+  ],
+  "events": [
+    {
+      "type": "ConnectionCheckOutStarted"
+    },
+    {
+      "type": "ConnectionPoolCleared",
+      "closeInUseConnections": true
+    },
+    {
+      "type": "ConnectionClosed"
+    },
+    {
+      "type": "ConnectionCheckOutFailed"
+    }
+  ],
+  "ignore": [
+    "ConnectionCheckedIn",
+    "ConnectionCheckedOut",
+    "ConnectionCreated",
+    "ConnectionPoolCreated",
+    "ConnectionPoolReady"
+  ]
+}
