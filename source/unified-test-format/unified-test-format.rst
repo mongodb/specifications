@@ -1334,7 +1334,6 @@ ObjectId are not 0). If false, test runners MUST assert that the field is not
 set or is an empty BSON ObjectId.
 
 closeInUseConnections
-`````````````
 
 This field is an optional boolean that specifies whether or not the
 ``closeInUseConnections`` field should be asserted. If field is set, test runners MUST assert
