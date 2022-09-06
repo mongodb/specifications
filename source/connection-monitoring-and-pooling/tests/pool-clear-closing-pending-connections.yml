@@ -21,11 +21,8 @@ operations:
   - name: checkOut
     thread: thread1
   - name: waitForEvent
-    event: ConnectionCheckOutStarted
+    event: ConnectionCreated
     count: 1
-    # ensure a connection has time to be initialized
-  - name: wait
-    ms: 200
   - name: clear
     closeInUseConnections: true
   - name: waitForEvent
@@ -33,6 +30,7 @@ operations:
     count: 1
 events:
   - type: ConnectionCheckOutStarted
+  - type: ConnectionCreated
   - type: ConnectionPoolCleared
     closeInUseConnections: true
   - type: ConnectionClosed
@@ -40,6 +38,5 @@ events:
 ignore:
   - ConnectionCheckedIn
   - ConnectionCheckedOut
-  - ConnectionCreated
   - ConnectionPoolCreated
   - ConnectionPoolReady
