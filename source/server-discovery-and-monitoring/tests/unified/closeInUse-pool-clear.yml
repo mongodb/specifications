@@ -216,7 +216,7 @@ tests:
           - connectionCheckedOutEvent: {}
           - poolClearedEvent:
               closeInUseConnections: true
-          - connectionClosedEvent:
+          - connectionClosedEvent: {}
           - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
@@ -307,7 +307,7 @@ tests:
           - connectionCheckedOutEvent: {}
           - poolClearedEvent:
               closeInUseConnections: true
-          - connectionClosedEvent:
+          - connectionClosedEvent: {}
           - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
