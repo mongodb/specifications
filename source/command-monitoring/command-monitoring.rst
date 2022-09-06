@@ -127,7 +127,7 @@ See "Why are document sequences included as BSON arrays?" in the `rationale`_.
 Rationale
 ---------
 
-*2. Why are commands with* ``{ ok: 1 }`` *treated as successful and* ``{ ok: 0 }`` *as failed?*
+*1. Why are commands with* ``{ ok: 1 }`` *treated as successful and* ``{ ok: 0 }`` *as failed?*
 
 The specification is consistent with what the server deems as a successful or failed command and
 reports this as so. This also allows for server changes around this behaviour in the future to
@@ -141,11 +141,11 @@ command. Implementators of the API are free to handle these events as they see f
 code that futher interprets replies to specific commands based on the presence or absence of other
 fields in the reply beyond the ``ok`` field.
 
-*3. Why are document sequences included as BSON arrays?*
+*2. Why are document sequences included as BSON arrays?*
 
 The OP_MSG wire protocol was introduced in MongoDB 3.6, with document sequences as an optimization for bulk writes. We have chosen to represent these OP_MSGs as single command or reply documents for now, until a need for a more accurate (and perhaps better-performing) command monitoring API for document sequences has been demonstrated.
 
-*4. Why is BSON serialization and deserialization optional to include in durations?*
+*3. Why is BSON serialization and deserialization optional to include in durations?*
 
 Different drivers will serialize and deserialize BSON at different levels of
 the driver architecture.  For example, some parts of a command (e.g. inserted
