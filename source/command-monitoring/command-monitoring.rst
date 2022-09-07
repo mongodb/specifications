@@ -109,18 +109,6 @@ Implementation Notes
 
 When a driver sends an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in CommandStartedEvent.command. The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver sends an "update" command using OP_MSG, and sends a document sequence as a separate section of payload type 1 with identifier "updates", the driver MUST include the documents as a BSON array in CommandStartedEvent.command with field name "updates".
 
-When a driver receives an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in CommandSucceededEvent.reply. The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver receives an OP_MSG reply to a "find" command with a section of payload type 1 with identifier "cursor.firstBatch", it MUST include the documents as a BSON array in CommandSucceededEvent.reply like:
-
-.. code:: javascript
-
-  {
-      cursor: {
-          firstBatch: [ { document 1 }, { document 2 }, ... ]
-      }
-  }
-
-A document sequence in an OP_MSG reply to "aggregate" or "getMore" MUST be similarly included in CommandSucceededEvent.reply.
-
 See "Why are document sequences included as BSON arrays?" in the `rationale`_.
 
 ---------
