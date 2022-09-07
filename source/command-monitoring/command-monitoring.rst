@@ -131,7 +131,7 @@ fields in the reply beyond the ``ok`` field.
 
 *2. Why are document sequences included as BSON arrays?*
 
-The OP_MSG wire protocol was introduced in MongoDB 3.6, with document sequences as an optimization for bulk writes. We have chosen to represent these OP_MSGs as single command or reply documents for now, until a need for a more accurate (and perhaps better-performing) command monitoring API for document sequences has been demonstrated.
+The OP_MSG wire protocol was introduced in MongoDB 3.6, with document sequences as an optimization for bulk writes. We have chosen to represent these OP_MSGs as single command documents for now, until a need for a more accurate (and perhaps better-performing) command monitoring API for document sequences has been demonstrated.
 
 *3. Why is BSON serialization and deserialization optional to include in durations?*
 
