@@ -4,7 +4,12 @@
   "runOnRequirements": [
     {
       "minServerVersion": "4.9",
-      "serverless": "forbid"
+      "topologies": [
+        "replicaset",
+        "sharded",
+        "load-balanced"
+      ],
+      "serverless": "forbid",
     }
   ],
   "createEntities": [
@@ -174,10 +179,10 @@
               }
             },
             {
-              "connectionClosedEvent": { }
+              "connectionCheckedInEvent": {}  
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionClosedEvent": { }
             }
          ]
        }       
@@ -346,10 +351,10 @@
               }
             },
             {
-              "connectionClosedEvent": { }
+              "connectionCheckedInEvent": {}  
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionClosedEvent": { }
             },
             {
               "connectionCheckedOutEvent": {}  
@@ -504,10 +509,10 @@
               }
             },
             {
-              "connectionClosedEvent": { }
+              "connectionCheckedInEvent": {}  
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionClosedEvent": { }
             },
             {
               "connectionCheckedOutEvent": {}  
