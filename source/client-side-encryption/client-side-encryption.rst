@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-07-20
-:Version: 1.11.0
+:Last Modified: 2022-09-09
+:Version: 1.11.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -1016,6 +1016,13 @@ An optional BinData of 96 bytes to use as custom key material for the data key
 being created. If ``keyMaterial`` is given, the custom key material is used for
 encrypting and decrypting data. Otherwise, the key material for the new data key
 is generated from a cryptographically secure random device.
+
+rewrapManyDataKey
+-----------------
+
+If applicable, drivers MUST document that users must upgrade dependencies if necessary to avoid being impacted by MONGOCRYPT-464.
+
+If applicable, drivers MUST return an error if rewrapManyDataKey is called with libmongocrypt 1.5.1 or 1.5.0.
 
 RewrapManyDataKeyOpts
 ---------------------
@@ -2428,6 +2435,8 @@ Changelog
    :align: left
 
    Date, Description
+
+   22-09-09, Prohibit ``rewrapManyDataKey`` with libmongocrypt <= 1.5.1.
    22-07-20, Add behavior for automatic GCP credential loading in ``kmsProviders``.
    22-06-30, Add behavior for automatic AWS credential loading in ``kmsProviders``.
    22-06-29, Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
