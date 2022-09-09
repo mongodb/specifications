@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.9.2
+:Spec Version: 1.10.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
@@ -51,6 +51,7 @@ This test format can be used to define tests for the following specifications:
 - `Sessions <../sessions/driver-sessions.rst>`__
 - `Transactions <../transactions/transactions.rst>`__
 - `Convenient API for Transactions <../transactions-convenient-api/transactions-convenient-api.rst>`__
+- `Server Discovery and Monitoring <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
 
 This is not an exhaustive list. Specifications that are known to not be
 supported by this format may be discussed under `Future Work`_.
@@ -208,6 +209,11 @@ ChangeStream) and only allow access to BSON types (see:
 test runner needs to ensure driver objects in its entity map are properly
 freed/destroyed between tests.
 
+The entity map MUST be implemented in a way that allows for safe concurrent
+access, since a test may include multiple thread entities that all need to
+access the map concurrently. See `entity_thread`_ for more information on test
+runner threads.
+
 Consider the following examples::
 
     # Error due to a duplicate name (client0 was already defined)
@@ -273,6 +279,23 @@ Test runners MUST support the following types of entities:
   Tests SHOULD NOT utilize deprecated types (e.g. 0x0E: Symbol), since they may
   not be supported by all drivers and could yield runtime errors (e.g. while
   loading a test file with an Extended JSON parser).
+
+.. _entity_thread:
+
+- Test runner thread. An entity representing a "thread" that can be used to
+  concurrently execute operations. Thread entities MUST be able to run
+  concurrently with the main test runner thread and other thread entities, but
+  they do not have to be implemented as actual OS threads (e.g. they can be
+  goroutines or async tasks). See `entity_thread_object`_ for more information
+  on how they are created.
+
+.. _entity_topologydescription:
+
+- TopologyDescription. An entity representing a client's `TopologyDescription
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`__
+  at a certain point in time. These entities are not defined in
+  `createEntities`_ but are instead created via `recordTopologyDescription`_
+  test runner operations. 
 
 This is an exhaustive list of supported types for the entity map. Test runners
 MUST raise an error if an attempt is made to store an unsupported type in the
@@ -549,6 +572,8 @@ The structure of this object is as follows:
 
     - `connectionCheckedInEvent <expectedEvent_connectionCheckedInEvent_>`_
 
+    - `serverDescriptionChangedEvent <expectedEvent_serverDescriptionChangedEvent_>`_
+
   .. _entity_client_ignoreCommandMonitoringEvents:
 
   - ``ignoreCommandMonitoringEvents``: Optional array of one or more strings.
@@ -730,6 +755,17 @@ The structure of this object is as follows:
     `GridFS <../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
+
+.. _entity_thread_object:
+
+- ``thread``: Optional object. Defines a test runner "thread". Once the "thread"
+  has been created, it should be idle and waiting for operations to be
+  dispatched to it later on by `runOnThread`_ operations.
+
+  The structure of this object is as follows:
+
+  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g. ``id: &thread0 thread0``).
 
 
 storeEventsAsEntity
@@ -1072,9 +1108,11 @@ The structure of each object is as follows:
 
 - ``eventType``: Optional string. Specifies the type of the monitor which
   captured the events. Valid values are ``command`` for `Command Monitoring
-  <../command-monitoring/command-monitoring.rst#api>`__ events and ``cmap``
-  for `CMAP
+  <../command-monitoring/command-monitoring.rst#api>`__ events, ``cmap`` for
+  `CMAP
   <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  events, and ``sdam`` for `SDAM
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__
   events. Defaults to ``command`` if omitted.
 
 - ``events``: Required array of `expectedEvent`_ objects. List of events, which
@@ -1104,12 +1142,18 @@ cannot be reliably tested. Taking command monitoring events as an example,
 ``requestId`` and ``operationId`` are nondeterministic and types for
 ``connectionId`` and ``failure`` can vary by implementation.
 
-The events allowed in an ``expectedEvent`` object depend on the value of
-``eventType`` in the corresponding `expectedEventsForClient`_ object. There
-are two possible structures. If the value is omitted or is explicitly set to
-``command``, only the event types defined in `expectedCommandEvent`_ are
-allowed. If the value is ``cmap``, only the event types defined in
-`expectedCmapEvent`_ are allowed.
+The events allowed in an ``expectedEvent`` object depend on the value
+of ``eventType`` in the corresponding `expectedEventsForClient`_
+object, which can have one of the following values:
+
+- ``command`` or omitted: only the event types defined in
+`expectedCommandEvent`_ are allowed.
+
+- ``cmap``: only the event types defined in `expectedCmapEvent`_ are
+allowed.
+
+- ``sdam``: only the event types defined in `expectedSdamEvent`_ are
+allowed.
 
 expectedCommandEvent
 ````````````````````
@@ -1252,6 +1296,33 @@ expectedCmapEvent
   MUST be an empty document as all fields in this event are non-deterministic.
 
 
+expectedSdamEvent
+`````````````````
+
+The structure of this object is as follows:
+
+.. _expectedEvent_serverDescriptionChangedEvent:
+
+- ``serverDescriptionChangedEvent``: Optional object. Assertions for one or more
+  `ServerDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
+
+  The structure of this object is as follows:
+
+  - ``previousDescription``: Optional object. A value corresponding to the server
+    description as it was before the change that triggered this event. 
+
+  - ``newDescription``: Optional object. A value corresponding to the server
+    description as it was after the change that triggered this event.
+
+  The structure of a server description object (which the ``previousDescription``
+  and ``newDescription`` fields contain) is as follows:
+
+  - ``type``: Optional string. The type of the server in the description. Test
+    runners MUST assert that the type in the published event matches this
+    value. See `SDAM: ServerType
+    <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`__
+    for a list of valid values. 
+
 hasServiceId
 `````````````
 
@@ -1295,6 +1366,7 @@ these types and their parameters may be found in the following specifications:
 
 - `Read and Write Concern <../read-write-concern/read-write-concern.rst>`__.
 - `Server Selection: Read Preference <../server-selection/server-selection.rst#read-preference>`__.
+- `Server Discovery and Monitoring: TopologyDescription <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`__.
 
 The structure of these common options is as follows:
 
@@ -2493,7 +2565,236 @@ An example of this operation follows::
         client: *client0
         connections: 1
 
+runOnThread
+~~~~~~~~~~~
 
+The ``runOnThread`` operation instructs the test runner to schedule an operation
+to be run on a given thread. The given thread MUST begin executing the operation
+immediately. ``runOnThread`` MUST NOT wait for the operation to complete. If any
+of the operation's test assertions fail, the entire test case MUST fail as well.
+
+When writing test cases that use ``runOnThread``, it's important to note that
+certain entities are not concurrency-safe (e.g. sessions, cursors) and therefore
+SHOULD NOT be used in operations on multiple different threads entities.
+
+The following arguments are supported:
+
+- ``thread``: Required string. Thread entity on which this operation should be
+  scheduled.
+
+- ``operation``: Required `operation`_ object. The operation to schedule on the
+  thread. This object must be a valid operation as described in `Entity Test
+  Operations`_.
+
+An example of this operation follows::
+
+     - name: runOnThread
+       object: testRunner
+       arguments:
+         thread: *thread0
+         operation:
+           name: insertOne
+           object: *collection0
+           arguments:
+             document: { _id: 2 }
+           expectResult:
+             $$unsetOrMatches:
+               insertedId: { $$unsetOrMatches: 2 }
+
+
+waitForThread
+~~~~~~~~~~~~~
+
+The ``waitForThread`` operation instructs the test runner to notify the given
+thread that no more operations are forthcoming, wait for it to complete its last
+operation, and assert that it exited without any errors.
+
+If the ``waitForThread`` operation is not satisfied after 10 seconds, this
+operation MUST cause a test failure.
+
+The ``test.operations`` list SHOULD contain a ``waitForThread`` operation for
+each thread entity that the test creates.
+
+The following arguments are supported:
+
+- ``thread``: Required string. Thread entity that should be stopped and awaited
+  for completion.
+
+An example of this operation follows::
+
+    - name: waitForThread
+      object: testRunner
+      arguments:
+        thread: *thread0
+  
+
+waitForEvent
+~~~~~~~~~~~~
+
+The ``waitForEvent`` operation instructs the test runner to wait until the
+specified MongoClient has published a specific, matching event a given number of
+times. Note that this includes any events published before the ``waitForEvent``
+operation started.
+
+If the ``waitForEvent`` operation is not satisfied after 10 seconds, this
+operation MUST cause a test failure.
+
+The following arguments are supported:
+
+- ``client``: Required string. Client entity whose events the runner will be
+  waiting for.
+
+- ``event``: Required `expectedEvent`_ object. The event which the test runner
+  is waiting to be observed on the provided client. The assertions laid out in
+  `expectedEvent`_ MUST be used to determine if an observed event matches
+  ``event``. ``event`` SHOULD have an event type that was included in the
+  ``client``'s ``observeEvents`` field.
+
+- ``count``: Required integer. The number of matching events to wait for before
+  resuming execution of subsequent operations.
+
+For example, the following instructs the test runner to wait for at least one
+poolClearedEvent to be published::
+
+    - name: waitForEvent
+      object: testRunner
+      arguments:
+        client: *client0
+        event:
+          poolClearedEvent: {}
+        count: 1
+
+
+assertEventCount
+~~~~~~~~~~~~~~~~
+
+The ``assertEventCount`` operation instructs the test runner to assert the
+specified MongoClient has published a specific, matching event a given number of
+times so far in the test.
+
+The following arguments are supported:
+
+- ``client``: Required string. Client entity whose events the runner will be
+  counting.
+
+- ``event``: Required `expectedEvent`_ object. The event which the test runner
+  will be counting on the provided client. The assertions laid out in
+  `expectedEvent`_ MUST be used to determine if an observed event matches
+  ``event``. ``event`` SHOULD have an event type that was included in the
+  ``client``'s ``observeEvents`` field.
+
+- ``count``: Required integer. The exact number of matching events that
+  ``client`` should have seen so far.
+
+For example, the following instructs the test runner to assert that
+a single PoolClearedEvent was published::
+
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client0
+          event:
+            poolClearedEvent: {}
+          count: 1
+
+recordTopologyDescription
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``recordTopologyDescription`` operation instructs the test runner to
+retrieve the specified MongoClient's current `TopologyDescription
+<entity_topologydescription_>`_ and store it in the `Entity Map`_.
+
+The following arguments are supported:
+
+- ``client``: Required string. Client entity whose TopologyDescription will be recorded.
+
+- ``id``: Required string. The name with which the TopologyDescription will be
+  stored in the `Entity Map`_.
+
+For example::
+
+    - name: recordTopologyDescription
+      object: testRunner
+      arguments:
+        client: *client0
+        id: &postInsertTopology postInsertTopology
+
+assertTopologyType
+~~~~~~~~~~~~~~~~~~
+
+The ``assertTopologyType`` operation instructs the test runner to assert that
+the given `TopologyDescription <entity_topologydescription_>`_ has a particular TopologyType.
+
+The following arguments are supported:
+
+- ``topologyDescription``: Required string. TopologyDescription entity whose
+  TopologyType will be inspected.
+
+- ``topologyType``: Required string. Expected TopologyType for the
+  TopologyDescription. See `SDAM: TopologyType
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologytype>`__
+  for a list of possible values.
+
+For example::
+
+  - name: assertTopologyType
+    object: testRunner
+    arguments:
+      topologyDescription: *postInsertTopology
+      topologyType: ReplicaSetWithPrimary
+
+waitForPrimaryChange
+~~~~~~~~~~~~~~~~~~~~
+
+The ``waitForPrimaryChange`` operation instructs the test runner to wait until
+the provided MongoClient discovers a different primary from the one in the
+provided `TopologyDescription <entity_topologydescription_>`_. If the provided
+TopologyDescription does not include a primary, then this operation will wait
+until the client discovers any primary.
+
+The following arguments are supported:
+
+- ``client``: Required string. See `commonOptions_client`_.
+
+  The client entity MUST be the same one from which ``topologyDescription`` was
+  derived. Test runners do not need to verify this.
+
+- ``priorTopologyDescription``: Required string. The name of a
+  `TopologyDescription <entity_topologydescription_>`_ entity which will be used
+  to determine if the primary has changed or not.
+
+- ``timeoutMS``: Optional integer. The number of milliseconds to wait for the
+  primary change before timing out and failing the test. If unspecified, a
+  default timeout of 10 seconds MUST be used.
+
+For example::
+
+  - name: waitForPrimaryChange
+    object: testRunner
+    arguments:
+      client: *client0
+      priorTopologyDescription: *postInsertTopology
+      timeoutMS: 1000
+
+wait
+~~~~
+
+The ``wait`` operation instructs the test runner to sleep for a provided number
+of milliseconds.
+
+The following arguments are supported:
+
+- ``ms``: Required integer. The number of milliseconds for which the current
+  test runner thread should sleep.
+
+For example::
+
+  - name: wait
+    object: testRunner
+    arguments:
+      ms: 1000
+
+        
 Special Placeholder Value
 -------------------------
 
@@ -3428,17 +3729,6 @@ The process for executing tests should not require significant changes, but test
 files will need to express a dependency on mongocryptd.
 
 
-Support SDAM integration tests
-------------------------------
-
-SDAM integration tests should not require test format changes, but will
-introduce several new special test operations for the "testRunner" object. While
-the tests themselves only define expectations for command monitoring events,
-some special operations may require observing additional event types. There are
-also special operations for defining threads and executing operations within
-threads, which may warrant introducing a new "thread" entity type.
-
-
 Incorporate referenced entity operations into the schema version
 ----------------------------------------------------------------
 
@@ -3462,6 +3752,14 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
+:2022-07-28: **Schema version 1.10.**
+             Add support for ``thread`` entities (``runOnThread``,
+             ``waitForThread``), TopologyDescription entities
+             (``recordTopologyDescription``, ``waitForPrimaryChange``,
+             ``assertTopologyType``), testRunner event assertion operations
+             (``waitForEvent``, ``assertEventCount``), expected SDAM events, and
+             the ``wait`` operation.
+
 :2022-07-27: Retroactively note schema version bumps in the change log and
              require doing so for future changes.
 
@@ -3474,9 +3772,10 @@ Change Log
              `ClientEncryption Operations`_.
 
 :2022-04-27: **Schema version 1.9.**
-             Added ``createOptions`` field to ``initialData``, introduced a
-             new ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and
-             added an ``isTimeoutError`` field to ``expectedError``.
+             Added ``createOptions`` field to ``initialData``, introduced a new
+             ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and added
+             an ``isTimeoutError`` field to ``expectedError``. Also introduced
+             the ``createEntities`` operation.
 
 :2022-04-27: **Schema version 1.8.**
              Add ``runOnRequirement.csfle``.

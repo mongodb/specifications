@@ -4,6 +4,7 @@ schemaVersion: "1.9"
 
 runOnRequirements:
   - minServerVersion: "4.4"
+    serverless: forbid  # GridFS ops can be slow on serverless.
 
 createEntities:
   - client:
@@ -12,7 +13,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 50
+        timeoutMS: 75
       useMultipleMongoses: false
   - database:
       id: &database database
@@ -54,7 +55,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -76,7 +77,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -98,7 +99,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -121,7 +122,7 @@ tests:
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -144,7 +145,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -169,7 +170,7 @@ tests:
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -190,7 +191,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -213,7 +214,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 55
+              blockTimeMS: 100
       - name: upload
         object: *bucket
         arguments:
@@ -223,8 +224,8 @@ tests:
           isTimeoutError: true
 
   # Test that drivers apply timeoutMS to the entire upload rather than refreshing it between individual commands. We
-  # test this by blocking the "find" and "listIndexes" commands for 30ms each and performing an upload. The upload
-  # should inherit timeoutMS=50 from the client/database and the server takes over 50ms total, so the operation should
+  # test this by blocking the "find" and "listIndexes" commands for 50ms each and performing an upload. The upload
+  # should inherit timeoutMS=75 from the client/database and the server takes over 75ms total, so the operation should
   # fail.
   - description: "timeoutMS applied to upload as a whole, not individual parts"
     operations:
@@ -238,7 +239,7 @@ tests:
             data:
               failCommands: ["find", "listIndexes"]
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 50
       - name: upload
         object: *bucket
         arguments:

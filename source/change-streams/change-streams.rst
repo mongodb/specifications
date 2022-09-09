@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-05-19
-:Version: 1.16
+:Last Modified: 2022-08-22
+:Version: 1.18
 
 .. contents::
 
@@ -252,6 +252,12 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * @since 6.0.0
      */
     collectionUUID: Optional<Binary>;
+
+    /**
+     * The cluster time at which the change occurred.
+     */
+    clusterTime: Timestamp;
+
   }
 
   class UpdateDescription {
@@ -307,6 +313,26 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * @since 4.7.0
      */
     truncatedArrays: Array<Document>;
+
+    /**
+     * A document containing a map that associates an update path to an array containing the path components used in the update document. This data
+     * can be used in combination with the other fields in an `UpdateDescription` to determine the actual path in the document that was updated. This is 
+     * necessary in cases where a key contains dot-separated strings (i.e., `{ "a.b": "c" }`) or a document contains a numeric literal string key
+     * (i.e., `{ "a": { "0": "a" } }`. Note that in this scenario, the numeric key can't be the top level key, because `{ "0": "a" }` is not ambiguous - 
+     * update paths would simply be `'0'` which is unambiguous because BSON documents cannot have arrays at the top level.).
+     * 
+     * Each entry in the document maps an update path to an array which contains the actual path used when the document was updated.  
+     * For example, given a document with the following shape `{ "a": { "0": 0 } }` and an update of `{ $inc: { "a.0": 1 } }`, `disambiguatedPaths` would
+     * look like the following:
+     *   {
+     *      "a.0": ["a", "0"]
+     *   }
+     * 
+     * In each array, all elements will be returned as strings with the exception of array indices, which will be returned as 32 bit integers.
+     * 
+     * @since 6.1.0
+     */
+    disambiguatedPaths: Optional<Document>
   }
 
 The responses to a change stream aggregate or getMore have the following structures:
@@ -1069,4 +1095,8 @@ Changelog
 | 2022-05-17 | Added ``wallTime`` to ``ChangeStreamDocument``.            |
 +------------+------------------------------------------------------------+
 | 2022-05-19 | Support new change stream events with showExpandedEvents.  |
++------------+------------------------------------------------------------+
+| 2022-08-17 | Support `disambiguatedPaths` in `UpdateDescription`.       |
++------------+------------------------------------------------------------+
+| 2022-08-22 | Added ``clusterTime`` to ``ChangeStreamDocument``.         |
 +------------+------------------------------------------------------------+

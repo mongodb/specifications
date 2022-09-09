@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.8.0
+:Spec Version: 1.8.1
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-01-25
+:Last Modified: 2022-08-30
 
 .. contents::
 
@@ -408,6 +408,9 @@ to another retryable error or some other error originating from the server, that
 error should be raised instead as the caller can infer that an attempt was made
 and the second error is likely more relevant (with respect to the current
 topology state).
+
+If a retry attempt fails with an error labeled NoWritesPerformed, drivers MUST
+return the original error.
 
 Drivers MUST NOT attempt to retry a write command with the same transaction ID
 more than once.

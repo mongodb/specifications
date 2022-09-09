@@ -2012,3 +2012,174 @@ the environment.
 .. _Automatic AWS Credentials: ../client-side-encryption.rst#automatic-aws-credentials
 .. _ClientEncryption: ../client-side-encryption.rst#clientencryption
 .. _auth-aws: ../../auth/auth.rst#obtaining-credentials
+
+16. Rewrap
+~~~~~~~~~~
+
+Case 1: Rewrap with separate ClientEncryption
+`````````````````````````````````````````````
+
+When the following test case requests setting ``masterKey``, use the following values based on the KMS provider:
+
+For "aws":
+
+.. code:: javascript
+
+   {
+      "region": "us-east-1",
+      "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+   }
+
+For "azure":
+
+.. code:: javascript
+
+   {
+      "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+      "keyName": "key-name-csfle"
+   }
+
+For "gcp":
+
+.. code:: javascript
+
+   {
+      "projectId": "devprod-drivers",
+      "location": "global",
+      "keyRing": "key-ring-csfle",
+      "keyName": "key-name-csfle"
+   }
+
+For "kmip":
+
+.. code:: javascript
+
+   {}
+
+For "local", do not set a masterKey document.
+
+Run the following test case for each pair of KMS providers (referred to as ``srcProvider`` and ``dstProvider``).
+Include pairs where ``srcProvider`` equals ``dstProvider``.
+
+1. Drop the collection ``keyvault.datakeys``. 
+
+2. Create a ``ClientEncryption`` object named ``clientEncryption1`` with these options:
+   .. code:: typescript
+
+      ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>;
+         keyVaultNamespace: "keyvault.datakeys";
+         kmsProviders: <all KMS providers>
+      }
+
+3. Call ``clientEncryption1.createDataKey`` with ``srcProvider`` and these options:
+   .. code:: typescript
+
+      class DataKeyOpts {
+         masterKey: <depends on srcProvider>
+      }
+
+   Store the return value in ``keyID``.
+
+4. Call ``clientEncryption1.encrypt`` with the value "test" and these options:
+   .. code:: typescript
+
+      class EncryptOpts {
+         keyId : keyID,
+         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+      }
+
+   Store the return value in ``ciphertext``.
+
+5. Create a ``ClientEncryption`` object named ``clientEncryption2`` with these options:
+   .. code:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <new MongoClient>;
+      keyVaultNamespace: "keyvault.datakeys";
+      kmsProviders: <all KMS providers>
+   }
+
+6. Call ``clientEncryption2.rewrapManyDataKey`` with an empty ``filter`` and these options:
+
+   .. code:: typescript
+
+      class RewrapManyDataKeyOpts {
+         provider: dstProvider
+         masterKey: <depends on dstProvider>
+      }
+
+   Assert that the returned ``RewrapManyDataKeyResult.bulkWriteResult.modifiedCount`` is 1.
+
+7. Call ``clientEncryption1.decrypt`` with the ``ciphertext``. Assert the return value is "test".
+
+8. Call ``clientEncryption2.decrypt`` with the ``ciphertext``. Assert the return value is "test".
+
+17. On-demand GCP Credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Refer: `Automatic GCP Credentials`_.
+
+For these cases, create a ClientEncryption_ object :math:`C` with the following
+options:
+
+.. code-block:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <setupClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "gcp": {} },
+   }
+
+Case 1: Failure
+```````````````
+
+Do not run this test case in an environment with a GCP service account is
+attached (e.g. any `GCE equivalent runtime
+<https://google.aip.dev/auth/4115>`_). This may be run in an AWS EC2 instance.
+
+Attempt to create a datakey with :math:`C` using the ``"gcp"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "projectId": "devprod-drivers",
+         "location": "global",
+         "keyRing": "key-ring-csfle",
+         "keyName": "key-name-csfle"
+      }
+   }
+
+Expect the attempt to obtain ``"gcp"`` credentials from the environment to fail.
+
+Case 2: Success
+```````````````
+
+This test case must run in a Google Compute Engine (GCE) Virtual Machine with a
+service account attached. See `drivers-evergreen-tools/.evergreen/csfle/gcpkms
+<https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/gcpkms>`_
+for scripts to create a GCE instance for testing. The Evergreen task SHOULD set a
+``batchtime`` of 14 days to reduce how often this test case runs.
+
+Attempt to create a datakey with :math:`C` using the ``"gcp"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "projectId": "devprod-drivers",
+         "location": "global",
+         "keyRing": "key-ring-csfle",
+         "keyName": "key-name-csfle"
+      }
+   }
+
+This should successfully load and use the GCP credentials of the service account
+attached to the virtual machine.
+
+Expect the key to be successfully created.
+
+.. _Automatic GCP Credentials: ../client-side-encryption.rst#automatic-gcp-credentials

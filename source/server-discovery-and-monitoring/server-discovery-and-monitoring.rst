@@ -2452,7 +2452,6 @@ Bernie Hackett gently oversaw the specification process.
 Changes
 -------
 
-2021-01-17: Require clients to compare (electionId, setVersion) tuples.
 
 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
 
@@ -2518,6 +2517,8 @@ stale application errors.
 2020-12-17: Mark the pool for a server as "ready" after performing a successful
 check. Synchronize pool clearing with SDAM updates.
 
+2021-01-17: Require clients to compare (electionId, setVersion) tuples.
+
 2021-2-11: Errors encountered during auth are handled by SDAM. Auth errors
 mark the server Unknown and clear the pool.
 
@@ -2529,7 +2530,9 @@ mark the server Unknown and clear the pool.
 
 2021-06-29: Updated to use modern terminology.
 
-2020-12-23: Add iscryptd and 90th percentile RTT fields to ServerDescription.
+2022-01-19: Add iscryptd and 90th percentile RTT fields to ServerDescription.
+
+2022-07-11: Convert integration tests to the unified format.
 
 .. Section for links.
 
