@@ -1,7 +1,7 @@
 {
   "version": 1,
   "style": "unit",
-  "description": "Pool clear SHOULD schedule the next background thread run immediately (closeInUseConnections: false)",
+  "description": "Pool clear SHOULD schedule the next background thread run immediately (interruptInUseConnections: false)",
   "poolOptions": {
     "backgroundThreadIntervalMS": 10000
   },
@@ -22,7 +22,7 @@
     },
     {
       "name": "clear",
-      "closeInUseConnections": false
+      "interruptInUseConnections": false
     },
     {
       "name": "waitForEvent",
@@ -58,7 +58,7 @@
     },
     {
       "type": "ConnectionPoolCleared",
-      "closeInUseConnections":  false
+      "interruptInUseConnections": false
     },
     {
       "type": "ConnectionClosed",

@@ -1,6 +1,6 @@
 version: 1
 style: unit
-description: Pool clear SHOULD schedule the next background thread run immediately (closeInUseConnections: false)
+description: Pool clear SHOULD schedule the next background thread run immediately (interruptInUseConnections: false)
 poolOptions:
   # ensure it's not involved by default
   backgroundThreadIntervalMS: 10000
@@ -12,7 +12,7 @@ operations:
   - name: checkIn
     connection: conn
   - name: clear
-    closeInUseConnections: false
+    interruptInUseConnections: false
   - name: waitForEvent
     event: ConnectionPoolCleared
     count: 1
@@ -33,7 +33,7 @@ events:
     connectionId: 2
     address: 42
   - type: ConnectionPoolCleared
-    closeInUseConnections: false
+    interruptInUseConnections: false
   - type: ConnectionClosed
     connectionId: 2
     reason: stale

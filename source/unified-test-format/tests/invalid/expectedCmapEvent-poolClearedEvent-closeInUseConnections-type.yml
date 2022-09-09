@@ -1,4 +1,4 @@
-description: expectedCmapEvent-poolClearedEvent-closeInUseConnections-type
+description: expectedCmapEvent-poolClearedEvent-interruptInUseConnections-type
 
 schemaVersion: '1.11'
 
@@ -10,4 +10,4 @@ tests:
         eventType: cmap
         events:
           - poolClearedEvent:
-              closeInUseConnections: foo
+              interruptInUseConnections: foo

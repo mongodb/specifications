@@ -1239,7 +1239,7 @@ expectedCmapEvent
   The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
-  - ``closeInUseConnections``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
+  - ``interruptInUseConnections``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
 .. _expectedEvent_poolClosedEvent:
 
@@ -1333,10 +1333,10 @@ that the field is set and is a non-empty BSON ObjectId (i.e. all bytes of the
 ObjectId are not 0). If false, test runners MUST assert that the field is not
 set or is an empty BSON ObjectId.
 
-closeInUseConnections
+interruptInUseConnections
 
 This field is an optional boolean that specifies whether or not the
-``closeInUseConnections`` field should be asserted. If field is set, test runners MUST assert
+``interruptInUseConnections`` field should be asserted. If field is set, test runners MUST assert
 that the field is set and has appropriate value. If not set, test runners MUST ignore asserting.
 
 hasServerConnectionId
@@ -3760,7 +3760,7 @@ Change Log
 ==========
 
 :2022-09-02: **Schema version 1.11.**
-             Add ``closeInUseConnections`` field to ``poolClearedEvent``
+             Add ``interruptInUseConnections`` field to ``poolClearedEvent``
 
 :2022-07-28: **Schema version 1.10.**
              Add support for ``thread`` entities (``runOnThread``,

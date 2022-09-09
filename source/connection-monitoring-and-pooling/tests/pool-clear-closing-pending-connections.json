@@ -1,7 +1,7 @@
 {
   "version": 1,
   "style": "integration",
-  "description": "clear with closeInUseConnections = true closes pending connections",
+  "description": "clear with interruptInUseConnections = true closes pending connections",
   "runOn": [
     {
       "minServerVersion": "4.9.0"
@@ -42,7 +42,7 @@
     },
     {
       "name": "clear",
-      "closeInUseConnections": true
+      "interruptInUseConnections": true
     },
     {
       "name": "waitForEvent",
@@ -59,7 +59,7 @@
     },    
     {
       "type": "ConnectionPoolCleared",
-      "closeInUseConnections": true
+      "interruptInUseConnections": true
     },
     {
       "type": "ConnectionClosed"

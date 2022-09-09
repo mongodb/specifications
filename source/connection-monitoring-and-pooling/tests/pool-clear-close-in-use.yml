@@ -8,7 +8,7 @@ operations:
   - name: checkOut
   - name: checkOut
   - name: clear
-    closeInUseConnections: true
+    interruptInUseConnections: true
   - name: waitForEvent
     event: ConnectionPoolCleared
     count: 1
@@ -26,7 +26,7 @@ events:
     connectionId: 2
     address: 42
   - type: ConnectionPoolCleared
-    closeInUseConnections: true
+    interruptInUseConnections: true
   - type: ConnectionClosed
     reason: stale
     address: 42

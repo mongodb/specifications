@@ -1,13 +1,12 @@
 {
-  "description": "closeInUse",
+  "description": "interruptInUse",
   "schemaVersion": "1.11",
   "runOnRequirements": [
     {
       "minServerVersion": "4.9",
       "topologies": [
         "replicaset",
-        "sharded",
-        "load-balanced"
+        "sharded"
       ],
       "serverless": "forbid",
     }
@@ -22,14 +21,14 @@
   ],  
   "initialData": [
     {
-      "collectionName": "closeInUse",
+      "collectionName": "interruptInUse",
       "databaseName": "sdam-tests",
       "documents": []
     }
   ],  
   "tests": [
     {
-      "description": "Connection pool clear uses closeInUseConnections=true after monitor timeout",
+      "description": "Connection pool clear uses interruptInUseConnections=true after monitor timeout",
       "operations": [
         {
           "name": "createEntities",
@@ -43,7 +42,7 @@
                   "uriOptions": {
                     "connectTimeoutMS": 500,  
                     "heartbeatFrequencyMS": 500,
-                    "appname": "closeInUse",
+                    "appname": "interruptInUse",
                     "retryReads": false,
                     "minPoolSize": 0
                   },
@@ -69,7 +68,7 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "closeInUse"
+                  "collectionName": "interruptInUse"
                 }
               },
               {
@@ -119,7 +118,7 @@
                 ],
                 "blockConnection": true,
                 "blockTimeMS": 1500,
-                "appName": "closeInUse"
+                "appName": "interruptInUse"
               }
             },
             "client": "setupClient"
@@ -175,7 +174,7 @@
             },
             {
               "poolClearedEvent": {
-                "closeInUseConnections": true
+                "interruptInUseConnections": true
               }
             },
             {
@@ -188,13 +187,13 @@
        }       
       ],
       "outcome": [{
-        "collectionName": "closeInUse",
+        "collectionName": "interruptInUse",
         "databaseName": "sdam-tests",
         "documents": [{ "_id": 1 }]
       }]
     },
     {
-      "description": "Error returned from connection pool clear with closeInUseConnections=true is retryable",
+      "description": "Error returned from connection pool clear with interruptInUseConnections=true is retryable",
       "operations": [
         {
           "name": "createEntities",
@@ -208,7 +207,7 @@
                   "uriOptions": {
                     "connectTimeoutMS": 500,  
                     "heartbeatFrequencyMS": 500,
-                    "appname": "closeInUseRetryable",
+                    "appname": "interruptInUseRetryable",
                     "retryReads": true,
                     "minPoolSize": 0
                   },
@@ -234,7 +233,7 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "closeInUse"
+                  "collectionName": "interruptInUse"
                 }
               },
               {
@@ -281,7 +280,7 @@
                 ],
                 "blockConnection": true,
                 "blockTimeMS": 1500,
-                "appName": "closeInUseRetryable"
+                "appName": "interruptInUseRetryable"
               }
             },
             "client": "setupClient"
@@ -347,7 +346,7 @@
             },
             {
               "poolClearedEvent": {
-                "closeInUseConnections": true
+                "interruptInUseConnections": true
               }
             },
             {
@@ -366,13 +365,13 @@
        }      
       ],
       "outcome": [{
-        "collectionName": "closeInUse",
+        "collectionName": "interruptInUse",
         "databaseName": "sdam-tests",
         "documents": [{ "_id": 1 }]
       }]
     },
     {
-      "description": "Error returned from connection pool clear with closeInUseConnections=true is retryable for write",
+      "description": "Error returned from connection pool clear with interruptInUseConnections=true is retryable for write",
       "operations": [
         {
           "name": "createEntities",
@@ -386,7 +385,7 @@
                   "uriOptions": {
                     "connectTimeoutMS": 500,
                     "heartbeatFrequencyMS": 500,
-                    "appname": "closeInUseRetryableWrite",
+                    "appname": "interruptInUseRetryableWrite",
                     "retryWrites": true,
                     "minPoolSize": 0
                   },
@@ -411,7 +410,7 @@
                 "collection": {
                   "id": "collection",
                   "database": "database",
-                  "collectionName": "closeInUse"
+                  "collectionName": "interruptInUse"
                 }
               }
             ]
@@ -439,7 +438,7 @@
                 ],
                 "blockConnection": true,
                 "blockTimeMS": 2000,
-                "appName": "closeInUseRetryableWrite"
+                "appName": "interruptInUseRetryableWrite"
               }
             },
             "client": "setupClient"
@@ -450,6 +449,9 @@
           "object": "collection",
           "arguments": {
             "document": { "_id": 2 }
+          },
+          "expectResult": {
+            $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
           }
         }
       ],
@@ -505,7 +507,7 @@
             },
             {
               "poolClearedEvent": {
-                "closeInUseConnections": true
+                "interruptInUseConnections": true
               }
             },
             {
@@ -524,7 +526,7 @@
        }
       ],
       "outcome": [{
-        "collectionName": "closeInUse",
+        "collectionName": "interruptInUse",
         "databaseName": "sdam-tests",
         "documents": [{ "_id": 1 }, { "_id": 2 }]
       }]

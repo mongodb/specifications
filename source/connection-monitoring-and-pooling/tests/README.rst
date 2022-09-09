@@ -101,7 +101,7 @@ Valid Unit Test Operations are the following:
 
 - ``pool.clear()``: call ``clear`` on Pool
 
-  - ``closeInUseConnections``: Determines whether "in use" connections should be also closed
+  - ``interruptInUseConnections``: Determines whether "in use" connections should be also interrupted
   
 - ``pool.close()``: call ``close`` on Pool
 - ``pool.ready()``: call ``ready`` on Pool

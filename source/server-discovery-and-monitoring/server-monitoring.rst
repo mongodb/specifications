@@ -617,7 +617,7 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
    both network and command errors`_). For CMAP compliant drivers, clearing the
    pool MUST be synchronized with marking the server as Unknown (see `Why
    synchronize clearing a server's pool with updating the topology?`_). If this 
-   was a network timeout error, then the pool MUST be cleared with closeInUseConnections = true 
+   was a network timeout error, then the pool MUST be cleared with interruptInUseConnections = true 
    (see `Why does the pool need to support closing in use connections as part of 
    its clear logic?`_)
 #. If this was a network error and the server was in a known state before the
@@ -695,7 +695,7 @@ The event API here is assumed to be like the standard `Python Event
                 topology.onServerDescriptionChanged(description, connection pool for server)
                 if description.error != Null:
                     # Clear the connection pool only after the server description is set to Unknown.
-                    clear(closeInUseConnections: isNetworkTimeout(description.error)) connection pool for server
+                    clear(interruptInUseConnections: isNetworkTimeout(description.error)) connection pool for server
 
             # Immediately proceed to the next check if the previous response
             # was successful and included the topologyVersion field, or the
@@ -1103,7 +1103,7 @@ or command error (`Network or command error during server check`_).
 When the check fails with a network error it is likely that all connections
 to that server are also closed.
 (See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_). When the check fails 
-with a network timeout error, a monitor SHOULD set closeInUseConnections to true. 
+with a network timeout error, a monitor SHOULD set interruptInUseConnections to true. 
 See, `Why does the pool need to support closing in use connections as part of its clear logic?`_.
 
 When the server is shutting down, it may respond to hello or legacy hello commands with

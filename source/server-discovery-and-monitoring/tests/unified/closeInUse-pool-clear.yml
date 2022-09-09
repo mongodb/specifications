@@ -1,5 +1,5 @@
 ---
-description: closeInUse
+description: interruptInUse
 
 schemaVersion: "1.11"
 
@@ -7,7 +7,7 @@ runOnRequirements:
   # failCommand appName requirements
   - minServerVersion: "4.9"
     serverless: forbid
-    topologies: [ replicaset, sharded, load-balanced ]
+    topologies: [ replicaset, sharded ]
 
 createEntities:
   - client:
@@ -15,12 +15,12 @@ createEntities:
       useMultipleMongoses: false
 
 initialData: &initialData
-  - collectionName: &collectionName closeInUse
+  - collectionName: &collectionName interruptInUse
     databaseName: &databaseName sdam-tests
     documents: []
 
 tests:
-  - description: Connection pool clear uses closeInUseConnections=true after monitor timeout
+  - description: Connection pool clear uses interruptInUseConnections=true after monitor timeout
     operations:
       - name: createEntities
         object: testRunner
@@ -40,7 +40,7 @@ tests:
                 uriOptions:
                   connectTimeoutMS: 500
                   heartbeatFrequencyMS: 500
-                  appname: closeInUse
+                  appname: interruptInUse
                   retryReads: false
                   minPoolSize: 0
             - database:
@@ -72,7 +72,7 @@ tests:
             expectError:
               isError: true
         # Configure the monitor check to fail with a timeout.
-        # Use times: 2 so that the RTT hello is blocked as well.
+        # Wse times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
       - name: failPoint
         object: testRunner
         arguments:
@@ -87,7 +87,7 @@ tests:
                 - isMaster
               blockConnection:  true,
               blockTimeMS: 1500,                
-              appName: closeInUse        
+              appName: interruptInUse        
       - name: waitForThread
         object: testRunner,
         arguments: {
@@ -111,7 +111,7 @@ tests:
           - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - poolClearedEvent:
-              closeInUseConnections: true
+              interruptInUseConnections: true
           - connectionCheckedInEvent: {}
           - connectionClosedEvent: {}
 
@@ -121,7 +121,7 @@ tests:
         documents:
           - _id: 1
 
-  - description: Error returned from connection pool clear with closeInUseConnections=true is retryable
+  - description: Error returned from connection pool clear with interruptInUseConnections=true is retryable
     operations:
       - name: createEntities
         object: testRunner
@@ -141,7 +141,7 @@ tests:
                 uriOptions:
                   connectTimeoutMS: 500
                   heartbeatFrequencyMS: 500
-                  appname: closeInUseRetryable
+                  appname: interruptInUseRetryable
                   retryReads: true
                   minPoolSize: 0
             - database:
@@ -171,7 +171,7 @@ tests:
               filter:
                 $where : sleep(5000) || true
         # Configure the monitor check to fail with a timeout.
-        # Use times: 2 so that the RTT hello is blocked as well.
+        # Wse times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
       - name: failPoint
         object: testRunner
         arguments:
@@ -186,7 +186,7 @@ tests:
                 - isMaster
               blockConnection:  true,
               blockTimeMS: 1500,                
-              appName: closeInUseRetryable        
+              appName: interruptInUseRetryable        
       - name: waitForThread
         object: testRunner,
         arguments: {
@@ -216,10 +216,9 @@ tests:
           - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - poolClearedEvent:
-              closeInUseConnections: true
+              interruptInUseConnections: true
           - connectionCheckedInEvent: {}
           - connectionClosedEvent: {}
-          - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
      
@@ -228,7 +227,7 @@ tests:
         databaseName: *databaseName
         documents:
           - _id: 1
-  - description: Error returned from connection pool clear with closeInUseConnections=true is retryable for write
+  - description: Error returned from connection pool clear with interruptInUseConnections=true is retryable for write
     operations:
       - name: createEntities
         object: testRunner
@@ -248,7 +247,7 @@ tests:
                 uriOptions:
                   connectTimeoutMS: 500
                   heartbeatFrequencyMS: 500
-                  appname: closeInUseRetryableWrite
+                  appname: interruptInUseRetryableWrite
                   retryWrites: true
                   minPoolSize: 0
             - database:
@@ -259,6 +258,7 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+      # ensure the primary is discovered
       - name: insertOne
         object: *collection
         arguments:
@@ -279,12 +279,18 @@ tests:
                 - insert
               blockConnection:  true,
               blockTimeMS: 2000,                
-              appName: closeInUseRetryableWrite        
+              appName: interruptInUseRetryableWrite
+      # The failpoint will block the insert and next monitor check by 2 seconds each. 
+      # The monitor check should time out after 1 second plus whatever time was left 
+      # over on the prior heartbeat (max 500ms), cancelling the insert before it would succeed. 
+      # The retry will happen and succeed after the server is eventually rediscovered.
       - name: insertOne
         object: *collection
         arguments:
           document:
             _id: 2
+        expectResult: 
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
     expectEvents:
       - client: *client
         eventType: command
@@ -308,7 +314,7 @@ tests:
           - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - poolClearedEvent:
-              closeInUseConnections: true
+              interruptInUseConnections: true
           - connectionCheckedInEvent: {}
           - connectionClosedEvent: {}
           - connectionCheckedOutEvent: {}

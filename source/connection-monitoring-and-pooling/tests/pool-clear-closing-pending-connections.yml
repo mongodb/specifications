@@ -1,6 +1,6 @@
 version: 1
 style: integration
-description: clear with closeInUseConnections = true closes pending connections
+description: clear with interruptInUseConnections = true closes pending connections
 runOn:
   -
     minServerVersion: "4.9.0"
@@ -24,7 +24,7 @@ operations:
     event: ConnectionCreated
     count: 1
   - name: clear
-    closeInUseConnections: true
+    interruptInUseConnections: true
   - name: waitForEvent
     event: ConnectionCheckOutFailed
     count: 1
@@ -32,7 +32,7 @@ events:
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
   - type: ConnectionPoolCleared
-    closeInUseConnections: true
+    interruptInUseConnections: true
   - type: ConnectionClosed
   - type: ConnectionCheckOutFailed
 ignore:
