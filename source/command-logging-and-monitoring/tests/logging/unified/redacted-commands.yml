@@ -41,7 +41,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: authenticate
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -70,7 +71,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: saslStart
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -99,7 +101,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: saslContinue
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -124,13 +127,15 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: getnonce
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             data:
               message: "Command succeeded"
               commandName: getnonce
-              reply: "{}"
+              reply:
+                $$matchAsDocument: {}
 
   - description: "createUser"
     operations:
@@ -155,7 +160,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: createUser
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -184,7 +190,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: updateUser
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -211,7 +218,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: copydbgetnonce
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -238,7 +246,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: copydbsaslstart
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -265,7 +274,8 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: copydb
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             hasFailure: false
@@ -294,13 +304,15 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: hello
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             data:
               message: "Command succeeded"
               commandName: hello
-              reply: "{}"
+              reply:
+                $$matchAsDocument: {}
 
   - description: "legacy hello with speculative authenticate"
     operations:
@@ -329,26 +341,30 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: ismaster
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             data:
               message: "Command succeeded"
               commandName: ismaster
-              reply: "{}"
+              reply:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             data:
               message: "Command started"
               databaseName: *databaseName
               commandName: isMaster
-              command: "{}"
+              command:
+                $$matchAsDocument: {}
           - level: debug
             component: command
             data:
               message: "Command succeeded"
               commandName: isMaster
-              reply: "{}"
+              reply:
+                $$matchAsDocument: {}
 
   - description: "hello without speculative authenticate is not redacted"
     runOnRequirements:

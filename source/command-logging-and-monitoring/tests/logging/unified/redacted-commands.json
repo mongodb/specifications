@@ -56,7 +56,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "authenticate",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -102,7 +104,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "saslStart",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -148,7 +152,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "saslContinue",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -189,7 +195,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "getnonce",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -198,7 +206,9 @@
               "data": {
                 "message": "Command succeeded",
                 "commandName": "getnonce",
-                "reply": "{}"
+                "reply": {
+                  "$$matchAsDocument": {}
+                }
               }
             }
           ]
@@ -235,7 +245,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "createUser",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -281,7 +293,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "updateUser",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -325,7 +339,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "copydbgetnonce",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -369,7 +385,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "copydbsaslstart",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -413,7 +431,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "copydb",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -462,7 +482,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "hello",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -471,7 +493,9 @@
               "data": {
                 "message": "Command succeeded",
                 "commandName": "hello",
-                "reply": "{}"
+                "reply": {
+                  "$$matchAsDocument": {}
+                }
               }
             }
           ]
@@ -519,7 +543,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "ismaster",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -528,7 +554,9 @@
               "data": {
                 "message": "Command succeeded",
                 "commandName": "ismaster",
-                "reply": "{}"
+                "reply": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -538,7 +566,9 @@
                 "message": "Command started",
                 "databaseName": "logging-redaction-tests",
                 "commandName": "isMaster",
-                "command": "{}"
+                "command": {
+                  "$$matchAsDocument": {}
+                }
               }
             },
             {
@@ -547,7 +577,9 @@
               "data": {
                 "message": "Command succeeded",
                 "commandName": "isMaster",
-                "reply": "{}"
+                "reply": {
+                  "$$matchAsDocument": {}
+                }
               }
             }
           ]
