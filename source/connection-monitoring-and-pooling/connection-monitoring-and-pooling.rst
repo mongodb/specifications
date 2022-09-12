@@ -354,7 +354,7 @@ has the following properties:
       /**
        *  Mark all current Connections as stale, clear the WaitQueue, and mark the pool as "paused".
        *  No connections may be checked out or created in this pool until ready() is called again.
-       *  interruptInUseConnections specifies whether the pool will force close "in use" connections as part of the clear. 
+       *  interruptInUseConnections specifies whether the pool will force interrupt "in use" connections as part of the clear. 
        *  Default false.
        */
       clear(interruptInUseConnections: Optional<Boolean>): void;
@@ -730,17 +730,17 @@ eagerly so that any operations waiting on `Connections <#connection>`_ can retry
 as soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear
 requests from the WaitQueue.
 
-The clearing method MUST provide the option to close any in-use connections as part
+The clearing method MUST provide the option to interrupt any in-use connections as part
 of the clearing (henceforth referred to as the interruptInUseConnections flag in this
 specification). The closing of these connections MUST NOT block the pool or prevent 
 it from processing further requests. The next background thread run SHOULD be scheduled 
 as soon as possible if it's responsible for closing these connections requested 
 by interruptInUseConnections flag.
-The pool MUST only close in use connections whose generation is less than or equal 
+The pool MUST only interrupt in use connections whose generation is less than or equal 
 to the generation of the pool at the moment of the clear (before the increment) 
 that used the interruptInUseConnections flag. Any operations that have their connections 
-closed in this way MUST fail with a retryable error. If possible, the error SHOULD 
-be a PoolClearedError with the following message: "Connection to <pool address> closed 
+interrupted in this way MUST fail with a retryable error. If possible, the error SHOULD 
+be a PoolClearedError with the following message: "Connection to <pool address> interrupted 
 due to server monitor timeout".
 
 Clearning a load balanced pool
@@ -1143,7 +1143,7 @@ If a SDAM monitor has observed a network timeout, we assume that all connections
 including "in use" connections are no longer healthy. In some cases connections 
 will fail to detect the network timeout fast enough. For example, a server request 
 can hang at the OS level in TCP retry loop up for 17 minutes before failing. Therefore 
-these connections MUST be proactively closed in the case of a server monitor network timeout. 
+these connections MUST be proactively interrupted in the case of a server monitor network timeout. 
 Requesting an immediate backround thread run will speed up this process.
 
 Why don't we configure TCP_USER_TIMEOUT?
