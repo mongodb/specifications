@@ -1333,12 +1333,6 @@ that the field is set and is a non-empty BSON ObjectId (i.e. all bytes of the
 ObjectId are not 0). If false, test runners MUST assert that the field is not
 set or is an empty BSON ObjectId.
 
-interruptInUseConnections
-
-This field is an optional boolean that specifies whether or not the
-``interruptInUseConnections`` field should be asserted. If field is set, test runners MUST assert
-that the field is set and has appropriate value. If not set, test runners MUST ignore asserting.
-
 hasServerConnectionId
 `````````````````````
 

@@ -56,8 +56,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          document:
-            _id: 1
+          document: { _id: 1 }
       # simulate a long-running query
       - name: runOnThread
         object: testRunner
@@ -90,9 +89,8 @@ tests:
               appName: interruptInUse        
       - name: waitForThread
         object: testRunner,
-        arguments: {
-          "thread": "thread1"
-        }
+        arguments:
+          thread: *thread1
 
     expectEvents:
       - client: *client
@@ -157,8 +155,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          document:
-            _id: 1
+          document: { _id: 1 }
       # simulate a long-running query
       - name: runOnThread
         object: testRunner
@@ -189,9 +186,8 @@ tests:
               appName: interruptInUseRetryable        
       - name: waitForThread
         object: testRunner,
-        arguments: {
-          "thread": "thread1"
-        }
+        arguments:
+          thread: *thread1
 
     expectEvents:
       - client: *client
@@ -262,8 +258,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          document:
-            _id: 1
+          document: { _id: 1 }
       - name: failPoint
         object: testRunner
         arguments:
@@ -287,8 +282,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          document:
-            _id: 2
+          document: { _id: 2 }
         expectResult: 
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
     expectEvents:
