@@ -732,9 +732,11 @@ requests from the WaitQueue.
 
 The clearing method MUST provide the option to interrupt any in-use connections as part
 of the clearing (henceforth referred to as the interruptInUseConnections flag in this
-specification). The closing of these connections MUST NOT block the pool or prevent 
+specification) where by "interrupt" drivers SHOULD mean canceling whatever task the 
+connection is currently performing and marks the connection as perished (e.g. by closing 
+the underlying socket). The interrupting of these connections MUST NOT block the pool or prevent 
 it from processing further requests. The next background thread run SHOULD be scheduled 
-as soon as possible if it's responsible for closing these connections requested 
+as soon as possible if it's responsible for interrupting these connections requested 
 by interruptInUseConnections flag.
 The pool MUST only interrupt in use connections whose generation is less than or equal 
 to the generation of the pool at the moment of the clear (before the increment) 
