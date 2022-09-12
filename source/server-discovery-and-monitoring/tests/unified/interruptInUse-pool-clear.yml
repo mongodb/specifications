@@ -71,7 +71,7 @@ tests:
             expectError:
               isError: true
         # Configure the monitor check to fail with a timeout.
-        # Wse times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
+        # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
       - name: failPoint
         object: testRunner
         arguments:
@@ -168,7 +168,7 @@ tests:
               filter:
                 $where : sleep(5000) || true
         # Configure the monitor check to fail with a timeout.
-        # Wse times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
+        # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
       - name: failPoint
         object: testRunner
         arguments:
