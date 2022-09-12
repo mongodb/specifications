@@ -183,7 +183,7 @@ tests:
                 - isMaster
               blockConnection:  true,
               blockTimeMS: 1500,                
-              appName: interruptInUseRetryable        
+              appName: interruptInUseRetryable
       - name: waitForThread
         object: testRunner,
         arguments:
