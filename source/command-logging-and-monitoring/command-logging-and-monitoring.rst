@@ -401,7 +401,11 @@ The structured format MUST contain the following key-value pairs:
 
    * - driverConnectionId
      - Int
-     - The driver's ID for the connection used for the command, as defined in the `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_. 
+     - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandStartedEvent.connectionId`` defined above,
+       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
+       Unlike ``CommandStartedEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
+       ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
+       a connection ID.
 
    * - serverHost
      - String
@@ -465,7 +469,11 @@ The structured format MUST contain the following key-value pairs:
 
    * - driverConnectionId
      - Int
-     - The driver's ID for the connection used for the command, as defined in the `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_. 
+     - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandSucceededEvent.connectionId`` defined above,
+       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
+       Unlike ``CommandSucceededEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
+       ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
+       a connection ID.
 
    * - serverHost
      - String
@@ -530,7 +538,11 @@ The structured format MUST contain the following key-value pairs:
 
    * - driverConnectionId
      - Int
-     - The driver's ID for the connection used for the command, as defined in the `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_. 
+     - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandFailedEvent.connectionId`` defined above,
+       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
+       Unlike ``CommandFailedEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
+       ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
+       a connection ID.
 
    * - serverHost
      - String

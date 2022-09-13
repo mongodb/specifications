@@ -1,5 +1,5 @@
 {
-  "description": "command-logging",
+  "description": "driver-connection-id",
   "schemaVersion": "1.11",
   "createEntities": [
     {
@@ -63,21 +63,7 @@
                 "message": "Command started",
                 "databaseName": "logging-tests",
                 "commandName": "ping",
-                "command": {
-                  "$$matchAsDocument": {
-                    "$$matchAsRoot": {
-                      "ping": 1,
-                      "$db": "logging-tests"
-                    }
-                  }
-                },
-                "requestId": {
-                  "$$exists": true
-                },
-                "serverHost": {
-                  "$$exists": true
-                },
-                "serverPort": {
+                "driverConnectionId": {
                   "$$exists": true
                 }
               }
@@ -88,19 +74,7 @@
               "data": {
                 "message": "Command succeeded",
                 "commandName": "ping",
-                "reply": {
-                  "$$type": "string"
-                },
-                "requestId": {
-                  "$$exists": true
-                },
-                "serverHost": {
-                  "$$exists": true
-                },
-                "serverPort": {
-                  "$$exists": true
-                },
-                "durationMS": {
+                "driverConnectionId": {
                   "$$exists": true
                 }
               }
@@ -136,16 +110,7 @@
                 "message": "Command started",
                 "databaseName": "logging-tests",
                 "commandName": "find",
-                "command": {
-                  "$$type": "string"
-                },
-                "requestId": {
-                  "$$exists": true
-                },
-                "serverHost": {
-                  "$$exists": true
-                },
-                "serverPort": {
+                "driverConnectionId": {
                   "$$exists": true
                 }
               }
@@ -156,19 +121,7 @@
               "data": {
                 "message": "Command failed",
                 "commandName": "find",
-                "failure": {
-                  "$$exists": true
-                },
-                "requestId": {
-                  "$$exists": true
-                },
-                "serverHost": {
-                  "$$exists": true
-                },
-                "serverPort": {
-                  "$$exists": true
-                },
-                "durationMS": {
+                "driverConnectionId": {
                   "$$exists": true
                 }
               }

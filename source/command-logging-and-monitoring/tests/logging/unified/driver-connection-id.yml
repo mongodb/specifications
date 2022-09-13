@@ -1,4 +1,5 @@
-description: "command-logging"
+# This is a separate test so that drivers that do not implement CMAP can easily skip it.
+description: "driver-connection-id"
 
 schemaVersion: "1.11"
 
@@ -39,25 +40,14 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: *commandName
-              command:
-                $$matchAsDocument:
-                  $$matchAsRoot:
-                    ping: 1
-                    $db: *databaseName
-              requestId: { $$exists: true }
-              serverHost: { $$exists: true }
-              serverPort:  { $$exists: true }
+              driverConnectionId: { $$exists: true }
 
           - level: debug
             component: command
             data:
               message: "Command succeeded"
               commandName: *commandName
-              reply: { $$type: string }
-              requestId: { $$exists: true }
-              serverHost: { $$exists: true }
-              serverPort: { $$exists: true }
-              durationMS: { $$exists: true }
+              driverConnectionId: { $$exists: true }
         
   - description: "A failed command"
     operations:
@@ -76,18 +66,11 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: *commandName
-              command: { $$type: string }
-              requestId: { $$exists: true }
-              serverHost: { $$exists: true }
-              serverPort:  { $$exists: true }
+              driverConnectionId: { $$exists: true }
 
           - level: debug
             component: command
             data:
               message: "Command failed"
               commandName: *commandName
-              failure: { $$exists: true }
-              requestId:  { $$exists: true }
-              serverHost: { $$exists: true }
-              serverPort:  { $$exists: true }
-              durationMS: { $$exists: true }
+              driverConnectionId: { $$exists: true }
