@@ -15,7 +15,7 @@ Testing
 Automated Tests
 ^^^^^^^^^^^^^^^
 There are tests in the `Unified Test Format <../../unified-test-format/unified-test-format.rst>`__ for both logging and
-monitoring in `/logging/unified </logging/unified>`_ and `/monitoring/unified </monitoring/unified>`_, respectively.
+monitoring in `/logging </logging>`_ and `/monitoring </monitoring>`_, respectively.
 
 
 Prose Tests
