@@ -45,22 +45,22 @@ tests:
             data:
               message: "Command started"
               commandName: insert
-              serverConnectionId: { $$exists: true }
+              serverConnectionId: { $$type: [int, long] }
           - level: debug
             component: command
             data:
               message: "Command succeeded"
               commandName: insert
-              serverConnectionId: { $$exists: true }
+              serverConnectionId: { $$type: [int, long] }
           - level: debug
             component: command
             data:
               message: "Command started"
               commandName: find
-              serverConnectionId: { $$exists: true }
+              serverConnectionId: { $$type: [int, long] }
           - level: debug
             component: command
             data:
               message: "Command failed"
               commandName: find
-              serverConnectionId: { $$exists: true }
+              serverConnectionId: { $$type: [int, long] }

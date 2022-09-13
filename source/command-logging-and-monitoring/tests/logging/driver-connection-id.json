@@ -64,7 +64,11 @@
                 "databaseName": "logging-tests",
                 "commandName": "ping",
                 "driverConnectionId": {
-                  "$$exists": true
+                  "$$type": [
+                    "double",
+                    "int",
+                    "long"
+                  ]
                 }
               }
             },
@@ -75,7 +79,11 @@
                 "message": "Command succeeded",
                 "commandName": "ping",
                 "driverConnectionId": {
-                  "$$exists": true
+                  "$$type": [
+                    "double",
+                    "int",
+                    "long"
+                  ]
                 }
               }
             }
@@ -111,7 +119,10 @@
                 "databaseName": "logging-tests",
                 "commandName": "find",
                 "driverConnectionId": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 }
               }
             },
@@ -122,7 +133,10 @@
                 "message": "Command failed",
                 "commandName": "find",
                 "driverConnectionId": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 }
               }
             }

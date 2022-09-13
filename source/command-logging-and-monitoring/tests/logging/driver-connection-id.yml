@@ -40,14 +40,14 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: *commandName
-              driverConnectionId: { $$exists: true }
+              driverConnectionId: { $$type: [double, int, long] }
 
           - level: debug
             component: command
             data:
               message: "Command succeeded"
               commandName: *commandName
-              driverConnectionId: { $$exists: true }
+              driverConnectionId: { $$type: [double, int, long] }
         
   - description: "A failed command"
     operations:
@@ -66,11 +66,11 @@ tests:
               message: "Command started"
               databaseName: *databaseName
               commandName: *commandName
-              driverConnectionId: { $$exists: true }
+              driverConnectionId: { $$type: [int, long] }
 
           - level: debug
             component: command
             data:
               message: "Command failed"
               commandName: *commandName
-              driverConnectionId: { $$exists: true }
+              driverConnectionId: { $$type: [int, long] }

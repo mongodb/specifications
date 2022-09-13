@@ -72,13 +72,19 @@
                   }
                 },
                 "requestId": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 },
                 "serverHost": {
-                  "$$exists": true
+                  "$$type": "string"
                 },
                 "serverPort": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 }
               }
             },
@@ -92,16 +98,26 @@
                   "$$type": "string"
                 },
                 "requestId": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 },
                 "serverHost": {
-                  "$$exists": true
+                  "$$type": "string"
                 },
                 "serverPort": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 },
                 "durationMS": {
-                  "$$exists": true
+                  "$$type": [
+                    "double",
+                    "int",
+                    "long"
+                  ]
                 }
               }
             }
@@ -140,13 +156,19 @@
                   "$$type": "string"
                 },
                 "requestId": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 },
                 "serverHost": {
-                  "$$exists": true
+                  "$$type": "string"
                 },
                 "serverPort": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 }
               }
             },
@@ -160,16 +182,26 @@
                   "$$exists": true
                 },
                 "requestId": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 },
                 "serverHost": {
-                  "$$exists": true
+                  "$$type": "string"
                 },
                 "serverPort": {
-                  "$$exists": true
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
                 },
                 "durationMS": {
-                  "$$exists": true
+                  "$$type": [
+                    "double",
+                    "int",
+                    "long"
+                  ]
                 }
               }
             }
