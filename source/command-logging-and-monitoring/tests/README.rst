@@ -24,6 +24,10 @@ Drivers MUST implement the following logging prose tests. These tests require th
 structured form as described in the 
 `Unified Test Format specification <../../unified-test-format/unified-test-format.rst#expectedLogMessage>`__.
 
+Note: the following tests mention string "length"; this refers to length in terms of whatever unit the driver has chosen
+to support for specifying max document length as discussed in the 
+`logging specification <../../logging/logging.rst#truncation-of-large-documents>`__.
+
 *Test 1: Default truncation limit*
 
 1. Configure logging with a minimum severity level of "debug" for the "command" component. Do not explicitly configure the max document length.
@@ -36,8 +40,8 @@ structured form as described in the
 
 *Test 2: Explicitly configured truncation limit*
 
-1. Configure logging with a minimum severity level of "debug" for the "command" component. Set the max document length to 5 of (your driver's unit of choice for truncation).
-2. Run the command ``{"hello": true}```.
+1. Configure logging with a minimum severity level of "debug" for the "command" component. Set the max document length to 5.
+2. Run the command ``{"hello": true}``.
 3. Inspect the resulting "command started" log message and assert that the "command" value is a string of length 5.
 4. Inspect the resulting "command succeeded" log message and assert that the "reply" value is a string of length 5.
 5. If the driver attaches raw server responses to failures and can access these via log messages to assert on, run the command 
