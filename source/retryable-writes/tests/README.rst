@@ -404,6 +404,8 @@ and sharded clusters.
    2. only run against replica sets as mongos does not propagate the
       NoWritesPerformed label to the drivers.
 
+   3. be run against server versions 6.0 and above.
+
    Additionally, this test requires drivers to set a fail point after an
    ``insertOne`` operation but before the subsequent retry. Drivers that are
    unable to set a failCommand after the CommandSucceededEvent SHOULD use
