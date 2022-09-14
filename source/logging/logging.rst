@@ -97,7 +97,7 @@ Drivers MUST support configuring where log messages should be output, including 
 stderr, output file (path MUST be configurable).
 
     **Fallback implementation method**: If the environment variable ``MONGODB_LOG_PATH`` is provided:
-     -  If the value is "stdout" (case-insensitive), log to stdout.
+     - If the value is "stdout" (case-insensitive), log to stdout.
      - If the value is "stderr" (case-insensitive), log to stderr.
      - Else, log to a file at the specified path. If the file already exists, it MUST be appended to.
 
@@ -288,6 +288,7 @@ A common complaint from our support team is that they don't know how to easily g
 information from drivers. Some drivers provide debug logging, but others do not. For drivers that
 do provide it, the log messages produced and the mechanisms for enabling debug logging are
 inconsistent.
+
 Although users can implement their own debug logging support via existing driver events (SDAM,
 APM, etc), this requires code changes. It is often difficult to quickly implement and deploy such
 changes in production at the time they are needed, and to remove the changes afterward.
