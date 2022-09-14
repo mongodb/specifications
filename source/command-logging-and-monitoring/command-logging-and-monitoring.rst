@@ -359,9 +359,9 @@ is present (e.g. a double instead of an integer, or a string instead of an integ
 
 Drivers MUST not emit command log messages for commands issued as part of the handshake with the server, or heartbeat commands issued by server monitors. 
 
-Command Started Message
------------------------
-The structured format MUST contain the following key-value pairs:
+Common Fields
+-------------
+The following key-value pairs MUST be included in all command messages:
 
 .. list-table::
    :header-rows: 1
@@ -370,19 +370,6 @@ The structured format MUST contain the following key-value pairs:
    * - Key
      - Suggested Type
      - Value
-
-   * - message
-     - String
-     - "Command started"
-
-   * - command
-     - String
-     - Canonical extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
-       `logging specification <../logging/logging.rst>`_, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.
-
-   * - databaseName
-     - String
-     - The database name.
 
    * - commandName
      - String
@@ -420,7 +407,32 @@ The structured format MUST contain the following key-value pairs:
      - String
      - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
 
-The unstructured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+Command Started Message
+-----------------------
+In addition to the common fields, command started messages MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Command started"
+
+   * - command
+     - String
+     - Canonical extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
+       `logging specification <../logging/logging.rst>`_, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.
+
+   * - databaseName
+     - String
+     - The database name.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
   Command "{{commandName}}" started on database "{{databaseName}}" using a connection with driver ID {{driverConnectionId}} and server ID
   {{serverConnectionId}} to a server with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is
@@ -428,7 +440,7 @@ The unstructured form MUST be as follows, using the values defined in the struct
 
 Command Succeeded Message
 -------------------------
-The structured format MUST contain the following key-value pairs:
+In addition to the common fields, command succeeded messages MUST contain the following key-value pairs:
 
 .. list-table::
    :header-rows: 1
@@ -452,43 +464,7 @@ The structured format MUST contain the following key-value pairs:
      - Canonical extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the 
        `logging specification <../logging/logging.rst>`_, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.
 
-   * - commandName
-     - String
-     - The command name.
-
-   * - requestId
-     - Int
-     - The driver-generated request ID.
-  
-   * - operationId
-     - Int
-     - The driver-generated operation ID. Optional; only present if the driver generated operation IDs and this command has one. 
-
-   * - driverConnectionId
-     - Int
-     - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandSucceededEvent.connectionId`` defined above,
-       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
-       Unlike ``CommandSucceededEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
-       ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
-       a connection ID.
-
-   * - serverHost
-     - String
-     - The hostname or IP address for the server the command was run on.
-
-   * - serverPort
-     - Int
-     - The port for the server the command was run on. Optional; only present if a port was specified.
-
-   * - serverConnectionId
-     - Int
-     - The server's ID for the connection used for the command. Optional; only present for server versions 4.2+.
-
-   * - serviceId
-     - String
-     - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
-
-The unstructured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
   Command "{{commandName}}" succeeded in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}} 
   to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID is
@@ -496,7 +472,7 @@ The unstructured form MUST be as follows, using the values defined in the struct
 
 Command Failed Message
 ----------------------
-The structured format MUST contain the following key-value pairs:
+In addition to the common fields, command failed messages MUST contain the following key-value pairs:
 
 .. list-table::
    :header-rows: 1
@@ -515,49 +491,13 @@ The structured format MUST contain the following key-value pairs:
      - The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply
        from the server and MAY include BSON serialization and/or deserialization.
 
-   * - commandName
-     - String
-     - The command name.
-
    * - failure
      - Flexible
      - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst>`_ for details on representing
        errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative
        for a redacted error, e.g. an empty string, empty document, or null.
 
-   * - requestId
-     - Int
-     - The driver-generated request ID.
-  
-   * - operationId
-     - Int
-     - The driver-generated operation ID. Optional; only present if the driver generated operation IDs and this command has one. 
-
-   * - driverConnectionId
-     - Int
-     - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandFailedEvent.connectionId`` defined above,
-       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
-       Unlike ``CommandFailedEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
-       ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
-       a connection ID.
-
-   * - serverHost
-     - String
-     - The hostname or IP address for the server the command was run on.
-
-   * - serverPort
-     - Int
-     - The port for the server the command was run on. Optional; only present if a port was specified.
-
-   * - serverConnectionId
-     - Int
-     - The server's ID for the connection used for the command. Optional; only present for server versions 4.2+.
-
-   * - serviceId
-     - String
-     - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
-
-The unstructured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
   Command "{{commandName}}" failed in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}}
   to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID
