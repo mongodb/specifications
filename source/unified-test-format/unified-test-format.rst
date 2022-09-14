@@ -939,7 +939,7 @@ The structure of this object is as follows:
 .. _test_expectLogMessages:
 
 - ``expectLogMessages``: Optional array of one or more `expectedLogMessagesForClient`_
-  objects. For one or mroe clients, a list of log messages that are expected to
+  objects. For one or more clients, a list of log messages that are expected to
   be observed in a particular order.
 
   If a driver only supports configuring log collectors globally (for all
@@ -1395,7 +1395,7 @@ The structure of each object is as follows:
    Test runners MUST assert that the actual level matches this value.
 
 - ``component``: Required string. This MUST be one of the component names listed
-   in `components <./logging/logging.rst#components>`__. This specifies the
+   in `components <../logging/logging.rst#components>`__. This specifies the
    expected component for the log message. Note that since naming variations
    are permitted for components, some drivers may need to map this to a
    corresponding language-specific component name. Test runners MUST assert
