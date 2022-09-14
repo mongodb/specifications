@@ -420,7 +420,7 @@ The structured format MUST contain the following key-value pairs:
      - String
      - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
 
-The unstuctured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+The unstructured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
   Command "{{commandName}}" started on database "{{databaseName}}" using a connection with driver ID {{driverConnectionId}} and server ID
   {{serverConnectionId}} to a server with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is
@@ -488,7 +488,7 @@ The structured format MUST contain the following key-value pairs:
      - String
      - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
 
-The unstuctured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+The unstructured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
   Command "{{commandName}}" succeeded in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}} 
   to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID is
@@ -557,7 +557,7 @@ The structured format MUST contain the following key-value pairs:
      - String
      - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
 
-The unstuctured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+The unstructured form MUST be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
   Command "{{commandName}}" failed in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}}
   to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID
