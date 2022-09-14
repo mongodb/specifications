@@ -3,6 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
+:Schema Version: 1.11.0
 :Status: Accepted
 :Minimum Server Version: N/A
 
@@ -613,8 +614,8 @@ The structure of this object is as follows:
   .. _entity_client_observeLogMessages:
 
   - ``observeLogMessages``: Optional object where the key names are log 
-    `components <./logging/logging.rst#components>`__ and the values are minimum
-    `log severity levels <logging/logging.rst#log-severity-levels>`__ indicating
+    `components <../logging/logging.rst#components>`__ and the values are minimum
+    `log severity levels <../logging/logging.rst#log-severity-levels>`__ indicating
     which components to collect log messages for and what the minimum severity
     level of collected messages should be. Messages for unspecified components
     and/or with lower severity levels than those specified MUST be ignored by
@@ -945,7 +946,8 @@ The structure of this object is as follows:
   If a driver only supports configuring log collectors globally (for all
   clients), the test runner SHOULD associate each observed message with a client
   in order to perform these assertions. One possible implementation is to add a
-  test-only option to MongoClient which 
+  test-only option to MongoClient which enables the client to store its entity name
+  and add the entity name to each log message to enable filtering messages by client.
 
   Tests SHOULD NOT specify multiple `expectedLogMessagesForClient`_ objects for a
   single client entity.
@@ -1389,10 +1391,11 @@ The structure of each object is as follows:
 
 - ``level``: Required string. This MUST be one of the level names listed in
    `log severity levels <logging/logging.rst#log-severity-levels>`__. This
-   specifies the expected level for the log message. Note that since not all
-   drivers will necessarily support all log levels, some drivers may need to
-   map the specified level to the corresponding driver-supported level.
-   Test runners MUST assert that the actual level matches this value.
+   specifies the expected level for the log message and corresponds to the
+   level used for the message in the specification that defines it. Note that
+   since not all drivers will necessarily support all log levels, some driver
+   may need to map the specified level to the corresponding driver-supported
+   level. Test runners MUST assert that the actual level matches this value.
 
 - ``component``: Required string. This MUST be one of the component names listed
    in `components <../logging/logging.rst#components>`__. This specifies the
@@ -1421,8 +1424,6 @@ The structure of each object is as follows:
   Note that for drivers that do not implement structured logging, this requires
   designing logging internals such that data is first gathered in a structured
   form (e.g. a document or hashmap) which can be intercepted for testing purposes.
-  A sample implementation for Java can be found on this 
-  `branch <https://github.com/jyemin/mongo-java-driver/tree/j4486>`_.
 
 collectionOrDatabaseOptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
