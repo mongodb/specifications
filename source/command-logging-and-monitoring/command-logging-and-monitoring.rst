@@ -98,7 +98,7 @@ Bulk Writes
 -----------
 
 This specification defines the monitoring and logging of individual commands and in that respect MUST generate
-events for each command a bulk write executes. Each of these commands, however, must be linked
+events and log messages for each command a bulk write executes. Each of these commands, however, must be linked
 together via the same ``operationId``.
 
 Implementation Notes
@@ -355,10 +355,7 @@ The log messages are intended to match the information contained in the events a
 support via an event subscriber if it is convenient to do so.
 
 The types used in the structured message definitions below are demonstrative, and drivers MAY use similar types instead so long as the information
-is present (e.g. a double instead of an integer, or a string instead of an integer if the structured logging framework does not support numeric types.) 
-
-For the string representations of messages defined below, for any optional field that is not available, drivers MAY either substitute the value with a
-language-appropriate representation of null (e.g. "null", "nil", "None") or omit the corresponding segment of the message altogether. 
+is present (e.g. a double instead of an integer, or a string instead of an integer if the structured logging framework does not support numeric types.)
 
 Drivers MUST not emit command log messages for commands issued as part of the handshake with the server, or heartbeat commands issued by server monitors. 
 

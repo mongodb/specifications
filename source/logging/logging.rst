@@ -269,6 +269,15 @@ its error classes MUST be included in the log representations.
 Note that if the driver includes full server responses in its errors these MUST be truncated in
 accordance with the max document length option.
 
+Omitting Null Values from Log Messages
+--------------------------------------
+Some log messages will include fields that are only present under particular circumstances, for example
+on certain server versions. When such a field is not present:
+* If the driver does structured logging, the field MUST be omitted from the message altogether, i.e. the field
+  MUST not be present with an explicit null value.
+* If the driver does unstructured logging, the corresponding segment of the message string MUST be omitted
+  altogether.
+
 Performance Considerations
 --------------------------
 The computation required to generate certain log messages can be significant, e.g. if extended
@@ -329,6 +338,16 @@ Structured versus Unstructured Logging
 The MongoDB server produces structured logs as of 4.4, so it seems natural that MongoDB drivers
 might too. However, the idiomatic logging mechanisms of choice for some language ecosystems (e.g.
 Java) do not support structured logging yet, so we cannot require it.
+
+--------------------------------------
+Omitting Null Values from Log Messages
+--------------------------------------
+We considered alternatives such as allowing, or requiring, drivers to explicitly include null values
+in log messages. While this might make it easier to identify cases where a value is unexpectedly null,
+we decided against it because there are a number of values that will often be null, or even always
+be null for certain applications (e.g. ``serviceId`` when not connected to a load-balanced topology)
+and their inclusion may confuse users and lead them to think the null value is meaningful.
+Additionally, always including null values would increase the size of log messages.
 
 Backwards Compatibility
 =======================
