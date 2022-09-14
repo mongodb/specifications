@@ -1,5 +1,5 @@
 description: "change-streams-clusterTime"
-schemaVersion: "1.3"
+schemaVersion: "1.4"
 createEntities:
   - client:
       id: &client0 client0
