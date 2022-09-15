@@ -1139,7 +1139,7 @@ clear the pool again. This situation is possible if the pool is cleared by the
 background thread after it encounters an error establishing a connection, but
 the ServerDescription for the endpoint was not updated accordingly yet.
 
-Why does the pool need to support closing in use connections as part of its clear logic?
+Why does the pool need to support interrupting in use connections as part of its clear logic?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If a SDAM monitor has observed a network timeout, we assume that all connections
 including "in use" connections are no longer healthy. In some cases connections 
