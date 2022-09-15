@@ -95,12 +95,23 @@
                 "name": "find",
                 "object": "collection",
                 "arguments": {
-                    "filter": { "$where": "sleep(5000) || true" }
+                    "filter": { "$where": "sleep(2000) || true" }
                 },
                 "expectError": {
                   "isError": true
                 }
             }
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "commandStartedEvent": {}
+            },
+            "count": 2
           }
         },
         {
@@ -260,9 +271,20 @@
                 "name": "find",
                 "object": "collection",
                 "arguments": {
-                    "filter": { "$where": "sleep(5000) || true" }
+                    "filter": { "$where": "sleep(2000) || true" }
                 }
             }
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+              "client": "client",
+              "event": {
+                  "commandStartedEvent": {}
+              },
+              "count": 2
           }
         },
         {
@@ -412,6 +434,11 @@
                   "database": "database",
                   "collectionName": "interruptInUse"
                 }
+              },
+              {
+                "thread": {
+                  "id": "thread1"
+                }
               }
             ]
           }
@@ -424,20 +451,46 @@
           }
         },
         {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1",
+            "operation": {
+              "name": "updateOne",
+              "object": "collection",
+              "arguments": {
+                "filter": { "$where": "sleep(2000) || true" },
+                "update": [ { "$set": { "a": "bar" } } ]
+               }
+            }
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+              "client": "client",
+              "event": {
+                  "commandStartedEvent": {}
+              },
+              "count": 2
+          }
+        },
+        {
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 3
+                "times": 2
               },
               "data": {
                 "failCommands": [
-                  "insert", "hello", "isMaster"
+                  "hello", "isMaster"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 2000,
+                "blockTimeMS": 1500,
                 "appName": "interruptInUseRetryableWrite"
               }
             },
@@ -445,14 +498,11 @@
           }
         },
         {
-          "name": "insertOne",
-          "object": "collection",
-          "arguments": {
-            "document": { "_id": 2 }
-          },
-          "expectResult": {
-            $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
-          }
+            "name": "waitForThread",
+            "object": "testRunner",
+            "arguments": {
+              "thread": "thread1"
+            }
         }
       ],
       "expectEvents": [
@@ -472,22 +522,22 @@
             },
             {
               "commandStartedEvent": {
-                "commandName": "insert"
+                "commandName": "update"
               }
             },
             {
               "commandFailedEvent": {
-                "commandName": "insert"
+                "commandName": "update"
               }
             },
             {
               "commandStartedEvent": {
-                "commandName": "insert"
+                "commandName": "update"
               }
             },
             {
               "commandSucceededEvent": {
-                "commandName": "insert"
+                "commandName": "update"
               }
             }
          ]
@@ -528,7 +578,7 @@
       "outcome": [{
         "collectionName": "interruptInUse",
         "databaseName": "sdam-tests",
-        "documents": [{ "_id": 1 }, { "_id": 2 }]
+        "documents": [{ "_id": 1, "a" : "bar"}]
       }]
     }
   ]

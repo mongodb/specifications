@@ -67,9 +67,16 @@ tests:
             object: *collection
             arguments:
               filter:
-                $where : sleep(5000) || true
+                $where : sleep(2000) || true
             expectError:
               isError: true
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            commandStartedEvent: {}
+          count: 2
         # Configure the monitor check to fail with a timeout.
         # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
       - name: failPoint
@@ -166,7 +173,14 @@ tests:
             object: *collection
             arguments:
               filter:
-                $where : sleep(5000) || true
+                $where : sleep(2000) || true
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            commandStartedEvent: {}
+          count: 2
         # Configure the monitor check to fail with a timeout.
         # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
       - name: failPoint
@@ -254,11 +268,33 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
-      # ensure the primary is discovered
+            - thread:
+                id: &thread1 thread1
+      # ensure the primary is discovered                
       - name: insertOne
         object: *collection
         arguments:
           document: { _id: 1 }
+      # simulate a long-running query
+      - name: runOnThread
+        object: testRunner
+        arguments:
+          thread: *thread1
+          operation:
+            name: updateOne
+            object: *collection
+            arguments:
+                "filter": { "$where": "sleep(2000) || true" },
+                "update": [ { "$set": { "a": "bar" } } ]
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            commandStartedEvent: {}
+          count: 2
+        # Configure the monitor check to fail with a timeout.
+        # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
       - name: failPoint
         object: testRunner
         arguments:
@@ -266,25 +302,19 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              times: 3
+              times: 2
             data:
               failCommands:
                 - hello
                 - isMaster
-                - insert
               blockConnection:  true,
-              blockTimeMS: 2000,                
+              blockTimeMS: 1500,                
               appName: interruptInUseRetryableWrite
-      # The failpoint will block the insert and next monitor check by 2 seconds each. 
-      # The monitor check should time out after 1 second plus whatever time was left 
-      # over on the prior heartbeat (max 500ms), cancelling the insert before it would succeed. 
-      # The retry will happen and succeed after the server is eventually rediscovered.
-      - name: insertOne
-        object: *collection
+      - name: waitForThread
+        object: testRunner,
         arguments:
-          document: { _id: 2 }
-        expectResult: 
-          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
+          thread: *thread1
+
     expectEvents:
       - client: *client
         eventType: command
@@ -294,13 +324,13 @@ tests:
           - commandSucceededEvent:
               commandName: insert
           - commandStartedEvent:
-              commandName: insert
+              commandName: update
           - commandFailedEvent:
-              commandName: insert
+              commandName: update
           - commandStartedEvent:
-              commandName: insert
+              commandName: update
           - commandSucceededEvent:
-              commandName: insert
+              commandName: update
       - client: *client
         eventType: cmap
         events:
@@ -318,5 +348,5 @@ tests:
       - collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          - _id: 1
-          - _id: 2
+          - _id: 1, a : bar
+
