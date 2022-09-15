@@ -283,9 +283,10 @@ Omitting Null Values from Log Messages
 --------------------------------------
 Some log messages will include fields that are only present under particular circumstances, for example
 on certain server versions. When such a field is not present:
-* If the driver does structured logging, the field MUST be omitted from the message altogether, i.e. the field
+
+- If the driver does structured logging, the field MUST be omitted from the message altogether, i.e. the field 
   MUST not be present with an explicit null value.
-* If the driver does unstructured logging, the corresponding segment of the message string MUST be omitted
+- If the driver does unstructured logging, the corresponding segment of the message string MUST be omitted
   altogether.
 
 Performance Considerations
