@@ -732,19 +732,19 @@ requests from the WaitQueue.
 
 The clearing method MUST provide the option to interrupt any in-use connections as part
 of the clearing (henceforth referred to as the interruptInUseConnections flag in this
-specification) where by "interrupt" drivers SHOULD mean canceling whatever task the 
-connection is currently performing and marks the connection as perished (e.g. by closing 
-the underlying socket). The interrupting of these connections MUST NOT block the pool or prevent 
-it from processing further requests. The next background thread run SHOULD be scheduled 
-as soon as possible if it's responsible for interrupting these connections requested 
-by interruptInUseConnections flag.
-The pool MUST only interrupt in use connections whose generation is less than or equal 
+specification). "Interrupting a Connection" is defined as canceling whatever task the 
+Connection is currently performing and marking the Connection as perished (e.g. by closing 
+its underlying socket). The interrupting of these Connections MUST be performed as soon as possible
+but MUST NOT block the pool or prevent it from processing further requests. If the pool has a background
+thread, and it is responsible for interrupting in-use connections, its next run MUST be scheduled as soon as
+possible.
+
+The pool MUST only interrupt in-use Connections whose generation is less than or equal 
 to the generation of the pool at the moment of the clear (before the increment) 
-that used the interruptInUseConnections flag. Any operations that have their connections 
+that used the interruptInUseConnections flag. Any operations that have their Connections 
 interrupted in this way MUST fail with a retryable error. If possible, the error SHOULD 
 be a PoolClearedError with the following message: "Connection to <pool address> interrupted 
 due to server monitor timeout".
-
 Clearning a load balanced pool
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
