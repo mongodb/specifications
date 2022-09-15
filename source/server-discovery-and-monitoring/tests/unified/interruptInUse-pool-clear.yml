@@ -284,8 +284,10 @@ tests:
             name: updateOne
             object: *collection
             arguments:
-                "filter": { "$where": "sleep(2000) || true" },
-                "update": [ { "$set": { "a": "bar" } } ]
+              filter: 
+                $where: sleep(2000) || true
+              update: 
+                $set: { "a": "bar" }
       - name: waitForEvent
         object: testRunner
         arguments:
