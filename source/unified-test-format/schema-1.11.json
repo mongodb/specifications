@@ -122,7 +122,7 @@
                 "additionalProperties": false,
                 "properties": {
                     "command": { "$ref": "#/definitions/logSeverityLevel" },
-                    "sdam": { "$ref": "#/definitions/logSeverityLevel" },
+                    "topology": { "$ref": "#/definitions/logSeverityLevel" },
                     "serverSelection": { "$ref": "#/definitions/logSeverityLevel" },
                     "connection": { "$ref": "#/definitions/logSeverityLevel" }
                 }
@@ -195,7 +195,7 @@
   
       "logComponent": {
         "type": "string",
-        "enum": ["command", "sdam", "serverSelection", "connection"]
+        "enum": ["command", "topology", "serverSelection", "connection"]
       },
 
       "logSeverityLevel": {

@@ -67,7 +67,9 @@ those defined in this specification.
 For languages/ecosystems where libraries depend on only a logging interface (for example, the Java
 driver and `SLF4J <https://www.slf4j.org/>`_) and application developers must choose a log handler,
 the requirements MAY be considered satisfied if there is a log handler available in the ecosystem
-which users can select that satisfies the requirements.
+which users can select that satisfies the requirements. Similarly, the requirements MAY be
+considered satisfied if the driver provides an integration with a logging framework which satisfies
+the requirements.
 
 Per-Component Configuration of Log Levels
 -----------------------------------------
@@ -106,13 +108,15 @@ stderr, output file (path MUST be configurable).
 Configurable Max Document Length
 --------------------------------
 Drivers MUST support configuring the maximum logged length for extended JSON documents in log messages.
-The unit here is flexible and can be bytes, Unicode code points, or graphemes, depending on what a
-driver is able to accomplish with its language's string APIs. The default max length is 1000 of
+The unit here is flexible and can be bytes, Unicode code points, code units, or graphemes, depending on
+what a driver is able to accomplish with its language's string APIs. The default max length is 1000 of
 whichever unit is selected.
-If the chosen unit is bytes, the driver MUST ensure that it gracefully handles cases where the
-truncation length falls mid code point, by either rounding the length up or down to the closest
-code point boundary or using the Unicode replacement character, to avoid producing invalid Unicode
-data.
+If the chosen unit is anything other than a Unicode code point, the driver MUST ensure that it
+gracefully handles cases where the truncation length falls mid code point, by either rounding the length
+up or down to the closest code point boundary or using the Unicode replacement character, to avoid
+producing invalid Unicode data.
+Truncated extended JSON MUST have a trailing ellipsis ``...`` appended to indicate to the user that
+truncation occurred. The ellipsis MUST NOT count toward the the max length.
 
     **Fallback Implementation method**: Environment variable ``MONGOB_LOG_MAX_DOCUMENT_LENGTH``.
     When unspecified, any extended JSON representation of a document which is longer than the
@@ -129,7 +133,7 @@ components currently exist and correspond to the listed specifications. This lis
 grow over time as logging is added to more specifications.
 
 Drivers SHOULD specify the component names in whatever the idiomatic way is for their language.
-For example, the Java command component could be named ``org.mongodb.driver.command``.
+For example, the Java command component could be named ``org.mongodb.driver.protocol.command``.
 
 Drivers MAY define additional language-specific components in addition to these for any
 driver-specific messages they produce.
@@ -146,10 +150,10 @@ driver-specific messages they produce.
      - `Command Monitoring <../command-monitoring/command-monitoring.rst>`__
      - ``MONGODB_LOG_COMMAND``
 
-   * - sdam
+   * - topologu
      - `Server Discovery and Monitoring
        <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
-     - ``MONGODB_LOG_SDAM``
+     - ``MONGODB_LOG_TOPOLOGY``
 
    * - serverSelection
      - `Server Selection <../server-selection/server-selection.rst>`__
@@ -241,8 +245,8 @@ severe level otherwise.
 
 For example:
 
-- If an Informational level is not available and Debug is, Informational messages defined as \
-  Informational in a specification MUST be emitted at Debug level.
+- If an Informational level is not available and Debug is, messages defined as Informational in a
+  specification MUST be emitted at Debug level.
 - If a Trace level is not available, Trace messages MUST be omitted at Debug level.
 
 Structured versus Unstructured Logging
@@ -256,8 +260,14 @@ for users who want it (for example, the
 SHOULD utilize it to support both types of logging.
 
 Note that drivers implementing unstructured logging MUST still support some internal way to intercept
-the data contained in messages in a structured form. See the `unified test
-format specification <../unified-test-format/unified-test-format.rst#expectedLogMessage>`_ for details.
+the data contained in messages in a structured form, as this is required to implement the unified tests
+for logging conformance.. See the `unified test format specification 
+<../unified-test-format/unified-test-format.rst#expectedLogMessage>`_ for details.
+
+Representing Documents in Log Messages
+--------------------------------------
+BSON documents MUST be represented in relaxed extended JSON when they appear in log messages to
+improve readability.
 
 Representing Errors in Log Messages
 -----------------------------------
@@ -283,7 +293,12 @@ Performance Considerations
 The computation required to generate certain log messages can be significant, e.g. if extended
 JSON serialization is required. If possible, drivers SHOULD check whether a log message would
 actually be emitted and consumed based on the users' configuration before doing such computation.
-For example, this can be checked in Rust via `log::log_enabled <https://docs.rs/log/latest/log/macro.log_enabled.html>`_. 
+For example, this can be checked in Rust via `log::log_enabled 
+<https://docs.rs/log/latest/log/macro.log_enabled.html>`_. 
+
+Drivers SHOULD optimize extended JSON generation to avoid generating JSON strings longer than will
+be emitted, such that the complexity is O(N) where N = ``<max document length>``, rather than
+N = ``<actual document length>``.
 
 Test Plan
 =========
@@ -327,8 +342,8 @@ Truncation of large documents
 2. Why are the units for max document length flexible? 
     String APIs vary across languages, and not all drivers will be able to easily and efficiently
     truncate strings in the same exact manner. The important thing is that the option exists and
-    that its default value is reasonable, and for all possible unit choices (byte, code point, or
-    grapheme) we felt 1000 was a reasonable default. See
+    that its default value is reasonable, and for all possible unit choices (byte, code point, 
+    code unit, or grapheme) we felt 1000 was a reasonable default. See
     `here <https://exploringjs.com/impatient-js/ch_unicode.html>`_ for a helpful primer on related
     Unicode concepts.
 

@@ -425,7 +425,7 @@ In addition to the common fields, command started messages MUST contain the foll
 
    * - command
      - String
-     - Canonical extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
+     - Relaxed extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
        `logging specification <../logging/logging.rst>`_, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.
 
    * - databaseName
@@ -461,7 +461,7 @@ In addition to the common fields, command succeeded messages MUST contain the fo
 
    * - reply
      - String
-     - Canonical extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the 
+     - Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the 
        `logging specification <../logging/logging.rst>`_, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
