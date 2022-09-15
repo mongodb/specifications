@@ -72,7 +72,7 @@ tests:
   - description: "Failed bulk write command log message includes operationId"
     operations:
       - name: bulkWrite
-        object: *collectionName
+        object: *collection
         arguments:
           requests:
             - updateOne:
