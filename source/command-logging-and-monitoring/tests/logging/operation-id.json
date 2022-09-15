@@ -43,7 +43,7 @@
       "operations": [
         {
           "name": "bulkWrite",
-          "object": "logging-tests-collection",
+          "object": "collection",
           "arguments": {
             "requests": [
               {

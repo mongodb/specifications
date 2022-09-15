@@ -28,7 +28,7 @@ tests:
   - description: "Successful bulk write command log messages include operationIds"
     operations:
       - name: bulkWrite
-        object: *collectionName
+        object: *collection
         arguments:
           requests:
             - insertOne:
