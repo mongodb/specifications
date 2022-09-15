@@ -8,8 +8,8 @@ Enumerating Databases
 :Author: Jeremy Mikola
 :Status: Accepted
 :Type: Standards
-:Minimum Server Version: 3.7
-:Last Modified: 2022-02-01
+:Minimum Server Version: 3.8
+:Last Modified: 2022-08-17
 
 .. contents::
 
@@ -103,7 +103,8 @@ Comment
 MongoDB 4.4 introduced a ``comment``  option to the ``listDatabases``
 command. This option enables users to specify a comment as an arbitrary
 BSON type to help trace the operation through the database profiler, currentOp and logs.
-The default is to not send a value.
+The default is to not send a value.  If a comment is provided on pre-4.4 servers, the comment
+should still be attached and the driver should rely on the server to provide an error to the user.
 
 ::
 
@@ -299,6 +300,7 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changes
 =======
 
+* 2022-08-17: Clarify the behavior of comment on pre-4.4 servers.
 * 2022-02-01: Support comment option in listDatabases command
 * 2017-10-30: Support filter option in listDatabases command
 * 2019-11-20: Support authorizedDatabases option in listDatabases command
