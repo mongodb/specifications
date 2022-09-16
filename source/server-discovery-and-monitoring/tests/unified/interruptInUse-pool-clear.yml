@@ -70,15 +70,11 @@ tests:
                 $where : sleep(2000) || true
             expectError:
               isError: true
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: *client
-          event:
-            commandStartedEvent: {}
-          count: 2
         # Configure the monitor check to fail with a timeout.
-        # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
+        # Use times: 4 to account:
+        # * first 2: for the RTT monitor triggering the failpoint instead of the regular monitor
+        # * the rest: the value is doubled to manage some rare race issue when heartbeat 
+        #   could consume failpoint blocking before operation has been started
       - name: failPoint
         object: testRunner
         arguments:
@@ -86,7 +82,7 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              times: 2
+              times: 4
             data:
               failCommands:
                 - hello
@@ -174,15 +170,11 @@ tests:
             arguments:
               filter:
                 $where : sleep(2000) || true
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: *client
-          event:
-            commandStartedEvent: {}
-          count: 2
         # Configure the monitor check to fail with a timeout.
-        # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
+        # Use times: 4 to account:
+        # * first 2: for the RTT monitor triggering the failpoint instead of the regular monitor
+        # * the rest: the value is doubled to manage some rare race issue when heartbeat 
+        #   could consume failpoint blocking before operation has been started
       - name: failPoint
         object: testRunner
         arguments:
@@ -190,7 +182,7 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              times: 2
+              times: 4
             data:
               failCommands:
                 - hello
@@ -285,18 +277,14 @@ tests:
             object: *collection
             arguments:
               filter: 
-                $where: sleep(2000) || true
+                $where": sleep(2000) || true
               update: 
-                $set: { "a": "bar" }
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: *client
-          event:
-            commandStartedEvent: {}
-          count: 2
+                "$set": { "a": "bar" } 
         # Configure the monitor check to fail with a timeout.
-        # Use times: 2 to account for the RTT monitor triggering the failpoint instead of the regular monitor
+        # Use times: 4 to account:
+        # * first 2: for the RTT monitor triggering the failpoint instead of the regular monitor
+        # * the rest: the value is doubled to manage some rare race issue when heartbeat 
+        #   could consume failpoint blocking before operation has been started
       - name: failPoint
         object: testRunner
         arguments:
@@ -304,7 +292,7 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              times: 2
+              times: 4
             data:
               failCommands:
                 - hello

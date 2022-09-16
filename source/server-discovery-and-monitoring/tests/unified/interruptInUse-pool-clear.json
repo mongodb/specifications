@@ -104,24 +104,13 @@
           }
         },
         {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "commandStartedEvent": {}
-            },
-            "count": 2
-          }
-        },
-        {
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -277,24 +266,13 @@
           }
         },
         {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-              "client": "client",
-              "event": {
-                  "commandStartedEvent": {}
-              },
-              "count": 2
-          }
-        },
-        {
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
@@ -466,24 +444,13 @@
           }
         },
         {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-              "client": "client",
-              "event": {
-                  "commandStartedEvent": {}
-              },
-              "count": 2
-          }
-        },
-        {
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 2
+                "times": 4
               },
               "data": {
                 "failCommands": [
