@@ -352,8 +352,8 @@ Truncation of large documents
 Structured versus Unstructured Logging
 --------------------------------------
 The MongoDB server produces structured logs as of 4.4, so it seems natural that MongoDB drivers
-might too. However, the idiomatic logging mechanisms of choice for some language ecosystems (e.g.
-Java) do not support structured logging yet, so we cannot require it.
+might too. However, structured logging is not idiomatic or common in some language ecosystems,
+so we have chosen not to require it.
 
 --------------------------------------
 Omitting Null Values from Log Messages
