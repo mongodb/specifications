@@ -368,7 +368,7 @@ Additionally, always including null values would increase the size of log messag
 Backwards Compatibility
 =======================
 This specification takes the stance that the contents of log messages (both structured and
-unstructured) are _not_ covered by semantic versioning, but that logging components _are_, since
+unstructured) are *not* covered by semantic versioning, but that logging components *are*, since
 changing the name of a component or removing a component altogether has the potential to break user
 logging configuration and cause users to silently miss log messages.
 
