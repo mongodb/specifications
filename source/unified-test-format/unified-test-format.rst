@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.10.0
+:Spec Version: 1.11.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-07-27
+:Last Modified: 2022-09-02
 
 .. contents::
 
@@ -1239,6 +1239,7 @@ expectedCmapEvent
   The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
+  - ``interruptInUseConnections``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
 .. _expectedEvent_poolClosedEvent:
 
@@ -3751,6 +3752,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-09-02: **Schema version 1.11.**
+             Add ``interruptInUseConnections`` field to ``poolClearedEvent``
 
 :2022-07-28: **Schema version 1.10.**
              Add support for ``thread`` entities (``runOnThread``,
