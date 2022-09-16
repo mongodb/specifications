@@ -1,6 +1,15 @@
 {
   "description": "no-heartbeat-command-logs",
   "schemaVersion": "1.11",
+  "runOnRequirements": [
+    {
+      "topologies": [
+        "single",
+        "replicaset",
+        "sharded"
+      ]
+    }
+  ],
   "tests": [
     {
       "description": "Heartbeat commands should not generate log messages",
@@ -32,16 +41,6 @@
           }
         },
         {
-          "name": "runCommand",
-          "object": "database",
-          "arguments": {
-            "command": {
-              "ping": 1
-            },
-            "commandName": "ping"
-          }
-        },
-        {
           "name": "waitForEvent",
           "object": "testRunner",
           "arguments": {
@@ -50,6 +49,16 @@
               "serverDescriptionChangedEvent": {}
             },
             "count": 1
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "command": {
+              "ping": 1
+            },
+            "commandName": "ping"
           }
         }
       ],
