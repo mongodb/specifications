@@ -745,8 +745,9 @@ that used the interruptInUseConnections flag. Any operations that have their Con
 interrupted in this way MUST fail with a retryable error. If possible, the error SHOULD 
 be a PoolClearedError with the following message: "Connection to <pool address> interrupted 
 due to server monitor timeout".
-Clearning a load balanced pool
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Clearing a load balanced pool
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A Pool MUST also have a method of clearing all `Connections <#connection>`_ for
 a specific ``serviceId`` for use when in load balancer mode. This method
