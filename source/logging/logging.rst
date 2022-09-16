@@ -150,7 +150,7 @@ driver-specific messages they produce.
      - `Command Monitoring <../command-monitoring/command-monitoring.rst>`__
      - ``MONGODB_LOG_COMMAND``
 
-   * - topologu
+   * - topology
      - `Server Discovery and Monitoring
        <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
      - ``MONGODB_LOG_TOPOLOGY``

@@ -53,5 +53,5 @@ to support for specifying max document length as discussed in the
 A specific test case is not provided here due to the allowed variations in truncation logic as well as varying extended JSON whitespace usage.
 Drivers MUST write language-specific tests that confirm truncation of commands, replies, and (if applicable) server responses included in error
 messages work as expected when the data being truncated includes multi-byte Unicode codepoints.
-If the driver uses bytes as the unit for max document length, there also MUST be tests confirming that cases where the max byte length falls in
-the middle of a multi-byte codepoint are handled gracefully.
+If the driver uses anything other than Unicode codepoints as the unit for max document length, there also MUST be tests confirming that cases
+where the max length falls in the middle of a multi-byte codepoint are handled gracefully.
