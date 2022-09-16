@@ -1103,7 +1103,7 @@ or command error (`Network or command error during server check`_).
 When the check fails with a network error it is likely that all connections
 to that server are also closed.
 (See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_). When the check fails 
-with a network timeout error, a monitor SHOULD set interruptInUseConnections to true. 
+with a network timeout error, a monitor MUST set interruptInUseConnections to true. 
 See, `Why does the pool need to support closing in use connections as part of its clear logic?`_.
 
 When the server is shutting down, it may respond to hello or legacy hello commands with
