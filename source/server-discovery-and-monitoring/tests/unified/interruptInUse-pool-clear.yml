@@ -71,10 +71,9 @@ tests:
             expectError:
               isError: true
         # Configure the monitor check to fail with a timeout.
-        # Use times: 4 to account:
-        # * first 2: for the RTT monitor triggering the failpoint instead of the regular monitor
-        # * the rest: the value is doubled to manage some rare race issue when heartbeat 
-        #   could consume failpoint blocking before operation has been started
+        # Use "times: 4" to increase the probability that the Monitor check triggers
+        # the failpoint, since the RTT hello may trigger this failpoint one or many 
+        # times as well.
       - name: failPoint
         object: testRunner
         arguments:
@@ -171,10 +170,9 @@ tests:
               filter:
                 $where : sleep(2000) || true
         # Configure the monitor check to fail with a timeout.
-        # Use times: 4 to account:
-        # * first 2: for the RTT monitor triggering the failpoint instead of the regular monitor
-        # * the rest: the value is doubled to manage some rare race issue when heartbeat 
-        #   could consume failpoint blocking before operation has been started
+        # Use "times: 4" to increase the probability that the Monitor check triggers
+        # the failpoint, since the RTT hello may trigger this failpoint one or many 
+        # times as well.
       - name: failPoint
         object: testRunner
         arguments:
@@ -281,10 +279,9 @@ tests:
               update: 
                 "$set": { "a": "bar" } 
         # Configure the monitor check to fail with a timeout.
-        # Use times: 4 to account:
-        # * first 2: for the RTT monitor triggering the failpoint instead of the regular monitor
-        # * the rest: the value is doubled to manage some rare race issue when heartbeat 
-        #   could consume failpoint blocking before operation has been started
+        # Use "times: 4" to increase the probability that the Monitor check triggers
+        # the failpoint, since the RTT hello may trigger this failpoint one or many 
+        # times as well.
       - name: failPoint
         object: testRunner
         arguments:
