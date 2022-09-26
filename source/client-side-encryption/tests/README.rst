@@ -2061,9 +2061,10 @@ For "local", do not set a masterKey document.
 Run the following test case for each pair of KMS providers (referred to as ``srcProvider`` and ``dstProvider``).
 Include pairs where ``srcProvider`` equals ``dstProvider``.
 
-1. Drop the collection ``keyvault.datakeys``. 
+1. Drop the collection ``keyvault.datakeys``.
 
 2. Create a ``ClientEncryption`` object named ``clientEncryption1`` with these options:
+
    .. code:: typescript
 
       ClientEncryptionOpts {
@@ -2073,6 +2074,7 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
       }
 
 3. Call ``clientEncryption1.createDataKey`` with ``srcProvider`` and these options:
+
    .. code:: typescript
 
       class DataKeyOpts {
@@ -2082,6 +2084,7 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
    Store the return value in ``keyID``.
 
 4. Call ``clientEncryption1.encrypt`` with the value "test" and these options:
+
    .. code:: typescript
 
       class EncryptOpts {
@@ -2092,13 +2095,14 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
    Store the return value in ``ciphertext``.
 
 5. Create a ``ClientEncryption`` object named ``clientEncryption2`` with these options:
+
    .. code:: typescript
 
-   ClientEncryptionOpts {
-      keyVaultClient: <new MongoClient>;
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: <all KMS providers>
-   }
+      ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>;
+         keyVaultNamespace: "keyvault.datakeys";
+         kmsProviders: <all KMS providers>
+      }
 
 6. Call ``clientEncryption2.rewrapManyDataKey`` with an empty ``filter`` and these options:
 
@@ -2115,8 +2119,9 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
 8. Call ``clientEncryption2.decrypt`` with the ``ciphertext``. Assert the return value is "test".
 
-17. On-demand GCP Credentials
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+17.  On-demand GCP Credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Refer: `Automatic GCP Credentials`_.
 
