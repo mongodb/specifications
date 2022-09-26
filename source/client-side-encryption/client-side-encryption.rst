@@ -326,6 +326,8 @@ specified as a BSON binary with subtype 0x04 as described in
 MongoClient Changes
 -------------------
 
+.. _MongoClient:
+
 .. code:: typescript
 
    class MongoClient {
@@ -337,6 +339,10 @@ MongoClient Changes
       private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient, the parent MongoClient, or internal_client.
       private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
+
+      // Exposition-only, used for caching automatic Azure credentials
+      private cachedAzureAccessToken?: AzureAccessToken;
+      private azureAccessTokenExpireTime?: PointInTime;
    }
 
 .. _AutoEncryptionOpts:
@@ -577,21 +583,22 @@ following process:
 
 5. If `K` contains an ``azure`` property, and that property is an empty map:
 
-   1. Attempt to obtain the **default** Azure VM Managed Identity Access Token
-      `T` as detailed in `Obtaining an Access Token for Azure Key Vault`_.
-   2. If a token `T` was obtained successfully, create a new AzureAccessToken_
-      object with `T` as the ``accessToken`` property. Insert that
-      AzureAccessToken_ object into `P` as the ``azure`` property.
+   1. If the current MongoClient_ has a ``cachedAzureAccessToken`` AND the
+      duration until ``azureAccessTokenExpireTime`` is greater than one minute,
+      insert ``cachedAzureAccessToken`` as the ``azure`` property on `P`.
+   2. Otherwise:
 
-6. If `K` contains an ``azure`` property, and that property is an empty map:
+      1. Let `t_0` be the current time.
+      2. Attempt to obtain an Azure VM Managed Identity Access Token `T` as
+         detailed in `Obtaining an Access Token for Azure Key Vault`_.
+      3. If a token `T` with expire duration `d_{exp}` were obtained
+         successfully, create a new AzureAccessToken_ object with `T` as the
+         ``accessToken`` property. Insert that AzureAccessToken_ object into `P`
+         as the ``azure`` property. Record the generated AzureAccessToken_ in
+         ``cachedAzureAccessToken``. Record the ``azureAccessTokenExpireTime``
+         as `t_0 + d_{exp}`.
 
-   1. Attempt to obtain an Azure VM Managed Identity Access Token `T`, as
-      detailed in `Obtaining an Access Token for Azure Key Vault`_.
-   2. If a token `T` was obtained successfully, create a new AzureAccessToken_
-      object with `T` as the ``accessToken`` property. Insert that
-      AzureAccessToken_ object into `P` as the ``azure`` property.
-
-7. Return `P` as the additional KMS providers to libmongocrypt_.
+6. Return `P` as the additional KMS providers to libmongocrypt_.
 
 __ ../auth/auth.html#obtaining-credentials
 
@@ -652,15 +659,17 @@ The below steps should be taken:
 7.  If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the
     HTTP response body of `Resp` encodes information about the error that
     occurred. Return an error instead of an access token.
-8.  Otherwise, let ``J`` be the JSON document encoded in the HTTP response body
+8.  Otherwise, let `J` be the JSON document encoded in the HTTP response body
     of `Resp`.
 9.  The result access token `T` is given as the ``access_token`` string property
-    of ``J``. Return `T` as the resulting access token.
+    of `J`. Return `T` as the resulting access token.
+10. The resulting "expires in" duration `d_{exp}` is a count of seconds given as an
+    ASCII-encoded integer string ``expires_in`` property of `J`.
 
 .. note::
 
    If JSON decoding of `Resp` fails, or the ``access_token`` property is absent
-   from ``J``, this is a protocol error from IMDS. Indicate this error to the
+   from `J`, this is a protocol error from IMDS. Indicate this error to the
    requester of the access token.
 
 .. note::
