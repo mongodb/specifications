@@ -1444,6 +1444,9 @@ is propagated to the user.
 Connecting to mongocryptd_
 --------------------------
 
+If the crypt_shared_ library is loaded, the driver MUST NOT attempt to connect
+to mongocryptd_. (Refer: `Detecting crypt_shared Availability`_).
+
 Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
 , connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
@@ -1455,7 +1458,7 @@ selection error is propagated to the user.
 .. note::
 
    A correctly-behaving driver will never attempt to connect to mongocryptd_
-   when |opt-crypt_shared-required| is set to |true|.
+   when |opt-crypt_shared-required| is set to |true| or crypt_shared_ is loaded.
 
 ClientEncryption
 ================
