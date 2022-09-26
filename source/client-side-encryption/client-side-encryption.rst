@@ -583,12 +583,10 @@ following process:
       object with `T` as the ``accessToken`` property. Insert that
       AzureAccessToken_ object into `P` as the ``azure`` property.
 
-6. If `K` contains an ``azure`` property, and that property contains a
-   ``managedIdentity`` property `M`:
+6. If `K` contains an ``azure`` property, and that property is an empty map:
 
-   1. Attempt to obtain an Azure VM Managed Identity Access Token `T`, with
-      disambiguation parameters given by `M`, as detailed in
-      `Obtaining an Access Token for Azure Key Vault`_.
+   1. Attempt to obtain an Azure VM Managed Identity Access Token `T`, as
+      detailed in `Obtaining an Access Token for Azure Key Vault`_.
    2. If a token `T` was obtained successfully, create a new AzureAccessToken_
       object with `T` as the ``accessToken`` property. Insert that
       AzureAccessToken_ object into `P` as the ``azure`` property.
@@ -671,7 +669,7 @@ The below steps should be taken:
    If an Azure VM has more than one managed identity, requesting an access token
    requires additional query parameters to disambiguate the request. For
    simplicity, these parameters are omitted, and only VMs that have a single
-   managed identity are support.
+   managed identity are supported.
 
 .. default-role:: literal
 
