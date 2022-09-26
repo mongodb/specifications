@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.11.0
+:Spec Version: 1.21.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-19
+:Last Modified: 2022-08-25
 
 .. contents::
 
@@ -736,7 +736,7 @@ MONGODB-AWS
 
 MONGODB-AWS authenticates using AWS IAM credentials (an access key ID and a secret access key), `temporary AWS IAM credentials <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html>`_ obtained from an 
 `AWS Security Token Service (STS) <https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.html>`_ 
-`Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request, 
+`Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request, an OpenID Connect ID token that supports `AssumeRoleWithWebIdentity <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html>`_,
 or temporary AWS IAM credentials assigned to an `EC2 instance <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html>`_ or ECS task. Temporary credentials, in addition to an access key ID and a secret access key, includes a security (or session) token.
 
 MONGODB-AWS requires that a client create a randomly generated nonce. It is 
@@ -939,6 +939,8 @@ The order in which Drivers MUST search for credentials is:
 
 #. The URI
 #. Environment variables
+#. Using ``AssumeRoleWithWebIdentity`` if ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
+``AWS_ROLE_SESSION_NAME``  are set.
 #. The ECS endpoint if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set. Otherwise, the EC2 endpoint.
 
 .. note::
@@ -962,6 +964,60 @@ request. If so, then in addition to a username and password, users MAY also prov
 Environment variables
 _____________________
 AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
+
+AssumeRoleWithWebIdentity
+_________________________
+AWS EKS clusters can be configured to automatically provide a valid OpenID
+Connect ID token and associated role ARN.  These can be exchanged for temporary
+credentials using an `AssumeRoleWithWebIdentity request <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html>`_.
+
+If the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and ``AWS_ROLE_ARN`` environment
+variables are set, drivers MUST make an ``AssumeRoleWithWebIdentity`` request
+to obtain temporary credentials.  AWS recommends using an AWS Software
+Development Kit (SDK) to make STS requests.
+
+The ``WebIdentityToken`` value is obtained by reading the contents of the
+file given by ``AWS_WEB_IDENTITY_TOKEN_FILE``.  The ``RoleArn`` value is
+obtained from ``AWS_ROLE_ARN``.  If ``AWS_ROLE_SESSION_NAME`` is set,
+it MUST be used for the ``RoleSessionName`` parameter, otherwise a suitable
+random name can be chosen.  No other request parameters need to be set if
+using an SDK.
+
+If not using an AWS SDK, the request must be made manually.  If making a manual request, the ``Version`` should be specified as well. An example manual
+POST request looks like the following:
+
+.. code:: html
+
+    https://sts.amazonaws.com/
+    ?Action=AssumeRoleWithWebIdentity
+    &RoleSessionName=app1
+    &RoleArn=<role_arn>
+    &WebIdentityToken=<token_file_contents>
+    &Version=2011-06-15
+
+with the header:
+
+.. code:: html
+
+    Accept: application/json
+
+The JSON response from the STS endpoint will contain credentials in
+this format:
+
+.. code:: javascript
+
+    {
+        "Credentials": {
+            "AccessKeyId": <access_key>,
+            "Expiration": <date>,
+            "RoleArn": <assumed_role_arn>,
+            "SecretAccessKey": <secret_access_key>,
+            "SessionToken": <session_token>
+        }
+    }
+
+Note that the token is called ``SessionToken`` and not ``Token`` as it
+would be with other credential responses.
 
 ECS endpoint
 ____________
@@ -1284,6 +1340,9 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 
 Version History
 ===============
+
+Version 1.12.0 Changes
+    * Add support for AWS AssumeRoleWithWebIdentity.
 
 Version 1.11.0 Changes
     * Require that timeouts be applied per the client-side operations timeout spec.

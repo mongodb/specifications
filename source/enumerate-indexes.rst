@@ -12,8 +12,8 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2022-02-01
-:Version: 0.7.0
+:Last Modified: 2022-08-17
+:Version: 0.8.0
 
 .. contents::
 
@@ -144,7 +144,8 @@ document::
 MongoDB 4.4 introduced a ``comment``  option to the ``listIndexes``
 database command. This option enables users to specify a comment as an arbitrary
 BSON type to help trace the operation through the database profiler, currentOp and logs.
-The default is to not send a value.
+The default is to not send a value.  If a comment is provided on pre-4.4 servers, the comment
+should still be attached and the driver should rely on the server to provide an error to the user.
 
 Example of usage of the comment option::
 
@@ -408,6 +409,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+0.8.0 - 2022-08-17
+    Clarify the behavior of ``comment`` on pre-4.4 servers.
 
 0.7.0 - 2022-02-01
     Add ``comment`` option to ``listIndexes`` command.
