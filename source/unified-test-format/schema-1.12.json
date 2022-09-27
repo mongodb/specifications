@@ -450,7 +450,8 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "hasServiceId": { "type": "boolean" }
+              "hasServiceId": { "type": "boolean" },
+              "interruptInUseConnections": { "type": "boolean" }
             }
           },
           "poolClosedEvent": {
