@@ -1,6 +1,6 @@
 description: "server-connection-id"
 
-schemaVersion: "1.11"
+schemaVersion: "1.12"
 
 runOnRequirements:
   - minServerVersion: "4.2"
