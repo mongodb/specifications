@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Schema Version: 1.11.0
+:Schema Version: 1.12.0
 :Status: Accepted
 :Minimum Server Version: N/A
 
@@ -291,7 +291,7 @@ Test runners MUST support the following types of entities:
   <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`__
   at a certain point in time. These entities are not defined in
   `createEntities`_ but are instead created via `recordTopologyDescription`_
-  test runner operations. 
+  test runner operations.
 
 This is an exhaustive list of supported types for the entity map. Test runners
 MUST raise an error if an attempt is made to store an unsupported type in the
@@ -1172,11 +1172,9 @@ object, which can have one of the following values:
 - ``command`` or omitted: only the event types defined in
   `expectedCommandEvent`_ are allowed.
 
-- ``cmap``: only the event types defined in `expectedCmapEvent`_ are
-  allowed.
+- ``cmap``: only the event types defined in `expectedCmapEvent`_ are allowed.
 
-- ``sdam``: only the event types defined in `expectedSdamEvent`_ are
-  allowed.
+- ``sdam``: only the event types defined in `expectedSdamEvent`_ are allowed.
 
 expectedCommandEvent
 ````````````````````
@@ -1262,6 +1260,7 @@ expectedCmapEvent
   The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
+  - ``interruptInUseConnections``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
 .. _expectedEvent_poolClosedEvent:
 
@@ -1332,7 +1331,7 @@ The structure of this object is as follows:
   The structure of this object is as follows:
 
   - ``previousDescription``: Optional object. A value corresponding to the server
-    description as it was before the change that triggered this event. 
+    description as it was before the change that triggered this event.
 
   - ``newDescription``: Optional object. A value corresponding to the server
     description as it was after the change that triggered this event.
@@ -1344,7 +1343,7 @@ The structure of this object is as follows:
     runners MUST assert that the type in the published event matches this
     value. See `SDAM: ServerType
     <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`__
-    for a list of valid values. 
+    for a list of valid values.
 
 hasServiceId
 `````````````
@@ -2708,7 +2707,7 @@ An example of this operation follows::
       object: testRunner
       arguments:
         thread: *thread0
-  
+
 
 waitForEvent
 ~~~~~~~~~~~~
@@ -2876,7 +2875,7 @@ For example::
     arguments:
       ms: 1000
 
-        
+
 Special Placeholder Value
 -------------------------
 
@@ -3855,12 +3854,15 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
-:2022-09-07: **Schema version 1.11.**
+:2022-09-07: **Schema version 1.12.**
             Add support for logging assertions via the ``observeLogMessages`` field
             for client entities, along with a new top-level field ``expectLogMessages``
             containing ``expectedLogMessagesForClient`` objects.
             Add new special matching operators to enable command logging assertions,
             ``$$matchAsDocument`` and ``$$matchAsRoot``.
+
+:2022-09-02: **Schema version 1.11.**
+             Add ``interruptInUseConnections`` field to ``poolClearedEvent``
 
 :2022-07-28: **Schema version 1.10.**
              Add support for ``thread`` entities (``runOnThread``,

@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-09-09
-:Version: 1.11.1
+:Last Modified: 2022-09-26
+:Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -25,6 +25,8 @@ Client Side Encryption
 
 .. |true| replace:: :ts:`true`
 .. |false| replace:: :ts:`false`
+
+.. |--| unicode:: 0x2014 .. em dash
 
 .. contents::
 
@@ -324,6 +326,8 @@ specified as a BSON binary with subtype 0x04 as described in
 MongoClient Changes
 -------------------
 
+.. _MongoClient:
+
 .. code:: typescript
 
    class MongoClient {
@@ -335,6 +339,10 @@ MongoClient Changes
       private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient, the parent MongoClient, or internal_client.
       private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
+
+      // Exposition-only, used for caching automatic Azure credentials
+      private cachedAzureAccessToken?: AzureAccessToken;
+      private azureAccessTokenExpireTime?: PointInTime;
    }
 
 .. _AutoEncryptionOpts:
@@ -461,6 +469,7 @@ See `What's the deal with metadataClient, keyVaultClient, and the internal clien
 .. _KMSProviderName:
 .. _AWSKMSOptions:
 .. _GCPKMSOptions:
+.. _AzureAccessToken:
 
 kmsProviders
 ^^^^^^^^^^^^
@@ -480,9 +489,9 @@ accept arbitrary strings at runtime for forward-compatibility.
 .. code:: typescript
 
    interface KMSProviders {
-      aws?: AWSKMSOptions | { /* Empty. (See "Automatic Credentials") */ };
-      azure?: AzureKMSOptions;
-      gcp?: GCPKMSOptions | { /* Empty. (See "Automatic Credentials") */ };
+      aws?: AWSKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+      azure?: AzureKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+      gcp?: GCPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
       local?: LocalKMSOptions;
       kmip?: KMIPKMSOptions;
    };
@@ -497,11 +506,17 @@ accept arbitrary strings at runtime for forward-compatibility.
       sessionToken?: string; // Required for temporary AWS credentials.
    };
 
-   interface AzureKMSOptions {
+   type AzureKMSOptions = AzureKMSCredentials | AzureAccessToken;
+
+   interface AzureKMSCredentials {
       tenantId: string;
       clientId: string;
       clientSecret: string;
       identityPlatformEndpoint?: string; // Defaults to login.microsoftonline.com
+   };
+
+   interface AzureAccessToken {
+      accessToken: string;
    };
 
    type GCPKMSOptions = GCPKMSCredentials | GCPKMSAccessToken
@@ -530,51 +545,67 @@ Automatic Credentials
 
 .. versionadded:: 1.9.0 2022/06/22
 
-If the ``aws`` or ``gcp`` provider properties of a KMSProviders_ are present and
-are an empty map/object, the driver MUST be able to populate an AWSKMSOptions_ or
-GCPKMSOptions_ object on-demand if-and-only-if AWS or GCP credentials are
-needed.
+Certain values of KMSProviders_ indicate a request by the user that the
+associated KMS providers should be populated lazily on-demand. The driver MUST
+be able to populate the respective options object on-demand if-and-only-if such
+respective credentials are needed. The request for KMS credentials will be
+indicated by libmongocrypt_ only once they are needed.
 
-.. note:: Drivers MUST NOT eagerly fill an empty ``aws`` or ``gcp`` map property.
+When such a state is detected, libmongocrypt_ will call back to the driver by
+entering the ``MONGOCRYPT_CTX_NEED_KMS_CREDENTIALS`` state, upon which the
+driver should fill in the KMS options automatically.
 
-libmongocrypt_ will interpret an empty KMSProviders_ map properties as a request
-by the user to lazily load the credentials for the respective `KMS provider`_.
-libmongocrypt_ will call back to the driver to fill an empty KMS provider
-property only once the associated credentials are needed by entering
-the ``MONGOCRYPT_CTX_NEED_KMS_CREDENTIALS`` state.
+.. note:: Drivers MUST NOT eagerly fill an empty KMS options property.
 
-Once requested, drivers MUST create a new KMSProviders_ :math:`P` according to
-the following process:
+.. default-role:: math
 
-1. Initialize :math:`P` to an empty KMSProviders_ object.
-2. If the user-provided kmsProviders_ (from ClientEncryptionOpts_ or
-   AutoEncryptionOpts_) contains an ``aws`` property, and that property is an
-   empty map:
+Once requested, drivers MUST create a new KMSProviders_ `P` according to the
+following process:
 
-   1. Attempt to obtain credentials :math:`C` from the environment using similar
-      logic as is detailed in `the obtaining-AWS-credentials section from the
-      Driver Authentication specification`__, but ignoring the case of loading
-      the credentials from a URI
-   2. If credentials :math:`C` were successfully loaded, create a new
-      AWSKMSOptions_ map from :math:`C` and insert that map onto :math:`P` as
-      the ``aws`` property.
+1. Let `K` be the kmsProviders_ value provided by the user as part of the
+   original ClientEncryptionOpts_ or AutoEncryptionOpts_.
+2. Initialize `P` to an empty KMSProviders_ object.
+3. If `K` contains an ``aws`` property, and that property is an empty map:
 
-3. If the user-provided kmsProviders_ (from ClientEncryptionOpts_ or
-   AutoEncryptionOpts_) contains an ``gcp`` property, and that property is an
-   empty map:
+   1. Attempt to obtain credentials `C` from the environment using similar logic
+      as is detailed in `the obtaining-AWS-credentials section from the Driver
+      Authentication specification`__, but ignoring the case of loading the
+      credentials from a URI
+   2. If credentials `C` were successfully loaded, create a new AWSKMSOptions_
+      map from `C` and insert that map onto `P` as the ``aws`` property.
 
-   1. Attempt to obtain credentials :math:`C` from the environment
-      logic as is detailed in `Obtaining GCP Credentials`_.
-   2. If credentials :math:`C` were successfully loaded, create a new
-      GCPKMSOptions_ map from :math:`C` and insert that map onto :math:`P` as
-      the ``gcp`` property.
+4. If `K` contains an ``gcp`` property, and that property is an empty map:
 
-4. Return :math:`P` as the additional KMS providers to libmongocrypt_.
+   1. Attempt to obtain credentials `C` from the environment logic as is
+      detailed in `Obtaining GCP Credentials`_.
+   2. If credentials `C` were successfully loaded, create a new GCPKMSOptions_
+      map from `C` and insert that map onto `P` as the ``gcp`` property.
+
+5. If `K` contains an ``azure`` property, and that property is an empty map:
+
+   1. If the current MongoClient_ has a ``cachedAzureAccessToken`` AND the
+      duration until ``azureAccessTokenExpireTime`` is greater than one minute,
+      insert ``cachedAzureAccessToken`` as the ``azure`` property on `P`.
+   2. Otherwise:
+
+      1. Let `t_0` be the current time.
+      2. Attempt to obtain an Azure VM Managed Identity Access Token `T` as
+         detailed in `Obtaining an Access Token for Azure Key Vault`_.
+      3. If a token `T` with expire duration `d_{exp}` were obtained
+         successfully, create a new AzureAccessToken_ object with `T` as the
+         ``accessToken`` property. Insert that AzureAccessToken_ object into `P`
+         as the ``azure`` property. Record the generated AzureAccessToken_ in
+         ``cachedAzureAccessToken``. Record the ``azureAccessTokenExpireTime``
+         as `t_0 + d_{exp}`.
+
+6. Return `P` as the additional KMS providers to libmongocrypt_.
 
 __ ../auth/auth.html#obtaining-credentials
 
+.. default-role:: literal
+
 Obtaining GCP Credentials
-^^^^^^^^^^^^^^^^^^^^^^^^^
+`````````````````````````
 
 .. versionadded:: 1.11.0 2022/07/20
 
@@ -595,6 +626,61 @@ present, return an error including the body of the HTTP response in the error
 message.
 
 Return "access_token" as the credential.
+
+
+Obtaining an Access Token for Azure Key Vault
+`````````````````````````````````````````````
+
+.. versionadded:: 1.12.0 2022/08/30
+
+Virtual machines running on the Azure platform have one or more *Managed
+Identities* associated with them. From within the VM, an identity can be used by
+obtaining an access token via HTTP from the *Azure Instance Metadata Service*
+(IMDS). `See this documentation for more information`__
+
+__ https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
+
+.. default-role:: math
+
+The below steps should be taken:
+
+1. Let `U` be a new URL, initialized from the URL string
+   :ts:`"http://169.254.169.254/metadata/identity/oauth2/token"`
+2. Add a query parameter ``api-version=2018-02-01`` to `U`.
+3. Add a query parameter ``resource=http://vault.azure.com/`` to `U`.
+4. Prepare an HTTP GET request `Req` based on `U`.
+
+   .. note:: All query parameters on `U` should be appropriately percent-encoded
+
+5. Add HTTP headers ``Metadata: true`` and ``Accept: application/json`` to
+   `Req`.
+6. Issue `Req` to the Azure IMDS server ``168.254.169.254:80``. Let `Resp` be
+   the response from the server.
+7.  If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the
+    HTTP response body of `Resp` encodes information about the error that
+    occurred. Return an error instead of an access token.
+8.  Otherwise, let `J` be the JSON document encoded in the HTTP response body
+    of `Resp`.
+9.  The result access token `T` is given as the ``access_token`` string property
+    of `J`. Return `T` as the resulting access token.
+10. The resulting "expires in" duration `d_{exp}` is a count of seconds given as an
+    ASCII-encoded integer string ``expires_in`` property of `J`.
+
+.. note::
+
+   If JSON decoding of `Resp` fails, or the ``access_token`` property is absent
+   from `J`, this is a protocol error from IMDS. Indicate this error to the
+   requester of the access token.
+
+.. note::
+
+   If an Azure VM has more than one managed identity, requesting an access token
+   requires additional query parameters to disambiguate the request. For
+   simplicity, these parameters are omitted, and only VMs that have a single
+   managed identity are supported.
+
+.. default-role:: literal
+
 
 KMS provider TLS options
 ````````````````````````
@@ -2435,7 +2521,7 @@ Changelog
    :align: left
 
    Date, Description
-
+   22-09-26, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
    22-09-09, Prohibit ``rewrapManyDataKey`` with libmongocrypt <= 1.5.1.
    22-07-20, Add behavior for automatic GCP credential loading in ``kmsProviders``.
    22-06-30, Add behavior for automatic AWS credential loading in ``kmsProviders``.
@@ -2448,7 +2534,7 @@ Changelog
    22-06-08, Add ``Queryable Encryption`` to abstract.
    22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
    22-05-31, Rename ``csfle`` to ``crypt_shared``
-   22-05-27, Define ECC, ECOC, and ESC acronyms within encryptedFields
+   22-05-27, "Define ECC, ECOC, and ESC acronyms within encryptedFields"
    22-05-26, Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
    22-05-24, Add key management API functions
    22-05-18, Add createKey and rewrapManyDataKey
