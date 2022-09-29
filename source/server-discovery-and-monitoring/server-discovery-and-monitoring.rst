@@ -1109,21 +1109,47 @@ updateRSFromPrimary
         return
 
     # Election ids are ObjectIds, see
-    # "using setVersion and electionId to detect stale primaries"
+    # "Using electionId and setVersion to detect stale primaries"
     # for comparison rules.
 
-    # Null values for both electionId and setVersion are always considered less than
-    if serverDescription.electionId > topologyDescription.maxElectionId or (
-        serverDescription.electionId == topologyDescription.maxElectionId
-        and serverDescription.setVersion >= topologyDescription.maxSetVersion
-    ):
-        topologyDescription.maxElectionId = serverDescription.electionId
-        topologyDescription.maxSetVersion = serverDescription.setVersion
+    if serverDescription.maxWireVersion >= 17:
+      # Null values for both electionId and setVersion are always considered less than
+      if serverDescription.electionId > topologyDescription.maxElectionId or (
+          serverDescription.electionId == topologyDescription.maxElectionId
+          and serverDescription.setVersion >= topologyDescription.maxSetVersion
+      ):
+          topologyDescription.maxElectionId = serverDescription.electionId
+          topologyDescription.maxSetVersion = serverDescription.setVersion
+      else:
+          # Stale primary.
+          # replace serverDescription with a default ServerDescription of type "Unknown"
+          checkIfHasPrimary()
+          return
     else:
-        # Stale primary.
-        # replace serverDescription with a default ServerDescription of type "Unknown"
-        checkIfHasPrimary()
-        return
+      # Maintain old comparison rules, namely setVersion is checked before electionId
+      # see "Using electionId and setVersion to detect stale primaries"
+      # for comparison rules.
+
+      if topologyDescription.maxSetVersion is not null \
+          and topologyDescription.maxElectionId is not null \
+          and (topologyDescription.maxSetVersion > description.setVersion
+              or topologyDescription.maxSetVersion == description.setVersion
+              and topologyDescription.maxElectionId
+              > description.electionId):
+
+          # Stale primary.
+          # replace description with a default ServerDescription of type "Unknown"
+
+          checkIfHasPrimary()
+          return
+
+      topologyDescription.maxElectionId = description.electionId
+
+      if description.setVersion is not null \
+          and (topologyDescription.maxSetVersion is null
+              or description.setVersion > topologyDescription.maxSetVersion):
+
+          topologyDescription.maxSetVersion = description.setVersion
 
     for each server in topologyDescription.servers:
         if server.address != serverDescription.address:
@@ -1986,10 +2012,16 @@ between the old and new primary during a split-brain period,
 and helps provide read-your-writes consistency with write concern "majority"
 and read preference "primary".
 
+Prior to MongoDB server version 6.0 drivers had the logic opposite from
+the server side Replica Set Management logic by ordering the tuple by ``setVersion`` before the ``electionId``.
+In order to remain compatibility with backup systems, etc. drivers continue to
+maintain the reversed logic when connected to a topology that reports a maxWireVersion less than ``17``.
+Server versions 6.0 and beyond MUST order the tuple by ``electionId`` then ``setVersion``.
+
 Requirements for read-your-writes consistency
 `````````````````````````````````````````````
 
-Using (setVersion, electionId) only provides read-your-writes consistency if:
+Using (electionId, setVersion) only provides read-your-writes consistency if:
 
 * The application uses the same MongoClient instance for write-concern
   "majority" writes and read-preference "primary" reads, and
