@@ -1112,44 +1112,52 @@ updateRSFromPrimary
     # "Using electionId and setVersion to detect stale primaries"
     # for comparison rules.
 
-    if serverDescription.maxWireVersion >= 17:
-      # Null values for both electionId and setVersion are always considered less than
-      if serverDescription.electionId > topologyDescription.maxElectionId or (
-          serverDescription.electionId == topologyDescription.maxElectionId
-          and serverDescription.setVersion >= topologyDescription.maxSetVersion
-      ):
-          topologyDescription.maxElectionId = serverDescription.electionId
-          topologyDescription.maxSetVersion = serverDescription.setVersion
-      else:
-          # Stale primary.
-          # replace serverDescription with a default ServerDescription of type "Unknown"
-          checkIfHasPrimary()
-          return
+    if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
+        # Null values for both electionId and setVersion are always considered less than
+        if serverDescription.electionId > topologyDescription.maxElectionId or (
+            serverDescription.electionId == topologyDescription.maxElectionId
+            and serverDescription.setVersion >= topologyDescription.maxSetVersion
+        ):
+            topologyDescription.maxElectionId = serverDescription.electionId
+            topologyDescription.maxSetVersion = serverDescription.setVersion
+        else:
+            # Stale primary.
+            # replace serverDescription with a default ServerDescription of type "Unknown"
+            checkIfHasPrimary()
+            return
     else:
-      # Maintain old comparison rules, namely setVersion is checked before electionId
-      # see "Using electionId and setVersion to detect stale primaries"
-      # for comparison rules.
+        # Maintain old comparison rules, namely setVersion is checked before electionId
+        # see "Using electionId and setVersion to detect stale primaries"
+        # for comparison rules.
 
-      if topologyDescription.maxSetVersion is not null \
-          and topologyDescription.maxElectionId is not null \
-          and (topologyDescription.maxSetVersion > description.setVersion
-              or topologyDescription.maxSetVersion == description.setVersion
-              and topologyDescription.maxElectionId
-              > description.electionId):
+        if serverDescription.setVersion is not null and serverDescription.electionId is not null:
+            # Election ids are ObjectIds, see
+            # "using setVersion and electionId to detect stale primaries"
+            # for comparison rules.
+            if (
+                topologyDescription.maxSetVersion is not null
+                and topologyDescription.maxElectionId is not null
+                and (
+                    topologyDescription.maxSetVersion > serverDescription.setVersion
+                    or (
+                        topologyDescription.maxSetVersion == serverDescription.setVersion
+                        and topologyDescription.maxElectionId > serverDescription.electionId
+                    )
+                )
+            ):
+                # Stale primary.
+                # replace serverDescription with a default ServerDescription of type "Unknown"
+                checkIfHasPrimary()
+                return
 
-          # Stale primary.
-          # replace description with a default ServerDescription of type "Unknown"
+            topologyDescription.maxElectionId = serverDescription.electionId
 
-          checkIfHasPrimary()
-          return
+            if serverDescription.setVersion is not null and (
+                topologyDescription.maxSetVersion is null
+                or serverDescription.setVersion > topologyDescription.maxSetVersion
+            ):
+                topologyDescription.maxSetVersion = serverDescription.setVersion
 
-      topologyDescription.maxElectionId = description.electionId
-
-      if description.setVersion is not null \
-          and (topologyDescription.maxSetVersion is null
-              or description.setVersion > topologyDescription.maxSetVersion):
-
-          topologyDescription.maxSetVersion = description.setVersion
 
     for each server in topologyDescription.servers:
         if server.address != serverDescription.address:
