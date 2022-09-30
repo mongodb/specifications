@@ -1109,7 +1109,7 @@ updateRSFromPrimary
         return
 
     # Election ids are ObjectIds, see
-    # "Using electionId and setVersion to detect stale primaries"
+    # see "Using electionId and setVersion to detect stale primaries"
     # for comparison rules.
 
     if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
@@ -1127,13 +1127,7 @@ updateRSFromPrimary
             return
     else:
         # Maintain old comparison rules, namely setVersion is checked before electionId
-        # see "Using electionId and setVersion to detect stale primaries"
-        # for comparison rules.
-
         if serverDescription.setVersion is not null and serverDescription.electionId is not null:
-            # Election ids are ObjectIds, see
-            # "using setVersion and electionId to detect stale primaries"
-            # for comparison rules.
             if (
                 topologyDescription.maxSetVersion is not null
                 and topologyDescription.maxElectionId is not null
