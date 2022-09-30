@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.34
+:Version: 2.35
 :Last Modified: 2022-09-30
 
 .. contents::
