@@ -9,7 +9,7 @@ Server Discovery And Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: 2.34
-:Last Modified: 2022-01-19
+:Last Modified: 2022-09-30
 
 .. contents::
 
@@ -2573,6 +2573,8 @@ mark the server Unknown and clear the pool.
 2022-01-19: Add iscryptd and 90th percentile RTT fields to ServerDescription.
 
 2022-07-11: Convert integration tests to the unified format.
+
+2022-30-09: Update ``updateRSFromPrimary`` to include logic before and after 6.0 servers
 
 .. Section for links.
 
