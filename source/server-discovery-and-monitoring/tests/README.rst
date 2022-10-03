@@ -150,6 +150,8 @@ All files in the "rs" directory include a connection string with a "replicaSet" 
 Set the client's initial TopologyType to ReplicaSetNoPrimary.
 (For most clients, parsing a connection string with a "replicaSet" option
 automatically sets the TopologyType to ReplicaSetNoPrimary.)
+Some of the files in "rs" are post-fixed with "pre-6.0". These files test the ``updateRSFromPrimary`` behavior
+prior to maxWireVersion 17, there should be no special handling required for these tests.
 
 Set up a listener to collect SDAM events published by the client, including
 events published during client construction.

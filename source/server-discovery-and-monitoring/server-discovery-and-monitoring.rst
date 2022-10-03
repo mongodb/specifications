@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.34
-:Last Modified: 2022-01-19
+:Version: 2.35
+:Last Modified: 2022-09-30
 
 .. contents::
 
@@ -1109,21 +1109,49 @@ updateRSFromPrimary
         return
 
     # Election ids are ObjectIds, see
-    # "using setVersion and electionId to detect stale primaries"
+    # see "Using electionId and setVersion to detect stale primaries"
     # for comparison rules.
 
-    # Null values for both electionId and setVersion are always considered less than
-    if serverDescription.electionId > topologyDescription.maxElectionId or (
-        serverDescription.electionId == topologyDescription.maxElectionId
-        and serverDescription.setVersion >= topologyDescription.maxSetVersion
-    ):
-        topologyDescription.maxElectionId = serverDescription.electionId
-        topologyDescription.maxSetVersion = serverDescription.setVersion
+    if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
+        # Null values for both electionId and setVersion are always considered less than
+        if serverDescription.electionId > topologyDescription.maxElectionId or (
+            serverDescription.electionId == topologyDescription.maxElectionId
+            and serverDescription.setVersion >= topologyDescription.maxSetVersion
+        ):
+            topologyDescription.maxElectionId = serverDescription.electionId
+            topologyDescription.maxSetVersion = serverDescription.setVersion
+        else:
+            # Stale primary.
+            # replace serverDescription with a default ServerDescription of type "Unknown"
+            checkIfHasPrimary()
+            return
     else:
-        # Stale primary.
-        # replace serverDescription with a default ServerDescription of type "Unknown"
-        checkIfHasPrimary()
-        return
+        # Maintain old comparison rules, namely setVersion is checked before electionId
+        if serverDescription.setVersion is not null and serverDescription.electionId is not null:
+            if (
+                topologyDescription.maxSetVersion is not null
+                and topologyDescription.maxElectionId is not null
+                and (
+                    topologyDescription.maxSetVersion > serverDescription.setVersion
+                    or (
+                        topologyDescription.maxSetVersion == serverDescription.setVersion
+                        and topologyDescription.maxElectionId > serverDescription.electionId
+                    )
+                )
+            ):
+                # Stale primary.
+                # replace serverDescription with a default ServerDescription of type "Unknown"
+                checkIfHasPrimary()
+                return
+
+            topologyDescription.maxElectionId = serverDescription.electionId
+
+            if serverDescription.setVersion is not null and (
+                topologyDescription.maxSetVersion is null
+                or serverDescription.setVersion > topologyDescription.maxSetVersion
+            ):
+                topologyDescription.maxSetVersion = serverDescription.setVersion
+
 
     for each server in topologyDescription.servers:
         if server.address != serverDescription.address:
@@ -1986,10 +2014,16 @@ between the old and new primary during a split-brain period,
 and helps provide read-your-writes consistency with write concern "majority"
 and read preference "primary".
 
+Prior to MongoDB server version 6.0 drivers had the logic opposite from
+the server side Replica Set Management logic by ordering the tuple by ``setVersion`` before the ``electionId``.
+In order to remain compatibility with backup systems, etc. drivers continue to
+maintain the reversed logic when connected to a topology that reports a maxWireVersion less than ``17``.
+Server versions 6.0 and beyond MUST order the tuple by ``electionId`` then ``setVersion``.
+
 Requirements for read-your-writes consistency
 `````````````````````````````````````````````
 
-Using (setVersion, electionId) only provides read-your-writes consistency if:
+Using (electionId, setVersion) only provides read-your-writes consistency if:
 
 * The application uses the same MongoClient instance for write-concern
   "majority" writes and read-preference "primary" reads, and
@@ -2533,6 +2567,8 @@ mark the server Unknown and clear the pool.
 2022-01-19: Add iscryptd and 90th percentile RTT fields to ServerDescription.
 
 2022-07-11: Convert integration tests to the unified format.
+
+2022-30-09: Update ``updateRSFromPrimary`` to include logic before and after 6.0 servers
 
 .. Section for links.
 
