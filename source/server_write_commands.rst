@@ -2,9 +2,8 @@
 Write Commands Specification
 ============================
 
-:last modified: July 25, 2022
-:version: 0.9.2
-:status: Approved
+:Status: Accepted
+:Minimum Server Version: 2.6
 
 .. contents::
 
@@ -495,21 +494,10 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 Changelog
 ---------
 
-v0.8
-~~~~
-* First public version
-
-v0.9
-~~~~
-* Removed text related to bulk operations; see the Bulk API spec for bulk details
-* Clarified some paragraphs; re-ordered the response field sections
-
-v0.9.1
-~~~~~~
-* Updated to use hello command
-
-v0.9.2
-~~~~~~
-* Remove outdated value for ``maxWriteBatchSize``
-
-..  LocalWords:  boolean ie
+:2014-05-14: First public version
+:2014-05-15: Removed text related to bulk operations; see the Bulk API spec for
+             bulk details. Clarified some paragraphs; re-ordered the response
+             field sections.
+:2021-04-22: Updated to use hello command
+:2022-07-25: Remove outdated value for ``maxWriteBatchSize``
+:2022-10-05: Revise spec front matter and reformat changelog.

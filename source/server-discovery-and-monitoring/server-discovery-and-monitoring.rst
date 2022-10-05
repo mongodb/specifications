@@ -2,14 +2,8 @@
 Server Discovery And Monitoring
 ===============================
 
-:Spec: 101
-:Title: Server Discovery And Monitoring
-:Author: A\. Jesse Jiryu Davis
-:Advisors: David Golden, Craig Wilson
 :Status: Accepted
-:Type: Standards
-:Version: 2.35
-:Last Modified: 2022-09-30
+:Minimum Server Version: 2.4
 
 .. contents::
 
@@ -153,6 +147,9 @@ Also known as RTT.
 The client's measurement of the duration of one hello or legacy hello call.
 The round trip time is used to support the "localThresholdMS" [1]_
 option in the Server Selection Spec.
+
+.. [1] "localThresholdMS" was called "secondaryAcceptableLatencyMS" in the Read
+   Preferences Spec, before it was superseded by the Server Selection Spec.
 
 hello or legacy hello outcome
 `````````````````````````````
@@ -2483,92 +2480,61 @@ Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6
 contributed as well.
 Bernie Hackett gently oversaw the specification process.
 
-Changes
--------
+Changelog
+---------
 
+:2015-12-17: Require clients to compare (setVersion, electionId) tuples.
+:2015-10-09: Specify electionID comparison method.
+:2015-06-16: Added cooldownMS.
+:2016-05-04: Added link to SDAM monitoring.
+:2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server
+             Selection Spec", and "secondaryAcceptableLatencyMS" with
+             "localThresholdMS".
+:2016-07-21: Updated for Max Staleness support.
+:2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
+:2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to
+             update the topology when they handshake application connections.
+:2016-10-06: In updateRSWithoutPrimary the hello or legacy hello response's
+             "primary" field should be used to update the topology description,
+             even if address != me.
+:2016-10-29: Allow for idleWritePeriodMS to change someday.
+:2016-11-01: "Unknown" is no longer the default TopologyType, the default is now
+             explicitly unspecified. Update instructions for setting the initial
+             TopologyType when running the spec tests.
+:2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+             future.
+:2017-02-28: Update "network error when reading or writing": timeout while
+             connecting does mark a server Unknown, unlike a timeout while
+             reading or writing. Justify the different behaviors, and also
+             remove obsolete reference to auto-retry.
+:2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
+:2017-08-01: Parse logicalSessionTimeoutMinutes from hello or legacy hello reply.
+:2017-08-11: Clearer specification of "incompatible" logic.
+:2017-09-01: Improved incompatibility error messages.
+:2018-03-28: Specify that monitoring must not do mechanism negotiation or authentication.
+:2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
+:2020-02-13: Drivers must run SDAM flow even when server description is equal to
+             the last one.
+:2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring
+             stale application errors.
+:2020-05-07: Include error field in ServerDescription equality comparison.
+:2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.
+:2020-12-17: Mark the pool for a server as "ready" after performing a successful
+             check. Synchronize pool clearing with SDAM updates.
+:2021-01-17: Require clients to compare (electionId, setVersion) tuples.
+:2021-02-11: Errors encountered during auth are handled by SDAM. Auth errors
+             mark the server Unknown and clear the pool.
+:2021-04-12: Adding in behaviour for load balancer mode.
+:2021-05-03: Require parsing "isWritablePrimary" field in responses.
+:2021-06-09: Connection pools must be created and eventually marked ready for
+             any server if a direct connection is used.
+:2021-06-29: Updated to use modern terminology.
+:2022-01-19: Add iscryptd and 90th percentile RTT fields to ServerDescription.
+:2022-07-11: Convert integration tests to the unified format.
+:2022-09-30: Update ``updateRSFromPrimary`` to include logic before and after 6.0 servers
+:2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
 
-2015-12-17: Require clients to compare (setVersion, electionId) tuples.
-
-2015-10-09: Specify electionID comparison method.
-
-2015-06-16: Added cooldownMS.
-
-2016-05-04: Added link to SDAM monitoring.
-
-2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server Selection Spec",
-  and "secondaryAcceptableLatencyMS" with "localThresholdMS".
-
-.. [1] "localThresholdMS" was called "secondaryAcceptableLatencyMS" in the Read Preferences Spec,
-  before it was superseded by the Server Selection Spec.
-
-2016-07-21: Updated for Max Staleness support.
-
-2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
-
-2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to update the topology
-  when they handshake application connections.
-
-2016-10-06: in updateRSWithoutPrimary the hello or legacy hello response's "primary" field
-  should be used to update the topology description, even if address != me.
-
-2016-10-29: Allow for idleWritePeriodMS to change someday.
-
-2016-11-01: "Unknown" is no longer the default TopologyType, the default is now
-  explicitly unspecified. Update instructions for setting the initial
-  TopologyType when running the spec tests.
-
-2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
-future.
-
-2017-02-28: Update "network error when reading or writing": timeout while
-connecting does mark a server Unknown, unlike a timeout while reading or
-writing. Justify the different behaviors, and also remove obsolete reference
-to auto-retry.
-
-2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
-
-2017-08-01: Parse logicalSessionTimeoutMinutes from hello or legacy hello reply.
-
-2017-08-11: Clearer specification of "incompatible" logic.
-
-2017-09-01: Improved incompatibility error messages.
-
-2018-03-28: Specify that monitoring must not do mechanism negotiation or
-authentication.
-
-2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
-
-2020-02-13: Drivers must run SDAM flow even when server description is equal
-to the last one.
-
-2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring
-stale application errors.
-
-2020-05-07: Include error field in ServerDescription equality comparison.
-
-2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.
-
-2020-12-17: Mark the pool for a server as "ready" after performing a successful
-check. Synchronize pool clearing with SDAM updates.
-
-2021-01-17: Require clients to compare (electionId, setVersion) tuples.
-
-2021-2-11: Errors encountered during auth are handled by SDAM. Auth errors
-mark the server Unknown and clear the pool.
-
-2021-4-12: Adding in behaviour for load balancer mode.
-
-2021-05-03: Require parsing "isWritablePrimary" field in responses.
-
-2021-06-09: Connection pools must be created and eventually marked ready for any server if a direct connection is used.
-
-2021-06-29: Updated to use modern terminology.
-
-2022-01-19: Add iscryptd and 90th percentile RTT fields to ServerDescription.
-
-2022-07-11: Convert integration tests to the unified format.
-
-2022-30-09: Update ``updateRSFromPrimary`` to include logic before and after 6.0 servers
+----
 
 .. Section for links.
 

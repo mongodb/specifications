@@ -2,16 +2,8 @@
 BSON Binary Subtype 6
 =====================
 
-:Title: BSON Binary Subtype 6
-:Author: Kevin Albertson
-:Spec Lead: A\. Jesse Jiryu Davis
-:Approvers: Bernie Hackett, Dan Pasette, David Storch, Eliot Horowitz, Kenn White, Mark Benvenuto, Scott L'Hommedieu
-:Advisory Group: A\. Jesse Jiryu Davis, Kenn White, Scott L'Hommedieu, Mark Benvenuto, Bernie Hackett
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: June 14, 2019
-:Version: 1.0.0
 
 .. contents::
 
@@ -181,4 +173,7 @@ ciphertext should have been.
 Therefore, the leading byte of the BSON binary subtype distinguishes
 between marking and ciphertext.
 
+Changelog
+=========
 
+:2022-10-05: Remove spec front matter and create changelog.

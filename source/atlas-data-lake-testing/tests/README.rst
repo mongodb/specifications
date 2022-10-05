@@ -2,6 +2,9 @@
 Atlas Data Lake Tests
 =====================
 
+:Status: Accepted
+:Minimum Server Version: N/A
+
 .. contents::
 
 ----
@@ -81,5 +84,6 @@ Atlas Data Lake.
 Changelog
 =========
 
+:2022-10-05: Add spec front matter
 :2020-07-15: Link to CRUD test runner implementation and note that the collection
              under test must not be dropped before each test.

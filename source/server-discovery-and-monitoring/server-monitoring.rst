@@ -2,12 +2,8 @@
 Server Monitoring
 =================
 
-:Spec: 1580
-:Title: Server Monitoring
 :Status: Accepted
-:Type: Standards
-:Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2022-06-24
+:Minimum Server Version: 2.4
 
 .. contents::
 
@@ -1143,29 +1139,22 @@ awaitable hello or legacy hello heartbeat in the new protocol.
 Changelog
 ---------
 
-- 2021-06-24: Remove optimization mention that no longer applies
+:2020-02-20: Extracted server monitoring from SDAM into this new spec.
+:2020-03-09: A monitor check that creates a new connection MUST use the
+             connection's handshake to update the topology.
+:2020-04-20: Add streaming heartbeat protocol.
+:2020-05-20: Include rationale for why we don't use `awaitedTimeMS`
+:2020-06-11: Support connectTimeoutMS=0 in streaming heartbeat protocol.
+:2020-12-17: Mark the pool for a server as "ready" after performing a successful
+             check. Synchronize pool clearing with SDAM updates.
+:2021-06-21: Added support for hello/helloOk to handshake and monitoring.
+:2021-06-24: Remove optimization mention that no longer applies
+:2022-01-19: Add 90th percentile RTT tracking.
+:2022-02-24: Rename Versioned API to Stable API
+:2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
+:2022-10-05: Remove spec front matter reformat changelog.
 
-- 2021-06-21: Added support for hello/helloOk to handshake and monitoring.
-
-- 2020-12-17: Mark the pool for a server as "ready" after performing a successful
-  check. Synchronize pool clearing with SDAM updates.
-
-- 2020-06-11 Support connectTimeoutMS=0 in streaming heartbeat protocol.
-
-- 2020-05-20 Include rationale for why we don't use `awaitedTimeMS`
-
-- 2020-04-20 Add streaming heartbeat protocol.
-
-- 2020-03-09 A monitor check that creates a new connection MUST use the
-  connection's handshake to update the topology.
-
-- 2020-02-20 Extracted server monitoring from SDAM into this new spec.
-
-- 2022-01-19 Add 90th percentile RTT tracking.
-
-- 2022-02-24: Rename Versioned API to Stable API
-
-- 2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
+----
 
 .. Section for links.
 

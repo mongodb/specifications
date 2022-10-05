@@ -2,14 +2,8 @@
 Load Balancer Support
 =====================
 
-:Spec Title: Load Balancer Support
-:Spec Version: 1.0.1
-:Author: Durran Jordan
-:Advisors: Jeff Yemin, Divjot Arora, Andy Schwerin, Cory Mintz
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 2022-01-18
 
 .. contents::
 
@@ -425,8 +419,10 @@ in the reference section below, and only load balancers that support the PROXY p
 be supported.
 
 
-Change Log
-==========
-- 2022-01-18: Clarify that ``OP_MSG`` must be used in load balanced mode.
-- 2021-12-22: Clarify that pinned connections in transactions are exclusive.
-- 2021-10-14: Note that ``loadBalanced=true`` conflicts with ``srvMaxHosts``.
+Changelog
+=========
+
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-01-18: Clarify that ``OP_MSG`` must be used in load balanced mode.
+:2021-12-22: Clarify that pinned connections in transactions are exclusive.
+:2021-10-14: Note that ``loadBalanced=true`` conflicts with ``srvMaxHosts``.

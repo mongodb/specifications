@@ -2,17 +2,8 @@
 URI Options Specification
 =========================
 
-:Spec Title: URI Options Specification
-:Spec Version: 1.10
-:Author: Sam Rossi
-:Spec Lead: Bernie Hackett
-:Advisory Group: Scott L'Hommedieu
-:Approver(s): Cailin Nelson, Jeff Yemin, Matt Broadstone, Dan Pasette, Prashant Mital, Spencer Jackson
-:Informed: drivers@
-:Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
-:Type: Standards
-:Last Modified: 2022-01-19
-
+:Status: Accepted
+:Minimum Server Version: N/A
 
 **Abstract**
 ------------
@@ -531,24 +522,27 @@ written. Whenever another specification is written or modified in a way that
 changes the name or the semantics of a URI option or adds a new URI option,
 this specification MUST be updated to reflect those changes.
 
-Changes
--------
+Changelog
+---------
 
-- 2022-01-19 Add the timeoutMS option and deprecate some existing timeout options
-- 2021-12-14 Add SOCKS5 options
-- 2021-11-08 Add maxConnecting option.
-- 2021-10-14 Add srvMaxHosts option. Merge headings discussing URI validation
-  for directConnection option.
-- 2021-09-15 Add srvServiceName option
-- 2021-09-13 Fix link to load balancer spec
-- 2021-04-15 Adding in behaviour for load balancer mode.
-- 2021-04-08 Updated to refer to hello and legacy hello
-- 2020-03-03 Add tlsDisableCertificateRevocationCheck option
-- 2020-02-26 Add tlsDisableOCSPEndpointCheck option
-- 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
-- 2019-02-04 Specified errors for conflicting TLS-related URI options
-- 2019-04-26 authSource and authMechanism have no default value
-- 2019-09-08 Add retryReads option
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-01-19: Add the timeoutMS option and deprecate some existing timeout options
+:2021-12-14: Add SOCKS5 options
+:2021-11-08: Add maxConnecting option.
+:2021-10-14: Add srvMaxHosts option. Merge headings discussing URI validation
+             for directConnection option.
+:2021-09-15: Add srvServiceName option
+:2021-09-13: Fix link to load balancer spec
+:2021-04-15: Adding in behaviour for load balancer mode.
+:2021-04-08: Updated to refer to hello and legacy hello
+:2020-03-03: Add tlsDisableCertificateRevocationCheck option
+:2020-02-26: Add tlsDisableOCSPEndpointCheck option
+:2019-09-08: Add retryReads option
+:2019-04-26: authSource and authMechanism have no default value
+:2019-02-04: Specified errors for conflicting TLS-related URI options
+:2019-01-25: Updated to reflect new Connection Monitoring and Pooling Spec
+
+----
 
 .. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
 .. _SOCKS5 support spec: https://github.com/mongodb/specifications/blob/master/source/socks5-support/socks5.rst#mongoclient-configuration

@@ -2,15 +2,8 @@
 GridFS Spec
 ===========
 
-:Spec: 105
-:Title: GridFS Spec
-:Authors: Samantha Ritter and Robert Stam
-:Advisors: David Golden and Jeff Yemin
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: 2.2
-:Last Modified: 2022-01-19
-:Version: 1.5
 
 .. contents::
 
@@ -1208,14 +1201,15 @@ functionality is not in-scope for this spec (see ‘Why can’t I alter
 documents once they are in the system?’) it is a potential area of
 growth for the future.
 
-Changes
-=======
+Changelog
+=========
 
-- 2016-05-10 Support custom file ids
-- 2016-10-07 Drivers SHOULD handle any numeric type of length and chunkSize
-- 2016-10-07 Added ReadConcern to the GridFS spec
-- 2016-10-07 Modified a JSON test that was testing optional behavior
-- 2018-01-31 Deprecated MD5, and specified an option to disable MD5 until removed
-- 2018-07-05 Must not use 'filemd5'
-- 2020-01-17 Added allowDiskUse to GridFSFindOptions
-- 2022-01-19 Require that timeouts be applied per the client-side operations timeout spec
+:2016-05-10: Support custom file ids
+:2016-10-07: Drivers SHOULD handle any numeric type of length and chunkSize
+:2016-10-07: Added ReadConcern to the GridFS spec
+:2016-10-07: Modified a JSON test that was testing optional behavior
+:2018-01-31: Deprecated MD5, and specified an option to disable MD5 until removed
+:2018-07-05: Must not use 'filemd5'
+:2020-01-17: Added allowDiskUse to GridFSFindOptions
+:2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
+:2022-10-05: Remove spec front matter and reformat changelog.

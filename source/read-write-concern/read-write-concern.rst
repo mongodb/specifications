@@ -5,15 +5,8 @@
 Read and Write Concern
 ======================
 
-:Spec: 135
-:Title: Read and Write Concern
-:Authors: Craig Wilson
-:Advisors: Jesse Davis, Hannes Magnusson, Anna Herlihy
-:Status: Approved
-:Type: Standards
-:Server Versions: 2.4+
-:Last Modified: 2022-01-19
-:Version: 1.7
+:Status: Accepted
+:Minimum Server Version: 2.4
 
 .. contents::
 
@@ -697,32 +690,36 @@ Q: Why does a driver send :javascript:`{ readConcern: { level: “local” } }` 
   user does specify a ``ReadConcern``, we do send one. If the user specifies
   level=”local”, for instance, we send it.
 
-Version History
-===============
+Changelog
+=========
 
-  - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
-  - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
-  - 2016-06-17: Added "linearizable" to ReadConcern levels.
-  - 2016-07-15: Command-specific helper methods for commands that write SHOULD check the server's MaxWireVersion
-    and decide whether to send writeConcern.
-    Advise drivers to parse server replies for writeConcernError
-    and raise an exception if found,
-    only in command-specific helper methods that take a writeConcern parameter,
-    not in generic command methods.
-    Don't mention obscure commands with no helpers.
-  - 2016-08-06: Further clarify that command-specific helper methods for commands that write
-    take write concern options in their parameter lists, and relax from SHOULD to MAY.
-  - 2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns
-    an error if writeConcern is included with MongoDB 3.5+. See
-    `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.
-  - 2017-11-17 : Added list of commands that support readConcern
-  - 2017-12-18 : Added "available" to Readconcern level.
-  - 2017-05-29 : Added user management commands to list of commands that write
-  - 2019-01-29 : Added section listing all known examples of writeConcernError.
-  - 2019-06-07: Clarify language for aggregate and mapReduce commands that write.
-  - 2019-10-31: Explicitly define write concern option mappings.
-  - 2020-02-13: Inconsistent write concern must be considered an error.
-  - 2021-04-07: Updated to use hello command.
-  - 2021-06-15: Added "snapshot" to Readconcern level
-  - 2021-07-12: Add missing commas after ReadConcernLevel enum values
-  - 2022-01-19: Deprecate wTimeoutMS in favor of timeoutMS.
+:2015-10-16: ReadConcern of local is no longer allowed to be used when talking
+             with MaxWireVersion < 4.
+:2016-05-20: Added note about helpers for commands that write accepting a
+             writeConcern parameter.
+:2016-06-17: Added "linearizable" to ReadConcern levels.
+:2016-07-15: Command-specific helper methods for commands that write SHOULD
+             check the server's MaxWireVersion and decide whether to send
+             writeConcern. Advise drivers to parse server replies for
+             writeConcernError and raise an exception if found, only in
+             command-specific helper methods that take a writeConcern parameter,
+             not in generic command methods. Don't mention obscure commands with
+             no helpers.
+:2016-08-06: Further clarify that command-specific helper methods for commands
+             that write take write concern options in their parameter lists, and
+             relax from SHOULD to MAY.
+:2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns an
+             error if writeConcern is included with MongoDB 3.5+. See
+             `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.
+:2017-11-17: Added list of commands that support readConcern
+:2017-12-18: Added "available" to Readconcern level.
+:2017-05-29: Added user management commands to list of commands that write
+:2019-01-29: Added section listing all known examples of writeConcernError.
+:2019-06-07: Clarify language for aggregate and mapReduce commands that write.
+:2019-10-31: Explicitly define write concern option mappings.
+:2020-02-13: Inconsistent write concern must be considered an error.
+:2021-04-07: Updated to use hello command.
+:2021-06-15: Added "snapshot" to Readconcern level
+:2021-07-12: Add missing commas after ReadConcernLevel enum values
+:2022-01-19: Deprecate wTimeoutMS in favor of timeoutMS.
+:2022-10-05: Remove spec front matter and reformat changelog.

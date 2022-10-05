@@ -5,15 +5,8 @@
 Driver Authentication
 =====================
 
-:Spec: 100
-:Spec Version: 1.21.0
-:Title: Driver Authentication
-:Author: Craig Wilson, David Golden
-:Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-08-25
 
 .. contents::
 
@@ -1338,103 +1331,56 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 	No. While it's possible to allow access to EC2 instance metadata in ECS, for security reasons, Amazon states it's best practice to avoid this. (See `accessing EC2 metadata in ECS <https://aws.amazon.com/premiumsupport/knowledge-center/ecs-container-ec2-metadata/>`_ and `IAM Roles for Tasks <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html>`_)
 
-Version History
-===============
+Changelog
+=========
 
-Version 1.12.0 Changes
-    * Add support for AWS AssumeRoleWithWebIdentity.
+:2022-10-05: Remove spec front matter and convert version history to changelog.
+:2022-09-07: Add support for AWS AssumeRoleWithWebIdentity.
+:2022-01-20: Require that timeouts be applied per the client-side operations timeout spec.
+:2022-01-14: Clarify that ``OP_MSG`` must be used for authentication when it is supported.
+:2021-04-23: Updated to use hello and legacy hello.
+:2021-03-04: Note that errors encountered during auth are handled by SDAM.
+:2020-03-06: Add reference to the speculative authentication section of the handshake spec.
+:2020-02-15: Rename MONGODB-IAM to MONGODB-AWS
+:2020-02-04: Support shorter SCRAM conversation starting in version 4.4 of the server.
+:2020-01-31: Clarify that drivers must raise an error when a connection string
+             has an empty value for authSource.
+:2020-01-23: Clarify when authentication will occur.
+:2020-01-22: Clarify that authSource in URI is not treated as a user configuring
+             auth credentials.
+:2019-12-05: Added MONGODB-IAM auth mechanism
+:2019-07-13: Clarify database to use for auth mechanism negotiation.
+:2019-04-26: * Test format changed to improve specificity of behavior assertions.
+             * Clarify that database name in URI is not treated as a user configuring auth credentials.
+:2018-08-08: Unknown users don't cause handshake errors. This was changed before
+             server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
+             such a possibility.
+:2018-04-17: * Clarify authSource defaults
+             * Fix PLAIN authSource rule to allow user provided values
+             * Change SCRAM-SHA-256 rules such that usernames are *NOT*
+               normalized; this follows a change in the server design and should
+               be available in server 4.0-rc0.
+:2018-03-29: Clarify auth handshake and that it only applies to non-monitoring sockets.
+:2018-03-15: Describe CANONICALIZE_HOST_NAME algorithm.
+:2018-03-02: * Added SCRAM-SHA-256 and mechanism negotiation as provided by server 4.0
+             * Updated default mechanism determination
+             * Clarified SCRAM-SHA-1 rules around SASLprep
+             * Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a minimum iteration count
+:2017-11-10: * Updated minimum server version to 2.6
+             * Updated the Q & A to recommend support for at most a single credential per MongoClient
+             * Removed lazy authentication section
+             * Changed the list of server types requiring authentication
+             * Made providing username for X509 authentication optional
+:2015-02-04: * Added SCRAM-SHA-1 sasl mechanism
+             * Added connection handshake
+             * Changed connection string to support mechanism properties in generic form
+             * Added example conversations for all mechanisms except GSSAPI
+             * Miscellaneous wording changes for clarification
+             * Added MONGODB-X509
+             * Added PLAIN sasl mechanism
+             * Added support for GSSAPI mechanism property gssapiServiceName
 
-Version 1.11.0 Changes
-    * Require that timeouts be applied per the client-side operations timeout spec.
-
-Version 1.10.5 Changes
-    * Clarify that ``OP_MSG`` must be used for authentication when it is
-      supported.
-
-Version 1.10.4 Changes
-    * Updated to use hello and legacy hello.
-
-Version 1.10.3 Changes
-    * Note that errors encountered during auth are handled by SDAM.
-
-Version 1.10.2 Changes
-    * Add reference to the speculative authentication section of the handshake spec.
-
-Version 1.10.1 Changes
-    * Rename MONGODB-IAM to MONGODB-AWS
-
-Version 1.10.0 Changes
-    * Support shorter SCRAM conversation starting in version 4.4 of the server.
-
-Version 1.9.1 Changes
-    * Clarify when authentication will occur.
-
-Version 1.9.0 Changes
-    * Clarify that drivers must raise an error when a connection string
-      has an empty value for authSource.
-
-Version 1.8.3 Changes
-    * Clarify that authSource in URI is not treated as a user configuring
-      auth credentials.
-
-Version 1.8.2 Changes
-    * Added MONGODB-IAM auth mechanism
-
-Version 1.8.1 Changes
-    * Clarify database to use for auth mechanism negotiation.
-
-Version 1.8.0 Changes
-    * Test format changed to improve specificity of behavior assertions.
-
-Version 1.7.2 Changes
-    * Clarify that database name in URI is not treated as a user configuring
-      auth credentials.
-
-Version 1.7.1 Changes
-    * Unknown users don't cause handshake errors. This was changed before
-      server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
-      such a possibility.
-
-Version 1.7 Changes
-    * Clarify authSource defaults
-    * Fix PLAIN authSource rule to allow user provided values
-
-Version 1.6 Changes
-    * Change SCRAM-SHA-256 rules such that usernames are *NOT* normalized;
-      this follows a change in the server design and should be available in
-      server 4.0-rc0.
-
-Version 1.5 Changes
-    * Clarify auth handshake and that it only applies to non-monitoring
-      sockets.
-
-Version 1.4.1 Changes
-    * Describe CANONICALIZE_HOST_NAME algorithm.
-
-Version 1.4 Changes
-	* Added SCRAM-SHA-256 and mechanism negotiation as provided by server 4.0
-	* Updated default mechanism determination
-	* Clarified SCRAM-SHA-1 rules around SASLprep
-	* Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a minimum iteration count
-
-Version 1.3 Changes
-	* Updated minimum server version to 2.6
-	* Updated the Q & A to recommend support for at most a single credential per MongoClient
-	* Removed lazy authentication section
-	* Changed the list of server types requiring authentication
-	* Made providing username for X509 authentication optional
-
-Version 1.2 Changes
-	* Added SCRAM-SHA-1 sasl mechanism
-	* Added connection handshake
-	* Changed connection string to support mechanism properties in generic form
-	* Added example conversations for all mechanisms except GSSAPI
-	* Miscellaneous wording changes for clarification
-
-Version 1.1 Changes
-	* Added MONGODB-X509
-	* Added PLAIN sasl mechanism
-	* Added support for GSSAPI mechanism property gssapiServiceName
+----
 
 .. Section for links.
 

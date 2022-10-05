@@ -2,16 +2,8 @@
 Client Side Encryption
 ======================
 
-:Title: Client Side Encryption
-:Author: Kevin Albertson
-:Spec Lead: Jeff Yemin
-:Approvers: Bernie Hackett, David Golden, David Storch
-:Advisory Group: A\. Jesse Jiryu Davis, Kenn White, Scott L'Hommedieu, Mark Benvenuto, Bernie Hackett, Samantha Ritter, Matt Broadstone
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-09-26
-:Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2521,6 +2513,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-10-05, Remove spec front matter.
    22-09-26, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
    22-09-09, Prohibit ``rewrapManyDataKey`` with libmongocrypt <= 1.5.1.
    22-07-20, Add behavior for automatic GCP credential loading in ``kmsProviders``.

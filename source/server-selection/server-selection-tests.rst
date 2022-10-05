@@ -2,13 +2,8 @@
 Server Selection -- Test Plan
 =============================
 
-:Spec: 103
-:Title: Server Selection
-:Author: Samantha Ritter
-:Advisors: David Golden
 :Status: Accepted
-:Type: Standards
-:Last Modified: 2022-01-19
+:Minimum Server Version: 2.4
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.

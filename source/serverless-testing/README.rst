@@ -2,6 +2,9 @@
 Atlas Serverless Tests
 ======================
 
+:Status: Accepted
+:Minimum Server Version: N/A
+
 .. contents::
 
 ----
@@ -146,6 +149,6 @@ proxy, so their spec and prose tests MUST be skipped.
 Changelog
 =========
 
+:2022-10-05: Add spec front matter
 :2022-04-22: Testing uses a load balancer fronting a single proxy.
 :2021-08-25: Update tests for load balanced serverless instances.
-

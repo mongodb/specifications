@@ -2,14 +2,8 @@
 SOCKS5 Support
 ==============
 
-:Spec Title: SOCKS5 Support
-:Spec Version: 1.0.0
-:Author: Anna Henningsen
-:Advisors: Neal Beeken
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-12-14
 
 .. contents::
 
@@ -188,5 +182,7 @@ Design Rationales
 Alternative Designs
 -------------------
 
-Change Log
-==========
+Changelog
+=========
+
+:2022-10-05: Remove spec front matter

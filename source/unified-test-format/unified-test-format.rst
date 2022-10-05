@@ -2,14 +2,9 @@
 Unified Test Format
 ===================
 
-:Spec Title: Unified Test Format
-:Spec Version: 1.11.0
-:Author: Jeremy Mikola
-:Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-09-02
+:Current Schema Version: 1.11.0
 
 .. contents::
 
@@ -107,7 +102,7 @@ example: if an additive change is made to version 1.0 of the spec, the
 ``schema-1.0.json`` file will be copied to ``schema-1.1.json`` and modified
 accordingly. A new or existing test file using `schemaVersion`_ "1.0" would then
 be expected to validate against both schema files. Schema version bumps MUST be
-noted in the `Change Log`_.
+noted in the `Changelog`_.
 
 A particular minor version MUST be capable of validating any and all test files
 in that major version series up to and including the minor version. For example,
@@ -3670,7 +3665,7 @@ Breaking Changes
 
 This section is reserved for future use. Any breaking changes to the test format
 SHOULD be described here in detail for historical reference, in addition to any
-shorter description that may be added to the `Change Log`_.
+shorter description that may be added to the `Changelog`_.
 
 
 Future Work
@@ -3748,12 +3743,17 @@ better processes can be established for versioning other specs *and* collating
 spec changes developed in parallel or during the same release cycle.
 
 
-Change Log
-==========
+Changelog
+=========
 
+..
+  Please note schema version bumps in changelog entries where applicable.
+
+:2022-10-05: Remove spec front matter, add "Current Schema Version" field, and
+             reformat changelog. Add comment to remind editors to note schema
+             version bumps in changelog updates (where applicable).
 :2022-09-02: **Schema version 1.11.**
              Add ``interruptInUseConnections`` field to ``poolClearedEvent``
-
 :2022-07-28: **Schema version 1.10.**
              Add support for ``thread`` entities (``runOnThread``,
              ``waitForThread``), TopologyDescription entities
@@ -3761,70 +3761,50 @@ Change Log
              ``assertTopologyType``), testRunner event assertion operations
              (``waitForEvent``, ``assertEventCount``), expected SDAM events, and
              the ``wait`` operation.
-
 :2022-07-27: Retroactively note schema version bumps in the change log and
              require doing so for future changes.
-
 :2022-07-11: Update `Future Work`_ to reflect that support for ignoring extra
              observed events was added in schema version 1.7.
-
 :2022-06-16: Require server 4.2+ for ``csfle: true``.
-
 :2022-05-10: Add reference to Client Side Encryption spec under
              `ClientEncryption Operations`_.
-
 :2022-04-27: **Schema version 1.9.**
              Added ``createOptions`` field to ``initialData``, introduced a new
              ``timeoutMS`` field in ``collectionOrDatabaseOptions``, and added
              an ``isTimeoutError`` field to ``expectedError``. Also introduced
              the ``createEntities`` operation.
-
 :2022-04-27: **Schema version 1.8.**
              Add ``runOnRequirement.csfle``.
-
 :2022-04-26: Add ``clientEncryption`` entity and ``$$placeholder`` syntax.
-
 :2022-04-22: Revise ``useMultipleMongoses`` and "Initializing the Test Runner"
              for Atlas Serverless URIs using a load balancer fronting a single
              proxy.
-
 :2022-03-01: **Schema version 1.7.**
              Add ``ignoreExtraEvents`` field to ``expectedEventsForClient``.
-
 :2022-02-24: Rename Versioned API to Stable API
-
 :2021-08-30: **Schema version 1.6.**
              Add ``hasServerConnectionId`` field to ``commandStartedEvent``,
              ``commandSuccededEvent`` and ``commandFailedEvent``.
-
 :2021-08-30: Test runners may create an internal MongoClient for each mongos.
              Better clarify how internal MongoClients may be used.
              Clarify that drivers creating an internal MongoClient for each
              mongos should use those clients for ``targetedFailPoint``
              operations.
-
 :2021-08-23: Allow ``runOnRequirement`` conditions to be evaluated in any order.
-
 :2021-08-09: Updated all existing schema files to require at least one element
              in ``test.expectEvents`` if specified.
-
 :2021-07-29: Note that events for sensitive commands will have redacted
              commands and replies when using ``observeSensitiveCommands``, and
              how that affects conditionally sensitive commands such as ``hello``
              and legacy hello.
-
 :2021-07-01: Note that ``expectError.expectResult`` should use
              ``$$unsetOrMatches`` when the result is optional.
-
 :2021-06-09: **Schema version 1.5.**
              Added an ``observeSensitiveCommands`` property to the ``client``
              entity type.
-
 :2021-05-17: Ensure old JSON schema files remain in place
-
 :2021-04-19: **Schema version 1.4.**
              Introduce ``serverless`` `runOnRequirement`_.
-
 :2021-04-12: **Schema version 1.3.**
              Added a ``FindCursor`` entity type. Defined a set of cursor
              operations. Added an ``auth`` property to ``runOnRequirements``
@@ -3832,30 +3812,22 @@ Change Log
              ``load-balanced``. Added CMAP events to the possible event types
              for ``expectedEvent``. Add ``assertNumberConnectionsCheckedOut``
              operation. Add ``ignoreResultAndError`` operation option.
-
 :2021-04-08: List additional error codes that may be ignored when calling
              ``killAllSessions`` and note that the command should not be called
              when connected to Atlas.
-
 :2021-03-22: Split ``serverApi`` into its own section. Note types for ``loop``
              operation arguments. Clarify how ``loop`` iterations are counted
              for ``storeIterationsAsEntity``.
-
 :2021-03-10: Clarify that ``observedAt`` field measures time in seconds for
              ``storeEventsAsEntities``.
-
 :2021-03-09: Clarify which components of a version string are relevant for
              comparisons.
-
 :2021-03-04: Change ``storeEventsAsEntities`` from a map to an array of
              ``storeEventsAsEntity`` objects.
-
 :2021-03-01: **Schema version 1.2.**
              Added ``storeEventsAsEntities`` option for client entities and
              ``loop`` operation, which is needed for Atlas Driver Testing.
-
 :2020-12-23: Clarify how JSON schema is renamed for new minor versions.
-
 :2020-11-06: **Schema version 1.1.**
              Added ``serverApi`` option for client entities, ``_yamlAnchors``
              property to define values for later use in YAML tests, and

@@ -2,13 +2,8 @@
 Server Discovery And Monitoring -- Test Plan
 ============================================
 
-:Spec: 101
-:Title: Server Discovery And Monitoring
-:Author: A\. Jesse Jiryu Davis
-:Advisors: David Golden, Craig Wilson
-:Status: Draft
-:Type: Standards
-:Last Modified: June 21, 2021
+:Status: Accepted
+:Minimum Server Version: 2.4
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.

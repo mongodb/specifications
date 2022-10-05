@@ -2,15 +2,8 @@
 Max Staleness
 =============
 
-:Spec: 142
-:Title: Max Staleness
-:Author: \A. Jesse Jiryu Davis
-:Lead: Bernie Hackett, Andy Schwerin
-:Advisors: Christian Kvalheim, Jeff Yemin, Eric Milkie
 :Status: Accepted
-:Type: Standards
-:Last Modified: April 6, 2021
-:Version: 1.4.1
+:Minimum Server Version: 3.4
 
 .. contents::
 
@@ -593,16 +586,17 @@ hello response like::
 ... then a future client can use the value from the server as its default
 maxStalenessSeconds when there is no client-side setting.
 
-Changes
-=======
+Changelog
+=========
 
-2021-09-08: Updated tests to support driver removal of support for server versions older than 3.6.
-2021-09-03: Clarify that wire version check only applies to available servers.
-2021-04-06: Updated to use hello command.
-2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
-instead of "maxStalenessMS=0".
-2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
-2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
-to heartbeatFrequencyMS + idleWritePeriodMS (with proper conversions of course).
-2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
-future, require maxStalenessSeconds to be at least 90.
+:2022-10-05: Remove spec front matter and revise change log.
+:2021-09-08: Updated tests to support driver removal of support for server versions older than 3.6.
+:2021-09-03: Clarify that wire version check only applies to available servers.
+:2021-04-06: Updated to use hello command.
+:2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1" instead of "maxStalenessMS=0".
+:2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
+:2016-10-25: Change minimum maxStalenessSeconds value from 2 *
+             heartbeatFrequencyMS to heartbeatFrequencyMS + idleWritePeriodMS
+             (with proper conversions of course).
+:2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+             future, require maxStalenessSeconds to be at least 90.

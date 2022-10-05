@@ -5,13 +5,8 @@
 Polling SRV Records for mongos Discovery
 ========================================
 
-:Title: Polling SRV Records for mongos Discovery
-:Author: Derick Rethans
 :Status: Accepted
-:Type: Standards
-:Last Modified: 2020-10-14
-:Version: 1.2.0
-:Spec Lead: David Golden
+:Minimum Server Version: N/A
 
 .. contents::
 
@@ -237,9 +232,7 @@ No future work is expected.
 Changelog
 =========
 
-2021-10-14 - 1.2.0
-    Specify behavior for ``srvMaxHosts`` MongoClient option.
-
-2021-09-15 - 1.1.0
-    Clarify that service name only defaults to ``mongodb``, and should be
-    defined by the ``srvServiceName`` URI option.
+:2022-10-05: Revise spec front matter and reformat change log.
+:2021-10-14: Specify behavior for ``srvMaxHosts`` MongoClient option.
+:2021-09-15: Clarify that service name only defaults to ``mongodb``, and should
+             be defined by the ``srvServiceName`` URI option.
