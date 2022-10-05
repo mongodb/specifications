@@ -1146,11 +1146,11 @@ updateRSFromPrimary
 
             topologyDescription.maxElectionId = serverDescription.electionId
 
-            if serverDescription.setVersion is not null and (
-                topologyDescription.maxSetVersion is null
-                or serverDescription.setVersion > topologyDescription.maxSetVersion
-            ):
-                topologyDescription.maxSetVersion = serverDescription.setVersion
+        if serverDescription.setVersion is not null and (
+            topologyDescription.maxSetVersion is null
+            or serverDescription.setVersion > topologyDescription.maxSetVersion
+        ):
+            topologyDescription.maxSetVersion = serverDescription.setVersion
 
 
     for each server in topologyDescription.servers:
