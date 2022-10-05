@@ -18,7 +18,8 @@ There are tests in the `Unified Test Format <../../unified-test-format/unified-t
 monitoring in `/logging </logging>`_ and `/monitoring </monitoring>`_, respectively. Drivers MUST run the logging
 tests with their max document length setting (as described in the 
 `logging specification <../../logging/logging.rst#truncation-of-large-documents>`__) set to a large value e.g. 10,000;
-this is necessary to be able to receive and match against the full server reply on certain MongoDB topologies.
+this is necessary in order for the driver to emit the full server reply (and to allow matching against that reply) on
+certain MongoDB versions and topologies.
 
 Prose Tests
 ^^^^^^^^^^^
