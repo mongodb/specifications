@@ -334,7 +334,7 @@ SRV records.
 ChangeLog
 =========
 
-:2022-10-05: Revise spec front matter and reformat change log.
+:2022-10-05: Revise spec front matter and reformat changelog.
 :2021-10-14: Add ``srvMaxHosts`` MongoClient option and restructure Seedlist
              Discovery section. Improve documentation for the ``srvServiceName``
              MongoClient option and add a new URI Validation section.

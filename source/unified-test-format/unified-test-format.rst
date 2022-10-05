@@ -3761,7 +3761,7 @@ Changelog
              ``assertTopologyType``), testRunner event assertion operations
              (``waitForEvent``, ``assertEventCount``), expected SDAM events, and
              the ``wait`` operation.
-:2022-07-27: Retroactively note schema version bumps in the change log and
+:2022-07-27: Retroactively note schema version bumps in the changelog and
              require doing so for future changes.
 :2022-07-11: Update `Future Work`_ to reflect that support for ignoring extra
              observed events was added in schema version 1.7.

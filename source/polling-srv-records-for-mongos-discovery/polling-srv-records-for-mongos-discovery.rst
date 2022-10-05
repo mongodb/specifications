@@ -232,7 +232,7 @@ No future work is expected.
 Changelog
 =========
 
-:2022-10-05: Revise spec front matter and reformat change log.
+:2022-10-05: Revise spec front matter and reformat changelog.
 :2021-10-14: Specify behavior for ``srvMaxHosts`` MongoClient option.
 :2021-09-15: Clarify that service name only defaults to ``mongodb``, and should
              be defined by the ``srvServiceName`` URI option.

@@ -589,7 +589,7 @@ maxStalenessSeconds when there is no client-side setting.
 Changelog
 =========
 
-:2022-10-05: Remove spec front matter and revise change log.
+:2022-10-05: Remove spec front matter and revise changelog.
 :2021-09-08: Updated tests to support driver removal of support for server versions older than 3.6.
 :2021-09-03: Clarify that wire version check only applies to available servers.
 :2021-04-06: Updated to use hello command.
