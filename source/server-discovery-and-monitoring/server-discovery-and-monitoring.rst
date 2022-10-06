@@ -993,7 +993,7 @@ updateUnknownWithStandalone
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This subroutine is executed with the ServerDescription from Standalone
-when the TopologyType is Unknown
+when the TopologyType is Unknown:
 
 .. code-block:: python
 
@@ -1012,7 +1012,7 @@ updateRSWithoutPrimary
 
 This subroutine is executed
 with the ServerDescription from an RSSecondary, RSArbiter, or RSOther
-when the TopologyType is ReplicaSetNoPrimary
+when the TopologyType is ReplicaSetNoPrimary:
 
 .. code-block:: python
 
@@ -1057,7 +1057,7 @@ updateRSWithPrimaryFromMember
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This subroutine is executed with the ServerDescription from
-an RSSecondary, RSArbiter, or RSOther when the TopologyType is ReplicaSetWithPrimary
+an RSSecondary, RSArbiter, or RSOther when the TopologyType is ReplicaSetWithPrimary:
 
 .. code-block:: python
 
@@ -1095,7 +1095,7 @@ ensures that a single-threaded client
 updateRSFromPrimary
 ~~~~~~~~~~~~~~~~~~~
 
-This subroutine is executed with a ServerDescription of type RSPrimary
+This subroutine is executed with a ServerDescription of type RSPrimary:
 
 .. code-block:: python
 
@@ -1301,7 +1301,7 @@ Depending on the context, these errors may update SDAM state by marking
 the server Unknown and may clear the server's connection pool. Some errors
 also require other side effects, like cancelling a check or requesting an
 immediate check. Drivers may use the following pseudocode to guide their
-implementation
+implementation:
 
 .. code-block:: python
 
@@ -1360,7 +1360,7 @@ implementation
       return compareTopologyVersion(currentTopologyVersion, error.commandResponse.get("topologyVersion")) >= 0
 
 The following pseudocode checks a response for a "not master" or "node is
-recovering" error
+recovering" error:
 
 .. code-block:: python
 
