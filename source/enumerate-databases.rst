@@ -3,7 +3,7 @@ Enumerating Databases
 =====================
 
 :Status: Accepted
-:Minimum Server Version: 3.8
+:Minimum Server Version: 3.6
 
 .. contents::
 
@@ -294,7 +294,9 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changelog
 =========
 
-:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-10-05: Remove spec front matter and reformat changelog. Also reverts the
+             minimum server version to 3.6, which is where ``nameOnly`` and
+             ``filter`` options were first introduced for ``listDatabases``.
 :2022-08-17: Clarify the behavior of comment on pre-4.4 servers.
 :2022-02-01: Support comment option in listDatabases command
 :2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
