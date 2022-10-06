@@ -987,240 +987,247 @@ TopologyType ReplicaSetWithPrimary
     run `updateRSWithPrimaryFromMember`_.
 
 Actions
-~~~~~~~
-
-.. _updateUnknownWithStandalone:
+```````
 
 updateUnknownWithStandalone
-  This subroutine is executed
-  with the ServerDescription from Standalone
-  when the TopologyType is Unknown::
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    if description.address not in topologyDescription.servers:
-        return
+This subroutine is executed with the ServerDescription from Standalone
+when the TopologyType is Unknown
 
-    if settings.seeds has one seed:
-        topologyDescription.type = Single
-    else:
-        remove this server from topologyDescription and stop monitoring it
+.. code-block:: python
 
-  See `TopologyType remains Unknown when one of the seeds is a Standalone`_.
+  if description.address not in topologyDescription.servers:
+      return
 
-.. _updateRSWithoutPrimary:
+  if settings.seeds has one seed:
+      topologyDescription.type = Single
+  else:
+      remove this server from topologyDescription and stop monitoring it
+
+See `TopologyType remains Unknown when one of the seeds is a Standalone`_.
 
 updateRSWithoutPrimary
-  This subroutine is executed
-  with the ServerDescription from an RSSecondary, RSArbiter, or RSOther
-  when the TopologyType is ReplicaSetNoPrimary::
+~~~~~~~~~~~~~~~~~~~~~~
 
-    if description.address not in topologyDescription.servers:
-        return
+This subroutine is executed
+with the ServerDescription from an RSSecondary, RSArbiter, or RSOther
+when the TopologyType is ReplicaSetNoPrimary
 
-    if topologyDescription.setName is null:
-        topologyDescription.setName = description.setName
+.. code-block:: python
 
-    else if topologyDescription.setName != description.setName:
-        remove this server from topologyDescription and stop monitoring it
-        return
+  if description.address not in topologyDescription.servers:
+      return
 
-    for each address in description's "hosts", "passives", and "arbiters":
-        if address is not in topologyDescription.servers:
-            add new default ServerDescription of type "Unknown"
-            begin monitoring the new server
+  if topologyDescription.setName is null:
+      topologyDescription.setName = description.setName
 
-    if description.primary is not null:
-        find the ServerDescription in topologyDescription.servers whose
-        address equals description.primary
+  else if topologyDescription.setName != description.setName:
+      remove this server from topologyDescription and stop monitoring it
+      return
 
-        if its type is Unknown, change its type to PossiblePrimary
+  for each address in description's "hosts", "passives", and "arbiters":
+      if address is not in topologyDescription.servers:
+          add new default ServerDescription of type "Unknown"
+          begin monitoring the new server
 
-    if description.address != description.me:
-        remove this server from topologyDescription and stop monitoring it
-        return
+  if description.primary is not null:
+      find the ServerDescription in topologyDescription.servers whose
+      address equals description.primary
 
-  Unlike `updateRSFromPrimary`_,
-  this subroutine does **not** remove any servers from the TopologyDescription
-  based on the list of servers in the "hosts" field of the hello or legacy hello
-  response. The only server that might be removed is the server itself that the
-  hello or legacy hello response is from.
+      if its type is Unknown, change its type to PossiblePrimary
 
-  The special handling of description.primary
-  ensures that a single-threaded client
-  `scans`_ the possible primary before other members.
+  if description.address != description.me:
+      remove this server from topologyDescription and stop monitoring it
+      return
 
-  See `replica set monitoring with and without a primary`_.
+Unlike `updateRSFromPrimary`_,
+this subroutine does **not** remove any servers from the TopologyDescription
+based on the list of servers in the "hosts" field of the hello or legacy hello
+response. The only server that might be removed is the server itself that the
+hello or legacy hello response is from.
 
-.. _updateRSWithPrimaryFromMember:
+The special handling of description.primary
+ensures that a single-threaded client
+`scans`_ the possible primary before other members.
+
+See `replica set monitoring with and without a primary`_.
 
 updateRSWithPrimaryFromMember
-  This subroutine is executed
-  with the ServerDescription from an RSSecondary, RSArbiter, or RSOther
-  when the TopologyType is ReplicaSetWithPrimary::
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    if description.address not in topologyDescription.servers:
-        # While we were checking this server, another thread heard from the
-        # primary that this server is not in the replica set.
-        return
+This subroutine is executed with the ServerDescription from
+an RSSecondary, RSArbiter, or RSOther when the TopologyType is ReplicaSetWithPrimary
 
-    # SetName is never null here.
-    if topologyDescription.setName != description.setName:
-        remove this server from topologyDescription and stop monitoring it
-        checkIfHasPrimary()
-        return
+.. code-block:: python
 
-    if description.address != description.me:
-        remove this server from topologyDescription and stop monitoring it
-        checkIfHasPrimary()
-        return
+  if description.address not in topologyDescription.servers:
+      # While we were checking this server, another thread heard from the
+      # primary that this server is not in the replica set.
+      return
 
-    # Had this member been the primary?
-    if there is no primary in topologyDescription.servers:
-        topologyDescription.type = ReplicaSetNoPrimary
+  # SetName is never null here.
+  if topologyDescription.setName != description.setName:
+      remove this server from topologyDescription and stop monitoring it
+      checkIfHasPrimary()
+      return
 
-        if description.primary is not null:
-            find the ServerDescription in topologyDescription.servers whose
-            address equals description.primary
+  if description.address != description.me:
+      remove this server from topologyDescription and stop monitoring it
+      checkIfHasPrimary()
+      return
 
-            if its type is Unknown, change its type to PossiblePrimary
+  # Had this member been the primary?
+  if there is no primary in topologyDescription.servers:
+      topologyDescription.type = ReplicaSetNoPrimary
 
-  The special handling of description.primary
-  ensures that a single-threaded client
-  `scans`_ the possible primary before other members.
+      if description.primary is not null:
+          find the ServerDescription in topologyDescription.servers whose
+          address equals description.primary
 
-.. _updateRSFromPrimary:
+          if its type is Unknown, change its type to PossiblePrimary
+
+The special handling of description.primary
+ensures that a single-threaded client
+`scans`_ the possible primary before other members.
+
 
 updateRSFromPrimary
-  This subroutine is executed with a ServerDescription of type RSPrimary::
+~~~~~~~~~~~~~~~~~~~
 
-    if serverDescription.address not in topologyDescription.servers:
-        return
+This subroutine is executed with a ServerDescription of type RSPrimary
 
-    if topologyDescription.setName is null:
-        topologyDescription.setName = serverDescription.setName
+.. code-block:: python
 
-    else if topologyDescription.setName != serverDescription.setName:
-        # We found a primary but it doesn't have the setName
-        # provided by the user or previously discovered.
-        remove this server from topologyDescription and stop monitoring it
-        checkIfHasPrimary()
-        return
+  if serverDescription.address not in topologyDescription.servers:
+      return
 
-    # Election ids are ObjectIds, see
-    # see "Using electionId and setVersion to detect stale primaries"
-    # for comparison rules.
+  if topologyDescription.setName is null:
+      topologyDescription.setName = serverDescription.setName
 
-    if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
-        # Null values for both electionId and setVersion are always considered less than
-        if serverDescription.electionId > topologyDescription.maxElectionId or (
-            serverDescription.electionId == topologyDescription.maxElectionId
-            and serverDescription.setVersion >= topologyDescription.maxSetVersion
-        ):
-            topologyDescription.maxElectionId = serverDescription.electionId
-            topologyDescription.maxSetVersion = serverDescription.setVersion
-        else:
-            # Stale primary.
-            # replace serverDescription with a default ServerDescription of type "Unknown"
-            checkIfHasPrimary()
-            return
-    else:
-        # Maintain old comparison rules, namely setVersion is checked before electionId
-        if serverDescription.setVersion is not null and serverDescription.electionId is not null:
-            if (
-                topologyDescription.maxSetVersion is not null
-                and topologyDescription.maxElectionId is not null
-                and (
-                    topologyDescription.maxSetVersion > serverDescription.setVersion
-                    or (
-                        topologyDescription.maxSetVersion == serverDescription.setVersion
-                        and topologyDescription.maxElectionId > serverDescription.electionId
-                    )
-                )
-            ):
-                # Stale primary.
-                # replace serverDescription with a default ServerDescription of type "Unknown"
-                checkIfHasPrimary()
-                return
+  else if topologyDescription.setName != serverDescription.setName:
+      # We found a primary but it doesn't have the setName
+      # provided by the user or previously discovered.
+      remove this server from topologyDescription and stop monitoring it
+      checkIfHasPrimary()
+      return
 
-            topologyDescription.maxElectionId = serverDescription.electionId
+  # Election ids are ObjectIds, see
+  # see "Using electionId and setVersion to detect stale primaries"
+  # for comparison rules.
 
-        if serverDescription.setVersion is not null and (
-            topologyDescription.maxSetVersion is null
-            or serverDescription.setVersion > topologyDescription.maxSetVersion
-        ):
-            topologyDescription.maxSetVersion = serverDescription.setVersion
+  if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
+      # Null values for both electionId and setVersion are always considered less than
+      if serverDescription.electionId > topologyDescription.maxElectionId or (
+          serverDescription.electionId == topologyDescription.maxElectionId
+          and serverDescription.setVersion >= topologyDescription.maxSetVersion
+      ):
+          topologyDescription.maxElectionId = serverDescription.electionId
+          topologyDescription.maxSetVersion = serverDescription.setVersion
+      else:
+          # Stale primary.
+          # replace serverDescription with a default ServerDescription of type "Unknown"
+          checkIfHasPrimary()
+          return
+  else:
+      # Maintain old comparison rules, namely setVersion is checked before electionId
+      if serverDescription.setVersion is not null and serverDescription.electionId is not null:
+          if (
+              topologyDescription.maxSetVersion is not null
+              and topologyDescription.maxElectionId is not null
+              and (
+                  topologyDescription.maxSetVersion > serverDescription.setVersion
+                  or (
+                      topologyDescription.maxSetVersion == serverDescription.setVersion
+                      and topologyDescription.maxElectionId > serverDescription.electionId
+                  )
+              )
+          ):
+              # Stale primary.
+              # replace serverDescription with a default ServerDescription of type "Unknown"
+              checkIfHasPrimary()
+              return
+
+          topologyDescription.maxElectionId = serverDescription.electionId
+
+      if serverDescription.setVersion is not null and (
+          topologyDescription.maxSetVersion is null
+          or serverDescription.setVersion > topologyDescription.maxSetVersion
+      ):
+          topologyDescription.maxSetVersion = serverDescription.setVersion
 
 
-    for each server in topologyDescription.servers:
-        if server.address != serverDescription.address:
-            if server.type is RSPrimary:
-                # See note below about invalidating an old primary.
-                replace the server with a default ServerDescription of type "Unknown"
+  for each server in topologyDescription.servers:
+      if server.address != serverDescription.address:
+          if server.type is RSPrimary:
+              # See note below about invalidating an old primary.
+              replace the server with a default ServerDescription of type "Unknown"
 
-    for each address in serverDescription's "hosts", "passives", and "arbiters":
-        if address is not in topologyDescription.servers:
-            add new default ServerDescription of type "Unknown"
-            begin monitoring the new server
+  for each address in serverDescription's "hosts", "passives", and "arbiters":
+      if address is not in topologyDescription.servers:
+          add new default ServerDescription of type "Unknown"
+          begin monitoring the new server
 
-    for each server in topologyDescription.servers:
-        if server.address not in serverDescription's "hosts", "passives", or "arbiters":
-            remove the server and stop monitoring it
+  for each server in topologyDescription.servers:
+      if server.address not in serverDescription's "hosts", "passives", or "arbiters":
+          remove the server and stop monitoring it
 
-    checkIfHasPrimary()
+  checkIfHasPrimary()
 
-  A note on invalidating the old primary:
-  when a new primary is discovered,
-  the client finds the previous primary (there should be none or one)
-  and replaces its description
-  with a default ServerDescription of type "Unknown."
-  A multi-threaded client MUST `request an immediate check`_ for that server as
-  soon as possible.
+A note on invalidating the old primary:
+when a new primary is discovered,
+the client finds the previous primary (there should be none or one)
+and replaces its description
+with a default ServerDescription of type "Unknown."
+A multi-threaded client MUST `request an immediate check`_ for that server as
+soon as possible.
 
-  If the old primary server version is 4.0 or earlier,
-  the client MUST clear its connection pool for the old primary, too:
-  the connections are all bad because the old primary has closed its sockets.
-  If the old primary server version is 4.2 or newer, the client MUST NOT
-  clear its connection pool for the old primary.
+If the old primary server version is 4.0 or earlier,
+the client MUST clear its connection pool for the old primary, too:
+the connections are all bad because the old primary has closed its sockets.
+If the old primary server version is 4.2 or newer, the client MUST NOT
+clear its connection pool for the old primary.
 
-  See `replica set monitoring with and without a primary`_.
+See `replica set monitoring with and without a primary`_.
 
-  If the server is primary with an obsolete electionId or setVersion, it is
-  likely a stale primary that is going to step down. Mark it Unknown and let periodic
-  monitoring detect when it becomes secondary. See
-  `using electionId and setVersion to detect stale primaries`_.
+If the server is primary with an obsolete electionId or setVersion, it is
+likely a stale primary that is going to step down. Mark it Unknown and let periodic
+monitoring detect when it becomes secondary. See
+`using electionId and setVersion to detect stale primaries`_.
 
-  A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is not equal to
-  "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the server will already have been
-  removed.
-
-.. _checkIfHasPrimary:
+A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is not equal to
+"me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the server will already have been
+removed.
 
 checkIfHasPrimary
-  Set TopologyType to ReplicaSetWithPrimary if there is an RSPrimary
-  in TopologyDescription.servers, otherwise set it to ReplicaSetNoPrimary.
+~~~~~~~~~~~~~~~~~
 
-  For example, if the TopologyType is ReplicaSetWithPrimary
-  and the client is processing a new ServerDescription of type Unknown,
-  that could mean the primary just disconnected,
-  so checkIfHasPrimary must run to check if the TopologyType should become
-  ReplicaSetNoPrimary.
+Set TopologyType to ReplicaSetWithPrimary if there is an RSPrimary
+in TopologyDescription.servers, otherwise set it to ReplicaSetNoPrimary.
 
-  Another example is if the client first reaches the primary via its external
-  IP, but the response's host list includes only internal IPs.
-  In that case the client adds the primary's internal IP to the
-  TopologyDescription and begins monitoring it, and removes the external IP.
-  Right after removing the external IP from the description,
-  the TopologyType MUST be ReplicaSetNoPrimary, since no primary is
-  available at this moment.
+For example, if the TopologyType is ReplicaSetWithPrimary
+and the client is processing a new ServerDescription of type Unknown,
+that could mean the primary just disconnected,
+so checkIfHasPrimary must run to check if the TopologyType should become
+ReplicaSetNoPrimary.
 
-.. _remove:
+Another example is if the client first reaches the primary via its external
+IP, but the response's host list includes only internal IPs.
+In that case the client adds the primary's internal IP to the
+TopologyDescription and begins monitoring it, and removes the external IP.
+Right after removing the external IP from the description,
+the TopologyType MUST be ReplicaSetNoPrimary, since no primary is
+available at this moment.
 
 remove
-  Remove the server from TopologyDescription.servers and stop monitoring it.
+~~~~~~
 
-  In multi-threaded clients, a monitor may be currently checking this server
-  and may not immediately abort.
-  Once the check completes, this server's hello or legacy hello outcome MUST be
-  ignored, and the monitor SHOULD halt.
+Remove the server from TopologyDescription.servers and stop monitoring it.
+
+In multi-threaded clients, a monitor may be currently checking this server
+and may not immediately abort.
+Once the check completes, this server's hello or legacy hello outcome MUST be
+ignored, and the monitor SHOULD halt.
 
 Logical Session Timeout
 ```````````````````````
@@ -1294,113 +1301,117 @@ Depending on the context, these errors may update SDAM state by marking
 the server Unknown and may clear the server's connection pool. Some errors
 also require other side effects, like cancelling a check or requesting an
 immediate check. Drivers may use the following pseudocode to guide their
-implementation::
+implementation
 
-    def handleError(error):
-        address = error.address
-        topologyVersion = error.topologyVersion
+.. code-block:: python
 
-        with client.lock:
-            # Ignore stale errors based on generation and topologyVersion.
-            if isStaleError(client.topologyDescription, error)
-                return
+  def handleError(error):
+      address = error.address
+      topologyVersion = error.topologyVersion
 
-            if isStateChangeError(error):
-                # Don't mark server unknown in load balanced mode.
-                if type != LoadBalanced
-                  # Mark the server Unknown
-                  unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
-                  onServerDescriptionChanged(unknown, connection pool for server)
-                if isShutdown(code) or (error was from <4.2):
-                  # the pools must only be cleared while the lock is held.
-                  if type == LoadBalanced:
-                    clear connection pool for serviceId
-                  else:
-                    clear connection pool for server
-                if multi-threaded:
-                    request immediate check
+      with client.lock:
+          # Ignore stale errors based on generation and topologyVersion.
+          if isStaleError(client.topologyDescription, error)
+              return
+
+          if isStateChangeError(error):
+              # Don't mark server unknown in load balanced mode.
+              if type != LoadBalanced
+                # Mark the server Unknown
+                unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
+                onServerDescriptionChanged(unknown, connection pool for server)
+              if isShutdown(code) or (error was from <4.2):
+                # the pools must only be cleared while the lock is held.
+                if type == LoadBalanced:
+                  clear connection pool for serviceId
                 else:
-                    # Check right now if this is "not writable primary", since it might be a
-                    # useful secondary. If it's "node is recovering" leave it for the
-                    # next full scan.
-                    if isNotWritablePrimary(error):
-                        check failing server
-            elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
-                if type != LoadBalanced
-                  # Mark the server Unknown
-                  unknown = new ServerDescription(type=Unknown, error=error)
-                  onServerDescriptionChanged(unknown, connection pool for server)
                   clear connection pool for server
-                else
-                  if serviceId
-                    clear connection pool for serviceId
-                # Cancel inprogress check
-                cancel monitor check
+              if multi-threaded:
+                  request immediate check
+              else:
+                  # Check right now if this is "not writable primary", since it might be a
+                  # useful secondary. If it's "node is recovering" leave it for the
+                  # next full scan.
+                  if isNotWritablePrimary(error):
+                      check failing server
+          elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+              if type != LoadBalanced
+                # Mark the server Unknown
+                unknown = new ServerDescription(type=Unknown, error=error)
+                onServerDescriptionChanged(unknown, connection pool for server)
+                clear connection pool for server
+              else
+                if serviceId
+                  clear connection pool for serviceId
+              # Cancel inprogress check
+              cancel monitor check
 
-    def isStaleError(topologyDescription, error):
-        currentServer = topologyDescription.servers[server.address]
-        currentGeneration = currentServer.pool.generation
-        generation = get connection generation from error
-        if generation < currentGeneration:
-            # Stale generation number.
-            return True
+  def isStaleError(topologyDescription, error):
+      currentServer = topologyDescription.servers[server.address]
+      currentGeneration = currentServer.pool.generation
+      generation = get connection generation from error
+      if generation < currentGeneration:
+          # Stale generation number.
+          return True
 
-        currentTopologyVersion = currentServer.topologyVersion
-        # True if the current error's topologyVersion is greater than the server's
-        # We use >= instead of > because any state change should result in a new topologyVersion
-        return compareTopologyVersion(currentTopologyVersion, error.commandResponse.get("topologyVersion")) >= 0
+      currentTopologyVersion = currentServer.topologyVersion
+      # True if the current error's topologyVersion is greater than the server's
+      # We use >= instead of > because any state change should result in a new topologyVersion
+      return compareTopologyVersion(currentTopologyVersion, error.commandResponse.get("topologyVersion")) >= 0
 
 The following pseudocode checks a response for a "not master" or "node is
-recovering" error::
+recovering" error
 
-    recoveringCodes = [11600, 11602, 13436, 189, 91]
-    notWritablePrimaryCodes = [10107, 13435, 10058]
-    shutdownCodes = [11600, 91]
+.. code-block:: python
 
-    def isRecovering(message, code):
-        if code:
-            if code in recoveringCodes:
-                return true
-        else:
-            # if no code, use the error message.
-            return ("not master or secondary" in message
-                or "node is recovering" in message)
+  recoveringCodes = [11600, 11602, 13436, 189, 91]
+  notWritablePrimaryCodes = [10107, 13435, 10058]
+  shutdownCodes = [11600, 91]
 
-    def isNotWritablePrimary(message, code):
-        if code:
-            if code in notWritablePrimaryCodes:
+  def isRecovering(message, code):
+      if code:
+          if code in recoveringCodes:
               return true
-        else:
+      else:
           # if no code, use the error message.
-          if isRecovering(message, None):
-              return false
-          return ("not master" in message)
+          return ("not master or secondary" in message
+              or "node is recovering" in message)
 
-    def isShutdown(code):
-        if code and code in shutdownCodes:
+  def isNotWritablePrimary(message, code):
+      if code:
+          if code in notWritablePrimaryCodes:
             return true
-        return false
+      else:
+        # if no code, use the error message.
+        if isRecovering(message, None):
+            return false
+        return ("not master" in message)
 
-    def isStateChangeError(error):
-        message = error.errmsg
-        code = error.code
-        return isRecovering(message, code) or isNotWritablePrimary(message, code)
+  def isShutdown(code):
+      if code and code in shutdownCodes:
+          return true
+      return false
 
-    def parseGle(response):
-        if "err" in response:
-            handleError(CommandError(response, response["err"], response["code"]))
+  def isStateChangeError(error):
+      message = error.errmsg
+      code = error.code
+      return isRecovering(message, code) or isNotWritablePrimary(message, code)
 
-    # Parse response to any command besides getLastError.
-    def parseCommandResponse(response):
-        if not response["ok"]:
-            handleError(CommandError(response, response["errmsg"], response["code"]))
-        else if response["writeConcernError"]:
-            wce = response["writeConcernError"]
-            handleError(WriteConcernError(response, wce["errmsg"], wce["code"]))
+  def parseGle(response):
+      if "err" in response:
+          handleError(CommandError(response, response["err"], response["code"]))
 
-    def parseQueryResponse(response):
-        if the "QueryFailure" bit is set in response flags:
-            handleError(CommandError(response, response["$err"], response["code"]))
+  # Parse response to any command besides getLastError.
+  def parseCommandResponse(response):
+      if not response["ok"]:
+          handleError(CommandError(response, response["errmsg"], response["code"]))
+      else if response["writeConcernError"]:
+          wce = response["writeConcernError"]
+          handleError(WriteConcernError(response, wce["errmsg"], wce["code"]))
+
+  def parseQueryResponse(response):
+      if the "QueryFailure" bit is set in response flags:
+          handleError(CommandError(response, response["$err"], response["code"]))
 
 The following sections describe the handling of different classes of
 application errors in detail including network errors, network timeout errors,
