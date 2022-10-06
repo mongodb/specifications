@@ -624,6 +624,12 @@ Identities* associated with them. From within the VM, an identity can be used by
 obtaining an access token via HTTP from the *Azure Instance Metadata Service*
 (IMDS). `See this documentation for more information`__
 
+..note::
+
+   To optimize for testability, it is recommended to implement an isolated
+   abstraction for communication with IMDS. This will aide in the implementation
+   of the prose tests of the communication with an IMDS server.
+
 __ https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
 
 .. default-role:: math
