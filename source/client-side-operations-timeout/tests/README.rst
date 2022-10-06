@@ -17,7 +17,7 @@ Spec Tests
 
 This directory contains a set of YAML and JSON spec tests. Drivers MUST run these as described in the "Unified Test
 Runner" specification. Because the tests introduced in this specification are timing-based, there is a risk that some
-of them may intermittently fail without any bugs being present in the driver. As a mitigatio, drivers MAY execute
+of them may intermittently fail without any bugs being present in the driver. As a mitigation, drivers MAY execute
 these tests in two new Evergreen tasks that use single-node replica sets: one with only authentication enabled and
 another with both authentication and TLS enabled. Drivers that choose to do so SHOULD use the ``single-node-auth.json``
 and ``single-node-auth-ssl.json`` files in the ``drivers-evergreen-tools`` repository to create these clusters.
@@ -31,10 +31,12 @@ during a test MUST be unset using ``internalClient`` after the test has been exe
 created for tests MUST be configured with read/write concern ``majority``, read preference ``primary``, and command
 monitoring enabled to listen for ``command_started`` events.
 
-Multi-batch writes
-~~~~~~~~~~~~~~~~~~
+1. Multi-batch writes
+~~~~~~~~~~~~~~~~~~~~~
 
-This test MUST only run against server versions 4.4 and higher.
+This test MUST only run against standalones on server versions 4.4 and higher.
+The ``insertMany`` call takes an exceedingly long time on replicasets and sharded
+clusters.
 
 #. Using ``internalClient``, drop the ``db.coll`` collection.
 #. Using ``internalClient``, set the following fail point:
@@ -49,19 +51,19 @@ This test MUST only run against server versions 4.4 and higher.
            data: {
                failCommands: ["insert"],
                blockConnection: true,
-               blockTimeMS: 15
+               blockTimeMS: 1010
            }
        }
 
-#. Create a new MongoClient (referred to as ``client``) with ``timeoutMS=20``.
+#. Create a new MongoClient (referred to as ``client``) with ``timeoutMS=2000``.
 #. Using ``client``, insert 100,001 empty documents in a single ``insertMany`` call.
 
    - Expect this to fail with a timeout error.
 
 #. Verify that two ``insert`` commands were executed against ``db.coll`` as part of the ``insertMany`` call.
 
-maxTimeMS is not set for commands sent to mongocryptd
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2. maxTimeMS is not set for commands sent to mongocryptd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This test MUST only be run against enterprise server versions 4.2 and higher.
 
@@ -70,8 +72,8 @@ This test MUST only be run against enterprise server versions 4.2 and higher.
 #. Using ``client``, execute the ``{ ping: 1 }`` command against the ``admin`` database.
 #. Verify via command monitoring that the ``ping`` command sent did not contain a ``maxTimeMS`` field.
 
-ClientEncryption
-~~~~~~~~~~~~~~~~
+3. ClientEncryption
+~~~~~~~~~~~~~~~~~~~
 
 Each test under this category MUST only be run against server versions 4.4 and higher. In these tests,
 ``LOCAL_MASTERKEY`` refers to the following base64:
@@ -181,8 +183,8 @@ decrypt
 
 #. Verify that a ``find`` command was executed against the ``keyvault.datakeys`` collection as part of the ``decrypt`` call.
 
-Background Connection Pooling
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4. Background Connection Pooling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The tests in this section MUST only be run if the server version is 4.4 or higher and the URI has authentication
 fields (i.e. a username and password). Each test in this section requires drivers to create a MongoClient and then wait
@@ -245,8 +247,8 @@ timeoutMS is refreshed for each handshake command
 
 #. Wait for a ``ConnectionCreatedEvent`` and a ``ConnectionReady`` to be published.
 
-Blocking Iteration Methods
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+5. Blocking Iteration Methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Tests in this section MUST only be run against server versions 4.4 and higher and only apply to drivers that have a
 blocking method for cursor iteration that executes ``getMore`` commands in a loop until a document is available or an
@@ -315,8 +317,8 @@ Change Streams
 
 #. Verify that an ``aggregate`` command and two ``getMore`` commands were executed against the ``db.coll`` collection during the test.
 
-GridFS - Upload
-~~~~~~~~~~~~~~~
+6. GridFS - Upload
+~~~~~~~~~~~~~~~~~~
 
 Tests in this section MUST only be run against server versions 4.4 and higher.
 
@@ -371,7 +373,7 @@ This test only applies to drivers that provide an API to abort a GridFS upload s
 
 #. Create a new MongoClient (referred to as ``client``) with ``timeoutMS=10``.
 #. Using ``client``, create a GridFS bucket (referred to as ``bucket``) that wraps the ``db`` database with ``chunkSizeBytes=2``.
-#. Call ``bucket.open_upload_stream()`` with the filename ``filename`` to create an upload stream (referred to as ``uploadStream``).    
+#. Call ``bucket.open_upload_stream()`` with the filename ``filename`` to create an upload stream (referred to as ``uploadStream``).
 
    - Expect this to succeed and return a non-null stream.
 
@@ -380,8 +382,8 @@ This test only applies to drivers that provide an API to abort a GridFS upload s
 
    - Expect this to fail with a timeout error.
 
-GridFS - Download
-~~~~~~~~~~~~~~~~~
+7. GridFS - Download
+~~~~~~~~~~~~~~~~~~~~
 
 This test MUST only be run against server versions 4.4 and higher.
 
@@ -432,8 +434,8 @@ This test MUST only be run against server versions 4.4 and higher.
 
 #. Verify that two ``find`` commands were executed during the read: one against ``db.fs.files`` and another against ``db.fs.chunks``.
 
-Server Selection
-~~~~~~~~~~~~~~~~
+8. Server Selection
+~~~~~~~~~~~~~~~~~~~
 
 serverSelectionTimeoutMS honored if timeoutMS is not set
 ````````````````````````````````````````````````````````
@@ -521,8 +523,8 @@ username and password).
 
    - Expect this to fail with a timeout error after no more than 15ms.
 
-endSession
-~~~~~~~~~~
+9. endSession
+~~~~~~~~~~~~~
 
 This test MUST only be run against replica sets and sharded clusters with server version 4.4 or higher. It MUST be
 run three times: once with the timeout specified via the MongoClient ``timeoutMS`` option, once with the timeout
@@ -557,8 +559,8 @@ specified via the ClientSession ``defaultTimeoutMS`` option, and once more with 
 
    - Expect this to fail with a timeout error after no more than 15ms.
 
-Convenient Transactions
-~~~~~~~~~~~~~~~~~~~~~~~
+10. Convenient Transactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Tests in this section MUST only run against replica sets and sharded clusters with server versions 4.4 or higher.
 
