@@ -4,6 +4,7 @@ Retryable Writes
 
 :Status: Accepted
 :Minimum Server Version: 3.6
+:Last Modified: 2022-10-07
 
 .. contents::
 
@@ -367,48 +368,48 @@ transaction number for each supported write command in the batch.
 Executing Retryable Write Commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When selecting a writable server for the first attempt of a retryable write
-command, drivers MUST allow a server selection error to propagate. In this case,
-the caller is able to infer that no attempt was made.
+The process for executing a retryable write command MUST follow these steps:
 
-If retryable writes is not enabled or the selected server does not support
-retryable writes, drivers MUST NOT include a transaction ID in the command and
-MUST attempt to execute the write command exactly once and allow any errors to
-propagate. In this case, the caller is able to infer that an attempt was made.
+1. When selecting a writable server for the first attempt of a retryable write
+   command, drivers MUST allow a server selection error to propagate. In this case,
+   the caller is able to infer that no attempt was made.
 
-If retryable writes are enabled and the selected server supports retryable
-writes, drivers MUST add a transaction ID to the command. Drivers MUST only
-attempt to retry a write command if the first attempt yields a retryable error.
-Drivers MUST NOT attempt to retry a write command on any other error.
+2. If retryable writes is not enabled or the selected server does not support
+   retryable writes, drivers MUST NOT include a transaction ID in the command and
+   MUST attempt to execute the write command exactly once and allow any errors to
+   propagate. In this case, the caller is able to infer that an attempt was made.
 
-If the first attempt of a write command including a transaction ID encounters a
-retryable error, the driver MUST update its topology according to the SDAM spec
-(see: `Error Handling`_) and capture this original retryable error. Drivers
-should then proceed with selecting a writable server for the retry attempt.
+3. If retryable writes are enabled and the selected server supports retryable
+   writes, drivers MUST add a transaction ID to the command. Drivers MUST only
+   attempt to retry a write command if the first attempt yields a retryable error.
+   Drivers MUST NOT attempt to retry a write command on any other error.
 
-.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+4. If the initial retryable write command failed with a retryable error, the driver
+   MUST update its topology according to the SDAM spec (see: `Error Handling`_)
+   and capture this original retryable error. Drivers should then proceed with
+   selecting a writable server for the retry attempt.
 
-If the driver cannot select a server for the retry attempt or the selected
-server does not support retryable writes, retrying is not possible and drivers
-MUST raise the original retryable error. In both cases, the caller is able to
-infer that an attempt was made.
+5. If CSOT is enabled and the ``timeoutMS`` has expired, raise the
+   previous retryable error. Otherwise, proceed to the next step.
 
-If the retry attempt also fails, drivers MUST update their topology according to
-the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
-to infer that an attempt was made (e.g. connection pool exception originating
-from the driver), the original error should be raised. If the retry failed due
-to another retryable error or some other error originating from the server, that
-error should be raised instead as the caller can infer that an attempt was made
-and the second error is likely more relevant (with respect to the current
-topology state).
+6. If the driver cannot select a server for the retry attempt or the selected
+   server does not support retryable writes, retrying is not possible and drivers
+   MUST raise the previous retryable error. In both cases, the caller is able to
+   infer that an attempt was made.
 
-If a retry attempt fails with an error labeled NoWritesPerformed, drivers MUST
-return the original error.
+7. If the retry attempt also fails, drivers MUST update their topology according to
+   the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
+   to infer that an attempt was made (e.g. connection pool exception originating
+   from the driver), the previous error should be raised. If the retry failed due
+   to another retryable error or some other error originating from the server, that
+   error should be raised instead as the caller can infer that an attempt was made
+   and the second error is likely more relevant (with respect to the current
+   topology state).
 
-Drivers MUST NOT attempt to retry a write command with the same transaction ID
-more than once.
+8. If a retry attempt fails with an error labeled NoWritesPerformed, drivers MUST
+   return the previous error.
 
-Consider the following pseudo-code:
+The above rules are implemented in the following pseudo-code:
 
 .. code:: typescript
 
