@@ -5,14 +5,8 @@
 Driver CRUD API
 ===============
 
-:Spec: 110
-:Title: Driver CRUD API
-:Authors: Craig Wilson
-:Advisors: Jeremy Mikola, Jeff Yemin, Tyler Brock
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: 2.6
-:Last Modified: 2022-02-10
 
 .. contents::
 
@@ -2366,66 +2360,83 @@ Q: Why are client-side errors raised for some unsupported options?
 Q: Why does reverting to using ``count`` instead of ``aggregate`` with ``$collStats`` for estimatedDocumentCount not require a major version bump in the drivers, even though it might break users of the Stable API?
   SemVer `allows <https://semver.org/#what-if-i-inadvertently-alter-the-public-api-in-a-way-that-is-not-compliant-with-the-version-number-change-ie-the-code-incorrectly-introduces-a-major-breaking-change-in-a-patch-release>`_ for a library to include a breaking change in a minor or patch version if the change is required to fix another accidental breaking change introduced in a prior version and is not expected to further break a large number of users. Given that the original switch to ``$collStats`` was a breaking change due to it not working on views, the number of users using estimatedDocumentCount with ``apiStrict: true`` is small, and the server is back-porting the addition of ``count`` to the Stable API, it was decided that this change was acceptable to make in minor version releases of the drivers per the aforementioned allowance in the SemVer spec.
 
-Changes
-=======
+Changelog
+=========
 
-* 2022-04-21: Revert to using the ``count`` command for ``estimatedDocumentCount``
-* 2022-02-18: Add let to BulkWriteOptions.
-* 2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.
-* 2022-02-01: Add comment attribute to all helpers.
-* 2022-01-27: Use optional return types for write commands and findAndModify
-* 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
-* 2022-01-14: Add let to ReplaceOptions
-* 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge.
-* 2021-11-10: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
-* 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
-* 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
-* 2021-06-02: Introduce WriteError.details and clarify WriteError construction
-* 2021-06-01: Add let to AggregateOptions
-* 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
-* 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
-* 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions.
-* 2020-03-06: Added hint option for DeleteOne, DeleteMany, and FindOneAndDelete operations.
-* 2020-01-24: Added hint option for findAndModify update/replace operations.
-* 2020-01-17: Add allowDiskUse to FindOptions.
-* 2020-01-14: Deprecate oplogReplay option for find command
-* 2020-01-10: Clarify client-side error reporting for unsupported options
-* 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers < 4.2
-* 2019-10-28: Removed link to old language examples.
-* 2019-09-26: Added hint option for update commands.
-* 2019-06-07: Consistent treatment for aggregate $merge and $out stages
-* 2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
-* 2019-02-20: Mark the request field of BulkWriteError as NOT REQUIRED
-* 2018-11-30: Specify maxAwaitTimeMS in AggregateOptions
-* 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
-* 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
-* 2018-07-25: Added upsertedCount to UpdateResult.
-* 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
-* 2018-03-05: Deprecate snapshot option
-* 2018-03-01: Deprecate maxScan query option.
-* 2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also apply to getMore.
-* 2018-01-26: Only send bypassDocumentValidation option if it's true, don't send false.
-* 2017-10-23: Allow BulkWriteException to provide an intermediary write result.
-* 2017-10-17: Document negative limit for FindOptions.
-* 2017-10-09: Bumped minimum server version to 2.6 and removed references to older versions in spec and tests.
-* 2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.
-* 2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne() previously used UpdateOptions, this may have BC implications for drivers using option classes.
-* 2017-10-05: Removed useCursor option from AggregateOptions.
-* 2017-09-26: Added hint option to AggregateOptions.
-* 2017-09-25: Added comment option to AggregateOptions.
-* 2017-08-31: Added arrayFilters to bulk write update models.
-* 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
-* 2017-06-27: Added arrayFilters to UpdateOptions and FindOneAndUpdateOptions.
-* 2017-06-26: Added FAQ entry for omission of save method.
-* 2017-05-12: Removed extra "collation" option added to several bulk write models.
-* 2017-01-09: Removed modifiers from FindOptions and added in all options.
-* 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
-* 2017-01-09: Reworded description of how default values are handled and when to send certain options.
-* 2016-09-23: Included collation option in the bulk write models.
-* 2016-08-05: Added in collation option.
-* 2015-11-05: Typos in comments about bypassDocumentValidation
-* 2015-10-16: Added maxAwaitTimeMS to FindOptions.
-* 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
-* 2015-09-16: Added bypassDocumentValidation.
-* 2015-09-16: Added readConcern notes.
-* 2015-06-17: Added limit/batchSize calculation logic.
+:2022-10-05: Remove spec front matter and reformat changlog.
+:2022-04-21: Revert to using the ``count`` command for ``estimatedDocumentCount``
+:2022-02-18: Add let to BulkWriteOptions.
+:2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.
+:2022-02-01: Add comment attribute to all helpers.
+:2022-01-27: Use optional return types for write commands and findAndModify
+:2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied
+             per the client-side operations timeout spec.
+:2022-01-14: Add let to ReplaceOptions
+:2021-11-10: Revise rules for applying read preference for aggregations with
+             $out and $merge. Add let to FindOptions, UpdateOptions,
+             DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions,
+             FindOneAndUpdateOptions
+:2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
+:2021-08-31: Allow unacknowledged hints on write operations if supported by
+             server (reverts previous change).
+:2021-06-02: Introduce WriteError.details and clarify WriteError construction
+:2021-06-01: Add let to AggregateOptions
+:2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
+:2020-04-17: Specify that the driver must raise an error for unacknowledged
+             hints on any write operation, regardless of server version.
+:2020-03-19: Clarify that unacknowledged update, findAndModify, and delete
+             operations with a hint option should raise an error on older server
+             versions.
+:2020-03-06: Added hint option for DeleteOne, DeleteMany, and FindOneAndDelete operations.
+:2020-01-24: Added hint option for findAndModify update/replace operations.
+:2020-01-17: Add allowDiskUse to FindOptions.
+:2020-01-14: Deprecate oplogReplay option for find command
+:2020-01-10: Clarify client-side error reporting for unsupported options
+:2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE
+             or OP_MSG for servers < 4.2
+:2019-10-28: Removed link to old language examples.
+:2019-09-26: Added hint option for update commands.
+:2019-06-07: Consistent treatment for aggregate $merge and $out stages
+:2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
+:2019-02-20: Mark the request field of BulkWriteError as NOT REQUIRED
+:2018-11-30: Specify maxAwaitTimeMS in AggregateOptions
+:2018-11-15: Aggregate commands with an $out stage should not specify batchSize
+:2018-10-25: Note how results are backed for aggregate, distinct, and find operations
+:2018-07-25: Added upsertedCount to UpdateResult.
+:2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and
+             countDocuments helpers.
+:2018-03-05: Deprecate snapshot option
+:2018-03-01: Deprecate maxScan query option.
+:2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also
+             apply to getMore.
+:2018-01-26: Only send bypassDocumentValidation option if it's true, don't send false.
+:2017-10-23: Allow BulkWriteException to provide an intermediary write result.
+:2017-10-17: Document negative limit for FindOptions.
+:2017-10-09: Bumped minimum server version to 2.6 and removed references to
+             older versions in spec and tests.
+:2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.
+:2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne()
+             previously used UpdateOptions, this may have BC implications for
+             drivers using option classes.
+:2017-10-05: Removed useCursor option from AggregateOptions.
+:2017-09-26: Added hint option to AggregateOptions.
+:2017-09-25: Added comment option to AggregateOptions.
+:2017-08-31: Added arrayFilters to bulk write update models.
+:2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
+:2017-06-27: Added arrayFilters to UpdateOptions and FindOneAndUpdateOptions.
+:2017-06-26: Added FAQ entry for omission of save method.
+:2017-05-12: Removed extra "collation" option added to several bulk write models.
+:2017-01-09: Removed modifiers from FindOptions and added in all options.
+:2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to
+             Int64 with a note related to calculating batchSize for opcode writes.
+:2017-01-09: Reworded description of how default values are handled and when to
+             send certain options.
+:2016-09-23: Included collation option in the bulk write models.
+:2016-08-05: Added in collation option.
+:2015-11-05: Typos in comments about bypassDocumentValidation
+:2015-10-16: Added maxAwaitTimeMS to FindOptions.
+:2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it
+             from the individual write models.
+:2015-09-16: Added bypassDocumentValidation.
+:2015-09-16: Added readConcern notes.
+:2015-06-17: Added limit/batchSize calculation logic.

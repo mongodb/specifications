@@ -2,16 +2,8 @@
 Retryable Reads
 ===============
 
-:Spec Title: Retryable Reads
-:Spec Version: 1.3.1
-:Author: Vincent Kam
-:Lead: Bernie Hackett
-:Advisory Group: Shane Harvey, Scott L’Hommedieu, Jeremy Mikola
-:Approvers: Jason Carey, Bernie Hackett, Shane Harvey, Eliot Horowitz, Scott L’Hommedieu, Jeremy Mikola, Dan Pasette, Jeff Yemin
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-01-25
 
 .. contents::
 
@@ -313,6 +305,9 @@ The above requirement can be fulfilled in one of two ways:
    choose to not retry and simply raise the original retryable error because
    there is no guarantee that the lower versioned server can support the
    original command.
+
+.. [1] The first and second commands will be identical unless variations in
+       parameters exist between wire/server versions.
 
 3c. If the retry attempt fails
 ''''''''''''''''''''''''''''''
@@ -685,17 +680,10 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
-2022-01-25: Note that drivers should retry handshake network failures.
-
-2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers will always return an error code
-
-2021-03-23: Require that PoolClearedErrors are retried
-
-2019-06-07: Mention $merge stage for aggregate alongside $out
-
-2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
-
-Endnotes
-========
-.. [1] The first and second commands will be identical unless variations in
-       parameters exist between wire/server versions.
+:2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
+:2022-01-25: Note that drivers should retry handshake network failures.
+:2021-04-26: Replaced deprecated terminology; removed requirement to parse error
+             message text as MongoDB 3.6+ servers will always return an error code
+:2021-03-23: Require that PoolClearedErrors are retried
+:2019-06-07: Mention $merge stage for aggregate alongside $out
+:2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange

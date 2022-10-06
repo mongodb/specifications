@@ -5,8 +5,7 @@
 Command Monitoring
 ==================
 
-:Title: Command Monitoring
-:Status: Approved
+:Status: Accepted
 :Minimum Server Version: 2.4
 
 .. contents::
@@ -388,49 +387,25 @@ See the README in the test directory for requirements and guidance.
 Changelog
 =========
 
-16 SEP 2015:
-  - Removed ``limit`` from find test with options to support 3.2.
-  - Changed find test read preference to ``primaryPreferred``.
-
-1 OCT 2015:
-  - Changed find test with a kill cursors to not run on server versions greater than 3.0
-  - Added a find test with no kill cursors command which only runs on 3.1 and higher.
-  - Added notes on which tests should run based on server versions.
-
-19 OCT 2015:
-  - Changed batchSize in the 3.2 find tests to expect the remaining value.
-
-31 OCT 2015:
-  - Changed find test on 3.1 and higher to ignore being run on sharded clusters.
-
-22 NOV 2015:
-  - Specify how to merge OP_MSG document sequences into command-started events.
-
-29 MAR 2016:
-  - Added note on guarantee of the request ids.
-
-2 NOV 2016:
-  - Added clause for not upconverting commands larger than maxBsonSize.
-
-16 APR 2018:
-  - Made inclusion of BSON serialization/deserialization in command durations
-    to be optional.
-
-12 FEB 2020:
-  - Added legacy hello ``speculativeAuthenticate`` to the list of values that should be redacted.
-
-15 APR 2021:
-  - Added ``serviceId`` field to events.
-
-5 MAY 2021:
-  - Updated to use hello and legacy hello.
-
-30 AUG 2021:
-  - Added ``serverConnectionId`` field to ``CommandStartedEvent``, ``CommandSucceededEvent`` and
-    ``CommandFailedEvent``.
-
-18 MAY 2022:
-  - Converted legacy tests to the unified test format.
-
-2 SEPTEMBER 2022:
-  - Remove material that only applies to MongoDB versions < 3.6.
+:2015-09-16: Removed ``limit`` from find test with options to support 3.2.
+             Changed find test read preference to ``primaryPreferred``.
+:2015-10-01: Changed find test with a kill cursors to not run on server versions
+             greater than 3.0. Added a find test with no kill cursors command
+             which only runs on 3.1 and higher. Added notes on which tests
+             should run based on server versions.
+:2015-10-19: Changed batchSize in the 3.2 find tests to expect the remaining value.
+:2015-10-31: Changed find test on 3.1 and higher to ignore being run on sharded clusters.
+:2015-11-22: Specify how to merge OP_MSG document sequences into command-started events.
+:2016-03-29: Added note on guarantee of the request ids.
+:2016-11-02: Added clause for not upconverting commands larger than maxBsonSize.
+:2018-04-16: Made inclusion of BSON serialization/deserialization in command
+             durations to be optional.
+:2020-02-12: Added legacy hello ``speculativeAuthenticate`` to the list of
+             values that should be redacted.
+:2021-04-15: Added ``serviceId`` field to events.
+:2021-05-05: Updated to use hello and legacy hello.
+:2021-08-30: Added ``serverConnectionId`` field to ``CommandStartedEvent``,
+             ``CommandSucceededEvent`` and ``CommandFailedEvent``.
+:2022-05-18: Converted legacy tests to the unified test format.
+:2022-09-02: Remove material that only applies to MongoDB versions < 3.6.
+:2022-10-05: Remove spec front matter and reformat changelog.

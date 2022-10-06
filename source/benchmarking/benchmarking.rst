@@ -2,11 +2,8 @@
 MongoDB Driver Performance Benchmarking
 =======================================
 
-:Title: MongoDB Driver Performance Benchmarking
-:Author: David Golden
+:Status: Accepted
 :Minimum Server Version: N/A
-:Last Modified: April 6, 2021
-:Version: 1.4
 
 .. contents::
 
@@ -1132,41 +1129,27 @@ Question?
 
 Answer.
 
-Change log
-==========
+Changelog
+=========
 
-v1.4 (Apr 6, 2021)
-
--  Update run command test to use 'hello' command
-
-V1.3 (Aug 13, 2016)
-
--  Update corpus files to allow much greater compression of data
--  Updated LDJSON corpus size to reflect revisions to the test data
--  Published data files on GitHub and updated instructions on how to
-   find datasets
--  RunCommand and query benchmark can create collection objects during
-   setup rather than before task.  (No change on actual benchmark.)
-
-v1.2 (Jan 6, 2016)
-
--  Clarify that 'bulk insert' means 'insert\_many'
--  Clarify that "create a collection" means using the 'create' command
--  Add omitted "upload files" step to setup for GridFS multi-file
-   download; also clarify that steps should be using the default bucket
-   in the 'perftest' database
-
-v1.1 (Dec 23, 2015)
-
--  Rename benchmark names away from MMA/weight class names
--  Split BSON encoding and decoding micro-benchmarks
--  Rename BSON micro-benchmarks to better match dataset names
--  Move "Run Command" micro-benchmark out of composite
--  Reduced amount of data held in memory and sent to/from the server to
-   decrease memory pressure and increase number of iterations in a
-   reasonable time (e.g. file sizes and number of documents in certain
-   datasets changed)
--  Create empty collections/indexes during the 'before' phase when
-   appropriate
--  Updated data set sizes to account for changes in the source file
-   structure/size
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2021-04-06: Update run command test to use 'hello' command
+:2016-08-13: * Update corpus files to allow much greater compression of data
+             * Updated LDJSON corpus size to reflect revisions to the test data
+             * Published data files on GitHub and updated instructions on how to find datasets
+             * RunCommand and query benchmark can create collection objects during setup rather than before task. (No change on actual benchmark.)
+:2016-01-06: * Clarify that 'bulk insert' means 'insert\_many'
+             * Clarify that "create a collection" means using the 'create' command
+             * Add omitted "upload files" step to setup for GridFS multi-file
+               download; also clarify that steps should be using the default
+               bucket in the 'perftest' database
+:2015-12-23: * Rename benchmark names away from MMA/weight class names
+             * Split BSON encoding and decoding micro-benchmarks
+             * Rename BSON micro-benchmarks to better match dataset names
+             * Move "Run Command" micro-benchmark out of composite
+             * Reduced amount of data held in memory and sent to/from the server
+               to decrease memory pressure and increase number of iterations in
+               a reasonable time (e.g. file sizes and number of documents in
+               certain datasets changed)
+             * Create empty collections/indexes during the 'before' phase when appropriate
+             * Updated data set sizes to account for changes in the source file structure/size

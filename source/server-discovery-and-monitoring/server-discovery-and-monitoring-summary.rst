@@ -2,13 +2,8 @@
 Server Discovery And Monitoring -- Summary
 ==========================================
 
-:Spec: 101
-:Title: Server Discovery And Monitoring
-:Author: A\. Jesse Jiryu Davis
-:Advisors: David Golden, Craig Wilson
-:Status: Draft
-:Type: Standards
-:Last Modified: June 21, 2021
+:Status: Accepted
+:Minimum Server Version: 2.4
 
 .. contents::
 
@@ -221,3 +216,8 @@ and single-threaded clients MUST request a scan before the next operation.
 The client MUST clear its connection pool for the server if the
 server is 4.0 or earlier, and MUST NOT clear its connection pool for the
 server if the server is 4.2 or later.
+
+Changelog
+---------
+
+:2022-10-05: Revise spec front matter and add changelog.

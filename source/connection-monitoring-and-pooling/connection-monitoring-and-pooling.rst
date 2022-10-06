@@ -2,15 +2,8 @@
 Connection Monitoring and Pooling
 =================================
 
-:Title: Connection Monitoring and Pooling
-:Author: Dan Aprahamian
-:Advisory Group: Jeff Yemin, Matt Broadstone
-:Approvers: Bernie Hackett, Dan Pasette, Jeff Yemin, Matt Broadstone, Sam Rossi, Scott L'Hommedieu
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-01-19
-:Version: 1.6.0
 
 .. contents::
 
@@ -1195,32 +1188,25 @@ Add support for OP_MSG exhaustAllowed
 Exhaust Cursors may require changes to how we close `Connections <#connection>`_ in the future, specifically to add a way to close and remove from its pool a `Connection <#connection>`_ which has unread exhaust messages.
 
 
-Change log
-==========
+Changelog
+=========
 
-:2021-01-19: Require that timeouts be applied per the client-side operations
-             timeout specification.
-
-:2021-01-12: Clarify "clear" method behavior in load balancer mode.
-
-:2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.
-
-:2020-09-24: Introduce maxConnecting requirement
-
+:2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent
 :2020-09-03: Clarify Connection states and definition. Require the use of a
              background thread and/or async I/O. Add tests to ensure
              ConnectionReadyEvents are fired after ConnectionCreatedEvents.
-
-:2019-06-06: Add "connectionError" as a valid reason for
-             ConnectionCheckOutFailedEvent
-
-:2021-4-12: Adding in behaviour for load balancer mode.
-
+:2020-09-24: Introduce maxConnecting requirement
+:2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.
+:2021-01-12: Clarify "clear" method behavior in load balancer mode.
+:2021-01-19: Require that timeouts be applied per the client-side operations
+             timeout specification.
+:2021-04-12: Adding in behaviour for load balancer mode.
 :2021-06-02: Formalize the behavior of a `Background Thread <#background-thread>`__.
-
 :2021-11-08: Make maxConnecting configurable.
-
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
+:2022-10-05: Remove spec front matter and reformat changelog.
+
+----
 
 .. Section for links.
 

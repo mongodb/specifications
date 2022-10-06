@@ -2,16 +2,8 @@
 Extended JSON
 =============
 
-:Spec: 587
-:Spec-ticket: SPEC-587
-:Title: Extended JSON
-:Author: Luke Lovett, David Golden
-:Spec Lead: David Golden, Jeff Yemin
-:Advisory Group: Jeff Yemin, Christian Kvalheim, Hannes Magnusson, Matt Broadstone, Jesse Davis
-:Status: Proposed
-:Type: Standards
-:Last Modified: May 21, 2021
-:Version: 2.2.0
+:Status: Accepted
+:Minimum Server Version: N/A
 
 .. contents::
 
@@ -931,52 +923,34 @@ a MongoDB query filter containing the ``$type`` operator?
 
 **A**. Yes, "extjson" is short for "Extended JSON".
 
-Changes
-=======
+Changelog
+=========
 
-v2.2.0
-------
-
-* Remove any mention of extra dollar-prefixed keys being prohibited in a DBRef.
-  MongoDB 5.0 and compatible drivers no longer enforce such restrictions.
-
-* Objects that resemble a DBRef without fully complying to its structure should
-  be left as-is during parsing.
-
-v2.1.1
-------
-
-* Note that ``$``-prefixed keys not matching a known type MUST be left as-is
-  when parsing. This is patch-level change as this behavior was already required
-  in the BSON corpus tests ("Document with keys that start with $").
-
-v2.1.0
-------
-
-* Added support for parsing ``$uuid`` fields as BSON Binary subtype 4.
-
-* Changed the example to using the MongoDB Python Driver. It previously
-  used the MongoDB Java Driver. The new example excludes the following
-  BSON types that are unsupported in Python - ``Symbol``, ``SpecialFloat``,
-  ``DBPointer`` and ``Undefined``. Transformations for these types are
-  now only documented in the `Conversion table`_.
-
-v2.0.0
-------
-
-* Added "Relaxed" format.
-
-* Changed BSON timestamp type wrapper back to ``{"t": *int*, "i": *int*}`` for
-  backwards compatibility.  (The change in v1 to unsigned 64-bit string was
-  premature optimization.)
-
-* Changed BSON regular expression type wrapper to
-  ``{"$regularExpression": {pattern: *string*, "options": *string*"}}``.
-
-* Changed BSON binary type wrapper to
-  ``{"$binary": {"base64": <base64-encoded payload as a *string*>,
-  "subType": <BSON binary type as a one- or two-character *hex string*>}}``
-
-* Added "Restrictions and limitations" section.
-
-* Clarified parser and generator rules.
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2021-05-26: * Remove any mention of extra dollar-prefixed keys being prohibited
+               in a DBRef. MongoDB 5.0 and compatible drivers no longer enforce
+               such restrictions.
+             * Objects that resemble a DBRef without fully complying to its
+               structure should be left as-is during parsing.
+:2020-09-01: Note that ``$``-prefixed keys not matching a known type MUST be
+             left as-is when parsing. This is patch-level change as this
+             behavior was already required in the BSON corpus tests ("Document
+             with keys that start with $").
+:2020-09-08: * Added support for parsing ``$uuid`` fields as BSON Binary subtype 4.
+             * Changed the example to using the MongoDB Python Driver. It
+               previously used the MongoDB Java Driver. The new example excludes
+               the following BSON types that are unsupported in Python -
+               ``Symbol``, ``SpecialFloat``, ``DBPointer`` and ``Undefined``.
+               Transformations for these types are now only documented in the
+               `Conversion table`_.
+:2017-07-20: * Bumped specification to version 2.0.
+             * Added "Relaxed" format.
+             * Changed BSON timestamp type wrapper back to
+               ``{"t": *int*, "i": *int*}`` for backwards compatibility. (The
+               change in v1 to unsigned 64-bit string was premature optimization)
+             * Changed BSON regular expression type wrapper to
+               ``{"$regularExpression": {pattern: *string*, "options": *string*"}}``.
+             * Changed BSON binary type wrapper to ``{"$binary": {"base64": <base64-encoded payload as a *string*>, "subType": <BSON binary type as a one- or two-character *hex string*>}}``
+             * Added "Restrictions and limitations" section.
+             * Clarified parser and generator rules.
+:2017-02-01: Initial specification version 1.0.

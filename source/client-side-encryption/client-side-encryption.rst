@@ -2,16 +2,8 @@
 Client Side Encryption
 ======================
 
-:Title: Client Side Encryption
-:Author: Kevin Albertson
-:Spec Lead: Jeff Yemin
-:Approvers: Bernie Hackett, David Golden, David Storch
-:Advisory Group: A\. Jesse Jiryu Davis, Kenn White, Scott L'Hommedieu, Mark Benvenuto, Bernie Hackett, Samantha Ritter, Matt Broadstone
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-09-26
-:Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -543,8 +535,6 @@ accept arbitrary strings at runtime for forward-compatibility.
 Automatic Credentials
 `````````````````````
 
-.. versionadded:: 1.9.0 2022/06/22
-
 Certain values of KMSProviders_ indicate a request by the user that the
 associated KMS providers should be populated lazily on-demand. The driver MUST
 be able to populate the respective options object on-demand if-and-only-if such
@@ -607,8 +597,6 @@ __ ../auth/auth.html#obtaining-credentials
 Obtaining GCP Credentials
 `````````````````````````
 
-.. versionadded:: 1.11.0 2022/07/20
-
 Set ``HOST`` to ``metadata.google.internal``.
 
 Send an HTTP request to the URL
@@ -630,8 +618,6 @@ Return "access_token" as the credential.
 
 Obtaining an Access Token for Azure Key Vault
 `````````````````````````````````````````````
-
-.. versionadded:: 1.12.0 2022/08/30
 
 Virtual machines running on the Azure platform have one or more *Managed
 Identities* associated with them. From within the VM, an identity can be used by
@@ -2521,6 +2507,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-10-05, Remove spec front matter and ``versionadded`` RST macros (since spec version was removed)
    22-09-26, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
    22-09-09, Prohibit ``rewrapManyDataKey`` with libmongocrypt <= 1.5.1.
    22-07-20, Add behavior for automatic GCP credential loading in ``kmsProviders``.

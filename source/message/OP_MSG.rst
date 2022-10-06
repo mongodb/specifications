@@ -2,19 +2,8 @@
 OP_MSG
 ======
 
-
-:Title: One opcode to rule them all
-:Author: Hannes Magnússon
-:Advisory Group: \A. Jesse Jiryu Davis, Jeremy Mikola, Mathias Stearn, Robert Stam
-:Approvers: Bernie Hackett, David Golden, Jeff Yemin, Matt broadstone
-:Informed: Bryan Reinero, Chris Hendel, drivers@
-:Status: Approved
-:Type: Standards
-:Last Modified: 2021-12-16
+:Status: Accepted
 :Minimum Server Version: 3.6
-:Version: 1.3.1
-
-
 
 .. contents::
 
@@ -621,10 +610,12 @@ Q & A
 
 Changelog
 =========
-- 2022-01-13 Clarify that ``OP_MSG`` must be used when using stable API
-- 2021-12-16 Clarify that old drivers should default to OP_QUERY handshakes
-- 2021-04-20 Suggest using OP_MSG for initial handshake when using stable API
-- 2021-04-06 Updated to use hello and not writable primary
-- 2017-11-12 Specify read preferences for OP_MSG with direct connection
-- 2017-08-17 Added the ``User originating command`` section
-- 2017-07-18 Published 1.0.0
+
+:2022-10-05: Remove spec front matter.
+:2022-01-13: Clarify that ``OP_MSG`` must be used when using stable API
+:2021-12-16: Clarify that old drivers should default to OP_QUERY handshakes
+:2021-04-20: Suggest using OP_MSG for initial handshake when using stable API
+:2021-04-06: Updated to use hello and not writable primary
+:2017-11-12: Specify read preferences for OP_MSG with direct connection
+:2017-08-17: Added the ``User originating command`` section
+:2017-07-18: Published initial version

@@ -2,15 +2,8 @@
 BSON Corpus
 ===========
 
-:Title: BSON Corpus
-:Author: Luke Lovett, David Golden
-:Lead: Jeff Yemin
-:Advisors: Craig Wilson
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: N/A
-:Last Modified: September 9, 2021
-:Version: 2.1.1
 
 .. contents::
 
@@ -495,44 +488,23 @@ but the ``canonical_bson`` field is the same.  This is by design so that each
 case stands alone and can be confirmed to be internally consistent via the
 assertions.  This makes for easier and safer test case development.
 
-Changes
-=======
+Changelog
+=========
 
-Version 2.1.1 - September 9, 2021
-
-* Clarify error expectation rules for ``parseErrors``.
-
-Version 2.1 - September 2, 2021
-
-* Add spec and prose tests for prohibiting null bytes in null-terminated strings
-  within document field names and regular expressions.
-
-* Clarify type-specific rules for ``parseErrors``.
-
-Version 2.0 - May 26, 2017
-
-* Revised to be consistent with Extended JSON spec 2.0: valid case fields
-  have changed, as have the test assertions.
-
-Version 1.3 - January 23, 2017
-
-* Added ``multi-type.json`` to test encoding and decoding all BSON types within
-  the same document.
-
-* Amended all extended JSON strings to adhere to the Extended JSON
-  Specification.
-
-* Modified the "Use of extjson" section of this specification to note that
-  canonical extended JSON is now used.
-
-Version 1.2 - November 14, 2016
-
-* Removed "invalid flags" BSON Regexp case.
-
-Version 1.1 – October 25, 2016
-
-* Added a "non-alphabetized flags" case to the BSON Regexp corpus file;
-  decoders must be able to read non-alphabetized flags, but encoders must
-  emit alphabetized flags.
-
-* Added an "invalid flags" case to the BSON Regexp corpus file.
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2021-09-09: Clarify error expectation rules for ``parseErrors``.
+:2021-09-02: Add spec and prose tests for prohibiting null bytes in
+             null-terminated strings within document field names and regular
+             expressions. Clarify type-specific rules for ``parseErrors``.
+:2017-05-26: Revised to be consistent with Extended JSON spec 2.0: valid case
+             fields have changed, as have the test assertions.
+:2017-01-23: Added ``multi-type.json`` to test encoding and decoding all BSON
+             types within the same document. Amended all extended JSON strings
+             to adhere to the Extended JSON Specification. Modified the "Use of
+             extjson" section of this specification to note that canonical
+             extended JSON is now used.
+:2016-11-14: Removed "invalid flags" BSON Regexp case.
+:2016-10-25: Added a "non-alphabetized flags" case to the BSON Regexp corpus
+             file; decoders must be able to read non-alphabetized flags, but
+             encoders must emit alphabetized flags. Added an "invalid flags"
+             case to the BSON Regexp corpus file.

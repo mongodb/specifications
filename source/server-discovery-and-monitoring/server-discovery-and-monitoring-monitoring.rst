@@ -5,16 +5,8 @@
 SDAM Monitoring Specification
 =============================
 
-:Spec: 222
-:Title: SDAM Monitoring Specification
-:Spec Version: Same as the `Server Discovery And Monitoring`_ spec
-:Author: Durran Jordan
-:Spec Lead: Durran Jordan
-:Advisory Group: Jeff Yemin, Craig Wilson, Jesse Davis
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: 2.4
-:Last Modified: 06-May-2021
 
 .. contents::
 
@@ -427,11 +419,14 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
-- 06 MAY 2021: Updated to use modern terminology.
-- 20 APR 2020: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
-- 12 DEC 2018: Clarified table of rules for readable/writable servers
-- 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
-- 11 OCT 2016: TopologyDescription objects MAY have additional methods and properties.
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2021-05-06: Updated to use modern terminology.
+:2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
+:2018:12-12: Clarified table of rules for readable/writable servers
+:2016-08-31: Added table of rules for determining if topology has readable/writable servers.
+:2016-10-11: TopologyDescription objects MAY have additional methods and properties.
+
+----
 
 .. Section for links.
 

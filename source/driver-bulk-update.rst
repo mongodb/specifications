@@ -2,42 +2,10 @@
 Bulk API Spec
 =============
 
-:Authors: Christian Kvalheim
 :Status: Deprecated
-:Type: Standards
-:Last Modified: May 18, 2021
+:Minimum Server Version: 2.4
 
 .. contents::
-
-Changes from previous versions
-==============================
-
-Deprecated in favor of the *Driver CRUD API*.
-
-v0.8
-----
-* Removed "Test Case 3: Key validation, no $-prefixed keys allowed" for insert.
-
-v0.7
-----
-* Clarify that "writeConcernErrors" field is plural
-
-v0.6
-----
-* First public version of the specification.
-* Merged in Test Cases from QA tickets
-* Specification cleanup and increased precision
-
-v0.5
-----
-* Specification cleanup and increased precision
-* Suggested Error handling for languages using commonly raising exceptions
-* Narrowed writeConcern reporting requirement
-
-v0.4
-----
-* Renamed nUpdated to nMatched as to reflect that it's the number of matched documents not the number of modified documents.
-
 
 Bulk Operation Builder
 ======================
@@ -1740,3 +1708,22 @@ sleep 6 seconds
     client.admin.command({replSetStepDown: 5})
     batch = client.db.collection.initializeOrderedBulkOp()
     batch.insert({_id: 2}).execute() should succeed
+
+Changelog
+=========
+
+:2022-10-05: Remove spec front matter and reformat changelog. Consolidated
+             changelog entries prior to the first published version of this
+             document, since exact dates were unavailable.
+:2021-05-27: Removed "Test Case 3: Key validation, no $-prefixed keys allowed"
+             for insert.
+:2015-10-23: Clarify that "writeConcernErrors" field is plural
+:2015-05-22: * First public version of the specification.
+             * Deprecated this specification in favor of CRUD API.
+             * Merged in Test Cases from QA tickets.
+             * Specification cleanup and increased precision.
+             * Suggested error handling for languages using commonly raising
+               exceptions.
+             * Narrowed writeConcern reporting requirement.
+             * Renamed nUpdated to nMatched as to reflect that it's the number
+               of matched documents not the number of modified documents.

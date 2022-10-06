@@ -2,14 +2,8 @@
 Stable API For Drivers
 ======================
 
-:Spec Title: Stable API For Drivers (previously: Versioned API)
-:Spec Version: 1.2.2
-:Author: Andreas Braun
-:Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Patrick Freed, Oleg Pudeyev
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-02-24
 
 .. contents::
 
@@ -292,13 +286,14 @@ and ``MongoCollection`` classes to only include features that are part of the
 stable API. This is not covered in this specification.
 
 
-Change Log
-==========
+Changelog
+=========
 
-* 2022-02-24: Rename Versioned API to Stable API
-* 2022-01-14: Require ``OP_MSG`` for all messages including the initial step
-  of the handshake when using stable API.
-* 2021-05-05: Require sending stable API parameters with ``getMore`` and
-  transaction-continuing commands.
-* 2021-04-20: Require using ``hello`` when using the stable API.
-* 2021-04-10: Replaced usages of ``acceptAPIVersion2`` with ``acceptApiVersion2``.
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-02-24: Rename Versioned API to Stable API
+:2022-01-14: Require ``OP_MSG`` for all messages including the initial step of
+             the handshake when using stable API.
+:2021-05-05: Require sending stable API parameters with ``getMore`` and
+             transaction-continuing commands.
+:2021-04-20: Require using ``hello`` when using the stable API.
+:2021-04-10: Replaced usages of ``acceptAPIVersion2`` with ``acceptApiVersion2``.
