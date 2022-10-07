@@ -115,6 +115,8 @@ If the chosen unit is anything other than a Unicode code point, the driver MUST 
 gracefully handles cases where the truncation length falls mid code point, by either rounding the length
 up or down to the closest code point boundary or using the Unicode replacement character, to avoid
 producing invalid Unicode data.
+Drivers MUST implement truncation naively by simply truncating the output at the required length; i.e.
+do not attempt to implement truncation such that the output is still valid JSON.
 Truncated extended JSON MUST have a trailing ellipsis ``...`` appended to indicate to the user that
 truncation occurred. The ellipsis MUST NOT count toward the the max length.
 
@@ -347,6 +349,17 @@ Truncation of large documents
     code unit, or grapheme) we felt 1000 was a reasonable default. See
     `here <https://exploringjs.com/impatient-js/ch_unicode.html>`_ for a helpful primer on related
     Unicode concepts.
+
+3. Why do we implement naive truncation rather than truncating the JSON so it is still valid?
+    Designing and implementing a truncation algorithm for JSON that outputs valid JSON, but fits
+    in as much of the original JSON as possible, would be non-trivial. The server team wrote an
+    entire separate truncation design document when they implemented this for their log messages.
+    This is more of a necessity for the server where the entire log message is JSON, but we don't
+    know if parsing the documents included in log messages is something that users will actually
+    need to do. Furthermore, any users who want parseable documents have an escape hatch to do so:
+    they can set the max document length to a very large value. If we hear of use cases in the Future
+    for parsing the documents in log messages, we could make an additive change to this specification
+    to permit a smarter truncation algorithm.
 
 --------------------------------------
 Structured versus Unstructured Logging
