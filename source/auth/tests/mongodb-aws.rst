@@ -129,11 +129,11 @@ check for the absence of the AWS_ACCESS_KEY_ID and of credentials in the URI.
 #. Clear the cache.
 #. Create a new client.
 #. Ensure that a ``find`` operation adds credentials to the cache..
-#. Override the cached credentials with an "Expiration" that is within thirty
-   seconds of the current UTC time.
+#. Override the cached credentials with an "Expiration" that is within one
+   minute of the current UTC time.
 #. Create a new client.
 #. Ensure that a ``find`` operation updates the credentials in the cache.
-#. Poison the cache with garbage content.
+#. Poison the cache with invalid auth content.
 #. Create a new client.
 #. Ensure that a ``find`` operation results in an error.
 #. Ensure that the cache has been cleared.

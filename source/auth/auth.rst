@@ -1120,19 +1120,13 @@ be used in lieu of manual caching.
 
 If using manual caching, the "Expiration" field MUST be stored
 and used to determine when to clear the cache.  Credentials are considered
-valid if they are more than one minute away from expiring, to the reduce the
+valid if they are more than five minutes away from expiring, to the reduce the
 chance of expiration before they are validated by the server.
 
 If there are no current valid cached credentials, the driver MUST initiate a
 credential request.  To avoid adding a bottleneck that would override the
 ``maxConnecting`` setting, the driver MUST not place a lock on making a
 request.  The cache MUST be written atomically.
-
-Once valid credentials are received, the driver SHOULD schedule an update of
-the cache within five minutes of the expiration time, unless the driver does not have the ability to schedule background tasks.  The background task MUST
-handle timeouts or errors and retry appropriately.  The purpose of the
-background task is to limit the chance of needing to initiate multiple
-simultaneous requests.
 
 If AWS authentication fails for any reason, the cache MUST be cleared.
 
