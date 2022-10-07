@@ -1079,6 +1079,11 @@ The structure of this object is as follows:
   assert that the error does not contain any of the specified labels (e.g. using
   the ``hasErrorLabel`` method).
 
+- ``errorResponse``: Optional document. A value corresponding to the expected
+  server-generated error response. The test runner MUST assert that the error
+  includes a server-generated response that matches this value according to the
+  rules in `Evaluating Matches`_.
+
 .. _expectedError_expectResult:
 
 - ``expectResult``: Optional mixed type. This field follows the same rules as
@@ -3749,6 +3754,8 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2022-10-07: **Schema version 1.12.**
+             Add ``errorResponse`` to ``expectedError``.
 :2022-10-05: Remove spec front matter, add "Current Schema Version" field, and
              reformat changelog. Add comment to remind editors to note schema
              version bumps in changelog updates (where applicable).
