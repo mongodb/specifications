@@ -36,7 +36,8 @@ monitoring enabled to listen for ``command_started`` events.
 
 This test MUST only run against standalones on server versions 4.4 and higher.
 The ``insertMany`` call takes an exceedingly long time on replicasets and sharded
-clusters.
+clusters. Drivers MAY adjust the timeouts used in this test to allow for differing
+bulk encoding performance.
 
 #. Using ``internalClient``, drop the ``db.coll`` collection.
 #. Using ``internalClient``, set the following fail point:
