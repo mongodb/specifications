@@ -303,6 +303,14 @@ Drivers SHOULD optimize extended JSON generation to avoid generating JSON string
 be emitted, such that the complexity is O(N) where N = ``<max document length>``, rather than
 N = ``<actual document length>``.
 
+Standard Naming in Structured Log Messages
+------------------------------------------
+Driver specifications typically allow for language-appropriate naming variations, e.g. using
+snakecase or camelcase to name a property. However, for log messages, drivers doing structured
+logging MUST use the exact names and casing specified for the names of fields included in messages.
+This will be easier for our support team since the names will be consistent across languages, and
+will simplify writing language-agnostic tooling to search through and parse structured logs.
+
 Test Plan
 =========
 Tests for logging behavior are defined in each corresponding specification. The  `unified test
