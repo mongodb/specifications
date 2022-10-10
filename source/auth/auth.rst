@@ -5,20 +5,8 @@
 Driver Authentication
 =====================
 
-<<<<<<< HEAD
-=======
-:Spec: 100
-:Spec Version: 1.12.0
-:Title: Driver Authentication
-:Author: Craig Wilson, David Golden
-:Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
->>>>>>> a1756248 (update changelog and version)
 :Status: Accepted
 :Minimum Server Version: 2.6
-<<<<<<< HEAD
-=======
-:Last Modified: 2022-07-27
->>>>>>> a1756248 (update changelog and version)
 
 .. contents::
 
@@ -1120,18 +1108,18 @@ be used in lieu of manual caching.
 
 If using manual caching, the "Expiration" field MUST be stored
 and used to determine when to clear the cache. Credentials are considered
-valid if they are more than five minutes away from expiring, to the reduce the
+valid if they are more than five minutes away from expiring; to the reduce the
 chance of expiration before they are validated by the server.
 
 If there are no current valid cached credentials, the driver MUST initiate a
 credential request. To avoid adding a bottleneck that would override the
 ``maxConnecting`` setting, the driver MUST not place a lock on making a
-request.  he cache MUST be written atomically.
+request.  The cache MUST be written atomically.
 
 If AWS authentication fails for any reason, the cache MUST be cleared.
 
 .. note::
-    Five minutes was chosen because based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
+    Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
 
 -------------------------
 Connection String Options
