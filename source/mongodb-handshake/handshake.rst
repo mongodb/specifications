@@ -2,16 +2,8 @@
 MongoDB Handshake
 =================
 
-:Spec Title: MongoDB Handshake
-:Spec Version: 1.3.1
-:Author: Hannes Magnusson
-:Kernel Advisory: Mark Benvenuto
-:Driver Advisory: Anna Herlihy, Justin Lee
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: 3.4
-:Last Modified: 2022-02-24
-
 
 .. contents::
 
@@ -509,12 +501,13 @@ Q&A
 * My language doesn't have ``uname``, but does instead provide its own variation of these values, is that OK?
    * Absolutely. As long as the value is identifiable it is fine. The exact method and values are undefined by this specification
 
-Changes
-=======
+Changelog
+=========
 
-* 2019-11-13: Added section about supporting wrapping libraries
-* 2020-02-12: Added section about speculative authentication
-* 2021-04-27: Updated to define ``hello`` and legacy hello
-* 2022-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
-* 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
-* 2022-02-24: Rename Versioned API to Stable API
+:2019-11-13: Added section about supporting wrapping libraries
+:2020-02-12: Added section about speculative authentication
+:2021-04-27: Updated to define ``hello`` and legacy hello
+:2022-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
+:2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
+:2022-02-24: Rename Versioned API to Stable API
+:2022-10-05: Remove spec front matter and reformat changelog.

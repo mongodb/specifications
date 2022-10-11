@@ -5,15 +5,8 @@
 Enumerating Indexes
 ===================
 
-:Spec: 106
-:Spec-ticket: SPEC-53
-:Title: Enumerating Indexes
-:Authors: Derick Rethans
-:Status: Draft
-:Type: Standards
-:Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2022-08-17
-:Version: 0.8.0
+:Status: Accepted
+:Minimum Server Version: 1.8
 
 .. contents::
 
@@ -407,37 +400,21 @@ The shell implements the first algorithm for falling back if the
 (`<https://github.com/mongodb/mongo/blob/f32ba54f971c045fb589fe4c3a37da77dc486cee/src/mongo/shell/collection.js#L942>`_).
 
 
-Version History
-===============
+Changelog
+=========
 
-0.8.0 - 2022-08-17
-    Clarify the behavior of ``comment`` on pre-4.4 servers.
-
-0.7.0 - 2022-02-01
-    Add ``comment`` option to ``listIndexes`` command.
-
-0.6.0 - 2022-01-19
-    Require that timeouts be applied per the client-side operations timeout spec.
-
-0.5.1 - 2021-04-06
-    Changed to secondaryOk.
-
-0.5.0 - 2020-01-14
-    MongoDB 4.4 no longer includes ``ns`` field in ``listIndexes`` responses.
-
-0.4.1 - 2018-04-05
-    Fix typo.
-
-0.4 - 2017-09-20
-    Allow more leniency for handling error code 26 (collection does not
-    exist).
-
-0.3 - 2015-01-14
-    Put preferred method name for listing indexes with a cursor as return
-    value.
-
-0.2
-    Update with the server change to return a cursor for ``listIndexes``.
-
-0.1
-    Initial draft
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-08-17: Clarify the behavior of ``comment`` on pre-4.4 servers.
+:2022-02-01: Add ``comment`` option to ``listIndexes`` command.
+:2022-01-19: Require that timeouts be applied per the client-side operations
+             timeout spec.
+:2021-04-06: Changed to secondaryOk.
+:2020-01-14: MongoDB 4.4 no longer includes ``ns`` field in ``listIndexes``
+             responses.
+:2018-04-05: Fix typo.
+:2017-09-20: Allow more leniency for handling error code 26 (collection does not
+             exist).
+:2015-01-14: Put preferred method name for listing indexes with a cursor as
+             return value.
+:2014-12-18: Update with the server change to return a cursor for
+             ``listIndexes``.

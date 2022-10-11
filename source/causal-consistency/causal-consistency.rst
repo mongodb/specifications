@@ -2,17 +2,8 @@
 Causal Consistency Specification
 ================================
 
-:Spec Title: Causal Consistency Specification (See the registry of specs)
-:Spec Version: 1.1
-:Author: Robert Stam
-:Spec Lead: A\. Jesse Jiryu Davis
-:Advisory Group: Jeremy Mikola, Jeff Yemin, Misha Tyulene, A. Jesse Jiryu Davis
-:Approver(s): A\. Jesse Jiryu Davis, Jeff Yemin, Bernie Hackett, David Golden, Matt Broadstone, Andy Schwerin, Kal Manassiev, Eliot
-:Informed: drivers@, Bryan Reinero, Christopher Hendel
-:Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
-:Type: Standards
-:Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2022-01-28
+:Status: Accepted
+:Minimum Server Version: 3.6
 
 .. contents::
 
@@ -516,14 +507,16 @@ Q&A
 Changelog
 =========
 
-- 2017-09-13: Renamed "causally consistent reads" to "causal consistency"
-- 2017-09-13: If no value is supplied for ``causallyConsistent`` assume true
-- 2017-09-28: Remove remaining references to collections being associated with sessions
-- 2017-09-28: Update spec to reflect that replica sets use $clusterTime also now
-- 2017-10-04: Added advanceOperationTime
-- 2017-10-05: How to handle default read concern
-- 2017-10-06: advanceOperationTime MUST NOT validate operationTime
-- 2017-11-17: Added link to ReadConcern spec which lists commands that support readConcern
-- 2021-06-26: Default value for causalConsistency is influenced by snapshot reads
-- 2022-01-22: Remove outdated prose test #10
-- 2022-01-28: Fix formatting for prose tests
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-01-28: Fix formatting for prose tests
+:2022-01-22: Remove outdated prose test #10
+:2021-06-26: Default value for causalConsistency is influenced by snapshot reads
+:2017-11-17: Added link to ReadConcern spec which lists commands that support readConcern
+:2017-10-06: advanceOperationTime MUST NOT validate operationTime
+:2017-10-05: How to handle default read concern
+:2017-10-04: Added advanceOperationTime
+:2017-09-28: Remove remaining references to collections being associated with
+             sessions. Update spec to reflect that replica sets use $clusterTime
+             also now.
+:2017-09-13: Renamed "causally consistent reads" to "causal consistency". If no
+             value is supplied for ``causallyConsistent`` assume true.

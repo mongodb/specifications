@@ -2,13 +2,8 @@
 Server Discovery And Monitoring -- Test Plan
 ============================================
 
-:Spec: 101
-:Title: Server Discovery And Monitoring
-:Author: A\. Jesse Jiryu Davis
-:Advisors: David Golden, Craig Wilson
-:Status: Draft
-:Type: Standards
-:Last Modified: June 21, 2021
+:Status: Accepted
+:Minimum Server Version: 2.4
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -173,7 +168,7 @@ Attempt a write to a collection.
 Outcome: Verify that the write succeeded or failed depending on existing
 driver behavior with respect to the starting topology.
 
-Monitors sleep at least minHeartbeatFreqencyMS between checks
+Monitors sleep at least minHeartbeatFrequencyMS between checks
 -------------------------------------------------------------
 
 This test will be used to ensure monitors sleep for an appropriate amount of

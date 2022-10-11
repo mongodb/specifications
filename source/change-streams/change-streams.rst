@@ -2,15 +2,8 @@
 Change Streams
 ==============
 
-:Title: Change Streams
-:Author: Matt Broadstone
-:Advisory Group: David Golden, A. Jesse Jiryu Davis
-:Approvers: Jeff Yemin, A. Jesse Jiryu Davis, Bernie Hackett, David Golden, Eliot
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-08-22
-:Version: 1.18
 
 .. contents::
 
@@ -1099,4 +1092,6 @@ Changelog
 | 2022-08-17 | Support `disambiguatedPaths` in `UpdateDescription`.       |
 +------------+------------------------------------------------------------+
 | 2022-08-22 | Added ``clusterTime`` to ``ChangeStreamDocument``.         |
++------------+------------------------------------------------------------+
+| 2022-10-05 | Remove spec front matter.                                  |
 +------------+------------------------------------------------------------+

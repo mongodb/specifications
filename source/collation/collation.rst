@@ -5,15 +5,8 @@
 Collation
 =========
 
-:Spec: 79
-:Title: Collation
-:Authors: Emily Stolfo
-:Advisory Group: Derick Rethans, Craig Wilson
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: 1.8
-:Last Modified: May 15, 2017
-:Version: 1.0
 
 .. contents::
 
@@ -295,8 +288,9 @@ A: A collection with a default collation can be created using the create helper
 and by providing a collation option.
 
 
-Version History
-===============
+Changelog
+=========
 
-- 2017-05-15: minor markup fixes in API section.
-- 2016-08-31: version 1.0.
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2017-05-15: Minor markup fixes in API section.
+:2016-08-31: Initial version.

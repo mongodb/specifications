@@ -2,15 +2,8 @@
 Retryable Writes
 ================
 
-:Spec Title: Retryable Writes
-:Spec Version: 1.8.1
-:Author: Jeremy Mikola
-:Lead: \A. Jesse Jiryu Davis
-:Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-08-30
 
 .. contents::
 
@@ -803,75 +796,55 @@ command, which only happens when the retryWrites option is true on the client.
 For the driver to add the label even if retryWrites is not true would be
 inconsistent with the server and potentially confusing to developers.
 
-Changes
-=======
+Changelog
+=========
 
-2022-01-25: Note that drivers should retry handshake network failures.
-
-2021-11-02: Clarify that error labels are only specified in a top-level field of
-an error.
-
-2021-04-26: Replaced deprecated terminology
-
-2021-03-24: Require that PoolClearedErrors be retried
-
-2020-09-01: State the the driver should only add the RetryableWriteError label
-to network errors when connected to a 4.4+ server.
-
-2020-02-25: State that the driver should only add the RetryableWriteError label
-when retryWrites is on, and make it clear that mongos will sometimes perform
-internal retries and not return the RetryableWriteError label.
-
-2020-02-10: Remove redundant content in Tests section.
-
-2020-01-14: Add ExceededTimeLimit to the list of error codes that should
-receive a RetryableWriteError label.
-
-2019-10-21: Change the definition of "retryable write" to be based on the
-RetryableWriteError label. Stop requiring drivers to parse errmsg to
-categorize retryable errors for pre-4.4 servers.
-
-2019-07-30: Drivers must rewrite error messages for error code 20 when
-txnNumber is not supported by the storage engine.
-
-2019-06-07: Mention $merge stage for aggregate alongside $out
-
-2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
-
-2019-03-06: retryWrites now defaults to true.
-
-2019-03-05: Prohibit resending wire protocol messages if doing so would violate
-rules for gossipping the cluster time.
-
-2018-06-07: WriteConcernFailed is not a retryable error code.
-
-2018-04-25: Evaluate retryable eligibility of bulkWrite() commands individually.
-
-2018-03-14: Clarify that retryable writes may fail with a FCV 3.4 shard.
-
-2017-11-02: Drivers should not raise errors if selected server does not support
-retryable writes and instead fall back to non-retryable behavior. In addition to
-wire protocol version, drivers may check for ``logicalSessionTimeoutMinutes`` to
-determine if a server supports sessions and retryable writes.
-
-2017-10-26: Errors when retrying may be raised instead of the original error
-provided they allow the user to infer that an attempt was made.
-
-2017-10-23: Drivers must document operations that support retryability.
-
-2017-10-23: Raise the original retryable error if server selection or wire
-protocol checks fail during the retry attempt. Encourage drivers to provide
-intermediary write results after an unrecoverable failure during a bulk write.
-
-2017-10-18: Standalone servers do not support retryable writes.
-
-2017-10-18: Also retry writes after a "not writable primary" error.
-
-2017-10-08: Renamed ``txnNum`` to ``txnNumber`` and noted that it must be a
-64-bit integer (BSON type 0x12).
-
-2017-08-25: Drivers will maintain an allow list so that only supported write
-operations may be retried. Transaction IDs will not be included in unsupported
-write commands, irrespective of the ``retryWrites`` option.
-
-2017-08-18: ``retryWrites`` is now a MongoClient option.
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-01-25: Note that drivers should retry handshake network failures.
+:2021-11-02: Clarify that error labels are only specified in a top-level field
+             of an error.
+:2021-04-26: Replaced deprecated terminology
+:2021-03-24: Require that PoolClearedErrors be retried
+:2020-09-01: State the the driver should only add the RetryableWriteError label
+             to network errors when connected to a 4.4+ server.
+:2020-02-25: State that the driver should only add the RetryableWriteError label
+             when retryWrites is on, and make it clear that mongos will
+             sometimes perform internal retries and not return the
+             RetryableWriteError label.
+:2020-02-10: Remove redundant content in Tests section.
+:2020-01-14: Add ExceededTimeLimit to the list of error codes that should
+             receive a RetryableWriteError label.
+:2019-10-21: Change the definition of "retryable write" to be based on the
+             RetryableWriteError label. Stop requiring drivers to parse errmsg
+             to categorize retryable errors for pre-4.4 servers.
+:2019-07-30: Drivers must rewrite error messages for error code 20 when
+             txnNumber is not supported by the storage engine.
+:2019-06-07: Mention $merge stage for aggregate alongside $out
+:2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
+:2019-03-06: retryWrites now defaults to true.
+:2019-03-05: Prohibit resending wire protocol messages if doing so would violate
+             rules for gossipping the cluster time.
+:2018-06-07: WriteConcernFailed is not a retryable error code.
+:2018-04-25: Evaluate retryable eligibility of bulkWrite() commands individually.
+:2018-03-14: Clarify that retryable writes may fail with a FCV 3.4 shard.
+:2017-11-02: Drivers should not raise errors if selected server does not support
+             retryable writes and instead fall back to non-retryable behavior.
+             In addition to wire protocol version, drivers may check for
+             ``logicalSessionTimeoutMinutes`` to determine if a server supports
+             sessions and retryable writes.
+:2017-10-26: Errors when retrying may be raised instead of the original error
+             provided they allow the user to infer that an attempt was made.
+:2017-10-23: Drivers must document operations that support retryability.
+:2017-10-23: Raise the original retryable error if server selection or wire
+             protocol checks fail during the retry attempt. Encourage drivers to
+             provide intermediary write results after an unrecoverable failure
+             during a bulk write.
+:2017-10-18: Standalone servers do not support retryable writes.
+:2017-10-18: Also retry writes after a "not writable primary" error.
+:2017-10-08: Renamed ``txnNum`` to ``txnNumber`` and noted that it must be a
+             64-bit integer (BSON type 0x12).
+:2017-08-25: Drivers will maintain an allow list so that only supported write
+             operations may be retried. Transaction IDs will not be included in
+             unsupported write commands, irrespective of the ``retryWrites``
+             option.
+:2017-08-18: ``retryWrites`` is now a MongoClient option.

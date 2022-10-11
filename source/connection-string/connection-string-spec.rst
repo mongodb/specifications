@@ -5,14 +5,8 @@
 Connection String Spec
 ======================
 
-:Spec: 104
-:Title: Connection String Spec
-:Authors: Ross Lawley
-:Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
-:Status: Approved
-:Type: Standards
-:Last Modified: 2019-04-26
-:Version: 1.5.0
+:Status: Accepted
+:Minimum Server Version: N/A
 
 .. contents::
 
@@ -375,20 +369,22 @@ Q: Why must the auth database be URL decoded by the parser?
 Q: How should the space character be encoded in a connection string?
   Space characters SHOULD be encoded as ``%20`` rather than ``+``, this will be portable across all implementations. Implementations MAY support decoding ``+`` into a space, as many languages treat strings as ``x-www-form-urlencoded`` data by default.
 
--------
-Changes
--------
+Changelog
+=========
 
-- 2016-07-22: In Port section, clarify that zero is not an acceptable port.
-- 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
-- 2017-06-10: In Userinfo section, require username and password to be fully URI
-  encoded, not just "%", "@", and ":". In Auth Database, list the prohibited
-  characters. In Reference Implementation, split at the first "/", not the last.
-- 2018-01-09: Clarified that space characters should be encoded to ``%20``.
-- 2018-06-04: Revised Userinfo section to provide an explicit list of allowed
-  characters and clarify rules for exceptions.
-- 2019-02-04: In Repeated Keys section, clarified that the URI options spec may
-  override the repeated key behavior described here for certain options.
-- 2019-03-04: Require drivers to document option precedence rules
-- 2019-04-26: Database name in URI alone does not trigger authentication
-- 2020-01-21: Clarified how empty values in a connection string are parsed.
+:2016-07-22: In Port section, clarify that zero is not an acceptable port.
+:2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
+:2017-06-10: In Userinfo section, require username and password to be fully URI
+             encoded, not just "%", "@", and ":". In Auth Database, list the
+             prohibited characters. In Reference Implementation, split at the
+             first "/", not the last.
+:2018-01-09: Clarified that space characters should be encoded to ``%20``.
+:2018-06-04: Revised Userinfo section to provide an explicit list of allowed
+             characters and clarify rules for exceptions.
+:2019-02-04: In Repeated Keys section, clarified that the URI options spec may
+             override the repeated key behavior described here for certain
+             options.
+:2019-03-04: Require drivers to document option precedence rules
+:2019-04-26: Database name in URI alone does not trigger authentication
+:2020-01-21: Clarified how empty values in a connection string are parsed.
+:2022-10-05: Remove spec front matter and reformat changelog.

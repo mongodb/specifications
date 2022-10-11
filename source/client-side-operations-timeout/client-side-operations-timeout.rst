@@ -2,16 +2,8 @@
 Client Side Operations Timeout
 ==============================
 
-:Title: Client Side Operations Timeout
-:Author: Divjot Arora
-:Spec Lead: Jeff Yemin
-:Approvers: Jeff Yemin, Clyde Bazile
-:Advisory Group: Bernie Hackett, Jason Carey, Will Shulman
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-19
-:Version: 1.0.0
 
 .. contents::
 
@@ -926,4 +918,5 @@ for each database operation. This would mimic using
 Changelog
 =========
 
-:2021-01-19: Initial version.
+:2022-10-05: Remove spec front matter.
+:2022-01-19: Initial version.

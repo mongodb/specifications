@@ -2,17 +2,8 @@
 Driver Transactions Specification
 =================================
 
-:Spec Title: Driver Transactions Specification
-:Spec Version: 1.8.0
-:Author: Shane Harvey
-:Spec Lead: A\. Jesse Jiryu Davis
-:Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
-:Approver(s): A\. Jesse Jiryu Davis, Andrew Morrow, Bernie Hackett, Dan Pasette, Jeff Yemin, Robert Stam, Spencer Brody, Tess Avitabile
-:Informed: drivers@
-:Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
-:Type: Standards
-:Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2022-01-25
+:Status: Accepted
+:Minimum Server Version: 4.0
 
 .. contents::
 
@@ -1416,8 +1407,10 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2022-10-05: Remove spec front matter and reformat changelog
 :2022-01-25: Mention the additional case of a retryable handshake error
 :2022-01-19: Deprecate maxCommitTimeMS in favor of timeoutMS.
+:2021-04-12: Adding in behaviour for load balancer mode.
 :2020-04-07: Clarify that all abortTransaction attempts should unpin the session,
              even if the command is not executed.
 :2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.
@@ -1436,4 +1429,3 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 :2018-06-07: The count command is not supported within transactions.
 :2018-06-14: Any retryable writes error raised by commitTransaction must be
              labelled "UnknownTransactionCommitResult".
-:2021-04-12: Adding in behaviour for load balancer mode.

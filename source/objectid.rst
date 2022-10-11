@@ -5,17 +5,8 @@
 ObjectID format
 ===============
 
-:Spec-ticket: WRITING-2823
-:Title: ObjectID
-:Authors: Derick Rethans
-:Status: Draft
-:Type: Standards
-:Last Modified: 2019-01-14
-:Version: 0.4
-:Spec Lead: n/a
-:Advisory Group: n/a
-:Approver(s): Andy Schwerin, Bernie Hackett, Eliot Horowitz, Jeff Yemin, Jeremy Mikola, Matt Broadstone
-
+:Status: Accepted
+:Minimum Server Version: N/A
 
 .. contents::
 
@@ -180,16 +171,12 @@ Currently there is no full reference implementation yet.
 Changelog
 =========
 
-2019-01-14 — Version 0.4
-	Clarify that the random numbers don't need to be cryptographically secure.
-	Add a test to test that the unique value is different in forked processes.
-
-2018-10-11 — Version 0.3
-	Clarify that the *Timestamp* and *Counter* fields are big endian, and add
-	the reason why.
-
-2018-07-02 — Version 0.2
-	Replaced Machine ID and Process ID fields with a single 5-byte unique value
-
-2018-05-22 — Version 0.1
-	Initial Release
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2019-01-14: Clarify that the random numbers don't need to be cryptographically
+             secure. Add a test to test that the unique value is different in
+             forked processes.
+:2018-10-11: Clarify that the *Timestamp* and *Counter* fields are big endian,
+             and add the reason why.
+:2018-07-02: Replaced Machine ID and Process ID fields with a single 5-byte
+             unique value
+:2018-05-22: Initial Release
