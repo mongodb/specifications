@@ -1,6 +1,6 @@
 {
   "description": "entity-client-observeLogMessages-type",
-  "schemaVersion": "1.11",
+  "schemaVersion": "1.12",
   "createEntities": [
     {
       "client": {

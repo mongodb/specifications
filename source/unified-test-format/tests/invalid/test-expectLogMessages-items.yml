@@ -1,6 +1,6 @@
 description: "test-expectLogMessages-items"
 
-schemaVersion: "1.11"
+schemaVersion: "1.12"
 
 tests:
   - description: "foo"
