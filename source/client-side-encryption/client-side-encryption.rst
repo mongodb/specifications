@@ -640,7 +640,7 @@ The below steps should be taken:
 
 5. Add HTTP headers ``Metadata: true`` and ``Accept: application/json`` to
    `Req`.
-6. Issue `Req` to the Azure IMDS server ``168.254.169.254:80``. Let `Resp` be
+6. Issue `Req` to the Azure IMDS server ``169.254.169.254:80``. Let `Resp` be
    the response from the server.
 7.  If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the
     HTTP response body of `Resp` encodes information about the error that
