@@ -639,7 +639,7 @@ The below steps should be taken:
 1. Let `U` be a new URL, initialized from the URL string
    :ts:`"http://169.254.169.254/metadata/identity/oauth2/token"`
 2. Add a query parameter ``api-version=2018-02-01`` to `U`.
-3. Add a query parameter ``resource=http://vault.azure.com/`` to `U`.
+3. Add a query parameter ``resource=https://vault.azure.net/`` to `U`.
 4. Prepare an HTTP GET request `Req` based on `U`.
 
    .. note:: All query parameters on `U` should be appropriately percent-encoded
