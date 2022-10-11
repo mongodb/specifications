@@ -1414,10 +1414,15 @@ The structure of each object is as follows:
   This value is often used in tandem with ``failureIsRedacted``.
 
 - ``failureIsRedacted``: Optional boolean. This field MUST only be specified
-  when ``hasFailure`` is present and its value is ``true``. When specified,
+  when ``hasFailure`` is present and its value is ``true``. When ``true``,
   the test runner MUST assert that the failure has been redacted according to
   the rules defined for error redaction in the `command logging and monitoring
   specification <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__.
+  When ``false``, the test runner MUST assert that the failure has NOT been
+  redacted.
+  The exact form of these assertions and how thorough they are will vary based
+  on the driver's chosen error representation in logs; e.g. drivers that use
+  strings may only be able to assert on the presence/absence of substrings.
 
 - ``data``: Required object. Contains key-value pairs that are expected to be
   attached to the log message. Test runners MUST assert that the actual data
