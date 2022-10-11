@@ -1372,13 +1372,16 @@ client while executing `operations <test_operations_>`_.
 
 The structure of each object is as follows:
 
-- ``client``: Required string. Client entity on which the events are expected
+- ``client``: Required string. Client entity for which the messages are expected
   to be observed. See `commonOptions_client`_.
 
 - ``messages``: Required array of `expectedLogMessage`_ objects. List of 
   messages, which are expected to be observed (in this order) on the corresponding
   client while executing `operations`_. If the array is empty, the test runner
-  MUST assert that no messages were observed on the client.
+  MUST assert that no messages were observed on the client. The driver MUST assert
+  that the messages produced are an exact match, i.e. that the expected and actual
+  message counts are the same and that there are no extra messages emitted by the
+  client during the test run.
 
 expectedLogMessage
 ~~~~~~~~~~~~~~~~~~
