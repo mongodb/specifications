@@ -149,10 +149,28 @@ the architecture needs of each driver.
 Security
 --------
 
-Some commands and replies will contain sensitive data and in order to not risk the leaking of this
-data to external sources or logs their commands AND replies AND corresponding error messages/exceptions 
-MUST be redacted from the events and log messages. The value MUST be replaced with an empty BSON document.
-The list is as follows:
+Some commands and replies will contain sensitive data relating to authentication.
+
+In order to not risk leaking this data to external sources or logs, for these commands:
+
+- The "command" field in ``CommandStartedEvent`` and "command started" log messages MUST 
+  be replaced with an empty BSON document.
+- The "reply" field in ``CommandSucceededEvent`` and "command succeeded" log messages MUST 
+  be replaced with an empty BSON document.
+- If the error is a server-side error, the "failure" field in ``CommandFailedEvent`` and
+  "command failed" log messages MUST have all fields besides the following redacted:
+
+  - ``code``
+  - ``codeName``
+  - ``errorLabels``
+
+  The exact implementation of redaction is flexible depending on the type the driver uses
+  to represent a failure in these events and log messages. For example, a driver could choose
+  to set all properties besides these on an error object to null. Alternatively, a driver
+  that uses strings to represent failures could replace relevant portions of the string with
+  "REDACTED".
+
+The list of sensitive commands is as follows:
 
 .. list-table::
    :header-rows: 1

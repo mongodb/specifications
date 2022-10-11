@@ -1408,13 +1408,16 @@ The structure of each object is as follows:
 
 - ``hasFailure``: Optional boolean. When this field is set to ``true``, 
   the test runner MUST assert that the log message has a ``failure`` value
-  in its attached data, and that the failure has not been redacted in any
-  way. When this field is set to ``false``, the test runner MUST assert
-  that the log message either has no ``failure`` value at all or that it
-  has a redacted failure, e.g. an empty string or object. 
-  The exact form of those assertions will vary based on the driver's chosen
-  representations for failures and redacted failures in log messages.
+  in its attached data. Then this field is set to ``false``, the test runner
+  MUST assert has no ``failure`` value in its attached data.
   Currently, this assertion is only relevant for "command failed" log messages.
+  This value is often used in tandem with ``failureIsRedacted``.
+
+- ``failureIsRedacted``: Optional boolean. This field MUST only be specified
+  when ``hasFailure`` is present and its value is ``true``. When specified,
+  the test runner MUST assert that the failure has been redacted according to
+  the rules defined for error redaction in the `command logging and monitoring
+  specification <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__.
 
 - ``data``: Required object. Contains key-value pairs that are expected to be
   attached to the log message. Test runners MUST assert that the actual data

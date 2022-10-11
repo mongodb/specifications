@@ -1,0 +1,30 @@
+{
+  "description": "expectedLogMessage-failureIsRedacted-requires-hasFailure",
+  "schemaVersion": "1.12",
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "foo",
+      "operations": [],
+      "expectLogMessages": [
+        {
+          "client": "client0",
+          "messages": [
+            {
+              "level": "debug",
+              "component": "command",
+              "failureIsRedacted": true,
+              "data": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

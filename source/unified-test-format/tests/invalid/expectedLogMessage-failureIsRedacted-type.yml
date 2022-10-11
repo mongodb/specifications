@@ -1,0 +1,19 @@
+description: "expectedLogMessage-failureIsRedacted-type"
+
+schemaVersion: "1.12"
+
+createEntities:
+  - client:
+      id: &client0 "client0"
+
+tests:
+  - description: "foo"
+    operations: []
+    expectLogMessages:
+      - client: *client0
+        messages:
+          - level: debug
+            component: command
+            hasFailure: true
+            failureIsRedacted: 0
+            data: {}
