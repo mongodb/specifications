@@ -1405,20 +1405,18 @@ The structure of each object is as follows:
    corresponding language-specific component name. Test runners MUST assert
    that the actual component matches this value.
 
-- ``hasFailure``: Optional boolean. When this field is set to ``true``, 
-  the test runner MUST assert that the log message has a ``failure`` value
-  in its attached data. Then this field is set to ``false``, the test runner
-  MUST assert has no ``failure`` value in its attached data.
-  Currently, this assertion is only relevant for "command failed" log messages.
-  This value is often used in tandem with ``failureIsRedacted``.
+- ``failureIsRedacted``: Optional boolean. This field SHOULD only be specified
+  when ``data`` contains ``{ failure: { $$exists: true }}``; the test runner
+  MUST report an error if this is not the case.
 
-- ``failureIsRedacted``: Optional boolean. This field MUST only be specified
-  when ``hasFailure`` is present and its value is ``true``. When ``true``,
+  When ``hasFailure`` is present and its value is ``true``,
   the test runner MUST assert that the failure has been redacted according to
   the rules defined for error redaction in the `command logging and monitoring
   specification <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__.
+
   When ``false``, the test runner MUST assert that the failure has NOT been
   redacted.
+  
   The exact form of these assertions and how thorough they are will vary based
   on the driver's chosen error representation in logs; e.g. drivers that use
   strings may only be able to assert on the presence/absence of substrings.
@@ -1427,9 +1425,11 @@ The structure of each object is as follows:
   attached to the log message. Test runners MUST assert that the actual data
   contained in the log message matches the expected data, and MUST treat the
   log message data as a root-level document.
+
   A suggested implementation approach is to decode ``data`` as a BSON document
   and serialize the data attached to each log message to a BSON document, and
   match those documents.
+
   Note that for drivers that do not implement structured logging, this requires
   designing logging internals such that data is first gathered in a structured
   form (e.g. a document or hashmap) which can be intercepted for testing purposes.

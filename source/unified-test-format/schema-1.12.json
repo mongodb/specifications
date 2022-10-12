@@ -561,26 +561,8 @@
             "level": { "$ref": "#/definitions/logSeverityLevel" },
             "component": { "$ref": "#/definitions/logComponent" },
             "data": { "type": "object" },
-            "hasFailure": {"type": "boolean" },
             "failureIsRedacted": { "type": "boolean" }
-        },
-        "anyOf": [
-          { "allOf": [
-              { "not": { "required": ["hasFailure"] } },
-              { "not": { "required": ["failureIsRedacted"] } }
-            ]
-          },
-          { "allOf": [
-              { "required": ["hasFailure"] },
-              { "not": { "required": ["failureIsRedacted"] } }
-            ]
-          },
-          { "allOf": [
-              { "properties": { "hasFailure": { "const": true } } },
-              { "required": ["hasFailure", "failureIsRedacted"] }
-            ]
-          }
-        ]
+        }
       },
 
       "collectionOrDatabaseOptions": {

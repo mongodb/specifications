@@ -19,7 +19,6 @@
             {
               "level": "debug",
               "component": "command",
-              "hasFailure": true,
               "failureIsRedacted": 0,
               "data": {}
             }

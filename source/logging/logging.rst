@@ -365,7 +365,7 @@ Truncation of large documents
     This is more of a necessity for the server where the entire log message is JSON, but we don't
     know if parsing the documents included in log messages is something that users will actually
     need to do. Furthermore, any users who want parseable documents have an escape hatch to do so:
-    they can set the max document length to a very large value. If we hear of use cases in the Future
+    they can set the max document length to a very large value. If we hear of use cases in the future
     for parsing the documents in log messages, we could make an additive change to this specification
     to permit a smarter truncation algorithm.
 
