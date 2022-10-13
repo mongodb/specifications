@@ -57,7 +57,7 @@ bulk encoding performance.
        }
 
 #. Create a new MongoClient (referred to as ``client``) with ``timeoutMS=2000``.
-#. Using ``client``, insert 100,001 empty documents in a single ``insertMany`` call.
+#. Using ``client``, insert 50 1-megabyte documents in a single ``insertMany`` call.
 
    - Expect this to fail with a timeout error.
 
@@ -68,7 +68,7 @@ bulk encoding performance.
 
 This test MUST only be run against enterprise server versions 4.2 and higher.
 
-#. Launch a mongoryptd process on 23000.
+#. Launch a mongocryptd process on 23000.
 #. Create a MongoClient (referred to as ``client``) using the URI ``mongodb://localhost:23000/?timeoutMS=1000``.
 #. Using ``client``, execute the ``{ ping: 1 }`` command against the ``admin`` database.
 #. Verify via command monitoring that the ``ping`` command sent did not contain a ``maxTimeMS`` field.
