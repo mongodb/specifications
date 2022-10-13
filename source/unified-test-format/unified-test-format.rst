@@ -1406,16 +1406,16 @@ The structure of each object is as follows:
    that the actual component matches this value.
 
 - ``failureIsRedacted``: Optional boolean. This field SHOULD only be specified
-  when ``data`` contains ``{ failure: { $$exists: true }}``; the test runner
-  MUST report an error if this is not the case.
+  when the log message data is expected to contain a ``failure`` value.
 
-  When ``hasFailure`` is present and its value is ``true``,
-  the test runner MUST assert that the failure has been redacted according to
-  the rules defined for error redaction in the `command logging and monitoring
-  specification <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__.
+  When ``failureIsRedacted`` is present and its value is ``true``,
+  the test runner MUST assert that a failure is present and that the failure 
+  has been redacted according to the rules defined for error redaction in the 
+  `command logging and monitoring specification 
+  <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__.
 
-  When ``false``, the test runner MUST assert that the failure has NOT been
-  redacted.
+  When ``false``, the test runner MUST assert that a failure is present and that
+  the failure has NOT been redacted.
   
   The exact form of these assertions and how thorough they are will vary based
   on the driver's chosen error representation in logs; e.g. drivers that use
