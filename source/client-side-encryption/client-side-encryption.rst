@@ -646,19 +646,19 @@ The below steps should be taken:
 
 5. Add HTTP headers ``Metadata: true`` and ``Accept: application/json`` to
    `Req`.
-6. Issue `Req` to the Azure IMDS server ``168.254.169.254:80``. Let `Resp` be
+6. Issue `Req` to the Azure IMDS server ``169.254.169.254:80``. Let `Resp` be
    the response from the server. If the HTTP response is not completely received
-   within three seconds, consider the request to have timed out, and return an
+   within ten seconds, consider the request to have timed out, and return an
    error instead of an access token.
 7. If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the HTTP
    response body of `Resp` encodes information about the error that occurred.
-   Return an error instead of an access token.
+   Return an error including the HTTP response body instead of an access token.
 8. Otherwise, let `J` be the JSON document encoded in the HTTP response body of
    `Resp`.
 9. The result access token `T` is given as the ``access_token`` string property
    of `J`. Return `T` as the resulting access token.
-10. The resulting "expires in" duration `d_{exp}` is a count of seconds given as an
-    ASCII-encoded integer string ``expires_in`` property of `J`.
+10. The resulting "expires in" duration `d_{exp}` is a count of seconds given as
+    an ASCII-encoded integer string ``expires_in`` property of `J`.
 
 .. note::
 

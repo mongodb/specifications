@@ -2314,7 +2314,7 @@ halt the application waiting on a peer to communicate.
 Set ``X-MongoDB-HTTP-TestParams`` to ``case=slow``.
 
 The HTTP response from the ``fake_azure`` server will take at least 1000 seconds
-to complete. The client should report a timeout within a few seconds.
+to complete. The request should fail with a timeout.
 
 
 Case 7: Large Response
