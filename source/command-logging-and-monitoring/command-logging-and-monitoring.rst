@@ -1,9 +1,9 @@
 .. role:: javascript(code)
   :language: javascript
 
-==================
-Command Monitoring
-==================
+==============================
+Command Logging and Monitoring
+==============================
 
 :Status: Accepted
 :Minimum Server Version: 2.4
@@ -15,7 +15,8 @@ Command Monitoring
 Specification
 =============
 
-The performance monitoring specification defines a set of behaviour in the drivers for providing runtime information about commands to any 3rd party APM library as well internal driver use, such as logging.
+The command logging and monitoring specification defines a set of behaviour in the drivers for providing runtime information about commands in log messages as well as in events which users
+can consume programmatically, either directly or by integrating with third-party APM libraries.
 
 -----------
 Definitions
@@ -43,22 +44,17 @@ Documentation
 The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
 
 
-Operations
-----------
+Messages and Events
+-------------------
 
-All drivers MUST implement the API. Implementation details are noted in the comments when a specific implementation is required. Within each API, all methods are REQUIRED unless noted otherwise in the comments.
+All drivers MUST implement the specified event types as well as log messages. 
 
-
-Operation Parameters
---------------------
-
-All drivers MUST include the specified parameters in each operation, with the exception of the options parameter which is OPTIONAL.
-
+Implementation details are noted in the comments when a specific implementation is required. Within each event and log message, all properties are REQUIRED unless noted otherwise.
 
 Naming
 ------
 
-All drivers MUST name operations, parameters and topic names as defined in the following sections. Exceptions to this rule are noted in the appropriate section. Class and interface names may vary according to the driver and language best practices.
+All drivers MUST name types, properties, and log message values as defined in the following sections. Exceptions to this rule are noted in the appropriate section. Class and interface names may vary according to the driver and language best practices.
 
 
 Publishing & Subscribing
@@ -66,18 +62,22 @@ Publishing & Subscribing
 
 The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
 
+Similarly, as described in the `logging specification <../logging/logging.rst#implementation-requirements>`_ the driver SHOULD emit log messages in a manner that is standard for the language.
+
 
 Guarantees
 ----------
 
-The driver MUST guarantee that every ``CommandStartedEvent`` has either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``.
+The driver MUST guarantee that every ``CommandStartedEvent`` has either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``, and that every "command started" log message has either a
+correlating "command succeeded" log message or "command failed" log message.
 
-The driver MUST guarantee that the ``requestId`` of the ``CommandStartedEvent`` and the corresponding ``CommandSucceededEvent`` or ``CommandFailedEvent`` is the same.
+The driver MUST guarantee that the ``requestId`` of the ``CommandStartedEvent`` and the corresponding ``CommandSucceededEvent`` or ``CommandFailedEvent`` is the same, and that the ``requestId`` of
+the "command started" log message and the corresponding "command succeeded" or "command failed" log message is the same.
 
 Unacknowledged/Acknowledged Writes
 ----------------------------------
 
- Unacknowledged writes must provide a ``CommandSucceededEvent`` with a ``{ ok: 1 }`` reply.
+ Unacknowledged writes must provide a ``CommandSucceededEvent`` and a "command succeeded" log message with a ``{ ok: 1 }`` reply.
 
 A non-default write concern MUST be included in the published command. The default write concern is not required to be included.
 
@@ -85,28 +85,28 @@ Succeeded or Failed
 -------------------
 
 Commands that executed on the server and return a status of ``{ ok: 1.0 }`` are considered
-successful commands and MUST fire a ``CommandSucceededEvent``. Commands that have write errors
-are included since the actual command did succeed, only writes failed.
-
-``CommandSucceededEvent`` and ``CommandFailedEvent`` events MUST have a ``requestId`` that matches their
-originating ``CommandStartedEvent``.
+successful commands and MUST generate a ``CommandSucceededEvent`` and "command succeeded" log message. 
+Commands that have write errors are included since the actual command did succeed, only writes failed.
 
 Error Handling
 --------------
 
-If an exception occurs while sending the operation to the server, the driver MUST generate a ``CommandFailedEvent`` with the exception or message and re-raise the exception.
+If an exception occurs while sending the operation to the server, the driver MUST generate a ``CommandFailedEvent`` and "command failed" log message with the exception or message, and re-raise the exception.
 
 Bulk Writes
 -----------
 
-This specification defines the monitoring of individual commands and in that respect MUST generate
-an event for each command a bulk write executes. Each of these commands, however, must be linked
+This specification defines the monitoring and logging of individual commands and in that respect MUST generate
+events and log messages for each command a bulk write executes. Each of these commands, however, must be linked
 together via the same ``operationId``.
 
 Implementation Notes
 --------------------
 
-When a driver sends an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in CommandStartedEvent.command. The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver sends an "update" command using OP_MSG, and sends a document sequence as a separate section of payload type 1 with identifier "updates", the driver MUST include the documents as a BSON array in CommandStartedEvent.command with field name "updates".
+When a driver sends an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in ``CommandStartedEvent.command``.
+The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver sends an ``update`` command using OP_MSG, and sends a
+document sequence as a separate section of payload type 1 with identifier ``updates``, the driver MUST include the documents as a BSON array in
+``CommandStartedEvent.command`` with field name ``updates``.
 
 See "Why are document sequences included as BSON arrays?" in the `rationale`_.
 
@@ -148,9 +148,28 @@ the architecture needs of each driver.
 Security
 --------
 
-Some commands and replies will contain sensitive data and in order to not risk the leaking of this
-data to external sources or logs their commands AND replies MUST be redacted from the events. The
-value MUST be replaced with an empty BSON document. The list is as follows:
+Some commands and replies will contain sensitive data relating to authentication.
+
+In order to not risk leaking this data to external sources or logs, for these commands:
+
+- The "command" field in ``CommandStartedEvent`` and "command started" log messages MUST 
+  be replaced with an empty BSON document.
+- The "reply" field in ``CommandSucceededEvent`` and "command succeeded" log messages MUST 
+  be replaced with an empty BSON document.
+- If the error is a server-side error, the "failure" field in ``CommandFailedEvent`` and
+  "command failed" log messages MUST have all fields besides the following redacted:
+
+  - ``code``
+  - ``codeName``
+  - ``errorLabels``
+
+  The exact implementation of redaction is flexible depending on the type the driver uses
+  to represent a failure in these events and log messages. For example, a driver could choose
+  to set all properties besides these on an error object to null. Alternatively, a driver
+  that uses strings to represent failures could replace relevant portions of the string with
+  "REDACTED".
+
+The list of sensitive commands is as follows:
 
 .. list-table::
    :header-rows: 1
@@ -172,9 +191,9 @@ See the `MongoDB Handshake spec <https://github.com/mongodb/specifications/blob/
 for more information on ``hello`` and legacy hello. Note that legacy hello has two different letter casings that must be taken
 into account. See the previously mentioned MongoDB Handshake spec for details.
 
----
-API
----
+----------
+Events API
+----------
 
 See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
 
@@ -340,42 +359,168 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     serviceId: Optional<ObjectId>;
   }
 
+------------
+Log Messages
+------------
+Please refer to the `logging specification <../logging/logging.rst>`_ for details on logging implementations in general, including log levels, log
+components, and structured versus unstructured logging.
 
---------
-Examples
---------
+Drivers MUST support logging of command information via the following types of log messages. These messages MUST be logged at ``Debug`` level and use
+the ``command`` log component.
 
-A Ruby subscriber to a query series and how it could handle it with respect to logging.
+The log messages are intended to match the information contained in the events above. Drivers MAY implement command logging
+support via an event subscriber if it is convenient to do so.
 
-Ruby:
+The types used in the structured message definitions below are demonstrative, and drivers MAY use similar types instead so long as the information
+is present (e.g. a double instead of an integer, or a string instead of an integer if the structured logging framework does not support numeric types.)
 
-.. code:: ruby
+Drivers MUST not emit command log messages for commands issued as part of the handshake with the server, or heartbeat commands issued by server monitors. 
 
-  class LoggingSubscriber
-    def logger
-      Logger.new(STDERR)
-    end
+Common Fields
+-------------
+The following key-value pairs MUST be included in all command messages:
 
-    def started(event)
-      logger.info("COMMAND.#{event.command_name} #{event.address} STARTED: #{event.command.inspect}")
-    end
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
 
-    def succeeded(event)
-      logger.info("COMMAND.#{event.command_name} #{event.address} COMPLETED: #{event.reply.inspect} (#{event.duration}s)")
-    end
+   * - Key
+     - Suggested Type
+     - Value
 
-    def failed(event)
-      logger.info("COMMAND.#{event.command_name} #{event.address} FAILED: #{event.message.inspect}: #{event.failure.inspect} (#{event.duration}s)")
-    end
-  end
+   * - commandName
+     - String
+     - The command name.
 
-  subscriber = LoggingSubscriber.new
-  Mongo::Monitoring::Global.subscribe(Mongo::Monitoring::COMMAND, subscriber)
+   * - requestId
+     - Int
+     - The driver-generated request ID.
+  
+   * - operationId
+     - Int
+     - The driver-generated operation ID. Optional; only present if the driver generated operation IDs and this command has one. 
 
-  # When the subscriber handles the events the log could show:
-  # COMMAND.query 127.0.0.1:27017 STARTED: { $query: { name: 'testing' }}
-  # COMMAND.query 127.0.0.1:27017 COMPLETED: { number_returned: 50 } (0.050s)
+   * - driverConnectionId
+     - Int
+     - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandStartedEvent.connectionId`` defined above,
+       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
+       Unlike ``CommandStartedEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
+       ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
+       a connection ID.
 
+   * - serverHost
+     - String
+     - The hostname or IP address for the server the command is being run on.
+
+   * - serverPort
+     - Int
+     - The port for the server the command is being run on. Optional; only present if a port was specified.
+
+   * - serverConnectionId
+     - Int
+     - The server's ID for the connection used for the command. Optional; only present for server versions 4.2+.
+
+   * - serviceId
+     - String
+     - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
+
+Command Started Message
+-----------------------
+In addition to the common fields, command started messages MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Command started"
+
+   * - command
+     - String
+     - Relaxed extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
+       `logging specification <../logging/logging.rst#configurable-max-document-length>`_, and MUST be replaced with an empty document
+       "{ }" if the command is considered sensitive.
+
+   * - databaseName
+     - String
+     - The database name.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Command "{{commandName}}" started on database "{{databaseName}}" using a connection with driver ID {{driverConnectionId}} and server ID
+  {{serverConnectionId}} to a server with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is
+  {{requestId}} and the operation ID is {{operationId}}. Command: {{command}}
+
+Command Succeeded Message
+-------------------------
+In addition to the common fields, command succeeded messages MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Command succeeded"
+
+   * - durationMS
+     - Int
+     - The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply
+       from the server and MAY include BSON serialization and/or deserialization.
+
+   * - reply
+     - String
+     - Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the 
+       `logging specification <../logging/logging.rst#configurable-max-document-length>`_, and MUST be replaced with an empty document
+       "{ }" if the command is considered sensitive.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Command "{{commandName}}" succeeded in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}} 
+  to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID is
+  {{operationId}}. Command reply: {{command}}
+
+Command Failed Message
+----------------------
+In addition to the common fields, command failed messages MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Command failed"
+
+   * - durationMS
+     - Int
+     - The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply
+       from the server and MAY include BSON serialization and/or deserialization.
+
+   * - failure
+     - Flexible
+     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_ 
+       for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a 
+       language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Command "{{commandName}}" failed in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}}
+  to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID
+  is {{operationId}}. Error: {{error}}
 
 -------
 Testing
@@ -409,3 +554,4 @@ Changelog
 :2022-05-18: Converted legacy tests to the unified test format.
 :2022-09-02: Remove material that only applies to MongoDB versions < 3.6.
 :2022-10-05: Remove spec front matter and reformat changelog.
+:2022-10-11: Add command logging information and tests.
