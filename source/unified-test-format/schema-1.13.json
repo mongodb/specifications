@@ -633,6 +633,9 @@
             "minItems": 1,
             "items": { "type": "string" }
           },
+          "errorResponse": {
+            "type": "object"
+          },
           "expectResult": {}
         }
       },

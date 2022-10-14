@@ -1,6 +1,6 @@
 {
   "description": "test-expectLogMessages-items",
-  "schemaVersion": "1.12",
+  "schemaVersion": "1.13",
   "tests": [
     {
       "description": "foo",

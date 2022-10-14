@@ -4,7 +4,7 @@ Unified Test Format
 
 :Status: Accepted
 :Minimum Server Version: N/A
-:Current Schema Version: 1.12.0
+:Current Schema Version: 1.13.0
 
 .. contents::
 
@@ -3867,7 +3867,7 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
-:2022-10-11: **Schema version 1.12.**
+:2022-10-11: **Schema version 1.13.**
             Add support for logging assertions via the ``observeLogMessages`` field
             for client entities, along with a new top-level field ``expectLogMessages``
             containing ``expectedLogMessagesForClient`` objects.

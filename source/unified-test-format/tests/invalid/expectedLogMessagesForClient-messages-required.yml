@@ -1,6 +1,6 @@
 description: "expectedLogMessagesForClient-messages-required"
 
-schemaVersion: "1.12"
+schemaVersion: "1.13"
 
 createEntities:
   - client:
