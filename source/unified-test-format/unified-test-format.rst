@@ -3882,7 +3882,7 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
-:2022-10-11: **Schema version 1.13.**
+:2022-10-14: **Schema version 1.13.**
             Add support for logging assertions via the ``observeLogMessages`` field
             for client entities, along with a new top-level field ``expectLogMessages``
             containing ``expectedLogMessagesForClient`` objects.
