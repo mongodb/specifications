@@ -3764,7 +3764,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2022-10-07: **Schema version 1.12.**
+:2022-10-14: **Schema version 1.12.**
              Add ``errorResponse`` to ``expectedError``.
 :2022-10-05: Remove spec front matter, add "Current Schema Version" field, and
              reformat changelog. Add comment to remind editors to note schema
