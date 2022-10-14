@@ -77,7 +77,7 @@ the "command started" log message and the corresponding "command succeeded" or "
 Unacknowledged/Acknowledged Writes
 ----------------------------------
 
- Unacknowledged writes must provide a ``CommandSucceededEvent`` and a "command succeeded" log message with a ``{ ok: 1 }`` reply .
+ Unacknowledged writes must provide a ``CommandSucceededEvent`` and a "command succeeded" log message with a ``{ ok: 1 }`` reply.
 
 A non-default write concern MUST be included in the published command. The default write concern is not required to be included.
 
@@ -443,7 +443,8 @@ In addition to the common fields, command started messages MUST contain the foll
    * - command
      - String
      - Relaxed extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
-       `logging specification <../logging/logging.rst>`_, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.
+       `logging specification <../logging/logging.rst#configurable-max-document-length>`_, and MUST be replaced with an empty document
+       "{ }" if the command is considered sensitive.
 
    * - databaseName
      - String
@@ -479,7 +480,8 @@ In addition to the common fields, command succeeded messages MUST contain the fo
    * - reply
      - String
      - Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the 
-       `logging specification <../logging/logging.rst>`_, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.
+       `logging specification <../logging/logging.rst#configurable-max-document-length>`_, and MUST be replaced with an empty document
+       "{ }" if the command is considered sensitive.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
@@ -510,9 +512,9 @@ In addition to the common fields, command failed messages MUST contain the follo
 
    * - failure
      - Flexible
-     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst>`_ for details on representing
-       errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative
-       for a redacted error, e.g. an empty string, empty document, or null.
+     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_ 
+       for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a 
+       language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
