@@ -1,4 +1,4 @@
-SCHEMA=../schema-1.12.json
+SCHEMA=../schema-1.13.json
 
 .PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions crud collection-management sessions command-monitoring client-side-operations-timeout HAS_AJV
 
