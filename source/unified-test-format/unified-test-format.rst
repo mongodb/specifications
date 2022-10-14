@@ -1079,6 +1079,20 @@ The structure of this object is as follows:
   assert that the error does not contain any of the specified labels (e.g. using
   the ``hasErrorLabel`` method).
 
+.. _expectedError_errorResponse:
+
+- ``errorResponse``: Optional document. A value corresponding to the expected
+  server response. The test runner MUST assert that the error includes a server
+  response that matches this value as a root-level document according to the
+  rules in `Evaluating Matches`_.
+
+  Note that some drivers may not be able to evaluate ``errorResponse`` for write
+  commands (i.e. insert, update, delete) and bulk write operations. For example,
+  a BulkWriteException is derived from potentially multiple server responses and
+  may not provide direct access to a single response. Tests SHOULD avoid using
+  ``errorResponse`` for such operations if possible; otherwise, affected drivers
+  SHOULD skip such tests if necessary.
+
 .. _expectedError_expectResult:
 
 - ``expectResult``: Optional mixed type. This field follows the same rules as
@@ -2900,7 +2914,8 @@ root-level documents include, but are not limited to:
 - ``command`` for `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 - `expectResult`_ for ``findOneAndUpdate`` `Collection Operations`_
-- `expectResult`_ for `iterateUntilDocumentOrError`_.
+- `expectResult`_ for `iterateUntilDocumentOrError`_
+- `expectedError_errorResponse`_
 - each array element in `expectResult`_ for `find`_ or `collection_aggregate`_
   `Collection Operations`_
 
@@ -3749,6 +3764,8 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2022-10-14: **Schema version 1.12.**
+             Add ``errorResponse`` to ``expectedError``.
 :2022-10-05: Remove spec front matter, add "Current Schema Version" field, and
              reformat changelog. Add comment to remind editors to note schema
              version bumps in changelog updates (where applicable).
