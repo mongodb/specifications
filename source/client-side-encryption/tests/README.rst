@@ -2315,15 +2315,3 @@ Set ``X-MongoDB-HTTP-TestParams`` to ``case=slow``.
 
 The HTTP response from the ``fake_azure`` server will take at least 1000 seconds
 to complete. The request should fail with a timeout.
-
-
-Case 7: Large Response
-``````````````````````
-
-This case addresses an IMDS server responding with an abnormally large message.
-Drivers should refuse to receive HTTP messages of unreasonable size.
-
-Set ``X-MongoDB-HTTP-TestParams`` to ``case=giant``.
-
-The HTTP response from ``fake_azure`` will be a JSON document several MB in
-size. The client should report an error without receiving the entire message.
