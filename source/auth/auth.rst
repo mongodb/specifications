@@ -1114,7 +1114,7 @@ chance of expiration before they are validated by the server.
 If there are no current valid cached credentials, the driver MUST initiate a
 credential request. To avoid adding a bottleneck that would override the
 ``maxConnecting`` setting, the driver MUST not place a lock on making a
-request.  The cache MUST be written atomically.
+request. The cache MUST be written atomically.
 
 If AWS authentication fails for any reason, the cache MUST be cleared.
 
