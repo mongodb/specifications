@@ -48,7 +48,7 @@ timeoutMS
 
 This 64-bit integer option specifies the per-operation timeout value in
 milliseconds. The default value is unset which means this feature is not
-enabled, ie the existing timeout behavior is unchanged (including
+enabled, i.e. the existing timeout behavior is unchanged (including
 ``serverSelectionTimeoutMS``, ``connectTimeoutMS``, ``socketTimeoutMS`` etc..).
 An explicit value of 0 means infinite, though some client-side timeouts like
 ``serverSelectionTimeoutMS`` will still apply. Drivers MUST error if a
