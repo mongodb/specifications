@@ -426,7 +426,7 @@ and reflects the flow described above.
         throw error;
       }
       /* CSOT is enabled and the operation has timed out. */
-      if (timeoutMS != null && is_expired(timeoutMS) {
+      if (timeoutMS != null && isExpired(timeoutMS) {
         throw previousError;
       }
     }
