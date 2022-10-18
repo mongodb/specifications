@@ -4,7 +4,6 @@ Retryable Writes
 
 :Status: Accepted
 :Minimum Server Version: 3.6
-:Last Modified: 2022-10-07
 
 .. contents::
 
@@ -810,6 +809,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2022-10-18: When CSOT is enabled multiple retry attempts may occur.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-25: Note that drivers should retry handshake network failures.
 :2021-11-02: Clarify that error labels are only specified in a top-level field
