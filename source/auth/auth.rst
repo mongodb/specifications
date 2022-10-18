@@ -1098,6 +1098,29 @@ From the JSON response drivers
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
 
+Caching Credentials
+___________________
+Credentials fetched by the driver using AWS endpoints MUST be cached and reused
+to avoid hitting AWS rate limitations. AWS recommends using a suitable
+Software Development Kit (SDK) for your langauge. If that SDK supports
+credential fetch and automatic refresh/caching, then that mechanism can
+be used in lieu of manual caching.
+
+If using manual caching, the "Expiration" field MUST be stored
+and used to determine when to clear the cache. Credentials are considered
+valid if they are more than five minutes away from expiring; to the reduce the
+chance of expiration before they are validated by the server.
+
+If there are no current valid cached credentials, the driver MUST initiate a
+credential request. To avoid adding a bottleneck that would override the
+``maxConnecting`` setting, the driver MUST not place a lock on making a
+request. The cache MUST be written atomically.
+
+If AWS authentication fails for any reason, the cache MUST be cleared.
+
+.. note::
+    Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
+
 -------------------------
 Connection String Options
 -------------------------
@@ -1334,6 +1357,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2022-10-07: Require caching of AWS credentials fetched by the driver.
 :2022-10-05: Remove spec front matter and convert version history to changelog.
 :2022-09-07: Add support for AWS AssumeRoleWithWebIdentity.
 :2022-01-20: Require that timeouts be applied per the client-side operations timeout spec.
