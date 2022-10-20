@@ -999,99 +999,57 @@ Reference Implementations
 
 Changelog
 =========
-+------------+------------------------------------------------------------+
-| 2017-08-03 | Initial commit                                             |
-+------------+------------------------------------------------------------+
-| 2017-08-07 | Fixed typo in command format                               |
-+------------+------------------------------------------------------------+
-| 2017-08-16 | Added clarification regarding Resumable errors             |
-+------------+------------------------------------------------------------+
-| 2017-08-16 | Fixed formatting of resume process                         |
-+------------+------------------------------------------------------------+
-| 2017-08-22 | Clarified killing cursors during resume process            |
-+------------+------------------------------------------------------------+
-| 2017-09-06 | Remove `desired user experience` example                   |
-+------------+------------------------------------------------------------+
-| 2017-09-21 | Clarified that we need to close the cursor on missing token|
-+------------+------------------------------------------------------------+
-| 2017-09-26 | Clarified that change stream options may be added later    |
-+------------+------------------------------------------------------------+
-| 2017-11-06 | Defer to Read and Write concern spec for determining a read|
-|            | concern for the helper method.                             |
-+------------+------------------------------------------------------------+
-| 2017-12-13 | Default read concern is also accepted, not just "majority".|
-+------------+------------------------------------------------------------+
-| 2018-04-17 | Clarified that the initial aggregate should not be retried.|
-+------------+------------------------------------------------------------+
-| 2018-04-18 | Added helpers for Database and MongoClient,                |
-|            | and added ``startAtClusterTime`` option.                   |
-+------------+------------------------------------------------------------+
-| 2018-05-24 | Changed ``startatClusterTime`` to ``startAtOperationTime`` |
-+------------+------------------------------------------------------------+
-| 2018-06-14 | Clarified how to calculate ``startAtOperationTime``        |
-+------------+------------------------------------------------------------+
-| 2018-07-27 | Added drop to change stream operationType                  |
-+------------+------------------------------------------------------------+
-| 2018-07-30 | Remove redundant error message checks for resumable errors |
-+------------+------------------------------------------------------------+
-| 2018-09-09 | Added dropDatabase to change stream operationType          |
-+------------+------------------------------------------------------------+
-| 2018-12-14 | Added ``startAfter`` to change stream options              |
-+------------+------------------------------------------------------------+
-| 2018-11-06 | Added handling of ``postBatchResumeToken``.                |
-+------------+------------------------------------------------------------+
-| 2019-01-10 | Clarified error handling for killing the cursor.           |
-+------------+------------------------------------------------------------+
-| 2019-04-03 | Updated the lowest server version that supports            |
-|            | ``postBatchResumeToken``.                                  |
-+------------+------------------------------------------------------------+
-| 2019-04-12 | Clarified caching process for resume token.                |
-+------------+------------------------------------------------------------+
-| 2019-06-20 | Fix server version for addition of postBatchResumeToken    |
-+------------+------------------------------------------------------------+
-| 2019-07-01 | Clarified that close may be implemented with more idiomatic|
-|            | patterns instead of a method.                              |
-+------------+------------------------------------------------------------+
-| 2019-07-02 | Fix server version for startAfter                          |
-+------------+------------------------------------------------------------+
-| 2019-07-09 | Changed ``fullDocument`` to be an optional string.         |
-+------------+------------------------------------------------------------+
-| 2019-07-15 | Clarify resume process for change streams started with     |
-|            | the ``startAfter`` option.                                 |
-+------------+------------------------------------------------------------+
-| 2020-02-10 | Changed error handling approach to use an allow list       |
-+------------+------------------------------------------------------------+
-| 2021-02-08 | Added the ``UpdateDescription.truncatedArrays`` field      |
-+------------+------------------------------------------------------------+
-| 2021-04-23 | Updated to use modern terminology                          |
-+------------+------------------------------------------------------------+
-| 2021-04-29 | Added ``load-balanced`` to test topology requirements      |
-+------------+------------------------------------------------------------+
-| 2021-09-01 | Clarified that server selection during resumption should   |
-|            | respect normal server selection rules.                     |
-+------------+------------------------------------------------------------+
-| 2022-01-19 | Require that timeouts be applied per the client-side       |
-|            | operations timeout specification                           |
-+------------+------------------------------------------------------------+
-| 2022-02-01 | Added ``comment`` to ``ChangeStreamOptions``.              |
-+------------+------------------------------------------------------------+
-| 2022-02-10 | Specified that ``getMore`` command must explicitly send    |
-|            | inherited ``comment``.                                     |
-+------------+------------------------------------------------------------+
-| 2022-02-28 | Added ``to`` to ``ChangeStreamDocument``.                  |
-+------------+------------------------------------------------------------+
-| 2022-03-25 | Do not error when parsing change stream event documents.   |
-+------------+------------------------------------------------------------+
-| 2022-04-13 | Support returning point-in-time pre and post-images with   |
-|            | ``fullDocumentBeforeChange`` and ``fullDocument``.         |
-+------------+------------------------------------------------------------+
-| 2022-05-17 | Added ``wallTime`` to ``ChangeStreamDocument``.            |
-+------------+------------------------------------------------------------+
-| 2022-05-19 | Support new change stream events with showExpandedEvents.  |
-+------------+------------------------------------------------------------+
-| 2022-08-17 | Support `disambiguatedPaths` in `UpdateDescription`.       |
-+------------+------------------------------------------------------------+
-| 2022-08-22 | Added ``clusterTime`` to ``ChangeStreamDocument``.         |
-+------------+------------------------------------------------------------+
-| 2022-10-05 | Remove spec front matter.                                  |
-+------------+------------------------------------------------------------+
+
+:2022-10-20: Reformat changelog.
+:2022-10-05: Remove spec front matter.
+:2022-08-22: Add ``clusterTime`` to ``ChangeStreamDocument``.
+:2022-08-17: Support ``disambiguatedPaths`` in ``UpdateDescription``.
+:2022-05-19: Support new change stream events with ``showExpandedEvents``.
+:2022-05-17: Add ``wallTime`` to ``ChangeStreamDocument``.
+:2022-04-13: Support returning point-in-time pre and post-images with
+             ``fullDocumentBeforeChange`` and ``fullDocument``.
+:2022-03-25: Do not error when parsing change stream event documents.
+:2022-02-28: Add ``to`` to ``ChangeStreamDocument``.
+:2022-02-10: Specify that ``getMore`` command must explicitly send inherited
+             ``comment``.
+:2022-02-01: Add ``comment`` to ``ChangeStreamOptions``.
+:2022-01-19: Require that timeouts be applied per the client-side operations
+             timeout specification.
+:2021-09-01: Clarify that server selection during resumption should respect
+             normal server selection rules.
+:2021-04-29: Add ``load-balanced`` to test topology requirements.
+:2021-04-23: Update to use modern terminology.
+:2021-02-08: Add the ``UpdateDescription.truncatedArrays`` field.
+:2020-02-10: Change error handling approach to use an allow list.
+:2019-07-15: Clarify resume process for change streams started with the
+            ``startAfter`` option.
+:2019-07-09: Change ``fullDocument`` to be an optional string.
+:2019-07-02: Fix server version for ``startAfter``.
+:2019-07-01: Clarify that close may be implemented with more idiomatic
+             patterns instead of a method.
+:2019-06-20: Fix server version for addition of ``postBatchResumeToken``.
+:2019-04-12: Clarify caching process for resume token.
+:2019-04-03: Update the lowest server version that supports 
+             ``postBatchResumeToken``.
+:2019-01-10: Clarify error handling for killing the cursor.
+:2018-11-06: Add handling of ``postBatchResumeToken``.
+:2018-12-14: Add ``startAfter`` to change stream options.
+:2018-09-09: Add ``dropDatabase`` to change stream ``operationType``.
+:2018-07-30: Remove redundant error message checks for resumable errors.
+:2018-07-27: Add drop to change stream ``operationType``.
+:2018-06-14: Clarify how to calculate ``startAtOperationTime``.
+:2018-05-24: Change ``startAtClusterTime`` to ``startAtOperationTime``.
+:2018-04-18: Add helpers for Database and MongoClient, and add
+             ``startAtClusterTime`` option.
+:2018-04-17: Clarify that the initial aggregate should not be retried.
+:2017-12-13: Default read concern is also accepted, not just "majority".
+:2017-11-06: Defer to Read and Write concern spec for determining a read
+             concern for the helper method.
+:2017-09-26: Clarify that change stream options may be added later.
+:2017-09-21: Clarify that we need to close the cursor on missing token.
+:2017-09-06: Remove ``desired user experience`` example.
+:2017-08-22: Clarify killing cursors during resume process.
+:2017-08-16: Fix formatting of resume process.
+:2017-08-16: Add clarification regarding Resumable errors.
+:2017-08-07: Fix typo in command format.
+:2017-08-03: Initial commit.
