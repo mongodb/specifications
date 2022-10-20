@@ -1643,7 +1643,9 @@ counting to automatically close/deinitialize clients once they go out of scope, 
 require implementing an abstraction to allow a client entity's underlying client to be set
 to null. Because drivers do not consistently propagate errors encountered while closing a
 client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or 
-`expectError <operation_expectError_>`_ for this operation. 
+`expectError <operation_expectError_>`_ for this operation. Test files SHOULD NOT
+specify any operations for a client entity following a `close` operation on it, as
+driver behavior when an operation is attempted on a closed client is not consistent.
 
 .. _client_createChangeStream:
 
