@@ -100,7 +100,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           document: { x: 1 }
           
     expectEvents:
@@ -207,7 +207,7 @@ tests:
       - name: insertMany
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           documents:
             - { x: 1 }
           
@@ -315,7 +315,7 @@ tests:
       - name: deleteOne
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -422,7 +422,7 @@ tests:
       - name: replaceOne
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           replacement: { x: 1 }
           
@@ -531,7 +531,7 @@ tests:
       - name: updateOne
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -639,7 +639,7 @@ tests:
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -746,7 +746,7 @@ tests:
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           replacement: { x: 1 }
           
@@ -855,7 +855,7 @@ tests:
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -965,7 +965,7 @@ tests:
       - name: bulkWrite
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           requests:
             - insertOne:
                 document: { _id: 1 }
@@ -1075,7 +1075,7 @@ tests:
       - name: listDatabases
         object: *client
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -1179,7 +1179,7 @@ tests:
       - name: listDatabaseNames
         object: *client
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           
     expectEvents:
       - client: *client
@@ -1283,7 +1283,7 @@ tests:
       - name: createChangeStream
         object: *client
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           pipeline: []
           
     expectEvents:
@@ -1389,7 +1389,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
     expectEvents:
@@ -1495,7 +1495,7 @@ tests:
       - name: listCollections
         object: *database
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -1601,7 +1601,7 @@ tests:
       - name: listCollectionNames
         object: *database
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -1707,7 +1707,7 @@ tests:
       - name: createChangeStream
         object: *database
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           pipeline: []
           
     expectEvents:
@@ -1813,7 +1813,7 @@ tests:
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           pipeline: []
           
     expectEvents:
@@ -1919,7 +1919,7 @@ tests:
       - name: count
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -2025,7 +2025,7 @@ tests:
       - name: countDocuments
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -2129,7 +2129,7 @@ tests:
       - name: estimatedDocumentCount
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           
     expectEvents:
       - client: *client
@@ -2234,7 +2234,7 @@ tests:
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           fieldName: x
           filter: {}
           
@@ -2342,7 +2342,7 @@ tests:
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -2448,7 +2448,7 @@ tests:
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           filter: {}
           
     expectEvents:
@@ -2552,7 +2552,7 @@ tests:
       - name: listIndexes
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           
     expectEvents:
       - client: *client
@@ -2656,7 +2656,7 @@ tests:
       - name: createChangeStream
         object: *collection
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           pipeline: []
           
     expectEvents:

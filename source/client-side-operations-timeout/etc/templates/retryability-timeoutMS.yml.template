@@ -104,7 +104,7 @@ tests:
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         arguments:
-          timeoutMS: 500
+          timeoutMS: 1000
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
