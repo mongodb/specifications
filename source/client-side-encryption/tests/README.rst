@@ -2315,3 +2315,67 @@ Set ``X-MongoDB-HTTP-TestParams`` to ``case=slow``.
 
 The HTTP response from the ``fake_azure`` server will take at least 1000 seconds
 to complete. The request should fail with a timeout.
+
+19. Azure IMDS Credentials Integration Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Refer: `Automatic Azure Credentials <auto-azure_>`_
+
+.. _auto-azure: ../client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault
+
+For these cases, create a ClientEncryption_ object :math:`C` with the following
+options:
+
+.. code-block:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <setupClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "azure": {} },
+   }
+
+Case 1: Failure
+```````````````
+
+Do not run this test case in an Azure environment with an attached identity.
+This may be run in an AWS EC2 instance.
+
+Attempt to create a datakey with :math:`C` using the ``"azure"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
+         "keyName": "KEY-NAME"
+      }
+   }
+
+Expect the attempt to obtain ``"azure"`` credentials from the environment to fail.
+
+Case 2: Success
+```````````````
+
+This test case must run in an Azure environment with an attached identity.
+See `drivers-evergreen-tools/.evergreen/csfle/azurekms
+<https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/azurekms>`_
+for scripts to create a Azure instance for testing. The Evergreen task SHOULD set a
+``batchtime`` of 14 days to reduce how often this test case runs.
+
+Attempt to create a datakey with :math:`C` using the ``"azure"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
+         "keyName": "KEY-NAME"
+      }
+   }
+
+This should successfully load and use the Azure credentials of the service account
+attached to the virtual machine.
+
+Expect the key to be successfully created.
