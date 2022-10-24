@@ -870,24 +870,25 @@ The convenience methods support the following lookup process for finding the
 .. default-role:: math
 
 Assume an exposition-only function
-`GetEncryptedFields(opts, collName, dbName, askDb)`, where `opts` is an options
-documen, `collName` is the name of the collection, `dbName` is the name of the
+`GetEncryptedFields(opts, collName, dbName, askDb)`, where `opts` is a set of
+options, `collName` is the name of the collection, `dbName` is the name of the
 database associated with that collection, and `askDb` is a boolean value. The
 resulting ``encryptedFields`` `EF` is found by:
 
 1. Let `QualName` be the string formed by joining `dbName` and `collName` with
-   an ASCII dot ``".""``.
-2. If `opts` contains an ``"encryptedFields"`` document element, then `EF` is
-   that document.
+   an ASCII dot ``"."``.
+2. If `opts` contains an ``"encryptedFields"`` property, then `EF` is the value
+   of that property.
 3. Otherwise, if ``AutoEncryptionOptions.encryptedFieldsMap`` contains an
-   document element `QualName`, then `EF` is that document.
+   element named by `QualName`, then `EF` is the value of that element.
 4. Otherwise, if `askDb` is `true`:
 
    1. Issue a ``listCollections`` command against the database named by
       `dbName`, filtered by ``{name: <collName>}``. Let the result be the
       document `L`.
-   2. If `L` contains an ``encryptedFields`` option, `EF` is `L`\
-      ``["encryptedFields"]``.
+   2. If `L` contains an ``options`` document element, and that element contains
+      an ``encryptedFields`` document element, `EF` is `L`\
+      ``["options"]["encryptedFields"]``.
    3. Otherwise, `EF` is *not-found*
 
 5. Otherwise, `EF` is considered *not-found*.
