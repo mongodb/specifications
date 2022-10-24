@@ -940,13 +940,12 @@ Create Encrypted Collection Helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To support automatic generation of encryption data keys, a helper
-`CreateEncryptedCollection` is defined. This requires an associated
-``ClientEncryption`` object `C`.
+`CreateEncryptedCollection` is defined, associated with a ClientEncryption_
+object `C`.
 
-For a helper
-`CreateEncryptedCollection(C, collName, collOpts, kmsProv, dkOpts)`, where
-`kmsProv` is a KMSProviderName_ and `dkOpts` is a DataKeyOpts_, with the name of
-the database associated as `dbName`, look up the encrypted fields `EF` for the
+For `CreateEncryptedCollection(C, collName, collOpts, kmsProvider, dkOpts)`,
+where `kmsProv` is a KMSProviderName_ and `dkOpts` is a DataKeyOpts_, with the
+name of the database as `dbName`, look up the encrypted fields `EF` for the
 collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
 (`See here <GetEncryptedFields_>`_).
 
@@ -1001,8 +1000,8 @@ are not attempted. A ``namespace not found`` error returned from the server
   ``enxcol_.<collectionName>.ecoc``.
 - Drop the collection ``collectionName``.
 
-
 .. default-role:: literal
+.. _ClientEncryption:
 
 ClientEncryption
 ----------------
@@ -1011,6 +1010,11 @@ ClientEncryption
 
    class ClientEncryption {
       ClientEncryption(opts: ClientEncryptionOpts);
+
+      // The "Create Encrypted Collection" helper is a convenience function wrapping CreateCollection. It will
+      // create a collection with encrypted fields, automatically allocating and assigning new data encryption
+      // keys. Refer to "Create Encrypted Collection Helper"
+      createEncryptedCollection(collName: string, collOpts, kmsProvider: KMSProviderName, dkOpts: DataKeyOpts);
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
