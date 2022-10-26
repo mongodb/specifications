@@ -438,4 +438,5 @@ individual clients or for particular namespaces.
 
 Changelog
 =========
-\-
+
+:2022-10-26: Allow drivers to add timestamps to log messages.
