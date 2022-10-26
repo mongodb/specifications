@@ -2012,3 +2012,43 @@ the environment.
 .. _Automatic AWS Credentials: ../client-side-encryption.rst#automatic-aws-credentials
 .. _ClientEncryption: ../client-side-encryption.rst#clientencryption
 .. _auth-aws: ../../auth/auth.rst#obtaining-credentials
+
+16. Bypass Spawning mongocryptd client when shared library is loaded
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+   IMPORTANT: If crypt_shared_ is not visible to the operating system's library
+   search mechanism, this test should be skipped.
+
+
+The following tests that a mongocryptd client is not created when shared library is in-use.
+
+#. Start a new thread (referred to as ``listenerThread``)
+
+#. On ``listenerThread``, create a TcpListener on 127.0.0.1 endpoint and port 27021. Start the listener and wait for establishing connections.
+   If any connection is established, then signal about this to the main thread.
+   
+   Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure the required options. Use the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Configure with the ``keyVaultNamespace`` set to ``keyvault.datakeys``.
+
+   Configure the following ``extraOptions``:
+
+   .. code:: javascript
+
+      {
+        "mongocryptdURI": "mongodb://localhost:27021"
+      }
+   
+#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. 
+
+#. Expect no signal from ``listenerThread``.

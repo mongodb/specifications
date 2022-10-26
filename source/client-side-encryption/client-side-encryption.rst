@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-06-30
-:Version: 1.10.0
+:Last Modified: 2022-10-26
+:Version: 1.11.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2390,6 +2390,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-10-26, Do not connect to `mongocryptd` if shared library is loaded.
    22-06-30, Add behavior for automatic AWS credential loading in ``kmsProviders``.
    22-06-29, Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
    22-06-27, Remove ``createKey``.
