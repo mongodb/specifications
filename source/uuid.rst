@@ -2,15 +2,8 @@
 Handling of Native UUID Types
 =============================
 
-:Spec Title: Handling of Native UUID Types
-:Spec Version: 1.0
-:Author: Jeff Yemin
-:Lead: Bernie Hackett
-:Advisory Group: Shane Harvey, Oleg Pudeyev, Robert Stam
-:Informed: drivers@
 :Status: Accepted
-:Type: Standards
-:Last Modified: 2019-11-19
+:Minimum Server Version: N/A
 
 .. contents::
 
@@ -325,3 +318,8 @@ In short, the C# driver has existing behavior that make it infeasible to work th
 The C# driver has a global serialization registry. Since it's global and not per-MongoClient, it's not feasible to override the UUID representation on a per-MongoClient basis, since doing so would require a per-MongoClient registry.  Instead, the specification allows for a global override so that the C# driver can implement the specification.
 
 Additionally, the C# driver has an existing configuration parameter that controls the behavior of BSON readers and writers at a level below the serializers. This configuration affects the semantics of the existing BsonBinary class in a way that doesn't allow for the constructor(UUID) mentioned in the specification.  For this reason, that constructor is specified as optional.
+
+Changelog
+=========
+
+:2022-10-05: Remove spec front matter.

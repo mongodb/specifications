@@ -13,6 +13,9 @@
 # Client Side Encryption
 /source/client-side-encryption/ @mongodb/dbx-spec-owners-fle
 
+# Client Side Operations Timeout
+/source/client-side-operations-timeout/ @mongodb/dbx-spec-owners-csot
+
 # CMAP
 /source/connection-monitoring-and-pooling/ @mongodb/dbx-spec-owners-cmap
 

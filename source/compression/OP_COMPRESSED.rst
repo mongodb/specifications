@@ -2,21 +2,8 @@
 Wire Compression in Drivers
 ===========================
 
-
-:Title: Wire Compression In Drivers
-:Author: Hannes Magnússon
-:Advisory Group: Jonathan Reams, Christian Kvalheim, Ross Lawley
-:Approvers: David Golden (2017-04-26),
-            Christian Kvalheim (2017-04-27),
-            Jeff Yemin (2017-04-27),
-            Bernie Hackett (2017-05-09),
-            Dana Groff (2017-05-02) 
 :Status: Accepted
-:Type: Standards
-:Last Modified: 2021-04-06
 :Minimum Server Version: 3.4
-:Version: 1.3
-
 
 Abstract
 ========
@@ -506,12 +493,8 @@ Q & A
 Changelog
 =========
 
-+------------+--------------------------------------------------------+
-| 2021-04-06 | v1.3 Use 'hello' command                               |
-+------------+--------------------------------------------------------+
-| 2019-05-13 | v1.2 Add zstd as supported compression algorithm       |
-+------------+--------------------------------------------------------+
-| 2017-06-13 | v1.1 Don't require clients to implement legacy opcodes |
-+------------+--------------------------------------------------------+
-| 2017-05-10 | v1.0 Initial commit                                    |
-+------------+--------------------------------------------------------+
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2021-04-06: Use 'hello' command
+:2019-05-13: Add zstd as supported compression algorithm
+:2017-06-13: Don't require clients to implement legacy opcodes
+:2017-05-10: Initial commit.

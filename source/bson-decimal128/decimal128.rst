@@ -2,17 +2,8 @@
 BSON Decimal128 Type Handling in Drivers
 ========================================
 
-:Spec Title: BSON Decimal128 Type Handling In Drivers
-:Spec Version: 1.0
-:Author: Hannes Magnusson
-:Advisory Group: Emily Stolfo and Craig Wilson
-:Kernel Advisory: Geert Bosch
-:Original Work: David Hatch and Raymond Jacobson
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: 3.4
-:Last Modified: 2016-06-06
-
 
 .. contents::
 
@@ -450,3 +441,8 @@ Q&A
    * No
 * Is there a wire version bump or something for Decimal128?
    * No
+
+Changelog
+=========
+
+:2022-10-05: Remove spec front matter.

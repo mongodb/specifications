@@ -2,15 +2,8 @@
 Convenient API for Transactions
 ===============================
 
-:Spec Title: Convenient API for Transactions
-:Spec Version: 1.3
-:Author: Jeremy Mikola
-:Lead: Jeff Yemin
-:Advisors: A\. Jesse Jiryu Davis, Kris Brandow, Oleg Pudeyev, Sam Ritter, Tess Avitabile
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 4.0
-:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -501,10 +494,8 @@ client-side operation timeout, withTransaction can continue to use the
 Changes
 =======
 
-2022-01-19: withTransaction applies timeouts per the client-side
-            operations timeout specification.
-
-2019-04-24: withTransaction does not retry when commit fails with
-            MaxTimeMSExpired.
-
-2018-02-13: withTransaction should retry commits after a wtimeout
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-01-19: withTransaction applies timeouts per the client-side operations
+             timeout specification.
+:2019-04-24: withTransaction does not retry when commit fails with MaxTimeMSExpired.
+:2018-02-13: withTransaction should retry commits after a wtimeout

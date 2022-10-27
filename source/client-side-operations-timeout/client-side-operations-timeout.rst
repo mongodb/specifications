@@ -2,16 +2,8 @@
 Client Side Operations Timeout
 ==============================
 
-:Title: Client Side Operations Timeout
-:Author: Divjot Arora
-:Spec Lead: Jeff Yemin
-:Approvers: Jeff Yemin, Clyde Bazile
-:Advisory Group: Bernie Hackett, Jason Carey, Will Shulman
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-19
-:Version: 1.0.0
 
 .. contents::
 
@@ -55,8 +47,10 @@ timeoutMS
 ~~~~~~~~~
 
 This 64-bit integer option specifies the per-operation timeout value in
-milliseconds. The default value is unset. Both unset and an explicit value of
-0 mean infinite, though some client-side timeouts like
+milliseconds. The default value is unset which means this feature is not
+enabled, i.e. the existing timeout behavior is unchanged (including
+``serverSelectionTimeoutMS``, ``connectTimeoutMS``, ``socketTimeoutMS`` etc..).
+An explicit value of 0 means infinite, though some client-side timeouts like
 ``serverSelectionTimeoutMS`` will still apply. Drivers MUST error if a
 negative value is specified. This value MUST be configurable at the level of
 a MongoClient, MongoDatabase, MongoCollection, or of a single operation.
@@ -355,7 +349,7 @@ Retryability
 ~~~~~~~~~~~~
 
 If an operation requires a retry per the retryable reads or writes
-specifications and ``timeoutMS`` is set to a non-zero value, drivers MUST
+specifications and ``timeoutMS`` is set, drivers MUST
 retry operations as many times as possible before the timeout expires or a
 retry attempt returns a non-retryable error. Once the timeout expires, a
 timeout error MUST be raised.
@@ -926,4 +920,5 @@ for each database operation. This would mimic using
 Changelog
 =========
 
-:2021-01-19: Initial version.
+:2022-10-05: Remove spec front matter.
+:2022-01-19: Initial version.

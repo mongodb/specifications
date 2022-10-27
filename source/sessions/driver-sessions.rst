@@ -2,17 +2,8 @@
 Driver Sessions Specification
 =============================
 
-:Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.9.2
-:Author: Robert Stam
-:Spec Lead: A\. Jesse Jiryu Davis
-:Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
-:Approver(s): A\. Jesse Jiryu Davis, Jeff Yemin, Bernie Hackett, David Golden, Eliot
-:Informed: drivers@, Bryan Reinero, Christopher Hendel
-:Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
-:Type: Standards
-:Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2022-06-13
+:Status: Accepted
+:Minimum Server Version: 3.6
 
 .. contents::
 
@@ -1163,8 +1154,8 @@ There are a variety of cases, such as retryable operations or cursor creating op
 where a ``serverSession`` must remain acquired by the ``ClientSession`` after an operation is attempted.
 Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
 
-Change log
-==========
+Changelog
+=========
 
 :2017-09-13: If causalConsistency option is omitted assume true
 :2017-09-16: Omit session ID when opening and authenticating a connection
@@ -1195,3 +1186,4 @@ Change log
 :2022-01-28: Implicit sessions MUST obtain server session after connection checkout succeeds
 :2022-03-24: ServerSession Pooling is required and clarifies session acquisition bounding
 :2022-06-13: Move prose tests to test README and apply new ordering
+:2022-10-05: Remove spec front matter

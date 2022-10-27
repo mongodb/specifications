@@ -2,15 +2,8 @@
 OCSP Support
 ============
 
-:Spec Title: OCSP Support
-:Spec Version: 2.1.0
-:Author: Vincent Kam
-:Lead: Jeremy Mikola
-:Advisory Group: Divjot Arora *(POC author)*, Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -112,7 +105,7 @@ invalid, the driver SHOULD end the connection.
     response that concretely marks the certificate status as good or revoked
     should be used. A timeout should be applied to requests per the `Client
     Side Operations Timeout
-    <../client-side-operations-timeout/client-side-operations-timeout>`__
+    <../client-side-operations-timeout/client-side-operations-timeout.rst>`__
     specification, with a default timeout of five seconds. The status for a
     response should only be checked if the response is valid per `RFC 6960
     Section 3.2 <https://tools.ietf.org/html/rfc6960#section-3.2>`_
@@ -788,37 +781,27 @@ of checking this are:
    certificate.
 
 Changelog
-==========
+=========
 
-**2022-01-19**: 2.1.0: Require that timeouts be applied per the client-side
-operations timeout spec.
-
-**2021-04-07**: 2.0.1: Updated terminology to use allowList.
-
-**2020-07-01**: 2.0.0: Default tlsDisableOCSPEndpointCheck or
-tlsDisableCertificateRevocationCheck to true in the case that a driver's
-TLS library exhibits hard-fail behavior and add provision for
-platform-specific defaults.
-
-**2020-03-20**: 1.3.1: Clarify OCSP documentation requirements for
-drivers unable to enable OCSP by default on a per MongoClient basis.
-
-**2020-03-03**: 1.3.0: Add tlsDisableCertificateRevocationCheck URI
-option. Add Go as a reference implementation. Add hard-fail backwards
-compatibility documentation requirements.
-
-**2020-02-26**: 1.2.0: Add tlsDisableOCSPEndpointCheck URI option.
-
-**2020-02-19**: 1.1.1 Clarify behavior for reaching out to OCSP responders.
-
-**2020-02-10**: 1.1.0: Add cache requirement.
-
-**2020-01-31**: 1.0.2: Add SNI requirement and clarify design rationale
-regarding minimizing round trips.
-
-**2020-01-28**: 1.0.1: Clarify behavior regarding nonces and tolerance periods.
-
-**2020-01-16**: 1.0.0: Initial commit.
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
+:2021-04-07: Updated terminology to use allowList.
+:2020-07-01: Default tlsDisableOCSPEndpointCheck or
+             tlsDisableCertificateRevocationCheck to true in the case that a
+             driver's TLS library exhibits hard-fail behavior and add provision
+             for platform-specific defaults.
+:2020-03-20: Clarify OCSP documentation requirements for drivers unable to
+             enable OCSP by default on a per MongoClient basis.
+:2020-03-03: Add tlsDisableCertificateRevocationCheck URI option. Add Go as a
+             reference implementation. Add hard-fail backwards compatibility
+             documentation requirements.
+:2020-02-26: Add tlsDisableOCSPEndpointCheck URI option.
+:2020-02-19: Clarify behavior for reaching out to OCSP responders.
+:2020-02-10: Add cache requirement.
+:2020-01-31: Add SNI requirement and clarify design rationale regarding
+             minimizing round trips.
+:2020-01-28: Clarify behavior regarding nonces and tolerance periods.
+:2020-01-16: Initial commit.
 
 Endnotes
 ========

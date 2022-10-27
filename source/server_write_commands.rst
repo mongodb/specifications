@@ -2,9 +2,8 @@
 Write Commands Specification
 ============================
 
-:date: April 7, 2021
-:version: 0.9.1
-:status: Approved
+:Status: Accepted
+:Minimum Server Version: 2.6
 
 .. contents::
 
@@ -144,7 +143,7 @@ Both of these limits can be found using hello():
   assembled into a write command the total size may exceed ``maxBsonObjectSize`` by a maximum of
   16 KiB, allowing users to insert documents up to ``maxBsonObjectSize``.
 
-* ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that 
+* ``maxWriteBatchSize`` : this is the maximum number of inserts, updates, or deletes that 
   can be included in a write batch.  If more than this number of writes are included, the server cannot
   guarantee space in the response document to reply to the batch.
 
@@ -495,17 +494,10 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 Changelog
 ---------
 
-v0.8
-~~~~
-* First public version
-
-v0.9
-~~~~
-* Removed text related to bulk operations; see the Bulk API spec for bulk details
-* Clarified some paragraphs; re-ordered the response field sections
-
-v0.9.1
-~~~~~~
-* Updated to use hello command
-
-..  LocalWords:  boolean ie
+:2014-05-14: First public version
+:2014-05-15: Removed text related to bulk operations; see the Bulk API spec for
+             bulk details. Clarified some paragraphs; re-ordered the response
+             field sections.
+:2021-04-22: Updated to use hello command
+:2022-07-25: Remove outdated value for ``maxWriteBatchSize``
+:2022-10-05: Revise spec front matter and reformat changelog.

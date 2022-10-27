@@ -2,12 +2,8 @@
 Server Monitoring
 =================
 
-:Spec: 1580
-:Title: Server Monitoring
 :Status: Accepted
-:Type: Standards
-:Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2022-06-24
+:Minimum Server Version: 2.4
 
 .. contents::
 
@@ -616,7 +612,10 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
 #. Clear the connection pool for the server (See `Clear the connection pool on
    both network and command errors`_). For CMAP compliant drivers, clearing the
    pool MUST be synchronized with marking the server as Unknown (see `Why
-   synchronize clearing a server's pool with updating the topology?`_).
+   synchronize clearing a server's pool with updating the topology?`_). If this 
+   was a network timeout error, then the pool MUST be cleared with interruptInUseConnections = true 
+   (see `Why does the pool need to support closing in use connections as part of 
+   its clear logic?`_)
 #. If this was a network error and the server was in a known state before the
    error, the client MUST NOT sleep and MUST begin the next check immediately.
    (See `retry hello or legacy hello calls once`_ and
@@ -692,7 +691,7 @@ The event API here is assumed to be like the standard `Python Event
                 topology.onServerDescriptionChanged(description, connection pool for server)
                 if description.error != Null:
                     # Clear the connection pool only after the server description is set to Unknown.
-                    clear connection pool for server
+                    clear(interruptInUseConnections: isNetworkTimeout(description.error)) connection pool for server
 
             # Immediately proceed to the next check if the previous response
             # was successful and included the topologyVersion field, or the
@@ -1099,7 +1098,9 @@ A monitor clears the connection pool when a server check fails with a network
 or command error (`Network or command error during server check`_).
 When the check fails with a network error it is likely that all connections
 to that server are also closed.
-(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_).
+(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_). When the check fails 
+with a network timeout error, a monitor MUST set interruptInUseConnections to true. 
+See, `Why does the pool need to support closing in use connections as part of its clear logic?`_.
 
 When the server is shutting down, it may respond to hello or legacy hello commands with
 ShutdownInProgress errors before closing connections. In this case, the
@@ -1138,27 +1139,22 @@ awaitable hello or legacy hello heartbeat in the new protocol.
 Changelog
 ---------
 
-- 2021-06-24: Remove optimization mention that no longer applies
+:2020-02-20: Extracted server monitoring from SDAM into this new spec.
+:2020-03-09: A monitor check that creates a new connection MUST use the
+             connection's handshake to update the topology.
+:2020-04-20: Add streaming heartbeat protocol.
+:2020-05-20: Include rationale for why we don't use `awaitedTimeMS`
+:2020-06-11: Support connectTimeoutMS=0 in streaming heartbeat protocol.
+:2020-12-17: Mark the pool for a server as "ready" after performing a successful
+             check. Synchronize pool clearing with SDAM updates.
+:2021-06-21: Added support for hello/helloOk to handshake and monitoring.
+:2021-06-24: Remove optimization mention that no longer applies
+:2022-01-19: Add 90th percentile RTT tracking.
+:2022-02-24: Rename Versioned API to Stable API
+:2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
+:2022-10-05: Remove spec front matter reformat changelog.
 
-- 2021-06-21: Added support for hello/helloOk to handshake and monitoring.
-
-- 2020-12-17: Mark the pool for a server as "ready" after performing a successful
-  check. Synchronize pool clearing with SDAM updates.
-
-- 2020-06-11 Support connectTimeoutMS=0 in streaming heartbeat protocol.
-
-- 2020-05-20 Include rationale for why we don't use `awaitedTimeMS`
-
-- 2020-04-20 Add streaming heartbeat protocol.
-
-- 2020-03-09 A monitor check that creates a new connection MUST use the
-  connection's handshake to update the topology.
-
-- 2020-02-20 Extracted server monitoring from SDAM into this new spec.
-
-- 2022-01-19 Add 90th percentile RTT tracking.
-
-- 2022-02-24: Rename Versioned API to Stable API
+----
 
 .. Section for links.
 
@@ -1182,3 +1178,4 @@ Changelog
 .. _Client Side Operations Timeout Spec: /source/client-side-operations-timeout/client-side-operations-timeout.rst
 .. _timeoutMS: /source/client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS
 .. _t-digest algorithm: https://github.com/tdunning/t-digest
+.. _Why does the pool need to support closing in use connections as part of its clear logic?: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Why-does-the-pool-need-to-support-closing-in-use-connections-as-part-of-its-clear-logic?

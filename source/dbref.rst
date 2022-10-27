@@ -2,12 +2,8 @@
 Handling of DBRefs
 ==================
 
-:Spec Title: Handling of DBRefs
-:Spec Version: 1.0
-:Author: Jeremy Mikola
-:Status: Draft
-:Type: Standards
-:Last Modified: 2021-05-21
+:Status: Accepted
+:Minimum Server Version: N/A
 
 .. contents::
 
@@ -355,7 +351,7 @@ out of implicit decoding if desired.
 .. _robustness principle: https://en.wikipedia.org/wiki/Robustness_principle
 
 
-Change Log
-==========
+Changelog
+=========
 
-This section is intentionally blank.
+:2022-10-05: Remove spec front matter.

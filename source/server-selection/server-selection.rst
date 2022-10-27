@@ -2,15 +2,8 @@
 Server Selection
 ================
 
-:Spec: 103
-:Title: Server Selection
-:Author: David Golden
-:Lead: Bernie Hackett
-:Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
-:Type: Standards
-:Last Modified: 2022-01-19
-:Version: 1.14.0
+:Minimum Server Version: 2.4
 
 .. contents::
 
@@ -490,6 +483,9 @@ eligibility MUST be determined from ``maxStalenessSeconds`` as follows:
 
 See the Max Staleness Spec for overall description and justification of this
 feature.
+
+.. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
+   so it does no additional wire version checks related to maxStalenessSeconds.
 
 .. _algorithm for filtering by tag_sets:
 
@@ -1822,76 +1818,53 @@ References
 .. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _Global Command Argument: /source/message/OP_MSG.rst#global-command-arguments
 
-Changes
-=======
+Changelog
+=========
 
-2021-08-05: Updated $readPreference logic to describe OP_MSG behavior.
-
-2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
-
-2015-08-10: Updated single-threaded selection logic to ensure a scan always
-happens at least once under serverSelectionTryOnce if selection fails.
-Removed the general selection algorithm and put full algorithms for each of
-the single- and multi-threaded sections. Added a requirement that
-single-threaded drivers document selection time expectations.
-
-2016-07-21: Updated for Max Staleness support.
-
-2016-08-03: Clarify selection algorithm, in particular that maxStalenessMS
-comes before tag_sets.
-
-2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
-
-2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
-to heartbeatFrequencyMS + idleWritePeriodMS (with proper conversions of course).
-
-2016-11-01: Update formula for secondary staleness estimate with the
-equivalent, and clearer, expression of this formula from the Max Staleness Spec
-
-2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
-future, require maxStalenessSeconds to be at least 90.
-
-2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
-must retry selection after checking an idle socket and discovering it is broken.
-
-2017-11-10: Added application-configurated server selector.
-
-2017-11-12: Specify read preferences for OP_MSG with direct connection, and
-delete obsolete comment direct connections to secondaries getting "not writable
-primary" errors by design.
-
-2018-01-22: Clarify that $query wrapping is only for OP_QUERY
-
-2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation
-Pipeline Operator" spec and warns if read preference is not primary.
-
-2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand
-selection rules.
-
-2018-12-13: Update tag_set example to use only String values
-
-2019-05-20: Added rule to not send read preferene to standalone servers
-
-2019-06-07: Clarify language for aggregate and mapReduce commands that write
-
-2020-03-17: Specify read preferences with support for server hedged reads
-
-2020-10-10: Consider server load when selecting servers within the latency
-window.
-
-2021-04-07: Adding in behaviour for load balancer mode.
-
-2021-05-12: Removed deprecated URI option in favour of readPreference=secondaryPreferred.
-
-2021-05-13: Updated to use modern terminology.
-
-2021-09-03: Clarify that wire version check only applies to available servers.
-
-2021-09-28: Note that 5.0+ secondaries support aggregate with write stages (e.g.
-``$out`` and ``$merge``). Clarify setting ``SecondaryOk` wire protocol flag or
-``$readPreference`` global command argument for replica set topology.
-
-2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
-
-.. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
-   so it does no additional wire version checks related to maxStalenessSeconds.
+:2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
+:2015-08-10: Updated single-threaded selection logic to ensure a scan always
+             happens at least once under serverSelectionTryOnce if selection
+             fails. Removed the general selection algorithm and put full
+             algorithms for each of the single- and multi-threaded sections.
+             Added a requirement that single-threaded drivers document selection
+             time expectations.
+:2016-07-21: Updated for Max Staleness support.
+:2016-08-03: Clarify selection algorithm, in particular that maxStalenessMS
+             comes before tag_sets.
+:2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
+:2016-10-25: Change minimum maxStalenessSeconds value from 2 *
+             heartbeatFrequencyMS to heartbeatFrequencyMS + idleWritePeriodMS
+             (with proper conversions of course).
+:2016-11-01: Update formula for secondary staleness estimate with the
+             equivalent, and clearer, expression of this formula from the Max
+             Staleness Spec
+:2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+             future, require maxStalenessSeconds to be at least 90.
+:2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
+             must retry selection after checking an idle socket and discovering
+             it is broken.
+:2017-11-10: Added application-configurated server selector.
+:2017-11-12: Specify read preferences for OP_MSG with direct connection, and
+             delete obsolete comment direct connections to secondaries getting
+             "not writable primary" errors by design.
+:2018-01-22: Clarify that $query wrapping is only for OP_QUERY
+:2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation
+             Pipeline Operator" spec and warns if read preference is not primary.
+:2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand
+             selection rules.
+:2018-12-13: Update tag_set example to use only String values
+:2019-05-20: Added rule to not send read preferene to standalone servers
+:2019-06-07: Clarify language for aggregate and mapReduce commands that write
+:2020-03-17: Specify read preferences with support for server hedged reads
+:2020-10-10: Consider server load when selecting servers within the latency window.
+:2021-04-07: Adding in behaviour for load balancer mode.
+:2021-05-12: Removed deprecated URI option in favour of readPreference=secondaryPreferred.
+:2021-05-13: Updated to use modern terminology.
+:2021-08-05: Updated $readPreference logic to describe OP_MSG behavior.
+:2021-09-03: Clarify that wire version check only applies to available servers.
+:2021-09-28: Note that 5.0+ secondaries support aggregate with write stages
+             (e.g. ``$out`` and ``$merge``). Clarify setting ``SecondaryOk` wire
+             protocol flag or ``$readPreference`` global command argument for
+             replica set topology.
+:2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
+:2022-10-05: Remove spec front matter, move footnote, and reformat changelog.

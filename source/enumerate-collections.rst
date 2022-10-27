@@ -5,15 +5,8 @@
 Enumerating Collections
 =======================
 
-:Spec: 107
-:Spec-ticket: SPEC-54
-:Title: Enumerating Collections
-:Authors: Derick Rethans
-:Status: Draft
-:Type: Standards
-:Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2022-02-01
-:Version: 0.9.0
+:Status: Accepted
+:Minimum Server Version: 1.8
 
 .. contents::
 
@@ -133,7 +126,9 @@ document::
 MongoDB 4.4 introduced a ``comment``  option to the ``listCollections``
 database command. This option enables users to specify a comment as an arbitrary
 BSON type to help trace the operation through the database profiler, currentOp
-and logs. The default is to not send a value.
+and logs. The default is to not send a value.  If a comment is provided on pre-4.4 
+servers, the comment should still be attached and the driver should rely on the server 
+to provide an error to the user.
 
 Example of usage of the comment option::
 
@@ -462,52 +457,27 @@ The shell implements the first algorithm for falling back if the
 (`<https://github.com/mongodb/mongo/blob/f32ba54f971c045fb589fe4c3a37da77dc486cee/src/mongo/shell/db.js#L550>`_).
 
 
-Version History
-===============
+Changelog
+=========
 
-Version 0.9.0 Changes
-    Add ``comment`` option to ``listCollections`` command.
-
-Version 0.8.0 Changes
-    - Require that timeouts be applied per the client-side operations timeout spec.
-
-Version 0.7.0 Changes
-    - Support ``authorizedCollections`` option in ``listCollections`` command.
-
-Version 0.6.1 Changes
-    - Update to use secondaryOk.
-
-Version 0.6.0 Changes
-    - MongoDB 4.4 no longer includes ``ns`` field in ``idIndex`` field for
-      ``listCollections`` responses.
-
-Version 0.5.1 Changes
-    - The method that returns a list of collection names should be named
-      ``listCollectionNames``. The method that returns a list of collection
-      objects may be named ``listMongoCollections``.
-
-Version 0.5 Changes
-    - Clarify that ``nameOnly`` must not be used with filters other than ``name``.
-
-Version 0.4 Changes
-    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command.
-
-Version 0.3.1 Changes
-
-    - Fix typos.
-    - Clarify reason for filtering collection names containing '$'.
-
-Version 0.3 Changes
-
-    - SPEC-121: Clarify trimming of database name
-    - Put preferred method name for listing collections with a cursor as return
-      value.
-
-Version 0.2 Changes
-
-    - Update with the server change to return a cursor for
-      ``listCollections``.
-
-Version 0.1 Changes
-
-    - Initial draft
+:2022-10-05: Remove spec front matter and reformat changelog.
+:2022-09-15: Clarify the behavior of ``comment`` on pre-4.4 servers.
+:2022-02-01: Add ``comment`` option to ``listCollections`` command.
+:2022-01-20: Require that timeouts be applied per the client-side operations
+             timeout spec.
+:2021-12-17: Support ``authorizedCollections`` option in ``listCollections``
+             command.
+:2021-04-22: Update to use secondaryOk.
+:2020-03-18: MongoDB 4.4 no longer includes ``ns`` field in ``idIndex`` field
+             for ``listCollections`` responses.
+:2019-03-21: The method that returns a list of collection names should be named
+             ``listCollectionNames``. The method that returns a list of
+             collection objects may be named ``listMongoCollections``.
+:2018-07-03: Clarify that ``nameOnly`` must not be used with filters other than
+             ``name``.
+:2018-05-18: Support ``nameOnly`` option in ``listCollections`` command.
+:2017-09-27: Clarify reason for filtering collection names containing '$'.
+:2015-01-14: Clarify trimming of database name. Put preferred method name for
+             listing collections with a cursor as return value.
+:2014-12-18: Update with the server change to return a cursor for
+             ``listCollections``.

@@ -5,14 +5,8 @@
 Index Management
 ================
 
-:Spec: 79
-:Title: Index Management
-:Authors: Durran Jordan
-:Status: Approved
-:Type: Standards
+:Status: Accepted
 :Minimum Server Version: 2.4
-:Last Modified: 2022-02-10
-:Version: 1.10
 
 .. contents::
 
@@ -881,32 +875,25 @@ Q: Why does the driver manually throw errors if the ``commitQuorum`` option is s
 Changelog
 ---------
 
-17 SEP 2015:
-  - Added ``partialFilterExpression`` attribute to ``IndexOptions`` in order to support partial indexes.
-  - Fixed "provides" typo.
-19 MAY 2016:
-  - Added ``collation`` attribute to ``IndexOptions`` in order to support setting a collation on an index.
-8 AUG 2016:
-  - Fixed ``collation`` language to not mention a collection default.
-11 OCT 2016:
-  - Added note on 3.4 servers validation options passed to ``createIndexes``.
-11 OCT 2016:
-  - Add note on server generated name for the _id index.
-31 MAY 2017:
-  - Add Q & A addressing write concern and maxTimeMS option.
-7 JUN 2017:
-  - Include listIndexes() in Q&A about maxTimeMS.
-24 April 2019:
-  - Added ``wildcardProjection`` attribute to ``IndexOptions`` in order to support setting a wildcard projection on a wildcard index.
-30 MAR 2020:
-  - Added options types to various helpers
-  - Introduced ``commitQuorum`` option
-  - Added deprecation message for ``background`` option.
-19 JAN 2022:
-  - Require that timeouts be applied per the client-side operations timeout spec.
-01 FEB 2022:
-  - Added comment field to helper methods.
-10 FEB 2022:
-  - Specified that ``getMore`` command must explicitly send inherited comment.
-18 APR 2022:
-  - Added the ``clustered`` attribute to ``IndexOptions`` in order to support clustered collections.
+:2015-09-17: Added ``partialFilterExpression`` attribute to ``IndexOptions`` in
+             order to support partial indexes. Fixed "provides" typo.
+:2016-05-19: Added ``collation`` attribute to ``IndexOptions`` in order to
+             support setting a collation on an index.
+:2016-08-08: Fixed ``collation`` language to not mention a collection default.
+:2016-10-11: Added note on 3.4 servers validation options passed to
+             ``createIndexes``. Add note on server generated name for the _id
+             index.
+:2017-05-31: Add Q & A addressing write concern and maxTimeMS option.
+:2017-06-07: Include listIndexes() in Q&A about maxTimeMS.
+:2019-04-24: Added ``wildcardProjection`` attribute to ``IndexOptions`` in order
+             to support setting a wildcard projection on a wildcard index.
+:2020-03-30: Added options types to various helpers. Introduced ``commitQuorum``
+             option. Added deprecation message for ``background`` option.
+:2022-01-19: Require that timeouts be applied per the client-side operations
+             timeout spec.
+:2022-02-01: Added comment field to helper methods.
+:2022-02-10: Specified that ``getMore`` command must explicitly send inherited
+             comment.
+:2022-04-18: Added the ``clustered`` attribute to ``IndexOptions`` in order to
+             support clustered collections.
+:2022-10-05: Remove spec front matter and reformat changelog.

@@ -5,15 +5,8 @@
 Driver Authentication
 =====================
 
-:Spec: 100
-:Spec Version: 1.11.0
-:Title: Driver Authentication
-:Author: Craig Wilson, David Golden
-:Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
-:Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -736,7 +729,7 @@ MONGODB-AWS
 
 MONGODB-AWS authenticates using AWS IAM credentials (an access key ID and a secret access key), `temporary AWS IAM credentials <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html>`_ obtained from an 
 `AWS Security Token Service (STS) <https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.html>`_ 
-`Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request, 
+`Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request, an OpenID Connect ID token that supports `AssumeRoleWithWebIdentity <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html>`_,
 or temporary AWS IAM credentials assigned to an `EC2 instance <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html>`_ or ECS task. Temporary credentials, in addition to an access key ID and a secret access key, includes a security (or session) token.
 
 MONGODB-AWS requires that a client create a randomly generated nonce. It is 
@@ -939,6 +932,8 @@ The order in which Drivers MUST search for credentials is:
 
 #. The URI
 #. Environment variables
+#. Using ``AssumeRoleWithWebIdentity`` if ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
+   ``AWS_ROLE_SESSION_NAME``  are set.
 #. The ECS endpoint if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set. Otherwise, the EC2 endpoint.
 
 .. note::
@@ -962,6 +957,60 @@ request. If so, then in addition to a username and password, users MAY also prov
 Environment variables
 _____________________
 AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
+
+AssumeRoleWithWebIdentity
+_________________________
+AWS EKS clusters can be configured to automatically provide a valid OpenID
+Connect ID token and associated role ARN.  These can be exchanged for temporary
+credentials using an `AssumeRoleWithWebIdentity request <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html>`_.
+
+If the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and ``AWS_ROLE_ARN`` environment
+variables are set, drivers MUST make an ``AssumeRoleWithWebIdentity`` request
+to obtain temporary credentials.  AWS recommends using an AWS Software
+Development Kit (SDK) to make STS requests.
+
+The ``WebIdentityToken`` value is obtained by reading the contents of the
+file given by ``AWS_WEB_IDENTITY_TOKEN_FILE``.  The ``RoleArn`` value is
+obtained from ``AWS_ROLE_ARN``.  If ``AWS_ROLE_SESSION_NAME`` is set,
+it MUST be used for the ``RoleSessionName`` parameter, otherwise a suitable
+random name can be chosen.  No other request parameters need to be set if
+using an SDK.
+
+If not using an AWS SDK, the request must be made manually.  If making a manual request, the ``Version`` should be specified as well. An example manual
+POST request looks like the following:
+
+.. code:: html
+
+    https://sts.amazonaws.com/
+    ?Action=AssumeRoleWithWebIdentity
+    &RoleSessionName=app1
+    &RoleArn=<role_arn>
+    &WebIdentityToken=<token_file_contents>
+    &Version=2011-06-15
+
+with the header:
+
+.. code:: html
+
+    Accept: application/json
+
+The JSON response from the STS endpoint will contain credentials in
+this format:
+
+.. code:: javascript
+
+    {
+        "Credentials": {
+            "AccessKeyId": <access_key>,
+            "Expiration": <date>,
+            "RoleArn": <assumed_role_arn>,
+            "SecretAccessKey": <secret_access_key>,
+            "SessionToken": <session_token>
+        }
+    }
+
+Note that the token is called ``SessionToken`` and not ``Token`` as it
+would be with other credential responses.
 
 ECS endpoint
 ____________
@@ -1048,6 +1097,29 @@ The JSON response from both the actual and mock EC2 endpoint will be in this for
 From the JSON response drivers 
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
+
+Caching Credentials
+___________________
+Credentials fetched by the driver using AWS endpoints MUST be cached and reused
+to avoid hitting AWS rate limitations. AWS recommends using a suitable
+Software Development Kit (SDK) for your langauge. If that SDK supports
+credential fetch and automatic refresh/caching, then that mechanism can
+be used in lieu of manual caching.
+
+If using manual caching, the "Expiration" field MUST be stored
+and used to determine when to clear the cache. Credentials are considered
+valid if they are more than five minutes away from expiring; to the reduce the
+chance of expiration before they are validated by the server.
+
+If there are no current valid cached credentials, the driver MUST initiate a
+credential request. To avoid adding a bottleneck that would override the
+``maxConnecting`` setting, the driver MUST not place a lock on making a
+request. The cache MUST be written atomically.
+
+If AWS authentication fails for any reason, the cache MUST be cleared.
+
+.. note::
+    Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
 
 -------------------------
 Connection String Options
@@ -1282,100 +1354,57 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 	No. While it's possible to allow access to EC2 instance metadata in ECS, for security reasons, Amazon states it's best practice to avoid this. (See `accessing EC2 metadata in ECS <https://aws.amazon.com/premiumsupport/knowledge-center/ecs-container-ec2-metadata/>`_ and `IAM Roles for Tasks <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html>`_)
 
-Version History
-===============
+Changelog
+=========
 
-Version 1.11.0 Changes
-    * Require that timeouts be applied per the client-side operations timeout spec.
+:2022-10-07: Require caching of AWS credentials fetched by the driver.
+:2022-10-05: Remove spec front matter and convert version history to changelog.
+:2022-09-07: Add support for AWS AssumeRoleWithWebIdentity.
+:2022-01-20: Require that timeouts be applied per the client-side operations timeout spec.
+:2022-01-14: Clarify that ``OP_MSG`` must be used for authentication when it is supported.
+:2021-04-23: Updated to use hello and legacy hello.
+:2021-03-04: Note that errors encountered during auth are handled by SDAM.
+:2020-03-06: Add reference to the speculative authentication section of the handshake spec.
+:2020-02-15: Rename MONGODB-IAM to MONGODB-AWS
+:2020-02-04: Support shorter SCRAM conversation starting in version 4.4 of the server.
+:2020-01-31: Clarify that drivers must raise an error when a connection string
+             has an empty value for authSource.
+:2020-01-23: Clarify when authentication will occur.
+:2020-01-22: Clarify that authSource in URI is not treated as a user configuring
+             auth credentials.
+:2019-12-05: Added MONGODB-IAM auth mechanism
+:2019-07-13: Clarify database to use for auth mechanism negotiation.
+:2019-04-26: * Test format changed to improve specificity of behavior assertions.
+             * Clarify that database name in URI is not treated as a user configuring auth credentials.
+:2018-08-08: Unknown users don't cause handshake errors. This was changed before
+             server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
+             such a possibility.
+:2018-04-17: * Clarify authSource defaults
+             * Fix PLAIN authSource rule to allow user provided values
+             * Change SCRAM-SHA-256 rules such that usernames are *NOT*
+               normalized; this follows a change in the server design and should
+               be available in server 4.0-rc0.
+:2018-03-29: Clarify auth handshake and that it only applies to non-monitoring sockets.
+:2018-03-15: Describe CANONICALIZE_HOST_NAME algorithm.
+:2018-03-02: * Added SCRAM-SHA-256 and mechanism negotiation as provided by server 4.0
+             * Updated default mechanism determination
+             * Clarified SCRAM-SHA-1 rules around SASLprep
+             * Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a minimum iteration count
+:2017-11-10: * Updated minimum server version to 2.6
+             * Updated the Q & A to recommend support for at most a single credential per MongoClient
+             * Removed lazy authentication section
+             * Changed the list of server types requiring authentication
+             * Made providing username for X509 authentication optional
+:2015-02-04: * Added SCRAM-SHA-1 sasl mechanism
+             * Added connection handshake
+             * Changed connection string to support mechanism properties in generic form
+             * Added example conversations for all mechanisms except GSSAPI
+             * Miscellaneous wording changes for clarification
+             * Added MONGODB-X509
+             * Added PLAIN sasl mechanism
+             * Added support for GSSAPI mechanism property gssapiServiceName
 
-Version 1.10.5 Changes
-    * Clarify that ``OP_MSG`` must be used for authentication when it is
-      supported.
-
-Version 1.10.4 Changes
-    * Updated to use hello and legacy hello.
-
-Version 1.10.3 Changes
-    * Note that errors encountered during auth are handled by SDAM.
-
-Version 1.10.2 Changes
-    * Add reference to the speculative authentication section of the handshake spec.
-
-Version 1.10.1 Changes
-    * Rename MONGODB-IAM to MONGODB-AWS
-
-Version 1.10.0 Changes
-    * Support shorter SCRAM conversation starting in version 4.4 of the server.
-
-Version 1.9.1 Changes
-    * Clarify when authentication will occur.
-
-Version 1.9.0 Changes
-    * Clarify that drivers must raise an error when a connection string
-      has an empty value for authSource.
-
-Version 1.8.3 Changes
-    * Clarify that authSource in URI is not treated as a user configuring
-      auth credentials.
-
-Version 1.8.2 Changes
-    * Added MONGODB-IAM auth mechanism
-
-Version 1.8.1 Changes
-    * Clarify database to use for auth mechanism negotiation.
-
-Version 1.8.0 Changes
-    * Test format changed to improve specificity of behavior assertions.
-
-Version 1.7.2 Changes
-    * Clarify that database name in URI is not treated as a user configuring
-      auth credentials.
-
-Version 1.7.1 Changes
-    * Unknown users don't cause handshake errors. This was changed before
-      server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
-      such a possibility.
-
-Version 1.7 Changes
-    * Clarify authSource defaults
-    * Fix PLAIN authSource rule to allow user provided values
-
-Version 1.6 Changes
-    * Change SCRAM-SHA-256 rules such that usernames are *NOT* normalized;
-      this follows a change in the server design and should be available in
-      server 4.0-rc0.
-
-Version 1.5 Changes
-    * Clarify auth handshake and that it only applies to non-monitoring
-      sockets.
-
-Version 1.4.1 Changes
-    * Describe CANONICALIZE_HOST_NAME algorithm.
-
-Version 1.4 Changes
-	* Added SCRAM-SHA-256 and mechanism negotiation as provided by server 4.0
-	* Updated default mechanism determination
-	* Clarified SCRAM-SHA-1 rules around SASLprep
-	* Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a minimum iteration count
-
-Version 1.3 Changes
-	* Updated minimum server version to 2.6
-	* Updated the Q & A to recommend support for at most a single credential per MongoClient
-	* Removed lazy authentication section
-	* Changed the list of server types requiring authentication
-	* Made providing username for X509 authentication optional
-
-Version 1.2 Changes
-	* Added SCRAM-SHA-1 sasl mechanism
-	* Added connection handshake
-	* Changed connection string to support mechanism properties in generic form
-	* Added example conversations for all mechanisms except GSSAPI
-	* Miscellaneous wording changes for clarification
-
-Version 1.1 Changes
-	* Added MONGODB-X509
-	* Added PLAIN sasl mechanism
-	* Added support for GSSAPI mechanism property gssapiServiceName
+----
 
 .. Section for links.
 

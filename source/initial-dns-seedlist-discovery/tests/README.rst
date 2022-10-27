@@ -114,31 +114,51 @@ These YAML and JSON files contain the following fields:
 - ``error``: indicates that the parsing of the URI, or the resolving or
   contents of the SRV or TXT records included errors.
 - ``comment``: a comment to indicate why a test would fail.
+- ``ping``: if false, the test runner should not run a "ping" operation.
 
 .. _`Connection String`: ../../connection-string/connection-string-spec.rst
 .. _`URI options`: ../../uri-options/uri-options.rst
 
-For each file, create a MongoClient initialized with the ``mongodb+srv``
-connection string.
+For each YAML file:
 
-If ``seeds`` is specified, drivers SHOULD verify that the set of hosts in the
-client's initial seedlist matches the list in ``seeds``. If ``numSeeds`` is
-specified, drivers SHOULD verify that the size of that set matches ``numSeeds``.
+- Create a MongoClient initialized with the ``mongodb+srv``
+  connection string.
+- Run a "ping" operation unless ``ping`` is false or ``error`` is true.
 
-If ``hosts`` is specified, drivers MUST verify that the set of
-ServerDescriptions in the client's TopologyDescription eventually matches the
-list in ``hosts``. If ``numHosts`` is specified, drivers MUST verify that the
-size of that set matches ``numHosts``.
+Assertions:
 
-If ``options`` is specified, drivers MUST verify each of the values under
-``options`` match the MongoClient's parsed value for that option. There may be
-other options parsed by the MongoClient as well, which a test does not verify.
+- If ``seeds`` is specified, drivers SHOULD verify that the set of hosts in the
+  client's initial seedlist matches the list in ``seeds``. If ``numSeeds`` is
+  specified, drivers SHOULD verify that the size of that set matches
+  ``numSeeds``.
 
-If ``parsed_options`` is specified, drivers MUST verify that each of the values
-under ``parsed_options`` match the MongoClient's parsed value for that option.
-Supported values include, but are not limited to, ``user`` and ``password``
-(parsed from ``UserInfo``) and ``auth_database`` (parsed from
-``Auth database``).
+- If ``hosts`` is specified, drivers MUST verify that the set of
+  ServerDescriptions in the client's TopologyDescription eventually matches the
+  list in ``hosts``. If ``numHosts`` is specified, drivers MUST verify that the
+  size of that set matches ``numHosts``.
 
-If ``error`` is specified and ``true``, drivers MUST verify that an error has
-been thrown.
+- If ``options`` is specified, drivers MUST verify each of the values under
+  ``options`` match the MongoClient's parsed value for that option. There may be
+  other options parsed by the MongoClient as well, which a test does not verify.
+
+- If ``parsed_options`` is specified, drivers MUST verify that each of the
+  values under ``parsed_options`` match the MongoClient's parsed value for that
+  option. Supported values include, but are not limited to, ``user`` and
+  ``password`` (parsed from ``UserInfo``) and ``auth_database`` (parsed from
+  ``Auth database``).
+
+- If ``error`` is specified and ``true``, drivers MUST verify that initializing
+  the MongoClient throws an error. If ``error`` is not specified or is
+  ``false``, both initializing the MongoClient and running a ping operation must
+  succeed without throwing any errors.
+
+- If ``ping`` is not specified or ``true``, drivers MUST verify that running a
+  "ping" operation using the initialized MongoClient succeeds. If ``ping`` is
+  ``false``, drivers MUST NOT run a "ping" operation.
+
+    **Note:** These tests are expected to be run against MongoDB databases with
+    and without authentication enabled. The "ping" operation does not require
+    authentication so should succeed with URIs that contain no userinfo (i.e.
+    no username and password). Tests with URIs that contain userinfo always set
+    ``ping`` to ``false`` because some drivers will fail handshake on a
+    connection if userinfo is provided but incorrect.

@@ -2,6 +2,9 @@
 Atlas Serverless Tests
 ======================
 
+:Status: Accepted
+:Minimum Server Version: N/A
+
 .. contents::
 
 ----
@@ -115,6 +118,11 @@ included in a driver's Atlas Serverless testing suite:
     transactions tests may hang if an individual test leaves a transaction open
     when it finishes (`CLOUDP-84298`_).
 - Versioned/Stable API
+- Client Side Encryption
+
+  - Drivers MUST test with a version of the ``crypt_shared`` shared library that
+    matches the MongoDB Server version running in Serverless.
+    See `Using crypt_shared <https://github.com/mongodb/specifications/tree/e761591616849d9b507287811e77f7a359fb9587/source/client-side-encryption/tests#using-crypt-shared>`_.
 
 .. _CLOUDP-84298: https://jira.mongodb.org/browse/CLOUDP-84298
 
@@ -141,6 +149,6 @@ proxy, so their spec and prose tests MUST be skipped.
 Changelog
 =========
 
+:2022-10-05: Add spec front matter
 :2022-04-22: Testing uses a load balancer fronting a single proxy.
 :2021-08-25: Update tests for load balanced serverless instances.
-
