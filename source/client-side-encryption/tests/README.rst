@@ -2380,7 +2380,7 @@ attached to the virtual machine.
 
 Expect the key to be successfully created.
 
-20. Bypass Spawning mongocryptd client when shared library is loaded
+20. Bypass creating mongocryptd client when shared library is loaded
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::
