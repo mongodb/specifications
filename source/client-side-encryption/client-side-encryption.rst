@@ -4,6 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
+:Last Modified: 2022-10-26
+:Version: 1.11.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -1572,6 +1574,9 @@ is propagated to the user.
 Connecting to mongocryptd_
 --------------------------
 
+If the crypt_shared_ library is loaded, the driver MUST NOT attempt to connect
+to mongocryptd_. (Refer: `Detecting crypt_shared Availability`_).
+
 Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
 , connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
@@ -1583,7 +1588,7 @@ selection error is propagated to the user.
 .. note::
 
    A correctly-behaving driver will never attempt to connect to mongocryptd_
-   when |opt-crypt_shared-required| is set to |true|.
+   when |opt-crypt_shared-required| is set to |true| or crypt_shared_ is loaded.
 
 ClientEncryption
 ================
@@ -2515,6 +2520,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-10-26, Do not connect to `mongocryptd` if shared library is loaded.
    22-10-11, Specify a timeout on Azure IMDS HTTP requests and fix the resource URL
    22-10-05, Remove spec front matter and ``versionadded`` RST macros (since spec version was removed)
    22-09-26, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
