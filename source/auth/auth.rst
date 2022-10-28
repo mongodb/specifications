@@ -928,6 +928,15 @@ Drivers will need AWS IAM credentials (an access key, a secret access key and op
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.  If a username and password are provided drivers 
 MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. If, additionally, a session token is provided Drivers MUST use it as well. If a username is provided without a password (or vice-versa) or if *only* a session token is provided Drivers MUST raise an error. In other words, regardless of how Drivers obtain credentials the only valid combination of credentials is an access key ID and a secret access key or an access key ID, a secret access key and a session token.
 
+AWS recommends using an SDK to "take care of some of the heavy lifting
+necessary in successfully making API calls, including authentication, retry
+behavior, and more".
+
+A recommended pattern for drivers with existing custom implementation is to not
+further enhance existing implementations, and take an optional dependency on
+the AWS SDK.  If the SDK is available, use it, otherwise fallback to the
+existing implementation.
+
 The order in which Drivers MUST search for credentials is:
 
 #. The URI
