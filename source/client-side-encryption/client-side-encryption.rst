@@ -951,15 +951,17 @@ collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
 
 If `EF` is *not-found*, report an error.
 
-let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
+Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
 
-- For each element `F` of `EF'`:
+- Let `Fields` be the ``"fields"`` element within `EF'`.
+- If `Fields` is present and is an array value, then for each element `F` of
+  `Fields`:
 
   - If `F` is not a document element, skip it.
   - Otherwise, if `F` has a ``"keyId"`` named element `K` and `K` is a ``null``
     value:
 
-    - Let `D` be the result ``C.createDataKey(kmsProv, dkOpts)``.
+    - Let `D` be the result of ``C.createDataKey(kmsProv, dkOpts)``.
     - If generating `D` resulted in an error `E`, the entire
       `CreateEncryptedCollection` must now fail with error `E`.
     - Replace `K` in `F` with `D`.
