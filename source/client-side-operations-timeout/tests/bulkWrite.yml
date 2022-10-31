@@ -14,6 +14,9 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+      uriOptions:
+        # Used to speed up the test
+        w: 1
   - database:
       id: &database database
       client: *client
@@ -34,6 +37,11 @@ tests:
   # bulkWrite should fail with a timeout error.
   - description: "timeoutMS applied to entire bulkWrite, not individual commands"
     operations:
+      # Do an operation without a timeout to ensure the servers are discovered.
+      - name: insertOne
+        object: *collection
+        arguments:
+          document: {}
       - name: failPoint
         object: testRunner
         arguments:
@@ -45,11 +53,6 @@ tests:
               failCommands: ["insert", "update"]
               blockConnection: true
               blockTimeMS: 120
-      # Do an operation without a timeout to ensure the servers are discovered.
-      - name: find
-        object: *collection
-        arguments:
-          filter: { _id : 1 }
       - name: bulkWrite
         object: *collection
         arguments:
@@ -66,10 +69,10 @@ tests:
       - client: *client
         events:
           - commandStartedEvent:
-              commandName: find
+              commandName: insert
               databaseName: *databaseName
               command:
-                find: *collectionName
+                insert: *collectionName
           - commandStartedEvent:
               commandName: insert
               databaseName: *databaseName

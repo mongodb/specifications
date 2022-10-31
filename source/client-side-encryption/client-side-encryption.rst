@@ -4,6 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
+:Last Modified: 2022-10-26
+:Version: 1.11.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -624,6 +626,12 @@ Identities* associated with them. From within the VM, an identity can be used by
 obtaining an access token via HTTP from the *Azure Instance Metadata Service*
 (IMDS). `See this documentation for more information`__
 
+..note::
+
+   To optimize for testability, it is recommended to implement an isolated
+   abstraction for communication with IMDS. This will aide in the implementation
+   of the prose tests of the communication with an IMDS server.
+
 __ https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
 
 .. default-role:: math
@@ -633,24 +641,26 @@ The below steps should be taken:
 1. Let `U` be a new URL, initialized from the URL string
    :ts:`"http://169.254.169.254/metadata/identity/oauth2/token"`
 2. Add a query parameter ``api-version=2018-02-01`` to `U`.
-3. Add a query parameter ``resource=http://vault.azure.com/`` to `U`.
+3. Add a query parameter ``resource=https://vault.azure.net/`` to `U`.
 4. Prepare an HTTP GET request `Req` based on `U`.
 
    .. note:: All query parameters on `U` should be appropriately percent-encoded
 
 5. Add HTTP headers ``Metadata: true`` and ``Accept: application/json`` to
    `Req`.
-6. Issue `Req` to the Azure IMDS server ``168.254.169.254:80``. Let `Resp` be
-   the response from the server.
-7.  If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the
-    HTTP response body of `Resp` encodes information about the error that
-    occurred. Return an error instead of an access token.
-8.  Otherwise, let `J` be the JSON document encoded in the HTTP response body
-    of `Resp`.
-9.  The result access token `T` is given as the ``access_token`` string property
-    of `J`. Return `T` as the resulting access token.
-10. The resulting "expires in" duration `d_{exp}` is a count of seconds given as an
-    ASCII-encoded integer string ``expires_in`` property of `J`.
+6. Issue `Req` to the Azure IMDS server ``169.254.169.254:80``. Let `Resp` be
+   the response from the server. If the HTTP response is not completely received
+   within ten seconds, consider the request to have timed out, and return an
+   error instead of an access token.
+7. If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the HTTP
+   response body of `Resp` encodes information about the error that occurred.
+   Return an error including the HTTP response body instead of an access token.
+8. Otherwise, let `J` be the JSON document encoded in the HTTP response body of
+   `Resp`.
+9. The result access token `T` is given as the ``access_token`` string property
+   of `J`. Return `T` as the resulting access token.
+10. The resulting "expires in" duration `d_{exp}` is a count of seconds given as
+    an ASCII-encoded integer string ``expires_in`` property of `J`.
 
 .. note::
 
@@ -1564,6 +1574,9 @@ is propagated to the user.
 Connecting to mongocryptd_
 --------------------------
 
+If the crypt_shared_ library is loaded, the driver MUST NOT attempt to connect
+to mongocryptd_. (Refer: `Detecting crypt_shared Availability`_).
+
 Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
 , connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
@@ -1575,7 +1588,7 @@ selection error is propagated to the user.
 .. note::
 
    A correctly-behaving driver will never attempt to connect to mongocryptd_
-   when |opt-crypt_shared-required| is set to |true|.
+   when |opt-crypt_shared-required| is set to |true| or crypt_shared_ is loaded.
 
 ClientEncryption
 ================
@@ -2507,6 +2520,8 @@ Changelog
    :align: left
 
    Date, Description
+   22-10-26, Do not connect to `mongocryptd` if shared library is loaded.
+   22-10-11, Specify a timeout on Azure IMDS HTTP requests and fix the resource URL
    22-10-05, Remove spec front matter and ``versionadded`` RST macros (since spec version was removed)
    22-09-26, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
    22-09-09, Prohibit ``rewrapManyDataKey`` with libmongocrypt <= 1.5.1.
