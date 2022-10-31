@@ -937,6 +937,20 @@ further enhance existing implementations, and take an optional dependency on
 the AWS SDK.  If the SDK is available, use it, otherwise fallback to the
 existing implementation.
 
+One thing to be mindful of when adopting an AWS SDK is that they typically will
+check for credentials in a shared AWS credentials file when one is present,
+which may be confusing for users relying on the previous authentication
+handling behavior. It would be helpful to include a note like the following:
+
+"Because we are now using the AWS SDK to handle credentials, if you have a
+shared AWS credentials or config file, then those credentials will be used by
+default if AWS auth environment variables are not set. To override this
+behavior, set ``AWS_SHARED_CREDENTIALS_FILE=""`` in your shell or set the
+equivalent environment variable value in your script or application.
+Alternatively, you can create an AWS profile specifically for your MongoDB
+credentials and set the ``AWS_PROFILE`` environment variable to that profile
+name."
+
 The order in which Drivers MUST search for credentials is:
 
 #. The URI
