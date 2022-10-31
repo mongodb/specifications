@@ -1010,7 +1010,7 @@ The log messages are intended to match the information contained in the events a
 subscriber if it is convenient to do so.
 
 The types used in the structured message definitions below are demonstrative, and drivers MAY use similar types instead so long as the information
-is present (e.g. a double instead of an integer, or a string instead of an integer if the structured logging framework does not support numeric types.)
+is present (e.g. a double instead of an integer, or a string instead of an integer if the structured logging framework does not support numeric types).
 
 Common Fields
 -------------
@@ -1026,11 +1026,12 @@ All connection log messages MUST contain the following key-value pairs:
 
    * - serverHost
      - String
-     -  the hostname or IP address for the endpoint the pool is for.
+     -  the hostname, IP address, or Unix domain socket path for the endpoint the pool is for.
 
    * - serverPort
      - Int
-     - The port for the endpoint the pool is for. Optional; only present if a port was specified.
+     - The port for the endpoint the pool is for. Optional; not present for Unix domain sockets. When
+       the user does not specify a port and the default (27017) is used, the driver SHOULD include it here. 
 
 Pool Created Message
 ---------------------
@@ -1082,7 +1083,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection pool created for host with hostname {{serverHost}} on port {{serverPort}} using options maxIdleTimeMS={{maxIdleTimeMS}},
+  Connection pool created for {{serverHost}}:{{serverPort}} using options maxIdleTimeMS={{maxIdleTimeMS}},
   minPoolSize={{minPoolSize}}, maxPoolSize={{maxPoolSize}}, maxConnecting={{maxConnecting}}, waitQueueTimeoutMS={{waitQueueTimeoutMS}},
   waitQueueSize={{waitQueueSize}}, waitQueueMultiple={{waitQueueMultiple}}
 
@@ -1104,7 +1105,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection pool ready for host with hostname {{serverHost}} on port {{serverPort}}
+  Connection pool ready for {{serverHost}}:{{serverPort}}
 
 Pool Cleared Message
 --------------------
@@ -1128,7 +1129,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection pool cleared for serviceId {{serviceId}} and host with hostname {{serverHost}} on port {{serverPort}}
+  Connection pool for {{serverHost}}:{{serverPort}} cleared for serviceId {{serviceId}}
 
 Pool Closed Message
 -------------------
@@ -1148,7 +1149,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection pool closed for host with hostname {{serverHost}} on port {{serverPort}}
+  Connection pool closed for {{serverHost}}:{{serverPort}}
 
 Connection Created Message
 --------------------------
@@ -1172,7 +1173,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection created with driver ID {{driverConnectionId}} to host with hostname {{serverHost}} on port {{serverPort}}
+  Connection created with driver-generated ID {{driverConnectionId}} to {{serverHost}}:{{serverPort}}
 
 Connection Ready Message
 ------------------------
@@ -1196,7 +1197,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection ready with driver ID {{driverConnectionId}} to host with hostname {{serverHost}} on port {{serverPort}}
+  Connection ready with driver-generated ID {{driverConnectionId}} to {{serverHost}}:{{serverPort}}
 
 Connection Closed Message
 -------------------------
@@ -1230,7 +1231,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection closed with driver ID {{driverConnectionId}} to host with hostname {{serverHost}} on port {{serverPort}}. Reason: {{reason}}
+  Connection closed with driver-generated ID {{driverConnectionId}} to {{serverHost}}:{{serverPort}}. Reason: {{reason}}
 
 Connection Checkout Started Message
 -----------------------------------
@@ -1250,7 +1251,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Checkout started for connection to host with hostname {{serverHost}} on port {{serverPort}}
+  Checkout started for connection to {{serverHost}}:{{serverPort}}
 
 Connection Checkout Failed Message
 -----------------------------------
@@ -1279,7 +1280,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Checkout failed for connection to host with hostname {{serverHost}} on port {{serverPort}}
+  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}
 
 Connection Checked Out
 -----------------------
@@ -1303,7 +1304,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection checked out with driver ID {{driverConnectionId}} to host with hostname {{serverHost}} on port {{serverPort}}
+  Connection checked out with driver-generated ID {{driverConnectionId}} to {{serverHost}}:{{serverPort}}
 
 Connection Checked In
 ---------------------
@@ -1327,7 +1328,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection checked in with driver ID {{driverConnectionId}} to host with hostname {{serverHost}} on port {{serverPort}}
+  Connection checked in with driver-generated ID {{driverConnectionId}} to {{serverHost}}:{{serverPort}}
 
 Connection Pool Errors
 ~~~~~~~~~~~~~~~~~~~~~~
