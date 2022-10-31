@@ -939,6 +939,11 @@ The order in which Drivers MUST search for credentials is:
 .. note::
 	See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in `Q & A`_
 
+    Drivers are not expected to handle `AssumeRole <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ requests directly. See
+    description of ``AssumeRole`` below, which is distinct from
+    ``AssumeRoleWithWebIdentity`` requests that are meant to be handled
+    directly by the driver.
+
 URI
 ___
 An example URI for authentication with MONGODB-AWS using AWS IAM credentials passed through the URI is as follows:
