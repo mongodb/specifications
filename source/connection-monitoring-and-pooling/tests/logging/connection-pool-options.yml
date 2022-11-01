@@ -82,8 +82,8 @@ tests:
             - client:
                 id: &client client
                 # Observe and wait for a poolReadyEvent so we can ensure the pool has been created and is
-                # ready by the time we close the client, in order to avoid raciness in which messages
-                # ar eemitted.
+                # ready by the time we assert on log messages, in order to avoid raciness around which messages
+                # are emitted.
                 observeEvents:
                   - poolReadyEvent
                 observeLogMessages:
@@ -127,8 +127,8 @@ tests:
             - client:
                 id: &client client
                 # Observe and wait for a poolReadyEvent so we can ensure the pool has been created and is
-                # ready by the time we close the client, in order to avoid raciness in which messages
-                # ar eemitted.
+                # ready by the time we assert on log messages, in order to avoid raciness around which messages
+                # are emitted.
                 observeEvents:
                   - poolReadyEvent
                 observeLogMessages:
@@ -172,8 +172,8 @@ tests:
             - client:
                 id: &client client
                 # Observe and wait for a poolReadyEvent so we can ensure the pool has been created and is
-                # ready by the time we close the client, in order to avoid raciness in which messages
-                # ar eemitted.
+                # ready by the time we assert on log messages, in order to avoid raciness around which messages
+                # are emitted.
                 observeEvents:
                   - poolReadyEvent
                 observeLogMessages:
@@ -217,8 +217,8 @@ tests:
             - client:
                 id: &client client
                 # Observe and wait for a poolReadyEvent so we can ensure the pool has been created and is
-                # ready by the time we close the client, in order to avoid raciness in which messages
-                # ar eemitted.
+                # ready by the time we assert on log messages, in order to avoid raciness around which messages
+                # are emitted.
                 observeEvents:
                   - poolReadyEvent
                 observeLogMessages:
@@ -251,4 +251,3 @@ tests:
               message: "Connection pool ready"
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
-
