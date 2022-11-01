@@ -4,11 +4,11 @@
   "runOnRequirements": [
     {
       "minServerVersion": "4.9",
+      "serverless": "forbid",
       "topologies": [
         "replicaset",
         "sharded"
-      ],
-      "serverless": "forbid",
+      ]
     }
   ],
   "createEntities": [
@@ -18,14 +18,14 @@
         "useMultipleMongoses": false
       }
     }
-  ],  
+  ],
   "initialData": [
     {
       "collectionName": "interruptInUse",
       "databaseName": "sdam-tests",
       "documents": []
     }
-  ],  
+  ],
   "tests": [
     {
       "description": "Connection pool clear uses interruptInUseConnections=true after monitor timeout",
@@ -39,13 +39,6 @@
                 "client": {
                   "id": "client",
                   "useMultipleMongoses": false,
-                  "uriOptions": {
-                    "connectTimeoutMS": 500,  
-                    "heartbeatFrequencyMS": 500,
-                    "appname": "interruptInUse",
-                    "retryReads": false,
-                    "minPoolSize": 0
-                  },
                   "observeEvents": [
                     "poolClearedEvent",
                     "connectionClosedEvent",
@@ -54,7 +47,14 @@
                     "commandFailedEvent",
                     "connectionCheckedOutEvent",
                     "connectionCheckedInEvent"
-                  ]
+                  ],
+                  "uriOptions": {
+                    "connectTimeoutMS": 500,
+                    "heartbeatFrequencyMS": 500,
+                    "appname": "interruptInUse",
+                    "retryReads": false,
+                    "minPoolSize": 0
+                  }
                 }
               },
               {
@@ -78,12 +78,14 @@
               }
             ]
           }
-        },      
+        },
         {
           "name": "insertOne",
           "object": "collection",
           "arguments": {
-            "document": { "_id" : 1 }
+            "document": {
+              "_id": 1
+            }
           }
         },
         {
@@ -92,14 +94,16 @@
           "arguments": {
             "thread": "thread1",
             "operation": {
-                "name": "find",
-                "object": "collection",
-                "arguments": {
-                    "filter": { "$where": "sleep(2000) || true" }
-                },
-                "expectError": {
-                  "isError": true
+              "name": "find",
+              "object": "collection",
+              "arguments": {
+                "filter": {
+                  "$where": "sleep(2000) || true"
                 }
+              },
+              "expectError": {
+                "isError": true
+              }
             }
           }
         },
@@ -107,6 +111,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
+            "client": "setupClient",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -114,22 +119,22 @@
               },
               "data": {
                 "failCommands": [
-                  "hello", "isMaster"
+                  "hello",
+                  "isMaster"
                 ],
                 "blockConnection": true,
                 "blockTimeMS": 1500,
                 "appName": "interruptInUse"
               }
-            },
-            "client": "setupClient"
+            }
           }
         },
         {
-            "name": "waitForThread",
-            "object": "testRunner",
-            "arguments": {
-              "thread": "thread1"
-            }
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1"
+          }
         }
       ],
       "expectEvents": [
@@ -157,20 +162,20 @@
                 "commandName": "find"
               }
             }
-         ]
-       },
-       {
+          ]
+        },
+        {
           "client": "client",
           "eventType": "cmap",
           "events": [
             {
-              "connectionCheckedOutEvent": { }
+              "connectionCheckedOutEvent": {}
             },
             {
-              "connectionCheckedInEvent": { }
+              "connectionCheckedInEvent": {}
             },
             {
-              "connectionCheckedOutEvent": { }
+              "connectionCheckedOutEvent": {}
             },
             {
               "poolClearedEvent": {
@@ -178,19 +183,25 @@
               }
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionCheckedInEvent": {}
             },
             {
-              "connectionClosedEvent": { }
+              "connectionClosedEvent": {}
             }
-         ]
-       }       
+          ]
+        }
       ],
-      "outcome": [{
-        "collectionName": "interruptInUse",
-        "databaseName": "sdam-tests",
-        "documents": [{ "_id": 1 }]
-      }]
+      "outcome": [
+        {
+          "collectionName": "interruptInUse",
+          "databaseName": "sdam-tests",
+          "documents": [
+            {
+              "_id": 1
+            }
+          ]
+        }
+      ]
     },
     {
       "description": "Error returned from connection pool clear with interruptInUseConnections=true is retryable",
@@ -204,22 +215,22 @@
                 "client": {
                   "id": "client",
                   "useMultipleMongoses": false,
+                  "observeEvents": [
+                    "poolClearedEvent",
+                    "connectionClosedEvent",
+                    "commandStartedEvent",
+                    "commandFailedEvent",
+                    "commandSucceededEvent",
+                    "connectionCheckedOutEvent",
+                    "connectionCheckedInEvent"
+                  ],
                   "uriOptions": {
-                    "connectTimeoutMS": 500,  
+                    "connectTimeoutMS": 500,
                     "heartbeatFrequencyMS": 500,
                     "appname": "interruptInUseRetryable",
                     "retryReads": true,
                     "minPoolSize": 0
-                  },
-                  "observeEvents": [
-                    "poolClearedEvent",
-                    "connectionClosedEvent",
-                    "commandFailedEvent",
-                    "commandStartedEvent",
-                    "commandSucceededEvent",
-                    "connectionCheckedOutEvent",
-                    "connectionCheckedInEvent"
-                  ]
+                  }
                 }
               },
               {
@@ -243,12 +254,14 @@
               }
             ]
           }
-        },      
+        },
         {
           "name": "insertOne",
           "object": "collection",
           "arguments": {
-            "document": { "_id" : 1 }
+            "document": {
+              "_id": 1
+            }
           }
         },
         {
@@ -257,11 +270,13 @@
           "arguments": {
             "thread": "thread1",
             "operation": {
-                "name": "find",
-                "object": "collection",
-                "arguments": {
-                    "filter": { "$where": "sleep(2000) || true" }
+              "name": "find",
+              "object": "collection",
+              "arguments": {
+                "filter": {
+                  "$where": "sleep(2000) || true"
                 }
+              }
             }
           }
         },
@@ -269,6 +284,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
+            "client": "setupClient",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -276,22 +292,22 @@
               },
               "data": {
                 "failCommands": [
-                  "hello", "isMaster"
+                  "hello",
+                  "isMaster"
                 ],
                 "blockConnection": true,
                 "blockTimeMS": 1500,
                 "appName": "interruptInUseRetryable"
               }
-            },
-            "client": "setupClient"
-          }
-        },        
-        {
-            "name": "waitForThread",
-            "object": "testRunner",
-            "arguments": {
-              "thread": "thread1"
             }
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1"
+          }
         }
       ],
       "expectEvents": [
@@ -308,7 +324,7 @@
               "commandSucceededEvent": {
                 "commandName": "insert"
               }
-            },            
+            },
             {
               "commandStartedEvent": {
                 "commandName": "find"
@@ -318,7 +334,7 @@
               "commandFailedEvent": {
                 "commandName": "find"
               }
-            },            
+            },
             {
               "commandStartedEvent": {
                 "commandName": "find"
@@ -328,21 +344,21 @@
               "commandSucceededEvent": {
                 "commandName": "find"
               }
-            }            
-         ]
-       },
-       {
+            }
+          ]
+        },
+        {
           "client": "client",
           "eventType": "cmap",
           "events": [
             {
-              "connectionCheckedOutEvent": { }
+              "connectionCheckedOutEvent": {}
             },
             {
-              "connectionCheckedInEvent": { }
+              "connectionCheckedInEvent": {}
             },
             {
-              "connectionCheckedOutEvent": { }
+              "connectionCheckedOutEvent": {}
             },
             {
               "poolClearedEvent": {
@@ -350,25 +366,31 @@
               }
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionCheckedInEvent": {}
             },
             {
-              "connectionClosedEvent": { }
+              "connectionClosedEvent": {}
             },
             {
-              "connectionCheckedOutEvent": {}  
+              "connectionCheckedOutEvent": {}
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionCheckedInEvent": {}
             }
-         ]
-       }      
+          ]
+        }
       ],
-      "outcome": [{
-        "collectionName": "interruptInUse",
-        "databaseName": "sdam-tests",
-        "documents": [{ "_id": 1 }]
-      }]
+      "outcome": [
+        {
+          "collectionName": "interruptInUse",
+          "databaseName": "sdam-tests",
+          "documents": [
+            {
+              "_id": 1
+            }
+          ]
+        }
+      ]
     },
     {
       "description": "Error returned from connection pool clear with interruptInUseConnections=true is retryable for write",
@@ -382,22 +404,23 @@
                 "client": {
                   "id": "client",
                   "useMultipleMongoses": false,
+                  "observeEvents": [
+                    "poolClearedEvent",
+                    "connectionClosedEvent",
+                    "commandStartedEvent",
+                    "commandFailedEvent",
+                    "commandSucceededEvent",
+                    "connectionCheckedOutEvent",
+                    "connectionCheckedInEvent"
+                  ],
                   "uriOptions": {
                     "connectTimeoutMS": 500,
                     "heartbeatFrequencyMS": 500,
                     "appname": "interruptInUseRetryableWrite",
                     "retryWrites": true,
                     "minPoolSize": 0
-                  },
-                  "observeEvents": [
-                    "poolClearedEvent",
-                    "connectionClosedEvent",
-                    "commandFailedEvent",
-                    "commandStartedEvent",
-                    "commandSucceededEvent",
-                    "connectionCheckedOutEvent",
-                    "connectionCheckedInEvent"
-                  ]}
+                  }
+                }
               },
               {
                 "database": {
@@ -425,7 +448,9 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
-            "document": { "_id": 1 }
+            "document": {
+              "_id": 1
+            }
           }
         },
         {
@@ -437,9 +462,15 @@
               "name": "updateOne",
               "object": "collection",
               "arguments": {
-                "filter": { "$where": "sleep(2000) || true" },
-                "update": [ { "$set": { "a": "bar" } } ]
-               }
+                "filter": {
+                  "$where": "sleep(2000) || true"
+                },
+                "update": {
+                  "$set": {
+                    "a": "bar"
+                  }
+                }
+              }
             }
           }
         },
@@ -447,6 +478,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
+            "client": "setupClient",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -454,22 +486,22 @@
               },
               "data": {
                 "failCommands": [
-                  "hello", "isMaster"
+                  "hello",
+                  "isMaster"
                 ],
                 "blockConnection": true,
                 "blockTimeMS": 1500,
                 "appName": "interruptInUseRetryableWrite"
               }
-            },
-            "client": "setupClient"
+            }
           }
         },
         {
-            "name": "waitForThread",
-            "object": "testRunner",
-            "arguments": {
-              "thread": "thread1"
-            }
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1"
+          }
         }
       ],
       "expectEvents": [
@@ -507,20 +539,20 @@
                 "commandName": "update"
               }
             }
-         ]
-       },
-       {
+          ]
+        },
+        {
           "client": "client",
           "eventType": "cmap",
           "events": [
             {
-              "connectionCheckedOutEvent": { }
+              "connectionCheckedOutEvent": {}
             },
             {
-              "connectionCheckedInEvent": { }
+              "connectionCheckedInEvent": {}
             },
             {
-              "connectionCheckedOutEvent": { }
+              "connectionCheckedOutEvent": {}
             },
             {
               "poolClearedEvent": {
@@ -528,25 +560,32 @@
               }
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionCheckedInEvent": {}
             },
             {
-              "connectionClosedEvent": { }
+              "connectionClosedEvent": {}
             },
             {
-              "connectionCheckedOutEvent": {}  
+              "connectionCheckedOutEvent": {}
             },
             {
-              "connectionCheckedInEvent": {}  
+              "connectionCheckedInEvent": {}
             }
-         ]
-       }
+          ]
+        }
       ],
-      "outcome": [{
-        "collectionName": "interruptInUse",
-        "databaseName": "sdam-tests",
-        "documents": [{ "_id": 1, "a" : "bar"}]
-      }]
+      "outcome": [
+        {
+          "collectionName": "interruptInUse",
+          "databaseName": "sdam-tests",
+          "documents": [
+            {
+              "_id": 1,
+              "a": "bar"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
