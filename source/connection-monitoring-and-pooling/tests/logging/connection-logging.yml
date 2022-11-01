@@ -99,7 +99,7 @@ tests:
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
 
-  # This test exists to probide coverage of checkout failed and pool cleared events.
+  # This test exists to provide coverage of checkout failed and pool cleared events.
   - description: "Connection checkout fails due to error establishing connection"
     runOnRequirements:
       - auth: true
