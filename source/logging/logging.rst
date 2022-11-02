@@ -311,6 +311,10 @@ logging MUST use the exact names and casing specified for the names of fields in
 This will be easier for our support team since the names will be consistent across languages, and
 will simplify writing language-agnostic tooling to search through and parse structured logs.
 
+Including Timestamps in Log Messages
+------------------------------------
+Drivers MAY add timestamps to their log messages if one will not be added automatically by the logging framework(s) they use.
+
 Test Plan
 =========
 Tests for logging behavior are defined in each corresponding specification. The  `unified test
@@ -434,3 +438,5 @@ individual clients or for particular namespaces.
 
 Changelog
 =========
+
+:2022-10-26: Allow drivers to add timestamps to log messages.
