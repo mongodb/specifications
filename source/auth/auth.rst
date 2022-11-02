@@ -1388,6 +1388,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2022-11-02: Require environment variables to be read dynamically.
 :2022-10-28: Recommend the use of AWS SDKs where available.
 :2022-10-07: Require caching of AWS credentials fetched by the driver.
 :2022-10-05: Remove spec front matter and convert version history to changelog.
