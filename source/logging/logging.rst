@@ -434,4 +434,3 @@ individual clients or for particular namespaces.
 
 Changelog
 =========
-\-
