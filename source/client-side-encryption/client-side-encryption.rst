@@ -2515,41 +2515,37 @@ explicit session parameter as described in the
 Changelog
 =========
 
-.. csv-table::
-   :widths: auto
-   :align: left
-
-   Date, Description
-   22-10-26, Do not connect to `mongocryptd` if shared library is loaded.
-   22-10-11, Specify a timeout on Azure IMDS HTTP requests and fix the resource URL
-   22-10-05, Remove spec front matter and ``versionadded`` RST macros (since spec version was removed)
-   22-09-26, Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
-   22-09-09, Prohibit ``rewrapManyDataKey`` with libmongocrypt <= 1.5.1.
-   22-07-20, Add behavior for automatic GCP credential loading in ``kmsProviders``.
-   22-06-30, Add behavior for automatic AWS credential loading in ``kmsProviders``.
-   22-06-29, Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
-   22-06-27, Remove ``createKey``.
-   22-06-24, Clean up kmsProviders to use more TypeScript-like type definitions.
-   22-06-23, Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
-   22-06-16, Change ``QueryType`` to a string.
-   22-06-15, Clarify description of date fields in key documents.
-   22-06-08, Add ``Queryable Encryption`` to abstract.
-   22-06-02, Rename ``FLE 2`` to ``Queryable Encryption``
-   22-05-31, Rename ``csfle`` to ``crypt_shared``
-   22-05-27, "Define ECC, ECOC, and ESC acronyms within encryptedFields"
-   22-05-26, Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
-   22-05-24, Add key management API functions
-   22-05-18, Add createKey and rewrapManyDataKey
-   22-05-11, Update create state collections to use clustered collections. Drop data collection after state collection.
-   22-05-03, "Add queryType, contentionFactor, and ""Indexed"" and ""Unindexed"" to algorithm."
-   22-04-29, Add bypassQueryAnalysis option
-   22-04-11, Document the usage of the new ``csfle`` library (Note: Later renamed to ``crypt_shared``)
-   22-02-24, Rename Versioned API to Stable API
-   22-01-19, Require that timeouts be applied per the CSOT spec
-   21-11-04, Add 'kmip' KMS provider
-   21-04-08, Updated to use hello and legacy hello
-   21-01-22, Add sessionToken option to 'aws' KMS provider
-   20-12-12, Add metadataClient option and internal client
-   20-10-19, Add 'azure' and 'gcp' KMS providers
-   19-10-11, Add 'endpoint' to AWS masterkey
-   19-12-17, Clarified `bypassAutoEncryption` and managing `mongocryptd`
+:2022-11-03: Reformat changelog.
+:2022-10-26: Do not connect to ``mongocryptd`` if shared library is loaded.
+:2022-10-11: Specify a timeout on Azure IMDS HTTP requests and fix the resource URL
+:2022-10-05: Remove spec front matter and ``versionadded`` RST macros (since spec version was removed)
+:2022-09-26: Add behavior for automatic Azure KeyVault credentials for ``kmsProviders``.
+:2022-09-09: Prohibit ``rewrapManyDataKey`` with libmongocrypt <= 1.5.1.
+:2022-07-20: Add behavior for automatic GCP credential loading in ``kmsProviders``.
+:2022-06-30: Add behavior for automatic AWS credential loading in ``kmsProviders``.
+:2022-06-29: Clarify bulk write operation expectations for ``rewrapManyDataKey()``.
+:2022-06-27: Remove ``createKey``.
+:2022-06-24: Clean up kmsProviders to use more TypeScript-like type definitions.
+:2022-06-23: Make ``RewrapManyDataKeyResult.bulkWriteResult`` optional.
+:2022-06-16: Change ``QueryType`` to a string.
+:2022-06-15: Clarify description of date fields in key documents.
+:2022-06-08: Add ``Queryable Encryption`` to abstract.
+:2022-06-02: Rename ``FLE 2`` to ``Queryable Encryption``
+:2022-05-31: Rename ``csfle`` to ``crypt_shared``
+:2022-05-27: Define ECC, ECOC, and ESC acronyms within encryptedFields
+:2022-05-26: Clarify how ``encryptedFields`` interacts with ``create`` and ``drop`` commands
+:2022-05-24: Add key management API functions
+:2022-05-18: Add createKey and rewrapManyDataKey
+:2022-05-11: Update create state collections to use clustered collections. Drop data collection after state collection.
+:2022-05-03: Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.
+:2022-04-29: Add bypassQueryAnalysis option
+:2022-04-11: Document the usage of the new ``csfle`` library (Note: Later renamed to ``crypt_shared``)
+:2022-02-24: Rename Versioned API to Stable API
+:2022-01-19: Require that timeouts be applied per the CSOT spec
+:2021-11-04: Add "kmip" KMS provider
+:2021-04-08: Updated to use hello and legacy hello
+:2021-01-22: Add sessionToken option to "aws" KMS provider
+:2020-12-12: Add metadataClient option and internal client
+:2020-10-19: Add "azure" and "gcp" KMS providers
+:2019-10-11: Add "endpoint" to AWS masterkey
+:2019-12-17: Clarified ``bypassAutoEncryption`` and managing ``mongocryptd``
