@@ -928,6 +928,29 @@ Drivers will need AWS IAM credentials (an access key, a secret access key and op
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.  If a username and password are provided drivers 
 MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. If, additionally, a session token is provided Drivers MUST use it as well. If a username is provided without a password (or vice-versa) or if *only* a session token is provided Drivers MUST raise an error. In other words, regardless of how Drivers obtain credentials the only valid combination of credentials is an access key ID and a secret access key or an access key ID, a secret access key and a session token.
 
+AWS recommends using an SDK to "take care of some of the heavy lifting
+necessary in successfully making API calls, including authentication, retry
+behavior, and more".
+
+A recommended pattern for drivers with existing custom implementation is to not
+further enhance existing implementations, and take an optional dependency on
+the AWS SDK.  If the SDK is available, use it, otherwise fallback to the
+existing implementation.
+
+One thing to be mindful of when adopting an AWS SDK is that they typically will
+check for credentials in a shared AWS credentials file when one is present,
+which may be confusing for users relying on the previous authentication
+handling behavior. It would be helpful to include a note like the following:
+
+"Because we are now using the AWS SDK to handle credentials, if you have a
+shared AWS credentials or config file, then those credentials will be used by
+default if AWS auth environment variables are not set. To override this
+behavior, set ``AWS_SHARED_CREDENTIALS_FILE=""`` in your shell or set the
+equivalent environment variable value in your script or application.
+Alternatively, you can create an AWS profile specifically for your MongoDB
+credentials and set the ``AWS_PROFILE`` environment variable to that profile
+name."
+
 The order in which Drivers MUST search for credentials is:
 
 #. The URI
@@ -938,6 +961,11 @@ The order in which Drivers MUST search for credentials is:
 
 .. note::
 	See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in `Q & A`_
+
+    Drivers are not expected to handle `AssumeRole <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ requests directly. See
+    description of ``AssumeRole`` below, which is distinct from
+    ``AssumeRoleWithWebIdentity`` requests that are meant to be handled
+    directly by the driver.
 
 URI
 ___
@@ -1357,6 +1385,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2022-10-28: Recommend the use of AWS SDKs where available.
 :2022-10-07: Require caching of AWS credentials fetched by the driver.
 :2022-10-05: Remove spec front matter and convert version history to changelog.
 :2022-09-07: Add support for AWS AssumeRoleWithWebIdentity.
