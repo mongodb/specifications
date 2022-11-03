@@ -1229,9 +1229,14 @@ In addition to the common fields defined above, this message MUST contain the fo
        - Error: "An error occurred while using the connection"
        - Pool closed: "Connection pool was closed" 
 
+   * - error
+     - Flexible
+     - If ``reason`` is ``Error``, the associated error. The type and format of this value is flexible; see the
+       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_  for details on representing errors in log messages.
+
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection closed with driver-generated ID {{driverConnectionId}} to {{serverHost}}:{{serverPort}}. Reason: {{reason}}
+  Connection closed with driver-generated ID {{driverConnectionId}} to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}
 
 Connection Checkout Started Message
 -----------------------------------
@@ -1278,9 +1283,14 @@ In addition to the common fields defined above, this message MUST contain the fo
        - ConnectionError: "An error occurred while trying to establish a new connection"
        - Pool closed: "Connection pool was closed"
 
+   * - error
+     - Flexible
+     - If ``reason`` is ``ConnectionError``, the associated error. The type and format of this value is flexible; see the
+       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_  for details on representing errors in log messages.
+
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}
+  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}
 
 Connection Checked Out
 -----------------------
