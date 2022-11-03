@@ -989,6 +989,12 @@ in programming languages that support altering environment variables MUST always
 read environment variables dynamically during authorization, to handle the
 case where another part the application has refreshed the credentials.
 
+However, if environment variables are not present during initial authorization,
+credentials may be fetched from another source and cached.  Even if the
+environmnet variables are present in subsequent authorization attempts,
+the driver MUST use the cached credentials, or refresh them if applicable.
+This behavior is consistent with how the AWS SDKs behave.
+
 AssumeRoleWithWebIdentity
 _________________________
 AWS EKS clusters can be configured to automatically provide a valid OpenID
