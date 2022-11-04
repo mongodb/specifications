@@ -22,7 +22,7 @@ jobs:
       - name: Set up npm
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 16
       - name: Install dependencies
         run: |
           npm install -g js-yaml
@@ -43,7 +43,8 @@ jobs:
       - name: Regenerate all other JSON test files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+              echo "regenerating ${file}"
               json_file="${file%.*}.json"
-              rm json_file
+              rm $json_file
           done
           cd source && make && git diff --exit-code
