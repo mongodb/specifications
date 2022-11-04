@@ -334,7 +334,7 @@ MongoClient Changes
       private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
 
-      // Exposition-only, used for caching automatic Azure credentials
+      // Exposition-only, used for caching automatic Azure credentials. The cached credentials may be globally cached.
       private cachedAzureAccessToken?: AzureAccessToken;
       private azureAccessTokenExpireTime?: PointInTime;
    }
@@ -575,7 +575,7 @@ following process:
 
 5. If `K` contains an ``azure`` property, and that property is an empty map:
 
-   1. If the current MongoClient_ has a ``cachedAzureAccessToken`` AND the
+   1. If there is a ``cachedAzureAccessToken`` AND the
       duration until ``azureAccessTokenExpireTime`` is greater than one minute,
       insert ``cachedAzureAccessToken`` as the ``azure`` property on `P`.
    2. Otherwise:
