@@ -143,10 +143,9 @@ credentials in the URI.
 #. Ensure that the cache has been set.
 
 If the drivers's language supports dynamically setting environment variables,
-add the following tests. Note that a mock environment should be used if
-possible to ensure that tests can be run in parallel, which may require
-running as a unit test without using a client and instead interacting
-with the auth provider directly.
+add the following tests. Note that if integration tests are run in
+parallel for the driver, then these tests must be run as unit tests interacting
+with the auth provider directly instead of using a client.
 
 #. Create a new client.
 #. Ensure that a ``find`` operation adds credentials to the cache.
