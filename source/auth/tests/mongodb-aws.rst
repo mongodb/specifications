@@ -123,7 +123,7 @@ Cached Credentials
 
 Drivers MUST ensure that they are testing the ability to cache credentials.
 Drivers will need to be able to query and override the cached credentials to
-verify usage.  To determine whether to run the cache tests, the driver can
+verify usage. To determine whether to run the cache tests, the driver can
 check for the absence of the AWS_ACCESS_KEY_ID environment variable and of
 credentials in the URI.
 
@@ -143,7 +143,10 @@ credentials in the URI.
 #. Ensure that the cache has been set.
 
 If the drivers's language supports dynamically setting environment variables,
-add the following tests:
+add the following tests. Note that a mock environment should be used if
+possible to ensure that tests can be run in parallel, which may require
+running as a unit test without using a client and instead interacting
+with the auth provider directly.
 
 #. Create a new client.
 #. Ensure that a ``find`` operation adds credentials to the cache.
