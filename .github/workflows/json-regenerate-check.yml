@@ -33,13 +33,13 @@ jobs:
         with:
           files: |
             source/**/*.yml
-      - name: Regenerate CSOT and CSE JSON test files
-        run: |
-          python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py
-          python3 ./source/client-side-encryption/etc/generate-corpus.py ./source/client-side-encryption/corpus
-          python3 ./source/client-side-encryption/etc/generate-test.py ./source/client-side-encryption/etc/test-templates/*.template ./source/client-side-encryption/tests/legacy
-          python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests
-          git diff --exit-code
+      # - name: Regenerate CSOT and CSE JSON test files
+      #   run: |
+      #     python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py
+      #     python3 ./source/client-side-encryption/etc/generate-corpus.py ./source/client-side-encryption/corpus
+      #     python3 ./source/client-side-encryption/etc/generate-test.py ./source/client-side-encryption/etc/test-templates/*.template ./source/client-side-encryption/tests/legacy
+      #     python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests
+      #     git diff --exit-code
       - name: Regenerate all other JSON test files
         run: |
           echo "changed files: {{ steps.changed-files.outputs.all_changed_files }}"
