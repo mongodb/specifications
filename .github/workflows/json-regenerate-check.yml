@@ -2,7 +2,7 @@ name: Check if all JSON test files are up-to-date
 
 on:
   push:
-    branches: [master]
+    branches: [master, fix-json-generation-check]
   pull_request: ~
 
 jobs:
