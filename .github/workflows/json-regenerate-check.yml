@@ -32,7 +32,7 @@ jobs:
         uses: tj-actions/changed-files@v34
         with:
           files: |
-            **/*.yml
+            source/**/*.yml
       - name: Regenerate CSOT and CSE JSON test files
         run: |
           python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py
