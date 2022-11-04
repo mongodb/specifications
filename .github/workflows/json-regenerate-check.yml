@@ -42,6 +42,7 @@ jobs:
           git diff --exit-code
       - name: Regenerate all other JSON test files
         run: |
+          echo "changed files: {{ steps.changed-files.outputs.all_changed_files }}"
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
               echo "regenerating ${file}"
               json_file="${file%.*}.json"
