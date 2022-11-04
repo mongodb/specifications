@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-10-26
+:Last Modified: 2022-11-04
 :Version: 1.11.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -2520,6 +2520,7 @@ Changelog
    :align: left
 
    Date, Description
+   22-11-04, Permit global cache for Azure credentials.
    22-10-26, Do not connect to `mongocryptd` if shared library is loaded.
    22-10-11, Specify a timeout on Azure IMDS HTTP requests and fix the resource URL
    22-10-05, Remove spec front matter and ``versionadded`` RST macros (since spec version was removed)
