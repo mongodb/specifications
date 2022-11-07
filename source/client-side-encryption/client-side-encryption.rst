@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-10-26
+:Last Modified: 2022-11-04
 :Version: 1.11.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -334,7 +334,7 @@ MongoClient Changes
       private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
 
-      // Exposition-only, used for caching automatic Azure credentials
+      // Exposition-only, used for caching automatic Azure credentials. The cached credentials may be globally cached.
       private cachedAzureAccessToken?: AzureAccessToken;
       private azureAccessTokenExpireTime?: PointInTime;
    }
@@ -575,7 +575,7 @@ following process:
 
 5. If `K` contains an ``azure`` property, and that property is an empty map:
 
-   1. If the current MongoClient_ has a ``cachedAzureAccessToken`` AND the
+   1. If there is a ``cachedAzureAccessToken`` AND the
       duration until ``azureAccessTokenExpireTime`` is greater than one minute,
       insert ``cachedAzureAccessToken`` as the ``azure`` property on `P`.
    2. Otherwise:
@@ -2515,7 +2515,8 @@ explicit session parameter as described in the
 Changelog
 =========
 
-:2022-11-03: Reformat changelog.
+:2022-11-07: Reformat changelog.
+:2022-11-04: Permit global cache for Azure credentials.
 :2022-10-26: Do not connect to ``mongocryptd`` if shared library is loaded.
 :2022-10-11: Specify a timeout on Azure IMDS HTTP requests and fix the resource URL
 :2022-10-05: Remove spec front matter and ``versionadded`` RST macros (since spec version was removed)
