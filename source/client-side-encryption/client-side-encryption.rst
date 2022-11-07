@@ -926,37 +926,37 @@ Create Encrypted Collection Helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To support automatic generation of encryption data keys, a helper
-`CreateEncryptedCollection` is defined, associated with a ClientEncryption_
-object `C`.
+`CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, dkOpts)`
+is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
+KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
 
-For `CreateEncryptedCollection(C, collName, collOpts, kmsProvider, dkOpts)`,
-where `kmsProv` is a KMSProviderName_ and `dkOpts` is a DataKeyOpts_, with the
-name of the database as `dbName`, look up the encrypted fields `EF` for the
-collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
-(`See here <GetEncryptedFields_>`_).
+- Let `dbName` be the name of `database`. Look up the encrypted fields `EF` for
+  the new collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
+  (`See here <GetEncryptedFields_>`_).
+- If `EF` is *not-found*, report an error.
+- Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
 
-If `EF` is *not-found*, report an error.
+  - Let `Fields` be the ``"fields"`` element within `EF'`.
+  - If `Fields` is present and is an array value, then for each element `F` of
+    `Fields`:
 
-Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
+    - If `F` is not a document element, skip it.
+    - Otherwise, if `F` has a ``"keyId"`` named element `K` and `K` is a
+      ``null`` value:
 
-- Let `Fields` be the ``"fields"`` element within `EF'`.
-- If `Fields` is present and is an array value, then for each element `F` of
-  `Fields`:
+      - Let `D` be the result of ``CE.createDataKey(kmsProvider, dkOpts)``.
+      - If generating `D` resulted in an error `E`, the entire
+        `CreateEncryptedCollection` must now fail with error `E`. Return the
+        partially-formed `EF'` with the error so that the caller may know what
+        datakeys have been created by the helper.
+      - Replace `K` in `F` with `D`.
 
-  - If `F` is not a document element, skip it.
-  - Otherwise, if `F` has a ``"keyId"`` named element `K` and `K` is a ``null``
-    value:
+- Create a new set of options `collOpts'` duplicating `collOpts`. Set the
+  ``"encryptedFields"`` named element of `collOpts'` to `EF'`.
 
-    - Let `D` be the result of ``C.createDataKey(kmsProv, dkOpts)``.
-    - If generating `D` resulted in an error `E`, the entire
-      `CreateEncryptedCollection` must now fail with error `E`.
-    - Replace `K` in `F` with `D`.
-
-Create a new set of options `collOpts'` duplicating `collOpts`. Set the
-``"encryptedFields"`` named element of `collOpts'` to `EF'`.
-
-Invoke the ``CreateCollection`` helper as
-`CreateCollection(collName, collOpts')`.
+- Invoke the ``CreateCollection`` helper as
+  `CreateCollection(database, collName, collOpts')`. Return the resulting
+  collection and the generated `EF'`.
 
 
 Drop Collection Helper
@@ -996,8 +996,9 @@ ClientEncryption
 
       // The "Create Encrypted Collection" helper is a convenience function wrapping CreateCollection. It will
       // create a collection with encrypted fields, automatically allocating and assigning new data encryption
-      // keys. Refer to "Create Encrypted Collection Helper"
-      createEncryptedCollection(collName: string, collOpts, kmsProvider: KMSProviderName, dkOpts: DataKeyOpts);
+      // keys. It returns a handle to the  new collection, as well as a document consisting of the generated
+      // "create" options. Refer to "Create Encrypted Collection Helper"
+      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, dkOpts: DataKeyOpts): [Collection, Document];
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
