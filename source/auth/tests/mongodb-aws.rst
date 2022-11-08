@@ -123,8 +123,9 @@ Cached Credentials
 
 Drivers MUST ensure that they are testing the ability to cache credentials.
 Drivers will need to be able to query and override the cached credentials to
-verify usage.  To determine whether to run the cache tests, the driver can
-check for the absence of the AWS_ACCESS_KEY_ID and of credentials in the URI.
+verify usage. To determine whether to run the cache tests, the driver can
+check for the absence of the AWS_ACCESS_KEY_ID environment variable and of
+credentials in the URI.
 
 #. Clear the cache.
 #. Create a new client.
@@ -133,9 +134,29 @@ check for the absence of the AWS_ACCESS_KEY_ID and of credentials in the URI.
    minute of the current UTC time.
 #. Create a new client.
 #. Ensure that a ``find`` operation updates the credentials in the cache.
+
 #. Poison the cache with an invalid access key id.
 #. Create a new client.
 #. Ensure that a ``find`` operation results in an error.
 #. Ensure that the cache has been cleared.
 #. Ensure that a subsequent ``find`` operation succeeds.
 #. Ensure that the cache has been set.
+
+If the drivers's language supports dynamically setting environment variables,
+add the following tests. Note that if integration tests are run in
+parallel for the driver, then these tests must be run as unit tests interacting
+with the auth provider directly instead of using a client.
+
+#. Create a new client.
+#. Ensure that a ``find`` operation adds credentials to the cache.
+#. Set the AWS environment variables based on the cached credentials.
+#. Clear the cache.
+#. Ensure that a ``find`` operation succeeds and does not add credentials to
+   the cache.
+#. Set the AWS environment variables to invalid values.
+#. Ensure that a ``find`` operation results in an error.
+
+#. Create a new client.
+#. Ensure that a ``find`` operation adds credentials to the cache.
+#. Set the AWS environment variables to invalid values.
+#. Ensure that a ``find`` operation succeeds.
