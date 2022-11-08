@@ -76,6 +76,9 @@ tests:
           {{arg}}
           {%- endfor -%}
         {%- endif %}
+        {%- if operation.operation_name == "createChangeStream" %}
+        saveResultAsEntity: changeStream
+        {%- endif %}
     expectEvents:
       - client: *client
         eventType: cmap
@@ -95,12 +98,6 @@ tests:
               commandName: {{operation.command_name}}
           - commandSucceededEvent:
               commandName: {{operation.command_name}}
-          {%- if operation.operation_name == "createChangeStream" %}
-          - commandStartedEvent:
-              commandName: killCursors
-          - commandSucceededEvent:
-              commandName: killCursors
-          {%- endif %}
 
   - description: "{{operation.operation_name}} succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
@@ -126,6 +123,9 @@ tests:
           {{arg}}
           {%- endfor -%}
         {%- endif %}
+        {%- if operation.operation_name == "createChangeStream" %}
+        saveResultAsEntity: changeStream
+        {%- endif %}
     expectEvents:
       - client: *client
         eventType: cmap
@@ -145,10 +145,4 @@ tests:
               commandName: {{operation.command_name}}
           - commandSucceededEvent:
               commandName: {{operation.command_name}}
-          {%- if operation.operation_name == "createChangeStream" %}
-          - commandStartedEvent:
-              commandName: killCursors
-          - commandSucceededEvent:
-              commandName: killCursors
-          {%- endif %}
 {% endfor -%}

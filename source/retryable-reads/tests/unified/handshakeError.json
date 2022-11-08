@@ -468,7 +468,8 @@
           "object": "client",
           "arguments": {
             "pipeline": []
-          }
+          },
+          "saveResultAsEntity": "changeStream"
         }
       ],
       "expectEvents": [
@@ -514,16 +515,6 @@
             {
               "commandSucceededEvent": {
                 "commandName": "aggregate"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "killCursors"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "killCursors"
               }
             }
           ]
@@ -571,7 +562,8 @@
           "object": "client",
           "arguments": {
             "pipeline": []
-          }
+          },
+          "saveResultAsEntity": "changeStream"
         }
       ],
       "expectEvents": [
@@ -617,16 +609,6 @@
             {
               "commandSucceededEvent": {
                 "commandName": "aggregate"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "killCursors"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "killCursors"
               }
             }
           ]
@@ -1246,7 +1228,8 @@
           "object": "database",
           "arguments": {
             "pipeline": []
-          }
+          },
+          "saveResultAsEntity": "changeStream"
         }
       ],
       "expectEvents": [
@@ -1292,16 +1275,6 @@
             {
               "commandSucceededEvent": {
                 "commandName": "aggregate"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "killCursors"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "killCursors"
               }
             }
           ]
@@ -1349,7 +1322,8 @@
           "object": "database",
           "arguments": {
             "pipeline": []
-          }
+          },
+          "saveResultAsEntity": "changeStream"
         }
       ],
       "expectEvents": [
@@ -1395,16 +1369,6 @@
             {
               "commandSucceededEvent": {
                 "commandName": "aggregate"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "killCursors"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "killCursors"
               }
             }
           ]
@@ -2558,7 +2522,8 @@
           "object": "collection",
           "arguments": {
             "pipeline": []
-          }
+          },
+          "saveResultAsEntity": "changeStream"
         }
       ],
       "expectEvents": [
@@ -2604,16 +2569,6 @@
             {
               "commandSucceededEvent": {
                 "commandName": "aggregate"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "killCursors"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "killCursors"
               }
             }
           ]
@@ -2661,7 +2616,8 @@
           "object": "collection",
           "arguments": {
             "pipeline": []
-          }
+          },
+          "saveResultAsEntity": "changeStream"
         }
       ],
       "expectEvents": [
@@ -2707,16 +2663,6 @@
             {
               "commandSucceededEvent": {
                 "commandName": "aggregate"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "killCursors"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "killCursors"
               }
             }
           ]
