@@ -27,11 +27,11 @@ DB_OPERATIONS = [
 ]
 
 INSERT_MANY_ARGUMENTS = '''documents:
-            - { x: 1 }'''
+            - { _id: 2, x: 22 }'''
 
 BULK_WRITE_ARGUMENTS = '''requests:
             - insertOne:
-                document: { _id: 1 }'''
+                document: { _id: 2, x: 22 }'''
 
 COLLECTION_READ_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'collection', ['pipeline: []']),
@@ -47,29 +47,32 @@ COLLECTION_READ_OPERATIONS = [
     Operation('createChangeStream', 'aggregate',
               'collection', ['pipeline: []']),
 ]
+
 COLLECTION_WRITE_OPERATIONS = [
-    Operation('insertOne', 'insert', 'collection', ['document: { x: 1 }']),
+    Operation('insertOne', 'insert', 'collection',
+              ['document: { _id: 2, x: 22 }']),
     Operation('insertMany', 'insert', 'collection', [INSERT_MANY_ARGUMENTS]),
     Operation('deleteOne', 'delete', 'collection', ['filter: {}']),
     Operation('deleteMany', 'delete', 'collection', ['filter: {}']),
     Operation('replaceOne', 'update', 'collection', [
-              'filter: {}', 'replacement: { x: 1 }']),
+              'filter: {}', 'replacement: { x: 22 }']),
     Operation('updateOne', 'update', 'collection', [
-              'filter: {}', 'update: { $set: { x: 1 } }']),
+              'filter: {}', 'update: { $set: { x: 22 } }']),
     Operation('updateMany', 'update', 'collection', [
-              'filter: {}', 'update: { $set: { x: 1 } }']),
+              'filter: {}', 'update: { $set: { x: 22 } }']),
     Operation('findOneAndDelete', 'findAndModify',
               'collection', ['filter: {}']),
     Operation('findOneAndReplace', 'findAndModify', 'collection',
-              ['filter: {}', 'replacement: { x: 1 }']),
+              ['filter: {}', 'replacement: { x: 22 }']),
     Operation('findOneAndUpdate', 'findAndModify', 'collection',
-              ['filter: {}', 'update: { $set: { x: 1 } }']),
+              ['filter: {}', 'update: { $set: { x: 22 } }']),
     Operation('bulkWrite', 'insert', 'collection', [BULK_WRITE_ARGUMENTS]),
     Operation('createIndex', 'createIndexes', 'collection',
-              ['keys: { x: 1 }', 'name: "x_1"']),
-    Operation('dropIndex', 'dropIndexes', 'collection', ['name: "x_1"']),
+              ['keys: { x: 11 }', 'name: "x_11"']),
+    Operation('dropIndex', 'dropIndexes', 'collection', ['name: "x_11"']),
     Operation('dropIndexes', 'dropIndexes', 'collection', []),
 ]
+
 COLLECTION_OPERATIONS = COLLECTION_READ_OPERATIONS + COLLECTION_WRITE_OPERATIONS
 
 # Session and GridFS operations are generally tested in other files, so they're not included in the list of all

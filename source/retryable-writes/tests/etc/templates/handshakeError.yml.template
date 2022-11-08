@@ -32,8 +32,6 @@ initialData:
     databaseName: *databaseName
     documents:
       - { _id: 1, x: 11 }
-      - { _id: 2, x: 22 }
-      - { _id: 3, x: 33 }
 
 tests:
   # Because setting a failPoint creates a connection in the connection pool, run

@@ -48,14 +48,6 @@
         {
           "_id": 1,
           "x": 11
-        },
-        {
-          "_id": 2,
-          "x": 22
-        },
-        {
-          "_id": 3,
-          "x": 33
         }
       ]
     }
@@ -102,7 +94,8 @@
           "object": "collection",
           "arguments": {
             "document": {
-              "x": 1
+              "_id": 2,
+              "x": 22
             }
           }
         }
@@ -197,7 +190,8 @@
           "object": "collection",
           "arguments": {
             "document": {
-              "x": 1
+              "_id": 2,
+              "x": 22
             }
           },
           "ignoreResultAndError": true
@@ -294,7 +288,8 @@
           "arguments": {
             "documents": [
               {
-                "x": 1
+                "_id": 2,
+                "x": 22
               }
             ]
           }
@@ -391,7 +386,8 @@
           "arguments": {
             "documents": [
               {
-                "x": 1
+                "_id": 2,
+                "x": 22
               }
             ]
           },
@@ -676,7 +672,7 @@
           "arguments": {
             "filter": {},
             "replacement": {
-              "x": 1
+              "x": 22
             }
           }
         }
@@ -772,7 +768,7 @@
           "arguments": {
             "filter": {},
             "replacement": {
-              "x": 1
+              "x": 22
             }
           },
           "ignoreResultAndError": true
@@ -870,7 +866,7 @@
             "filter": {},
             "update": {
               "$set": {
-                "x": 1
+                "x": 22
               }
             }
           }
@@ -968,7 +964,7 @@
             "filter": {},
             "update": {
               "$set": {
-                "x": 1
+                "x": 22
               }
             }
           },
@@ -1253,7 +1249,7 @@
           "arguments": {
             "filter": {},
             "replacement": {
-              "x": 1
+              "x": 22
             }
           }
         }
@@ -1349,7 +1345,7 @@
           "arguments": {
             "filter": {},
             "replacement": {
-              "x": 1
+              "x": 22
             }
           },
           "ignoreResultAndError": true
@@ -1447,7 +1443,7 @@
             "filter": {},
             "update": {
               "$set": {
-                "x": 1
+                "x": 22
               }
             }
           }
@@ -1545,7 +1541,7 @@
             "filter": {},
             "update": {
               "$set": {
-                "x": 1
+                "x": 22
               }
             }
           },
@@ -1645,7 +1641,8 @@
               {
                 "insertOne": {
                   "document": {
-                    "_id": 1
+                    "_id": 2,
+                    "x": 22
                   }
                 }
               }
@@ -1746,7 +1743,8 @@
               {
                 "insertOne": {
                   "document": {
-                    "_id": 1
+                    "_id": 2,
+                    "x": 22
                   }
                 }
               }

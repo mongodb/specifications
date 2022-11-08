@@ -32,8 +32,6 @@ initialData:
     databaseName: *databaseName
     documents:
       - { _id: 1, x: 11 }
-      - { _id: 2, x: 22 }
-      - { _id: 3, x: 33 }
 
 tests:
   # Because setting a failPoint creates a connection in the connection pool, run
@@ -71,7 +69,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          document: { x: 1 }
+          document: { _id: 2, x: 22 }
     expectEvents:
       - client: *client
         eventType: cmap
@@ -111,7 +109,7 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          document: { x: 1 }
+          document: { _id: 2, x: 22 }
         ignoreResultAndError: true
     expectEvents:
       - client: *client
@@ -153,7 +151,7 @@ tests:
         object: *collection
         arguments:
           documents:
-            - { x: 1 }
+            - { _id: 2, x: 22 }
     expectEvents:
       - client: *client
         eventType: cmap
@@ -194,7 +192,7 @@ tests:
         object: *collection
         arguments:
           documents:
-            - { x: 1 }
+            - { _id: 2, x: 22 }
         ignoreResultAndError: true
     expectEvents:
       - client: *client
@@ -317,7 +315,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          replacement: { x: 1 }
+          replacement: { x: 22 }
     expectEvents:
       - client: *client
         eventType: cmap
@@ -358,7 +356,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          replacement: { x: 1 }
+          replacement: { x: 22 }
         ignoreResultAndError: true
     expectEvents:
       - client: *client
@@ -400,7 +398,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          update: { $set: { x: 1 } }
+          update: { $set: { x: 22 } }
     expectEvents:
       - client: *client
         eventType: cmap
@@ -441,7 +439,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          update: { $set: { x: 1 } }
+          update: { $set: { x: 22 } }
         ignoreResultAndError: true
     expectEvents:
       - client: *client
@@ -564,7 +562,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          replacement: { x: 1 }
+          replacement: { x: 22 }
     expectEvents:
       - client: *client
         eventType: cmap
@@ -605,7 +603,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          replacement: { x: 1 }
+          replacement: { x: 22 }
         ignoreResultAndError: true
     expectEvents:
       - client: *client
@@ -647,7 +645,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          update: { $set: { x: 1 } }
+          update: { $set: { x: 22 } }
     expectEvents:
       - client: *client
         eventType: cmap
@@ -688,7 +686,7 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          update: { $set: { x: 1 } }
+          update: { $set: { x: 22 } }
         ignoreResultAndError: true
     expectEvents:
       - client: *client
@@ -731,7 +729,7 @@ tests:
         arguments:
           requests:
             - insertOne:
-                document: { _id: 1 }
+                document: { _id: 2, x: 22 }
     expectEvents:
       - client: *client
         eventType: cmap
@@ -773,7 +771,7 @@ tests:
         arguments:
           requests:
             - insertOne:
-                document: { _id: 1 }
+                document: { _id: 2, x: 22 }
         ignoreResultAndError: true
     expectEvents:
       - client: *client
