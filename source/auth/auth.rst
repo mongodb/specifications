@@ -984,7 +984,16 @@ request. If so, then in addition to a username and password, users MAY also prov
 
 Environment variables
 _____________________
-AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
+AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.  Drivers implemented
+in programming languages that support altering environment variables MUST always
+read environment variables dynamically during authorization, to handle the
+case where another part the application has refreshed the credentials.
+
+However, if environment variables are not present during initial authorization,
+credentials may be fetched from another source and cached.  Even if the
+environmnet variables are present in subsequent authorization attempts,
+the driver MUST use the cached credentials, or refresh them if applicable.
+This behavior is consistent with how the AWS SDKs behave.
 
 AssumeRoleWithWebIdentity
 _________________________
@@ -1137,7 +1146,8 @@ be used in lieu of manual caching.
 If using manual caching, the "Expiration" field MUST be stored
 and used to determine when to clear the cache. Credentials are considered
 valid if they are more than five minutes away from expiring; to the reduce the
-chance of expiration before they are validated by the server.
+chance of expiration before they are validated by the server.  Credentials
+that are retreived from environment variables MUST NOT be cached.
 
 If there are no current valid cached credentials, the driver MUST initiate a
 credential request. To avoid adding a bottleneck that would override the
@@ -1385,6 +1395,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2022-11-02: Require environment variables to be read dynamically.
 :2022-10-28: Recommend the use of AWS SDKs where available.
 :2022-10-07: Require caching of AWS credentials fetched by the driver.
 :2022-10-05: Remove spec front matter and convert version history to changelog.
