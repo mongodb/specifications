@@ -77,42 +77,76 @@ COLLECTION_OPERATIONS = COLLECTION_READ_OPERATIONS + COLLECTION_WRITE_OPERATIONS
 OPERATIONS = CLIENT_OPERATIONS + DB_OPERATIONS + COLLECTION_OPERATIONS
 
 RETRYABLE_READ_OPERATIONS = [op for op in OPERATIONS if op.operation_name in
-                             ['find', 'findOne', 'aggregate', 'distinct', 'count', 'estimatedDocumentCount', 'countDocuments', 'createChangeStream', 'listDatabases',
-                              'listDatabaseNames', 'listCollections', 'listCollectionNames', 'listIndexes']
+                             ['find',
+                              'findOne',
+                              'aggregate',
+                              'distinct',
+                              'count',
+                              'estimatedDocumentCount',
+                              'countDocuments',
+                              'createChangeStream',
+                              'listDatabases',
+                              'listDatabaseNames',
+                              'listCollections',
+                              'listCollectionNames',
+                              'listIndexes',
+                              ]
                              ]
 
+RETRYABLE_WRITE_OPERATIONS = [op for op in OPERATIONS if op.operation_name in
+                              ['insertOne',
+                               'updateOne',
+                               'deleteOne',
+                               'replaceOne',
+                               'findOneAndDelete',
+                               'findOneAndUpdate',
+                               'findOneAndReplace',
+                               'insertMany',
+                               'bulkWrite',
+                               ]
+                              ]
 
-# ./source/retryable-reads/tests/etc
+
+# ./source/etc
 DIR = os.path.dirname(os.path.realpath(__file__))
 
-# ./source/retryable-reads/tests/etc/templates
-TEMPLATES_DIR = f'{DIR}/templates'
 
-# ./source/retryable-reads/tests/unified
-TESTS_DIR = f'{os.path.dirname(DIR)}/unified'
-
-
-def get_template(file):
-    path = f'{TEMPLATES_DIR}/{file}.yml.template'
+def get_template(file, templates_dir):
+    path = f'{templates_dir}/{file}.yml.template'
     return Template(open(path, 'r').read())
 
 
-def write_yaml(file, template, injections):
+def write_yaml(file, template, tests_dir, injections):
     rendered = template.render(**injections)
-    path = f'{TESTS_DIR}/{file}.yml'
+    path = f'{tests_dir}/{file}.yml'
     open(path, 'w').write(rendered)
 
 
-def generate(name, operations):
-    template = get_template(name)
+def generate(name, templates_dir, tests_dir, operations):
+    template = get_template(name, templates_dir)
     injections = {
         'operations': operations,
     }
-    write_yaml(name, template, injections)
+    write_yaml(name, template, tests_dir, injections)
 
 
-def generate_handshake_error_tests():
-    generate('handshakeError', RETRYABLE_READ_OPERATIONS)
+def generate_retryable_reads_handshake_error_tests():
+    # ./source/retryable-reads/tests/etc/templates
+    templates_dir = f'{os.path.dirname(DIR)}/retryable-reads/tests/etc/templates'
+    # ./source/retryable-reads/tests/unified
+    tests_dir = f'{os.path.dirname(DIR)}/retryable-reads/tests/unified'
+    generate('handshakeError', templates_dir,
+             tests_dir, RETRYABLE_READ_OPERATIONS)
 
 
-generate_handshake_error_tests()
+def generate_retryable_writes_handshake_error_tests():
+    # ./source/retryable-writes/tests/etc/templates
+    templates_dir = f'{os.path.dirname(DIR)}/retryable-writes/tests/etc/templates'
+    # ./source/retryable-writes/tests/unified
+    tests_dir = f'{os.path.dirname(DIR)}/retryable-writes/tests/unified'
+    generate('handshakeError', templates_dir,
+             tests_dir, RETRYABLE_WRITE_OPERATIONS)
+
+
+generate_retryable_reads_handshake_error_tests()
+generate_retryable_writes_handshake_error_tests()
