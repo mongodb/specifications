@@ -533,7 +533,7 @@ specification does not define a format for such log messages.
 Command Monitoring
 ==================
 
-In accordance with the `Command Monitoring`_ specification, drivers MUST
+In accordance with the `Command Logging and Monitoring`_ specification, drivers MUST
 guarantee that each ``CommandStartedEvent`` has either a correlating
 ``CommandSucceededEvent`` or ``CommandFailedEvent``. If the first attempt of a
 retryable write operation encounters a retryable error, drivers MUST fire a
@@ -542,13 +542,13 @@ retryable write operation encounters a retryable error, drivers MUST fire a
 the second ``CommandStartedEvent`` may have a different ``connectionId``, since
 a writable server is reselected for the retry attempt.
 
-.. _Command Monitoring: ../command-monitoring/command-monitoring.rst
+.. _Command Logging and Monitoring: ../command-logging-and-monitoring/command-logging-and-monitoring.rst
 
 Each attempt of a retryable write operation SHOULD report a different
 ``requestId`` so that events for each attempt can be properly correlated with
 one another.
 
-The `Command Monitoring`_ specification states that the ``operationId`` field is
+The `Command Logging and Monitoring`_ specification states that the ``operationId`` field is
 a driver-generated, 64-bit integer and may be "used to link events together such
 as bulk write operations." Each attempt of a retryable write operation SHOULD
 report the same ``operationId``; however, drivers SHOULD NOT use the

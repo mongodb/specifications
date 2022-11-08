@@ -610,7 +610,7 @@ Using ``client_encrypted`` perform the following operations:
 
    - ``{ "_id": "over_2mib_2", "unencrypted": <the string "a" repeated (2097152) times> }``
 
-   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command monitoring <https://github.com/mongodb/specifications/tree/master/source/command-monitoring/command-monitoring.rst>`_.
+   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command logging and monitoring <https://github.com/mongodb/specifications/tree/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst>`_.
 
 #. Bulk insert the following:
 
@@ -618,7 +618,7 @@ Using ``client_encrypted`` perform the following operations:
 
    - The document `limits/limits-doc.json <../limits/limits-doc.json>`_ concatenated with ``{ "_id": "encryption_exceeds_2mib_2", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }``
 
-   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command monitoring <https://github.com/mongodb/specifications/tree/master/source/command-monitoring/command-monitoring.rst>`_.
+   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command logging and monitoring <https://github.com/mongodb/specifications/tree/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst>`_.
 
 #. Insert ``{ "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times>``.
 
@@ -2395,7 +2395,7 @@ The following tests that a mongocryptd client is not created when shared library
 
 #. On ``listenerThread``, create a TcpListener on 127.0.0.1 endpoint and port 27021. Start the listener and wait for establishing connections.
    If any connection is established, then signal about this to the main thread.
-   
+
    Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
 
 #. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
@@ -2415,7 +2415,7 @@ The following tests that a mongocryptd client is not created when shared library
       {
         "mongocryptdURI": "mongodb://localhost:27021"
       }
-   
-#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. 
+
+#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``.
 
 #. Expect no signal from ``listenerThread``.

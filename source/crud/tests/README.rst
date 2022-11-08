@@ -269,7 +269,7 @@ like so:
      }
    }
 
-Enable `command monitoring <../../command-monitoring/command-monitoring.rst>`_
+Enable `command monitoring <../../command-logging-and-monitoring/command-logging-and-monitoring.rst>`_
 to observe CommandSucceededEvents. Then, insert an invalid document (e.g.
 ``{x: 1}``) and assert that a WriteError occurs, that its code is ``121``
 (i.e. DocumentValidationFailure), and that its ``details`` property is

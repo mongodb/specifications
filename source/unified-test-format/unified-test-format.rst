@@ -38,7 +38,7 @@ Goals
 This test format can be used to define tests for the following specifications:
 
 - `Change Streams <../change-streams/change-streams.rst>`__
-- `Command Monitoring <../command-monitoring/command-monitoring.rst>`__
+- `Command Logging and Monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
 - `CRUD <../crud/crud.rst>`__
 - `GridFS <../gridfs/gridfs-spec.rst>`__
 - `Retryable Reads <../retryable-reads/retryable-reads.rst>`__
@@ -576,7 +576,8 @@ The structure of this object is as follows:
     monitoring events. The command(s) will be ignored in addition to
     ``configureFailPoint`` and any commands containing sensitive information
     (per the
-    `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
+    `Command Logging and Monitoring
+    <../command-logging-and-monitoring/command-monitoring.rst#security>`__
     spec) unless ``observeSensitiveCommands`` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring
@@ -586,7 +587,8 @@ The structure of this object is as follows:
 
   - ``observeSensitiveCommands``: Optional boolean. If true, events associated
     with sensitive commands (per the
-    `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
+    `Command Logging and Monitoring
+    <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__
     spec) will be observed for this client. Note that the command and replies
     for such events will already have been redacted by the driver. If false or
     not specified, events for commands containing sensitive information MUST be
@@ -612,13 +614,13 @@ The structure of this object is as follows:
 
   .. _entity_client_observeLogMessages:
 
-  - ``observeLogMessages``: Optional object where the key names are log 
+  - ``observeLogMessages``: Optional object where the key names are log
     `components <../logging/logging.rst#components>`__ and the values are minimum
     `log severity levels <../logging/logging.rst#log-severity-levels>`__ indicating
     which components to collect log messages for and what the minimum severity
     level of collected messages should be. Messages for unspecified components
     and/or with lower severity levels than those specified MUST be ignored by
-    this client's log collector(s) and SHOULD NOT be included in 
+    this client's log collector(s) and SHOULD NOT be included in
     `test.expectLogMessages <test_expectLogMessages_>`_ for this client.
 
   - ``serverApi``: Optional `serverApi`_ object.
@@ -788,7 +790,7 @@ The structure of this object is as follows:
 - ``events``: Required array of one or more strings, which denote the events to
   be collected. Currently, only the following
   `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
-  and `command monitoring <../command-monitoring/command-monitoring.rst>`__
+  and `command logging and monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
   events MUST be supported:
 
   - PoolCreatedEvent
@@ -1143,8 +1145,8 @@ The structure of each object is as follows:
   to be observed. See `commonOptions_client`_.
 
 - ``eventType``: Optional string. Specifies the type of the monitor which
-  captured the events. Valid values are ``command`` for `Command Monitoring
-  <../command-monitoring/command-monitoring.rst#api>`__ events, ``cmap`` for
+  captured the events. Valid values are ``command`` for `Command Logging and Monitoring
+  <../command-logging-and-monitoring/command-logging-and-monitoring.rst#api>`__ events, ``cmap`` for
   `CMAP
   <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
   events, and ``sdam`` for `SDAM
@@ -1197,7 +1199,7 @@ The structure of this object is as follows:
 .. _expectedEvent_commandStartedEvent:
 
 - ``commandStartedEvent``: Optional object. Assertions for one or more
-  `CommandStartedEvent <../command-monitoring/command-monitoring.rst#api>`__
+  `CommandStartedEvent <../command-logging-and-monitoring/command-logging-and-monitoring.rst#api>`__
   fields.
 
   The structure of this object is as follows:
@@ -1220,7 +1222,7 @@ The structure of this object is as follows:
 .. _expectedEvent_commandSucceededEvent:
 
 - ``commandSucceededEvent``: Optional object. Assertions for one or more
-  `CommandSucceededEvent <../command-monitoring/command-monitoring.rst#api>`__
+  `CommandSucceededEvent <../command-logging-and-monitoring/command-logging-and-monitoring.rst#api>`__
   fields.
 
   The structure of this object is as follows:
@@ -1239,7 +1241,7 @@ The structure of this object is as follows:
 .. _expectedEvent_commandFailedEvent:
 
 - ``commandFailedEvent``: Optional object. Assertions for one or more
-  `CommandFailedEvent <../command-monitoring/command-monitoring.rst#api>`__
+  `CommandFailedEvent <../command-logging-and-monitoring/command-logging-and-monitoring.rst#api>`__
   fields.
 
   The structure of this object is as follows:
@@ -1380,7 +1382,7 @@ is a nonpositive Int32.
 expectedLogMessagesForClient
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A list of log messages that are expected to be observed (in that order) for a 
+A list of log messages that are expected to be observed (in that order) for a
 client while executing `operations <test_operations_>`_.
 
 The structure of each object is as follows:
@@ -1388,7 +1390,7 @@ The structure of each object is as follows:
 - ``client``: Required string. Client entity for which the messages are expected
   to be observed. See `commonOptions_client`_.
 
-- ``messages``: Required array of `expectedLogMessage`_ objects. List of 
+- ``messages``: Required array of `expectedLogMessage`_ objects. List of
   messages, which are expected to be observed (in this order) on the corresponding
   client while executing `operations`_. If the array is empty, the test runner
   MUST assert that no messages were observed on the client. The driver MUST assert
@@ -1423,14 +1425,14 @@ The structure of each object is as follows:
   when the log message data is expected to contain a ``failure`` value.
 
   When ``failureIsRedacted`` is present and its value is ``true``,
-  the test runner MUST assert that a failure is present and that the failure 
-  has been redacted according to the rules defined for error redaction in the 
-  `command logging and monitoring specification 
+  the test runner MUST assert that a failure is present and that the failure
+  has been redacted according to the rules defined for error redaction in the
+  `command logging and monitoring specification
   <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__.
 
   When ``false``, the test runner MUST assert that a failure is present and that
   the failure has NOT been redacted.
-  
+
   The exact form of these assertions and how thorough they are will vary based
   on the driver's chosen error representation in logs; e.g. drivers that use
   strings may only be able to assert on the presence/absence of substrings.
@@ -3292,7 +3294,7 @@ This operator may be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_) and the expected and actual values
 are documents. The test runner MUST treat the expected value as a root-level
 document as described in `Evaluating Matches`_ and match it against the expected
-value. 
+value.
 
 Test Runner Implementation
 --------------------------
@@ -3432,7 +3434,8 @@ events for the following:
   `targetedFailPoint`_ operations.
 
 - Any commands containing sensitive information (per the
-  `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
+  `Command Logging and Monitoring
+  <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__
   spec) unless
   `observeSensitiveCommands <entity_client_observeSensitiveCommands_>`_ is true.
   Note that drivers will redact commands and replies for sensitive commands. For

@@ -291,11 +291,11 @@ Command Construction Tests
 
 Drivers should also assert that command documents are properly constructed with
 or without a transaction ID, depending on whether the write operation is
-supported. `Command Monitoring`_ may be used to check for the presence of a
+supported. `Command Logging and Monitoring`_ may be used to check for the presence of a
 ``txnNumber`` field in the command document. Note that command documents may
 always include an ``lsid`` field per the `Driver Session`_ specification.
 
-.. _Command Monitoring: ../../command-monitoring/command-monitoring.rst
+.. _Command Logging and Monitoring: ../../command-logging-and-monitoring/command-logging-and-monitoring.rst
 .. _Driver Session: ../../sessions/driver-sessions.rst
 
 These tests may be run against both a replica set and shard cluster.

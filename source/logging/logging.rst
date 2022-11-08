@@ -149,7 +149,7 @@ driver-specific messages they produce.
      - Environment Variable
 
    * - command
-     - `Command Monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
+     - `Command Logging and Monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
      - ``MONGODB_LOG_COMMAND``
 
    * - topology

@@ -446,8 +446,8 @@ Command Monitoring
 
 `As with retryable writes
 <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#command-monitoring>`__,
-in accordance with the `Command Monitoring
-<https://github.com/mongodb/specifications/blob/master/source/command-monitoring/command-monitoring.rst>`__
+in accordance with the `Command Logging and Monitoring
+<https://github.com/mongodb/specifications/blob/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
 specification, drivers MUST guarantee that each ``CommandStartedEvent`` has
 either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``. If the
 first attempt of a retryable read operation encounters a retryable error,
