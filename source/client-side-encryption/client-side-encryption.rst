@@ -996,8 +996,8 @@ ClientEncryption
 
       // The "Create Encrypted Collection" helper is a convenience function wrapping CreateCollection. It will
       // create a collection with encrypted fields, automatically allocating and assigning new data encryption
-      // keys. It returns a handle to the  new collection, as well as a document consisting of the generated
-      // "create" options. Refer to "Create Encrypted Collection Helper"
+      // keys. It returns a handle to the new collection, as well as a document consisting of the generated
+      // "encryptedFields" options. Refer to "Create Encrypted Collection Helper"
       createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, dkOpts: DataKeyOpts): [Collection, Document];
 
       // Creates a new key document and inserts into the key vault collection.
