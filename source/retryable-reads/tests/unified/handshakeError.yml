@@ -112,7 +112,6 @@ tests:
         object: *client
         arguments:
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -189,7 +188,6 @@ tests:
         expectError: { isError: true }
       - name: listDatabaseNames
         object: *client
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -274,7 +272,6 @@ tests:
         object: *client
         arguments:
           pipeline: []
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -359,7 +356,6 @@ tests:
         object: *database
         arguments:
           pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -440,7 +436,6 @@ tests:
         object: *database
         arguments:
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -521,7 +516,6 @@ tests:
         object: *database
         arguments:
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -606,7 +600,6 @@ tests:
         object: *database
         arguments:
           pipeline: []
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -691,7 +684,6 @@ tests:
         object: *collection
         arguments:
           pipeline: []
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -772,7 +764,6 @@ tests:
         object: *collection
         arguments:
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -849,7 +840,6 @@ tests:
         expectError: { isError: true }
       - name: estimatedDocumentCount
         object: *collection
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -932,7 +922,6 @@ tests:
         arguments:
           fieldName: x
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -1013,7 +1002,6 @@ tests:
         object: *collection
         arguments:
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -1090,7 +1078,6 @@ tests:
         expectError: { isError: true }
       - name: listIndexes
         object: *collection
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -1175,7 +1162,6 @@ tests:
         object: *collection
         arguments:
           pipeline: []
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap

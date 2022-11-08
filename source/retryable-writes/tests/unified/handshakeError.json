@@ -193,8 +193,7 @@
               "_id": 2,
               "x": 22
             }
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -390,8 +389,7 @@
                 "x": 22
               }
             ]
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -577,8 +575,7 @@
           "object": "collection",
           "arguments": {
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -770,8 +767,7 @@
             "replacement": {
               "x": 22
             }
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -967,8 +963,7 @@
                 "x": 22
               }
             }
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1154,8 +1149,7 @@
           "object": "collection",
           "arguments": {
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1347,8 +1341,7 @@
             "replacement": {
               "x": 22
             }
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1544,8 +1537,7 @@
                 "x": 22
               }
             }
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1749,8 +1741,7 @@
                 }
               }
             ]
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [

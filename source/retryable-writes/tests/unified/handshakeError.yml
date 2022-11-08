@@ -110,7 +110,6 @@ tests:
         object: *collection
         arguments:
           document: { _id: 2, x: 22 }
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -193,7 +192,6 @@ tests:
         arguments:
           documents:
             - { _id: 2, x: 22 }
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -274,7 +272,6 @@ tests:
         object: *collection
         arguments:
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -357,7 +354,6 @@ tests:
         arguments:
           filter: {}
           replacement: { x: 22 }
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -440,7 +436,6 @@ tests:
         arguments:
           filter: {}
           update: { $set: { x: 22 } }
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -521,7 +516,6 @@ tests:
         object: *collection
         arguments:
           filter: {}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -604,7 +598,6 @@ tests:
         arguments:
           filter: {}
           replacement: { x: 22 }
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -687,7 +680,6 @@ tests:
         arguments:
           filter: {}
           update: { $set: { x: 22 } }
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
@@ -772,7 +764,6 @@ tests:
           requests:
             - insertOne:
                 document: { _id: 2, x: 22 }
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap

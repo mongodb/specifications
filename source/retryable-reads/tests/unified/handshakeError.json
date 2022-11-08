@@ -195,8 +195,7 @@
           "object": "client",
           "arguments": {
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -376,8 +375,7 @@
         },
         {
           "name": "listDatabaseNames",
-          "object": "client",
-          "ignoreResultAndError": true
+          "object": "client"
         }
       ],
       "expectEvents": [
@@ -573,8 +571,7 @@
           "object": "client",
           "arguments": {
             "pipeline": []
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -784,8 +781,7 @@
                 "$limit": 1
               }
             ]
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -971,8 +967,7 @@
           "object": "database",
           "arguments": {
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1158,8 +1153,7 @@
           "object": "database",
           "arguments": {
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1355,8 +1349,7 @@
           "object": "database",
           "arguments": {
             "pipeline": []
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1552,8 +1545,7 @@
           "object": "collection",
           "arguments": {
             "pipeline": []
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1739,8 +1731,7 @@
           "object": "collection",
           "arguments": {
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -1920,8 +1911,7 @@
         },
         {
           "name": "estimatedDocumentCount",
-          "object": "collection",
-          "ignoreResultAndError": true
+          "object": "collection"
         }
       ],
       "expectEvents": [
@@ -2109,8 +2099,7 @@
           "arguments": {
             "fieldName": "x",
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -2296,8 +2285,7 @@
           "object": "collection",
           "arguments": {
             "filter": {}
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [
@@ -2477,8 +2465,7 @@
         },
         {
           "name": "listIndexes",
-          "object": "collection",
-          "ignoreResultAndError": true
+          "object": "collection"
         }
       ],
       "expectEvents": [
@@ -2674,8 +2661,7 @@
           "object": "collection",
           "arguments": {
             "pipeline": []
-          },
-          "ignoreResultAndError": true
+          }
         }
       ],
       "expectEvents": [

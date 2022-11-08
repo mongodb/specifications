@@ -126,7 +126,6 @@ tests:
           {{arg}}
           {%- endfor -%}
         {%- endif %}
-        ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: cmap
