@@ -1634,6 +1634,19 @@ specifications:
 Client operations that require special handling or are not documented by an
 existing specification are described below.
 
+close
+~~~~~
+
+Closes the client, i.e. close underlying connection pool(s) and cease monitoring
+the topology. For languages that rely on built-in language mechanisms such as reference
+counting to automatically close/deinitialize clients once they go out of scope, this may
+require implementing an abstraction to allow a client entity's underlying client to be set
+to null. Because drivers do not consistently propagate errors encountered while closing a
+client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or 
+`expectError <operation_expectError_>`_ for this operation. Test files SHOULD NOT
+specify any operations for a client entity or any entity descended from it following
+a `close` operation on it, as driver behavior when an operation is attempted on a closed
+client or one of its descendant objects is not consistent.
 
 .. _client_createChangeStream:
 
@@ -3882,6 +3895,7 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+:2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
             Add support for logging assertions via the ``observeLogMessages`` field
             for client entities, along with a new top-level field ``expectLogMessages``

@@ -259,7 +259,7 @@ has the following properties:
 -  **Thread Safe:** All Pool behaviors MUST be thread safe.
 -  **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it MUST immediately clear itself and update its pid
 -  **Single Owner:** A Pool MUST be associated with exactly one Endpoint, and MUST NOT be shared between Endpoints.
--  **Emit Events:** A Pool MUST emit pool events when dictated by this spec (see `Connection Pool Monitoring <#connection-pool-monitoring>`__). Users MUST be able to subscribe to emitted events in a manner idiomatic to their language and driver.
+-  **Emit Events and Log Messages:** A Pool MUST emit pool events and log messages when dictated by this spec (see `Connection Pool Monitoring <#connection-pool-monitoring>`__). Users MUST be able to subscribe to emitted events and log messages in a manner idiomatic to their language and driver.
 -  **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
 
    -  Checking in a `Connection <#connection>`_ to the Pool automatically closes the `Connection <#connection>`_
@@ -391,7 +391,7 @@ section in the SDAM specification for more information.
 
     set generation to 0
     set state to "paused"
-    emit PoolCreatedEvent
+    emit PoolCreatedEvent and equivalent log message
 
 Closing a Connection Pool
 -------------------------
@@ -406,7 +406,7 @@ When a pool is closed, it MUST first close all available `Connections <#connecti
     mark pool as "closed"
     for connection in availableConnections:
       close connection
-    emit PoolClosedEvent
+    emit PoolClosedEvent and equivalent log message
 
 Marking a Connection Pool as Ready
 ----------------------------------
@@ -422,7 +422,7 @@ method MUST immediately return and MUST NOT emit a PoolReadyEvent.
 .. code::
 
    mark pool as "ready"
-   emit PoolReadyEvent
+   emit PoolReadyEvent and equivalent log message
    allow background thread to create connections
 
 Note that the PoolReadyEvent MUST be emitted before the background thread is allowed to resume creating new connections,
@@ -442,7 +442,7 @@ performs no I/O.
     increment totalConnectionCount
     increment pendingConnectionCount
     set connection state to "pending"
-    emit ConnectionCreatedEvent
+    emit ConnectionCreatedEvent and equivalent log message
     return connection
 
 Establishing a Connection (Internal Implementation)
@@ -459,7 +459,7 @@ handshake, handling OP_COMPRESSED, and performing authentication.
       perform connection handshake
       handle OP_COMPRESSED
       perform connection authentication
-      emit ConnectionReadyEvent
+      emit ConnectionReadyEvent and equivalent log message
       return connection
     except error:
       close connection
@@ -487,7 +487,7 @@ thread or async I/O.
       decrement pendingConnectionCount
 
     decrement totalConnectionCount
-    emit ConnectionClosedEvent
+    emit ConnectionClosedEvent and equivalent log message
 
     # The following can happen at a later time (i.e. in background
     # thread) or via non-blocking I/O.
@@ -606,7 +606,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
 .. code::
 
     connection = Null
-    emit ConnectionCheckOutStartedEvent
+    emit ConnectionCheckOutStartedEvent and equivalent log message
     try:
       enter WaitQueue
       wait until at top of wait queue
@@ -629,13 +629,13 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
             continue
           
     except pool is "closed":
-      emit ConnectionCheckOutFailedEvent(reason="poolClosed")
+      emit ConnectionCheckOutFailedEvent(reason="poolClosed") and equivalent log message
       throw PoolClosedError
     except pool is "paused":
-      emit ConnectionCheckOutFailedEvent(reason="connectionError")
+      emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
       throw PoolClearedError
     except timeout:
-      emit ConnectionCheckOutFailedEvent(reason="timeout")
+      emit ConnectionCheckOutFailedEvent(reason="timeout") and equivalent log message
       throw WaitQueueTimeoutError
     finally:
       # This must be done in all drivers
@@ -655,7 +655,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       try:
         establish connection
       except connection establishment error:
-        emit ConnectionCheckOutFailedEvent(reason="error")
+        emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
         decrement totalConnectionCount
         throw
       finally:
@@ -663,7 +663,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     else:
         decrement availableConnectionCount
     set connection state to "in use"
-    emit ConnectionCheckedOutEvent
+    emit ConnectionCheckedOutEvent and equivalent log message
     return connection
 
 Checking In a Connection
@@ -685,7 +685,7 @@ Otherwise, the `Connection <#connection>`_ is marked as available.
 
 .. code::
 
-    emit ConnectionCheckedInEvent
+    emit ConnectionCheckedInEvent and equivalent log message
     if connection is perished OR pool is closed:
       close connection
     else:
@@ -709,10 +709,10 @@ marking all current `Connections <#connection>`_ as stale. It should also
 transition the pool's state to "paused" to halt the creation of new connections
 until it is marked as "ready" again. The checkOut and checkIn algorithms will
 handle clearing out stale `Connections <#connection>`_. If a user is subscribed
-to Connection Monitoring events, a PoolClearedEvent MUST be emitted after
-incrementing the generation / marking the pool as "paused". If the pool is
-already "paused" when it is cleared, then the pool MUST NOT emit a PoolCleared
-event.
+to Connection Monitoring events and/or connection log messages, a PoolClearedEvent
+and log message MUST be emitted after incrementing the generation / marking the pool
+as "paused". If the pool is already "paused" when it is cleared, then the pool MUST
+NOT emit a PoolCleared event or log message.
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
@@ -745,7 +745,7 @@ Clearing a load balanced pool
 A Pool MUST also have a method of clearing all `Connections <#connection>`_ for
 a specific ``serviceId`` for use when in load balancer mode. This method
 increments the generation of the pool for that specific ``serviceId`` in the
-generation map. A PoolClearedEvent MUST be emitted after incrementing the
+generation map. A PoolClearedEvent and log message MUST be emitted after incrementing the
 generation. Note that this method MUST NOT transition the pool to the "paused"
 state and MUST NOT clear the WaitQueue.
 
@@ -998,6 +998,348 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       connectionId: number;
     }
 
+Connection Pool Logging
+~~~~~~~~~~~~~~~~~~~~~~~
+Please refer to the `logging specification <../logging/logging.rst>`_ for details on logging implementations in general, including log levels, log
+components, handling of null values in log messages, and structured versus unstructured logging.
+
+Drivers MUST support logging of connection pool information via the following types of log messages. These messages MUST be logged at ``Debug`` level
+and use the ``connection`` log component. These messages MUST be emitted when specified in “Connection Pool Behaviors”.
+
+The log messages are intended to match the information contained in the events above. Drivers MAY implement connection logging support via an event
+subscriber if it is convenient to do so.
+
+The types used in the structured message definitions below are demonstrative, and drivers MAY use similar types instead so long as the information
+is present (e.g. a double instead of an integer, or a string instead of an integer if the structured logging framework does not support numeric types).
+
+Common Fields
+-------------
+All connection log messages MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - serverHost
+     - String
+     -  the hostname, IP address, or Unix domain socket path for the endpoint the pool is for.
+
+   * - serverPort
+     - Int
+     - The port for the endpoint the pool is for. Optional; not present for Unix domain sockets. When
+       the user does not specify a port and the default (27017) is used, the driver SHOULD include it here. 
+
+Pool Created Message
+---------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection pool created"
+
+   * - maxIdleTimeMS
+     - Int
+     - The maxIdleTimeMS value for this pool. Optional; only required to include if the user specified a value.
+
+   * - minPoolSize
+     - Int
+     - The minPoolSize value for this pool. Optional; only required to include if the user specified a value.
+
+   * - maxPoolSize
+     - Int
+     - The maxPoolSize value for this pool. Optional; only required to include if the user specified a value.
+
+   * - maxConnecting
+     - Int
+     - The maxConnecting value for this pool. Optional; only required to include if the driver supports this option and the user
+       specified a value.
+
+   * - waitQueueTimeoutMS
+     - Int
+     - The waitQueueTimeoutMS value for this pool. Optional; only required to include if the driver supports this option and the
+       user specified a value.
+
+   * - waitQueueSize
+     - Int
+     - The waitQueueSize value for this pool. Optional; only required to include if the driver supports this option and the
+       user specified a value.          
+
+   * - waitQueueMultiple
+     - Int
+     - The waitQueueMultiple value for this pool. Optional; only required to include if the driver supports this option and the
+       user specified a value.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection pool created for {{serverHost}}:{{serverPort}} using options maxIdleTimeMS={{maxIdleTimeMS}},
+  minPoolSize={{minPoolSize}}, maxPoolSize={{maxPoolSize}}, maxConnecting={{maxConnecting}}, waitQueueTimeoutMS={{waitQueueTimeoutMS}},
+  waitQueueSize={{waitQueueSize}}, waitQueueMultiple={{waitQueueMultiple}}
+
+Pool Ready Message
+------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection pool ready"
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection pool ready for {{serverHost}}:{{serverPort}}
+
+Pool Cleared Message
+--------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection pool cleared"
+
+   * - serviceId
+     - String
+     - The hex string representation of the service ID which the pool was cleared for. Optional; only present in load balanced mode.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection pool for {{serverHost}}:{{serverPort}} cleared for serviceId {{serviceId}}
+
+Pool Closed Message
+-------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection pool closed"
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection pool closed for {{serverHost}}:{{serverPort}}
+
+Connection Created Message
+--------------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection created"
+
+   * - driverConnectionId
+     - Int
+     - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection created: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
+
+Connection Ready Message
+------------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection ready"
+
+   * - driverConnectionId
+     - Int
+     - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection ready: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
+
+Connection Closed Message
+-------------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection closed"
+
+   * - driverConnectionId
+     - Int
+     - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
+
+   * - reason
+     - String
+     - A string describing the reason the connection was closed. The following strings MUST be used for each possible reason
+       as defined in `Events <#events>`_ above:
+
+       - Stale: "Connection became stale because the pool was cleared"
+       - Idle: "Connection has been available but unused for longer than the configured max idle time"
+       - Error: "An error occurred while using the connection"
+       - Pool closed: "Connection pool was closed" 
+
+   * - error
+     - Flexible
+     - If ``reason`` is ``Error``, the associated error. The type and format of this value is flexible; see the
+       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_  for details on representing errors in log messages.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection closed: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}. Reason: {{reason}}. Error: {{error}}
+
+Connection Checkout Started Message
+-----------------------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection checkout started"
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Checkout started for connection to {{serverHost}}:{{serverPort}}
+
+Connection Checkout Failed Message
+-----------------------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection checkout failed"
+
+   * - reason
+     - String
+     - A string describing the reason checkout. The following strings MUST be used for each possible reason
+       as defined in `Events <#events>`_ above:
+
+       - Timeout: "Wait queue timeout elapsed without a connection becoming available"
+       - ConnectionError: "An error occurred while trying to establish a new connection"
+       - Pool closed: "Connection pool was closed"
+
+   * - error
+     - Flexible
+     - If ``reason`` is ``ConnectionError``, the associated error. The type and format of this value is flexible; see the
+       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_  for details on representing errors in log messages.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}
+
+Connection Checked Out
+-----------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection checked out"
+
+   * - driverConnectionId
+     - Int
+     - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection checked out: address={serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
+
+Connection Checked In
+---------------------
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Connection checked in"
+
+   * - driverConnectionId
+     - Int
+     - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
+
+  Connection checked in: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
+
 Connection Pool Errors
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1121,8 +1463,8 @@ not. This enables the following behaviors:
    between SDAM and Server Selection. These requests would then likely fail with
    potentially high latency, again wasting resources both server and driver side.
 
-Why not emit PoolCleared events when clearing a paused pool?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Why not emit PoolCleared events and log messages when clearing a paused pool?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a pool is already paused when it is cleared, that means it was previously
 cleared and no new connections have been created since then. Thus, clearing the
@@ -1205,6 +1547,7 @@ Changelog
 :2021-11-08: Make maxConnecting configurable.
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter and reformat changelog.
+:2022-10-14: Add connection pool log messages and associated tests.
 
 ----
 
