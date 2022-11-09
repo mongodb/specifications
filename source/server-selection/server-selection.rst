@@ -849,7 +849,10 @@ For multi-threaded clients, the server selection algorithm is as follows:
 
 5. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and continue to the next step;
-   otherwise, goto Step #9.
+   otherwise, log a `"Waiting for suitable server to become available" message`_
+   if one has not already been logged for this operation OR if the topology
+   description has changed since the last time the message was logged, and goto
+   Step #9.
 
 6. Choose two servers at random from the set of suitable servers in the latency
    window. If there is only 1 server in the latency window, just select that
@@ -922,7 +925,9 @@ as follows:
 
 9. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
    the selection start time, raise a `server selection error`_; otherwise,
-   goto Step #4
+   log a `"Waiting for suitable server to become available" message`_ if one
+   has not already been logged for this operation OR if the topology description
+   has changed since the last time the message was logged, and goto Step #4
 
 10. If the current time exceeds the maximum time, raise a
     `server selection error`_
@@ -1180,11 +1185,85 @@ server without an explicit ``start_request`` (or comparable) method call.
 Outside a legacy "request" API, drivers MUST use server selection for each
 individual read operation.
 
-Reference Implementation
-========================
+Logging
+-------
+Please refer to the `logging specification <../logging/logging.rst>`_ for
+details on logging implementations in general, including log levels, log
+components, and structured versus unstructured logging.
 
-The single-threaded reference implementation is the Perl master branch (work
-towards v1.0.0).  The multi-threaded reference implementation is TBD.
+Drivers MUST support logging of server selection information via the
+following log messages. These messages MUST use the ``serverSelection`` log
+component.
+
+The types used in the structured message definitions below are demonstrative,
+and drivers MAY use similar types instead so long as the information is present
+(e.g. a double instead of an integer, or a string instead of an integer if the
+structured logging framework does not support numeric types.)
+
+"Waiting for suitable server to become available" message
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This message MUST be logged at ``info`` level. It MUST be emitted on the occasions
+specified either in `Multi-threaded or asynchronous server selection`_ or
+`Single-threaded server selection`_, depending on which algorithm the driver
+implements.
+
+In order to avoid generating redundant log messages where all information besides
+the remaining time is identical, this message MUST not be repeatedly emitted for an
+operation unless the topology description changes.
+
+This message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Waiting for suitable server to become available"
+
+   * - selector
+     - String
+     - String representation of the selector being used to select the server. This can be
+       a read preference or an application-provided custom selector. The exact content of
+       is flexible depending on what the driver is able to log. At minimum, when the selector
+       is a read preference this string MUST contain all components of the read preference,
+       and when it is an application-provided custom selector the string MUST somehow indicate
+       that it is a custom selector.
+
+   * - requestId
+     - Int
+     - The driver-generated ID for the request a server is being selected for. Optional; this
+       field will not be present in cases where server selection does not correspond to an operation,
+       e.g. when the driver performs server selection to check if a `deployment supports sessions
+       <../sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions>`__.
+
+   * - operation
+     - String
+     - The name of the operation for which a server is being selected. When server selection is
+       being performed to select a server for a command, this MUST be the command name. For any
+       non-command server selection this MUST be a string describing the reason a server is being
+       selected, e.g. "Check for sessions support".
+
+   * - topology
+     - String
+     - String representation of the current topology description. The format of is flexible
+       and could be e.g. the ``toString()`` implementation for a driver's topology type,
+       or an extended JSON representation of the topology object.
+
+   * - remainingTimeMS
+     - Int
+     - The remaining time left until server selection will time out. This MAY be omitted if
+       the driver supports disabling server selection timeout altogether. 
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to
+fill in placeholders as appropriate:
+
+  Waiting for server matching selector {{selector}} to become available for operation {{operationName}}
+  with request ID {{requestId}} in topology {{topology}}. Remaining time: {{remainingTimeMS}} ms.
 
 Implementation Notes
 ====================
@@ -1293,6 +1372,8 @@ selection`_::
                 return selected
 
             request that all monitors check immediately
+            if the message was not logged already OR topologyDescription has changed since the last time it was logged: 
+                log a "waiting for suitable server to become available" message
 
             # Wait for a new TopologyDescription. condition.wait() releases
             # client.lock while waiting and reacquires it before returning.
@@ -1374,6 +1455,9 @@ The following is pseudocode for `single-threaded server selection`_::
                     throw server selection error with details
             else if loopEndTime > maxTime:
                 throw server selection error with details
+
+            if the message was not logged already OR topologyDescription has changed since the last time it was logged: 
+                log a "waiting for suitable server to become available" message
 
 .. _server selection error:
 

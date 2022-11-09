@@ -1,0 +1,405 @@
+{
+  "description": "server-selection-logging",
+  "schemaVersion": "1.13",
+  "createEntities": [
+    {
+      "client": {
+        "id": "client",
+        "uriOptions": {
+          "retryWrites": false,
+          "heartbeatFrequencyMS": 500,
+          "serverSelectionTimeoutMS": 2000
+        },
+        "observeLogMessages": {
+          "serverSelection": "info"
+        },
+        "observeEvents": [
+          "serverDescriptionChangedEvent"
+        ],
+        "useMultipleMongoses": false
+      }
+    },
+    {
+      "database": {
+        "id": "database",
+        "client": "client",
+        "databaseName": "logging-tests"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection",
+        "database": "database",
+        "collectionName": "server-selection"
+      }
+    },
+    {
+      "client": {
+        "id": "failPointClient",
+        "useMultipleMongoses": false
+      }
+    },
+    {
+      "collection": {
+        "id": "unsatisfiableRPColl",
+        "database": "database",
+        "collectionName": "unsatisfiableRPColl",
+        "collectionOptions": {
+          "readPreference": {
+            "mode": "Secondary",
+            "tagSets": [
+              {
+                "nonexistenttag": "a"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "Message is logged when a suitable server is not immediately available",
+      "runOnRequirements": [
+        {
+          "topologies": [
+            "single",
+            "replicaset"
+          ],
+          "minServerVersion": "4.0"
+        },
+        {
+          "topologies": [
+            "sharded"
+          ],
+          "minServerVersion": "4.1.5"
+        }
+      ],
+      "operations": [
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 100
+          }
+        },
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "insert"
+                ],
+                "closeConnection": true
+              }
+            }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Unknown"
+                }
+              }
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "updateOne",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "x": 1
+            },
+            "update": {
+              "$set": {
+                "y": 1
+              }
+            }
+          }
+        }
+      ],
+      "expectLogMessages": [
+        {
+          "client": "client",
+          "messages": [
+            {
+              "level": "info",
+              "component": "serverSelection",
+              "data": {
+                "message": "Waiting for suitable server to become available",
+                "selector": {
+                  "$$exists": true
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "operation": "update",
+                "topology": {
+                  "$$exists": true
+                },
+                "remainingTimeMS": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Message is only logged one time if topology does not change",
+      "runOnRequirements": [
+        {
+          "topologies": [
+            "replicaset"
+          ],
+          "minServerVersion": "4.0"
+        }
+      ],
+      "operations": [
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 100
+          }
+        },
+        {
+          "name": "find",
+          "object": "unsatisfiableRPColl",
+          "arguments": {
+            "filter": {
+              "x": 1
+            }
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        }
+      ],
+      "expectLogMessages": [
+        {
+          "client": "client",
+          "messages": [
+            {
+              "level": "info",
+              "component": "serverSelection",
+              "data": {
+                "message": "Waiting for suitable server to become available",
+                "selector": {
+                  "$$exists": true
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "operation": "find",
+                "topology": {
+                  "$$exists": true
+                },
+                "remainingTimeMS": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Message is re-logged if topology changes but still contains no suitable server",
+      "runOnRequirements": [
+        {
+          "topologies": [
+            "replicaset"
+          ],
+          "minServerVersion": "4.0"
+        }
+      ],
+      "operations": [
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 100
+          }
+        },
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "insert"
+                ],
+                "closeConnection": true
+              }
+            }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "previousDescription": {
+                  "type": "RSPrimary"
+                },
+                "newDescription": {
+                  "type": "Unknown"
+                }
+              }
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "find",
+          "object": "unsatisfiableRPColl",
+          "arguments": {
+            "filter": {
+              "x": 1
+            }
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "previousDescription": {
+                  "type": "Unknown"
+                },
+                "newDescription": {
+                  "type": "RSPrimary"
+                }
+              }
+            },
+            "count": 1
+          }
+        }
+      ],
+      "expectLogMessages": [
+        {
+          "client": "client",
+          "messages": [
+            {
+              "level": "info",
+              "component": "serverSelection",
+              "data": {
+                "message": "Waiting for suitable server to become available",
+                "selector": {
+                  "$$exists": true
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "operation": "find",
+                "topology": {
+                  "$$exists": true
+                },
+                "remainingTimeMS": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            },
+            {
+              "level": "info",
+              "component": "serverSelection",
+              "data": {
+                "message": "Waiting for suitable server to become available",
+                "selector": {
+                  "$$exists": true
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "operation": "find",
+                "topology": {
+                  "$$exists": true
+                },
+                "remainingTimeMS": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
