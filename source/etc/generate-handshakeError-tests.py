@@ -35,7 +35,7 @@ BULK_WRITE_ARGUMENTS = '''requests:
 
 COLLECTION_READ_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'collection', ['pipeline: []']),
-    Operation('count', 'count', 'collection', ['filter: {}']),  # Deprecated.
+    # Operation('count', 'count', 'collection', ['filter: {}']),  # Deprecated.
     Operation('countDocuments', 'aggregate', 'collection', ['filter: {}']),
     Operation('estimatedDocumentCount', 'count', 'collection', []),
     Operation('distinct', 'distinct', 'collection',
