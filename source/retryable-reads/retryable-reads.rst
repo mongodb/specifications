@@ -679,6 +679,7 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2022-11-09: CLAM must apply both events and log messages.
 :2022-10-18: When CSOT is enabled multiple retry attempts may occur.
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
 :2022-01-25: Note that drivers should retry handshake network failures.
