@@ -2190,7 +2190,239 @@ Expect the key to be successfully created.
 .. _Automatic GCP Credentials: ../client-side-encryption.rst#automatic-gcp-credentials
 
 
-18. Automatic Data Encryption Keys
+18. Azure IMDS Credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Refer: `Automatic Azure Credentials <auto-azure_>`_
+
+.. _auto-azure: ../client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault
+
+The test cases for IMDS communication are specially designed to not require an
+Azure environment, while still exercising the core of the functionality. The
+design of these test cases encourages an implementation to separate the concerns
+of IMDS communication from the logic of KMS key manipulation. The purpose of
+these test cases is to ensure drivers will behave appropriately regardless of
+the behavior of the IMDS server.
+
+For these IMDS credentials tests, a simple stand-in IMDS-imitating HTTP server
+is available in drivers-evergreen-tools, at ``.evergreen/csfle/fake_azure.py``.
+``fake_azure.py`` is a very simple ``bottle.py`` application. For the easiest
+use, it is recommended to execute it through ``bottle.py`` (which is a sibling
+file in the same directory)::
+
+   python .evergreen/csfle/bottle.py fake_azure:imds
+
+This will run the ``imds`` Bottle application defined in the ``fake_azure``
+Python module. ``bottle.py`` accepts additional command line arguments to
+control the bind host and TCP port (use ``--help`` for more information).
+
+For each test case, follow the process for obtaining the token as outlined in
+the `automatic Azure credentials section <auto-azure_>`_ with the following
+changes:
+
+1. Instead of the standard IMDS TCP endpoint of `169.254.169.254:80`,
+   communicate with the running ``fake_azure`` HTTP server.
+
+2. For each test case, the behavior of the server may be controlled by attaching
+   an additional HTTP header to the sent request: ``X-MongoDB-HTTP-TestParams``.
+
+
+Case 1: Success
+```````````````
+
+Do not set an ``X-MongoDB-HTTP-TestParams`` header.
+
+Upon receiving a response from ``fake_azure``, the driver must decode the
+following information:
+
+1. HTTP status will be ``200 Okay``.
+2. The HTTP body will be a valid JSON string.
+3. The access token will be the string ``"magic-cookie"``.
+4. The expiry duration of the token will be seventy seconds.
+5. The token will have a resource of ``"https://vault.azure.net"``
+
+
+Case 2: Empty JSON
+``````````````````
+
+This case addresses a server returning valid JSON with invalid content.
+
+Set ``X-MongoDB-HTTP-TestParams`` to ``case=empty-json``.
+
+Upon receiving a response:
+
+1. HTTP status will be ``200 Okay``
+2. The HTTP body will be a valid JSON string.
+3. There will be no access token, expiry duration, or resource.
+
+The test case should ensure that this error condition is handled gracefully.
+
+
+Case 3: Bad JSON
+````````````````
+
+This case addresses a server returning malformed JSON.
+
+Set ``X-MongoDB-HTTP-TestParams`` to ``case=bad-json``.
+
+Upon receiving a response:
+
+1. HTTP status will be ``200 Okay``
+2. The response body will contain a malformed JSON string.
+
+The test case should ensure that this error condition is handled gracefully.
+
+
+Case 4: HTTP 404
+````````````````
+
+This case addresses a server returning a "Not Found" response. This is
+documented to occur spuriously within an Azure environment.
+
+Set ``X-MongoDB-HTTP-TestParams`` to ``case=404``.
+
+Upon receiving a response:
+
+1. HTTP status will be ``404 Not Found``.
+2. The response body is unspecified.
+
+The test case should ensure that this error condition is handled gracefully.
+
+
+Case 5: HTTP 500
+````````````````
+
+This case addresses an IMDS server reporting an internal error. This is
+documented to occur spuriously within an Azure environment.
+
+Set ``X-MongoDB-HTTP-TestParams`` to ``case=500``.
+
+Upon receiving a response:
+
+1. HTTP status code will be ``500``.
+2. The response body is unspecified.
+
+The test case should ensure that this error condition is handled gracefully.
+
+
+Case 6: Slow Response
+`````````````````````
+
+This case addresses an IMDS server responding very slowly. Drivers should not
+halt the application waiting on a peer to communicate.
+
+Set ``X-MongoDB-HTTP-TestParams`` to ``case=slow``.
+
+The HTTP response from the ``fake_azure`` server will take at least 1000 seconds
+to complete. The request should fail with a timeout.
+
+19. Azure IMDS Credentials Integration Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Refer: `Automatic Azure Credentials <auto-azure_>`_
+
+.. _auto-azure: ../client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault
+
+For these cases, create a ClientEncryption_ object :math:`C` with the following
+options:
+
+.. code-block:: typescript
+
+   ClientEncryptionOpts {
+      keyVaultClient: <setupClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "azure": {} },
+   }
+
+Case 1: Failure
+```````````````
+
+Do not run this test case in an Azure environment with an attached identity.
+This may be run in an AWS EC2 instance.
+
+Attempt to create a datakey with :math:`C` using the ``"azure"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
+         "keyName": "KEY-NAME"
+      }
+   }
+
+Expect the attempt to obtain ``"azure"`` credentials from the environment to fail.
+
+Case 2: Success
+```````````````
+
+This test case must run in an Azure environment with an attached identity.
+See `drivers-evergreen-tools/.evergreen/csfle/azurekms
+<https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/azurekms>`_
+for scripts to create a Azure instance for testing. The Evergreen task SHOULD set a
+``batchtime`` of 14 days to reduce how often this test case runs.
+
+Attempt to create a datakey with :math:`C` using the ``"azure"`` KMS provider and
+following ``DataKeyOpts``:
+
+.. code-block:: typescript
+
+   class DataKeyOpts {
+      masterKey: {
+         "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
+         "keyName": "KEY-NAME"
+      }
+   }
+
+This should successfully load and use the Azure credentials of the service account
+attached to the virtual machine.
+
+Expect the key to be successfully created.
+
+20. Bypass creating mongocryptd client when shared library is loaded
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+   IMPORTANT: If crypt_shared_ is not visible to the operating system's library
+   search mechanism, this test should be skipped.
+
+
+The following tests that a mongocryptd client is not created when shared library is in-use.
+
+#. Start a new thread (referred to as ``listenerThread``)
+
+#. On ``listenerThread``, create a TcpListener on 127.0.0.1 endpoint and port 27021. Start the listener and wait for establishing connections.
+   If any connection is established, then signal about this to the main thread.
+
+   Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure the required options. Use the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Configure with the ``keyVaultNamespace`` set to ``keyvault.datakeys``.
+
+   Configure the following ``extraOptions``:
+
+   .. code:: javascript
+
+      {
+        "mongocryptdURI": "mongodb://localhost:27021"
+      }
+
+#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``.
+
+#. Expect no signal from ``listenerThread``.
+
+
+
+21. Automatic Data Encryption Keys
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Case 1: Simple Creation and Validation

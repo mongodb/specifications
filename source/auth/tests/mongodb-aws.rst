@@ -10,6 +10,7 @@ There are 6 scenarios drivers MUST test:
 #. ``Assume Role``: Auth via temporary credentials obtained from an STS AssumeRole request
 #. ``Assume Role with Web Identity``: Auth via temporary credentials obtained from an STS AssumeRoleWithWebIdentity request
 #. ``AWS Lambda``: Auth via environment variables ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``.
+#. Caching of AWS credentials fetched by the driver.
 
 For brevity, this section gives the values ``<AccessKeyId>``, ``<SecretAccessKey>`` and ``<Token>`` in place of a valid access key ID, secret access key and session token (also known as a security token). Note that if these values are passed into the URI they MUST be URL encoded. Sample values are below.
 
@@ -115,3 +116,47 @@ Sample URIs both with and without optional session tokens set are shown below. D
   URI="mongodb://localhost/?authMechanism=MONGODB-AWS"
 
 .. note:: No username, password or session token is passed into the URI. Drivers MUST check the environment variables listed above for these values. If the session token is set Drivers MUST use it.
+
+
+Cached Credentials
+==================
+
+Drivers MUST ensure that they are testing the ability to cache credentials.
+Drivers will need to be able to query and override the cached credentials to
+verify usage. To determine whether to run the cache tests, the driver can
+check for the absence of the AWS_ACCESS_KEY_ID environment variable and of
+credentials in the URI.
+
+#. Clear the cache.
+#. Create a new client.
+#. Ensure that a ``find`` operation adds credentials to the cache.
+#. Override the cached credentials with an "Expiration" that is within one
+   minute of the current UTC time.
+#. Create a new client.
+#. Ensure that a ``find`` operation updates the credentials in the cache.
+
+#. Poison the cache with an invalid access key id.
+#. Create a new client.
+#. Ensure that a ``find`` operation results in an error.
+#. Ensure that the cache has been cleared.
+#. Ensure that a subsequent ``find`` operation succeeds.
+#. Ensure that the cache has been set.
+
+If the drivers's language supports dynamically setting environment variables,
+add the following tests. Note that if integration tests are run in
+parallel for the driver, then these tests must be run as unit tests interacting
+with the auth provider directly instead of using a client.
+
+#. Create a new client.
+#. Ensure that a ``find`` operation adds credentials to the cache.
+#. Set the AWS environment variables based on the cached credentials.
+#. Clear the cache.
+#. Ensure that a ``find`` operation succeeds and does not add credentials to
+   the cache.
+#. Set the AWS environment variables to invalid values.
+#. Ensure that a ``find`` operation results in an error.
+
+#. Create a new client.
+#. Ensure that a ``find`` operation adds credentials to the cache.
+#. Set the AWS environment variables to invalid values.
+#. Ensure that a ``find`` operation succeeds.

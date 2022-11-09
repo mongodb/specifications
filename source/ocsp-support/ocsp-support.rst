@@ -105,7 +105,7 @@ invalid, the driver SHOULD end the connection.
     response that concretely marks the certificate status as good or revoked
     should be used. A timeout should be applied to requests per the `Client
     Side Operations Timeout
-    <../client-side-operations-timeout/client-side-operations-timeout>`__
+    <../client-side-operations-timeout/client-side-operations-timeout.rst>`__
     specification, with a default timeout of five seconds. The status for a
     response should only be checked if the response is valid per `RFC 6960
     Section 3.2 <https://tools.ietf.org/html/rfc6960#section-3.2>`_

@@ -4,7 +4,7 @@ Unified Test Format
 
 :Status: Accepted
 :Minimum Server Version: N/A
-:Current Schema Version: 1.11.0
+:Current Schema Version: 1.13.0
 
 .. contents::
 
@@ -610,6 +610,17 @@ The structure of this object is as follows:
         - id: client0_events
           events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
+  .. _entity_client_observeLogMessages:
+
+  - ``observeLogMessages``: Optional object where the key names are log 
+    `components <../logging/logging.rst#components>`__ and the values are minimum
+    `log severity levels <../logging/logging.rst#log-severity-levels>`__ indicating
+    which components to collect log messages for and what the minimum severity
+    level of collected messages should be. Messages for unspecified components
+    and/or with lower severity levels than those specified MUST be ignored by
+    this client's log collector(s) and SHOULD NOT be included in 
+    `test.expectLogMessages <test_expectLogMessages_>`_ for this client.
+
   - ``serverApi``: Optional `serverApi`_ object.
 
 .. _entity_clientEncryption:
@@ -924,6 +935,22 @@ The structure of this object is as follows:
   to ``cmap`` for both would either be redundant (if the ``events`` arrays were
   identical) or likely to fail (if the ``events`` arrays differed).
 
+
+.. _test_expectLogMessages:
+
+- ``expectLogMessages``: Optional array of one or more `expectedLogMessagesForClient`_
+  objects. For one or more clients, a list of log messages that are expected to
+  be observed in a particular order.
+
+  If a driver only supports configuring log collectors globally (for all
+  clients), the test runner SHOULD associate each observed message with a client
+  in order to perform these assertions. One possible implementation is to add a
+  test-only option to MongoClient which enables the client to store its entity name
+  and add the entity name to each log message to enable filtering messages by client.
+
+  Tests SHOULD NOT specify multiple `expectedLogMessagesForClient`_ objects for a
+  single client entity.
+
 .. _test_outcome:
 
 - ``outcome``: Optional array of one or more `collectionData`_ objects. Data
@@ -1078,6 +1105,20 @@ The structure of this object is as follows:
   label strings that the error is expected not to have. The test runner MUST
   assert that the error does not contain any of the specified labels (e.g. using
   the ``hasErrorLabel`` method).
+
+.. _expectedError_errorResponse:
+
+- ``errorResponse``: Optional document. A value corresponding to the expected
+  server response. The test runner MUST assert that the error includes a server
+  response that matches this value as a root-level document according to the
+  rules in `Evaluating Matches`_.
+
+  Note that some drivers may not be able to evaluate ``errorResponse`` for write
+  commands (i.e. insert, update, delete) and bulk write operations. For example,
+  a BulkWriteException is derived from potentially multiple server responses and
+  may not provide direct access to a single response. Tests SHOULD avoid using
+  ``errorResponse`` for such operations if possible; otherwise, affected drivers
+  SHOULD skip such tests if necessary.
 
 .. _expectedError_expectResult:
 
@@ -1336,6 +1377,76 @@ MUST assert that the field is not set, or, if the driver uses a nonpositive Int3
 value to indicate the field being unset, MUST assert that ``serverConnectionId``
 is a nonpositive Int32.
 
+expectedLogMessagesForClient
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A list of log messages that are expected to be observed (in that order) for a 
+client while executing `operations <test_operations_>`_.
+
+The structure of each object is as follows:
+
+- ``client``: Required string. Client entity for which the messages are expected
+  to be observed. See `commonOptions_client`_.
+
+- ``messages``: Required array of `expectedLogMessage`_ objects. List of 
+  messages, which are expected to be observed (in this order) on the corresponding
+  client while executing `operations`_. If the array is empty, the test runner
+  MUST assert that no messages were observed on the client. The driver MUST assert
+  that the messages produced are an exact match, i.e. that the expected and actual
+  message counts are the same and that there are no extra messages emitted by the
+  client during the test run.
+
+expectedLogMessage
+~~~~~~~~~~~~~~~~~~
+
+A log message which is expected to be observed while executing the test's
+operations.
+
+The structure of each object is as follows:
+
+- ``level``: Required string. This MUST be one of the level names listed in
+   `log severity levels <logging/logging.rst#log-severity-levels>`__. This
+   specifies the expected level for the log message and corresponds to the
+   level used for the message in the specification that defines it. Note that
+   since not all drivers will necessarily support all log levels, some driver
+   may need to map the specified level to the corresponding driver-supported
+   level. Test runners MUST assert that the actual level matches this value.
+
+- ``component``: Required string. This MUST be one of the component names listed
+   in `components <../logging/logging.rst#components>`__. This specifies the
+   expected component for the log message. Note that since naming variations
+   are permitted for components, some drivers may need to map this to a
+   corresponding language-specific component name. Test runners MUST assert
+   that the actual component matches this value.
+
+- ``failureIsRedacted``: Optional boolean. This field SHOULD only be specified
+  when the log message data is expected to contain a ``failure`` value.
+
+  When ``failureIsRedacted`` is present and its value is ``true``,
+  the test runner MUST assert that a failure is present and that the failure 
+  has been redacted according to the rules defined for error redaction in the 
+  `command logging and monitoring specification 
+  <../command-logging-and-monitoring/command-logging-and-monitoring.rst#security>`__.
+
+  When ``false``, the test runner MUST assert that a failure is present and that
+  the failure has NOT been redacted.
+  
+  The exact form of these assertions and how thorough they are will vary based
+  on the driver's chosen error representation in logs; e.g. drivers that use
+  strings may only be able to assert on the presence/absence of substrings.
+
+- ``data``: Required object. Contains key-value pairs that are expected to be
+  attached to the log message. Test runners MUST assert that the actual data
+  contained in the log message matches the expected data, and MUST treat the
+  log message data as a root-level document.
+
+  A suggested implementation approach is to decode ``data`` as a BSON document
+  and serialize the data attached to each log message to a BSON document, and
+  match those documents.
+
+  Note that for drivers that do not implement structured logging, this requires
+  designing logging internals such that data is first gathered in a structured
+  form (e.g. a document or hashmap) which can be intercepted for testing purposes.
 
 collectionOrDatabaseOptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1523,6 +1634,19 @@ specifications:
 Client operations that require special handling or are not documented by an
 existing specification are described below.
 
+close
+~~~~~
+
+Closes the client, i.e. close underlying connection pool(s) and cease monitoring
+the topology. For languages that rely on built-in language mechanisms such as reference
+counting to automatically close/deinitialize clients once they go out of scope, this may
+require implementing an abstraction to allow a client entity's underlying client to be set
+to null. Because drivers do not consistently propagate errors encountered while closing a
+client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or 
+`expectError <operation_expectError_>`_ for this operation. Test files SHOULD NOT
+specify any operations for a client entity or any entity descended from it following
+a `close` operation on it, as driver behavior when an operation is attempted on a closed
+client or one of its descendant objects is not consistent.
 
 .. _client_createChangeStream:
 
@@ -2900,7 +3024,8 @@ root-level documents include, but are not limited to:
 - ``command`` for `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 - `expectResult`_ for ``findOneAndUpdate`` `Collection Operations`_
-- `expectResult`_ for `iterateUntilDocumentOrError`_.
+- `expectResult`_ for `iterateUntilDocumentOrError`_
+- `expectedError_errorResponse`_
 - each array element in `expectResult`_ for `find`_ or `collection_aggregate`_
   `Collection Operations`_
 
@@ -3159,6 +3284,28 @@ MUST also apply the rules specified in `Flexible Numeric Comparisons`_ for
 this operator. For example, an expected value of ``1`` would match an actual
 value of ``1.0`` and ``0.0`` but would not match ``1.1``.
 
+$$matchAsDocument
+`````````````````
+
+Syntax::
+
+    { $$matchAsDocument: <anything> }
+
+This operator may be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_) and the actual value is an extended
+JSON string. The test runner MUST parse the actual value into a BSON document
+and match it against the expected value. Matching the expected value MUST use
+the standard rules in `Evaluating Matches`_, which means that it may contain
+special operators. This operator is primarily used to assert on extended JSON
+commands and command replies included in log messages.
+
+$$matchAsRoot
+`````````````
+This operator may be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_) and the expected and actual values
+are documents. The test runner MUST treat the expected value as a root-level
+document as described in `Evaluating Matches`_ and match it against the expected
+value. 
 
 Test Runner Implementation
 --------------------------
@@ -3748,7 +3895,15 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
-
+:2022-10-17: Add description of a `close` operation for client entities.
+:2022-10-14: **Schema version 1.13.**
+            Add support for logging assertions via the ``observeLogMessages`` field
+            for client entities, along with a new top-level field ``expectLogMessages``
+            containing ``expectedLogMessagesForClient`` objects.
+            Add new special matching operators to enable command logging assertions,
+            ``$$matchAsDocument`` and ``$$matchAsRoot``.
+:2022-10-14: **Schema version 1.12.**
+             Add ``errorResponse`` to ``expectedError``.
 :2022-10-05: Remove spec front matter, add "Current Schema Version" field, and
              reformat changelog. Add comment to remind editors to note schema
              version bumps in changelog updates (where applicable).

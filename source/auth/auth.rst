@@ -928,16 +928,44 @@ Drivers will need AWS IAM credentials (an access key, a secret access key and op
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.  If a username and password are provided drivers 
 MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. If, additionally, a session token is provided Drivers MUST use it as well. If a username is provided without a password (or vice-versa) or if *only* a session token is provided Drivers MUST raise an error. In other words, regardless of how Drivers obtain credentials the only valid combination of credentials is an access key ID and a secret access key or an access key ID, a secret access key and a session token.
 
+AWS recommends using an SDK to "take care of some of the heavy lifting
+necessary in successfully making API calls, including authentication, retry
+behavior, and more".
+
+A recommended pattern for drivers with existing custom implementation is to not
+further enhance existing implementations, and take an optional dependency on
+the AWS SDK.  If the SDK is available, use it, otherwise fallback to the
+existing implementation.
+
+One thing to be mindful of when adopting an AWS SDK is that they typically will
+check for credentials in a shared AWS credentials file when one is present,
+which may be confusing for users relying on the previous authentication
+handling behavior. It would be helpful to include a note like the following:
+
+"Because we are now using the AWS SDK to handle credentials, if you have a
+shared AWS credentials or config file, then those credentials will be used by
+default if AWS auth environment variables are not set. To override this
+behavior, set ``AWS_SHARED_CREDENTIALS_FILE=""`` in your shell or set the
+equivalent environment variable value in your script or application.
+Alternatively, you can create an AWS profile specifically for your MongoDB
+credentials and set the ``AWS_PROFILE`` environment variable to that profile
+name."
+
 The order in which Drivers MUST search for credentials is:
 
 #. The URI
 #. Environment variables
 #. Using ``AssumeRoleWithWebIdentity`` if ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
-``AWS_ROLE_SESSION_NAME``  are set.
+   ``AWS_ROLE_SESSION_NAME``  are set.
 #. The ECS endpoint if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set. Otherwise, the EC2 endpoint.
 
 .. note::
 	See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in `Q & A`_
+
+    Drivers are not expected to handle `AssumeRole <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ requests directly. See
+    description of ``AssumeRole`` below, which is distinct from
+    ``AssumeRoleWithWebIdentity`` requests that are meant to be handled
+    directly by the driver.
 
 URI
 ___
@@ -956,7 +984,16 @@ request. If so, then in addition to a username and password, users MAY also prov
 
 Environment variables
 _____________________
-AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
+AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.  Drivers implemented
+in programming languages that support altering environment variables MUST always
+read environment variables dynamically during authorization, to handle the
+case where another part the application has refreshed the credentials.
+
+However, if environment variables are not present during initial authorization,
+credentials may be fetched from another source and cached.  Even if the
+environmnet variables are present in subsequent authorization attempts,
+the driver MUST use the cached credentials, or refresh them if applicable.
+This behavior is consistent with how the AWS SDKs behave.
 
 AssumeRoleWithWebIdentity
 _________________________
@@ -1097,6 +1134,30 @@ The JSON response from both the actual and mock EC2 endpoint will be in this for
 From the JSON response drivers 
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
+
+Caching Credentials
+___________________
+Credentials fetched by the driver using AWS endpoints MUST be cached and reused
+to avoid hitting AWS rate limitations. AWS recommends using a suitable
+Software Development Kit (SDK) for your langauge. If that SDK supports
+credential fetch and automatic refresh/caching, then that mechanism can
+be used in lieu of manual caching.
+
+If using manual caching, the "Expiration" field MUST be stored
+and used to determine when to clear the cache. Credentials are considered
+valid if they are more than five minutes away from expiring; to the reduce the
+chance of expiration before they are validated by the server.  Credentials
+that are retreived from environment variables MUST NOT be cached.
+
+If there are no current valid cached credentials, the driver MUST initiate a
+credential request. To avoid adding a bottleneck that would override the
+``maxConnecting`` setting, the driver MUST not place a lock on making a
+request. The cache MUST be written atomically.
+
+If AWS authentication fails for any reason, the cache MUST be cleared.
+
+.. note::
+    Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
 
 -------------------------
 Connection String Options
@@ -1334,6 +1395,9 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2022-11-02: Require environment variables to be read dynamically.
+:2022-10-28: Recommend the use of AWS SDKs where available.
+:2022-10-07: Require caching of AWS credentials fetched by the driver.
 :2022-10-05: Remove spec front matter and convert version history to changelog.
 :2022-09-07: Add support for AWS AssumeRoleWithWebIdentity.
 :2022-01-20: Require that timeouts be applied per the client-side operations timeout spec.
