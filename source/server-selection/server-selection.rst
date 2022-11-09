@@ -1952,3 +1952,4 @@ Changelog
              replica set topology.
 :2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
+:2022-11-09: Add "waiting for suitable server" log message and tests.
