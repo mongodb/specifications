@@ -20,9 +20,8 @@ DB_OPERATIONS = [
               'pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]']),
     Operation('listCollections', 'listCollections',
               'database', ['filter: {}']),
-    # Optional.
     Operation('listCollectionNames', 'listCollections',
-              'database', ['filter: {}']),
+              'database', ['filter: {}']), # Optional.
     Operation('runCommand', 'ping', 'database', [RUN_COMMAND_ARGUMENTS]),
     Operation('createChangeStream', 'aggregate', 'database', ['pipeline: []'])
 ]
