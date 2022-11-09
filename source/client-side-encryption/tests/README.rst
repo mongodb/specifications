@@ -610,7 +610,7 @@ Using ``client_encrypted`` perform the following operations:
 
    - ``{ "_id": "over_2mib_2", "unencrypted": <the string "a" repeated (2097152) times> }``
 
-   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command logging and monitoring <https://github.com/mongodb/specifications/tree/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst>`_.
+   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command monitoring <https://github.com/mongodb/specifications/tree/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst>`_.
 
 #. Bulk insert the following:
 

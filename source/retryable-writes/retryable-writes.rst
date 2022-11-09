@@ -535,10 +535,11 @@ Command Monitoring
 
 In accordance with the `Command Logging and Monitoring`_ specification, drivers MUST
 guarantee that each ``CommandStartedEvent`` has either a correlating
-``CommandSucceededEvent`` or ``CommandFailedEvent``. If the first attempt of a
-retryable write operation encounters a retryable error, drivers MUST fire a
-``CommandFailedEvent`` for the retryable error and fire a separate
-``CommandStartedEvent`` when executing the subsequent retry attempt. Note that
+``CommandSucceededEvent`` or ``CommandFailedEvent`` and that every "command started"
+log message has either a correlating "command succeeded" log message or "command failed"
+log message. If the first attempt of a retryable write operation encounters a retryable
+error, drivers MUST fire a ``CommandFailedEvent`` for the retryable error and fire a
+separate ``CommandStartedEvent`` when executing the subsequent retry attempt. Note that
 the second ``CommandStartedEvent`` may have a different ``connectionId``, since
 a writable server is reselected for the retry attempt.
 

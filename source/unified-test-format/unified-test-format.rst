@@ -790,7 +790,7 @@ The structure of this object is as follows:
 - ``events``: Required array of one or more strings, which denote the events to
   be collected. Currently, only the following
   `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
-  and `command logging and monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
+  and `command monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
   events MUST be supported:
 
   - PoolCreatedEvent
@@ -1145,8 +1145,8 @@ The structure of each object is as follows:
   to be observed. See `commonOptions_client`_.
 
 - ``eventType``: Optional string. Specifies the type of the monitor which
-  captured the events. Valid values are ``command`` for `Command Logging and Monitoring
-  <../command-logging-and-monitoring/command-logging-and-monitoring.rst#api>`__ events, ``cmap`` for
+  captured the events. Valid values are ``command`` for `Command Monitoring
+  <../command-logging-and-monitoring/command-logging-and-monitoring.rst#events-api>`__ events, ``cmap`` for
   `CMAP
   <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
   events, and ``sdam`` for `SDAM
