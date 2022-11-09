@@ -692,6 +692,86 @@ tests:
           - commandSucceededEvent:
               commandName: aggregate
 
+  - description: "count succeeds after retryable handshake network error"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: [ping, saslContinue]
+              closeConnection: true
+      - name: runCommand
+        object: *database
+        arguments: { commandName: ping, command: { ping: 1 } }
+        expectError: { isError: true }
+      - name: count
+        object: *collection
+        arguments:
+          filter: {}
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command: { ping: 1 }
+              databaseName: *databaseName
+          - commandFailedEvent:
+              commandName: ping
+          - commandStartedEvent:
+              commandName: count
+          - commandSucceededEvent:
+              commandName: count
+
+  - description: "count succeeds after retryable handshake server error (ShutdownInProgress)"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: [ping, saslContinue]
+              closeConnection: true
+      - name: runCommand
+        object: *database
+        arguments: { commandName: ping, command: { ping: 1 } }
+        expectError: { isError: true }
+      - name: count
+        object: *collection
+        arguments:
+          filter: {}
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command: { ping: 1 }
+              databaseName: *databaseName
+          - commandFailedEvent:
+              commandName: ping
+          - commandStartedEvent:
+              commandName: count
+          - commandSucceededEvent:
+              commandName: count
+
   - description: "countDocuments succeeds after retryable handshake network error"
     operations:
       - name: failPoint
@@ -987,6 +1067,86 @@ tests:
         arguments: { commandName: ping, command: { ping: 1 } }
         expectError: { isError: true }
       - name: find
+        object: *collection
+        arguments:
+          filter: {}
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command: { ping: 1 }
+              databaseName: *databaseName
+          - commandFailedEvent:
+              commandName: ping
+          - commandStartedEvent:
+              commandName: find
+          - commandSucceededEvent:
+              commandName: find
+
+  - description: "findOne succeeds after retryable handshake network error"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: [ping, saslContinue]
+              closeConnection: true
+      - name: runCommand
+        object: *database
+        arguments: { commandName: ping, command: { ping: 1 } }
+        expectError: { isError: true }
+      - name: findOne
+        object: *collection
+        arguments:
+          filter: {}
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command: { ping: 1 }
+              databaseName: *databaseName
+          - commandFailedEvent:
+              commandName: ping
+          - commandStartedEvent:
+              commandName: find
+          - commandSucceededEvent:
+              commandName: find
+
+  - description: "findOne succeeds after retryable handshake server error (ShutdownInProgress)"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: [ping, saslContinue]
+              closeConnection: true
+      - name: runCommand
+        object: *database
+        arguments: { commandName: ping, command: { ping: 1 } }
+        expectError: { isError: true }
+      - name: findOne
         object: *collection
         arguments:
           filter: {}

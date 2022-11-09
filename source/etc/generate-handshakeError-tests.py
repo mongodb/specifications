@@ -20,6 +20,7 @@ DB_OPERATIONS = [
               'pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]']),
     Operation('listCollections', 'listCollections',
               'database', ['filter: {}']),
+    # Optional.
     Operation('listCollectionNames', 'listCollections',
               'database', ['filter: {}']),
     Operation('runCommand', 'ping', 'database', [RUN_COMMAND_ARGUMENTS]),
@@ -35,15 +36,15 @@ BULK_WRITE_ARGUMENTS = '''requests:
 
 COLLECTION_READ_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'collection', ['pipeline: []']),
-    # Operation('count', 'count', 'collection', ['filter: {}']), # Deprecated.
+    Operation('count', 'count', 'collection', ['filter: {}']),  # Deprecated.
     Operation('countDocuments', 'aggregate', 'collection', ['filter: {}']),
     Operation('estimatedDocumentCount', 'count', 'collection', []),
     Operation('distinct', 'distinct', 'collection',
               ['fieldName: x', 'filter: {}']),
     Operation('find', 'find', 'collection', ['filter: {}']),
-    # Operation('findOne', 'find', 'collection', ['filter: {}']), # Optional.
+    Operation('findOne', 'find', 'collection', ['filter: {}']),  # Optional.
     Operation('listIndexes', 'listIndexes', 'collection', []),
-    Operation('listIndexNames', 'listIndexes', 'collection', []),
+    Operation('listIndexNames', 'listIndexes', 'collection', []),  # Optional.
     Operation('createChangeStream', 'aggregate',
               'collection', ['pipeline: []']),
 ]
