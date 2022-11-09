@@ -93,6 +93,7 @@ RETRYABLE_READ_OPERATIONS = [op for op in OPERATIONS if op.operation_name in
                               'listCollections',
                               'listCollectionNames',
                               'listIndexes',
+                              'listIndexNames',
                               ]
                              ]
 
