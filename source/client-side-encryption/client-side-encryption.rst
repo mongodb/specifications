@@ -943,7 +943,8 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
 - Let `dbName` be the name of `database`. Look up the encrypted fields `EF` for
   the new collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
   (`See here <GetEncryptedFields_>`_).
-- If `EF` is *not-found*, report an error.
+- If `EF` is *not-found*, report an error that there are no ``encryptedFields``
+  defined for the collection.
 - Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
 
   - Let `Fields` be the ``"fields"`` element within `EF'`.
@@ -958,7 +959,7 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
       - If generating `D` resulted in an error `E`, the entire
         `CreateEncryptedCollection` must now fail with error `E`. Return the
         partially-formed `EF'` with the error so that the caller may know what
-        datakeys have been created by the helper.
+        datakeys have already been created by the helper.
       - Replace `K` in `F` with `D`.
 
 - Create a new set of options `collOpts'` duplicating `collOpts`. Set the
