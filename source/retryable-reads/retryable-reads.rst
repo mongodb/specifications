@@ -454,7 +454,7 @@ every "command started" log message has either a correlating "command succeeded"
 log message or "command failed" log message. If the first attempt of a retryable
 read operation encounters a retryable error, drivers MUST fire a ``CommandFailedEvent`` and emit a "command failed" log message
 for the retryable error and fire a separate ``CommandStartedEvent``and emit a separate "command started" log message when executing
-the subsequent retry attempt. Note that the second ``CommandStartedEvent`` may have
+the subsequent retry attempt. Note that the second ``CommandStartedEvent`` and "command started" log message may have
 a different ``connectionId``, since a server is reselected for a retry attempt.
 
 Documentation
