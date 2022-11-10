@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-11-04
+:Last Modified: 2022-11-10
 :Version: 1.11.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -837,9 +837,13 @@ encryptedFieldsMap
 
 ``encryptedFieldsMap`` only applies to Queryable Encryption.
 
-If a collection is present on both the ``encryptedFieldsMap`` and ``schemaMap``, libmongocrypt_ will error on initialization. See :ref:`fle2-and-fle1-error`.
+If a collection is present on both the ``encryptedFieldsMap`` and ``schemaMap``,
+libmongocrypt_ will error on initialization. See :ref:`fle2-and-fle1-error`.
 
-If a collection is present on the ``encryptedFieldsMap``, the behavior of ``CreateCollection()`` and ``Collection.Drop()`` is altered. See :ref:`fle2-createcollection-drop`.
+If a collection has a set of encrypted fields, the behavior of
+``CreateCollection()`` and ``Collection.Drop()`` is altered. An additional
+helper, ``CreateEncryptedCollection()`` has been defined as a convenience
+wrapper around ``CreateCollection()``. See :ref:`fle2-createcollection-drop`.
 
 Automatic encryption in Queryable Encryption is configured with the ``encryptedFields``.
 
@@ -863,6 +867,42 @@ A collection supporting Queryable Encryption requires an index and three additio
 
 .. _create: https://www.mongodb.com/docs/manual/reference/command/create
 .. _drop: https://www.mongodb.com/docs/manual/reference/command/drop
+
+
+.. _GetEncryptedFields:
+
+Collection ``encryptedFields`` Lookup (GetEncryptedFields)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The convenience methods support the following lookup process for finding the
+``encryptedFields`` associated with a collection.
+
+.. default-role:: math
+
+Assume an exposition-only function
+`GetEncryptedFields(opts, collName, dbName, askDb)`, where `opts` is a set of
+options, `collName` is the name of the collection, `dbName` is the name of the
+database associated with that collection, and `askDb` is a boolean value. The
+resulting ``encryptedFields`` `EF` is found by:
+
+1. Let `QualName` be the string formed by joining `dbName` and `collName` with
+   an ASCII dot ``"."``.
+2. If `opts` contains an ``"encryptedFields"`` property, then `EF` is the value
+   of that property.
+3. Otherwise, if ``AutoEncryptionOptions.encryptedFieldsMap`` contains an
+   element named by `QualName`, then `EF` is the value of that element.
+4. Otherwise, if `askDb` is `true`:
+
+   1. Issue a ``listCollections`` command against the database named by
+      `dbName`, filtered by ``{name: <collName>}``. Let the result be the
+      document `L`.
+   2. If `L` contains an ``options`` document element, and that element contains
+      an ``encryptedFields`` document element, `EF` is `L`\
+      ``["options"]["encryptedFields"]``.
+   3. Otherwise, `EF` is *not-found*
+
+5. Otherwise, `EF` is considered *not-found*.
+
 
 Create Collection Helper
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -891,6 +931,45 @@ If the collection namespace has an associated ``encryptedFields``, then do the f
 - Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``encryptedFields``.
 - Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
 
+
+Create Encrypted Collection Helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To support automatic generation of encryption data keys, a helper
+`CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, dkOpts)`
+is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
+KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
+
+- Let `dbName` be the name of `database`. Look up the encrypted fields `EF` for
+  the new collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
+  (`See here <GetEncryptedFields_>`_).
+- If `EF` is *not-found*, report an error that there are no ``encryptedFields``
+  defined for the collection.
+- Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
+
+  - Let `Fields` be the ``"fields"`` element within `EF'`.
+  - If `Fields` is present and is an array value, then for each element `F` of
+    `Fields`:
+
+    - If `F` is not a document element, skip it.
+    - Otherwise, if `F` has a ``"keyId"`` named element `K` and `K` is a
+      ``null`` value:
+
+      - Let `D` be the result of ``CE.createDataKey(kmsProvider, dkOpts)``.
+      - If generating `D` resulted in an error `E`, the entire
+        `CreateEncryptedCollection` must now fail with error `E`. Return the
+        partially-formed `EF'` with the error so that the caller may know what
+        datakeys have already been created by the helper.
+      - Replace `K` in `F` with `D`.
+
+- Create a new set of options `collOpts'` duplicating `collOpts`. Set the
+  ``"encryptedFields"`` named element of `collOpts'` to `EF'`.
+
+- Invoke the ``CreateCollection`` helper as
+  `CreateCollection(database, collName, collOpts')`. Return the resulting
+  collection and the generated `EF'`.
+
+
 Drop Collection Helper
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -915,6 +994,8 @@ If the collection namespace has an associated ``encryptedFields``, then do the f
   If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
 - Drop the collection ``collectionName``.
 
+.. default-role:: literal
+.. _ClientEncryption:
 
 ClientEncryption
 ----------------
@@ -923,6 +1004,12 @@ ClientEncryption
 
    class ClientEncryption {
       ClientEncryption(opts: ClientEncryptionOpts);
+
+      // The "Create Encrypted Collection" helper is a convenience function wrapping CreateCollection. It will
+      // create a collection with encrypted fields, automatically allocating and assigning new data encryption
+      // keys. It returns a handle to the new collection, as well as a document consisting of the generated
+      // "encryptedFields" options. Refer to "Create Encrypted Collection Helper"
+      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, dkOpts: DataKeyOpts): [Collection, Document];
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
@@ -2515,6 +2602,9 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2022-11-10: Defined a ``CreateEncryptedCollection`` helper for creating new
+             encryption keys automatically for the queryable encrypted fields in
+             a new collection.
 :2022-11-07: Reformat changelog.
 :2022-11-04: Permit global cache for Azure credentials.
 :2022-10-26: Do not connect to ``mongocryptd`` if shared library is loaded.

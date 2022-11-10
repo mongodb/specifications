@@ -2395,7 +2395,7 @@ The following tests that a mongocryptd client is not created when shared library
 
 #. On ``listenerThread``, create a TcpListener on 127.0.0.1 endpoint and port 27021. Start the listener and wait for establishing connections.
    If any connection is established, then signal about this to the main thread.
-   
+
    Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
 
 #. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
@@ -2415,7 +2415,61 @@ The following tests that a mongocryptd client is not created when shared library
       {
         "mongocryptdURI": "mongodb://localhost:27021"
       }
-   
-#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. 
+
+#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``.
 
 #. Expect no signal from ``listenerThread``.
+
+
+
+21. Automatic Data Encryption Keys
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Case 1: Simple Creation and Validation
+``````````````````````````````````````
+
+This test is the most basic to verify that CreateEncryptedCollection_ created a
+collection with queryable encryption enabled. It verifies that the server
+rejects an attempt to insert plaintext in an encrypted fields.
+
+.. _CreateEncryptedCollection: ../client-side-encryption.rst#create-encrypted-collection-helper
+.. _MongoClient: ../client-side-encryption.rst#mongoclient-changes
+
+.. highlight:: typescript
+.. default-role:: math
+
+1. Create a ClientEncryption_ object `CE` with the following options::
+
+      clientEncryptionOptions: {
+         keyVaultClient: <new MongoClient>,
+         keyVaultNamespace: "keyvault.datakeys",
+         kmsProviders: {
+            local: { key: base64Decode(LOCAL_MASTERKEY) },
+         },
+      }
+
+2. Create a new create-collection options `Opts` including the following::
+
+      {
+         encryptedFields: {
+            fields: [{
+               path: "ssn",
+               bsonType: "string",
+               keyId: null
+            }]
+         }
+      }
+
+3. Open a new database handle `DB`.
+4. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`
+   to obtain a new collection `Coll`. Expect success.
+5. Attempt to insert the following document into `Coll`::
+
+      {
+         ssn: "123-45-6789"
+      }
+
+6. Expect an error from the insert operation that indicates that the document
+   failed validation. This error indicates that the server expects to receive an
+   encrypted field for ``ssn``, but we tried to insert a plaintext field via a
+   client that is unaware of the encryption requirements.
