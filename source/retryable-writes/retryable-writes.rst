@@ -540,7 +540,7 @@ log message has either a correlating "command succeeded" log message or "command
 log message. If the first attempt of a retryable write operation encounters a retryable
 error, drivers MUST fire a ``CommandFailedEvent`` and emit a "command failed" log message for the retryable error and fire a
 separate ``CommandStartedEvent`` and "command succeeded" log message when executing the subsequent retry attempt. Note that
-the second ``CommandStartedEvent`` may have a different ``connectionId``, since
+the second ``CommandStartedEvent`` and "command succeeded" log message may have a different ``connectionId``, since
 a writable server is reselected for the retry attempt.
 
 .. _Command Logging and Monitoring: ../command-logging-and-monitoring/command-logging-and-monitoring.rst
