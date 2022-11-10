@@ -688,9 +688,9 @@ server TLS connections. The TLS options MUST enable setting a custom client
 certificate, equivalent to the `tlsCertificateKeyFile` URI option.
 
 Drivers SHOULD provide API that is consistent with configuring TLS options for
-MongoDB server TLS connections. New API to support the options MUST be
-independent of the KMS provider to permit future extension. The following is an
-example:
+MongoDB server TLS connections. New API to support the TLS options MUST support
+future addition of KMS providers without requiring a driver API change.
+The following is an example:
 
 .. code:: typescript
 
