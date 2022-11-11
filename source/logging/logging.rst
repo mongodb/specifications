@@ -12,7 +12,7 @@ Logging
 
 Abstract
 ========
-This specification defines requirements for drivers' logging configuration and behavior. 
+This specification defines requirements for drivers' logging configuration and behavior.
 
 
 META
@@ -51,7 +51,7 @@ not require any changes to an application's source code, and in the case of comp
 does not require recompilation.
 However, if that is impossible to do without conflicting with idiomatic logging patterns for the
 language ecosystem, it is acceptable for a driver to require minimal changes to enable logging,
-such as recompiling with a feature flag specified, or passing a logging configuration to a 
+such as recompiling with a feature flag specified, or passing a logging configuration to a
 ``MongoClient`` constructor. In that case, drivers SHOULD strive to minimize the amount of code
 change needed.
 
@@ -75,8 +75,8 @@ Per-Component Configuration of Log Levels
 -----------------------------------------
 Drivers MUST support enabling logging and specifying the minimum severity level for emitted messages
 on a per-component level, for each component defined below in the `Components`_ section.
-  
-  **Fallback implementation method**: Support configuration via environment variables 
+
+  **Fallback implementation method**: Support configuration via environment variables
   corresponding to each component, as defined in `Components`_, as well as via the
   environment variable ``MONGODB_LOG_ALL``.
 
@@ -89,7 +89,7 @@ on a per-component level, for each component defined below in the `Components`_ 
   If ``MONGODB_LOG_ALL`` is specified in addition to one or more component variables, the
   component variable(s) MUST take precedence.
 
-  The default is to not log anything. 
+  The default is to not log anything.
 
   If a variable is set to an invalid value, it MUST be treated as if it were not specified at all.
 
@@ -118,11 +118,11 @@ producing invalid Unicode data.
 Drivers MUST implement truncation naively by simply truncating the output at the required length; i.e.
 do not attempt to implement truncation such that the output is still valid JSON.
 Truncated extended JSON MUST have a trailing ellipsis ``...`` appended to indicate to the user that
-truncation occurred. The ellipsis MUST NOT count toward the the max length.
+truncation occurred. The ellipsis MUST NOT count toward the max length.
 
     **Fallback Implementation method**: Environment variable ``MONGOB_LOG_MAX_DOCUMENT_LENGTH``.
     When unspecified, any extended JSON representation of a document which is longer than the
-    default max length MUST be truncated to that length. 
+    default max length MUST be truncated to that length.
     When set to an integer value, any extended JSON document longer than that value MUST be
     truncated to that length.
     If the variable is set to an invalid value, it MUST be treated as if it were not specified at
@@ -149,7 +149,7 @@ driver-specific messages they produce.
      - Environment Variable
 
    * - command
-     - `Command Monitoring <../command-monitoring/command-monitoring.rst>`__
+     - `Command Logging and Monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
      - ``MONGODB_LOG_COMMAND``
 
    * - topology
@@ -263,7 +263,7 @@ SHOULD utilize it to support both types of logging.
 
 Note that drivers implementing unstructured logging MUST still support some internal way to intercept
 the data contained in messages in a structured form, as this is required to implement the unified tests
-for logging conformance.. See the `unified test format specification 
+for logging conformance. See the `unified test format specification
 <../unified-test-format/unified-test-format.rst#expectedLogMessage>`_ for details.
 
 Representing Documents in Log Messages
@@ -277,7 +277,7 @@ Drivers MAY represent errors in log messages in whatever format is idiomatic for
 existing error types. For example, if a driver's error classes have existing ``toString()``
 implementations, those MAY be used. Alternatively, if a driver emits structured log messages, a
 structured format containing error data could be used. Any information which a driver reports via
-its error classes MUST be included in the log representations. 
+its error classes MUST be included in the log representations.
 Note that if the driver includes full server responses in its errors these MUST be truncated in
 accordance with the max document length option.
 
@@ -286,7 +286,7 @@ Omitting Null Values from Log Messages
 Some log messages will include fields that are only present under particular circumstances, for example
 on certain server versions. When such a field is not present:
 
-- If the driver does structured logging, the field MUST be omitted from the message altogether, i.e. the field 
+- If the driver does structured logging, the field MUST be omitted from the message altogether, i.e. the field
   MUST not be present with an explicit null value.
 - If the driver does unstructured logging, the corresponding segment of the message string MUST be omitted
   altogether.
@@ -296,8 +296,8 @@ Performance Considerations
 The computation required to generate certain log messages can be significant, e.g. if extended
 JSON serialization is required. If possible, drivers SHOULD check whether a log message would
 actually be emitted and consumed based on the users' configuration before doing such computation.
-For example, this can be checked in Rust via `log::log_enabled 
-<https://docs.rs/log/latest/log/macro.log_enabled.html>`_. 
+For example, this can be checked in Rust via `log::log_enabled
+<https://docs.rs/log/latest/log/macro.log_enabled.html>`_.
 
 Drivers SHOULD optimize extended JSON generation to avoid generating JSON strings longer than will
 be emitted, such that the complexity is O(N) where N = ``<max document length>``, rather than
@@ -344,7 +344,7 @@ Design Rationale
 Truncation of large documents
 -----------------------------
 
-1. Why have an option? 
+1. Why have an option?
     We considered a number of approaches for dealing with documents of potentially very large size
     in log messages, e.g. command documents, including 1) always logging the full document, 2) only
     logging documents with the potential to be large when the user opts in, and 3) truncating large
@@ -354,10 +354,10 @@ Truncation of large documents
     will show the user the full data. In the case where data is large, the user will receive a
     readable message with truncated data, but have the option to see more or all of the data.
 
-2. Why are the units for max document length flexible? 
+2. Why are the units for max document length flexible?
     String APIs vary across languages, and not all drivers will be able to easily and efficiently
     truncate strings in the same exact manner. The important thing is that the option exists and
-    that its default value is reasonable, and for all possible unit choices (byte, code point, 
+    that its default value is reasonable, and for all possible unit choices (byte, code point,
     code unit, or grapheme) we felt 1000 was a reasonable default. See
     `here <https://exploringjs.com/impatient-js/ch_unicode.html>`_ for a helpful primer on related
     Unicode concepts.

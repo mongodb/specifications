@@ -446,15 +446,16 @@ Command Monitoring
 
 `As with retryable writes
 <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#command-monitoring>`__,
-in accordance with the `Command Monitoring
-<https://github.com/mongodb/specifications/blob/master/source/command-monitoring/command-monitoring.rst>`__
+in accordance with the `Command Logging and Monitoring
+<https://github.com/mongodb/specifications/blob/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
 specification, drivers MUST guarantee that each ``CommandStartedEvent`` has
-either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``. If the
-first attempt of a retryable read operation encounters a retryable error,
-drivers MUST fire a ``CommandFailedEvent`` for the retryable error and fire a
-separate ``CommandStartedEvent`` when executing the subsequent retry
-attempt. Note that the second ``CommandStartedEvent`` may have a different
-``connectionId``, since a server is reselected for a retry attempt.
+either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent`` and that
+every "command started" log message has either a correlating "command succeeded"
+log message or "command failed" log message. If the first attempt of a retryable
+read operation encounters a retryable error, drivers MUST fire a ``CommandFailedEvent`` and emit a "command failed" log message
+for the retryable error and fire a separate ``CommandStartedEvent``and emit a separate "command started" log message when executing
+the subsequent retry attempt. Note that the second ``CommandStartedEvent`` and "command started" log message may have
+a different ``connectionId``, since a server is reselected for a retry attempt.
 
 Documentation
 -------------
@@ -678,6 +679,7 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2022-11-09: CLAM must apply both events and log messages.
 :2022-10-18: When CSOT is enabled multiple retry attempts may occur.
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
 :2022-01-25: Note that drivers should retry handshake network failures.
