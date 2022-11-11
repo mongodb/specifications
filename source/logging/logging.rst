@@ -388,7 +388,9 @@ in log messages. While this might make it easier to identify cases where a value
 we decided against it because there are a number of values that will often be null, or even always
 be null for certain applications (e.g. ``serviceId`` when not connected to a load-balanced topology)
 and their inclusion may confuse users and lead them to think the null value is meaningful.
-Additionally, always including null values would increase the size of log messages.
+Additionally, always including null values would increase the size of log messages. The omission of
+null values is left to the drivers' discretion for any driver-specific logs not covered by common
+specification components. 
 
 Backwards Compatibility
 =======================
@@ -440,3 +442,4 @@ Changelog
 =========
 
 :2022-10-26: Allow drivers to add timestamps to log messages.
+:2022-11-10: Clarify driver-specific null omission.
