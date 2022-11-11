@@ -14,7 +14,7 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: &databaseName implicit-sessions-causal-consistency-tests
+      databaseName: &databaseName implicit-cc-tests
   - collection:
       id: &collectionDefault collectionDefault
       database: *database0
@@ -77,6 +77,8 @@ tests:
           - commandStartedEvent: *commandStartedEventDefault
 
   - description: "afterClusterTime is not sent on retried read in implicit session when readConcern level is snapshot"
+    runOnRequirements:
+      - minServerVersion: "5.0"
     operations:
       - *failPointCommand
       - name: find

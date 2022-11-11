@@ -25,7 +25,7 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "implicit-sessions-causal-consistency-tests"
+        "databaseName": "implicit-cc-tests"
       }
     },
     {
@@ -63,7 +63,7 @@
   "initialData": [
     {
       "collectionName": "coll-default",
-      "databaseName": "implicit-sessions-causal-consistency-tests",
+      "databaseName": "implicit-cc-tests",
       "documents": [
         {
           "_id": 1,
@@ -73,7 +73,7 @@
     },
     {
       "collectionName": "coll-snapshot",
-      "databaseName": "implicit-sessions-causal-consistency-tests",
+      "databaseName": "implicit-cc-tests",
       "documents": [
         {
           "_id": 1,
@@ -83,7 +83,7 @@
     },
     {
       "collectionName": "coll-linearizable",
-      "databaseName": "implicit-sessions-causal-consistency-tests",
+      "databaseName": "implicit-cc-tests",
       "documents": [
         {
           "_id": 1,
@@ -142,7 +142,7 @@
                     "$$exists": false
                   }
                 },
-                "databaseName": "implicit-sessions-causal-consistency-tests"
+                "databaseName": "implicit-cc-tests"
               }
             },
             {
@@ -154,7 +154,7 @@
                     "$$exists": false
                   }
                 },
-                "databaseName": "implicit-sessions-causal-consistency-tests"
+                "databaseName": "implicit-cc-tests"
               }
             }
           ]
@@ -163,6 +163,11 @@
     },
     {
       "description": "afterClusterTime is not sent on retried read in implicit session when readConcern level is snapshot",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "5.0"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",
@@ -213,7 +218,7 @@
                     }
                   }
                 },
-                "databaseName": "implicit-sessions-causal-consistency-tests"
+                "databaseName": "implicit-cc-tests"
               }
             },
             {
@@ -228,7 +233,7 @@
                     }
                   }
                 },
-                "databaseName": "implicit-sessions-causal-consistency-tests"
+                "databaseName": "implicit-cc-tests"
               }
             }
           ]
@@ -287,7 +292,7 @@
                     }
                   }
                 },
-                "databaseName": "implicit-sessions-causal-consistency-tests"
+                "databaseName": "implicit-cc-tests"
               }
             },
             {
@@ -302,7 +307,7 @@
                     }
                   }
                 },
-                "databaseName": "implicit-sessions-causal-consistency-tests"
+                "databaseName": "implicit-cc-tests"
               }
             }
           ]
