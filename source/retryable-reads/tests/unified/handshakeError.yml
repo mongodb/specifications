@@ -209,6 +209,8 @@ tests:
               commandName: listDatabases
 
   - description: "createChangeStream succeeds after retryable handshake network error"
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
@@ -250,6 +252,8 @@ tests:
               commandName: aggregate
 
   - description: "createChangeStream succeeds after retryable handshake server error (ShutdownInProgress)"
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
@@ -531,6 +535,8 @@ tests:
               commandName: listCollections
 
   - description: "createChangeStream succeeds after retryable handshake network error"
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
@@ -572,6 +578,8 @@ tests:
               commandName: aggregate
 
   - description: "createChangeStream succeeds after retryable handshake server error (ShutdownInProgress)"
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
@@ -1243,6 +1251,8 @@ tests:
               commandName: listIndexes
 
   - description: "createChangeStream succeeds after retryable handshake network error"
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
@@ -1284,6 +1294,8 @@ tests:
               commandName: aggregate
 
   - description: "createChangeStream succeeds after retryable handshake server error (ShutdownInProgress)"
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
