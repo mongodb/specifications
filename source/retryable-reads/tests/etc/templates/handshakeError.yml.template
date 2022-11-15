@@ -54,7 +54,8 @@ tests:
   #   - Tests whether operation successfully retries the handshake and succeeds.
 {% for operation in operations %}
   - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake network error"
-    {%- if operation.operation_name == 'createChangeStream' %}
+    {%- if ((operation.operation_name == 'createChangeStream') or
+            (operation.operation_name == 'aggregate' and operation.object == 'database')) %}
     runOnRequirements:
       - serverless: forbid
     {%- endif %}
@@ -105,7 +106,8 @@ tests:
               commandName: {{operation.command_name}}
 
   - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake server error (ShutdownInProgress)"
-    {%- if operation.operation_name == 'createChangeStream' %}
+    {%- if ((operation.operation_name == 'createChangeStream') or
+            (operation.operation_name == 'aggregate' and operation.object == 'database')) %}
     runOnRequirements:
       - serverless: forbid
     {%- endif %}
