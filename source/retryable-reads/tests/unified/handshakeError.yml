@@ -2,6 +2,7 @@
 
 description: "retryable reads handshake failures"
 
+# 1.4 is required for "serverless: forbid".
 schemaVersion: "1.4"
 
 runOnRequirements:
