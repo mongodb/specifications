@@ -53,7 +53,7 @@ tests:
   #   - Triggers failpoint (second time).
   #   - Tests whether operation successfully retries the handshake and succeeds.
 {% for operation in operations %}
-  - description: "{{operation.operation_name}} succeeds after retryable handshake network error"
+  - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake network error"
     {%- if operation.operation_name == 'createChangeStream' %}
     runOnRequirements:
       - serverless: forbid
@@ -104,7 +104,7 @@ tests:
           - commandSucceededEvent:
               commandName: {{operation.command_name}}
 
-  - description: "{{operation.operation_name}} succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake server error (ShutdownInProgress)"
     {%- if operation.operation_name == 'createChangeStream' %}
     runOnRequirements:
       - serverless: forbid
