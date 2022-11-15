@@ -158,11 +158,13 @@ causalConsistency
 Applications set ``causalConsistency`` when starting a session to
 indicate whether they want causal consistency.
 
-Note that the ``causalConsistency`` property is optional. The default value of
-this property is ``not supplied``. If no value is supplied for
+Note that the ``causalConsistency`` property is optional. For explicit sessions,
+the default value of this property is ``not supplied``. If no value is supplied for
 ``causalConsistency`` the value will be inherited. Currently it is inherited
 from the global default which is defined to be true. In the future it *might*
-be inherited from client settings.
+be inherited from client settings. For implicit sessions, the value of this
+property MUST be set to ``false`` in order to avoid potential conflicts with
+an operation's read concern level.
 
 Causal consistency is provided at the session level by tracking the ``clusterTime``
 and ``operationTime`` for each session. In some cases an application may wish
@@ -507,6 +509,7 @@ Q&A
 Changelog
 =========
 
+:2022-11-11: Require ``causalConsistency=false`` for implicit sessions.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-28: Fix formatting for prose tests
 :2022-01-22: Remove outdated prose test #10
