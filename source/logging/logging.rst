@@ -281,6 +281,31 @@ its error classes MUST be included in the log representations.
 Note that if the driver includes full server responses in its errors these MUST be truncated in
 accordance with the max document length option.
 
+Logging Failures
+----------------
+Specifications MAY define log messages that correspond to failures which also are reported
+via exceptions in the API, for example a "command failed" log message. Such messages MUST NOT
+use log levels more severe than ``debug``. 
+
+While it might seem natural that such messages would be logged at ``error`` level, not all
+failures that the driver considers worthy of an error will be considered a true error
+by the application. For example, consider an application that unconditionally creates a
+collection on startup, and ignores any ``NamespaceExists`` errors received in response: it
+would be undesirable for those failures to show up in application logs at ``error`` level.
+
+Additionally, some applications will already have infrastructure in place to log any
+unhandled exceptions at ``error`` level. If the driver were to log exception-related messages
+at ``error`` level, such applications would end up with duplicate, ``error``-level messages for
+these exceptions. On the other hand, some applications may not log exceptions at all, or might
+not include all of the relevant information about an encountered exception in their custom log
+messages; for these applications, there is value in a driver emitting such log messages.
+
+Given this, logging such messages at ``debug`` level strikes the best balance between making
+the diagnostic information available, but not overloading users with overly severe and/or duplicative
+messages. Users who do not log exceptions will have a way to see driver exceptions, by turning
+on ``debug`` logging, while sers who do log exceptions can filter for the true exceptions by
+only looking at more severe log levels.
+
 Omitting Null Values from Log Messages
 --------------------------------------
 Some log messages will include fields that are only present under particular circumstances, for example
@@ -438,5 +463,6 @@ individual clients or for particular namespaces.
 
 Changelog
 =========
-
+:2022-11-16: Add policy on severity level for log messages corresponding to driver exceptions.
+:2022-11-11: Clarify that guidance around null values only strictly applies to spec-defined log messages.
 :2022-10-26: Allow drivers to add timestamps to log messages.

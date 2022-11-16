@@ -1226,12 +1226,10 @@ The following key-value pairs MUST be included in all server selection log messa
        and when it is an application-provided custom selector the string MUST somehow indicate
        that it is a custom selector.
 
-   * - requestId
+   * - operationId
      - Int
-     - The driver-generated ID for the request a server is being selected for. Optional; this
-       field will not be present in cases where server selection does not correspond to an operation,
-       e.g. when the driver performs server selection to check if a `deployment supports sessions
-       <../sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions>`__.
+     - The driver-generated operation ID. Optional; only present if the driver generates
+       operation IDs and this command has one.
 
    * - operation
      - String
