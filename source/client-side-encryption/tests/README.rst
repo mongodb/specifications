@@ -2529,7 +2529,7 @@ missing.
 2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`.
 3. Expect the invocation to fail with an error indicating that
    ``encryptedFields`` is not defined for the collection, and expect that no
-   collection was created within the databse. It would be *incorrect* for
+   collection was created within the database. It would be *incorrect* for
    CreateEncryptedCollection_ to create a regular collection without queryable
    encryption enabled.
 
