@@ -2,7 +2,8 @@
 
 description: "retryable reads handshake failures"
 
-schemaVersion: "1.3"
+# 1.4 is required for "serverless: forbid".
+schemaVersion: "1.4"
 
 runOnRequirements:
   - minServerVersion: "4.2"
@@ -52,7 +53,12 @@ tests:
   #   - Triggers failpoint (second time).
   #   - Tests whether operation successfully retries the handshake and succeeds.
 {% for operation in operations %}
-  - description: "{{operation.operation_name}} succeeds after retryable handshake network error"
+  - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake network error"
+    {%- if ((operation.operation_name == 'createChangeStream') or
+            (operation.operation_name == 'aggregate' and operation.object == 'database')) %}
+    runOnRequirements:
+      - serverless: forbid
+    {%- endif %}
     operations:
       - name: failPoint
         object: testRunner
@@ -99,7 +105,12 @@ tests:
           - commandSucceededEvent:
               commandName: {{operation.command_name}}
 
-  - description: "{{operation.operation_name}} succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake server error (ShutdownInProgress)"
+    {%- if ((operation.operation_name == 'createChangeStream') or
+            (operation.operation_name == 'aggregate' and operation.object == 'database')) %}
+    runOnRequirements:
+      - serverless: forbid
+    {%- endif %}
     operations:
       - name: failPoint
         object: testRunner

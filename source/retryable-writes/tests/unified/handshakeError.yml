@@ -50,7 +50,7 @@ tests:
   #   - Triggers failpoint (second time).
   #   - Tests whether operation successfully retries the handshake and succeeds.
 
-  - description: "insertOne succeeds after retryable handshake network error"
+  - description: "collection.insertOne succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -90,7 +90,7 @@ tests:
           - commandSucceededEvent:
               commandName: insert
 
-  - description: "insertOne succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.insertOne succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -130,7 +130,7 @@ tests:
           - commandSucceededEvent:
               commandName: insert
 
-  - description: "insertMany succeeds after retryable handshake network error"
+  - description: "collection.insertMany succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -171,7 +171,7 @@ tests:
           - commandSucceededEvent:
               commandName: insert
 
-  - description: "insertMany succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.insertMany succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -212,7 +212,7 @@ tests:
           - commandSucceededEvent:
               commandName: insert
 
-  - description: "deleteOne succeeds after retryable handshake network error"
+  - description: "collection.deleteOne succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -252,7 +252,7 @@ tests:
           - commandSucceededEvent:
               commandName: delete
 
-  - description: "deleteOne succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.deleteOne succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -292,7 +292,7 @@ tests:
           - commandSucceededEvent:
               commandName: delete
 
-  - description: "replaceOne succeeds after retryable handshake network error"
+  - description: "collection.replaceOne succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -333,7 +333,7 @@ tests:
           - commandSucceededEvent:
               commandName: update
 
-  - description: "replaceOne succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.replaceOne succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -374,7 +374,7 @@ tests:
           - commandSucceededEvent:
               commandName: update
 
-  - description: "updateOne succeeds after retryable handshake network error"
+  - description: "collection.updateOne succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -415,7 +415,7 @@ tests:
           - commandSucceededEvent:
               commandName: update
 
-  - description: "updateOne succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.updateOne succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -456,7 +456,7 @@ tests:
           - commandSucceededEvent:
               commandName: update
 
-  - description: "findOneAndDelete succeeds after retryable handshake network error"
+  - description: "collection.findOneAndDelete succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -496,7 +496,7 @@ tests:
           - commandSucceededEvent:
               commandName: findAndModify
 
-  - description: "findOneAndDelete succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.findOneAndDelete succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -536,7 +536,7 @@ tests:
           - commandSucceededEvent:
               commandName: findAndModify
 
-  - description: "findOneAndReplace succeeds after retryable handshake network error"
+  - description: "collection.findOneAndReplace succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -577,7 +577,7 @@ tests:
           - commandSucceededEvent:
               commandName: findAndModify
 
-  - description: "findOneAndReplace succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.findOneAndReplace succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -618,7 +618,7 @@ tests:
           - commandSucceededEvent:
               commandName: findAndModify
 
-  - description: "findOneAndUpdate succeeds after retryable handshake network error"
+  - description: "collection.findOneAndUpdate succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -659,7 +659,7 @@ tests:
           - commandSucceededEvent:
               commandName: findAndModify
 
-  - description: "findOneAndUpdate succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.findOneAndUpdate succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
@@ -700,7 +700,7 @@ tests:
           - commandSucceededEvent:
               commandName: findAndModify
 
-  - description: "bulkWrite succeeds after retryable handshake network error"
+  - description: "collection.bulkWrite succeeds after retryable handshake network error"
     operations:
       - name: failPoint
         object: testRunner
@@ -742,7 +742,7 @@ tests:
           - commandSucceededEvent:
               commandName: insert
 
-  - description: "bulkWrite succeeds after retryable handshake server error (ShutdownInProgress)"
+  - description: "collection.bulkWrite succeeds after retryable handshake server error (ShutdownInProgress)"
     operations:
       - name: failPoint
         object: testRunner
