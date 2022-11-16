@@ -2464,6 +2464,19 @@ The following tests that a mongocryptd client is not created when shared library
 21. Automatic Data Encryption Keys
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+For each of the following test cases, assume `DB` is a valid open database
+handle, and assume a ClientEncryption_ object `CE` created using the following
+options::
+
+   clientEncryptionOptions: {
+      keyVaultClient: <new MongoClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: {
+         local: { key: base64Decode(LOCAL_MASTERKEY) },
+      },
+   }
+
+
 Case 1: Simple Creation and Validation
 ``````````````````````````````````````
 
@@ -2477,17 +2490,7 @@ rejects an attempt to insert plaintext in an encrypted fields.
 .. highlight:: typescript
 .. default-role:: math
 
-1. Create a ClientEncryption_ object `CE` with the following options::
-
-      clientEncryptionOptions: {
-         keyVaultClient: <new MongoClient>,
-         keyVaultNamespace: "keyvault.datakeys",
-         kmsProviders: {
-            local: { key: base64Decode(LOCAL_MASTERKEY) },
-         },
-      }
-
-2. Create a new create-collection options `Opts` including the following::
+1. Create a new create-collection options `Opts` including the following::
 
       {
          encryptedFields: {
@@ -2499,16 +2502,64 @@ rejects an attempt to insert plaintext in an encrypted fields.
          }
       }
 
-3. Open a new database handle `DB`.
-4. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`
    to obtain a new collection `Coll`. Expect success.
-5. Attempt to insert the following document into `Coll`::
+3. Attempt to insert the following document into `Coll`::
 
       {
          ssn: "123-45-6789"
       }
 
-6. Expect an error from the insert operation that indicates that the document
+4. Expect an error from the insert operation that indicates that the document
    failed validation. This error indicates that the server expects to receive an
    encrypted field for ``ssn``, but we tried to insert a plaintext field via a
    client that is unaware of the encryption requirements.
+
+
+Case 2: Missing ``encryptedFields``
+```````````````````````````````````
+
+The CreateEncryptedCollection_ helper should not create a regular collection if
+there are no ``encryptedFields`` for the collection being created. Instead, it
+should generate an error indicated that the ``encryptedFields`` option is
+missing.
+
+1. Create a new empty create-collection options `Opts`. (i.e. it must not
+   contain any ``encryptedFields`` options.)
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`.
+3. Expect the invocation to fail with an error indicating that
+   ``encryptedFields`` is not defined for the collection, and expect that no
+   collection was created within the databse. It would be *incorrect* for
+   CreateEncryptedCollection_ to create a regular collection without queryable
+   encryption enabled.
+
+
+Case 3: Invalid ``keyId``
+`````````````````````````
+
+The CreateEncryptedCollection_ helper only inspects ``encryptedFields.fields``
+for ``keyId`` of ``null``. CreateEncryptedCollection_ should forward all other
+data as-is, even if it would be malformed. The server should generate an error
+when attempting to create a collection with such invalid settings.
+
+.. note::
+
+   This test is not required if the type system of the driver has a compile-time
+   check that fields' ``keyId``\ s are of the correct type.
+
+1. Create a new create-collection options `Opts` including the following::
+
+      {
+         encryptedFields: {
+            fields: [{
+               path: "ssn",
+               bsonType: "string",
+               keyId: false,
+            }]
+         }
+      }
+
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`.
+3. Expect an error from the server indicating a validation error at
+   ``create.encryptedFields.fields.keyId``, which must be a UUID and not a
+   boolean value.
