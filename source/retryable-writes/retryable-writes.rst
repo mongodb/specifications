@@ -474,8 +474,14 @@ The above rules are implemented in the following pseudo-code:
          * For exceptions that originate from the driver (e.g. no socket available
          * from the connection pool), we should raise the previous error if there
          * was one.
+         *
+         * In addition, if the previousError is null (i.e. this is the first
+         * attempt), we should persist the previousError as the originalError,
+         * in case we need to raise it later (e.g. if all errors are labeled
+         * "NoWritesPerformed").
          */
-        if (originalError is not DriverException && ! originalError.hasErrorLabel("NoWritesPerformed")) {
+        if (originalError is not DriverException && ! originalError.hasErrorLabel("NoWritesPerformed") ||
+                previousError == null) {
           previousError = originalError;
         }
       }
