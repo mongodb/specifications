@@ -405,7 +405,8 @@ If a retry attempt also fails, drivers MUST update their topology according to
 the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
 to infer that an attempt was made (e.g. connection pool exception originating
 from the driver) or the error is labeled "NoWritesPerformed", the error from
-the previous attempt should be raised.
+the previous attempt should be raised. If all server errors are labeled
+"NoWritesPerformed", the first error should be raised.
 
 The above rules are implemented in the following pseudo-code:
 
@@ -816,6 +817,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2022-11-17: Add note on persisting originalError as previousError on first retry attempt.
 :2022-11-09: CLAM must apply both events and log messages.
 :2022-10-18: When CSOT is enabled multiple retry attempts may occur.
 :2022-10-05: Remove spec front matter and reformat changelog.
