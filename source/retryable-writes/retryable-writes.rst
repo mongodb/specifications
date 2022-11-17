@@ -406,7 +406,7 @@ the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
 to infer that an attempt was made (e.g. connection pool exception originating
 from the driver) or the error is labeled "NoWritesPerformed", the error from
 the previous attempt should be raised. If all server errors are labeled
-"NoWritesPerformed", the first error should be raised.
+"NoWritesPerformed", then the first error should be raised.
 
 The above rules are implemented in the following pseudo-code:
 
