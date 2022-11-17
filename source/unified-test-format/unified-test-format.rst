@@ -3898,8 +3898,6 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
-:2022-11-16: Update tests for ``observeSensitiveCommands`` that use ``getnonce`` to
-             only run on server versions < 6.2.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
             Add support for logging assertions via the ``observeLogMessages`` field
