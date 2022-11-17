@@ -18,7 +18,7 @@ createEntities:
   - collection:
       id: &collection0 collection0
       database: *database0
-      collectionName: &collectionName coll
+      collectionName: &collectionName no-writes-performed-collection
 
 tests:
   - description: "InsertOne fails after NoWritesPerformed error"
