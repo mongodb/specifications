@@ -3,7 +3,7 @@
   "schemaVersion": "1.0",
   "runOnRequirements": [
     {
-      "minServerVersion": "3.6",
+      "minServerVersion": "6.0",
       "topologies": [
         "replicaset"
       ]
@@ -37,14 +37,6 @@
   "tests": [
     {
       "description": "InsertOne fails after NoWritesPerformed error",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "4.0",
-          "topologies": [
-            "replicaset"
-          ]
-        }
-      ],
       "operations": [
         {
           "name": "failPoint",
