@@ -116,8 +116,8 @@ tests:
                   wtimeout: *wTimeoutMS
 
   # If the maxTimeMS option is set for a specific command, it should be used as the maxTimeMS command field without any
-  # modifications. This is different than timeoutMS because in that case, drivers subtract the target server's 90%
-  # percentile RTT from the remaining timeout to derive a maxTimeMS field.
+  # modifications. This is different from timeoutMS because in that case, drivers subtract the target server's min
+  # RTT from the remaining timeout to derive a maxTimeMS field.
   - description: "maxTimeMS option is used directly as the maxTimeMS field on a command"
     operations:
       - name: createEntities

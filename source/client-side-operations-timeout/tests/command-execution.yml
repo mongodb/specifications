@@ -27,7 +27,7 @@ initialData:
 tests:
   - description: "maxTimeMS value in the command is less than timeoutMS"
     operations:
-      # Artificially increase the server RTT to ~20ms.
+      # Artificially increase the server RTT to ~50ms.
       - name: failPoint
         object: testRunner
         arguments:
@@ -39,7 +39,7 @@ tests:
               failCommands: ["hello", "isMaster"]
               appName: &appName reduceMaxTimeMSTest
               blockConnection: true
-              blockTimeMS: 20
+              blockTimeMS: 50
       # Create a client with the app name specified in the fail point and timeoutMS higher than blockTimeMS.
       # Also create database and collection entities derived from the new client.
       - name: createEntities
@@ -52,7 +52,8 @@ tests:
                 uriOptions:
                   appName: *appName
                   w: 1  # Override server's w:majority default to speed up the test.
-                  timeoutMS: &timeoutMS 500
+                  timeoutMS: 500
+                  heartbeatFrequencyMS: 500
                 observeEvents:
                   - commandStartedEvent
             - database:
@@ -76,11 +77,11 @@ tests:
               databaseName: *databaseName
               command:
                 insert: *timeoutCollectionName
-                maxTimeMS: { $$lte: *timeoutMS }
+                maxTimeMS: { $$lte: 450 }
 
   - description: "command is not sent if RTT is greater than timeoutMS"
     operations:
-      # Artificially increase the server RTT to ~20ms.
+      # Artificially increase the server RTT to ~50ms.
       - name: failPoint
         object: testRunner
         arguments:
@@ -92,7 +93,7 @@ tests:
               failCommands: ["hello", "isMaster"]
               appName: &appName rttTooHighTest
               blockConnection: true
-              blockTimeMS: 20
+              blockTimeMS: 50
       # Create a client with the app name specified in the fail point. Also create database and collection entities
       # derived from the new client. There is one collection entity with no timeoutMS and another with a timeoutMS
       # that's lower than the fail point's blockTimeMS value.
@@ -107,6 +108,7 @@ tests:
                   appName: *appName
                   w: 1  # Override server's w:majority default to speed up the test.
                   timeoutMS: 10
+                  heartbeatFrequencyMS: 500
                 observeEvents:
                   - commandStartedEvent
             - database:

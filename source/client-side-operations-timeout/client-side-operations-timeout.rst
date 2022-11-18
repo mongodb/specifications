@@ -299,7 +299,7 @@ Command Execution
 ~~~~~~~~~~~~~~~~~
 
 If ``timeoutMS`` is set, drivers MUST append a ``maxTimeMS`` field to
-commands executed against a MongoDB server using the 90th percentile RTT of
+commands executed against a MongoDB server using the minimum RTT of
 the selected server. Note that this value MUST be retrieved during server
 selection using the ``servers`` field of the same `TopologyDescription
 <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#TopologyDescription>`__
@@ -309,9 +309,9 @@ server is reset to the default description (e.g. due to an error in the
 monitoring thread) after it has been selected but before the RTT is
 retrieved.
 
-If the 90th percentile RTT of the selected server is less than the remaining
-timeoutMS, the value of this field MUST be ``remaining timeoutMS - 90th
-percentile RTT``. If not, drivers MUST return a timeout error without
+If the minimum RTT of the selected server is less than the remaining timeoutMS,
+the value of this field MUST be ``remaining timeoutMS - minimum RTT``.
+If not, drivers MUST return a timeout error without
 attempting to send the message to the server. This is done to ensure that an
 operation is not routed to the server if it will likely fail with a socket
 timeout as that could cause connection churn. The ``maxTimeMS`` field MUST be
@@ -319,7 +319,7 @@ appended after all blocking work is complete.
 
 After wire message construction, drivers MUST check for timeout before
 writing the message to the server. If the timeout has expired or the amount
-of time remaining is less than the selected server's 90th percentile RTT,
+of time remaining is less than the selected server's minimum RTT,
 drivers MUST return the connection to the pool and raise a timeout exception.
 Otherwise, drivers MUST set the connection’s write timeout to the remaining
 ``timeoutMS`` value before writing a message to the server. After the write
@@ -899,6 +899,15 @@ introduce a new knob and increase the API surface of drivers without providing
 a significant benefit.
 
 
+Drivers use minimum RTT to short circuit operations
+---------------------------------------------------
+
+A previous version of this spec used the 90th percentile RTT to short
+circuit operations that might otherwise fail with a socket timeout.
+We decided to change this logic to avoid canceling operations that may
+have a high chance of succeeding and also removes a dependency on t-digest.
+Instead, drivers use the minimum RTT from the last 10 samples.
+
 Future work
 ===========
 
@@ -922,3 +931,4 @@ Changelog
 
 :2022-10-05: Remove spec front matter.
 :2022-01-19: Initial version.
+:2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.

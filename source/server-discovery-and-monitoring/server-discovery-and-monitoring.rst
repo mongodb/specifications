@@ -328,7 +328,7 @@ Fields:
   from the address the client uses.
 * (=) error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the hello or legacy hello call. Default null.
-* ninetiethPercentileRoundTripTime: the 90th percentile RTT for the server. Default null.
+* minRoundTripTime: the minimum RTT for the server. Default null.
 * lastWriteDate: a 64-bit BSON datetime or null.
   The "lastWriteDate" from the server's most recent hello or legacy hello response.
 * opTime: an opTime or null.
@@ -663,7 +663,7 @@ roundTripTime
 Drivers MUST record the server's `round trip time`_ (RTT) after each
 successful call to hello or legacy hello. The Server Selection Spec
 describes how RTT is averaged and how it is used in server selection.
-Drivers MUST also record the server's 90th percentile RTT per
+Drivers MUST also record the server's minimum RTT per
 `Server Monitoring (Measuring RTT)`_.
 
 If a hello or legacy hello call fails, the RTT is not updated.
@@ -2542,6 +2542,7 @@ Changelog
 :2022-07-11: Convert integration tests to the unified format.
 :2022-09-30: Update ``updateRSFromPrimary`` to include logic before and after 6.0 servers
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
+:2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
 
 ----
 

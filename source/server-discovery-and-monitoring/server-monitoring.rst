@@ -541,12 +541,10 @@ Clients MUST ignore the response to the hello or legacy hello command when measu
 Errors encountered when running a hello or legacy hello command MUST NOT update the topology.
 (See `Why don't clients mark a server unknown when an RTT command fails?`_)
 
-Clients MUST use RTT samples to calculate an approximation for the 90th
-percentile RTT for each server using the `t-digest algorithm`_.
+Clients MUST track the minimum RTT out of the (at most) last 10 samples.
 
 When constructing a ServerDescription from a streaming hello or legacy hello response,
-clients MUST use average and 90th percentile round trip times from the RTT
-task.
+clients MUST use average and minimum round trip times from the RTT task.
 
 See the pseudocode in the `RTT thread`_ section for an example implementation.
 
@@ -812,7 +810,7 @@ on a dedicated connection, for example:
         helloOk = stableApi != Null
         lock = Mutex()
         movingAverage = MovingAverage()
-        rttDigest = TDigest() # for 90th percentile RTT calculation
+        rttMin = MinWindow() # for min RTT calculation
 
     def reset():
         with lock:
@@ -821,15 +819,15 @@ on a dedicated connection, for example:
     def addSample(rtt):
         with lock:
             movingAverage.update(rtt)
-            rttDigest.update(rtt)
+            rttMin.update(rtt)
 
     def average():
         with lock:
             return movingAverage.get()
 
-    def ninetiethPercentile():
+    def min():
         with lock:
-            return rttDigest.percentile(90)
+            return rttMin.get()
 
     def run():
         while this monitor is not stopped:
@@ -1153,6 +1151,7 @@ Changelog
 :2022-02-24: Rename Versioned API to Stable API
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter reformat changelog.
+:2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
 
 ----
 
@@ -1177,5 +1176,4 @@ Changelog
 .. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring.rst#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?
 .. _Client Side Operations Timeout Spec: /source/client-side-operations-timeout/client-side-operations-timeout.rst
 .. _timeoutMS: /source/client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS
-.. _t-digest algorithm: https://github.com/tdunning/t-digest
 .. _Why does the pool need to support closing in use connections as part of its clear logic?: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Why-does-the-pool-need-to-support-closing-in-use-connections-as-part-of-its-clear-logic?

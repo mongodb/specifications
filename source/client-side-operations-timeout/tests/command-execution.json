@@ -45,7 +45,7 @@
                 ],
                 "appName": "reduceMaxTimeMSTest",
                 "blockConnection": true,
-                "blockTimeMS": 20
+                "blockTimeMS": 50
               }
             }
           }
@@ -62,7 +62,8 @@
                   "uriOptions": {
                     "appName": "reduceMaxTimeMSTest",
                     "w": 1,
-                    "timeoutMS": 500
+                    "timeoutMS": 500,
+                    "heartbeatFrequencyMS": 500
                   },
                   "observeEvents": [
                     "commandStartedEvent"
@@ -107,7 +108,7 @@
                 "command": {
                   "insert": "timeoutColl",
                   "maxTimeMS": {
-                    "$$lte": 500
+                    "$$lte": 450
                   }
                 }
               }
@@ -134,7 +135,7 @@
                 ],
                 "appName": "rttTooHighTest",
                 "blockConnection": true,
-                "blockTimeMS": 20
+                "blockTimeMS": 50
               }
             }
           }
@@ -151,7 +152,8 @@
                   "uriOptions": {
                     "appName": "rttTooHighTest",
                     "w": 1,
-                    "timeoutMS": 10
+                    "timeoutMS": 10,
+                    "heartbeatFrequencyMS": 500
                   },
                   "observeEvents": [
                     "commandStartedEvent"
