@@ -810,11 +810,12 @@ on a dedicated connection, for example:
         helloOk = stableApi != Null
         lock = Mutex()
         movingAverage = MovingAverage()
-        rttMin = MinWindow() # for min RTT calculation
+        rttMin = MinWindow(max_window_size=10) # for min RTT calculation
 
     def reset():
         with lock:
             movingAverage.reset()
+            rttMin.reset()
 
     def addSample(rtt):
         with lock:
