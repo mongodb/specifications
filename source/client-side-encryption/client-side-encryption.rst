@@ -4,8 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-11-10
-:Version: 1.11.0
+:Last Modified: 2022-11-27
+:Version: 1.11.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -811,13 +811,13 @@ load. Refer:
 - `Enabling crypt_shared`_
 
 
-``extraOptions.cryptSharedRequired``
+``extraOptions.cryptSharedLibRequired``
 ````````````````````````````````````
 
 :type: :ts:`boolean`
 :default: |false|
 
-.. |opt-crypt_shared-required| replace:: `extraOptions.cryptSharedRequired`_
+.. |opt-crypt_shared-required| replace:: `extraOptions.cryptSharedLibRequired`_
 
 If |true|, the driver MUST refuse to continue unless crypt_shared_ was loaded
 successfully.
@@ -2602,6 +2602,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2022-11-27: Fix typo for references to ``cryptSharedLibRequired`` option.
 :2022-11-10: Defined a ``CreateEncryptedCollection`` helper for creating new
              encryption keys automatically for the queryable encrypted fields in
              a new collection.
