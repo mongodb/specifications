@@ -1001,7 +1001,7 @@ The following tests that loading crypt_shared_ bypasses spawning mongocryptd.
         "mongocryptdURI": "mongodb://localhost:27021/db?serverSelectionTimeoutMS=1000",
         "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"],
         "cryptSharedLibPath": "<path to shared library>",
-        "cryptSharedRequired": true
+        "cryptSharedLibRequired": true
       }
 
    Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
