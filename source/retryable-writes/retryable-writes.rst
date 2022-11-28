@@ -455,8 +455,8 @@ The above rules are implemented in the following pseudo-code:
     while true {
       try {
         return executeCommand(server, retryableCommand);
-      } catch (Exception originalError) {
-        handleError(originalError);
+      } catch (Exception currentError) {
+        handleError(currentError);
 
         /* If the error has a RetryableWriteError label, remember the exception
          * and proceed with retrying the operation.
@@ -464,26 +464,31 @@ The above rules are implemented in the following pseudo-code:
          * IllegalOperation (code 20) with errmsg starting with "Transaction
          * numbers" MUST be re-raised with an actionable error message.
          */
-        if (!originalError.hasErrorLabel("RetryableWriteError")) {
-          if ( originalError.code == 20 && originalError.errmsg.startsWith("Transaction numbers") ) {
-            originalError.errmsg = "This MongoDB deployment does not support retryable...";
+        if (!currentError.hasErrorLabel("RetryableWriteError")) {
+          if ( currentError.code == 20 && originalError.errmsg.startsWith("Transaction numbers") ) {
+            currentError.errmsg = "This MongoDB deployment does not support retryable...";
           }
-          throw originalError
+          throw currentError;
+        }
+
+        /*
+         * If the "previousError" is "null", then the "currentError" is the
+         * first error encountered during the retry attempt cycle. We must
+         * persist the first error in the case where all succeeding errors are
+         * labeled "NoWritesPerformed", which would otherwise raise "null" as
+         * the error.
+         */
+        if (previousError == null) {
+          previousError = currentError;
         }
 
         /*
          * For exceptions that originate from the driver (e.g. no socket available
          * from the connection pool), we should raise the previous error if there
          * was one.
-         *
-         * In addition, if the previousError is null (i.e. this is the first
-         * attempt), we should persist the previousError as the originalError,
-         * in case we need to raise it later (e.g. if all errors are labeled
-         * "NoWritesPerformed").
          */
-        if (originalError is not DriverException && ! originalError.hasErrorLabel("NoWritesPerformed") ||
-                previousError == null) {
-          previousError = originalError;
+        if (currentError is not DriverException && ! originalError.hasErrorLabel("NoWritesPerformed")) {
+          previousError = currentError;
         }
       }
 
@@ -501,7 +506,7 @@ The above rules are implemented in the following pseudo-code:
        * is very rare, and likely means that the cluster is in the midst of a
        * downgrade. */
       if ( ! isRetryableWritesSupported(server)) {
-        throw originalError;
+        throw currentError;
       }
 
       /* CSOT is enabled and the operation has timed out. */
@@ -817,7 +822,8 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
-:2022-11-17: Add note on persisting originalError as previousError on first retry attempt.
+:2022-11-17: Add logic for persisting "currentError" as "previousError" on first
+             retry attempt, avoiding raising "null" errors.
 :2022-11-09: CLAM must apply both events and log messages.
 :2022-10-18: When CSOT is enabled multiple retry attempts may occur.
 :2022-10-05: Remove spec front matter and reformat changelog.
