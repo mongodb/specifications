@@ -555,3 +555,4 @@ Changelog
 :2022-09-02: Remove material that only applies to MongoDB versions < 3.6.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-10-11: Add command logging information and tests.
+:2022-11-16: Update sensitive command tests to only run on server versions where the commands are supported.
