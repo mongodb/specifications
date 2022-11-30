@@ -4,8 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-11-10
-:Version: 1.11.0
+:Last Modified: 2022-11-30
+:Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -1045,6 +1045,13 @@ ClientEncryption
       getKeyByAltName(keyAltName: String): Optional<Document>;
 
       // Encrypts a BsonValue with a given key and algorithm.
+      // If `opts.queryType` == "range", `value` is expected to be a BSON document
+      // of one of the following forms:
+      // 1. A Match Expression of this form:
+      //   {$and: [{<field>: {$gt: <value1>}}, {<field>: {$lt: <value2> }}]}
+      // 2. An Aggregate Expression of this form:
+      //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
+      // $gt may also be $gte. $lt may also be $lte.
       // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
       encrypt(value: BsonValue, opts: EncryptOpts): Binary;
 
@@ -1236,6 +1243,20 @@ EncryptOpts
       algorithm: String,
       contentionFactor: Optional<Int64>,
       queryType: Optional<String>
+      rangeOpts: Optional<RangeOpts>
+   }
+
+   // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
+   // min, max, sparsity, and range must match the values set in the encryptedFields of the destination collection.
+   // For double and decimal128, min/max/precision must all be set, or all be unset.
+   class RangeOpts {
+      // min is required if precision is set.
+      min: Optional<BSONValue>,
+      // max is required if precision is set.
+      max: Optional<BSONValue>,
+      sparsity: Int64,
+      // precision may only be set for double or decimal128.
+      precision: Optional<Int32>
    }
 
 Explicit encryption requires a key and algorithm. Keys are either
@@ -1256,24 +1277,31 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
+- "Range"
 
-The result of explicit encryption with the "Indexed" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
 
-   To insert or query with an "Indexed" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
+   To insert or query with an "Indexed" or "Range" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
    ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
 
 contentionFactor
 ^^^^^^^^^^^^^^^^
-contentionFactor only applies when algorithm is "Indexed".
+contentionFactor only applies when algorithm is "Indexed" or "Range".
 It is an error to set contentionFactor when algorithm is not "Indexed".
 
 queryType
 ^^^^^^^^^
 One of the strings:
 - "equality"
+- "range"
 
-queryType only applies when algorithm is "Indexed".
-It is an error to set queryType when algorithm is not "Indexed".
+queryType only applies when algorithm is "Indexed" or "Range".
+It is an error to set queryType when algorithm is not "Indexed" or "Range".
+
+rangeOpts
+^^^^^^^^^
+rangeOpts only applies when queryType is "range".
+It is an error to set rangeOpts when queryType is not "range".
 
 User facing API: When Auto Encryption Fails
 ===========================================
@@ -2602,6 +2630,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2022-11-30: Add ``Range``.
 :2022-11-10: Defined a ``CreateEncryptedCollection`` helper for creating new
              encryption keys automatically for the queryable encrypted fields in
              a new collection.
