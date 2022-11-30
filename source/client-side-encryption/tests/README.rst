@@ -2612,44 +2612,44 @@ Data Types RangeOpts
 `````````````````````
 In each test below, each data type will require different ``RangeOpts``. Use these ``RangeOpts`` for each of the supported types: 
 
-#. Double no precision
+#. DoubleNoPrecision
 
-.. code:: typescript
+   .. code:: typescript
    
-   class RangeOpts {
-      sparsity: 1
-   }
+      class RangeOpts {
+         sparsity: 1
+      }
 
-#. Double with precision 
+#. DoubleWithPrecision
 
-.. code:: typescript
+   .. code:: typescript
    
-   class RangeOpts {
-      min: 0,
-      max: 199.9,
-      sparsity: 1,
-      precision: 2
-   }
+      class RangeOpts {
+         min: 0,
+         max: 199.9,
+         sparsity: 1,
+         precision: 2
+      }
 
 #. Date 
 
-.. code:: typescript
+   .. code:: typescript
    
-   class RangeOpts {
-      min: 0,
-      max: 200,
-      sparsity: 1
-   }
+      class RangeOpts {
+         min: 0,
+         max: 200,
+         sparsity: 1
+      }
 
 #. Integer and Long
 
-.. code:: typescript
+   .. code:: typescript
    
-   class RangeOpts {
-      min: 0,
-      max: 200,
-      sparsity: 1
-   }
+      class RangeOpts {
+         min: 0,
+         max: 200,
+         sparsity: 1
+      }
 
 Case 1: can insert encrypted range and decrypt 
 ```````````````````````````````````````````````
@@ -2697,7 +2697,7 @@ Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryptio
 
 Assert these three documents are returned ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }, { "encrypted<Type>": 200}``.
 
-If testing ``double`` no precision two documents (not three) will be returned, since no maximum is set.
+If testing ``doubleNoPrecision`` two documents (not three) will be returned, since no maximum is set.
 
 Case 3: can find encrypted range and return the minimum 
 ```````````````````````````````````````````````````````
@@ -2722,7 +2722,7 @@ Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryptio
 
 Assert these two documents are returned ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }``.
 
-If testing ``double`` no precision one document (not two) will be returned, since no minimum is set.
+If testing ``doubleNoPrecision`` one document (not two) will be returned, since no minimum is set.
 
 Case 4: can find encrypted range with an open range query
 `````````````````````````````````````````````````````````
@@ -2776,7 +2776,7 @@ Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encry
 
 Assert these three documents are returned ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }, { "encrypted<Type>": 30}``.
 
-If testing ``double`` no precision two documents (not three) will be returned, since no minimum is set.
+If testing ``doubleNoPrecision`` two documents (not three) will be returned, since no minimum is set.
 
 Case 6: can aggregate encrypted range and return the minimum 
 `````````````````````````````````````````````````````````````
@@ -2836,27 +2836,87 @@ Case 8: encrypting a document greater than the maximum errors
 `````````````````````````````````````````````````````````````
 This test case should be skipped if the ``encryptedField`` is ``double`` no ``precision``. 
 
-Use ``clientEncryption`` to encrypt the value 6 with these ``EncryptOpts``:
+Use ``clientEncryption`` to encrypt the value 201 with the matching ``RangeOpts`` listed in Data Types RangeOpts and these ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
       keyId : <key1ID>
-      algorithm: "Indexed",
+      algorithm: "RangePreview",
       contentionFactor: 0
    }
 
+Assert that an error was raised with the message "Value must be greater than or equal to the minimum value and less than or equal to the maximum value"
 
 Case 9: encrypting a document less than the minimum errors
 ```````````````````````````````````````````````````````````
 This test case should be skipped if the ``encryptedField`` is ``double`` no ``precision``. 
 
+Use ``clientEncryption`` to encrypt the value -1 with the matching ``RangeOpts`` listed in Data Types RangeOpts and these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      contentionFactor: 0
+   }
+
+Assert that an error message contains "got min: 0, max: 250, value: -1".
 
 Case 10: encrypting a document of a different type errors 
 `````````````````````````````````````````````````````````
 This test case should be skipped if the ``encryptedField`` is ``double`` no ``precision``. 
 
+For all the tests before use ``clientEncryption`` to try and encrypt the values listed below with these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      contentionFactor: 0
+   }
+
+#. DoubleWithPrecision
+   encrypt 100
+   assert an error is returned with the message "Got range option 'min' of type DOUBLE and value of type INT64"
+#. Date 
+#. Integer 
+#. Long
 
 Case 11: setting precision errors if the type is not a double
 ``````````````````````````````````````````````````````````````
-This test case should be skipped if the ``encryptedField`` is ``double`` with and without ``precision``. 
+This test case should be skipped if the ``encryptedField`` is the type ``doubleWithPrecision`` and ``doubleNoPrecision``.
+
+Use ``clientEncryption`` to encrypt the value 6 with these ``RangeOpts`` and ``EncryptOpts``:
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      contentionFactor: 0
+
+   }
+
+#. Date 
+
+   .. code:: typescript
+   
+      class RangeOpts {
+         min: 0,
+         max: 200,
+         sparsity: 1
+      }
+
+#. Integer and Long
+
+   .. code:: typescript
+   
+      class RangeOpts {
+         min: 0,
+         max: 200,
+         sparsity: 1
+      }
+
+Assert that an error message contains "expected 'precision' to be set with double or decimal128 index, but got: <TYPE> min"
