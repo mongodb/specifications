@@ -1268,7 +1268,7 @@ This message MUST contain the following key-value pairs:
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to
 fill in placeholders as appropriate:
 
-  Starting server selection for operation {{operationName}} with request ID {{requestID}}.
+  Server selection started for operation {{operationName}} with request ID {{requestID}}.
   Selector: {{selector}}, topology description: {{topologyDescription}}
 
 "Server selection succeeded" message
@@ -1332,7 +1332,7 @@ This message MUST contain the following key-value pairs:
    * - failure
      - Flexible
      - Representation of the error the driver will throw regarding server selection failing. The type and format of this
-     - value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_ 
+       value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_ 
        for details on representing errors in log messages. Drivers MUST take care to not include any information in this
        field that is already included in the log message; e.g. the topology description should not be duplicated within
        this field.
@@ -1352,7 +1352,14 @@ implements.
 
 In order to avoid generating redundant log messages where all information besides
 the remaining time is identical, this message MUST not be repeatedly emitted for an
-operation unless the topology description changes.
+operation unless the topology description changes. The driver should only consider
+the topology description to have changed if:
+1. A server was added to the topology, OR
+2. A server was removed from the topology, OR 
+3. The new description for a server in the topology does not equal the old description, according
+to the definition of
+`Server Description Equality <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server-description-equality>`_
+in the `Server Discovery and Monitoring specification <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`_.
 
 This message MUST contain the following key-value pairs:
 
@@ -2068,4 +2075,4 @@ Changelog
              replica set topology.
 :2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
-:2022-11-09: Add "waiting for suitable server" log message and tests.
+:2022-11-09: Add log messages and tests.
