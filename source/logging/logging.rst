@@ -303,7 +303,7 @@ messages; for these applications, there is value in a driver emitting such log m
 Given this, logging such messages at ``debug`` level strikes the best balance between making
 the diagnostic information available, but not overloading users with overly severe and/or duplicative
 messages. Users who do not log exceptions will have a way to see driver exceptions, by turning
-on ``debug`` logging, while sers who do log exceptions can filter for the true exceptions by
+on ``debug`` logging, while users who do log exceptions can filter for the true exceptions by
 only looking at more severe log levels.
 
 Omitting Null Values from Log Messages
