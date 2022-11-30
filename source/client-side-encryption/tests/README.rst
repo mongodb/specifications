@@ -2607,8 +2607,6 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
       kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
       bypassQueryAnalysis: true
    }
-
-.. _setup_reference-label:
  
 Test Setup: RangeOpts
 `````````````````````
@@ -2805,7 +2803,7 @@ Assert that this document is returned ``{ "encrypted<Type>": 30 }``.
 
 Case 7: can aggregate encrypted range and return no documents
 `````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query with the matching ``RangeOpts`` :ref:`setup_reference-label` and these ``EncryptOpts``:
+Use ``clientEncryption`` to encrypt this query with the matching ``RangeOpts`` `Test Setup: RangeOpts` and these ``EncryptOpts``:
 
 .. code:: javascript
 
