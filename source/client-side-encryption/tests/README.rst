@@ -2568,13 +2568,13 @@ when attempting to create a collection with such invalid settings.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Range Explicit Encryption tests require MongoDB server 6.2+. The tests must not run against a standalone.
 
-Each of the following test cases must pass for each of the supported types (``double``, ``double`` with precision, ``date``, ``integer``, and ``long``)
+Each of the following test cases must pass for each of the supported types (``double``, ``double`` with precision, ``date``, ``integer``, and ``long``).
 
 Before running each of the following test cases, perform the following Test Setup.
 
 Test Setup
 ``````````
-Load the file for specific data type being tested ``encryptedFields-<type>.json``. For example, for ``integer`` load `encryptedFields-Int.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/range-encryptedFields-Int.json>`_ as ``encryptedFields``.
+Load the file for specific data type being tested ``encryptedFields-<type>.json``. For example, for ``integer`` load `range-encryptedFields-Int.json <https://github.com/galon1/specifications/blob/DRIVERS-2505/source/client-side-encryption/etc/data/range-encryptedFields-Int.json>`_ as ``encryptedFields``.
 
 Load the file `key1-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json>`_ as ``key1Document``.
 
@@ -2610,7 +2610,7 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
  
 Test Setup: RangeOpts
 `````````````````````
-In the tests below, each data type will require different ``RangeOpts``. Use these ``RangeOpts`` for each of the supported types: 
+Each range explicit encryption test requires each data type to use a different ``RangeOpts``. Use these ``RangeOpts`` for each of the supported types: 
 
 #. Double
 
@@ -2631,21 +2631,41 @@ In the tests below, each data type will require different ``RangeOpts``. Use the
          precision: 2
       }
 
-#. Date and Integer and Long
+#. Date
 
    .. code:: typescript
    
       class RangeOpts {
-         min: 0,
-         max: 200,
+         min: {'$date': 0 } ,
+         max: {'$date': 200 },
+         sparsity: 1
+      }
+
+#. Integer
+
+   .. code:: typescript
+   
+      class RangeOpts {
+         min: {'$numberInt': 0 } ,
+         max: {'$numberInt': 200 },
+         sparsity: 1
+      }
+
+#. Long
+
+   .. code:: typescript
+   
+      class RangeOpts {
+         min: {'$numberLong': 0 } ,
+         max: {'$numberLong': 200 },
          sparsity: 1
       }
 
 Case 1: can insert encrypted range and decrypt 
 ```````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt these values separately: 6, 30, and minimum and maximum (if the minimum and maximum are set). Ensure the type matches with the type of ``encryptedFields``. For example, if the encryptedField is ``doubleNoPrecision`` encrypt the value 6.0. 
+Use ``clientEncryption`` to encrypt these values separately: 6, 30, and the minimum and maximum set in ``RangeOpts`` (if the minimum and maximum are set). Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0. 
 
-Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts <#Test Setup: RangeOpts>` and these ``EncryptOpts``:
+Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
 .. code:: typescript
 
@@ -2658,77 +2678,22 @@ Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: Rang
 
 Store the result in ``insertPayload``.
 
-Use ``encryptedClient`` to insert the different documents ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
+Use ``encryptedClient`` to insert the different documents with a variable ``i`` to store the ``_id`` value ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
 
-After inserting the documents, use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals the value of the last document inserted.
+After inserting the documents, use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals the value of one of the documents inserted.
 
 Case 2: can find encrypted range and return the maximum 
 ```````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts <#Test Setup: RangeOpts>` and these ``EncryptOpts``:
+This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
 
-.. code:: javascript
-
-   //make sure 5 and 200 match the type of encryptedField
-   {"$and": [{"encrypted<Type>": {"$gt": 5}}, {"encrypted<Type>": {"$lte": 200}}]}
-
-.. code:: typescript
-
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      queryType: "rangePreview",
-      contentionFactor: 0
-   }
-
-Store the result in ``findPayload``.
-
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }``.
-
-Assert these three documents are returned ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }, { "encrypted<Type>": 200}``.
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` two documents (not three) will be returned, since no maximum is set.
-
-Case 3: can find encrypted range and return the minimum 
-```````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts <#Test Setup: RangeOpts>` and these ``EncryptOpts``:
-
-.. code:: javascript
-
-   {"$and": [{"encrypted<Type>": {"$gte": 0}}, {"encrypted<Type>": {"$lte": 6}}]}
-
-.. code:: typescript
-
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      queryType: "rangePreview",
-      contentionFactor: 0
-   }
-
-Store the result in ``findPayload``.
-
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }``.
-
-Assert these two documents are returned ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }``.
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` one document (not two) will be returned, since no minimum is set.
-
-Case 4: can find encrypted range with an open range query
-`````````````````````````````````````````````````````````
 Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
 
-   {"$and": [{"encrypted<Type>": {"$gt": 150}}]}
+   //convert 5 and 200 to match the type of the encrypted field.
+   {"$and": [{"encrypted<Type>": {"$gt": 5}}, {"encrypted<Type>": {"$lte": 200}}]}
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` encrypt this query instead 
-
-.. code:: javascript
-
-   {"$and": [{"encrypted<Type>": {"$gt": 25.0}}]}
-
-
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts <#Test Setup: RangeOpts>` and these ``EncryptOpts`` to encrypt the query:
+Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
 .. code:: typescript
 
@@ -2741,17 +2706,124 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts <#Test Setup: Ra
 
 Store the result in ``findPayload``.
 
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }``.
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
 
-Assert that this document is returned ``{ "encrypted<Type>": 200 }`` or  ``{ "encrypted<Type>": 30 }`` if the encrypted field is ``encryptedDoubleNoPrecision``.
+Assert these three documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
 
-Case 5: can aggregate encrypted range and return the maximum  
-`````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts <#Test Setup: RangeOpts>` and these ``EncryptOpts``:
+If the encrypted field is ``encryptedDoubleNoPrecision`` two documents (not three) will be returned, since there is not a maximum value to insert.
+
+Case 3: can find encrypted range and return the minimum 
+```````````````````````````````````````````````````````
+This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
+
+Use ``clientEncryption`` to encrypt this query: 
+
+
+.. code:: javascript
+   
+   //convert 0 and 6 to match the type of the encrypted field.
+   {"$and": [{"encrypted<Type>": {"$gte": 0}}, {"encrypted<Type>": {"$lte": 6}}]}
+
+Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      queryType: "rangePreview",
+      contentionFactor: 0
+   }
+
+Store the result in ``findPayload``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
+
+Assert these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
+
+If the encrypted field is ``encryptedDoubleNoPrecision`` one document (not two) will be returned, since there is not a minimum value to insert.
+
+Case 4: can find encrypted range with an open range query
+`````````````````````````````````````````````````````````
+This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
+
+Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
 
-   {"$and": [{"encrypted<Type>": {"$gte", 0}}, {"encrypted<Type>", : {"$lte", 30}}]}
+   //convert 150 to match the type of the encrypted field.
+   {"$and": [{"encrypted<Type>": {"$gt": 150}}]}
+
+If the encrypted field is ``encryptedDoubleNoPrecision`` encrypt this query instead:
+
+.. code:: javascript
+
+   //convert 25 to match the type of the encrypted field.
+   {"$and": [{"encrypted<Type>": {"$gt": 25}}]}
+
+Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      queryType: "rangePreview",
+      contentionFactor: 0
+   }
+
+Store the result in ``findPayload``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
+
+Assert that only this document ``{ "encrypted<Type>": 200 }`` is returned. 
+
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that the document ``{ "encrypted<Type>": 30 }`` is returned.
+
+Case 5: can run an aggregation expression inside $expr 
+`````````````````````````````````````````````````````````````
+This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
+
+Use ``clientEncryption`` to encrypt this query: 
+
+.. code:: javascript
+
+   {'$and': [ { '$lt': [ '$encrypted<Type>', 10 ] } ] } }
+
+Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      queryType: "rangePreview",
+      contentionFactor: 0
+   }
+
+Store the result in ``findPayload``.
+
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": {'$expr' :  { <findPayload> } }`` and sort the results by ``_id``.
+
+Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
+
+If the encrypted field is ``encryptedDoubleNoPrecision`` one document (not two) will be returned, since no minimum is set.
+
+Case 6: can aggregate encrypted range and return the maximum  
+`````````````````````````````````````````````````````````````
+This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
+
+Use ``clientEncryption`` to encrypt this query: 
+
+.. code:: javascript
+
+   {'$and': ["
+      "{ 'encrypted<Type>': { '$gte': { '$<type>': '30' } } },"
+      "{ 'encrypted<Type>': { '$lte': { '$<type>': '200' } } } ] }
+
+If the encrypted field is ``encryptedDoublePrecision`` use ``199.99`` instead of ``200.0``.
+
+Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
 .. code:: typescript
 
@@ -2770,17 +2842,25 @@ Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encry
 
    {"pipeline": [{"$match": "<findPayload>"}, {"$sort": { "_id: 1"}}]}
 
-Assert these three documents are returned ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }, { "encrypted<Type>": 30}``.
+Assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
+
+If the encrypted field is ``encryptedDoublePrecision`` assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>": 199.9}`` are returned.
 
 If the encrypted field is ``encryptedDoubleNoPrecision`` two documents (not three) will be returned, since no minimum is set.
 
-Case 6: can aggregate encrypted range and return the minimum 
+Case 7: can aggregate encrypted range and return the minimum 
 `````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts <#Test Setup: RangeOpts>` and these ``EncryptOpts``:
+This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
+
+Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
 
-   {"$and": [{"encrypted<Type>": {"$gte", 7}}, {"encrypted<Type>", : {"$lte", 30}}]}
+     {'$and': ["
+      "{ 'encrypted<Type>': { '$gte': { '$<type>': '0' } } },"
+      "{ 'encrypted<Type>': { '$lte': { '$<type>': '6' } } } ] }
+
+Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
 .. code:: typescript
 
@@ -2799,15 +2879,23 @@ Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encry
 
    {"pipeline": [{"$match": "<findPayload>"}, {"$sort": { "_id: 1"}}]}
 
-Assert that this document is returned ``{ "encrypted<Type>": 30 }``.
+Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
-Case 7: can aggregate encrypted range and return no documents
+If the encrypted field is ``encryptedDoubleNoPrecision`` only the document ``{ "encrypted<Type>": 6 }`` is returned.
+
+Case 8: can aggregate encrypted range and return no documents
 `````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query with the matching ``RangeOpts`` `Test Setup: RangeOpts` and these ``EncryptOpts``:
+This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
+
+Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
 
-   {"$and": [{"encrypted<Type>": {"$gte", 7}}, {"encrypted<Type>", : {"$lt", 30}}]}
+        {'$and': ["
+      "{ 'encrypted<Type>': { '$gt': { '$<type>': '0' } } },"
+      "{ 'encrypted<Type>': { '$lt': { '$<type>': '6' } } } ] }
+
+Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
 .. code:: typescript
 
@@ -2826,13 +2914,13 @@ Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encry
 
    {"pipeline": [{"$match": "<findPayload>"}, {"$sort": { "_id: 1"}}]}
 
-Assert that no documents were returned.
+Assert that no documents are returned.
 
-Case 8: encrypting a document greater than the maximum errors
+Case 9: encrypting a document greater than the maximum errors
 `````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
-Use ``clientEncryption`` to encrypt the value 201 with the matching ``RangeOpts`` listed in Data Types RangeOpts and these ``EncryptOpts``:
+Use ``clientEncryption`` to try to encrypt the value 201 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
 .. code:: typescript
 
@@ -2842,13 +2930,13 @@ Use ``clientEncryption`` to encrypt the value 201 with the matching ``RangeOpts`
       contentionFactor: 0
    }
 
-Assert that an error was raised with the message "Value must be greater than or equal to the minimum value and less than or equal to the maximum value"
+Assert that an error was raised.
 
-Case 9: encrypting a document less than the minimum errors
+Case 10: encrypting a document less than the minimum errors
 ```````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
-Use ``clientEncryption`` to encrypt the value -1 with the matching ``RangeOpts`` listed in Data Types RangeOpts and these ``EncryptOpts``:
+Use ``clientEncryption`` to try to encrypt the value -1 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
 .. code:: typescript
 
@@ -2858,9 +2946,9 @@ Use ``clientEncryption`` to encrypt the value -1 with the matching ``RangeOpts``
       contentionFactor: 0
    }
 
-Assert that an error message contains "got min: 0, max: 250, value: -1".
+Assert that an error was raised.
 
-Case 10: encrypting a document of a different type errors 
+Case 11: encrypting a document of a different type errors 
 `````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
@@ -2876,34 +2964,34 @@ For all the tests below use these ``EncryptOpts``:
 
 #. Double (with precision)
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt a ``long`` (use 100).
+   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt ``{$numberLong : 100 }``.
    
-   Assert an error is returned with the message "Got range option 'min' of type DOUBLE and value of type INT64".
+   Assert an error was raised.
 
 #. Date 
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``double`` (use 4.44).
+   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
    
-   Assert an error is returned with the message "Got range option 'min' of type DATE_TIME and value of type DOUBLE".
+   Assert an error was raised.
 
 #. Integer 
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``double`` (use 4.44).
+   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
    
-   Assert an error is returned with the message "Got range option 'min' of type INT32 and value of type DOUBLE".
+   Assert an error was raised.
 
 #. Long
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``integer`` (use 3).
+   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``{$numberInt : 3 }``.
    
-   Assert an error is returned with the message "Got range option 'min' of type INT64 and value of type INT32".
+   Assert an error was raised.
 
 
-Case 11: setting precision errors if the type is not a double
+Case 12: setting precision errors if the type is not a double
 ``````````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoubleWithPrecision`` and ``encryptedDoubleNoPrecision``.
+This test case should be skipped if the encrypted field is ``encryptedDoubleWithPrecision`` or ``encryptedDoubleNoPrecision``.
 
-Use ``clientEncryption`` to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
+Use ``clientEncryption`` to try to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
 
 .. code:: typescript
 
@@ -2920,4 +3008,4 @@ Use ``clientEncryption`` to encrypt the value 6 with these ``EncryptOpts`` and t
       precision: 2,
    }
 
-Assert that an error message contains "expected 'precision' to be set with double or decimal128 index, but got: <TYPE> min"
+   Assert an error was raised.
