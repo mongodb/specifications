@@ -2568,7 +2568,7 @@ when attempting to create a collection with such invalid settings.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Range Explicit Encryption tests require MongoDB server 6.2+. The tests must not run against a standalone.
 
-Each of the following test cases must pass for each of the supported types (``double``, ``double`` with precision, ``date``, ``integer``, and ``long``).
+Each of the following test cases must pass for each of the supported types (``double``, ``double`` with precision, ``date``, ``integer``, and ``long``), unless it is stated the type should be skipped.
 
 Before running each of the following test cases, perform the following Test Setup.
 
@@ -2610,7 +2610,9 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
  
 Test Setup: RangeOpts
 `````````````````````
-Each range explicit encryption test requires each data type to use a different ``RangeOpts``. Use these ``RangeOpts`` for each of the supported types: 
+Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
+
+Each data type must use a different ``RangeOpts``. Use these ``RangeOpts`` for each of the supported types: 
 
 #. Double
 
@@ -2837,13 +2839,13 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``En
       contentionFactor: 0
    }
 
-Store the result in ``findPayload``.
+Store the result in ``aggPayload``.
 
 Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encryption`` collection with this pipeline: 
 
 .. code:: javascript
 
-   {"pipeline": [{"$match": "<findPayload>"}, {"$sort": { "_id: 1"}}]}
+   {"pipeline": [{"$match": "<aggPayload>"}, {"$sort": { "_id: 1"}}]}
 
 Assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
 
@@ -2874,13 +2876,13 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``En
       contentionFactor: 0
    }
 
-Store the result in ``findPayload``.
+Store the result in ``aggPayload``.
 
 Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encryption`` collection with this pipeline:
 
 .. code:: javascript
 
-   {"pipeline": [{"$match": "<findPayload>"}, {"$sort": { "_id: 1"}}]}
+   {"pipeline": [{"$match": "<aggPayload>"}, {"$sort": { "_id: 1"}}]}
 
 Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
@@ -2909,13 +2911,13 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``En
       contentionFactor: 0
    }
 
-Store the result in ``findPayload``.
+Store the result in ``aggPayload``.
 
 Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encryption`` collection with this pipeline:
 
 .. code:: javascript
 
-   {"pipeline": [{"$match": "<findPayload>"}, {"$sort": { "_id: 1"}}]}
+   {"pipeline": [{"$match": "<aggPayload>"}, {"$sort": { "_id: 1"}}]}
 
 Assert that no documents are returned.
 
@@ -2933,7 +2935,7 @@ Use ``clientEncryption`` to try to encrypt the value 201 with the matching ``Ran
       contentionFactor: 0
    }
 
-Ensure 201 matches the type of the encrypted field. The error should be raised because -1 is less than the minimum.
+Ensure 201 matches the type of the encrypted field. The error should be raised because 201 is greater than the maximum value in ``RangeOpts``.
 
 Assert that an error was raised.
 
@@ -2951,7 +2953,7 @@ Use ``clientEncryption`` to try to encrypt the value -1 with the matching ``Rang
       contentionFactor: 0
    }
 
-Ensure -1 matches the type of the encrypted field. The error should be raised because -1 is less than the minimum.
+Ensure -1 matches the type of the encrypted field. The error should be raised because -1 is less than the minimum value in ``RangeOpts``.
 
 Assert that an error was raised.
 
