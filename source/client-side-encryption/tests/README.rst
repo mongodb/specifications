@@ -2678,9 +2678,11 @@ Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: Rang
 
 Store the result in ``insertPayload``.
 
-Use ``encryptedClient`` to insert the different documents with a variable ``i`` to store the ``_id`` value ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
+Create a variable ``i`` to assign ``_id`` values to the documents. 
 
-After inserting the documents, use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals the value of one of the documents inserted.
+Use ``encryptedClient`` to insert the document ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
+
+After inserting all the documents, use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals the value of the last document inserted.
 
 Case 2: can find encrypted range and return the maximum 
 ```````````````````````````````````````````````````````
@@ -2710,7 +2712,8 @@ Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryptio
 
 Assert these three documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` two documents (not three) will be returned, since there is not a maximum value to insert.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }`` are returned.
+
 
 Case 3: can find encrypted range and return the minimum 
 ```````````````````````````````````````````````````````
@@ -2741,7 +2744,7 @@ Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryptio
 
 Assert these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` one document (not two) will be returned, since there is not a minimum value to insert.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
 
 Case 4: can find encrypted range with an open range query
 `````````````````````````````````````````````````````````
@@ -2778,7 +2781,7 @@ Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryptio
 
 Assert that only this document ``{ "encrypted<Type>": 200 }`` is returned. 
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that the document ``{ "encrypted<Type>": 30 }`` is returned.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 30 }`` is returned.
 
 Case 5: can run an aggregation expression inside $expr 
 `````````````````````````````````````````````````````````````
@@ -2807,7 +2810,7 @@ Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryptio
 
 Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` one document (not two) will be returned, since no minimum is set.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
 
 Case 6: can aggregate encrypted range and return the maximum  
 `````````````````````````````````````````````````````````````
@@ -2846,7 +2849,7 @@ Assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>"
 
 If the encrypted field is ``encryptedDoublePrecision`` assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>": 199.9}`` are returned.
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` two documents (not three) will be returned, since no minimum is set.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 30 }`` is returned.
 
 Case 7: can aggregate encrypted range and return the minimum 
 `````````````````````````````````````````````````````````````
@@ -2881,7 +2884,7 @@ Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encry
 
 Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` only the document ``{ "encrypted<Type>": 6 }`` is returned.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
 
 Case 8: can aggregate encrypted range and return no documents
 `````````````````````````````````````````````````````````````
@@ -2930,6 +2933,8 @@ Use ``clientEncryption`` to try to encrypt the value 201 with the matching ``Ran
       contentionFactor: 0
    }
 
+Ensure 201 matches the type of the encrypted field. The error should be raised because -1 is less than the minimum.
+
 Assert that an error was raised.
 
 Case 10: encrypting a document less than the minimum errors
@@ -2945,6 +2950,8 @@ Use ``clientEncryption`` to try to encrypt the value -1 with the matching ``Rang
       algorithm: "RangePreview",
       contentionFactor: 0
    }
+
+Ensure -1 matches the type of the encrypted field. The error should be raised because -1 is less than the minimum.
 
 Assert that an error was raised.
 
@@ -3008,4 +3015,4 @@ Use ``clientEncryption`` to try to encrypt the value 6 with these ``EncryptOpts`
       precision: 2,
    }
 
-   Assert an error was raised.
+Assert an error was raised.
