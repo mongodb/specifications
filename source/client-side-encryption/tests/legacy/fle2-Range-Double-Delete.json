@@ -317,6 +317,24 @@
                       }
                     ]
                   }
+                },
+                "deleteTokens": {
+                  "default.default": {
+                    "encryptedDouble": {
+                      "e": {
+                        "$binary": {
+                          "base64": "65pz95EthqQpfoHS9nWvdCh05AV+OokP7GUaI+7j8+w=",
+                          "subType": "00"
+                        }
+                      },
+                      "o": {
+                        "$binary": {
+                          "base64": "noN+05JsuO1oDg59yypIGj45i+eFH6HOTXOPpeZ//Mk=",
+                          "subType": "00"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             },
