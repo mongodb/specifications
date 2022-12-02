@@ -319,9 +319,7 @@
                       }
                     }
                   },
-                  "limit": {
-                    "$numberLong": "1"
-                  }
+                  "limit": 1
                 }
               ],
               "encryptionInformation": {

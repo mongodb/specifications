@@ -310,9 +310,7 @@
                       }
                     }
                   },
-                  "limit": {
-                    "$numberDouble": "1"
-                  }
+                  "limit": 1
                 }
               ],
               "encryptionInformation": {
