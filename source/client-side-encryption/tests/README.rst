@@ -2630,7 +2630,7 @@ Use ``encryptedClient`` to insert the document ``{ "encrypted<Type>": <insertPay
 
 Assert that these 4 documents ``{ "encrypted<Type>": 6, _id: 0 }``, ``{ "encrypted<Type>": 30, _id: 1 }``, ``{ "encrypted<Type>": 200, _id: 2 }``, ``{ "encrypted<Type>": 0, _id: 4 }`` were successfully inserted in ``db.explicit_encryption``. 
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }``were successfully inserted in ``db.explicit_encryption``.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }`` were successfully inserted in ``db.explicit_encryption``.
 
 
 Test Setup: RangeOpts
