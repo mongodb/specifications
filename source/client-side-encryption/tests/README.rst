@@ -2692,6 +2692,7 @@ Store the result in ``insertPayload``.
 Encrypt with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
 .. code:: typescript
+   
    class EncryptOpts {
       keyId : <key1ID>
       algorithm: "RangePreview",
