@@ -1045,7 +1045,7 @@ ClientEncryption
       getKeyByAltName(keyAltName: String): Optional<Document>;
 
       // Encrypts a BsonValue with a given key and algorithm.
-      // If `opts.queryType` == "range", `value` is expected to be a BSON document
+      // If `opts.queryType` == "rangePreview", `value` is expected to be a BSON document
       // of one of the following forms:
       // 1. A Match Expression of this form:
       //   {$and: [{<field>: {$gt: <value1>}}, {<field>: {$lt: <value2> }}]}
@@ -1246,7 +1246,7 @@ EncryptOpts
       rangeOpts: Optional<RangeOpts>
    }
 
-   // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
+   // RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
    // min, max, sparsity, and range must match the values set in the encryptedFields of the destination collection.
    // For double and decimal128, min/max/precision must all be set, or all be unset.
    class RangeOpts {
@@ -1277,31 +1277,31 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
-- "Range"
+- "RangePreview"
 
-The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed" or "RangePreview" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
 
-   To insert or query with an "Indexed" or "Range" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
+   To insert or query with an "Indexed" or "RangePreview" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
    ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
 
 contentionFactor
 ^^^^^^^^^^^^^^^^
-contentionFactor only applies when algorithm is "Indexed" or "Range".
+contentionFactor only applies when algorithm is "Indexed" or "RangePreview".
 It is an error to set contentionFactor when algorithm is not "Indexed".
 
 queryType
 ^^^^^^^^^
 One of the strings:
 - "equality"
-- "range"
+- "rangePreview"
 
-queryType only applies when algorithm is "Indexed" or "Range".
-It is an error to set queryType when algorithm is not "Indexed" or "Range".
+queryType only applies when algorithm is "Indexed" or "RangePreview".
+It is an error to set queryType when algorithm is not "Indexed" or "RangePreview".
 
 rangeOpts
 ^^^^^^^^^
-rangeOpts only applies when queryType is "range".
-It is an error to set rangeOpts when queryType is not "range".
+rangeOpts only applies when queryType is "rangePreview".
+It is an error to set rangeOpts when queryType is not "rangePreview".
 
 User facing API: When Auto Encryption Fails
 ===========================================
