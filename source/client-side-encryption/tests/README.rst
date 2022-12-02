@@ -2608,6 +2608,8 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
       bypassQueryAnalysis: true
    }
 
+The remaining tasks require setting ``RangeOpts``. `Test Setup: RangeOpts`_ lists the values to use for ``RangeOpts`` for each of the supported data types. The values in ``RangeOpts`` should also match the values listed in ``encryptedFields`` for each support data type.  
+
 Use ``clientEncryption`` to encrypt these values separately: 6, 30, and the minimum and maximum set in ``RangeOpts`` (if the minimum and maximum are set). Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0. 
 
 Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
@@ -2630,9 +2632,9 @@ Assert that the documents were successfully inserted.
 
 Test Setup: RangeOpts
 `````````````````````
-Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
+This section lists the values to use for ``RangeOpts`` for each of the supported data types, since each data type requires a different ``RangeOpts``. 
 
-Each data type must use a different ``RangeOpts``. Use these ``RangeOpts`` for each of the supported types: 
+Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
 
 #. Double
 
