@@ -1246,6 +1246,7 @@ EncryptOpts
       rangeOpts: Optional<RangeOpts>
    }
 
+   // NOTE: The Range algorithm is experimental only. It is not intended for public use.
    // RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
    // min, max, sparsity, and range must match the values set in the encryptedFields of the destination collection.
    // For double and decimal128, min/max/precision must all be set, or all be unset.
@@ -1284,10 +1285,14 @@ The result of explicit encryption with the "Indexed" or "RangePreview" algorithm
    To insert or query with an "Indexed" or "RangePreview" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
    ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
 
+NOTE: The Range algorithm is experimental only. It is not intended for public use.
+
 contentionFactor
 ^^^^^^^^^^^^^^^^
 contentionFactor only applies when algorithm is "Indexed" or "RangePreview".
 It is an error to set contentionFactor when algorithm is not "Indexed".
+
+NOTE: The Range algorithm is experimental only. It is not intended for public use.
 
 queryType
 ^^^^^^^^^
@@ -1298,10 +1303,14 @@ One of the strings:
 queryType only applies when algorithm is "Indexed" or "RangePreview".
 It is an error to set queryType when algorithm is not "Indexed" or "RangePreview".
 
+NOTE: The Range algorithm is experimental only. It is not intended for public use.
+
 rangeOpts
 ^^^^^^^^^
 rangeOpts only applies when queryType is "rangePreview".
 It is an error to set rangeOpts when queryType is not "rangePreview".
+
+NOTE: The Range algorithm is experimental only. It is not intended for public use.
 
 User facing API: When Auto Encryption Fails
 ===========================================
