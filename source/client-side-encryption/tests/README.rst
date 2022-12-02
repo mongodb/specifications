@@ -2692,7 +2692,7 @@ Store the result in ``insertPayload``.
 Encrypt with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
 .. code:: typescript
-   
+
    class EncryptOpts {
       keyId : <key1ID>
       algorithm: "RangePreview",
@@ -2703,8 +2703,6 @@ Use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value
 
 Case 2: can find encrypted range and return the maximum 
 ```````````````````````````````````````````````````````
-This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
-
 Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
@@ -2734,8 +2732,6 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two d
 
 Case 3: can find encrypted range and return the minimum 
 ```````````````````````````````````````````````````````
-This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
-
 Use ``clientEncryption`` to encrypt this query: 
 
 
@@ -2765,8 +2761,6 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 4: can find encrypted range with an open range query
 `````````````````````````````````````````````````````````
-This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
-
 Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
@@ -2802,8 +2796,6 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 5: can run an aggregation expression inside $expr 
 `````````````````````````````````````````````````````````````
-This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
-
 Use ``clientEncryption`` to encrypt this query: 
 
 .. code:: javascript
@@ -2831,8 +2823,6 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 6: can aggregate encrypted range and return the maximum  
 `````````````````````````````````````````````````````````````
-This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
-
 Use ``clientEncryption`` to encrypt this query: 
 
 .. code:: javascript
@@ -2866,8 +2856,6 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 7: can aggregate encrypted range and return the minimum 
 `````````````````````````````````````````````````````````````
-This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
-
 Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
@@ -2901,8 +2889,6 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 8: can aggregate encrypted range and return no documents
 `````````````````````````````````````````````````````````````
-This test assumes that Case 1 has passed and the documents are in ``db.explicit_encryption``. 
-
 Use ``clientEncryption`` to encrypt this query:
 
 .. code:: javascript
