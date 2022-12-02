@@ -32,7 +32,7 @@
             "$numberLong": "0"
           },
           "sparsity": {
-            "$numberInt": "1"
+            "$numberLong": "1"
           }
         }
       }
@@ -212,7 +212,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           }
                         }
                       }
@@ -260,7 +260,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           }
                         }
                       }
@@ -309,7 +309,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           }
                         }
                       }

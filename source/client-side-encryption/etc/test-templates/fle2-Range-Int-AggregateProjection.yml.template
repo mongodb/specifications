@@ -1,0 +1,32 @@
+# Test correctness results.
+# Does not include command monitoring expectations or outcome assertions to make tests more readable.
+# Requires libmongocrypt 1.7.0.
+runOn:
+  - minServerVersion: "6.2.0"
+    # FLE 2 Encrypted collections are not supported on standalone.
+    topology: [ "replicaset", "sharded", "load-balanced" ]
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+data: []
+encrypted_fields: &encrypted_fields {{ yamlfile("encryptedFields-Range-Int.json") }}
+key_vault_data: [ {{ yamlfile("keys/key1-document.json") }} ]
+tests:
+  - description: "Aggregate with projection"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc0 { _id: 0, encryptedInt: { $numberInt: "0" } }
+      - name: insertOne
+        arguments:
+          document: &doc1 { _id: 1, encryptedInt: { $numberInt: "1" } }
+      - name: aggregate
+        arguments:
+          pipeline:
+          - { "$project" : { "encryptedInt" : 1, "encryptedIntMatches" : { "$and" : [ { "$gt" : [ "$encryptedInt", { $numberInt: "0" } ] }, { "$lte" : [ "$encryptedInt", { $numberInt: "1" } ] } ] } } }
+        result:
+        - { _id: 0, encryptedInt: { $numberInt: "0" }, encryptedIntMatches: false }
+        - { _id: 1, encryptedInt: { $numberInt: "1" }, encryptedIntMatches: true }

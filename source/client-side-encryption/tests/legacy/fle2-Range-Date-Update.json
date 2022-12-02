@@ -32,7 +32,7 @@
             "$numberLong": "0"
           },
           "sparsity": {
-            "$numberInt": "1"
+            "$numberLong": "1"
           },
           "min": {
             "$date": {
@@ -234,7 +234,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           },
                           "min": {
                             "$date": {
@@ -292,7 +292,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           },
                           "min": {
                             "$date": {
@@ -366,7 +366,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           },
                           "min": {
                             "$date": {

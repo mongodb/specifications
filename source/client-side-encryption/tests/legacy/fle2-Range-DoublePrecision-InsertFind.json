@@ -32,7 +32,7 @@
             "$numberLong": "0"
           },
           "sparsity": {
-            "$numberInt": "1"
+            "$numberLong": "1"
           },
           "min": {
             "$numberDouble": "0.0"
@@ -221,7 +221,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           },
                           "min": {
                             "$numberDouble": "0.0"
@@ -278,7 +278,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           },
                           "min": {
                             "$numberDouble": "0.0"
@@ -336,7 +336,7 @@
                             "$numberLong": "0"
                           },
                           "sparsity": {
-                            "$numberInt": "1"
+                            "$numberLong": "1"
                           },
                           "min": {
                             "$numberDouble": "0.0"
