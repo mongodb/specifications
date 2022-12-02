@@ -1307,8 +1307,8 @@ NOTE: The Range algorithm is experimental only. It is not intended for public us
 
 rangeOpts
 ^^^^^^^^^
-rangeOpts only applies when queryType is "rangePreview".
-It is an error to set rangeOpts when queryType is not "rangePreview".
+rangeOpts only applies when algorithm is "rangePreview".
+It is an error to set rangeOpts when algorithm is not "rangePreview".
 
 NOTE: The Range algorithm is experimental only. It is not intended for public use.
 

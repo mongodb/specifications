@@ -2607,7 +2607,27 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
       kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
       bypassQueryAnalysis: true
    }
- 
+
+Use ``clientEncryption`` to encrypt these values separately: 6, 30, and the minimum and maximum set in ``RangeOpts`` (if the minimum and maximum are set). Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0. 
+
+Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      contentionFactor: 0
+   }
+
+Store the result in ``insertPayload``.
+
+Create a variable ``i`` to assign ``_id`` values to the documents.
+
+Use ``encryptedClient`` to insert the document ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
+
+Assert that the documents were successfully inserted.
+
 Test Setup: RangeOpts
 `````````````````````
 Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
@@ -2628,7 +2648,7 @@ Each data type must use a different ``RangeOpts``. Use these ``RangeOpts`` for e
    
       class RangeOpts {
          min: 0,
-         max: 199.9,
+         max: 200.0,
          sparsity: 1,
          precision: 2
       }
@@ -2663,28 +2683,22 @@ Each data type must use a different ``RangeOpts``. Use these ``RangeOpts`` for e
          sparsity: 1
       }
 
-Case 1: can insert encrypted range and decrypt 
+Case 1: can decrypt a payload
 ```````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt these values separately: 6, 30, and the minimum and maximum set in ``RangeOpts`` (if the minimum and maximum are set). Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0. 
-
-Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
-
-.. code:: typescript
-
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      queryType: "rangePreview",
-      contentionFactor: 0
-   }
+Use ``clientEncryption`` to encrypt the value 6. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
 
 Store the result in ``insertPayload``.
 
-Create a variable ``i`` to assign ``_id`` values to the documents. 
+Encrypt with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
-Use ``encryptedClient`` to insert the document ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
+.. code:: typescript
+   class EncryptOpts {
+      keyId : <key1ID>
+      algorithm: "RangePreview",
+      contentionFactor: 0
+   }
 
-After inserting all the documents, use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals the value of the last document inserted.
+Use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals 6.
 
 Case 2: can find encrypted range and return the maximum 
 ```````````````````````````````````````````````````````
@@ -2826,8 +2840,6 @@ Use ``clientEncryption`` to encrypt this query:
       "{ 'encrypted<Type>': { '$gte': { '$<type>': '30' } } },"
       "{ 'encrypted<Type>': { '$lte': { '$<type>': '200' } } } ] }
 
-If the encrypted field is ``encryptedDoublePrecision`` use ``199.99`` instead of ``200.0``.
-
 Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
 .. code:: typescript
@@ -2848,8 +2860,6 @@ Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encry
    {"pipeline": [{"$match": "<aggPayload>"}, {"$sort": { "_id: 1"}}]}
 
 Assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
-
-If the encrypted field is ``encryptedDoublePrecision`` assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>": 199.9}`` are returned.
 
 If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 30 }`` is returned.
 
