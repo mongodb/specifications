@@ -342,9 +342,7 @@
                 }
               ],
               "encryptionInformation": {
-                "type": {
-                  "$numberLong": "1"
-                },
+                "type": 1,
                 "schema": {
                   "default.default": {
                     "escCollection": "enxcol_.default.esc",

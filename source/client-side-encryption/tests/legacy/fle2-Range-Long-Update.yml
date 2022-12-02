@@ -106,9 +106,7 @@ tests:
                     }
                 ],
                 "encryptionInformation": {
-                    "type": {
-                        "$numberLong": "1"
-                    },
+                    "type": 1,
                     "schema": {
                         "default.default": *encrypted_fields
                     },
