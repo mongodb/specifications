@@ -501,12 +501,12 @@ The above rules are implemented in the following pseudo-code:
         throw previousError;
       }
 
-      /* If the server selected for retrying is too old, throw the original error.
+      /* If the server selected for retrying is too old, throw the previous error.
        * The caller can then infer that an attempt was made and failed. This case
        * is very rare, and likely means that the cluster is in the midst of a
        * downgrade. */
       if ( ! isRetryableWritesSupported(server)) {
-        throw currentError;
+        throw previousError;
       }
 
       /* CSOT is enabled and the operation has timed out. */
