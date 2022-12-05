@@ -4,8 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-11-10
-:Version: 1.11.0
+:Last Modified: 2022-11-28
+:Version: 1.11.1
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -718,8 +718,10 @@ This includes options equivalent to the following URI options:
 - `tlsInsecure`
 - `tlsAllowInvalidCertificates`
 - `tlsAllowInvalidHostnames`
-- `tlsDisableOCSPEndpointCheck`
 - `tlsDisableCertificateRevocationCheck`
+
+Drivers MUST NOT raise an error if `tlsDisableOCSPEndpointCheck` is set.
+Setting `tlsDisableOCSPEndpointCheck` may prevent operation errors when OCSP responders are unresponsive.
 
 See the OCSP specification for a description of the default values of
 `tlsDisableOCSPEndpointCheck
@@ -2602,6 +2604,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2022-11-28: Permit `tlsDisableOCSPEndpointCheck` in KMS TLS options.
 :2022-11-10: Defined a ``CreateEncryptedCollection`` helper for creating new
              encryption keys automatically for the queryable encrypted fields in
              a new collection.
