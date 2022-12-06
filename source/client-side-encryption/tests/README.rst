@@ -2689,7 +2689,7 @@ Each test listed in the cases below must pass for all supported data types unles
       }
 
 Case 1: can decrypt a payload
-```````````````````````````````````````````````
+`````````````````````````````
 Use ``clientEncryption`` to encrypt the value 6. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
 
 Store the result in ``insertPayload``.
