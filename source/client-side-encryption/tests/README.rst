@@ -2760,7 +2760,7 @@ Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
 
-Assert these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
+Assert these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 0 }`` are returned.
 
 If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
 
@@ -2822,7 +2822,7 @@ Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": {'$expr' :  { <findPayload> } }`` and sort the results by ``_id``.
 
-Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
+Assert that these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 0 }`` are returned.
 
 If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
 
