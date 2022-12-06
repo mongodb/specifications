@@ -2844,25 +2844,7 @@ Ensure 201 matches the type of the encrypted field. The error should be raised b
 
 Assert that an error was raised.
 
-Case 7: encrypting a document less than the minimum errors
-``````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
-
-Use ``clientEncryption.encrypt()`` to try to encrypt the value -1 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
-
-.. code:: typescript
-
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      contentionFactor: 0
-   }
-
-Ensure -1 matches the type of the encrypted field. The error should be raised because -1 is less than the minimum value in ``RangeOpts``.
-
-Assert that an error was raised.
-
-Case 8: encrypting a document of a different type errors 
+Case 7: encrypting a document of a different type errors 
 ````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
@@ -2901,7 +2883,7 @@ For all the tests below use these ``EncryptOpts``:
    Assert an error was raised.
 
 
-Case 9: setting precision errors if the type is not a double
+Case 8: setting precision errors if the type is not a double
 ````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleWithPrecision`` or ``encryptedDoubleNoPrecision``.
 
