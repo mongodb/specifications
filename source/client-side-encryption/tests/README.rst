@@ -2610,7 +2610,7 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
 
 The remaining tasks require setting ``RangeOpts``. `Test Setup: RangeOpts`_ lists the values to use for ``RangeOpts`` for each of the supported data types. The values in ``RangeOpts`` should also match the values listed in ``encryptedFields`` for each support data type.  
 
-Use ``clientEncryption`` to encrypt these values in separate documents: 6, 30, and the minimum and maximum set in ``RangeOpts`` (if the minimum and maximum are set). Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0. 
+Use ``clientEncryption`` to encrypt these values in separate documents: 0, 6, 30, and 200. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0. 
 
 Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
@@ -2628,9 +2628,7 @@ Create a variable ``i`` to assign ``_id`` values to the documents.
 
 Use ``encryptedClient`` to insert the document ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
 
-Assert that these 4 documents ``{ "encrypted<Type>": 6, _id: 0 }``, ``{ "encrypted<Type>": 30, _id: 1 }``, ``{ "encrypted<Type>": 200, _id: 2 }``, ``{ "encrypted<Type>": 0, _id: 3 }`` were successfully inserted in ``db.explicit_encryption``. 
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two documents ``{ "encrypted<Type>": 6, _id: 0 }, { "encrypted<Type>": 30, _id: 1 }`` were successfully inserted in ``db.explicit_encryption``.
+Assert that these 4 documents ``{ "encrypted<Type>": 0, _id: 0 }``, ``{ "encrypted<Type>": 6, _id: 1 }``, ``{ "encrypted<Type>": 30, _id: 2 }``, ``{ "encrypted<Type>": 200, _id: 3 }`` were successfully inserted in ``db.explicit_encryption``. 
 
 
 Test Setup: RangeOpts
@@ -2732,8 +2730,6 @@ Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryptio
 
 Assert these three documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }`` are returned.
-
 
 Case 3: can find encrypted range and return the minimum 
 ```````````````````````````````````````````````````````
@@ -2760,9 +2756,7 @@ Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
 
-Assert these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 0 }`` are returned.
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
+Assert these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
 Case 4: can find encrypted range with an open range query
 `````````````````````````````````````````````````````````
@@ -2772,13 +2766,6 @@ Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
    //convert 150 to match the type of the encrypted field.
    {"$and": [{"encrypted<Type>": {"$gt": 150}}]}
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` encrypt this query instead:
-
-.. code:: javascript
-
-   //convert 25 to match the type of the encrypted field.
-   {"$and": [{"encrypted<Type>": {"$gt": 25}}]}
 
 Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
@@ -2796,8 +2783,6 @@ Store the result in ``findPayload``.
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
 
 Assert that only this document ``{ "encrypted<Type>": 200 }`` is returned. 
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 30 }`` is returned.
 
 Case 5: can run an aggregation expression inside $expr 
 ``````````````````````````````````````````````````````
@@ -2822,9 +2807,7 @@ Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{'$expr' :  { <findPayload> }`` and sort the results by ``_id``.
 
-Assert that these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 0 }`` are returned.
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
+Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
 Case 6: encrypting a document greater than the maximum errors
 `````````````````````````````````````````````````````````````
