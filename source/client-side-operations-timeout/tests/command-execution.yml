@@ -40,9 +40,8 @@ tests:
               appName: &appName reduceMaxTimeMSTest
               blockConnection: true
               blockTimeMS: 20
-      # Create a client with the app name specified in the fail point. Also create database and collection entities
-      # derived from the new client. There are two collection entities: one with no timeoutMS, which is used to run
-      # an initial operation, and one with a timeoutMS higher than the fail point's blockTimeMS value.
+      # Create a client with the app name specified in the fail point and timeoutMS higher than blockTimeMS.
+      # Also create database and collection entities derived from the new client.
       - name: createEntities
         object: testRunner
         arguments:
@@ -53,6 +52,7 @@ tests:
                 uriOptions:
                   appName: *appName
                   w: 1  # Override server's w:majority default to speed up the test.
+                  timeoutMS: &timeoutMS 500
                 observeEvents:
                   - commandStartedEvent
             - database:
@@ -60,20 +60,9 @@ tests:
                 client: *client
                 databaseName: *databaseName
             - collection:
-                id: &regularCollection regularCollection
-                database: *database
-                collectionName: *regularCollectionName
-            - collection:
                 id: &timeoutCollection timeoutCollection
                 database: *database
                 collectionName: *timeoutCollectionName
-                collectionOptions:
-                  timeoutMS: &timeoutMS 60
-      # Do an operation with regularCollection to ensure the servers are discovered.
-      - name: insertOne
-        object: *regularCollection
-        arguments:
-          document: { _id : 1 }
       # Do an operation with timeoutCollection so the event will include a maxTimeMS field.
       - name: insertOne
         object: *timeoutCollection
@@ -82,12 +71,6 @@ tests:
     expectEvents:
       - client: *client
         events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *regularCollectionName
-                maxTimeMS: { $$exists: false }
           - commandStartedEvent:
               commandName: insert
               databaseName: *databaseName
@@ -123,6 +106,7 @@ tests:
                 uriOptions:
                   appName: *appName
                   w: 1  # Override server's w:majority default to speed up the test.
+                  timeoutMS: 10
                 observeEvents:
                   - commandStartedEvent
             - database:
@@ -130,20 +114,30 @@ tests:
                 client: *client
                 databaseName: *databaseName
             - collection:
-                id: &regularCollection regularCollection
-                database: *database
-                collectionName: *regularCollectionName
-            - collection:
                 id: &timeoutCollection timeoutCollection
                 database: *database
                 collectionName: *timeoutCollectionName
-                collectionOptions:
-                  timeoutMS: 2
-      # Do an operation with regularCollection to ensure the servers are discovered.
+      # Do an operation with timeoutCollection which will error.
       - name: insertOne
-        object: *regularCollection
+        object: *timeoutCollection
         arguments:
-          document: { _id : 1 }
+          document: { _id: 2 }
+        expectError:
+          isTimeoutError: true
+      # Do an operation with timeoutCollection which will error.
+      - name: insertOne
+        object: *timeoutCollection
+        arguments:
+          document: { _id: 2 }
+        expectError:
+          isTimeoutError: true
+      # Do an operation with timeoutCollection which will error.
+      - name: insertOne
+        object: *timeoutCollection
+        arguments:
+          document: { _id: 2 }
+        expectError:
+          isTimeoutError: true
       # Do an operation with timeoutCollection which will error.
       - name: insertOne
         object: *timeoutCollection
@@ -152,13 +146,6 @@ tests:
         expectError:
           isTimeoutError: true
     expectEvents:
-      # There should only be one event, which corresponds to the first insertOne call. For the second insertOne call,
-      # drivers should fail client-side.
+      # There should be no events because the driver should fail client-side.
       - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *regularCollectionName
-                maxTimeMS: { $$exists: false }
+        events: []
