@@ -1045,15 +1045,18 @@ ClientEncryption
       getKeyByAltName(keyAltName: String): Optional<Document>;
 
       // Encrypts a BsonValue with a given key and algorithm.
-      // If `opts.queryType` == "rangePreview", `value` is expected to be a BSON document
-      // of one of the following forms:
+      // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
+      encrypt(value: BsonValue, opts: EncryptOpts): Binary;
+
+      // encryptExpression encrypts a Match Expression or Aggregate Expression to query a range index.
+      // `expr` is expected to be a BSON document of one of the following forms:
       // 1. A Match Expression of this form:
       //   {$and: [{<field>: {$gt: <value1>}}, {<field>: {$lt: <value2> }}]}
       // 2. An Aggregate Expression of this form:
       //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
       // $gt may also be $gte. $lt may also be $lte.
-      // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
-      encrypt(value: BsonValue, opts: EncryptOpts): Binary;
+      // Only supported for queryType "rangePreview"
+      encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
       // Decrypts an encrypted value (BSON binary of subtype 6).
       // Returns the original BSON value.
@@ -2565,6 +2568,47 @@ Using an enum to represent QueryType was considered and rejected in
 A string value helps with future compatibility. When new values of QueryType
 and IndexType are added in libmongocrypt, users would only need to upgrade
 libmongocrypt, and not the driver, to use the new values.
+
+Why is there an encryptExpression helper?
+-----------------------------------------
+
+A rejected alternative API is to encrypt the lower and upper bound payloads separately.
+The lower and upper bound payloads must have a unique matching UUID. The lower and upper bound payloads are unique.
+This API requires handling the UUID and distinguishing the upper and lower bounds. Here are examples showing possible errors:
+
+.. code::
+
+   uuid = UUID()
+   lOpts = EncryptOpts(
+      keyId=keyId, algorithm="range", queryType="range", uuid=uuid, bound="lower")
+   lower = clientEncryption.encrypt (value=30, lOpts)
+   uOpts = EncryptOpts(
+      keyId=keyId, algorithm="range", queryType="range", uuid=uuid, bound="upper")
+   upper = clientEncryption.encrypt (value=40, uOpts)
+
+   # Both bounds match UUID ... OK
+   db.coll.find_one ({"age": {"$gt": lower, "$lt": upper }})
+
+   # Lower bound is used as an upper bound ... ERROR!
+   db.coll.find_one ({"age": {"$gt": upper }})
+
+   lower2 = clientEncryption.encrypt (value=35, lOpts)
+
+   # UUID is re-used ... ERROR!
+   db.coll.find_one ({ "$or": [
+      {"age": {"$gt": lower, "$lt": upper }},
+      {"age": {"$gt": lower2 }}
+   ]})
+
+   # UUID does not match between lower and upper bound ... ERROR!
+   db.coll.find_one ({ "age": {"$gt": lower2, "$lt": upper }})
+
+Requiring an Aggregate Expression or Match Expression hides the UUID and handles both bounds.
+
+Returning an Aggregate Expression or Match Expression as a BSON document motivated adding a new ``ClientEncryption.encryptExpression()`` helper. ``ClientEncryption.encrypt()`` cannot be reused since it returns a Binary.
+
+To limit scope, only $and is supported. Support for other operators ($eq, $in) can be added in the future if desired.
+
 
 Future work
 ===========
