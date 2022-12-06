@@ -2826,104 +2826,7 @@ Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>":
 
 If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
 
-Case 6: can aggregate encrypted range and return the maximum  
-`````````````````````````````````````````````````````````````
-Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
-
-.. code:: javascript
-
-   {'$and': ["
-      "{ 'encrypted<Type>': { '$gte': { '$<type>': '30' } } },"
-      "{ 'encrypted<Type>': { '$lte': { '$<type>': '200' } } } ] }
-
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
-
-.. code:: typescript
-
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      queryType: "rangePreview",
-      contentionFactor: 0
-   }
-
-Store the result in ``aggPayload``.
-
-Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encryption`` collection with this pipeline: 
-
-.. code:: javascript
-
-   {"pipeline": [{"$match": "<aggPayload>"}, {"$sort": { "_id: 1"}}]}
-
-Assert that these two documents ``{ "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 30 }`` is returned.
-
-Case 7: can aggregate encrypted range and return the minimum 
-`````````````````````````````````````````````````````````````
-Use ``clientEncryption.encryptExpression()`` to encrypt this query:
-
-.. code:: javascript
-
-     {'$and': ["
-      "{ 'encrypted<Type>': { '$gte': { '$<type>': '0' } } },"
-      "{ 'encrypted<Type>': { '$lte': { '$<type>': '6' } } } ] }
-
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
-
-.. code:: typescript
-
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      queryType: "rangePreview",
-      contentionFactor: 0
-   }
-
-Store the result in ``aggPayload``.
-
-Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encryption`` collection with this pipeline:
-
-.. code:: javascript
-
-   {"pipeline": [{"$match": "<aggPayload>"}, {"$sort": { "_id: 1"}}]}
-
-Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
-
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 6 }`` is returned.
-
-Case 8: can aggregate encrypted range and return no documents
-`````````````````````````````````````````````````````````````
-Use ``clientEncryption.encryptExpression()`` to encrypt this query:
-
-.. code:: javascript
-
-        {'$and': ["
-      "{ 'encrypted<Type>': { '$gt': { '$<type>': '0' } } },"
-      "{ 'encrypted<Type>': { '$lt': { '$<type>': '6' } } } ] }
-
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
-
-.. code:: typescript
-
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      queryType: "rangePreview",
-      contentionFactor: 0
-   }
-
-Store the result in ``aggPayload``.
-
-Use ``encryptedClient`` to run an aggregation command on the ``db.explicit_encryption`` collection with this pipeline:
-
-.. code:: javascript
-
-   {"pipeline": [{"$match": "<aggPayload>"}, {"$sort": { "_id: 1"}}]}
-
-Assert that no documents are returned.
-
-Case 9: encrypting a document greater than the maximum errors
+Case 6: encrypting a document greater than the maximum errors
 `````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
@@ -2941,8 +2844,8 @@ Ensure 201 matches the type of the encrypted field. The error should be raised b
 
 Assert that an error was raised.
 
-Case 10: encrypting a document less than the minimum errors
-```````````````````````````````````````````````````````````
+Case 7: encrypting a document less than the minimum errors
+``````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
 Use ``clientEncryption.encrypt()`` to try to encrypt the value -1 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
@@ -2959,8 +2862,8 @@ Ensure -1 matches the type of the encrypted field. The error should be raised be
 
 Assert that an error was raised.
 
-Case 11: encrypting a document of a different type errors 
-`````````````````````````````````````````````````````````
+Case 8: encrypting a document of a different type errors 
+````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
 For all the tests below use these ``EncryptOpts``:
@@ -2998,8 +2901,8 @@ For all the tests below use these ``EncryptOpts``:
    Assert an error was raised.
 
 
-Case 12: setting precision errors if the type is not a double
-``````````````````````````````````````````````````````````````
+Case 9: setting precision errors if the type is not a double
+````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleWithPrecision`` or ``encryptedDoubleNoPrecision``.
 
 Use ``clientEncryption.encrypt()`` to try to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
