@@ -2710,8 +2710,8 @@ Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
-   //convert 5 and 200 to match the type of the encrypted field.
-   {"$and": [{"encrypted<Type>": {"$gt": 5}}, {"encrypted<Type>": {"$lte": 200}}]}
+   //convert 6 and 200 to match the type of the encrypted field.
+   {"$and": [{"encrypted<Type>": {"$gte": 6}}, {"encrypted<Type>": {"$lte": 200}}]}
 
 Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
