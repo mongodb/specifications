@@ -2690,7 +2690,7 @@ Each test listed in the cases below must pass for all supported data types unles
 
 Case 1: can decrypt a payload
 `````````````````````````````
-Use ``clientEncryption`` to encrypt the value 6. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
+Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
 
 Store the result in ``insertPayload``.
 
@@ -2708,7 +2708,7 @@ Use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value
 
 Case 2: can find encrypted range and return the maximum 
 ```````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query:
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
@@ -2737,7 +2737,7 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two d
 
 Case 3: can find encrypted range and return the minimum 
 ```````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query: 
+Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
 
 
 .. code:: javascript
@@ -2766,7 +2766,7 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 4: can find encrypted range with an open range query
 `````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query:
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
@@ -2801,7 +2801,7 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 5: can run an aggregation expression inside $expr 
 `````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query: 
+Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
 
 .. code:: javascript
 
@@ -2828,7 +2828,7 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 6: can aggregate encrypted range and return the maximum  
 `````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query: 
+Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
 
 .. code:: javascript
 
@@ -2861,7 +2861,7 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 7: can aggregate encrypted range and return the minimum 
 `````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query:
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
@@ -2894,7 +2894,7 @@ If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this d
 
 Case 8: can aggregate encrypted range and return no documents
 `````````````````````````````````````````````````````````````
-Use ``clientEncryption`` to encrypt this query:
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
@@ -2927,7 +2927,7 @@ Case 9: encrypting a document greater than the maximum errors
 `````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
-Use ``clientEncryption`` to try to encrypt the value 201 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
+Use ``clientEncryption.encrypt()`` to try to encrypt the value 201 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
 .. code:: typescript
 
@@ -2945,7 +2945,7 @@ Case 10: encrypting a document less than the minimum errors
 ```````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
 
-Use ``clientEncryption`` to try to encrypt the value -1 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
+Use ``clientEncryption.encrypt()`` to try to encrypt the value -1 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
 .. code:: typescript
 
@@ -2975,25 +2975,25 @@ For all the tests below use these ``EncryptOpts``:
 
 #. Double (with precision)
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt ``{$numberLong : 100 }``.
+   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt ``{$numberLong : 100 }``.
    
    Assert an error was raised.
 
 #. Date 
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
+   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
    
    Assert an error was raised.
 
 #. Integer 
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
+   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
    
    Assert an error was raised.
 
 #. Long
 
-   Use ``clientEncryption`` and the ``EncryptOpts`` above to encrypt an ``{$numberInt : 3 }``.
+   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt an ``{$numberInt : 3 }``.
    
    Assert an error was raised.
 
@@ -3002,7 +3002,7 @@ Case 12: setting precision errors if the type is not a double
 ``````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleWithPrecision`` or ``encryptedDoubleNoPrecision``.
 
-Use ``clientEncryption`` to try to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
+Use ``clientEncryption.encrypt()`` to try to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
 
 .. code:: typescript
 
