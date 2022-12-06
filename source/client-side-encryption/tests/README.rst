@@ -2800,7 +2800,7 @@ Assert that only this document ``{ "encrypted<Type>": 200 }`` is returned.
 If the encrypted field is ``encryptedDoubleNoPrecision`` assert that only this document ``{ "encrypted<Type>": 30 }`` is returned.
 
 Case 5: can run an aggregation expression inside $expr 
-`````````````````````````````````````````````````````````````
+``````````````````````````````````````````````````````
 Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
 
 .. code:: javascript
