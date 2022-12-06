@@ -2805,7 +2805,7 @@ Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
-   {'$and': [ { '$lt': [ '$encrypted<Type>', 10 ] } ] } }
+   {'$and': [ { '$lt': [ '$encrypted<Type>', 25 ] } ] } }
 
 Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
 
