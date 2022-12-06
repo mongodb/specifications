@@ -2628,9 +2628,9 @@ Create a variable ``i`` to assign ``_id`` values to the documents.
 
 Use ``encryptedClient`` to insert the document ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
 
-Assert that these 4 documents ``{ "encrypted<Type>": 6, _id: 0 }``, ``{ "encrypted<Type>": 30, _id: 1 }``, ``{ "encrypted<Type>": 200, _id: 2 }``, ``{ "encrypted<Type>": 0, _id: 4 }`` were successfully inserted in ``db.explicit_encryption``. 
+Assert that these 4 documents ``{ "encrypted<Type>": 6, _id: 0 }``, ``{ "encrypted<Type>": 30, _id: 1 }``, ``{ "encrypted<Type>": 200, _id: 2 }``, ``{ "encrypted<Type>": 0, _id: 3 }`` were successfully inserted in ``db.explicit_encryption``. 
 
-If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }`` were successfully inserted in ``db.explicit_encryption``.
+If the encrypted field is ``encryptedDoubleNoPrecision`` assert that these two documents ``{ "encrypted<Type>": 6, _id: 0 }, { "encrypted<Type>": 30, _id: 1 }`` were successfully inserted in ``db.explicit_encryption``.
 
 
 Test Setup: RangeOpts
