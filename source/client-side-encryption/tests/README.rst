@@ -2858,29 +2858,9 @@ For all the tests below use these ``EncryptOpts``:
       contentionFactor: 0
    }
 
-#. Double (with precision)
-
-   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt ``{$numberLong : 100 }``.
-   
-   Assert an error was raised.
-
-#. Date 
-
-   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
-   
-   Assert an error was raised.
-
-#. Integer 
-
-   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt an ``{$numberDouble : 4.44 }``.
-   
-   Assert an error was raised.
-
-#. Long
-
-   Use ``clientEncryption.encrypt()`` and the ``EncryptOpts`` above to encrypt an ``{$numberInt : 3 }``.
-   
-   Assert an error was raised.
+If the encrypted field is ``encryptedInt`` insert ``{ "encryptedInt": { "$numberDouble": "6" } }``.
+Otherwise, insert ``{ "encrypted<Type>": { "$numberInt": "6" }``.
+Assert an error was raised.
 
 
 Case 8: setting precision errors if the type is not a double
