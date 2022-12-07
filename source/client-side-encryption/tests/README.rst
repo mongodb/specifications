@@ -2608,9 +2608,9 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
       bypassQueryAnalysis: true
    }
 
-The remaining tasks require setting ``RangeOpts``. `Test Setup: RangeOpts`_ lists the values to use for ``RangeOpts`` for each of the supported data types. The values in ``RangeOpts`` should also match the values listed in ``encryptedFields`` for each support data type.  
+The remaining tasks require setting ``RangeOpts``. `Test Setup: RangeOpts`_ lists the values to use for ``RangeOpts`` for each of the supported data types.
 
-Use ``clientEncryption`` to encrypt these values in separate documents: 0, 6, 30, and 200. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0. 
+Use ``clientEncryption`` to encrypt these values: 0, 6, 30, and 200. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
 
 Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
@@ -2622,13 +2622,12 @@ Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: Rang
       contentionFactor: 0
    }
 
-Store each of the encrypted results in a separate ``insertPayload``. 
+Use ``encryptedClient`` to insert these documents into ``db.explicit_encryption``:
 
-Create a variable ``i`` to assign ``_id`` values to the documents.
-
-Use ``encryptedClient`` to insert the document ``{ "encrypted<Type>": <insertPayload>, _id: i }`` into ``db.explicit_encryption``. For example, for ``date`` insert the document ``{ "encryptedDate": <insertPayload>, _id: i }``.
-
-Assert that these 4 documents ``{ "encrypted<Type>": 0, _id: 0 }``, ``{ "encrypted<Type>": 6, _id: 1 }``, ``{ "encrypted<Type>": 30, _id: 2 }``, ``{ "encrypted<Type>": 200, _id: 3 }`` were successfully inserted in ``db.explicit_encryption``. 
+- ``{ "encrypted<Type>": <encrypted 0>, _id: 0 }``
+- ``{ "encrypted<Type>": <encrypted 6>, _id: 1 }``
+- ``{ "encrypted<Type>": <encrypted 30>, _id: 2 }``
+- ``{ "encrypted<Type>": <encrypted 200>, _id: 3 }``
 
 
 Test Setup: RangeOpts
