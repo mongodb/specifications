@@ -1058,7 +1058,7 @@ ClientEncryption
       //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
       // $gt may also be $gte. $lt may also be $lte.
       // Only supported for queryType "rangePreview"
-      // NOTE: The Range algorithm is experimental only. It is not intended for public use. The API is subject to breaking changes.
+      // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
       encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
       // Decrypts an encrypted value (BSON binary of subtype 6).
@@ -1252,7 +1252,7 @@ EncryptOpts
       rangeOpts: Optional<RangeOpts>
    }
 
-   // NOTE: The Range algorithm is experimental only. It is not intended for public use. The API is subject to breaking changes.
+   // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
    // RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
    // min, max, sparsity, and range must match the values set in the encryptedFields of the destination collection.
    // For double and decimal128, min/max/precision must all be set, or all be unset.
@@ -1291,14 +1291,14 @@ The result of explicit encryption with the "Indexed" or "RangePreview" algorithm
    To insert or query with an "Indexed" or "RangePreview" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
    ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. The API is subject to breaking changes.
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 contentionFactor
 ^^^^^^^^^^^^^^^^
 contentionFactor only applies when algorithm is "Indexed" or "RangePreview".
 It is an error to set contentionFactor when algorithm is not "Indexed".
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. The API is subject to breaking changes.
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 queryType
 ^^^^^^^^^
@@ -1309,14 +1309,14 @@ One of the strings:
 queryType only applies when algorithm is "Indexed" or "RangePreview".
 It is an error to set queryType when algorithm is not "Indexed" or "RangePreview".
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. The API is subject to breaking changes.
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 rangeOpts
 ^^^^^^^^^
 rangeOpts only applies when algorithm is "rangePreview".
 It is an error to set rangeOpts when algorithm is not "rangePreview".
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. The API is subject to breaking changes.
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 User facing API: When Auto Encryption Fails
 ===========================================
