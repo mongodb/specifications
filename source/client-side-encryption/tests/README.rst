@@ -1001,7 +1001,7 @@ The following tests that loading crypt_shared_ bypasses spawning mongocryptd.
         "mongocryptdURI": "mongodb://localhost:27021/db?serverSelectionTimeoutMS=1000",
         "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"],
         "cryptSharedLibPath": "<path to shared library>",
-        "cryptSharedRequired": true
+        "cryptSharedLibRequired": true
       }
 
    Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
@@ -1644,6 +1644,29 @@ Call `client_encryption_invalid_hostname.createDataKey()` with "kmip" as the pro
 the same masterKey.
 
 Expect an error indicating TLS handshake failed due to an invalid hostname.
+
+Case 5: `tlsDisableOCSPEndpointCheck` is permitted
+``````````````````````````````````````````````````
+
+This test does not apply if the driver does not support the the option ``tlsDisableOCSPEndpointCheck``.
+
+Create a ``ClientEncryption`` object with the following KMS providers:
+
+   .. code:: javascript
+
+      {
+            "aws": {
+               "accessKeyId": "foo",
+               "secretAccessKey": "bar"
+            }
+      }
+
+   Add TLS options for the ``aws`` with the following options:
+
+   - ``tlsDisableOCSPEndpointCheck`` (or equivalent) set to ``true``.
+
+Expect no error on construction.
+
 
 12. Explicit Encryption
 ~~~~~~~~~~~~~~~~~~~~~~~

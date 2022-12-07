@@ -718,8 +718,10 @@ This includes options equivalent to the following URI options:
 - `tlsInsecure`
 - `tlsAllowInvalidCertificates`
 - `tlsAllowInvalidHostnames`
-- `tlsDisableOCSPEndpointCheck`
 - `tlsDisableCertificateRevocationCheck`
+
+Drivers MUST NOT raise an error if `tlsDisableOCSPEndpointCheck` is set.
+Setting `tlsDisableOCSPEndpointCheck` may prevent operation errors when OCSP responders are unresponsive.
 
 See the OCSP specification for a description of the default values of
 `tlsDisableOCSPEndpointCheck
@@ -811,13 +813,13 @@ load. Refer:
 - `Enabling crypt_shared`_
 
 
-``extraOptions.cryptSharedRequired``
+``extraOptions.cryptSharedLibRequired``
 ````````````````````````````````````
 
 :type: :ts:`boolean`
 :default: |false|
 
-.. |opt-crypt_shared-required| replace:: `extraOptions.cryptSharedRequired`_
+.. |opt-crypt_shared-required| replace:: `extraOptions.cryptSharedLibRequired`_
 
 If |true|, the driver MUST refuse to continue unless crypt_shared_ was loaded
 successfully.
@@ -2686,6 +2688,8 @@ Changelog
 =========
 
 :2022-11-30: Add ``Range``.
+:2022-11-28: Permit `tlsDisableOCSPEndpointCheck` in KMS TLS options.
+:2022-11-27: Fix typo for references to ``cryptSharedLibRequired`` option.
 :2022-11-10: Defined a ``CreateEncryptedCollection`` helper for creating new
              encryption keys automatically for the queryable encrypted fields in
              a new collection.
