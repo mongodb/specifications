@@ -2649,8 +2649,8 @@ Each test listed in the cases below must pass for all supported data types unles
    .. code:: typescript
    
       class RangeOpts {
-         min: 0,
-         max: 200.0,
+         min: { "$numberDouble": "0" },
+         max: { "$numberDouble": "200" },
          sparsity: 1,
          precision: 2
       }
@@ -2660,8 +2660,8 @@ Each test listed in the cases below must pass for all supported data types unles
    .. code:: typescript
    
       class RangeOpts {
-         min: {'$date': 0 } ,
-         max: {'$date': 200 },
+         min: {"$date": { "$numberLong": "0" } } ,
+         max: {"$date": { "$numberLong": "200" } },
          sparsity: 1
       }
 
@@ -2670,8 +2670,8 @@ Each test listed in the cases below must pass for all supported data types unles
    .. code:: typescript
    
       class RangeOpts {
-         min: {'$numberInt': 0 } ,
-         max: {'$numberInt': 200 },
+         min: {"$numberInt": "0" } ,
+         max: {"$numberInt": "200" },
          sparsity: 1
       }
 
@@ -2680,14 +2680,14 @@ Each test listed in the cases below must pass for all supported data types unles
    .. code:: typescript
    
       class RangeOpts {
-         min: {'$numberLong': 0 } ,
-         max: {'$numberLong': 200 },
+         min: {"$numberLong": "0" } ,
+         max: {"$numberLong": "200" },
          sparsity: 1
       }
 
 Case 1: can decrypt a payload
 `````````````````````````````
-Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
+Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the double value 6.0.
 
 Store the result in ``insertPayload``.
 
