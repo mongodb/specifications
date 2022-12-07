@@ -2573,6 +2573,7 @@ libmongocrypt, and not the driver, to use the new values.
 Why is there an encryptExpression helper?
 -----------------------------------------
 
+Querying a range index requires encrypting a lower bound (value for ``$gt`` or ``$gte``) and upper bound (value for ``$lt`` or ``$lte``) payload.
 A rejected alternative API is to encrypt the lower and upper bound payloads separately.
 The lower and upper bound payloads must have a unique matching UUID. The lower and upper bound payloads are unique.
 This API requires handling the UUID and distinguishing the upper and lower bounds. Here are examples showing possible errors:
@@ -2590,7 +2591,7 @@ This API requires handling the UUID and distinguishing the upper and lower bound
    # Both bounds match UUID ... OK
    db.coll.find_one ({"age": {"$gt": lower, "$lt": upper }})
 
-   # Lower bound is used as an upper bound ... ERROR!
+   # Upper bound is used as a lower bound ... ERROR!
    db.coll.find_one ({"age": {"$gt": upper }})
 
    lower2 = clientEncryption.encrypt (value=35, lOpts)
