@@ -1,6 +1,13 @@
 {
   "description": "server-selection-logging",
   "schemaVersion": "1.13",
+  "runOnRequirements": [
+    {
+      "topologies": [
+        "sharded"
+      ]
+    }
+  ],
   "createEntities": [
     {
       "client": {
@@ -8,10 +15,11 @@
         "uriOptions": {
           "retryWrites": false,
           "heartbeatFrequencyMS": 500,
+          "appName": "loggingClient",
           "serverSelectionTimeoutMS": 2000
         },
         "observeLogMessages": {
-          "serverSelection": "info"
+          "serverSelection": "debug"
         },
         "observeEvents": [
           "serverDescriptionChangedEvent"
@@ -38,49 +46,103 @@
         "id": "failPointClient",
         "useMultipleMongoses": false
       }
-    },
-    {
-      "collection": {
-        "id": "unsatisfiableRPColl",
-        "database": "database",
-        "collectionName": "unsatisfiableRPColl",
-        "collectionOptions": {
-          "readPreference": {
-            "mode": "Secondary",
-            "tagSets": [
-              {
-                "nonexistenttag": "a"
-              }
-            ]
-          }
-        }
-      }
     }
   ],
   "tests": [
     {
-      "description": "Message is logged when a suitable server is not immediately available",
-      "runOnRequirements": [
+      "description": "A successful operation",
+      "operations": [
         {
-          "topologies": [
-            "single",
-            "replicaset"
-          ],
-          "minServerVersion": "4.0"
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Mongos"
+                }
+              }
+            },
+            "count": 1
+          }
         },
         {
-          "topologies": [
-            "sharded"
-          ],
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          }
+        }
+      ],
+      "expectLogMessages": [
+        {
+          "client": "client",
+          "messages": [
+            {
+              "level": "debug",
+              "component": "serverSelection",
+              "data": {
+                "message": "Server selection started",
+                "selector": {
+                  "$$exists": true
+                },
+                "operation": "insert",
+                "topologyDescription": {
+                  "$$exists": true
+                }
+              }
+            },
+            {
+              "level": "debug",
+              "component": "serverSelection",
+              "data": {
+                "message": "Server selection succeeded",
+                "selector": {
+                  "$$exists": true
+                },
+                "operation": "insert",
+                "topologyDescription": {
+                  "$$exists": true
+                },
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Waiting message is logged when a suitable server is not immediately available",
+      "runOnRequirements": [
+        {
           "minServerVersion": "4.1.5"
         }
       ],
       "operations": [
         {
-          "name": "wait",
+          "name": "waitForEvent",
           "object": "testRunner",
           "arguments": {
-            "ms": 100
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Mongos"
+                }
+              }
+            },
+            "count": 1
           }
         },
         {
@@ -149,70 +211,56 @@
           "client": "client",
           "messages": [
             {
-              "level": "info",
+              "level": "debug",
               "component": "serverSelection",
               "data": {
-                "message": "Waiting for suitable server to become available",
+                "message": "Server selection started",
                 "selector": {
                   "$$exists": true
                 },
-                "requestId": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "operation": "update",
-                "topology": {
+                "operation": "insert",
+                "topologyDescription": {
+                  "$$exists": true
+                }
+              }
+            },
+            {
+              "level": "debug",
+              "component": "serverSelection",
+              "data": {
+                "message": "Server selection succeeded",
+                "selector": {
                   "$$exists": true
                 },
-                "remainingTimeMS": {
+                "operation": "insert",
+                "topologyDescription": {
+                  "$$exists": true
+                },
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
                   "$$type": [
                     "int",
                     "long"
                   ]
                 }
               }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "Message is only logged one time if topology does not change",
-      "runOnRequirements": [
-        {
-          "topologies": [
-            "replicaset"
-          ],
-          "minServerVersion": "4.0"
-        }
-      ],
-      "operations": [
-        {
-          "name": "wait",
-          "object": "testRunner",
-          "arguments": {
-            "ms": 100
-          }
-        },
-        {
-          "name": "find",
-          "object": "unsatisfiableRPColl",
-          "arguments": {
-            "filter": {
-              "x": 1
-            }
-          },
-          "expectError": {
-            "isClientError": true
-          }
-        }
-      ],
-      "expectLogMessages": [
-        {
-          "client": "client",
-          "messages": [
+            },
+            {
+              "level": "debug",
+              "component": "serverSelection",
+              "data": {
+                "message": "Server selection started",
+                "selector": {
+                  "$$exists": true
+                },
+                "operation": "update",
+                "topologyDescription": {
+                  "$$exists": true
+                }
+              }
+            },
             {
               "level": "info",
               "component": "serverSelection",
@@ -221,17 +269,34 @@
                 "selector": {
                   "$$exists": true
                 },
-                "requestId": {
+                "operation": "update",
+                "topologyDescription": {
+                  "$$exists": true
+                },
+                "remainingTimeMS": {
                   "$$type": [
                     "int",
                     "long"
                   ]
-                },
-                "operation": "find",
-                "topology": {
+                }
+              }
+            },
+            {
+              "level": "debug",
+              "component": "serverSelection",
+              "data": {
+                "message": "Server selection succeeded",
+                "selector": {
                   "$$exists": true
                 },
-                "remainingTimeMS": {
+                "operation": "update",
+                "topologyDescription": {
+                  "$$exists": true
+                },
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
                   "$$type": [
                     "int",
                     "long"
@@ -244,23 +309,13 @@
       ]
     },
     {
-      "description": "Message is re-logged if topology changes but still contains no suitable server",
+      "description": "Failure due to unreachable server",
       "runOnRequirements": [
         {
-          "topologies": [
-            "replicaset"
-          ],
-          "minServerVersion": "4.0"
+          "minServerVersion": "4.4"
         }
       ],
       "operations": [
-        {
-          "name": "wait",
-          "object": "testRunner",
-          "arguments": {
-            "ms": 100
-          }
-        },
         {
           "name": "failPoint",
           "object": "testRunner",
@@ -268,16 +323,31 @@
             "client": "failPointClient",
             "failPoint": {
               "configureFailPoint": "failCommand",
-              "mode": {
-                "times": 1
-              },
+              "mode": "alwaysOn",
               "data": {
                 "failCommands": [
-                  "insert"
+                  "hello",
+                  "ismaster"
                 ],
+                "appName": "loggingClient",
                 "closeConnection": true
               }
             }
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "Unknown"
+                }
+              }
+            },
+            "count": 1
           }
         },
         {
@@ -291,54 +361,6 @@
           "expectError": {
             "isClientError": true
           }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "previousDescription": {
-                  "type": "RSPrimary"
-                },
-                "newDescription": {
-                  "type": "Unknown"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "find",
-          "object": "unsatisfiableRPColl",
-          "arguments": {
-            "filter": {
-              "x": 1
-            }
-          },
-          "expectError": {
-            "isClientError": true
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "previousDescription": {
-                  "type": "Unknown"
-                },
-                "newDescription": {
-                  "type": "RSPrimary"
-                }
-              }
-            },
-            "count": 1
-          }
         }
       ],
       "expectLogMessages": [
@@ -346,28 +368,16 @@
           "client": "client",
           "messages": [
             {
-              "level": "info",
+              "level": "debug",
               "component": "serverSelection",
               "data": {
-                "message": "Waiting for suitable server to become available",
+                "message": "Server selection started",
                 "selector": {
                   "$$exists": true
                 },
-                "requestId": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "operation": "find",
-                "topology": {
+                "operation": "insert",
+                "topologyDescription": {
                   "$$exists": true
-                },
-                "remainingTimeMS": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
                 }
               }
             },
@@ -379,14 +389,8 @@
                 "selector": {
                   "$$exists": true
                 },
-                "requestId": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "operation": "find",
-                "topology": {
+                "operation": "insert",
+                "topologyDescription": {
                   "$$exists": true
                 },
                 "remainingTimeMS": {
@@ -394,6 +398,23 @@
                     "int",
                     "long"
                   ]
+                }
+              }
+            },
+            {
+              "level": "debug",
+              "component": "serverSelection",
+              "data": {
+                "message": "Server selection failed",
+                "selector": {
+                  "$$exists": true
+                },
+                "operation": "insert",
+                "topologyDescription": {
+                  "$$exists": true
+                },
+                "failure": {
+                  "$$exists": true
                 }
               }
             }

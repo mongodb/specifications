@@ -1268,7 +1268,7 @@ This message MUST contain the following key-value pairs:
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to
 fill in placeholders as appropriate:
 
-  Server selection started for operation {{operationName}} with request ID {{requestID}}.
+  Server selection started for operation {{operation}} with ID {{operationId}}.
   Selector: {{selector}}, topology description: {{topologyDescription}}
 
 "Server selection succeeded" message
@@ -1304,7 +1304,7 @@ This message MUST contain the following key-value pairs:
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to
 fill in placeholders as appropriate:
 
-  Server selection succeeded for operation {{operationName}} with request ID {{requestID}}.
+  Server selection succeeded for operation {{operation}} with ID {{operationId}}.
   Selected server: {{serverHost}}:{{serverPort}}. Selector: {{selector}},
   topology description: {{topologyDescription}}
 
@@ -1340,7 +1340,7 @@ This message MUST contain the following key-value pairs:
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to
 fill in placeholders as appropriate:
 
-  Server selection failed for operation {{operationName}} with request ID {{requestID}}. Failure: {{failure}}. 
+  Server selection failed for operation {{operationName}} with ID {{operationId}}. Failure: {{failure}}. 
   Selector: {{selector}}, topology description: {{topologyDescription}}
 
 "Waiting for suitable server to become available" message
@@ -1383,7 +1383,7 @@ This message MUST contain the following key-value pairs:
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to
 fill in placeholders as appropriate:
 
-  Waiting for server to become available for operation {{operationName}} with request ID {{requestId}}.
+  Waiting for server to become available for operation {{operationName}} with ID {{operationId}}.
   Remaining time: {{remainingTimeMS}} ms. Selector: {{selector}}, topology description: {{topologyDescription}}.
 
 Implementation Notes
