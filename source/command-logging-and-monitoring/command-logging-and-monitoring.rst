@@ -414,7 +414,8 @@ The following key-value pairs MUST be included in all command messages:
 
    * - serverPort
      - Int
-     - The port for the server the command is being run on. Optional; only present if a port was specified.
+     - The port for the server the command is being run on. Optional; not present for Unix domain sockets. When
+       the user does not specify a port and the default (27017) is used, the driver SHOULD include it here. 
 
    * - serverConnectionId
      - Int
@@ -452,8 +453,8 @@ In addition to the common fields, command started messages MUST contain the foll
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Command "{{commandName}}" started on database "{{databaseName}}" using a connection with driver ID {{driverConnectionId}} and server ID
-  {{serverConnectionId}} to a server with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is
+  Command "{{commandName}}" started on database "{{databaseName}}" using a connection with driver-generated ID {{driverConnectionId}}
+  and server-generated ID {{serverConnectionId}} to {{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is
   {{requestId}} and the operation ID is {{operationId}}. Command: {{command}}
 
 Command Succeeded Message
@@ -485,9 +486,9 @@ In addition to the common fields, command succeeded messages MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Command "{{commandName}}" succeeded in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}} 
-  to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID is
-  {{operationId}}. Command reply: {{command}}
+  Command "{{commandName}}" succeeded in {{durationMS}} ms using a connection with driver-generated ID {{driverConnectionId}} and 
+  server-generated ID {{serverConnectionId}} to {{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is
+  {{requestId}} and the operation ID is {{operationId}}. Command reply: {{command}}
 
 Command Failed Message
 ----------------------
@@ -518,9 +519,9 @@ In addition to the common fields, command failed messages MUST contain the follo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Command "{{commandName}}" failed in {{durationMS}} ms using a connection with driver ID {{driverConnectionId}} and server ID {{serverConnectionId}}
-  to a host with hostname {{serverHost}} on port {{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID
-  is {{operationId}}. Error: {{error}}
+  Command "{{commandName}}" failed in {{durationMS}} ms using a connection with driver-generated ID {{driverConnectionId}} and
+  server-generated ID {{serverConnectionId}} to {{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is
+  {{requestId}} and the operation ID is {{operationId}}. Error: {{error}}
 
 -------
 Testing
