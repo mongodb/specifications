@@ -2827,7 +2827,7 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``En
 
 Store the result in ``findPayload``.
 
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{'$expr' :  { <findPayload> }`` and sort the results by ``_id``.
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{'$expr' :  <findPayload> }`` and sort the results by ``_id``.
 
 Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
