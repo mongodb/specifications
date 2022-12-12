@@ -2748,7 +2748,7 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``En
 
 Store the result in ``findPayload``.
 
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``findPayload`` and sort the results by ``_id``.
 
 Assert these three documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
 
@@ -2776,7 +2776,7 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``En
 
 Store the result in ``findPayload``.
 
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``findPayload`` and sort the results by ``_id``.
 
 Assert these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
 
@@ -2802,7 +2802,7 @@ Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``En
 
 Store the result in ``findPayload``.
 
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "encrypted<Type>": <findPayload> }`` and sort the results by ``_id``.
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``findPayload`` and sort the results by ``_id``.
 
 Assert that only this document ``{ "encrypted<Type>": 200 }`` is returned. 
 
