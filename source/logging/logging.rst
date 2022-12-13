@@ -418,14 +418,15 @@ Invalid Values of Environment Variables
 ---------------------------------------
 For drivers supporting configuration via environment variables, the spec requires that if an environment
 variable is set to an invalid value the driver behaves as if the value were not specified at all, and
-optionally warns the user but does not throw an error.
-We considered the following alternatives:
-1. Drivers could be required to throw an exception if a value is invalid: This was rejected because of concerns
+optionally warns the user but does not throw an error. We considered the following alternatives:
+
+1. Drivers could be required to throw an exception if a value is invalid: This was rejected because of concerns 
    around the implications for environments/applications where multiple versions of the driver or multiple
    drivers may be present and where the validation logic may not match, meaning a value considered valid for
    one driver/version might not be by another. Additionally, there is no obvious place to throw an exception
    from; ``MongoClient`` constructors would be one possibility, but not all languages will support per-client
-  configuration so throwing there might be surprising to users.
+   configuration so throwing there might be surprising to users.
+
 2. Drivers could be required to log a warning if a value is invalid: While drivers MAY do this, requiring
    it was rejected because depending on the language/framework log messages may not be a viable way to
    communicate a warning: if a language's default behavior is to log nothing, or only log messages at a
@@ -436,10 +437,11 @@ We considered the following alternatives:
 Programmatic Configuration Taking Precedence
 --------------------------------------------
 We chose to have programmatic configuration win out over environment variables because:
+
 1. This allows applications built atop drivers (e.g. mongosh) to fully control the driver's logging behavior
-  by setting options for it programmatically.
+   by setting options for it programmatically.
 2. This is consistent with how many drivers treat options specified both in a connection string and programmatically:
-  programmatic options win out.
+   programmatic options win out.
 3. It is straightforward for users to override this behavior (by writing logic to read in environment variables and override
    programmatic defaults), but if we went with the opposite default, it would be more complicated for users to override:
    not all languages will necessarily have an easy way to override/unset an environment variable from within
