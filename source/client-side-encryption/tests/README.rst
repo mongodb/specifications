@@ -2591,13 +2591,13 @@ when attempting to create a collection with such invalid settings.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Range Explicit Encryption tests require MongoDB server 6.2+. The tests must not run against a standalone.
 
-Each of the following test cases must pass for each of the supported types (``double``, ``double`` with precision, ``date``, ``integer``, and ``long``), unless it is stated the type should be skipped.
+Each of the following test cases must pass for each of the supported types (``DoublePrecision``, ``DoubleNoPrecision``, ``Date``, ``Int``, and ``Long``), unless it is stated the type should be skipped.
 
 Before running each of the following test cases, perform the following Test Setup.
 
 Test Setup
 ``````````
-Load the file for the specific data type being tested ``encryptedFields-<type>.json``. For example, for ``integer`` load `range-encryptedFields-Int.json <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/etc/data/range-encryptedFields-Int.json>`_ as ``encryptedFields``.
+Load the file for the specific data type being tested ``encryptedFields-<type>.json``. For example, for ``Int`` load `range-encryptedFields-Int.json <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/etc/data/range-encryptedFields-Int.json>`_ as ``encryptedFields``.
 
 Load the file `key1-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json>`_ as ``key1Document``.
 
@@ -2659,7 +2659,7 @@ This section lists the values to use for ``RangeOpts`` for each of the supported
 
 Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
 
-#. Double (without precision)
+#. DoubleNoPrecision
 
    .. code:: typescript
    
@@ -2667,7 +2667,7 @@ Each test listed in the cases below must pass for all supported data types unles
          sparsity: 1
       }
 
-#. Double (with precision)
+#. DoublePrecision
 
    .. code:: typescript
    
@@ -2688,7 +2688,7 @@ Each test listed in the cases below must pass for all supported data types unles
          sparsity: 1
       }
 
-#. Integer
+#. Int
 
    .. code:: typescript
    
@@ -2870,7 +2870,7 @@ Assert an error was raised.
 
 Case 8: setting precision errors if the type is not a double
 ````````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoubleWithPrecision`` or ``encryptedDoubleNoPrecision``.
+This test case should be skipped if the encrypted field is ``encryptedDoublePrecision`` or ``encryptedDoubleNoPrecision``.
 
 Use ``clientEncryption.encrypt()`` to try to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
 
