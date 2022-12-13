@@ -104,7 +104,7 @@ Drivers MUST support configuring where log messages should be output, including 
 * Output file (path MUST be configurable). For languages that are not relying on a logging interface or framework to handle
   file support, the driver can choose to either support this directly (i.e. the driver allows the user to specify 
   a path and itself handles writing to that path), or to instead provide a straightforward, idiomatic way to programmatically 
-  consume the messages for writing to a file, e.g. a Node.js `stream <https://nodejs.org/api/stream.html>`__ along with a
+  consume the messages and in turn write them to a file, e.g. via a Node.js `stream <https://nodejs.org/api/stream.html>`__, along with a
   documentation example of how to do this.
 
     **Fallback implementation method**: If the environment variable ``MONGODB_LOG_PATH`` is provided:
@@ -496,3 +496,10 @@ Changelog
 
 :2022-10-26: Allow drivers to add timestamps to log messages.
 :2022-11-10: Clarify driver-specific null omission.
+:2022-12-13: Elaborate on treatment of invalid values of environment variables.
+             Permit drivers to omit direct support for logging to file so long as they provide
+             a straightforward way for users to consume the log messages programmatically and
+             write to a file themselves.
+             Require that programmatic configuration take precedence over environment variables.
+
+             

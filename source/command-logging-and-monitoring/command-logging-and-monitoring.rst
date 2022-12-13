@@ -557,3 +557,6 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-10-11: Add command logging information and tests.
 :2022-11-16: Update sensitive command tests to only run on server versions where the commands are supported.
+:2022-12-13: Updated log message ``serverPort`` field description to clarify drivers should populate it with the
+             default port 27017 when relevant. Updated suggested unstructured forms of log messages to more
+             clearly label connection IDs and use more readable server address representations.
