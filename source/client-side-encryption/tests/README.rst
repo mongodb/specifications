@@ -2659,7 +2659,7 @@ This section lists the values to use for ``RangeOpts`` for each of the supported
 
 Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
 
-#. Double
+#. Double (without precision)
 
    .. code:: typescript
    
