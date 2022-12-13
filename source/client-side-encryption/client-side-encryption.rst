@@ -1057,7 +1057,7 @@ ClientEncryption
       // 2. An Aggregate Expression of this form:
       //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
       // $gt may also be $gte. $lt may also be $lte.
-      // Only supported for queryType "rangePreview"
+      // Only supported when queryType is "rangePreview" and algorithm is "RangePreview".
       // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
       encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
