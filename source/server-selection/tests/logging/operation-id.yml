@@ -65,7 +65,7 @@ tests:
               operationId: { $$type: [int, long] }
               operation: insert
 
-  - description: "Failed bulk write operation: log messages have operationIds"
+  - description: "Failed bulkWrite operation: log messages have operationIds"
     runOnRequirements:
       - minServerVersion: "4.4" # failCommand appname support
     operations:
