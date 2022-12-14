@@ -851,9 +851,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
 6. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and continue to the next step;
    otherwise, log a `"Waiting for suitable server to become available" message`_
-   if one has not already been logged for this operation OR if the topology
-   description has changed since the last time the message was logged, and goto
-   Step #9.
+   if one has not already been logged for this operation, and goto Step #9.
 
 7. Choose two servers at random from the set of suitable servers in the latency
    window. If there is only 1 server in the latency window, just select that
@@ -931,8 +929,7 @@ as follows:
    the selection start time, raise a `server selection error`_ and log a
    `"Server selection failed" message`_; otherwise, log a `"Waiting for suitable
    server to become available" message`_ if one has not already been logged for
-   this operation OR if the topology description has changed since the last time
-   the message was logged, and goto Step #4
+   this operation, and goto Step #4
 
 1.  If the current time exceeds the maximum time, raise a
     `server selection error`_ and log a `"Server selection failed" message`_.
@@ -1350,16 +1347,14 @@ specified either in `Multi-threaded or asynchronous server selection`_ or
 `Single-threaded server selection`_, depending on which algorithm the driver
 implements.
 
-In order to avoid generating redundant log messages where all information besides
-the remaining time is identical, this message MUST not be repeatedly emitted for an
-operation unless the topology description changes. The driver should only consider
-the topology description to have changed if:
-1. A server was added to the topology, OR
-2. A server was removed from the topology, OR 
-3. The new description for a server in the topology does not equal the old description, according
-to the definition of
-`Server Description Equality <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server-description-equality>`_
-in the `Server Discovery and Monitoring specification <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`_.
+In order to avoid generating redundant log messages, the driver MUST take care to
+only emit this message once per operation. We only log the message once because the
+only values that can change over time are:
+- The remaining time: given the initial message's timestamp and the initial timestamp,
+  the time remaining can always be inferred from the original message.
+- The topology description: rather than logging these changes on a per-operation basis, users
+  should observe them with a single set of messages for the entire client via SDAM log messages.
+  
 
 This message MUST contain the following key-value pairs:
 
@@ -1495,7 +1490,7 @@ selection`_::
                 return selected
 
             request that all monitors check immediately
-            if the message was not logged already OR topologyDescription has changed since the last time it was logged: 
+            if the message was not logged already for this operation: 
                 log a "waiting for suitable server to become available" message
 
             # Wait for a new TopologyDescription. condition.wait() releases
@@ -1579,7 +1574,7 @@ The following is pseudocode for `single-threaded server selection`_::
             else if loopEndTime > maxTime:
                 throw server selection error with details
 
-            if the message was not logged already OR topologyDescription has changed since the last time it was logged: 
+            if the message was not logged already: 
                 log a "waiting for suitable server to become available" message
 
 .. _server selection error:
