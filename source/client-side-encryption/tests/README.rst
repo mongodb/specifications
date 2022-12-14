@@ -2587,6 +2587,36 @@ when attempting to create a collection with such invalid settings.
    ``create.encryptedFields.fields.keyId``, which must be a UUID and not a
    boolean value.
 
+Case 4: Insert encrypted value
+``````````````````````````````
+
+This test is continuation of the case 1 and provides a way to complete inserting 
+with encrypted value.
+
+1. Create a new create-collection options `Opts` including the following::
+
+      {
+         encryptedFields: {
+            fields: [{
+               path: "ssn",
+               bsonType: "string",
+               keyId: null
+            }]
+         }
+      }
+
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`
+   to obtain a new collection `Coll` and data key `key1`. Expect success.
+3. Use `CE` to explicitly encrypt the string "123-45-6789" using
+   algorithm `Unindexed` and data key `key1`. Refer result as `encryptedPayload`.
+4. Attempt to insert the following document into `Coll`::
+
+      {
+         ssn: <encryptedPayload>
+      }
+
+   Expect success.
+
 22. Range Explicit Encryption
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Range Explicit Encryption tests require MongoDB server 6.2+. The tests must not run against a standalone.
