@@ -82,36 +82,6 @@
           }
         },
         {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "newDescription": {
-                  "type": "RSSecondary"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "newDescription": {
-                  "type": "RSArbiter"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
-        {
           "name": "insertOne",
           "object": "collection",
           "arguments": {
@@ -174,51 +144,6 @@
         }
       ],
       "operations": [
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "newDescription": {
-                  "type": "RSPrimary"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "newDescription": {
-                  "type": "RSSecondary"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "newDescription": {
-                  "type": "RSArbiter"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
         {
           "name": "find",
           "object": "unsatisfiableRPColl",
@@ -308,36 +233,6 @@
               "serverDescriptionChangedEvent": {
                 "newDescription": {
                   "type": "RSPrimary"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "newDescription": {
-                  "type": "RSSecondary"
-                }
-              }
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverDescriptionChangedEvent": {
-                "newDescription": {
-                  "type": "RSArbiter"
                 }
               }
             },
