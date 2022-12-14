@@ -4,8 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-11-28
-:Version: 1.11.1
+:Last Modified: 2022-11-30
+:Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -1050,6 +1050,17 @@ ClientEncryption
       // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
       encrypt(value: BsonValue, opts: EncryptOpts): Binary;
 
+      // encryptExpression encrypts a Match Expression or Aggregate Expression to query a range index.
+      // `expr` is expected to be a BSON document of one of the following forms:
+      // 1. A Match Expression of this form:
+      //   {$and: [{<field>: {$gt: <value1>}}, {<field>: {$lt: <value2> }}]}
+      // 2. An Aggregate Expression of this form:
+      //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
+      // $gt may also be $gte. $lt may also be $lte.
+      // Only supported when queryType is "rangePreview" and algorithm is "RangePreview".
+      // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+      encryptExpression(expr: Document, opts: EncryptOpts): Document;
+
       // Decrypts an encrypted value (BSON binary of subtype 6).
       // Returns the original BSON value.
       decrypt(value: Binary): BsonValue;
@@ -1238,6 +1249,21 @@ EncryptOpts
       algorithm: String,
       contentionFactor: Optional<Int64>,
       queryType: Optional<String>
+      rangeOpts: Optional<RangeOpts>
+   }
+
+   // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+   // RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
+   // min, max, sparsity, and range must match the values set in the encryptedFields of the destination collection.
+   // For double and decimal128, min/max/precision must all be set, or all be unset.
+   class RangeOpts {
+      // min is required if precision is set.
+      min: Optional<BSONValue>,
+      // max is required if precision is set.
+      max: Optional<BSONValue>,
+      sparsity: Int64,
+      // precision may only be set for double or decimal128.
+      precision: Optional<Int32>
    }
 
 Explicit encryption requires a key and algorithm. Keys are either
@@ -1258,24 +1284,39 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
+- "RangePreview"
 
-The result of explicit encryption with the "Indexed" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed" or "RangePreview" algorithm must be processed by the server to insert or query. Drivers MUST document the following behavior:
 
-   To insert or query with an "Indexed" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
+   To insert or query with an "Indexed" or "RangePreview" encrypted payload, use a ``MongoClient`` configured with ``AutoEncryptionOpts``.
    ``AutoEncryptionOpts.bypassQueryAnalysis`` may be true. ``AutoEncryptionOpts.bypassAutoEncryption`` must be false.
+
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 contentionFactor
 ^^^^^^^^^^^^^^^^
-contentionFactor only applies when algorithm is "Indexed".
+contentionFactor only applies when algorithm is "Indexed" or "RangePreview".
 It is an error to set contentionFactor when algorithm is not "Indexed".
+
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 queryType
 ^^^^^^^^^
 One of the strings:
 - "equality"
+- "rangePreview"
 
-queryType only applies when algorithm is "Indexed".
-It is an error to set queryType when algorithm is not "Indexed".
+queryType only applies when algorithm is "Indexed" or "RangePreview".
+It is an error to set queryType when algorithm is not "Indexed" or "RangePreview".
+
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+
+rangeOpts
+^^^^^^^^^
+rangeOpts only applies when algorithm is "rangePreview".
+It is an error to set rangeOpts when algorithm is not "rangePreview".
+
+NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 User facing API: When Auto Encryption Fails
 ===========================================
@@ -2531,6 +2572,48 @@ A string value helps with future compatibility. When new values of QueryType
 and IndexType are added in libmongocrypt, users would only need to upgrade
 libmongocrypt, and not the driver, to use the new values.
 
+Why is there an encryptExpression helper?
+-----------------------------------------
+
+Querying a range index requires encrypting a lower bound (value for ``$gt`` or ``$gte``) and upper bound (value for ``$lt`` or ``$lte``) payload.
+A rejected alternative API is to encrypt the lower and upper bound payloads separately.
+The lower and upper bound payloads must have a unique matching UUID. The lower and upper bound payloads are unique.
+This API requires handling the UUID and distinguishing the upper and lower bounds. Here are examples showing possible errors:
+
+.. code::
+
+   uuid = UUID()
+   lOpts = EncryptOpts(
+      keyId=keyId, algorithm="range", queryType="range", uuid=uuid, bound="lower")
+   lower = clientEncryption.encrypt (value=30, lOpts)
+   uOpts = EncryptOpts(
+      keyId=keyId, algorithm="range", queryType="range", uuid=uuid, bound="upper")
+   upper = clientEncryption.encrypt (value=40, uOpts)
+
+   # Both bounds match UUID ... OK
+   db.coll.find_one ({"age": {"$gt": lower, "$lt": upper }})
+
+   # Upper bound is used as a lower bound ... ERROR!
+   db.coll.find_one ({"age": {"$gt": upper }})
+
+   lower2 = clientEncryption.encrypt (value=35, lOpts)
+
+   # UUID is re-used ... ERROR!
+   db.coll.find_one ({ "$or": [
+      {"age": {"$gt": lower, "$lt": upper }},
+      {"age": {"$gt": lower2 }}
+   ]})
+
+   # UUID does not match between lower and upper bound ... ERROR!
+   db.coll.find_one ({ "age": {"$gt": lower2, "$lt": upper }})
+
+Requiring an Aggregate Expression or Match Expression hides the UUID and handles both bounds.
+
+Returning an Aggregate Expression or Match Expression as a BSON document motivated adding a new ``ClientEncryption.encryptExpression()`` helper. ``ClientEncryption.encrypt()`` cannot be reused since it returns a Binary.
+
+To limit scope, only $and is supported. Support for other operators ($eq, $in) can be added in the future if desired.
+
+
 Future work
 ===========
 
@@ -2604,6 +2687,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2022-11-30: Add ``Range``.
 :2022-11-28: Permit `tlsDisableOCSPEndpointCheck` in KMS TLS options.
 :2022-11-27: Fix typo for references to ``cryptSharedLibRequired`` option.
 :2022-11-10: Defined a ``CreateEncryptedCollection`` helper for creating new
