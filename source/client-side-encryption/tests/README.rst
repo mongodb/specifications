@@ -2608,11 +2608,11 @@ with encrypted value.
 2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`
    to obtain a new collection `Coll` and data key `key1`. Expect success.
 3. Use `CE` to explicitly encrypt the string "123-45-6789" using
-algorithm `Unindexed` and data key `key1`. Refer result as `encryptedPayload`.
+   algorithm `Unindexed` and data key `key1`. Refer result as `encryptedPayload`.
 4. Attempt to insert the following document into `Coll`::
 
       {
          ssn: <encryptedPayload>
       }
 
-4. Expect success.
+   Expect success.
