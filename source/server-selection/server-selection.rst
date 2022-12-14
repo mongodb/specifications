@@ -1269,7 +1269,7 @@ fill in placeholders as appropriate:
   Selector: {{selector}}, topology description: {{topologyDescription}}
 
 "Server selection succeeded" message
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This message MUST be logged at ``debug`` level. It MUST be emitted on the occasions
 specified either in `Multi-threaded or asynchronous server selection`_ or
 `Single-threaded server selection`_, depending on which algorithm the driver
@@ -1350,6 +1350,7 @@ implements.
 In order to avoid generating redundant log messages, the driver MUST take care to
 only emit this message once per operation. We only log the message once because the
 only values that can change over time are:
+
 - The remaining time: given the initial message's timestamp and the initial timestamp,
   the time remaining can always be inferred from the original message.
 - The topology description: rather than logging these changes on a per-operation basis, users
