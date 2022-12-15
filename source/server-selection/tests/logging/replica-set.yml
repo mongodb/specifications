@@ -41,7 +41,8 @@ tests:
   - description: "A successful operation"
     operations:
       # ensure we've discovered the primary before starting, so we don't get an unexpected "waiting" message
-      # when server selection happens for the insert.
+      # when server selection happens for the insert, or have extra logs from the driver performing server
+      # selection to determine session support status.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -79,6 +80,17 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.0" # min version for failCommand on mongod
     operations:
+      # ensure we've discovered the primary before starting, so we don't hav extra logs
+      # from the driver performing server selection to determine session support status.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            serverDescriptionChangedEvent:
+              newDescription:
+                type: RSPrimary
+          count: 1
       # the `find` should never succeed due to the unsatisfiable read preference.
       - name: find
         object: *unsatisfiableRPColl
@@ -120,7 +132,8 @@ tests:
       - minServerVersion: "4.0" # min version for failCommand on mongod
     operations:
       # ensure we've discovered the primary before starting, so we don't get an unexpected "waiting" message
-      # when server selection happens for the insert.
+      # when server selection happens for the insert, or have extra logs from the driver performing server
+      # selection to determine session support status.
       - name: waitForEvent
         object: testRunner
         arguments:

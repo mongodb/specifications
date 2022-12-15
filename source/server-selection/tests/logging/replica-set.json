@@ -145,6 +145,21 @@
       ],
       "operations": [
         {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {
+                "newDescription": {
+                  "type": "RSPrimary"
+                }
+              }
+            },
+            "count": 1
+          }
+        },
+        {
           "name": "find",
           "object": "unsatisfiableRPColl",
           "arguments": {
