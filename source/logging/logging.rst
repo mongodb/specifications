@@ -424,10 +424,17 @@ optionally warns the user but does not throw an error. We considered the followi
    around the implications for environments/applications where multiple versions of the driver or multiple
    drivers may be present and where the validation logic may not match, meaning a value considered valid for
    one driver/version might not be by another. Additionally, there is no obvious place to throw an exception
-   from; ``MongoClient`` constructors would be one possibility, but not all languages will support per-client
-   configuration so throwing there might be surprising to users.
+   from about invalid environment variables; ``MongoClient`` constructors would be one possibility, but not all
+   languages will support per-client configuration so throwing there regarding an environment variable might be
+   surprising to users. 
+  
+   Note that these same concerns do not apply to logging options that are specified via driver API: there is no
+   risk of such options propagating to other drivers/driver versions present, and drivers can report exceptions at
+   the point the options are specified, either globally or per-client. Therefore, drivers MUST validate
+   programmatic logging options in a manner consistent with how they validate all other programmatic
+   options, and if possible SHOULD prefer to throw exceptions for invalid configuration.
 
-2. Drivers could be required to log a warning if a value is invalid: While drivers MAY do this, requiring
+1. Drivers could be required to log a warning if a value is invalid: While drivers MAY do this, requiring
    it was rejected because depending on the language/framework log messages may not be a viable way to
    communicate a warning: if a language's default behavior is to log nothing, or only log messages at a
    more severe level than ``warn``, the user will not actually receive the message unless it is logged at a
