@@ -332,11 +332,17 @@ with the ``crypt_shared`` library instead of spawning mongocryptd.
 
 crypt_shared_ is released alongside the server.
 crypt_shared_ is only available in versions 6.0 and above.
-Drivers SHOULD prefer testing a version of crypt_shared_ that matches the server version being tested.
-Driver tests on server versions less than 6.0 SHOULD use mongocryptd.
 
-Drivers MUST continue to run all tests with mongocryptd on at least one
-platform for all tested server versions.
+mongocryptd is released alongside the server.
+mongocryptd is available in versions 4.2 and above.
+
+Drivers MUST run all tests with mongocryptd on at least one platform for all
+tested server versions.
+
+Drivers MUST run all tests with crypt_shared_ on at least one platform for all
+tested server versions. For server versions < 6.0, drivers MUST test with the
+latest major release of crypt_shared_. Using the latest major release of
+crypt_shared_ is supported with older server versions.
 
 Note that some tests assert on mongocryptd-related behaviors (e.g. the
 ``mongocryptdBypassSpawn`` test).
