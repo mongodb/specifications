@@ -2899,8 +2899,8 @@ For all the tests below use these ``EncryptOpts``:
       contentionFactor: 0
    }
 
-If the encrypted field is ``encryptedInt`` insert ``{ "encryptedInt": { "$numberDouble": "6" } }``.
-Otherwise, insert ``{ "encrypted<Type>": { "$numberInt": "6" }``.
+If the encrypted field is ``encryptedInt`` encrypt ``{ "encryptedInt": { "$numberDouble": "6" } }``.
+Otherwise, encrypt ``{ "encrypted<Type>": { "$numberInt": "6" }``.
 Assert an error was raised.
 
 
