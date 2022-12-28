@@ -131,8 +131,7 @@ The presence of the auth database component without other credential data such a
 Connection Options (optional)
 -----------------------------
 
-Any extra options to configure the MongoClient connection can be specified in the connection options part of the connection string. If provided, it is everything after the Host Information, optional auth database, and first question mark ("?") to the end of the
-string.  Connection Options consist of an ordered list of Key Value Pairs that are delimited by an ampersand ("&"). A delimiter of a semi colon (";") MAY also be supported for connection options for legacy reasons.
+Any extra options to configure the MongoClient connection can be specified in the connection options part of the connection string. If provided, it is everything after the Host Information (ending with "/"), optional auth database, and first question mark ("?") to the end of the string. Connection Options consist of an ordered list of Key Value Pairs that are delimited by an ampersand ("&"). A delimiter of a semi colon (";") MAY also be supported for connection options for legacy reasons.
 
 Key Value Pair
 --------------
@@ -388,3 +387,5 @@ Changelog
 :2019-04-26: Database name in URI alone does not trigger authentication
 :2020-01-21: Clarified how empty values in a connection string are parsed.
 :2022-10-05: Remove spec front matter and reformat changelog.
+:2022-12-27: Note that host information ends with a "/" character in connection
+             options description.
