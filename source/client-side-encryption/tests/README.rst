@@ -2493,6 +2493,8 @@ The following tests that a mongocryptd client is not created when shared library
 21. Automatic Data Encryption Keys
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The Automatic Data Encryption Keys tests require MongoDB server 6.0+. The tests must not run against a standalone.
+
 For each of the following test cases, assume `DB` is a valid open database
 handle, and assume a ClientEncryption_ object `CE` created using the following
 options::
