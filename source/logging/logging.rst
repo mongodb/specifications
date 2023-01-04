@@ -511,5 +511,3 @@ Changelog
              a straightforward way for users to consume the log messages programmatically and
              write to a file themselves.
              Require that programmatic configuration take precedence over environment variables.
-
-             
