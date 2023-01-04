@@ -843,34 +843,34 @@ For multi-threaded clients, the server selection algorithm is as follows:
 2. If the topology wire version is invalid, raise an error and log a
    `"Server selection failed" message`_.
 
-4. Find suitable servers by topology type and operation type
+3. Find suitable servers by topology type and operation type
 
-5. Filter the suitable servers by calling the optional, application-provided server
+4. Filter the suitable servers by calling the optional, application-provided server
    selector.
 
-6. If there are any suitable servers, filter them according to `Filtering
+5. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and continue to the next step;
    otherwise, log a `"Waiting for suitable server to become available" message`_
    if one has not already been logged for this operation, and goto Step #9.
 
-7. Choose two servers at random from the set of suitable servers in the latency
+6. Choose two servers at random from the set of suitable servers in the latency
    window. If there is only 1 server in the latency window, just select that
    server and goto Step #8.
 
-8. Of the two randomly chosen servers, select the one with the lower
+7. Of the two randomly chosen servers, select the one with the lower
    ``operationCount``. If both servers have the same ``operationCount``, select
    arbitrarily between the two of them.
 
-9. Increment the ``operationCount`` of the selected server and return it. Log a
+8. Increment the ``operationCount`` of the selected server and return it. Log a
    `"Server selection succeeded" message`_.  Do not go onto later steps.
 
-1.  Request an immediate topology check, then block the server selection thread
+9.  Request an immediate topology check, then block the server selection thread
    until the topology changes or until the server selection timeout has elapsed
 
-11. If server selection has timed out, raise a `server selection error`_ and log
+10. If server selection has timed out, raise a `server selection error`_ and log
    a `"Server selection failed" message`_. 
 
-13. Goto Step #2
+11. Goto Step #2
 
 
 Single-threaded server selection
@@ -1231,9 +1231,7 @@ The following key-value pairs MUST be included in all server selection log messa
    * - operation
      - String
      - The name of the operation for which a server is being selected. When server selection is
-       being performed to select a server for a command, this MUST be the command name. For any
-       non-command server selection this MUST be a string describing the reason a server is being
-       selected, e.g. "Check for sessions support".
+       being performed to select a server for a command, this MUST be the command name.
 
    * - topologyDescription
      - String
