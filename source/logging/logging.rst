@@ -262,7 +262,7 @@ For example:
 
 - If an Informational level is not available and Debug is, messages defined as Informational in a
   specification MUST be emitted at Debug level.
-- If a Trace level is not available, Trace messages MUST be omitted at Debug level.
+- If a Trace level is not available, Trace messages MUST be emitted at Debug level.
 
 Structured versus Unstructured Logging
 --------------------------------------
@@ -505,7 +505,8 @@ Changelog
 
 :2022-10-26: Allow drivers to add timestamps to log messages.
 :2022-11-10: Clarify driver-specific null omission.
-:2022-12-13: Elaborate on treatment of invalid values of environment variables.
+:2022-12-29: Fix typo in trace log level example
+:2023-01-04: Elaborate on treatment of invalid values of environment variables.
              Permit drivers to omit direct support for logging to file so long as they provide
              a straightforward way for users to consume the log messages programmatically and
              write to a file themselves.

@@ -631,8 +631,6 @@ However, the client MUST keep the RSGhost member in its TopologyDescription,
 in case the client's only hope for staying connected to the replica set
 is that this member will transition to a more useful state.
 
-RSGhosts may report their setNames in the future
-(see `SERVER-13458 <https://jira.mongodb.org/browse/SERVER-13458>`_).
 For simplicity, this is the rule:
 any server is an RSGhost that reports "isreplicaset: true".
 
