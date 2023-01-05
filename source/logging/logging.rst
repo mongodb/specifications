@@ -91,19 +91,31 @@ on a per-component level, for each component defined below in the `Components`_ 
 
   The default is to not log anything.
 
-  If a variable is set to an invalid value, it MUST be treated as if it were not specified at all.
+  If a variable is set to an invalid value, it MUST be treated as if it were not specified at all,
+  and the driver MAY attempt to warn the user about the misconfiguration via a log message or otherwise
+  but MUST NOT throw an exception.
 
 Configurable Log Destination
 ----------------------------
-Drivers MUST support configuring where log messages should be output, including the options: stdout,
-stderr, output file (path MUST be configurable).
+Drivers MUST support configuring where log messages should be output, including the options: 
+
+* stdout
+* stderr
+* Output file (path MUST be configurable). For languages that are not relying on a logging interface or framework to handle
+  file support, the driver can choose to either support this directly (i.e. the driver allows the user to specify 
+  a path and itself handles writing to that path), or to instead provide a straightforward, idiomatic way to programmatically 
+  consume the messages and in turn write them to a file, e.g. via a Node.js `stream <https://nodejs.org/api/stream.html>`__, along with a
+  documentation example of how to do this.
 
     **Fallback implementation method**: If the environment variable ``MONGODB_LOG_PATH`` is provided:
      - If the value is "stdout" (case-insensitive), log to stdout.
      - If the value is "stderr" (case-insensitive), log to stderr.
-     - Else, log to a file at the specified path. If the file already exists, it MUST be appended to.
+     - Else, if direct logging to files is supported, log to a file at the specified path. If the file already exists, it MUST be appended to.
 
-    If the variable is not provided, the driver MUST log to stderr.
+    If the variable is not provided or is set to an invalid value (which could be invalid for any
+    reason, e.g. the path does not exist or is not writeable), the driver MUST log to stderr and
+    the driver MAY attempt to warn the user about the misconfiguration via a log message or otherwise
+    but MUST NOT throw an exception.
 
 Configurable Max Document Length
 --------------------------------
@@ -125,8 +137,9 @@ truncation occurred. The ellipsis MUST NOT count toward the max length.
     default max length MUST be truncated to that length.
     When set to an integer value, any extended JSON document longer than that value MUST be
     truncated to that length.
-    If the variable is set to an invalid value, it MUST be treated as if it were not specified at
-    all.
+    If a variable is set to an invalid value, it MUST be treated as if it were not specified at all,
+    and the driver MAY attempt to warn the user about the misconfiguration via a log message or otherwise
+    but MUST NOT throw an exception.
 
 Components
 ----------
@@ -315,6 +328,14 @@ Including Timestamps in Log Messages
 ------------------------------------
 Drivers MAY add timestamps to their log messages if one will not be added automatically by the logging framework(s) they use.
 
+Supporting Both Programmatic and Environment Variable Configuration
+-------------------------------------------------------------------
+If a driver supports configuration via both environment variables and programmatically via API,
+programmatic configuration MUST take precedence over environment variables. 
+Drivers supporting both forms of configuration MUST document this behavior and MUST provide an
+example of how users can implement custom logic to allow an environment variable to override
+a programmatic default, so that users who prefer the opposite behavior have a way to achieve it.
+
 Test Plan
 =========
 Tests for logging behavior are defined in each corresponding specification. The  `unified test
@@ -392,6 +413,47 @@ Additionally, always including null values would increase the size of log messag
 null values is left to the drivers' discretion for any driver-specific logs not covered by common
 specification components. 
 
+---------------------------------------
+Invalid Values of Environment Variables
+---------------------------------------
+For drivers supporting configuration via environment variables, the spec requires that if an environment
+variable is set to an invalid value the driver behaves as if the value were not specified at all, and
+optionally warns the user but does not throw an error. We considered the following alternatives:
+
+1. Drivers could be required to throw an exception if a value is invalid: This was rejected because of concerns 
+   around the implications for environments/applications where multiple versions of the driver or multiple
+   drivers may be present and where the validation logic may not match, meaning a value considered valid for
+   one driver/version might not be by another. Additionally, there is no obvious place to throw an exception
+   from about invalid environment variables; ``MongoClient`` constructors would be one possibility, but not all
+   languages will support per-client configuration so throwing there regarding an environment variable might be
+   surprising to users. 
+  
+   Note that these same concerns do not apply to logging options that are specified via driver API: there is no
+   risk of such options propagating to other drivers/driver versions present, and drivers can report exceptions at
+   the point the options are specified, either globally or per-client. Therefore, drivers MUST validate
+   programmatic logging options in a manner consistent with how they validate all other programmatic
+   options, and if possible SHOULD prefer to throw exceptions for invalid configuration.
+
+1. Drivers could be required to log a warning if a value is invalid: While drivers MAY do this, requiring
+   it was rejected because depending on the language/framework log messages may not be a viable way to
+   communicate a warning: if a language's default behavior is to log nothing, or only log messages at a
+   more severe level than ``warn``, the user will not actually receive the message unless it is logged at a
+   level and component they have successfully enabled.
+
+--------------------------------------------
+Programmatic Configuration Taking Precedence
+--------------------------------------------
+We chose to have programmatic configuration win out over environment variables because:
+
+1. This allows applications built atop drivers (e.g. mongosh) to fully control the driver's logging behavior
+   by setting options for it programmatically.
+2. This is consistent with how many drivers treat options specified both in a connection string and programmatically:
+   programmatic options win out.
+3. It is straightforward for users to override this behavior (by writing logic to read in environment variables and override
+   programmatic defaults), but if we went with the opposite default, it would be more complicated for users to override:
+   not all languages will necessarily have an easy way to override/unset an environment variable from within
+   application code.
+
 Backwards Compatibility
 =======================
 This specification takes the stance that the contents of log messages (both structured and
@@ -444,3 +506,8 @@ Changelog
 :2022-10-26: Allow drivers to add timestamps to log messages.
 :2022-11-10: Clarify driver-specific null omission.
 :2022-12-29: Fix typo in trace log level example
+:2023-01-04: Elaborate on treatment of invalid values of environment variables.
+             Permit drivers to omit direct support for logging to file so long as they provide
+             a straightforward way for users to consume the log messages programmatically and
+             write to a file themselves.
+             Require that programmatic configuration take precedence over environment variables.
