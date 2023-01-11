@@ -1,48 +1,43 @@
 {
   "version": 1,
   "style": "integration",
-  "description": "error during minPoolSize population clears pool",
+  "description": "must properly handle auth error on check out",
   "runOn": [
     {
-      "minServerVersion": "4.9.0"
+      "minServerVersion": "4.9.0",
+      "auth": true
     }
   ],
   "failPoint": {
     "configureFailPoint": "failCommand",
     "mode": {
-      "times": 50
+      "times": 1
     },
     "data": {
       "failCommands": [
-        "isMaster",
-        "hello"
+        "saslContinue"
       ],
-      "closeConnection": true,
-      "appName": "poolCreateMinSizeErrorTest"
+      "appName": "poolCheckOutAuthErrorTest",
+      "errorCode": 18
     }
   },
   "poolOptions": {
-    "minPoolSize": 1,
-    "backgroundThreadIntervalMS": 50,
-    "appName": "poolCreateMinSizeErrorTest"
+    "appName": "poolCheckOutAuthErrorTest"
   },
   "operations": [
     {
       "name": "ready"
     },
     {
-      "name": "waitForEvent",
-      "event": "ConnectionPoolCleared",
-      "count": 1
-    },
-    {
-      "name": "wait",
-      "ms": 200
+      "name": "checkOut"
     }
   ],
+  "error": {
+    "type": "AuthenticationError"
+  },
   "events": [
     {
-      "type": "ConnectionPoolReady",
+      "type": "ConnectionCheckOutStarted",
       "address": 42
     },
     {
@@ -56,11 +51,17 @@
     {
       "type": "ConnectionClosed",
       "address": 42,
-      "connectionId": 42,
       "reason": "error"
+    },
+    {
+      "type": "ConnectionCheckOutFailed",
+      "address": 42,
+      "connectionId": 42,
+      "reason": "connectionError"
     }
   ],
   "ignore": [
-    "ConnectionPoolCreated"
+    "ConnectionPoolCreated",
+    "ConnectionPoolReady"
   ]
 }

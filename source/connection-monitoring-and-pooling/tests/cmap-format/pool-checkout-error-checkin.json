@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "style": "integration",
+  "description": "must properly handle network error on check out",
+  "runOn": [
+    {
+      "minServerVersion": "4.9.0"
+    }
+  ],
+  "poolOptions": {
+    "appName": "poolCheckOutErrorCheckInTest"
+  },
+  "operations": [
+    {
+      "name": "ready"
+    },
+    {
+      "name": "checkOut",
+      "label": "conn"
+    },
+    {
+      "name": "failPoint",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 10
+        },
+        "data": {
+          "failCommands": [
+            "isMaster",
+            "hello"
+          ],
+          "closeConnection": true,
+          "appName": "poolCheckOutErrorCheckInTest"
+        }
+      }
+    },
+    {
+      "name": "start",
+      "target": "thread1"
+    },
+    {
+      "name": "checkOut",
+      "thread": "thread1"
+    },
+    {
+      "name": "waitForEvent",
+      "event": "CheckOutFailed"
+    },
+    {
+      "name": "checkIn",
+      "connection": "conn"
+    }
+  ],
+  "events": [
+    {
+      "type": "ConnectionCheckOutStarted",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCreated",
+      "address": 42
+    },
+    {
+      "type": "ConnectionReady",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckedOut",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckOutStarted"
+    },
+    {
+      "type": "ConnectionCreated"
+    },
+    {
+      "type": "ConnectionPoolCleared"
+    },
+    {
+      "type": "ConnectionClosed",
+      "reason": "error"
+    },
+    {
+      "type": "CheckOutFailed",
+      "reason": "connectionError"
+    },
+    {
+      "type": "ConnectionCheckedIn"
+    },
+    {
+      "type": "ConnectionClosed",
+      "reason": "stale"
+    }
+  ],
+  "ignore": [
+    "ConnectionPoolCreated",
+    "ConnectionPoolReady"
+  ]
+}
