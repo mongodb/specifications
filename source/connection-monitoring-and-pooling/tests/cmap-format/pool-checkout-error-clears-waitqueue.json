@@ -20,7 +20,8 @@
   },
   "poolOptions": {
     "maxPoolSize": 1,
-    "waitQueueTimeoutMS": 30000
+    "waitQueueTimeoutMS": 30000,
+    "appName": "poolCheckOutErrorWaitQueueTest"
   },
   "operations": [
     {

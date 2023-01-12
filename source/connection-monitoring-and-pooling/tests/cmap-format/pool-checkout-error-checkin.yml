@@ -1,6 +1,6 @@
 version: 1
 style: integration
-description: must properly handle network error on check out
+description: checking in a connection after checkout fails closes connection
 runOn:
   -
     # required for appName in fail point
@@ -29,27 +29,26 @@ operations:
     thread: thread1
   # Wait for the check out to fail
   - name: waitForEvent
-    event: CheckOutFailed
+    event: ConnectionCheckOutFailed
+    count: 1
   - name: checkIn
     connection: conn
 events:
   - type: ConnectionCheckOutStarted
-    address: 42
   - type: ConnectionCreated
-    address: 42
   - type: ConnectionReady
-    address: 42
   - type: ConnectionCheckedOut
-    address: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
   - type: ConnectionPoolCleared
   - type: ConnectionClosed
     reason: error
-  - type: CheckOutFailed
+    connectionId: 2
+  - type: ConnectionCheckOutFailed
     reason: connectionError
   - type: ConnectionCheckedIn
   - type: ConnectionClosed
+    connectionId: 1
     reason: stale
 ignore:
   - ConnectionPoolCreated

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "style": "integration",
-  "description": "must properly handle network error on check out",
+  "description": "checking in a connection after checkout fails closes connection",
   "runOn": [
     {
       "minServerVersion": "4.9.0"
@@ -45,7 +45,8 @@
     },
     {
       "name": "waitForEvent",
-      "event": "CheckOutFailed"
+      "event": "ConnectionCheckOutFailed",
+      "count": 1
     },
     {
       "name": "checkIn",
@@ -54,20 +55,16 @@
   ],
   "events": [
     {
-      "type": "ConnectionCheckOutStarted",
-      "address": 42
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "ConnectionCreated",
-      "address": 42
+      "type": "ConnectionCreated"
     },
     {
-      "type": "ConnectionReady",
-      "address": 42
+      "type": "ConnectionReady"
     },
     {
-      "type": "ConnectionCheckedOut",
-      "address": 42
+      "type": "ConnectionCheckedOut"
     },
     {
       "type": "ConnectionCheckOutStarted"
@@ -80,10 +77,11 @@
     },
     {
       "type": "ConnectionClosed",
-      "reason": "error"
+      "reason": "error",
+      "connectionId": 2
     },
     {
-      "type": "CheckOutFailed",
+      "type": "ConnectionCheckOutFailed",
       "reason": "connectionError"
     },
     {
@@ -91,6 +89,7 @@
     },
     {
       "type": "ConnectionClosed",
+      "connectionId": 1,
       "reason": "stale"
     }
   ],

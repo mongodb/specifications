@@ -19,7 +19,7 @@ operations:
   - name: ready
   - name: checkOut
 error:
-  type: Network
+  type: NetworkError
 events:
   - type: ConnectionCheckOutStarted
     address: 42
@@ -29,10 +29,10 @@ events:
     address: 42
   - type: ConnectionClosed
     address: 42
+    connectionId: 1
     reason: error
   - type: ConnectionCheckOutFailed
     address: 42
-    connectionId: 42
     reason: connectionError
 ignore:
   - ConnectionPoolCreated

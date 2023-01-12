@@ -14,6 +14,7 @@ failPoint:
 poolOptions:
   maxPoolSize: 1
   waitQueueTimeoutMS: 30000
+  appName: *appName
 operations:
   - name: ready
   # start a few threads that all will enter
