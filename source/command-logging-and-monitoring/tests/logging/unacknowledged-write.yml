@@ -1,0 +1,102 @@
+description: "command-logging"
+
+schemaVersion: "1.13"
+
+createEntities:
+  - client:
+      id: &client client
+      observeLogMessages:
+        command: debug
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName logging-tests
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName logging-tests-collection
+      collectionOptions:
+        writeConcern: { w: 0 }
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents:
+      - { _id: 1 }
+
+tests:
+  - description: "An unacknowledged write that will succeed on the server"
+    operations:
+      - name: &commandName insert
+        object: *collection
+        arguments:
+          document: { _id: 2 }
+    expectLogMessages:
+      - client: *client
+        messages:
+          - level: debug
+            component: command
+            data:
+              message: "Command started"
+              databaseName: *databaseName
+              commandName: *commandName
+              command:
+                $$matchAsDocument:
+                  $$matchAsRoot:
+                    insert: *collectionName
+                    $db: *databaseName
+              requestId: { $$type: [int, long] }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+
+          - level: debug
+            component: command
+            data:
+              message: "Command succeeded"
+              commandName: *commandName
+              reply:
+                $$matchAsDocument:
+                  ok: 1
+              requestId: { $$type: [int, long] }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+              durationMS: { $$type: [double, int, long] }
+        
+  - description: "An unacknowledged write that will fail on the server"
+    operations:
+      # this should fail server-side with a duplicate key error
+      - name: &commandName insert
+        object: *collection
+        arguments:
+          document: { _id: 1 }
+    expectLogMessages:
+      - client: *client
+        messages:
+          - level: debug
+            component: command
+            data:
+              message: "Command started"
+              databaseName: *databaseName
+              commandName: *commandName
+              command:
+                $$matchAsDocument:
+                  $$matchAsRoot:
+                    ping: 1
+                    $db: *databaseName
+              requestId: { $$type: [int, long] }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+
+          - level: debug
+            component: command
+            data:
+              message: "Command succeeded"
+              commandName: *commandName
+              reply:
+                $$matchAsDocument:
+                  ok: 1
+              requestId: { $$type: [int, long] }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+              durationMS: { $$type: [double, int, long] }
+
