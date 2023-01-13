@@ -1164,7 +1164,7 @@ MONGODB-OIDC
 
 :since: 6.3 Enterprise
 
-MONGODB-OIDC authenticates using an OIDC access token.  Drivers support
+MONGODB-OIDC authenticates using an OIDC access token.  Drivers MUST support
 both the Authentication Code Flow and Device Workflow for AWS, Azure,
 and GCP platforms.
 
