@@ -1254,7 +1254,7 @@ password
     MUST NOT be specified.
 
 mechanism
-    MUST be "SCRAM-SHA-1"
+    MUST be "MONGODB-OIDC"
 
 mechanism_properties
     PRINCIPAL_NAME
