@@ -1159,6 +1159,199 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 .. note::
     Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
 
+MONGODB-OIDC
+~~~~~~~~~~~
+
+:since: 6.3 Enterprise
+
+MONGODB-OIDC authenticates using an OIDC access token.  Drivers support
+both the Authentication Code Flow and Device Workflow for AWS, Azure,
+and GCP platforms.
+
+
+Conversation
+````````````
+
+Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips between the client and MongoDB.  The requests from the client and the replies from the server are described by the following IDL structs which are encoded in the payload as octet sequences defining BSON objects:
+
+.. code:: idl
+
+  OIDCMechanismClientStep1:
+    description: Client's opening request in saslStart or
+                 hello.speculativeAuthenticate
+    strict: false
+    fields:
+      n:
+        description: "Principal name of client"
+        cpp_name: principalName
+        type: string
+        optional: true
+
+Note that the principal name is optional as it may be provided by the IDP in environments where only one IDP is used.
+
+.. code:: idl
+
+  OIDCMechanismServerStep1:
+    description: "Server's reply to clientStep1"
+    strict: false
+    fields:
+      authorizeEndpoint:
+        description: >-
+          URL where the IDP may be contacted for end user
+          authentication and authorization code generation.
+        type: string
+        optional: true # Req if deviceAuthorizeEndpoint not present
+      tokenEndpoint:
+        description: >-
+          URL where the IDP may be contacted for authorization
+          code <=> ID/access token exchange.
+        type: string
+        optional: true # Req if deviceAuthorizeEndpoint not present
+      deviceAuthorizeEndpoint:
+        description: >-
+          URL where the IDP may be contacted for device
+          authentication and authorization code generation.
+        type: string
+        optional: true # Req if authorizeEndpoint not present
+      clientId:
+        description: "Unique client ID for this OIDC client"
+        type: string
+      clientSecret:
+        description: "Secret used when communicating with IDP"
+        type: string
+        optional: true
+      requestScopes:
+        description: "Additional scopes to request from IDP"
+        type: array<string>
+        optional: true
+
+Server will use principalName (n) if provided in clientStep1 to select an appropriate IDP.  This IDP's configuration will be returned in serverStep1 to instruct the client on how to acquire an Access Token.  This Access Token will be used in clientStep2 to complete authentication.  The principalName identified within the Access Token MUST match any provided during clientStep1, or the authentication operation will fail.
+
+.. code:: idl
+
+  OIDCMechanismClientStep2:
+      description: "Client's request with signed token"
+      strict: false
+      fields:
+          jwt:
+              description: "Compact serialized JWT with signature"
+              cpp_name: JWT
+              type: string
+
+The driver MAY, if it has previously acquired a valid Access Token, or has cached the reply from serverStep1, begin their authentication by sending clientStep2 with their initial saslStart request and authenticate in a single round trip.  Similarly, as an authenticated client's token's expirationTime approaches, it should proactively acquire a new Access Token, and it MAY do so with cached IDP details, skipping directly to clientStep2.
+
+
+`MongoCredential`_ Properties
+`````````````````````````````
+
+username
+    MUST NOT be specified.
+
+source
+    MUST be "$external". Defaults to ``$external``.
+
+password
+    MUST NOT be specified.
+
+mechanism
+    MUST be "SCRAM-SHA-1"
+
+mechanism_properties
+    PRINCIPAL_NAME
+        Drivers MUST allow the user to specify a principal name, which
+        is required by the server when more than one Identity Provider
+        is configured.
+    DEVICE_NAME
+        Drivers MUST allow the user to specify a name for the device
+        workflow that is one of "aws", "azure", or "gcp".
+
+
+User Provided Callbacks
+```````````````````````
+
+Drivers MUST allow the user to provide callbacks for token request and
+token refresh.  The token request callback MUST accept the OIDCMechanismServerStep1 structure and return an OIDCRequestTokenResult of
+the form:
+
+.. code:: idl
+
+  OIDCRequestTokenResult:
+      description: "The result of a token request"
+      strict: false
+      fields:
+          accessToken:
+              description: "The OIDC access token"
+              type: string
+          expiresInSeconds:
+              description: "The expiration time in seconds from the current time"
+              type: int
+              optional: true
+          refreshToken:
+              description: "The OIDC refresh token"
+              type: str
+              optional: true
+
+.. code:: typescript
+
+    function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1): OIDCRequestTokenResult
+
+The optional token refresh callback will accept the IDP information as
+well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResult.
+
+
+.. code:: typescript
+
+    function onOIDCRefreshToken(serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult): OIDCRequestTokenResult
+
+If no callbacks are given, the driver MUST enforce that a DEVICE_NAME
+mechanism_properties is set and one of ("aws", "azure", or "gcp").
+The callback mechanism can be used to support both Authentication
+Code Workflows or Device workflows that are not explicitly implemented
+by drivers.
+
+
+Supported Device Workflows
+``````````````````````````
+
+Drives MUST support device workflows for "aws", "azure", and "gcp", given
+by the DEVICE_NAME mechanism property.  In all cases the acquired token
+will be given as the ``jwt`` argument in the second client step of the
+SASL exchange.
+
+AWS
+___
+
+When the DEVICE_NAME mechanism property is set to "aws", the driver MUST
+attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
+interpret it as a file path.  The contents of the file are read as the
+access token.
+
+Azure
+_____
+
+When the DEVICE_NAME mechanism property is set to "azure", the driver MUST
+acquire an access token using the workflow described in "Obtaining an Access Token for Azure Key Vault" <TODO insert link to client-side-encryption>.
+
+GCP
+___
+
+When the DEVICE_NAME mechanism property is set to "gcp", the driver MUST
+acquire an access token using the workflow described in "Obtaining GCP Credentials" <TODO insert link to client-side-encryption>.
+
+
+Caching Credentials
+```````````````````
+
+Drivers MUST enable caching when callback(s) are provided to the mongo client.
+When an authorization request is made and there is a valid cached response,
+the driver MUST use the cached response if it has not expired.
+
+The cached responses are tied to the principal name if given, and an id of the callback function, if possible in the driver's language.
+
+A cache will expire within 5 minutes of the ``expiresInSeconds`` time.   If a cache value is found but has expired, the refresh callback will be called (if given) with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult arguments, and it will return a new OIDCRequestTokenResult response.
+
+If there is no refresh callback and no current valid cached value, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent call to either callback.
+
 -------------------------
 Connection String Options
 -------------------------
