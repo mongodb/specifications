@@ -43,10 +43,10 @@
   ],
   "tests": [
     {
-      "description": "An unacknowledged write that will succeed on the server",
+      "description": "An unacknowledged write generates a succeeded log message with ok: 1 reply",
       "operations": [
         {
-          "name": "insert",
+          "name": "insertOne",
           "object": "collection",
           "arguments": {
             "document": {
@@ -70,94 +70,6 @@
                   "$$matchAsDocument": {
                     "$$matchAsRoot": {
                       "insert": "logging-tests-collection",
-                      "$db": "logging-tests"
-                    }
-                  }
-                },
-                "requestId": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                }
-              }
-            },
-            {
-              "level": "debug",
-              "component": "command",
-              "data": {
-                "message": "Command succeeded",
-                "commandName": "insert",
-                "reply": {
-                  "$$matchAsDocument": {
-                    "ok": 1
-                  }
-                },
-                "requestId": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "durationMS": {
-                  "$$type": [
-                    "double",
-                    "int",
-                    "long"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "An unacknowledged write that will fail on the server",
-      "operations": [
-        {
-          "name": "insert",
-          "object": "collection",
-          "arguments": {
-            "document": {
-              "_id": 1
-            }
-          }
-        }
-      ],
-      "expectLogMessages": [
-        {
-          "client": "client",
-          "messages": [
-            {
-              "level": "debug",
-              "component": "command",
-              "data": {
-                "message": "Command started",
-                "databaseName": "logging-tests",
-                "commandName": "insert",
-                "command": {
-                  "$$matchAsDocument": {
-                    "$$matchAsRoot": {
-                      "ping": 1,
                       "$db": "logging-tests"
                     }
                   }
