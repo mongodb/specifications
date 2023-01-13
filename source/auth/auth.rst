@@ -1160,7 +1160,7 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
     Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
 
 MONGODB-OIDC
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 :since: 6.3 Enterprise
 
