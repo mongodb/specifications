@@ -2631,6 +2631,8 @@ The Range Explicit Encryption tests require MongoDB server 6.2+. The tests must 
 
 Each of the following test cases must pass for each of the supported types (``DecimalNoPrecision``, ``DecimalPrecision``, ``DoublePrecision``, ``DoubleNoPrecision``, ``Date``, ``Int``, and ``Long``), unless it is stated the type should be skipped.
 
+Tests for ``DecimalNoPrecision`` must only run against a replica set. ``DecimalNoPrecision`` queries are expected to take a long time and may exceed the default mongos timeout.
+
 Before running each of the following test cases, perform the following Test Setup.
 
 Test Setup
