@@ -1295,6 +1295,8 @@ the form:
 
     function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1): OIDCRequestTokenResult
 
+If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
+
 The optional token refresh callback will accept the IDP information as
 well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResult.
 
@@ -1303,11 +1305,15 @@ well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResul
 
     function onOIDCRefreshToken(serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult): OIDCRequestTokenResult
 
+If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
+
 If no callbacks are given, the driver MUST enforce that a DEVICE_NAME
 mechanism_properties is set and one of ("aws", "azure", or "gcp").
 The callback mechanism can be used to support both Authentication
 Code Workflows or Device workflows that are not explicitly implemented
-by drivers.
+by drivers.  If there is no callback and no DEVICE_NAME, or the
+DEVICE_NAME is set but credentials cannot be automatically obtained,
+the driver MUST raise an error.
 
 
 Supported Device Workflows
