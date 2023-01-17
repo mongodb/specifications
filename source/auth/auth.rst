@@ -1264,7 +1264,14 @@ mechanism_properties
     DEVICE_NAME
         Drivers MUST allow the user to specify a name for the device
         workflow that is one of "aws", "azure", or "gcp".
-
+    REQUEST_TOKEN_CALLBACK
+        Drivers MUST allow the user to specify a callback of the form
+        "onOIDCRequestToken" (defined below), if the driver supports
+        providing objects as mechanism property values.
+    REFRESH_TOKEN_CALLBACK
+        Drivers MUST allow the user to specify a callback of the form
+        "onOIDCRefreshToken" (defined below), if the driver supports
+        providing objects as mechanism property values.
 
 User Provided Callbacks
 ```````````````````````
