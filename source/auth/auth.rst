@@ -1295,7 +1295,9 @@ the form:
 
     function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1): OIDCRequestTokenResult
 
-If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
+If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.   The driver will
+inspect that the correct properties are given, but MUST NOT attempt to validate
+the token(s) directly.
 
 The optional token refresh callback will accept the IDP information as
 well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResult.
@@ -1306,6 +1308,10 @@ well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResul
     function onOIDCRefreshToken(serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult): OIDCRequestTokenResult
 
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
+
+If the refresh callback is given and the request callback is not given,
+the driver MUST raise an error.  If DEVICE_NAME is given and one or more
+callbacks are given, the driver MUST raise an error.
 
 If no callbacks are given, the driver MUST enforce that a DEVICE_NAME
 mechanism_properties is set and one of ("aws", "azure", or "gcp").
