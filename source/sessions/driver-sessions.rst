@@ -203,11 +203,6 @@ instances at the same time (see the Server Session Pool section). Additionally,
 a ``ClientSession`` may only ever be associated with one ``ServerSession`` for
 its lifetime.
 
-Drivers MUST report an error if sessions are not supported by the deployment
-(see How to Check Whether a Deployment Supports Sessions). This error MUST either
-be reported by ``startSession``, or be reported the first time the session is used
-for an operation.
-
 Explicit vs implicit sessions
 -----------------------------
 
@@ -411,8 +406,7 @@ MongoDatabase changes
 =====================
 
 All ``MongoDatabase`` methods that talk to the server MUST send a session ID
-with the command when connected to a deployment that supports sessions so that
-the server can associate the operation with a session ID.
+with the command so that the server can associate the operation with a session ID.
 
 New database methods that take an explicit session
 --------------------------------------------------
@@ -433,9 +427,7 @@ Existing database methods that start an implicit session
 --------------------------------------------------------
 
 When an existing ``MongoDatabase`` method that does not take a session is called,
-the driver MUST check whether the deployment supports sessions (See How to
-Check Whether a Deployment Supports Session). If sessions are supported, the
-driver MUST behave as if a new ``ClientSession`` was started just for this one
+the driver MUST behave as if a new ``ClientSession`` was started just for this one
 operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec. Regardless, please consult the startSession section to
@@ -446,8 +438,7 @@ MongoCollection changes
 =======================
 
 All ``MongoCollection`` methods that talk to the server MUST send a session ID
-with the command when connected to a deployment that supports sessions so that
-the server can associate the operation with a session ID.
+with the command so that the server can associate the operation with a session ID.
 
 New collection methods that take an explicit session
 ----------------------------------------------------
@@ -475,9 +466,7 @@ Existing collection methods that start an implicit session
 ----------------------------------------------------------
 
 When an existing ``MongoCollection`` method that does not take a session is called,
-the driver MUST check whether the deployment supports sessions (See How to
-Check Whether a Deployment Supports Session). If sessions are supported, the
-driver MUST behave as if a new ``ClientSession`` was started just for this one
+the driver MUST behave as if a new ``ClientSession`` was started just for this one
 operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec.
@@ -502,75 +491,11 @@ A driver SHOULD NOT attempt to release the acquired session before connection ch
 
 Explicit sessions MAY be changed to allocate a server session similarly.
 
-How to Check Whether a Deployment Supports Sessions
-===================================================
-
-A driver can determine whether a deployment supports sessions by checking whether
-the ``logicalSessionTimeoutMinutes`` property of the ``TopologyDescription`` has
-a value or not. If it has a value the deployment supports sessions. However, in
-order for this determination to be valid, the driver MUST be connected to at least
-one server of a type that is `data-bearing
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_.
-Therefore, the detailed steps to determine whether sessions are supported are:
-
-1. If the ``TopologyDescription`` and connection type indicate that
-
-* the driver is not connected to any servers, OR
-* is not a direct connection AND is not connected to a data-bearing server
-
-then a driver must do a server selection for any server whose type is data-bearing.
-Server selection will either time out or result in a ``TopologyDescription`` that
-includes at least one connected, data-bearing server.
-
-2. Having verified in step 1 that the ``TopologyDescription`` includes at least
-one connected server a driver can now determine whether sessions are supported
-by inspecting the ``TopologyType`` and ``logicalSessionTimeoutMinutes`` property.
-When the ``TopologyType`` is ``LoadBalanced``, sessions are always supported.
-
-Possible race conditions when checking whether a deployment supports sessions
------------------------------------------------------------------------------
-
-There are some possible race conditions that can happen between the time the
-driver checks whether sessions are supported and subsequently sends a command
-to the server:
-
-* The TopologyDescription might be stale and no longer be accurate because it
-  has been a few seconds since the last heartbeat.
-
-* The TopologyDescription might be accurate at the time the driver checks
-  whether sessions are supported, but by the time the driver sends a command to
-  the server it might no longer be accurate.
-
-* The TopologyDescription might be based on connections to a subset of the
-  servers and it is possible that as the driver connects to more servers the
-  driver might discover that sessions aren't supported after all.
-
-* The server might have supported sessions at the time the connection was first
-  opened (and reported a value for logicalSessionTimeoutMinutes in the initial
-  response to the `handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_),
-  but have subsequently been downgraded to not support sessions. The server does
-  not close the socket in this scenario, and the driver will forever conclude that
-  the server at the other end of this connection supports sessions. This scenario
-  will only be a problem until the next heartbeat against that server.
-
-These race conditions are particularly insidious when the driver decides to
-start an implicit session based on the conclusion that sessions are supported.
-We don't want existing applications that don't use explicit sessions to fail
-when using implicit sessions.
-
-To handle these race conditions, the driver MUST ignore any implicit session if
-at the point it is sending a command to a specific server it turns out that
-that particular server doesn't support sessions after all. This handles the
-first three race conditions. There is nothing that the driver can do about the
-final race condition, and the server will just return an error in this
-scenario.
-
 Sending the session ID to the server on all commands
 ====================================================
 
-When connected to a server that supports sessions a driver MUST append the
-session ID to every command it sends to the server (with the exceptions noted
-in the following section). It does this by adding a
+A driver MUST append the session ID to every command it sends to the server 
+(with the exceptions noted in the following section). It does this by adding a
 top level ``lsid`` field to the command sent to the server. A driver MUST do this
 without modifying any data supplied by the application (e.g. the command
 document passed to runCommand).:
@@ -811,9 +736,9 @@ getting errors due to the server session going stale before it was used.
 
 A server session is considered stale by the server when it has not been used
 for a certain amount of time. The default amount of time is 30 minutes, but
-this value is configurable on the server. Servers that support sessions will
-report this value in the ``logicalSessionTimeoutMinutes`` field of the reply
-to the hello and legacy hello commands. The smallest reported timeout is recorded in the
+this value is configurable on the server. Servers will report this value 
+in the ``logicalSessionTimeoutMinutes`` field of the reply to the hello and 
+legacy hello commands. The smallest reported timeout is recorded in the
 ``logicalSessionTimeoutMinutes`` property of the ``TopologyDescription``. See the
 Server Discovery And Monitoring specification for details.
 
@@ -982,24 +907,6 @@ This sequence ensures that if the ``clusterTime`` of a ``ClientSession`` is inva
 one session will be affected. The ``MongoClient`` ``clusterTime`` is only
 updated with ``$clusterTime`` values known to be valid because they were
 received directly from a server.
-
-Tracking the highest seen cluster time does not require checking the deployment topology or the server version
---------------------------------------------------------------------------------------------------------------
-
-Drivers do not need to check the deployment topology or the server version they
-are connected to in order to track the highest seen ``$clusterTime``. They simply
-need to check for the presence of the ``$clusterTime`` field in responses received
-from servers.
-
-Gossipping with mixed server versions
--------------------------------------
-
-Drivers MUST check that the server they are sending a command to supports
-``$clusterTime`` before adding ``$clusterTime`` to the command. A server supports
-``$clusterTime`` when the ``maxWireVersion`` >= 6.
-
-This supports the (presumably short lived) scenario where not all servers have
-been upgraded to 3.6.
 
 Test Plan
 =========
@@ -1187,3 +1094,4 @@ Changelog
 :2022-03-24: ServerSession Pooling is required and clarifies session acquisition bounding
 :2022-06-13: Move prose tests to test README and apply new ordering
 :2022-10-05: Remove spec front matter
+:2023-01-19: Drivers may assume all officially supported MongoDB servers support sessions
