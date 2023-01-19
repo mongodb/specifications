@@ -16,7 +16,7 @@ initialData: &initialData
       - _id: 2
 
 tests:
-  - description: Pool is cleared after network error on checked out connection
+  - description: Pool properly handles network error on checked out connection
     runOnRequirements:
       # failCommand appName requirements
       - minServerVersion: "4.4"
@@ -97,7 +97,7 @@ tests:
           - _id: 1
           - _id: 2
 
-  - description: Pool is cleared after network error during checkout
+  - description: Pool properly handles network error during checkout
     runOnRequirements:
       # failCommand appName requirements
       - minServerVersion: "4.4"
@@ -193,7 +193,7 @@ tests:
           - _id: 1
           - _id: 2
 
-  - description: Network error on minPoolSize background creation
+  - description: Pool properly handles network error during minPoolSize background connection creation
     runOnRequirements:
       # failCommand appName requirements
       - minServerVersion: "4.4"

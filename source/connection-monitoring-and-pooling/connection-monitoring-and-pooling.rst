@@ -680,8 +680,9 @@ true:
 
 Otherwise, the `Connection <#connection>`_ is marked as available.
 
-If an error is encountered while reading from or writing to a `Connection <#connection>`_, the error MUST be handled
-according to the `Application Errors`_ section of the SDAM specification *before* the connection is checked back into the pool.
+If an error is encountered while reading from or writing to a checked out `Connection <#connection>`_, the error MUST
+be handled according to the `Application Errors`_ section of the SDAM specification *before* the connection is checked
+back into the pool.
 
 .. code::
 
