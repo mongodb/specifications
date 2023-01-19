@@ -452,6 +452,11 @@ Before a `Connection <#connection>`_ can be marked as either "available" or "in 
 must be established. This process involves performing the initial
 handshake, handling OP_COMPRESSED, and performing authentication.
 
+If an error is encountered while attempting to establish a connection, it MUST be handled according
+to the `Application Errors`_ section in the SDAM specification. After the SDAM machinery has handled the error,
+the connection MUST be `closed <#closing-a-connection-internal-implementation>`_. The error can then be propagated
+to the context that initiated the connection establishment attempt.
+
 .. code::
 
     try:
@@ -462,8 +467,11 @@ handshake, handling OP_COMPRESSED, and performing authentication.
       emit ConnectionReadyEvent and equivalent log message
       return connection
     except error:
+      # Handle error according to SDAM. This may entail clearing the pool.
+      topology.handle_pre_handshake_error(error)
       close connection
-      throw error # Propagate error in manner idiomatic to language.
+      # Propagate error in manner idiomatic to language.
+      throw error
 
 
 Closing a Connection (Internal Implementation)
@@ -519,10 +527,6 @@ Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
-If an error is encountered while populating a connection, it MUST be handled via
-the SDAM machinery according to the `Application Errors`_ section in the SDAM
-specification.
-
 If minPoolSize is set, the `Connection <#connection>`_ Pool MUST be populated
 until it has at least minPoolSize total `Connections <#connection>`_. This MUST
 occur only while the pool is "ready". If the pool implements a background
@@ -544,12 +548,8 @@ established as a result of populating the Pool.
 
    wait until pendingConnectionCount < maxConnecting and pool is "ready"
    create connection
-   try:
-     establish connection
-     mark connection as available
-   except error:
-     # Defer error handling to SDAM.
-     topology.handle_pre_handshake_error(error)
+   try establish connection
+   mark connection as available
 
 Checking Out a Connection
 -------------------------
@@ -656,10 +656,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
         establish connection
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
-        decrement totalConnectionCount
         throw
-      finally:
-        decrement pendingConnectionCount
     else:
         decrement availableConnectionCount
     set connection state to "in use"
@@ -682,6 +679,9 @@ true:
 -  The pool has been closed.
 
 Otherwise, the `Connection <#connection>`_ is marked as available.
+
+If an error is encountered while reading from or writing to a `Connection <#connection>`_, the error MUST be handled
+according to the `Application Errors`_ section of the SDAM specification *before* the connection is checked back into the pool.
 
 .. code::
 
