@@ -4,11 +4,25 @@
   "description": "checking in a connection after checkout fails closes connection",
   "runOn": [
     {
-      "minServerVersion": "4.9.0"
+      "minServerVersion": "4.9.0",
+      "auth": true
     }
   ],
   "poolOptions": {
     "appName": "poolCheckOutErrorCheckInTest"
+  },
+  "failPoint": {
+    "configureFailPoint": "failCommand",
+    "mode": {
+      "skip": 1
+    },
+    "data": {
+      "failCommands": [
+        "saslContinue"
+      ],
+      "closeConnection": true,
+      "appName": "poolCheckOutErrorCheckInTest"
+    }
   },
   "operations": [
     {
@@ -17,23 +31,6 @@
     {
       "name": "checkOut",
       "label": "conn"
-    },
-    {
-      "name": "failPoint",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 10
-        },
-        "data": {
-          "failCommands": [
-            "isMaster",
-            "hello"
-          ],
-          "closeConnection": true,
-          "appName": "poolCheckOutErrorCheckInTest"
-        }
-      }
     },
     {
       "name": "start",
