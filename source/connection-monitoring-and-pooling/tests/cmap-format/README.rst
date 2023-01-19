@@ -54,7 +54,14 @@ All Unit Tests have some of the following fields:
 
 - ``error``: Indicates that the main thread is expected to error during this test. An error may include of the following fields:
 
-  - ``type``: the type of error emitted
+  - ``type``: the type of error emitted. Currently, only the following error types are supported:
+
+    - WaitQueueTimeoutError
+    - PoolClosedError
+    - PoolClearedError
+    - AuthenticationError
+    - NetworkError
+
   - ``message``: the message associated with that error
   - ``address``: Address of pool emitting error
 
