@@ -2629,7 +2629,9 @@ with encrypted value.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Range Explicit Encryption tests require MongoDB server 6.2+. The tests must not run against a standalone.
 
-Each of the following test cases must pass for each of the supported types (``DoublePrecision``, ``DoubleNoPrecision``, ``Date``, ``Int``, and ``Long``), unless it is stated the type should be skipped.
+Each of the following test cases must pass for each of the supported types (``DecimalNoPrecision``, ``DecimalPrecision``, ``DoublePrecision``, ``DoubleNoPrecision``, ``Date``, ``Int``, and ``Long``), unless it is stated the type should be skipped.
+
+Tests for ``DecimalNoPrecision`` must only run against a replica set. ``DecimalNoPrecision`` queries are expected to take a long time and may exceed the default mongos timeout.
 
 Before running each of the following test cases, perform the following Test Setup.
 
@@ -2696,6 +2698,25 @@ Test Setup: RangeOpts
 This section lists the values to use for ``RangeOpts`` for each of the supported data types, since each data type requires a different ``RangeOpts``. 
 
 Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
+
+#. DecimalNoPrecision
+
+   .. code:: typescript
+   
+      class RangeOpts {
+         sparsity: 1
+      }
+
+#. DecimalPrecision
+
+   .. code:: typescript
+   
+      class RangeOpts {
+         min: { "$numberDecimal": "0" },
+         max: { "$numberDecimal": "200" },
+         sparsity: 1,
+         precision: 2
+      }
 
 #. DoubleNoPrecision
 
@@ -2871,7 +2892,7 @@ Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>":
 
 Case 6: encrypting a document greater than the maximum errors
 `````````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
+This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision`` or ``encryptedDecimalNoPrecision``.
 
 Use ``clientEncryption.encrypt()`` to try to encrypt the value 201 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
 
@@ -2889,7 +2910,7 @@ Assert that an error was raised.
 
 Case 7: encrypting a document of a different type errors 
 ````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision``.
+This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision`` or ``encryptedDecimalNoPrecision``.
 
 For all the tests below use these ``EncryptOpts``:
 
@@ -2908,7 +2929,7 @@ Assert an error was raised.
 
 Case 8: setting precision errors if the type is not a double
 ````````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoublePrecision`` or ``encryptedDoubleNoPrecision``.
+This test case should be skipped if the encrypted field is ``encryptedDoublePrecision`` or ``encryptedDoubleNoPrecision`` or ``encryptedDecimalPrecision`` or ``encryptedDecimalNoPrecision``.
 
 Use ``clientEncryption.encrypt()`` to try to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
 
