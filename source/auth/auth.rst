@@ -1177,8 +1177,7 @@ Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips 
 .. code:: idl
 
   OIDCMechanismClientStep1:
-    description: Client's opening request in saslStart or
-                 hello.speculativeAuthenticate
+    description: Client's opening request in saslStart
     strict: false
     fields:
       n:
@@ -1237,8 +1236,6 @@ Server will use principalName (n) if provided in clientStep1 to select an approp
               description: "Compact serialized JWT with signature"
               cpp_name: JWT
               type: string
-
-The driver MAY, if it has previously acquired a valid Access Token, or has cached the reply from serverStep1, begin their authentication by sending clientStep2 with their initial saslStart request and authenticate in a single round trip.  Similarly, as an authenticated client's token's expirationTime approaches, it should proactively acquire a new Access Token, and it MAY do so with cached IDP details, skipping directly to clientStep2.
 
 
 `MongoCredential`_ Properties
@@ -1302,6 +1299,11 @@ the form:
 
     function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1): OIDCRequestTokenResult
 
+The driver MUST use a lock when calling a callback, and check
+for a cached result when the lock is acquired.  This is because request
+callbacks may involve human interaction, and refresh callbacks could
+use refresh tokens that can only be used once.
+
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.   The driver will
 inspect that the correct properties are given, but MUST NOT attempt to validate
 the token(s) directly.
@@ -1364,6 +1366,8 @@ Caching Credentials
 Drivers MUST enable caching when callback(s) are provided to the mongo client.
 When an authorization request is made and there is a valid cached response,
 the driver MUST use the cached response if it has not expired.
+
+The driver MAY, if it has previously acquired a valid Access Token, or has cached the reply from serverStep1, begin their authentication by sending clientStep2 with their initial saslStart request and authenticate in a single round trip.
 
 If the driver implements a global cache, the cache keys MUST include the
 principal name if given, and a hash of the callback function, if possible
