@@ -3,12 +3,6 @@ description: cmap-network-error
 
 schemaVersion: "1.10"
 
-runOnRequirements:
-  # failCommand appName requirements
-  - minServerVersion: "4.4"
-    serverless: forbid
-    topologies: [ single, replicaset, sharded ]
-
 createEntities:
   - client:
       id: &setupClient setupClient
@@ -23,6 +17,11 @@ initialData: &initialData
 
 tests:
   - description: Pool is cleared after network error on checked out connection
+    runOnRequirements:
+      # failCommand appName requirements
+      - minServerVersion: "4.4"
+        serverless: forbid
+        topologies: [ single, replicaset, sharded ]
     operations:
       - name: failPoint
         object: testRunner
@@ -87,7 +86,6 @@ tests:
           - poolClearedEvent: {}
           - connectionCheckedInEvent: {}
           - connectionClosedEvent:
-              # connectionId: 1
               # Even though the connection is also stale, the reason it is being closed
               # is due to an error.
               reason: error
@@ -100,6 +98,11 @@ tests:
           - _id: 2
 
   - description: Pool is cleared after network error during checkout
+    runOnRequirements:
+      # failCommand appName requirements
+      - minServerVersion: "4.4"
+        serverless: forbid
+        topologies: [ single ]
     operations:
       - name: createEntities
         object: testRunner
@@ -121,7 +124,6 @@ tests:
                   retryWrites: false
                   retryReads: false
                   appName: &networkErrorCheckoutAppName cmapNetworkErrorCheckOutTest
-                  directConnection: true
             - database:
                 id: &database database
                 client: *client
@@ -139,6 +141,8 @@ tests:
             serverDescriptionChangedEvent:
               oldDescription:
                 type: Unknown
+              newDescription:
+                type: Standalone
           count: 1
       - name: failPoint
         object: testRunner
@@ -188,3 +192,96 @@ tests:
         documents:
           - _id: 1
           - _id: 2
+
+  - description: Network error on minPoolSize background creation
+    runOnRequirements:
+      # failCommand appName requirements
+      - minServerVersion: "4.4"
+        serverless: forbid
+        topologies: [ single, replicaset, sharded ]
+        auth: true
+    operations:
+      # Configure the initial monitor handshake to succeed but the
+      # first background minPoolSize establishment to fail.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - saslContinue
+              appName: &minPoolSizeAppName CMAPminPoolSizeError
+              closeConnection: true
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - poolClearedEvent
+                  - poolReadyEvent
+                  - connectionCreatedEvent
+                  - connectionReadyEvent
+                  - connectionClosedEvent
+                  - connectionCheckOutStartedEvent
+                  - connectionCheckedOutEvent
+                  - connectionCheckOutFailedEvent
+                  - connectionCheckedInEvent
+                uriOptions:
+                  heartbeatFrequencyMS: 500
+                  appname: *minPoolSizeAppName
+                  minPoolSize: 1
+      # Wait for monitor to succeed handshake and mark the pool as ready.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolReadyEvent: {}
+          count: 1
+      # Background connection establishment due to minPoolSize should fail,
+      # causing the connection to close.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionClosedEvent:
+              reason: error
+          count: 1
+      # Wait for monitor to rediscover server and mark pool as ready again.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolReadyEvent: {}
+          count: 2
+      # Now that the failpoint has been disabled (was set to times: 1), background
+      # connection creation should succeed.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionReadyEvent: {}
+          count: 1
+
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - poolReadyEvent: {}
+          - connectionCreatedEvent: {}
+          - poolClearedEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          - poolReadyEvent: {}
+          - connectionCreatedEvent: {}
+          - connectionReadyEvent: {}

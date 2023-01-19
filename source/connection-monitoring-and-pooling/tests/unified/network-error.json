@@ -1,17 +1,6 @@
 {
   "description": "cmap-network-error",
   "schemaVersion": "1.10",
-  "runOnRequirements": [
-    {
-      "minServerVersion": "4.4",
-      "serverless": "forbid",
-      "topologies": [
-        "single",
-        "replicaset",
-        "sharded"
-      ]
-    }
-  ],
   "createEntities": [
     {
       "client": {
@@ -37,6 +26,17 @@
   "tests": [
     {
       "description": "Pool is cleared after network error on checked out connection",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4",
+          "serverless": "forbid",
+          "topologies": [
+            "single",
+            "replicaset",
+            "sharded"
+          ]
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",
@@ -165,6 +165,15 @@
     },
     {
       "description": "Pool is cleared after network error during checkout",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4",
+          "serverless": "forbid",
+          "topologies": [
+            "single"
+          ]
+        }
+      ],
       "operations": [
         {
           "name": "createEntities",
@@ -188,8 +197,7 @@
                   "uriOptions": {
                     "retryWrites": false,
                     "retryReads": false,
-                    "appName": "cmapNetworkErrorCheckOutTest",
-                    "directConnection": true
+                    "appName": "cmapNetworkErrorCheckOutTest"
                   }
                 }
               },
@@ -219,6 +227,9 @@
               "serverDescriptionChangedEvent": {
                 "oldDescription": {
                   "type": "Unknown"
+                },
+                "newDescription": {
+                  "type": "Standalone"
                 }
               }
             },
@@ -307,6 +318,161 @@
             },
             {
               "_id": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Network error on minPoolSize background creation",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4",
+          "serverless": "forbid",
+          "topologies": [
+            "single",
+            "replicaset",
+            "sharded"
+          ],
+          "auth": true
+        }
+      ],
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "setupClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "saslContinue"
+                ],
+                "appName": "CMAPminPoolSizeError",
+                "closeConnection": true
+              }
+            }
+          }
+        },
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "observeEvents": [
+                    "poolClearedEvent",
+                    "poolReadyEvent",
+                    "connectionCreatedEvent",
+                    "connectionReadyEvent",
+                    "connectionClosedEvent"
+                  ],
+                  "uriOptions": {
+                    "heartbeatFrequencyMS": 500,
+                    "appname": "CMAPminPoolSizeError",
+                    "minPoolSize": 1,
+                    "serverSelectionTimeoutMS": 1000
+                  }
+                }
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "cmap-tests"
+                }
+              },
+              {
+                "collection": {
+                  "id": "collection",
+                  "database": "database",
+                  "collectionName": "cmap-network-error"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "poolReadyEvent": {}
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "connectionClosedEvent": {
+                "reason": "error"
+              }
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "poolReadyEvent": {}
+            },
+            "count": 2
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "connectionReadyEvent": {}
+            },
+            "count": 1
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "eventType": "cmap",
+          "events": [
+            {
+              "poolReadyEvent": {}
+            },
+            {
+              "connectionCreatedEvent": {}
+            },
+            {
+              "poolClearedEvent": {}
+            },
+            {
+              "connectionClosedEvent": {
+                "reason": "error"
+              }
+            },
+            {
+              "poolReadyEvent": {}
+            },
+            {
+              "connectionCreatedEvent": {}
+            },
+            {
+              "connectionReadyEvent": {}
             }
           ]
         }
