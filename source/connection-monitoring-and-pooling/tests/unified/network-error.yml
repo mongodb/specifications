@@ -123,7 +123,7 @@ tests:
                 uriOptions:
                   retryWrites: false
                   retryReads: false
-                  appName: &networkErrorCheckoutAppName cmapNetworkErrorCheckOutTest
+                  appName: &networkErrorCheckOutAppName cmapNetworkErrorCheckOutTest
             - database:
                 id: &database database
                 client: *client
@@ -154,7 +154,7 @@ tests:
                 - isMaster
                 - hello
               closeConnection: true
-              appName: *networkErrorCheckoutAppName
+              appName: *networkErrorCheckOutAppName
       - name: find
         object: *collection
         arguments:
