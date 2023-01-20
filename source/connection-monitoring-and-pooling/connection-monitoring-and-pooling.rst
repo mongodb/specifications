@@ -1560,7 +1560,8 @@ Changelog
 :2021-11-08: Make maxConnecting configurable.
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter and reformat changelog.
-:2022-10-14: Add connection pool log messages and associated tests.
+:2022-10-14: Add connection pool log messages and associated tests
+:2022-01-20: Clarify error handling semantics and add associated tests.
 
 ----
 
