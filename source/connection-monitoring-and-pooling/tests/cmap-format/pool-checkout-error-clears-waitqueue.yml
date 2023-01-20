@@ -61,6 +61,4 @@ ignore:
   - ConnectionPoolReady
   - ConnectionCreated
   - ConnectionPoolCreated
-  - ConnectionReady
-  - ConnectionCheckedIn
   - ConnectionClosed
