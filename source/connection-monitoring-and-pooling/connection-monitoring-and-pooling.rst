@@ -550,6 +550,7 @@ established as a result of populating the Pool.
    create connection
    try establish connection
    mark connection as available
+   decrement pendingConnectionCount
 
 Checking Out a Connection
 -------------------------
@@ -573,17 +574,26 @@ available `Connection`_ is found or the list of available `Connections
 
 If the list is exhausted, the total number of `Connections <#connection>`_ is
 less than maxPoolSize, and pendingConnectionCount < maxConnecting, the pool MUST
-create a `Connection`_, establish it, mark it as "in use" and return it. If
-totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting,
-then the pool MUST wait to service the request until neither of those two
-conditions are met or until a `Connection`_ becomes available, re-entering the
-checkOut loop in either case. This waiting MUST NOT prevent `Connections
-<#connection>`_ from being checked into the pool. Additionally, the Pool MUST
-NOT service any newer checkOut requests before fulfilling the original one which
-could not be fulfilled. For drivers that implement the WaitQueue via a fair
-semaphore, a condition variable may also be needed to to meet this
-requirement. Waiting on the condition variable SHOULD also be limited by the
-WaitQueueTimeout, if the driver supports one and it was specified by the user.
+create a `Connection`_ (as described in `Creating a Connection
+<#creating-a-connection-internal-implementation>`_), establish it (as described
+in `Establishing a Connection
+<#establishing-a-connection-internal-implementation>`_), mark it as "in use" and
+return it. If an error is encountered while attempting to establish the
+connection, the pool MUST emit a ConnectionCheckOutFailed event with reason
+"connectionError" and corresponding log message before propagating the error to
+connection requester.
+
+If the list is exhausted and totalConnectionCount == maxPoolSize or
+pendingConnectionCount == maxConnecting, then the pool MUST wait to service the
+request until neither of those two conditions are met or until a `Connection`_
+becomes available, re-entering the checkOut loop in either case. This waiting
+MUST NOT prevent `Connections <#connection>`_ from being checked into the
+pool. Additionally, the Pool MUST NOT service any newer checkOut requests before
+fulfilling the original one which could not be fulfilled. For drivers that
+implement the WaitQueue via a fair semaphore, a condition variable may also be
+needed to to meet this requirement. Waiting on the condition variable SHOULD
+also be limited by the WaitQueueTimeout, if the driver supports one and it was
+specified by the user.
 
 If the pool is "closed" or "paused", any attempt to check out a `Connection
 <#connection>`_ MUST throw an Error. The error thrown as a result of the pool
@@ -654,12 +664,14 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     if connection state is "pending":
       try:
         establish connection
+        set connection state to "in use"
+        decrement pendingConnectionCount
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
         throw
     else:
+        set connection state to "in use"
         decrement availableConnectionCount
-    set connection state to "in use"
     emit ConnectionCheckedOutEvent and equivalent log message
     return connection
 
