@@ -14,7 +14,7 @@ Introduction
 Drivers MUST implement all of the following types of CMAP tests:
 
 * Pool unit and integration tests as described in `cmap-format/README.rst <./cmap-format/README.rst>`__
-* Integration tests written in the `Unified Test Format <../../unified-test-format/unified-test-format.rst>`_ located in the `/unified <./unified>` directory
+* Integration tests written in the `Unified Test Format <../../unified-test-format/unified-test-format.rst>`_ located in the `/unified <./unified>`_ directory
 * Pool prose tests as described below in `Prose Tests`_
 
 Prose Tests

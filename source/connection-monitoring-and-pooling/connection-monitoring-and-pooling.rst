@@ -580,8 +580,8 @@ in `Establishing a Connection
 <#establishing-a-connection-internal-implementation>`_), mark it as "in use" and
 return it. If an error is encountered while attempting to establish the
 connection, the pool MUST emit a ConnectionCheckOutFailed event with reason
-"connectionError" and corresponding log message before propagating the error to
-connection requester.
+"connectionError" and a corresponding log message before propagating the error
+to connection requester.
 
 If the list is exhausted and totalConnectionCount == maxPoolSize or
 pendingConnectionCount == maxConnecting, then the pool MUST wait to service the
