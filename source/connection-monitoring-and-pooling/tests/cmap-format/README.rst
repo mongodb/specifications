@@ -142,23 +142,6 @@ the addition of the following fields to each test:
 
 - ``poolOptions.appName`` (optional): appName attribute to be set in connections, which will be affected by the fail point.
 
-The integration also supports the following additional operations which are not available
-in the unit test format:
-
-failPoint
-~~~~~~~~~
-
-The ``failPoint`` operation instructs the test runner to configure a fail point
-on the endpoint being used for the test.
-
-The following arguments are supported:
-
-- ``failPoint``: Required document. The ``configureFailPoint`` command to be
-  executed.
-
-When executing this operation, the test runner MUST keep a record of the fail
-point so that it can be disabled after the test.
-
 Spec Test Match Function
 ========================
 
