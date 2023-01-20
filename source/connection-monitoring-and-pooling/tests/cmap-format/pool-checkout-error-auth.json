@@ -33,8 +33,7 @@
     }
   ],
   "error": {
-    "type": "AuthenticationError",
-    "message": "????????"
+    "type": "AuthenticationError"
   },
   "events": [
     {
@@ -43,6 +42,7 @@
     },
     {
       "type": "ConnectionCreated",
+      "connectionId": 1,
       "address": 42
     },
     {
@@ -51,13 +51,14 @@
     },
     {
       "type": "ConnectionClosed",
+      "connectionId": 1,
       "address": 42,
       "reason": "error"
     },
     {
       "type": "ConnectionCheckOutFailed",
+      "connectionId": 1,
       "address": 42,
-      "connectionId": 42,
       "reason": "connectionError"
     }
   ],
