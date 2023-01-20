@@ -14,9 +14,8 @@ Introduction
 Drivers MUST implement all of the following types of CMAP tests:
 
 * Pool unit and integration tests as described in `cmap-format/README.rst <./cmap-format/README.rst>`__
-* `Unified Test Format <../../unified-test-format/unified-test-format.rst>`_ tests located in the ``unified`` directory
+* Integration tests written in the `Unified Test Format <../../unified-test-format/unified-test-format.rst>`_ located in the `/unified <./unified>` directory
 * Pool prose tests as described below in `Prose Tests`_
-* Logging tests as described below in `Logging Tests`_
 
 Prose Tests
 ===========
@@ -28,8 +27,3 @@ The following tests have not yet been automated, but MUST still be tested:
 #. A user MUST be able to specify all ConnectionPoolOptions via a URI string
 #. A user MUST be able to subscribe to Connection Monitoring Events in a manner idiomatic to their language and driver
 
-Logging Tests
-=============
-
-Tests for connection pool logging can be found in the `/logging <./logging>`__ subdirectory and are written in the 
-`Unified Test Format <../../unified-test-format/unified-test-format.rst>`__. 
