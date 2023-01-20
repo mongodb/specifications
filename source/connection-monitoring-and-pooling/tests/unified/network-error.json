@@ -170,7 +170,8 @@
           "minServerVersion": "4.4",
           "serverless": "forbid",
           "topologies": [
-            "single"
+            "single",
+            "sharded"
           ]
         }
       ],
@@ -224,14 +225,7 @@
           "arguments": {
             "client": "client",
             "event": {
-              "serverDescriptionChangedEvent": {
-                "oldDescription": {
-                  "type": "Unknown"
-                },
-                "newDescription": {
-                  "type": "Standalone"
-                }
-              }
+              "poolReadyEvent": {}
             },
             "count": 1
           }
@@ -331,7 +325,6 @@
           "serverless": "forbid",
           "topologies": [
             "single",
-            "replicaset",
             "sharded"
           ],
           "auth": true

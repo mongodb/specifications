@@ -102,7 +102,7 @@ tests:
       # failCommand appName requirements
       - minServerVersion: "4.4"
         serverless: forbid
-        topologies: [ single ]
+        topologies: [ single, sharded ]
     operations:
       - name: createEntities
         object: testRunner
@@ -138,11 +138,7 @@ tests:
         arguments:
           client: *client
           event:
-            serverDescriptionChangedEvent:
-              oldDescription:
-                type: Unknown
-              newDescription:
-                type: Standalone
+            poolReadyEvent: {}
           count: 1
       - name: failPoint
         object: testRunner
@@ -198,7 +194,7 @@ tests:
       # failCommand appName requirements
       - minServerVersion: "4.4"
         serverless: forbid
-        topologies: [ single, replicaset, sharded ]
+        topologies: [ single, sharded ]
         auth: true
     operations:
       # Configure the initial monitor handshake to succeed but the
