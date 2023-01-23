@@ -1381,7 +1381,13 @@ the principal name if given.
 A cache value will expire within 5 minutes of the ``expiresInSeconds`` time.
 If a cache value is found but has expired, the refresh callback will be called (if given) with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult arguments, and it will return a new OIDCRequestTokenResult response.
 
+If the "azure" device is used, then the same caching method used for Azure
+KMS credentials MUST be used.   <TODO insert link to client-side-encryption>.
+
 If there is no refresh callback and no current valid cached value, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent call to either callback.
+
+If a cached value is used and authentication fails, the driver MUST clear the
+cached value.
 
 -------------------------
 Connection String Options

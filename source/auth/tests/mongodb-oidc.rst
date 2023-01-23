@@ -28,7 +28,7 @@ The following URI would also be valid, if it matches the single principal name:
 
 .. code-block::
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME=<PRINCIPAL>
+  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:<PRINCIPAL>
 
 
 AWS Device Flow
@@ -44,20 +44,20 @@ The following URI would also be valid, if it matches the single principal name:
 
 .. code-block::
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME=<PRINCIPAL>,DEVICE_NAME=aws
+  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:<PRINCIPAL>,DEVICE_NAME:aws
 
 
 Multiple Principals
 ===================
 
 Drivers MUST be able to authenticate using either authentication or device
-type if there are multiple principals.
+type if there are multiple principals configured on the server.
 
 .. code-block::
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME=<PRINCIPAL1>
+  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:<PRINCIPAL1>
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME=<PRINCIPAL2>,DEVICE_NAME=aws
+  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME"<PRINCIPAL2>,DEVICE_NAME:aws
 
 Drivers MUST ensure that the following URIs fail:
 
@@ -65,7 +65,11 @@ Drivers MUST ensure that the following URIs fail:
 
   mongodb://localhost/?authMechanism=MONGODB-OIDC
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME=aws
+  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws
+
+Note: Even thogh only one of the the principals is using the device workflow,
+if the user does not provide a principal name then they cannot be
+distinguished, which is why the second URL should fail.
 
 
 Cached Credentials
