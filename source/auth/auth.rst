@@ -1367,13 +1367,13 @@ Drivers MUST enable caching when callback(s) are provided to the mongo client.
 When an authorization request is made and there is a valid cached response,
 the driver MUST use the cached response if it has not expired.
 
-The driver MAY, if it has previously acquired a valid Access Token, or has cached the reply from serverStep1, begin their authentication by sending clientStep2 with their initial saslStart request and authenticate in a single round trip.
-
 If the driver implements a global cache, the cache keys MUST include the
-principal name if given, and a hash of the callback function, if possible
-in the driver's language.  A global cache should be preferred, to prevent
-multiple browser interactions in the case of an authentication code
-workflow.
+principal name if given, the ``client_id`` from serverStep1 and a hash of the callback function, if possible
+in the driver's language.  Using the ``client_id`` accounts for the case when
+two different clusters use the same principal name but could be configurated differently.
+
+A global cache should be preferred, to prevent multiple browser interactions
+in the case of an authentication code workflow.
 
 If the driver implements a cache per client, then the cache key MUST include
 the principal name if given.
