@@ -77,8 +77,9 @@ Cached Credentials
 
 Drivers MUST ensure that they are testing the ability to cache credentials.
 Drivers will need to be able to query and override the cached credentials to
-verify usage.  This test must be performed with the authorization code
-workflow with and without a provided refresh callback.
+verify usage.  Unless otherwise specified, the tests MUST be performed with
+the authorization code workflow with and without a provided refresh callback.
+If desired, the caching tests can be done using mock server responses.
 
 #. Clear the cache.
 #. Create a new client with a request callback and a refresh callback.  Both callbacks will read the contents of the ``AWS_WEB_IDENTITY_TOKEN_FILE`` location to obtain a valid access token.
@@ -102,3 +103,7 @@ that is within one minute.
 #. Ensure that the cache has been cleared.
 #. Ensure that a subsequent ``find`` operation results in a call to the refresh callback.
 #. Ensure that the cache has been set.
+
+#. Clear the cache.
+#. Create a new client using the AWS device workflow.
+#. Ensure that a ``find`` operation does not add credentials to the cache.
