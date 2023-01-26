@@ -3897,6 +3897,8 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+:2023-01-26 Relax logging expectations to allow expected logs to be a subset of
+            the actual logs.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
             Add support for logging assertions via the ``observeLogMessages`` field
