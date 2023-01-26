@@ -7,6 +7,7 @@ Drivers MUST test the following scenarios:
 #. ``Authorization Code Flow``
 #. ``AWS Device Flow``
 #. ``Multiple Principals``
+#. ``Valid Configuration``
 #. ``Caching``
 
 
@@ -71,6 +72,18 @@ Note: Even thogh only one of the the principals is using the device workflow,
 if the user does not provide a principal name then they cannot be
 distinguished, which is why the second URL should fail.
 
+Valid Configuration
+===================
+
+Ensure all of the following conditions raise an error:
+
+#. ``username/password`` specified
+#. ``authSource`` is not ``$external``
+#. Any callback returns null
+#. Any callback returns unexpected result
+#. Both request callback and ``DEVICE_NAME ``are specified
+#. Request callback is omitted but refresh callback is specified
+#. Unknown auth prop is specified
 
 Cached Credentials
 ==================

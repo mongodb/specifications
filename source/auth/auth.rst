@@ -1237,7 +1237,6 @@ Server will use principalName (n) if provided in clientStep1 to select an approp
               cpp_name: JWT
               type: string
 
-
 `MongoCredential`_ Properties
 `````````````````````````````
 
@@ -1336,8 +1335,8 @@ Supported Device Workflows
 
 Drives MUST support device workflows for "aws", "azure", and "gcp", given
 by the DEVICE_NAME mechanism property.  In all cases the acquired token
-will be given as the ``jwt`` argument in the second client step of the
-SASL exchange.
+will be given as the ``jwt`` argument and the second client step of the
+OIDC SASL exchange MUST be made directly, skipping the clientStep1.
 
 AWS
 ___
@@ -1367,24 +1366,30 @@ Drivers MUST enable caching when callback(s) are provided to the mongo client.
 When an authorization request is made and there is a valid cached response,
 the driver MUST use the cached response if it has not expired.
 
-If the driver implements a global cache, the cache keys MUST include the
-principal name if given, the ``client_id`` from serverStep1 and a hash of the callback function, if possible
-in the driver's language.  Using the ``client_id`` accounts for the case when
-two different clusters use the same principal name but could be configurated differently.
+The cache keys MUST include the principal name (or empty string) and the
+resolved host name.  Using the resolved host name accounts for the case when
+two different clusters use the same principal name but could be configurated
+differently.  There is an edge case where if the same principal name is used
+and two aliases to the same local host address are given, there will be
+duplicate user/device interactions, unless the driver can resolve the local
+host address as well.
+
+The driver MUST cache the serverStep1 reponse as part of the cache value,
+to enable skipping serverStep1 on subsequent authentications of the same
+cache key.
 
 A global cache should be preferred, to prevent multiple browser interactions
-in the case of an authentication code workflow.
+in the case of an authentication code workflow.  However, drivers or dev tools
+can choose to use their own caching scheme if appropriate for their language/
+environment.
 
-If the driver implements a cache per client, then the cache key MUST include
-the principal name if given.
-
-A cache value will expire within 5 minutes of the ``expiresInSeconds`` time.
-If a cache value is found but has expired, the refresh callback will be called (if given) with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult arguments, and it will return a new OIDCRequestTokenResult response.
+A cached value will expire within 5 minutes of the ``expiresInSeconds`` time.
+If a cached value is found but has expired, the refresh callback will be called (if given) with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult arguments, and it will return a new OIDCRequestTokenResult response.
 
 If the "azure" device is used, then the same caching method used for Azure
 KMS credentials MUST be used.   <TODO insert link to client-side-encryption>.
 
-If there is no refresh callback and no current valid cached value, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent call to either callback.
+If there is no refresh callback and no current valid cached value, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent call to any callback for a given cache key.
 
 If a cached value is used and authentication fails, the driver MUST clear the
 cached value.
