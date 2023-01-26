@@ -541,10 +541,12 @@ Clients MUST ignore the response to the hello or legacy hello command when measu
 Errors encountered when running a hello or legacy hello command MUST NOT update the topology.
 (See `Why don't clients mark a server unknown when an RTT command fails?`_)
 
-Clients MUST track the minimum RTT out of the (at most) last 10 samples.
+Clients MUST track the minimum RTT out of the (at most) last 10 samples. Clients
+MUST report the minimum RTT as 0 until at least 2 samples have been gathered.
 
 When constructing a ServerDescription from a streaming hello or legacy hello response,
-clients MUST use average and minimum round trip times from the RTT task.
+clients MUST set the average and minimum round trip times from the RTT task as the
+"roundTripTime" and "minRoundTripTime" fields, respectively.
 
 See the pseudocode in the `RTT thread`_ section for an example implementation.
 
@@ -810,17 +812,18 @@ on a dedicated connection, for example:
         helloOk = stableApi != Null
         lock = Mutex()
         movingAverage = MovingAverage()
-        rttMin = MinWindow(max_window_size=10) # for min RTT calculation
+        # Track the min RTT seen in the most recent 10 samples.
+        recentSamples = deque(maxlen=10)
 
     def reset():
         with lock:
             movingAverage.reset()
-            rttMin.reset()
+            recentSamples.clear()
 
     def addSample(rtt):
         with lock:
             movingAverage.update(rtt)
-            rttMin.update(rtt)
+            recentSamples.append(rtt)
 
     def average():
         with lock:
@@ -828,7 +831,10 @@ on a dedicated connection, for example:
 
     def min():
         with lock:
-            return rttMin.get()
+            # Need at least 2 RTT samples.
+            if len(recentSamples) < 2:
+                return 0
+            return min(recentSamples)
 
     def run():
         while this monitor is not stopped:

@@ -299,7 +299,7 @@ Command Execution
 ~~~~~~~~~~~~~~~~~
 
 If ``timeoutMS`` is set, drivers MUST append a ``maxTimeMS`` field to
-commands executed against a MongoDB server using the minimum RTT of
+commands executed against a MongoDB server using the ``minRoundTripTime`` field of
 the selected server. Note that this value MUST be retrieved during server
 selection using the ``servers`` field of the same `TopologyDescription
 <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#TopologyDescription>`__
@@ -309,8 +309,8 @@ server is reset to the default description (e.g. due to an error in the
 monitoring thread) after it has been selected but before the RTT is
 retrieved.
 
-If the minimum RTT of the selected server is less than the remaining timeoutMS,
-the value of this field MUST be ``remaining timeoutMS - minimum RTT``.
+If the ``minRoundTripTime`` is less than the remaining timeoutMS,
+the value of this field MUST be ``remaining timeoutMS - minRoundTripTime``.
 If not, drivers MUST return a timeout error without
 attempting to send the message to the server. This is done to ensure that an
 operation is not routed to the server if it will likely fail with a socket
@@ -905,8 +905,9 @@ Drivers use minimum RTT to short circuit operations
 A previous version of this spec used the 90th percentile RTT to short
 circuit operations that might otherwise fail with a socket timeout.
 We decided to change this logic to avoid canceling operations that may
-have a high chance of succeeding and also removes a dependency on t-digest.
-Instead, drivers use the minimum RTT from the last 10 samples.
+have a high chance of succeeding and also remove a dependency on t-digest.
+Instead, drivers use the minimum RTT from the last 10 samples, or 0 until
+at least 2 samples have been recorded.
 
 Future work
 ===========
