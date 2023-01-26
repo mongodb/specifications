@@ -163,7 +163,7 @@ Do the following before running spec tests:
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
-If the test file name matches the form ``fle2-Range-<type>-Correctness``, drivers MAY skip the test on macOS. The ``fle2-Range`` tests are very slow on macOS and do not provide significant additional test coverage.
+If the test file name matches the regular expression ``fle2\-Range\-.*\-Correctness``, drivers MAY skip the test on macOS. The ``fle2-Range`` tests are very slow on macOS and do not provide significant additional test coverage.
 
 Then for each element in ``tests``:
 
