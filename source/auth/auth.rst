@@ -1162,7 +1162,7 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 MONGODB-OIDC
 ~~~~~~~~~~~~
 
-:since: 6.3 Enterprise
+:since: 7.0 Enterprise
 
 MONGODB-OIDC authenticates using an `OIDC <https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens.  Drivers MUST support
 both the Authentication Code Flow and Device Workflow for AWS, Azure,
