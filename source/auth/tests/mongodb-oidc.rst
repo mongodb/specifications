@@ -7,7 +7,7 @@ Drivers MUST test the following scenarios:
 #. ``Authorization Code Flow``
 #. ``AWS Device Flow``
 #. ``Multiple Principals``
-#. ``Valid Configuration``
+#. ``Invalid Configuration``
 #. ``Caching``
 
 
@@ -72,8 +72,8 @@ Note: Even thogh only one of the the principals is using the device workflow,
 if the user does not provide a principal name then they cannot be
 distinguished, which is why the second URL should fail.
 
-Valid Configuration
-===================
+Invalid Configuration
+=====================
 
 Ensure all of the following conditions raise an error:
 
