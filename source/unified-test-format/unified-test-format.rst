@@ -1394,9 +1394,8 @@ The structure of each object is as follows:
   messages, which are expected to be observed (in this order) on the corresponding
   client while executing `operations`_. If the array is empty, the test runner
   MUST assert that no messages were observed on the client. The driver MUST assert
-  that the messages produced are an exact match, i.e. that the expected and actual
-  message counts are the same and that there are no extra messages emitted by the
-  client during the test run.
+  that the messages match, i.e. that the expected messages are a subset of the
+  actual messages.
 
 expectedLogMessage
 ~~~~~~~~~~~~~~~~~~
@@ -1644,7 +1643,7 @@ the topology. For languages that rely on built-in language mechanisms such as re
 counting to automatically close/deinitialize clients once they go out of scope, this may
 require implementing an abstraction to allow a client entity's underlying client to be set
 to null. Because drivers do not consistently propagate errors encountered while closing a
-client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or 
+client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or
 `expectError <operation_expectError_>`_ for this operation. Test files SHOULD NOT
 specify any operations for a client entity or any entity descended from it following
 a `close` operation on it, as driver behavior when an operation is attempted on a closed
