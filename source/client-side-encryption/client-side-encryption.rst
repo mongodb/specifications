@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-11-30
+:Last Modified: 2023-01-26
 :Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -914,24 +914,38 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 will be interpreted by the helper method and MUST be passed to the `create`_
 command.
 
-A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
+For a helper function, ``CreateCollection(collectionName, collectionOptions)``
+with the name of the database associated as `dbName`, look up the encrypted
+fields ``encryptedFields`` for the collection as
+`GetEncryptedFields(collectionOptions, collectionName, dbName, false)`
+(`See here <GetEncryptedFields_>`_).
 
-- The ``encryptedFields`` option passed in ``collectionOptions``.
-- The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
+If a set of ``encryptedFields`` was found, then do the following operations. If
+any of the following operations error, the remaining operations are not
+attempted:
 
-If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
-
-- Create the collection with name ``encryptedFields["escCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
-  If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["eccCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
-  If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["ecocCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
-  If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``encryptedFields``.
-- Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
+- Create the collection with name ``encryptedFields["escCollection"]`` as a
+  clustered collection using the options
+  ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
+  ``encryptedFields["escCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.esc``. Creating this collection MUST NOT check if
+  the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection with name ``encryptedFields["eccCollection"]`` as a
+  clustered collection using the options
+  ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
+  ``encryptedFields["eccCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.ecc``. Creating this collection MUST NOT check if
+  the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection with name ``encryptedFields["ecocCollection"]`` as a
+  clustered collection using the options
+  ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
+  ``encryptedFields["ecocCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.ecoc``. Creating this collection MUST NOT check if
+  the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection ``collectionName`` with ``collectionOptions`` and the
+  option ``encryptedFields`` set to the ``encryptedFields``.
+- Create the the index ``{"__safeContent__": 1}`` on collection
+  ``collectionName``.
 
 
 Create Encrypted Collection Helper
@@ -980,20 +994,25 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 ``Collection.drop()``). This option will only be interpreted by the helper
 method and MUST NOT be passed to the `drop`_ command.
 
-A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
+For a helper function ``DropCollection(dropOptions)`` with associated collection
+named `collName` and database named `dbName`, look up the encrypted fields
+``encryptedFields`` as `GetEncryptedFields(dropOptions, collName, dbname, true)`
+(`See here <GetEncryptedFields_>`_).
 
-- The ``encryptedFields`` option passed in ``dropOptions``.
-- The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
-- If ``AutoEncryptionOpts.encryptedFieldsMap`` is not null, run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option.
+If a set of ``encryptedFields`` was found, then perform the following
+operations. If any of the following operations error, the remaining operations
+are not attempted. A ``namespace not found`` error returned from the server
+(server error code 26) MUST be ignored:
 
-If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted. A ``namespace not found`` error returned from the server (server error code 26) MUST be ignored:
-
-- Drop the collection with name ``encryptedFields["escCollection"]``.
-  If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
-- Drop the collection with name ``encryptedFields["eccCollection"]``.
-  If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
-- Drop the collection with name ``encryptedFields["ecocCollection"]``.
-  If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
+- Drop the collection with name ``encryptedFields["escCollection"]``. If
+  ``encryptedFields["escCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.esc``.
+- Drop the collection with name ``encryptedFields["eccCollection"]``. If
+  ``encryptedFields["eccCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.ecc``.
+- Drop the collection with name ``encryptedFields["ecocCollection"]``. If
+  ``encryptedFields["ecocCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.ecoc``.
 - Drop the collection ``collectionName``.
 
 .. default-role:: literal
@@ -2687,6 +2706,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2023-01-26: Use GetEncryptedFields_ in more helpers.
 :2022-11-30: Add ``Range``.
 :2022-11-28: Permit `tlsDisableOCSPEndpointCheck` in KMS TLS options.
 :2022-11-27: Fix typo for references to ``cryptSharedLibRequired`` option.
