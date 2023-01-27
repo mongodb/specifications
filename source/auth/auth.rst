@@ -1337,6 +1337,8 @@ Drives MUST support device workflows for "aws", "azure", and "gcp", given
 by the DEVICE_NAME mechanism property.  In all cases the acquired token
 will be given as the ``jwt`` argument and the second client step of the
 OIDC SASL exchange MUST be made directly, skipping the clientStep1.
+Drivers MUST raise an error if both a DEVICE_NAME and PRINCIPAL_NAME are
+given, since the device workflow will not use the PRINCIPAL_NAME.
 
 AWS
 ___
