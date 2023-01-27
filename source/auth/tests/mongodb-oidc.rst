@@ -82,6 +82,7 @@ Ensure all of the following conditions raise an error:
 #. Any callback returns null
 #. Any callback returns unexpected result
 #. Both request callback and ``DEVICE_NAME ``are specified
+#. Both ``PRINCIPAL_NAME`` and ``DEVICE_NAME`` are specified
 #. Request callback is omitted but refresh callback is specified
 #. Unknown auth prop is specified
 
