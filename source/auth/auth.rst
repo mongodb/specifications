@@ -1367,12 +1367,14 @@ When an authorization request is made and there is a valid cached response,
 the driver MUST use the cached response if it has not expired.
 
 The cache keys MUST include the principal name (or empty string) and the
-resolved host name.  Using the resolved host name accounts for the case when
-two different clusters use the same principal name but could be configurated
-differently.  There is an edge case where if the same principal name is used
-and two aliases to the same local host address are given, there will be
-duplicate user/device interactions, unless the driver can resolve the local
-host address as well.
+resolved host name for the current server.  Using the resolved host name
+accounts for the case when two different clusters use the same principal name
+but could be configurated differently.  There is an edge case where if the
+same principal name is used and two aliases to the same local host address are
+given, there will be duplicate user/device interactions, unless the driver can
+resolve the local host address as well.  Note that because we use the
+current host name, changing the primary host on a replica set will result
+in a cache miss.
 
 The driver MUST cache the serverStep1 reponse as part of the cache value,
 to enable skipping serverStep1 on subsequent authentications of the same
@@ -1385,6 +1387,10 @@ environment.
 
 A cached value will expire within 5 minutes of the ``expiresInSeconds`` time.
 If a cached value is found but has expired, the refresh callback will be called (if given) with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult arguments, and it will return a new OIDCRequestTokenResult response.
+
+In order to prevent a memory leak, the driver MUST loop over the existing cache
+at some interval, or per-authorization, to remove expired credentials from
+the cache.
 
 If the "azure" device is used, then the same caching method used for Azure
 KMS credentials MUST be used.   <TODO insert link to client-side-encryption>.
