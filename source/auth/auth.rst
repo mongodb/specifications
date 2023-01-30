@@ -1298,10 +1298,20 @@ the form:
 
     function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1): OIDCRequestTokenResult
 
-The driver MUST use a lock when calling a callback, and check
-for a cached result when the lock is acquired.  This is because request
-callbacks may involve human interaction, and refresh callbacks could
-use refresh tokens that can only be used once.
+Callbacks can be synchronous and/or asynchronous, depending on the driver
+and/or language.  Asynchronous callbacks should be preferred when other
+operations in the driver use asynchronous functions.
+
+Before calling a callback, the driver MUST acquire a lock, and verify that
+there are no valid cache credentials before calling the callback.
+This is because request callbacks may involve human interaction, and refresh
+callbacks could use refresh tokens that can only be used once.
+
+The driver MUST provide a way for the callback to be either automatically
+cancelled, or to cancel itself.  This can be as a timeout argument to the
+callback, a cancellation context passed to the callback, or some other
+language-appropriate mechanism.  The timeout MUST respect the client side
+operation timeout if set, or 60 seconds.
 
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.   The driver will
 inspect that the correct properties are given, but MUST NOT attempt to validate
@@ -1366,7 +1376,16 @@ Caching Credentials
 
 Drivers MUST enable caching when callback(s) are provided to the mongo client.
 When an authorization request is made and there is a valid cached response,
-the driver MUST use the cached response if it has not expired.
+the driver MUST use the cached authorization token if it has not expired.
+
+A cache value is considered valid if it has been created in the past 5 hours.
+The cache is kept alive to preserve the serverStep1 response, as well as
+account for refresh tokens, which typically have an (unknown) lifetime that
+is longer than the access token lifetime.  The refresh token may either be
+stored by the user application, or as part of the request/refresh token
+response in the driver cache. To prevent a memory leak, the driver MUST clear
+invalid cache values at a regular interval, or during every authentication
+attempt.
 
 The cache keys MUST include the principal name (or empty string) and the
 resolved host name for the current server.  Using the resolved host name
