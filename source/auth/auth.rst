@@ -1269,6 +1269,10 @@ mechanism_properties
         "onOIDCRefreshToken" (defined below), if the driver supports
         providing objects as mechanism property values.
 
+Drivers MUST skip client step 1 for device workflows
+or when the server step 1 response value is cached.  When skipping step 1,
+drivers will use ``saslStart`` and a payload with the ``jwt`` value.
+
 User Provided Callbacks
 ```````````````````````
 
@@ -1343,7 +1347,7 @@ the driver MUST raise an error.
 Supported Device Workflows
 ``````````````````````````
 
-Drives MUST support device workflows for "aws", "azure", and "gcp", given
+Drivers MUST support device workflows for "aws", "azure", and "gcp", given
 by the DEVICE_NAME mechanism property.  In all cases the acquired token
 will be given as the ``jwt`` argument and the second client step of the
 OIDC SASL exchange MUST be made directly, skipping the clientStep1.
@@ -1363,6 +1367,8 @@ _____
 
 When the DEVICE_NAME mechanism property is set to "azure", the driver MUST
 acquire an access token using the workflow described in "Obtaining an Access Token for Azure Key Vault" <TODO insert link to client-side-encryption>.
+In the case of authorization failure, the cache used for azure credentials
+MUST be cleared.
 
 GCP
 ___
