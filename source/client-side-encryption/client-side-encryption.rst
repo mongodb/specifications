@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2023-01-26
+:Last Modified: 2023-01-30
 :Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -983,7 +983,9 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
 
 - Invoke the ``CreateCollection`` helper as
   `CreateCollection(database, collName, collOpts')`. Return the resulting
-  collection and the generated `EF'`.
+  collection and the generated `EF'`. If an error occurred, return the
+  resulting `EF` with the error so that the caller may know what datakeys
+  have already been created by the helper.
 
 
 Drop Collection Helper
@@ -2706,6 +2708,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2023-01-30: Return ``encryptedFields`` on ``CreateCollection`` error.
 :2023-01-26: Use GetEncryptedFields_ in more helpers.
 :2022-11-30: Add ``Range``.
 :2022-11-28: Permit `tlsDisableOCSPEndpointCheck` in KMS TLS options.
