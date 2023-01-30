@@ -983,7 +983,9 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
 
 - Invoke the ``CreateCollection`` helper as
   `CreateCollection(database, collName, collOpts')`. Return the resulting
-  collection and the generated `EF'`.
+  collection and the generated `EF'`. If an error occurred, return the
+  resulting `EF` with the error so that the caller may know what datakeys
+  have already been created by the helper.
 
 
 Drop Collection Helper
