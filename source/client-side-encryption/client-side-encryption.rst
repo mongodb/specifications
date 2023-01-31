@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2023-01-30
+:Last Modified: 2023-01-31
 :Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -956,10 +956,8 @@ To support automatic generation of encryption data keys, a helper
 is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
 KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
 
-- Let `dbName` be the name of `database`. Look up the encrypted fields `EF` for
-  the new collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
-  (`See here <GetEncryptedFields_>`_).
-- If `EF` is *not-found*, report an error that there are no ``encryptedFields``
+- If `collOpts` contains an ``"encryptedFields"`` property, then `EF` is the value
+  of that property.  Otherwise, report an error that there are no ``encryptedFields``
   defined for the collection.
 - Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
 
@@ -986,6 +984,12 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
   collection and the generated `EF'`. If an error occurred, return the
   resulting `EF` with the error so that the caller may know what datakeys
   have already been created by the helper.
+
+
+Drivers MUST document that `createEncryptedCollection` does not affect any
+auto encryption settings on existing MongoClients that are already configured with 
+auto encryption.  Users must configure auto encryption after creating the 
+encrypted collection with the `createEncryptedCollection` helper.
 
 
 Drop Collection Helper
@@ -2708,6 +2712,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2023-01-31: ``createEncryptedCollection`` does not check AutoEncryptionOptions for the encryptedFieldsMap.
 :2023-01-30: Return ``encryptedFields`` on ``CreateCollection`` error.
 :2023-01-26: Use GetEncryptedFields_ in more helpers.
 :2022-11-30: Add ``Range``.
