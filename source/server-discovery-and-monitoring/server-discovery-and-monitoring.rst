@@ -101,7 +101,7 @@ Terms
 Server
 ``````
 
-A mongod or mongos process.
+A mongod or mongos process, or a load balancer.
 
 Deployment
 ``````````

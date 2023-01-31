@@ -1,9 +1,9 @@
 .. role:: javascript(code)
   :language: javascript
 
-=============================
-SDAM Monitoring Specification
-=============================
+=========================================
+SDAM Logging and Monitoring Specification
+=========================================
 
 :Status: Accepted
 :Minimum Server Version: 2.4
@@ -15,7 +15,9 @@ SDAM Monitoring Specification
 Abstract
 ========
 
-The SDAM monitoring specification defines a set of behaviour in the drivers for providing runtime information about server discovery and monitoring events (SDAM) to any 3rd party library as well internal driver use, such as logging.
+The SDAM logigng and monitoring specification defines a set of behaviour in the drivers for providing runtime information about server discovery and monitoring (SDAM) in log
+messages as well as in events which users can consume programmatically, either directly or by integrating with third-party APM libraries.
+
 
 -----------
 Definitions
@@ -39,11 +41,78 @@ Terms
 
 ``Server``
 
-  The term ``Server`` refers to the implementation in the driver’s language of either an abstraction of a connection to a single mongod or mongos process, as defined by the `SDAM specification <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server>`_.
+  The term ``Server`` refers to the implementation in the driver's language of an abstraction of a mongod or mongos process, or a load balancer, as defined by the
+  `SDAM specification <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server>`_.
 
 -------------
 Specification
 -------------
+
+--------
+Guidance
+--------
+
+Documentation
+-------------
+The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
+
+Messages and Events
+-------------------
+
+All drivers MUST implement the specified event types as well as log messages.
+
+Implementation details are noted below when a specific implementation is required. Within each event and log message, all properties are REQUIRED unless noted otherwise.
+
+Publishing and Subscribing
+--------------------------
+
+The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
+
+Similarly, as described in the `logging specification <../logging/logging.rst#implementation-requirements>`_ the driver SHOULD emit log messages in a manner that is standard for the language.
+
+----------
+Guarantees
+----------
+
+Event Order and Concurrency
+---------------------------
+
+Events and log messages MUST be published in the order that their corresponding changes are processed in the driver.
+Events MUST NOT be published concurrently for the same topology ID or server ID, but MAY be published concurrently for differing topology IDs and server IDs.
+
+Heartbeats
+----------
+
+The driver MUST guarantee that every ``ServerHeartbeatStartedEvent`` has either a correlating ``ServerHeartbeatSucceededEvent`` or ``ServerHeartbeatFailedEvent``, and that
+every "server heartbeat started" log message has either a correlating "server heartbeat succeeded" or "server heartbeat failed" log message.
+
+Drivers that use the streaming heartbeat protocol MUST publish a ``ServerHeartbeatStartedEvent`` and "server heartbeat started" log message before attempting to read the next
+``hello`` or legacy hello exhaust response.
+
+Error Handling
+--------------
+
+If an exception occurs while sending the ``hello`` or legacy hello operation to the server, the driver MUST generate a ``ServerHeartbeatFailedEvent`` and "server heartbeat failed"
+log message with the exception or message and re-raise the exception. The SDAM mandated retry of the ``hello`` or legacy hello call should be visible to consumers.
+
+Topology IDs
+------------
+
+These MUST be a unique value that is specific to the Topology for which the events and log messages are emitted. The language may decide how to generate the value and what type the value is,
+as long as it is unique to the Topology. The ID MUST be created once when the Topology is created and remain the same until the Topology is destroyed.
+
+Topology Description
+--------------------
+
+The ``TopologyDescription`` object MUST expose the new methods defined in the API below, in order for subscribers to take action on certain conditions based on the driver options.
+
+``TopologyDescription`` objects MAY have additional methods and properties.
+
+Initial Server Description
+--------------------------
+
+``ServerDescription`` objects MUST be initialized with a default description in an “unknown” state, guaranteeing that the previous description in the events and log messages will never be null.
+
 
 Events
 ------
@@ -75,67 +144,6 @@ Events that MUST be published (with their conditions) are as follows.
      - Published on successful completion of the server monitor’s ``hello`` or legacy hello call.
    * - ``ServerHeartbeatFailedEvent``
      - Published on failure of the server monitor’s ``hello`` or legacy hello call, either with an ok: 0 result or a socket exception from the connection.
-
-
-Operations
-----------
-All drivers MUST implement the API. Implementation details are noted in the comments when a specific implementation is required. Within each API, all methods are REQUIRED unless noted otherwise in the comments.
-
-Naming
-------
-All drivers MUST name operations, parameters and topic names as defined in the following sections. Exceptions to this rule are noted in the appropriate section. Class and interface names may vary according to the driver and language best practices.
-
-Documentation
--------------
-The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
-
---------
-Guidance
---------
-
-Publishing and Subscribing
---------------------------
-
-The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
-
-----------
-Guarantees
-----------
-
-Event Order and Concurrency
----------------------------
-
-Events MUST be published in the order they were applied in the driver.
-Events MUST NOT be published concurrently for the same topology id or server id, but MAY be published concurrently for differing topology ids and server ids.
-
-Heartbeats
-----------
-
-The driver MUST guarantee that every ServerHeartbeatStartedEvent has either a correlating ServerHeartbeatSucceededEvent or ServerHeartbeatFailedEvent.
-
-Drivers that use the streaming heartbeat protocol MUST publish a ServerHeartbeatStartedEvent before attempting to read the next ``hello`` or legacy hello exhaust response.
-
-Error Handling
---------------
-
-If an exception occurs while sending the ``hello`` or legacy hello operation to the server, the driver MUST generate a ServerHeartbeatFailedEvent with the exception or message and re-raise the exception. The SDAM mandated retry of the ``hello`` or legacy hello call should be visible to consumers.
-
-Topology Ids
-------------
-
-These MUST be a unique value that is specific to the Topology in which the events are fired. The language may decide how to generate the value and what type the value is, as long as it is unique to the Topology. The id MUST be created once when the Topology is created and remain the same until the Topology is destroyed.
-
-Topology Description
---------------------
-
-The TopologyDescription object MUST expose the new methods defined in the API below, in order for subscribers to take action on certain conditions based on the driver options.
-
-TopologyDescription objects MAY have additional methods and properties.
-
-Initial Server Description
---------------------------
-
-ServerDescriptions MUST be initialized with a default description in an “unknown” state, guaranteeing that the previous description in the events will never be null.
 
 ---
 API
@@ -362,7 +370,7 @@ API
 Determining If A Topology Has Readable/Writable Servers
 -------------------------------------------------------
 
-The following table describes the behaviour of determining if a topology type has readable or
+The following table describes the rules for determining if a topology type has readable or
 writable servers. If no read preference is passed to ``hasReadableServer``, the driver MUST default
 the value to the default read preference, ``primary``, or treat the call as if ``primary`` was provided.
 
@@ -388,26 +396,8 @@ the value to the default read preference, ``primary``, or treat the call as if `
 +-----------------------+----------------------------------------+----------------------------------------+
 | Sharded               | ``true`` if 1+ servers are available   | ``true`` if 1+ servers are available   |
 +-----------------------+----------------------------------------+----------------------------------------+
-
---------
-Examples
---------
-
-A Ruby subscriber to topology description changed events that logs the events.
-
-Ruby:
-
-.. code:: ruby
-
-  class TopologyDescriptionChangedSubscriber
-
-    def completed(event)
-      new_description = event.new_description
-      if (!new_description.has_writable_server?)
-        LOGGER.warn('New topology description contains no writable server.')
-      end
-    end
-  end
+| LoadBalanced          | ``true``                               | ``true``                               |
++-----------------------+----------------------------------------+----------------------------------------+
 
 -----
 Tests
