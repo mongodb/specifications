@@ -986,6 +986,12 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
   have already been created by the helper.
 
 
+Drivers MUST document that `createEncryptedCollection` does not affect any
+auto encryption settings on existing MongoClient's already configured with 
+auto encryption.  Users must configure auto encryption after creating the 
+encrypted collection with the `createEncryptedCollection` helper.
+
+
 Drop Collection Helper
 ^^^^^^^^^^^^^^^^^^^^^^
 
