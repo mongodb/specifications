@@ -956,10 +956,8 @@ To support automatic generation of encryption data keys, a helper
 is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
 KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
 
-- Let `dbName` be the name of `database`. Look up the encrypted fields `EF` for
-  the new collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
-  (`See here <GetEncryptedFields_>`_).
-- If `EF` is *not-found*, report an error that there are no ``encryptedFields``
+- If `collOpts` contains an ``"encryptedFields"`` property, then `EF` is the value
+  of that property.  Otherwise, report an error that there are no ``encryptedFields``
   defined for the collection.
 - Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
 
