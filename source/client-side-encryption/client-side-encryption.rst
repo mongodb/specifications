@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2023-01-31
+:Last Modified: 2023-02-01
 :Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -2714,6 +2714,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
 :2023-01-31: ``createEncryptedCollection`` does not check AutoEncryptionOptions for the encryptedFieldsMap.
 :2023-01-30: Return ``encryptedFields`` on ``CreateCollection`` error.
 :2023-01-26: Use GetEncryptedFields_ in more helpers.
