@@ -952,9 +952,10 @@ Create Encrypted Collection Helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To support automatic generation of encryption data keys, a helper
-`CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, dkOpts)`
+`CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, masterKey)`
 is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
-KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
+KMSProviderName_ and `masterKey` is equivalent to the `masterKey` defined in DataKeyOpts_.
+It has the following behavior:
 
 - If `collOpts` contains an ``"encryptedFields"`` property, then `EF` is the value
   of that property.  Otherwise, report an error that there are no ``encryptedFields``
@@ -969,6 +970,7 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
     - Otherwise, if `F` has a ``"keyId"`` named element `K` and `K` is a
       ``null`` value:
 
+      - Create a DataKeyOpts_ named `dkOpts` with the `masterKey` argument.
       - Let `D` be the result of ``CE.createDataKey(kmsProvider, dkOpts)``.
       - If generating `D` resulted in an error `E`, the entire
         `CreateEncryptedCollection` must now fail with error `E`. Return the
@@ -1036,7 +1038,7 @@ ClientEncryption
       // create a collection with encrypted fields, automatically allocating and assigning new data encryption
       // keys. It returns a handle to the new collection, as well as a document consisting of the generated
       // "encryptedFields" options. Refer to "Create Encrypted Collection Helper"
-      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, dkOpts: DataKeyOpts): [Collection, Document];
+      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, masterKey: Optional<Document>): [Collection, Document];
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
