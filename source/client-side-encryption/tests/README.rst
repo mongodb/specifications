@@ -2509,6 +2509,17 @@ options::
       },
    }
 
+Run each test case with each of these KMS providers: ``aws``, ``local``. The KMS provider name is referred to as ``kmsProvider``.
+When testing ``aws``, use the following as the ``masterKey`` option:
+
+.. code:: javascript
+
+   {
+      region: "us-east-1",
+      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+   }
+
+When testing ``local``, set ``masterKey`` to ``null``.
 
 Case 1: Simple Creation and Validation
 ``````````````````````````````````````
@@ -2535,7 +2546,7 @@ rejects an attempt to insert plaintext in an encrypted fields.
          }
       }
 
-2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)`
    to obtain a new collection `Coll`. Expect success.
 3. Attempt to insert the following document into `Coll`::
 
@@ -2559,7 +2570,7 @@ missing.
 
 1. Create a new empty create-collection options `Opts`. (i.e. it must not
    contain any ``encryptedFields`` options.)
-2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`.
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)`.
 3. Expect the invocation to fail with an error indicating that
    ``encryptedFields`` is not defined for the collection, and expect that no
    collection was created within the database. It would be *incorrect* for
@@ -2592,7 +2603,7 @@ when attempting to create a collection with such invalid settings.
          }
       }
 
-2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`.
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)`.
 3. Expect an error from the server indicating a validation error at
    ``create.encryptedFields.fields.keyId``, which must be a UUID and not a
    boolean value.
@@ -2615,7 +2626,7 @@ with encrypted value.
          }
       }
 
-2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, "local", null)`
+2. Invoke `CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)`
    to obtain a new collection `Coll` and data key `key1`. Expect success.
 3. Use `CE` to explicitly encrypt the string "123-45-6789" using
    algorithm `Unindexed` and data key `key1`. Refer result as `encryptedPayload`.
