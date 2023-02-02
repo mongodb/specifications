@@ -53,15 +53,17 @@ Multiple Principals
 ===================
 
 Drivers MUST be able to authenticate using either authentication or device
-type if there are multiple principals configured on the server.
+type if there are multiple principals configured on the server.  Note that
+``directConnection=true`` is needed because the servers are part of a replica
+set.
 
 .. code-block::
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:test_user1
+  mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:test_user1&directConnection=true
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDCauthMechanismProperties=PRINCIPAL_NAME:test_user2
+  mongodb://localhost:20178/?authMechanism=MONGODB-OIDCauthMechanismProperties=PRINCIPAL_NAME:test_user2&directConnection=true
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws
+  mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true
 
 For this prose test, set ``AWS_WEB_IDENTITY_TOKEN_FILE`` to the ``test_user2``
 generated token file.  Use the appropriate generated tokens for the callbacks
