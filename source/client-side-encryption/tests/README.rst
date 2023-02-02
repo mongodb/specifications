@@ -2506,6 +2506,10 @@ options::
       keyVaultNamespace: "keyvault.datakeys",
       kmsProviders: {
          local: { key: base64Decode(LOCAL_MASTERKEY) },
+         aws: {
+            accessKeyId: <set from environment>,
+            secretAccessKey: <set from environment>
+         },
       },
    }
 
