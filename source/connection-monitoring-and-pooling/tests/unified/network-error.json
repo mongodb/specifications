@@ -199,7 +199,8 @@
                   "uriOptions": {
                     "retryWrites": false,
                     "retryReads": false,
-                    "appName": "cmapNetworkErrorCheckOutTest"
+                    "appName": "cmapNetworkErrorCheckOutTest",
+                    "heartbeatFrequencyMS": 30000
                   }
                 }
               },
@@ -239,7 +240,7 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 50
+                "times": 1
               },
               "data": {
                 "failCommands": [

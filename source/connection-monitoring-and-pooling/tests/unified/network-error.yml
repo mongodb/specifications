@@ -125,6 +125,9 @@ tests:
                   retryWrites: false
                   retryReads: false
                   appName: &networkErrorCheckOutAppName cmapNetworkErrorCheckOutTest
+                  # Use a high frequency so that server does not get marked unknown before the find
+                  # can be executed.
+                  heartbeatFrequencyMS: 30000
             - database:
                 id: &database database
                 client: *client
@@ -148,8 +151,7 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode:
-              # use a high number of times to prevent monitor hellos from interfering.
-              times: 50
+              times: 1
             data:
               failCommands:
                 - isMaster
