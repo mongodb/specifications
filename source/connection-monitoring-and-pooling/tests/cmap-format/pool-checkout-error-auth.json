@@ -57,7 +57,6 @@
     },
     {
       "type": "ConnectionCheckOutFailed",
-      "connectionId": 1,
       "address": 42,
       "reason": "connectionError"
     }

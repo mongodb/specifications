@@ -33,7 +33,6 @@ events:
     address: 42
     reason: error
   - type: ConnectionCheckOutFailed
-    connectionId: 1
     address: 42
     reason: connectionError
 ignore:
