@@ -193,7 +193,8 @@
                     "connectionClosedEvent",
                     "poolClearedEvent",
                     "connectionCreatedEvent",
-                    "connectionReadyEvent"
+                    "connectionReadyEvent",
+                    "poolReadyEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,
@@ -280,6 +281,9 @@
           "client": "client",
           "eventType": "cmap",
           "events": [
+            {
+              "poolReadyEvent": {}
+            },
             {
               "connectionCheckOutStartedEvent": {}
             },

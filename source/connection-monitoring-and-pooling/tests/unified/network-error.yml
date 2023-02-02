@@ -120,6 +120,7 @@ tests:
                   - poolClearedEvent
                   - connectionCreatedEvent
                   - connectionReadyEvent
+                  - poolReadyEvent
                 uriOptions:
                   retryWrites: false
                   retryReads: false
@@ -173,6 +174,7 @@ tests:
       - client: *client
         eventType: cmap
         events:
+          - poolReadyEvent: {}
           - connectionCheckOutStartedEvent: {}
           - connectionCreatedEvent: {}
           # SDAM needs to handle the error before the pool proceeds with cleaning up the connection.
