@@ -465,7 +465,7 @@ The following key-value pairs are common to all or several log messages and MUST
      - Heartbeat-related log messages
      - Int
      - The server's ID for the monitoring connection, if known. This value will be unknown and can be omitted in certain cases, e.g. the first
-       "heartbeat started" on a monitoring connection. Only present on server versions 4.2+.
+       "heartbeat started" message for a monitoring connection. Only present on server versions 4.2+.
 
 "Starting Topology Monitoring" Log Message
 ------------------------------------------
