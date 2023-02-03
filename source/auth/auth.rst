@@ -254,6 +254,17 @@ or "SCRAM-SHA-256").
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
 
+Reauthentication
+~~~~~~~~~~~~~~~~
+
+On any operation that requires authentication, the server may raise the
+error ``ReauthenticationRequired`` (391) if the user's credential has expired.
+Drivers MUST immediately attempt to force a reauthenication on the connection
+when this error is raised, and then re-attempt the operation.
+This attempt MUST be irrespective of whether the operation is considered
+retryable.   Any errors encountered during reauthentication or the
+subsequent re-attempt of the operation MUST be raised to the user.
+
 --------------------------------
 Supported Authentication Methods
 --------------------------------
@@ -1336,7 +1347,7 @@ the driver MUST raise an error.  If DEVICE_NAME is given and one or more
 callbacks are given, the driver MUST raise an error.
 
 If no callbacks are given, the driver MUST enforce that a DEVICE_NAME
-mechanism_properties is set and one of ("aws", "azure", or "gcp").
+mechanism_properties is set and one of ("aws",).
 The callback mechanism can be used to support both Authentication
 Code Workflows or Device workflows that are not explicitly implemented
 by drivers.  If there is no callback and no DEVICE_NAME, or the
@@ -1347,7 +1358,7 @@ the driver MUST raise an error.
 Supported Device Workflows
 ``````````````````````````
 
-Drivers MUST support device workflows for "aws", "azure", and "gcp", given
+Drivers MUST support device workflows for "aws", given
 by the DEVICE_NAME mechanism property.  In all cases the acquired token
 will be given as the ``jwt`` argument and the second client step of the
 OIDC SASL exchange MUST be made directly, skipping the clientStep1.
@@ -1361,20 +1372,6 @@ When the DEVICE_NAME mechanism property is set to "aws", the driver MUST
 attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
 interpret it as a file path.  The contents of the file are read as the
 access token.
-
-Azure
-_____
-
-When the DEVICE_NAME mechanism property is set to "azure", the driver MUST
-acquire an access token using the workflow described in "Obtaining an Access Token for Azure Key Vault" <TODO insert link to client-side-encryption>.
-In the case of authorization failure, the cache used for azure credentials
-MUST be cleared.
-
-GCP
-___
-
-When the DEVICE_NAME mechanism property is set to "gcp", the driver MUST
-acquire an access token using the workflow described in "Obtaining GCP Credentials" <TODO insert link to client-side-encryption>.
 
 
 Caching Credentials
@@ -1394,7 +1391,7 @@ invalid cache values at a regular interval, or during every authentication
 attempt.
 
 The cache keys MUST include the principal name (or empty string) and the
-resolved host name for the current server.  Using the resolved host name
+DNS resolved host name for the current server.  Using the resolved host name
 accounts for the case when two different clusters use the same principal name
 but could be configurated differently.  There is an edge case where if the
 same principal name is used and two aliases to the same local host address are

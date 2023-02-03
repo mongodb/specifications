@@ -457,7 +457,7 @@ tests:
       credential: null
     -
       description: "should throw an exception if principalName and deviceName are specified (MONGODB-OIDC)"
-      uri: "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:principalName,DEVICE_NAME:gcp"
+      uri: "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:principalName,DEVICE_NAME:aws"
       valid: false
       credential: null
     -
