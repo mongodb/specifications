@@ -1391,14 +1391,13 @@ invalid cache values at a regular interval, or during every authentication
 attempt.
 
 The cache keys MUST include the principal name (or empty string) and the
-DNS resolved host name for the current server.  Using the resolved host name
-accounts for the case when two different clusters use the same principal name
-but could be configurated differently.  There is an edge case where if the
-same principal name is used and two aliases to the same local host address are
-given, there will be duplicate user/device interactions, unless the driver can
-resolve the local host address as well.  Note that because we use the
-current host name, changing the primary host on a replica set will result
-in a cache miss.
+IP address and port for the current server's endpoint.  Using the IP address and port accounts for the case when two different servers use the same
+principal name but could be configurated differently.  There is an edge case
+where if the same principal name is used and two aliases to the same local
+host address are given, there will be duplicate user/device interactions,
+unless the driver can resolve the local host address as well.  Note that
+because we use the current host name, changing the primary host on a replica
+set will result in a cache miss.
 
 The driver MUST cache the serverStep1 reponse as part of the cache value,
 to enable skipping serverStep1 on subsequent authentications of the same
