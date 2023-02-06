@@ -1325,8 +1325,8 @@ callbacks could use refresh tokens that can only be used once.
 The driver MUST provide a way for the callback to be either automatically
 cancelled, or to cancel itself.  This can be as a timeout argument to the
 callback, a cancellation context passed to the callback, or some other
-language-appropriate mechanism.  The timeout MUST respect the client side
-operation timeout if set, or 60 seconds.
+language-appropriate mechanism.  The timeout duration MUST be 5 minutes,
+to account for the fact that there may be human interaction involved.
 
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.   The driver will
 inspect that the correct properties are given, but MUST NOT attempt to validate
