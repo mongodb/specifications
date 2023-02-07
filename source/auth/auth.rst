@@ -1205,7 +1205,7 @@ Note that the principal name is optional as it may be provided by the IDP in env
     description: "Server's reply to clientStep1"
     strict: false
     fields:
-      authorizeEndpoint:
+      authorizationEndpoint:
         description: >-
           URL where the IDP may be contacted for end user
           authentication and authorization code generation.
@@ -1217,7 +1217,7 @@ Note that the principal name is optional as it may be provided by the IDP in env
           code <=> ID/access token exchange.
         type: string
         optional: true # Req if deviceAuthorizeEndpoint not present
-      deviceAuthorizeEndpoint:
+      deviceAuthorizationEndpoint:
         description: >-
           URL where the IDP may be contacted for device
           authentication and authorization code generation.
@@ -1415,9 +1415,6 @@ If a cached value is found but has expired, the refresh callback will be called 
 In order to prevent a memory leak, the driver MUST loop over the existing cache
 at some interval, or per-authorization, to remove expired credentials from
 the cache.
-
-If the "azure" device is used, then the same caching method used for Azure
-KMS credentials MUST be used.   <TODO insert link to client-side-encryption>.
 
 If there is no refresh callback and no current valid cached value, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent call to any callback for a given cache key.
 
