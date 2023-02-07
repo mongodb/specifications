@@ -263,7 +263,10 @@ Drivers MUST immediately attempt to force a reauthenication on the connection
 when this error is raised, and then re-attempt the operation.
 This attempt MUST be irrespective of whether the operation is considered
 retryable.   Any errors encountered during reauthentication or the
-subsequent re-attempt of the operation MUST be raised to the user.
+subsequent re-attempt of the operation MUST be raised to the user.  Currently
+the only auth mechanism that supports reauthentication is OIDC.  In this case,
+the reauthentication will procede using the standard OIDC mechanism defined
+below, including using cached values and the refresh callback.
 
 --------------------------------
 Supported Authentication Methods
