@@ -89,26 +89,24 @@ If desired, the caching tests can be done using mock server responses.
 
 #. Clear the cache.
 #. Create a new client with a request callback and a refresh callback.  Both callbacks will read the contents of the ``AWS_WEB_IDENTITY_TOKEN_FILE`` location to obtain a valid access token.
+#. Validate the request callback inputs, including the timeout parameter if
+possible.
 #. Give a callback response with a valid accessToken and an expiresInSeconds
 that is within one minute.
 #. Ensure that a ``find`` operation adds credentials to the cache.
 #. Create a new client with the same request callback and a refresh callback.
 #. Ensure that a ``find`` operation results in a call to the refresh callback.
+#. Validate the request callback inputs, including the timeout parameter if
+possible.
 
-#. Clear the cache.
-#. Create a new client with a request callback callback.
-#. Give a callback response with a valid accessToken and an expiresInSeconds
-that is within one minute.
-#. Ensure that a ``find`` operation adds credentials to the cache.
-#. Create a new client with the same request callback.
+#. Ensure there is a cache with soon-to-be-expired credentials.
+#. Create a new client with the a request callback but no refresh callback.
 #. Ensure that a ``find`` operation results in a call to the request callback.
 
-#. Poison the cache with an invalid access_token.
-#. Create a new client with a request callback and a refresh callback.
+#. Ensure there is a cache with soon-to-be-expired credentials.
+#. Create a new client with a refresh callback that gives invalid credentials.
 #. Ensure that a ``find`` operation results in an error.
 #. Ensure that the cache has been cleared.
-#. Ensure that a subsequent ``find`` operation results in a call to the refresh callback.
-#. Ensure that the cache has been set.
 
 #. Clear the cache.
 #. Create a new client using the AWS device workflow.
