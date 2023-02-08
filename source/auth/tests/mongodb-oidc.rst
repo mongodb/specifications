@@ -9,6 +9,7 @@ Drivers MUST test the following scenarios:
 #. ``Multiple Principals``
 #. ``Invalid Configuration``
 #. ``Caching``
+#. ``Reauthentication``
 
 
 .. sectnum::
@@ -111,3 +112,19 @@ possible.
 #. Clear the cache.
 #. Create a new client using the AWS device workflow.
 #. Ensure that a ``find`` operation does not add credentials to the cache.
+
+Reauthentication
+================
+
+If it is possible to force a reauthenictation on a connection, the driver
+MUST test the following:
+
+#. Clear the cache
+#. Create request and refresh callbacks that return valid credentials
+that will not expire soon.
+#. Create a client with the callbacks.
+#. Perform a find operation.
+#. Perform another find operation.
+#. Assert that the refresh callback has not been called.
+#. Force a reauthenication
+#. Assert that the refresh callback has been called.

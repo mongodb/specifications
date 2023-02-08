@@ -264,9 +264,8 @@ when this error is raised, and then re-attempt the operation.
 This attempt MUST be irrespective of whether the operation is considered
 retryable.   Any errors encountered during reauthentication or the
 subsequent re-attempt of the operation MUST be raised to the user.  Currently
-the only auth mechanism that supports reauthentication is OIDC.  In this case,
-the reauthentication will procede using the standard OIDC mechanism defined
-below, including using cached values and the refresh callback.
+the only auth mechanism that supports reauthentication is OIDC.  See the OIDC
+documentation on reauthentication for more details.
 
 --------------------------------
 Supported Authentication Methods
@@ -1423,6 +1422,15 @@ If there is no refresh callback and no current valid cached value, the request c
 
 If a cached value is used and authentication fails, the driver MUST clear the
 cached value.
+
+
+Reauthentication
+````````````````
+When reauthentication is requested and MONGODB-OIDC is in use, the driver MUST
+ensure that a cached ``access_token`` is not used for direct authentication,
+since it is has been identified as expired by the server.  If a refresh
+callback is given, it will be called as usual.  Otherwise the request callback
+will be called.
 
 -------------------------
 Connection String Options
