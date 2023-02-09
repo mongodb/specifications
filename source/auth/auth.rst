@@ -1199,7 +1199,8 @@ Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips 
         type: string
         optional: true
 
-Note that the principal name is optional as it may be provided by the IDP in environments where only one IDP is used.
+Note that the principal name is optional as it may be provided by the IDP in environments where only one IDP is used.  It is given by the user as the
+username.
 
 .. code:: idl
 
@@ -1254,7 +1255,8 @@ Server will use principalName (n) if provided in clientStep1 to select an approp
 `````````````````````````````
 
 username
-    MUST NOT be specified.
+    MUST specified if more than one OIDC provider is configured and
+    DEVICE_NAME mechanism property is not specified.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1266,10 +1268,6 @@ mechanism
     MUST be "MONGODB-OIDC"
 
 mechanism_properties
-    PRINCIPAL_NAME
-        Drivers MUST allow the user to specify a principal name, which
-        is required by the server when more than one Identity Provider
-        is configured.
     DEVICE_NAME
         Drivers MUST allow the user to specify a name for the device
         workflow that is one of "aws", "azure", or "gcp".
@@ -1364,8 +1362,8 @@ Drivers MUST support device workflows for "aws", given
 by the DEVICE_NAME mechanism property.  In all cases the acquired token
 will be given as the ``jwt`` argument and the second client step of the
 OIDC SASL exchange MUST be made directly, skipping the clientStep1.
-Drivers MUST raise an error if both a DEVICE_NAME and PRINCIPAL_NAME are
-given, since the device workflow will not use the PRINCIPAL_NAME.
+Drivers MUST raise an error if both a DEVICE_NAME and username are
+given, since the device workflow will not use the username.
 
 AWS
 ___
@@ -1392,11 +1390,11 @@ response in the driver cache. To prevent a memory leak, the driver MUST clear
 invalid cache values at a regular interval, or during every authentication
 attempt.
 
-The cache keys MUST include the principal name (or empty string) and the
+The cache keys MUST include the username (or empty string) and the
 actually used socket address and port for the current server.
 Using the socket address and port accounts for the case when two different
-servers use the same principal name but could be configurated differently.
-There is an edge case where if the same principal name is used and two aliases
+servers use the same username but could be configurated differently.
+There is an edge case where if the same username is used and two aliases
 to the same local host address are given, there will be duplicate user/device
 interactions, unless the driver can resolve the local host address as well.
 Note thatbecause we use the server socket address, there will different cache
