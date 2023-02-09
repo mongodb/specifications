@@ -3,7 +3,14 @@
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.9"
+      "minServerVersion": "4.9",
+      "topologies": [
+        "single",
+        "replicaset",
+        "sharded-replicaset",
+        "sharded"
+      ],
+      "serverless": "forbid"
     }
   ],
   "createEntities": [
@@ -92,6 +99,23 @@
           "object": "timeoutCollection",
           "arguments": {
             "document": {
+              "_id": 1
+            },
+            "timeoutMS": 100000
+          }
+        },
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 1000
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "timeoutCollection",
+          "arguments": {
+            "document": {
               "_id": 2
             }
           }
@@ -101,6 +125,15 @@
         {
           "client": "client",
           "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "databaseName": "test",
+                "command": {
+                  "insert": "timeoutColl"
+                }
+              }
+            },
             {
               "commandStartedEvent": {
                 "commandName": "insert",
@@ -182,11 +215,16 @@
           "object": "timeoutCollection",
           "arguments": {
             "document": {
-              "_id": 2
-            }
-          },
-          "expectError": {
-            "isTimeoutError": true
+              "_id": 1
+            },
+            "timeoutMS": 100000
+          }
+        },
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 1000
           }
         },
         {
@@ -206,7 +244,7 @@
           "object": "timeoutCollection",
           "arguments": {
             "document": {
-              "_id": 2
+              "_id": 3
             }
           },
           "expectError": {
@@ -218,7 +256,7 @@
           "object": "timeoutCollection",
           "arguments": {
             "document": {
-              "_id": 2
+              "_id": 4
             }
           },
           "expectError": {
@@ -229,7 +267,17 @@
       "expectEvents": [
         {
           "client": "client",
-          "events": []
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "databaseName": "test",
+                "command": {
+                  "insert": "timeoutColl"
+                }
+              }
+            }
+          ]
         }
       ]
     }

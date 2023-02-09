@@ -6,6 +6,9 @@ runOnRequirements:
   # The appName filter cannot be used to set a fail point on connection handshakes until server version 4.9 due to
   # SERVER-49220/SERVER-49336.
   - minServerVersion: "4.9"
+    # Skip load-balanced and serverless which do not support RTT measurements.
+    topologies: [ single, replicaset, sharded-replicaset, sharded ]
+    serverless: forbid
 
 createEntities:
   - client:
@@ -64,6 +67,17 @@ tests:
                 id: &timeoutCollection timeoutCollection
                 database: *database
                 collectionName: *timeoutCollectionName
+      # Do an operation with a large timeout to ensure the servers are discovered.
+      - name: insertOne
+        object: *timeoutCollection
+        arguments:
+          document: { _id: 1 }
+          timeoutMS: 100000
+      # Wait until short-circuiting has been enabled (at least 2 RTT measurements).
+      - name: wait
+        object: testRunner
+        arguments:
+          ms: 1000
       # Do an operation with timeoutCollection so the event will include a maxTimeMS field.
       - name: insertOne
         object: *timeoutCollection
@@ -72,6 +86,11 @@ tests:
     expectEvents:
       - client: *client
         events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *timeoutCollectionName
           - commandStartedEvent:
               commandName: insert
               databaseName: *databaseName
@@ -119,6 +138,17 @@ tests:
                 id: &timeoutCollection timeoutCollection
                 database: *database
                 collectionName: *timeoutCollectionName
+      # Do an operation with a large timeout to ensure the servers are discovered.
+      - name: insertOne
+        object: *timeoutCollection
+        arguments:
+          document: { _id: 1 }
+          timeoutMS: 100000
+      # Wait until short-circuiting has been enabled (at least 2 RTT measurements).
+      - name: wait
+        object: testRunner
+        arguments:
+          ms: 1000
       # Do an operation with timeoutCollection which will error.
       - name: insertOne
         object: *timeoutCollection
@@ -130,24 +160,24 @@ tests:
       - name: insertOne
         object: *timeoutCollection
         arguments:
-          document: { _id: 2 }
+          document: { _id: 3 }
         expectError:
           isTimeoutError: true
       # Do an operation with timeoutCollection which will error.
       - name: insertOne
         object: *timeoutCollection
         arguments:
-          document: { _id: 2 }
-        expectError:
-          isTimeoutError: true
-      # Do an operation with timeoutCollection which will error.
-      - name: insertOne
-        object: *timeoutCollection
-        arguments:
-          document: { _id: 2 }
+          document: { _id: 4 }
         expectError:
           isTimeoutError: true
     expectEvents:
-      # There should be no events because the driver should fail client-side.
+      # There should only be one event, which corresponds to the first
+      # insertOne call. For the subsequent insertOne calls, drivers should
+      # fail client-side.
       - client: *client
-        events: []
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *timeoutCollectionName
