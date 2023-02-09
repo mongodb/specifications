@@ -116,7 +116,7 @@ possible.
 Reauthentication
 ================
 
-If it is possible to force a reauthenictation on a connection, the driver
+If it is possible to force a reauthentication on a connection, the driver
 MUST test the following:
 
 #. Clear the cache
