@@ -131,17 +131,17 @@ of listening for SASL commands.
 .. code:: javascript
 
     {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 1
-        },
-        "data": {
-          "failCommands": [
-            "find"
-          ],
-          "errorCode": 391
-        }
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 1
+      },
+      "data": {
+        "failCommands": [
+          "find"
+        ],
+        "errorCode": 391
       }
+    }
 
 #. Perform another find operation.
 #. Assert that the refresh callback has been called, if possible.
@@ -162,17 +162,17 @@ of listening for SASL commands.
 .. code:: javascript
 
     {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 1
-        },
-        "data": {
-          "failCommands": [
-            "insert"
-          ],
-          "errorCode": 391
-        }
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 1
+      },
+      "data": {
+        "failCommands": [
+          "insert"
+        ],
+        "errorCode": 391
       }
+    }
 
 #. Perform an insert operation.
 #. Assert that the refresh callback has been called, if possible.
