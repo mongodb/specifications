@@ -30,7 +30,7 @@ The following URI would also be valid, if it matches the single principal name:
 
 .. code-block::
 
-  mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:test_user1
+  mongodb://test_user1@localhost/?authMechanism=MONGODB-OIDC
 
 For the prose test, the ``test_user1`` generated token from Drivers Evergreen Tools in the callback response.
 
@@ -60,9 +60,9 @@ set.
 
 .. code-block::
 
-  mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&authMechanismProperties=PRINCIPAL_NAME:test_user1&directConnection=true
+  mongodb://test_user1@localhost:20178/?authMechanism=MONGODB-OIDC&directConnection=true
 
-  mongodb://localhost:20178/?authMechanism=MONGODB-OIDCauthMechanismProperties=PRINCIPAL_NAME:test_user2&directConnection=true
+  mongodb://test_user2@localhost:20178/?authMechanism=MONGODB-OIDCauthMechanismProperties&directConnection=true
 
   mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true
 
