@@ -126,12 +126,29 @@ that will not expire soon.
 of listening for SASL commands.
 #. Perform a find operation.
 #. Assert that the refresh callback has not been called.
-#. Force a reauthenication using a ``failCommand``.
+#. Force a reauthenication using a ``failCommand`` of the form::
+
+.. code:: javascript
+
+    {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 391
+        }
+      }
+
 #. Perform another find operation.
 #. Assert that the refresh callback has been called, if possible.
 #. Assert that a ``find`` operation was started twice and a ``saslStart`` operation was started once during the command execution.
 #. Assert that a ``find`` operation succeeeded once and the ``saslStart`` operation succeeded during the command execution.
 #. Assert that a ``find`` operation failed once during the command execution.
+
 
 #. Clear the cache
 #. Create request and refresh callbacks that return valid credentials
@@ -140,7 +157,23 @@ that will not expire soon.
 of listening for SASL commands.
 #. Perform a find operation.
 #. Assert that the refresh callback has not been called.
-#. Force a reauthenication using a ``failCommand``
+#. Force a reauthenication using a ``failCommand`` of the form:
+
+.. code:: javascript
+
+    {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "insert"
+          ],
+          "errorCode": 391
+        }
+      }
+
 #. Perform an insert operation.
 #. Assert that the refresh callback has been called, if possible.
 #. Assert that a ``insert`` operation was started twice and a ``saslStart`` operation was started once  during the command execution
