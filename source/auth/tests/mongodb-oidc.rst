@@ -116,15 +116,33 @@ possible.
 Reauthentication
 ================
 
-If it is possible to force a reauthentication on a connection, the driver
-MUST test the following:
+The driver MUST test reauthentication with MONGODB-OIDC for both read
+and write operations.
 
 #. Clear the cache
 #. Create request and refresh callbacks that return valid credentials
 that will not expire soon.
-#. Create a client with the callbacks.
+#. Create a client with the callbacks and an event listener capable
+of listening for SASL commands.
 #. Perform a find operation.
-#. Perform another find operation.
 #. Assert that the refresh callback has not been called.
-#. Force a reauthenication
-#. Assert that the refresh callback has been called.
+#. Force a reauthenication using a ``failCommand``.
+#. Perform another find operation.
+#. Assert that the refresh callback has been called, if possible.
+#. Assert that a ``find`` operation was started twice and a ``saslStart`` operation was started once during the command execution.
+#. Assert that a ``find`` operation succeeeded once and the ``saslStart`` operation succeeded during the command execution.
+#. Assert that a ``find`` operation failed once during the command execution.
+
+#. Clear the cache
+#. Create request and refresh callbacks that return valid credentials
+that will not expire soon.
+#. Create a client with the callbacks and an event listener capable
+of listening for SASL commands.
+#. Perform a find operation.
+#. Assert that the refresh callback has not been called.
+#. Force a reauthenication using a ``failCommand``
+#. Perform an insert operation.
+#. Assert that the refresh callback has been called, if possible.
+#. Assert that a ``insert`` operation was started twice and a ``saslStart`` operation was started once  during the command execution
+#. Assert that a ``inser`` operation succeeeded once and the ``saslStart`` operation succeeded  during the command execution
+#. Assert that a ``insert`` operation failed once during the command execution.

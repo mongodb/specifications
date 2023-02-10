@@ -264,8 +264,11 @@ when this error is raised, and then re-attempt the operation.
 This attempt MUST be irrespective of whether the operation is considered
 retryable.   Any errors encountered during reauthentication or the
 subsequent re-attempt of the operation MUST be raised to the user.  Currently
-the only auth mechanism that supports reauthentication is OIDC.  See the OIDC
-documentation on reauthentication for more details.
+the only auth mechanism on the server that supports reauthentication is OIDC.
+See the OIDC documentation on reauthentication for more details.
+Note that in order to implement the unified spec tests for reauthentication,
+it may be necessary to add reauthentication support for whichever auth
+mechanism is used when running the auth spec tests.
 
 --------------------------------
 Supported Authentication Methods
