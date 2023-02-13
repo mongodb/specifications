@@ -157,9 +157,11 @@ with the auth provider directly instead of using a client.
 #. Set the AWS environment variables to invalid values.
 #. Create a new client.
 #. Ensure that a ``find`` operation results in an error.
+#. Clear the AWS environment variables.
 
 #. Create a new client.
 #. Ensure that a ``find`` operation adds credentials to the cache.
 #. Set the AWS environment variables to invalid values.
 #. Create a new client.
 #. Ensure that a ``find`` operation succeeds.
+#. Clear the AWS environment variables.
