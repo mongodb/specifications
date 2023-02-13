@@ -147,6 +147,7 @@ add the following tests. Note that if integration tests are run in
 parallel for the driver, then these tests must be run as unit tests interacting
 with the auth provider directly instead of using a client.
 
+#. Clear the cache.
 #. Create a new client.
 #. Ensure that a ``find`` operation adds credentials to the cache.
 #. Set the AWS environment variables based on the cached credentials.
@@ -159,6 +160,7 @@ with the auth provider directly instead of using a client.
 #. Ensure that a ``find`` operation results in an error.
 #. Clear the AWS environment variables.
 
+#. Clear the cache.
 #. Create a new client.
 #. Ensure that a ``find`` operation adds credentials to the cache.
 #. Set the AWS environment variables to invalid values.
