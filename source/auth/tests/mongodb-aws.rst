@@ -151,12 +151,15 @@ with the auth provider directly instead of using a client.
 #. Ensure that a ``find`` operation adds credentials to the cache.
 #. Set the AWS environment variables based on the cached credentials.
 #. Clear the cache.
+#. Create a new client.
 #. Ensure that a ``find`` operation succeeds and does not add credentials to
    the cache.
 #. Set the AWS environment variables to invalid values.
+#. Create a new client.
 #. Ensure that a ``find`` operation results in an error.
 
 #. Create a new client.
 #. Ensure that a ``find`` operation adds credentials to the cache.
 #. Set the AWS environment variables to invalid values.
+#. Create a new client.
 #. Ensure that a ``find`` operation succeeds.
