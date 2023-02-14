@@ -1400,7 +1400,7 @@ servers use the same username but could be configurated differently.
 There is an edge case where if the same username is used and two aliases
 to the same local host address are given, there will be duplicate user/device
 interactions, unless the driver can resolve the local host address as well.
-Note thatbecause we use the server socket address, there will different cache
+Note that because we use the server socket address, there will different cache
 keys for each member of a replica set.
 
 The driver MUST cache the serverStep1 reponse as part of the cache value,
