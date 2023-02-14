@@ -1181,8 +1181,7 @@ MONGODB-OIDC
 :since: 7.0 Enterprise
 
 MONGODB-OIDC authenticates using an `OIDC <https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens.  Drivers MUST support
-both the Authentication Code Flow and Device Workflow for AWS, Azure,
-and GCP platforms.
+both callback-driven OIDC and automatic OIDC authentication for AWS.
 
 
 Conversation
@@ -1412,8 +1411,11 @@ in the case of an authentication code workflow.  However, drivers or dev tools
 can choose to use their own caching scheme if appropriate for their language/
 environment.
 
-A cached value will expire within 5 minutes of the ``expiresInSeconds`` time.
-If a cached value is found but has expired, the refresh callback will be called (if given) with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult arguments, and it will return a new OIDCRequestTokenResult response.
+A cached ``accessToken`` will expire 5 minutes before the ``expiresInSeconds``
+time, if given.  If there is no ``expiresInSeconds``, the token must be consider expired after first usage.  If a cached value is found but its
+``accessToken`` has expired, the refresh callback will be called (if given)
+with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult
+arguments, and it will return a new OIDCRequestTokenResult response.
 
 In order to prevent a memory leak, the driver MUST loop over the existing cache
 at some interval, or per-authorization, to remove expired credentials from
