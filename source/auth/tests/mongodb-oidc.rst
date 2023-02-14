@@ -140,7 +140,7 @@ that will not expire soon.
 of listening for SASL commands.
 #. Perform a find operation.
 #. Assert that the refresh callback has not been called.
-#. Force a reauthenication using a ``failCommand`` of the form::
+#. Force a reauthenication using a ``failCommand`` of the form:
 
 .. code:: javascript
 
