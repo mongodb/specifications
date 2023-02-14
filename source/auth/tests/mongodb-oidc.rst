@@ -14,8 +14,9 @@ Drivers MUST test the following scenarios:
 
 .. sectnum::
 
-Authorization Code Flow
-=======================
+
+Callback-Driven Auth
+====================
 
 Drivers MUST be able to authenticate using OIDC callback(s) when there
 is one principal configured.
@@ -35,7 +36,7 @@ The following URI would also be valid, if it matches the single principal name:
 For the prose test, the ``test_user1`` generated token from Drivers Evergreen Tools in the callback response.
 
 
-AWS Device Flow
+AWS Device Auth
 ===============
 
 Drivers MUST be able to authenticate using the "aws" device workflow simulating
@@ -70,6 +71,8 @@ For this prose test, set ``AWS_WEB_IDENTITY_TOKEN_FILE`` to the ``test_user2``
 generated token file.  Use the appropriate generated tokens for the callbacks
 for ``test_user1`` and ``test_user2``.
 
+The drivers MUST ensure that if no ``username`` is given and multiple
+principals are configured, an errror is raised.
 
 Invalid Callbacks
 =================

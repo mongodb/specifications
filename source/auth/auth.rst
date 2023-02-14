@@ -1430,7 +1430,7 @@ cached value.
 Reauthentication
 ````````````````
 When reauthentication is requested and MONGODB-OIDC is in use, the driver MUST
-ensure that a cached ``access_token`` is not used for direct authentication,
+ensure that a cached ``accessToken`` is not used for direct authentication,
 since it is has been identified as expired by the server.  If a refresh
 callback is given, it will be called as usual.  Otherwise the request callback
 will be called.
