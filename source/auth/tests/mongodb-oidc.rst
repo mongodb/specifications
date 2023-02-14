@@ -23,13 +23,13 @@ is one principal configured.
 
 #. Create a request callback that reads in the generated ``test_user1`` token
 file.
-#. Create a client with a url of the form  ``mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+#. Create a client with a url of the form  ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
 
 #. Create a request callback that reads in the generated ``test_user1`` token
 file.
-#. Create a client with a url of the form  ``mongodb://test_user1@localhost:20178/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+#. Create a client with a url of the form  ``mongodb://test_user1@localhost/?authMechanism=MONGODB-OIDC`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
 
@@ -61,27 +61,27 @@ type if there are multiple principals configured on the server.  Note that
 
 #. Create a request callback that reads in the generated ``test_user1`` token
 file.
-#. Create a client with a url of the form  ``mongodb://test_user1@localhost:20178/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+#. Create a client with a url of the form  ``mongodb://test_user1@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
 
 #. Create a request callback that reads in the generated ``test_user2`` token
 file.
-#. Create a client with a url of the form  ``mongodb://test_user2@localhost:20178/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+#. Create a client with a url of the form  ``mongodb://test_user2@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
 
 #. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
 of the ``test_user1`` generated token file.
-#. Create a client with a url of the form ``mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
+#. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 #. Perform a ``find`` operation.
 
 #. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
 of the ``test_user2`` generated token file.
-#. Create a client with a url of the form ``mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
+#. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 #. Perform a ``find`` operation.
 
-#. Create a client with a url of the form  ``mongodb://localhost:20178/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+#. Create a client with a url of the form  ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
 #. Assert that a ``find`` operation fails.
 
 
