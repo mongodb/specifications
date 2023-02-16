@@ -3,7 +3,14 @@
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.9"
+      "minServerVersion": "4.9",
+      "topologies": [
+        "single",
+        "replicaset",
+        "sharded-replicaset",
+        "sharded"
+      ],
+      "serverless": "forbid"
     }
   ],
   "createEntities": [
@@ -45,7 +52,7 @@
                 ],
                 "appName": "reduceMaxTimeMSTest",
                 "blockConnection": true,
-                "blockTimeMS": 20
+                "blockTimeMS": 50
               }
             }
           }
@@ -61,7 +68,9 @@
                   "useMultipleMongoses": false,
                   "uriOptions": {
                     "appName": "reduceMaxTimeMSTest",
-                    "w": 1
+                    "w": 1,
+                    "timeoutMS": 500,
+                    "heartbeatFrequencyMS": 500
                   },
                   "observeEvents": [
                     "commandStartedEvent"
@@ -77,19 +86,9 @@
               },
               {
                 "collection": {
-                  "id": "regularCollection",
-                  "database": "database",
-                  "collectionName": "coll"
-                }
-              },
-              {
-                "collection": {
                   "id": "timeoutCollection",
                   "database": "database",
-                  "collectionName": "timeoutColl",
-                  "collectionOptions": {
-                    "timeoutMS": 60
-                  }
+                  "collectionName": "timeoutColl"
                 }
               }
             ]
@@ -97,11 +96,19 @@
         },
         {
           "name": "insertOne",
-          "object": "regularCollection",
+          "object": "timeoutCollection",
           "arguments": {
             "document": {
               "_id": 1
-            }
+            },
+            "timeoutMS": 100000
+          }
+        },
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 1000
           }
         },
         {
@@ -123,10 +130,7 @@
                 "commandName": "insert",
                 "databaseName": "test",
                 "command": {
-                  "insert": "coll",
-                  "maxTimeMS": {
-                    "$$exists": false
-                  }
+                  "insert": "timeoutColl"
                 }
               }
             },
@@ -137,7 +141,7 @@
                 "command": {
                   "insert": "timeoutColl",
                   "maxTimeMS": {
-                    "$$lte": 60
+                    "$$lte": 450
                   }
                 }
               }
@@ -164,7 +168,7 @@
                 ],
                 "appName": "rttTooHighTest",
                 "blockConnection": true,
-                "blockTimeMS": 20
+                "blockTimeMS": 50
               }
             }
           }
@@ -180,7 +184,9 @@
                   "useMultipleMongoses": false,
                   "uriOptions": {
                     "appName": "rttTooHighTest",
-                    "w": 1
+                    "w": 1,
+                    "timeoutMS": 10,
+                    "heartbeatFrequencyMS": 500
                   },
                   "observeEvents": [
                     "commandStartedEvent"
@@ -196,19 +202,9 @@
               },
               {
                 "collection": {
-                  "id": "regularCollection",
-                  "database": "database",
-                  "collectionName": "coll"
-                }
-              },
-              {
-                "collection": {
                   "id": "timeoutCollection",
                   "database": "database",
-                  "collectionName": "timeoutColl",
-                  "collectionOptions": {
-                    "timeoutMS": 2
-                  }
+                  "collectionName": "timeoutColl"
                 }
               }
             ]
@@ -216,11 +212,19 @@
         },
         {
           "name": "insertOne",
-          "object": "regularCollection",
+          "object": "timeoutCollection",
           "arguments": {
             "document": {
               "_id": 1
-            }
+            },
+            "timeoutMS": 100000
+          }
+        },
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 1000
           }
         },
         {
@@ -229,6 +233,30 @@
           "arguments": {
             "document": {
               "_id": 2
+            }
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "timeoutCollection",
+          "arguments": {
+            "document": {
+              "_id": 3
+            }
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "timeoutCollection",
+          "arguments": {
+            "document": {
+              "_id": 4
             }
           },
           "expectError": {
@@ -245,9 +273,115 @@
                 "commandName": "insert",
                 "databaseName": "test",
                 "command": {
-                  "insert": "coll",
+                  "insert": "timeoutColl"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "short-circuit is not enabled with only 1 RTT measurement",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": "alwaysOn",
+              "data": {
+                "failCommands": [
+                  "hello",
+                  "isMaster"
+                ],
+                "appName": "reduceMaxTimeMSTest",
+                "blockConnection": true,
+                "blockTimeMS": 100
+              }
+            }
+          }
+        },
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "uriOptions": {
+                    "appName": "reduceMaxTimeMSTest",
+                    "w": 1,
+                    "timeoutMS": 90,
+                    "heartbeatFrequencyMS": 100000
+                  },
+                  "observeEvents": [
+                    "commandStartedEvent"
+                  ]
+                }
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "test"
+                }
+              },
+              {
+                "collection": {
+                  "id": "timeoutCollection",
+                  "database": "database",
+                  "collectionName": "timeoutColl"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "timeoutCollection",
+          "arguments": {
+            "document": {
+              "_id": 1
+            },
+            "timeoutMS": 100000
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "timeoutCollection",
+          "arguments": {
+            "document": {
+              "_id": 2
+            }
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "databaseName": "test",
+                "command": {
+                  "insert": "timeoutColl"
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "databaseName": "test",
+                "command": {
+                  "insert": "timeoutColl",
                   "maxTimeMS": {
-                    "$$exists": false
+                    "$$lte": 450
                   }
                 }
               }
