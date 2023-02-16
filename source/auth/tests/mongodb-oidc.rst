@@ -114,11 +114,11 @@ that is within one minute.
 #. Validate the refresh callback inputs, including the timeout parameter if
 possible.
 
-#. Ensure there is a cache with credentials that expired in less than 5 minutes.
+#. Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
 #. Create a new client with the a request callback but no refresh callback.
 #. Ensure that a ``find`` operation results in a call to the request callback.
 
-#. Ensure there is a cache with credentials that expired in less than 5 minutes.
+#. Ensure there is a cache with credentials that will expire in less than 5 minutes.
 #. Create a new client with a valid request callback and a refresh callback that gives invalid credentials.
 #. Ensure that a ``find`` operation results in an error.
 #. Ensure that the cache has been cleared.
