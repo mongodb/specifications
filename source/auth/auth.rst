@@ -1313,7 +1313,7 @@ the form:
 
 .. code:: typescript
 
-    function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1): OIDCRequestTokenResult
+    function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1, timeoutSeconds: int): OIDCRequestTokenResult
 
 Callbacks can be synchronous and/or asynchronous, depending on the driver
 and/or language.  Asynchronous callbacks should be preferred when other
@@ -1340,7 +1340,7 @@ well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResul
 
 .. code:: typescript
 
-    function onOIDCRefreshToken(serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult): OIDCRequestTokenResult
+    function onOIDCRefreshToken(serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult, timeoutSeconds: int): OIDCRequestTokenResult
 
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
 
