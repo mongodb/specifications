@@ -118,6 +118,14 @@ possible.
 #. Create a new client with the a request callback but no refresh callback.
 #. Ensure that a ``find`` operation results in a call to the request callback.
 
+If the driver does not supports using callback hashes as part of the cache key,
+skip the next test.
+
+# Create a new client with a different request callback.
+# Ensure that a ``find`` operation adds a new entry to the cache.
+
+#. Clear the cache.
+#. Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
 #. Ensure there is a cache with credentials that will expire in less than 5 minutes.
 #. Create a new client with a valid request callback and a refresh callback that gives invalid credentials.
 #. Ensure that a ``find`` operation results in an error.
@@ -191,5 +199,5 @@ of listening for SASL commands.
 #. Perform an insert operation.
 #. Assert that the refresh callback has been called, if possible.
 #. Assert that a ``insert`` operation was started twice and a ``saslStart`` operation was started once  during the command execution
-#. Assert that a ``inser`` operation succeeeded once and the ``saslStart`` operation succeeded  during the command execution
+#. Assert that a ``insert`` operation succeeeded once and the ``saslStart`` operation succeeded  during the command execution
 #. Assert that a ``insert`` operation failed once during the command execution.

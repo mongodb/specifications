@@ -1313,7 +1313,7 @@ the form:
 
 .. code:: typescript
 
-    function onOIDCRequestToken(serverInfo: OIDCMechanismServerStep1, timeoutSeconds: int): OIDCRequestTokenResult
+    function onOIDCRequestToken(principalName: str, serverInfo: OIDCMechanismServerStep1, timeoutSeconds: int): OIDCRequestTokenResult
 
 Callbacks can be synchronous and/or asynchronous, depending on the driver
 and/or language.  Asynchronous callbacks should be preferred when other
@@ -1340,7 +1340,7 @@ well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResul
 
 .. code:: typescript
 
-    function onOIDCRefreshToken(serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult, timeoutSeconds: int): OIDCRequestTokenResult
+    function onOIDCRefreshToken(principalName: str, serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult, timeoutSeconds: int): OIDCRequestTokenResult
 
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
 
@@ -1393,7 +1393,10 @@ invalid cache values at a regular interval, or during every authentication
 attempt.
 
 The cache keys MUST include the username (or empty string) and the
-actually used socket address and port for the current server.
+actually used socket address and port for the current server.  The cache key
+MUST also include a hashes of the callback function(s), if relevant and
+possible in the driver language.
+
 Using the socket address and port accounts for the case when two different
 servers use the same username but could be configurated differently.
 There is an edge case where if the same username is used and two aliases
