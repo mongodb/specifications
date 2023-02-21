@@ -125,10 +125,10 @@ skip the next test.
 # Ensure that a ``find`` operation adds a new entry to the cache.
 
 #. Clear the cache.
-#. Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
-#. Ensure there is a cache with credentials that will expire in less than 5 minutes.
-#. Create a new client with a valid request callback and a refresh callback that gives invalid credentials.
-#. Ensure that a ``find`` operation results in an error.
+#. Create a new client with a valid request callback that gives credentials that expire within 5 minutes and a refresh callback that gives invalid
+credentials.
+# Ensure that a ``find`` operation adds a new entry to the cache.
+#. Ensure that a subsequent ``find`` operation results in an error.
 #. Ensure that the cache has been cleared.
 
 #. Clear the cache.

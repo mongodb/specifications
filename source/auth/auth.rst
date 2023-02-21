@@ -1383,7 +1383,7 @@ Drivers MUST enable caching when callback(s) are provided to the mongo client.
 When an authorization request is made and there is a valid cached response,
 the driver MUST use the cached authorization token if it has not expired.
 
-A cache value is considered valid if it has been created in the past 5 hours.
+A cache value is considered valid if it has been accessed in the past 5 hours.
 The cache is kept alive to preserve the serverStep1 response, as well as
 account for refresh tokens, which typically have an (unknown) lifetime that
 is longer than the access token lifetime.  The refresh token may either be
