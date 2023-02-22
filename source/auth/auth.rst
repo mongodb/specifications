@@ -258,9 +258,9 @@ Reauthentication
 ~~~~~~~~~~~~~~~~
 
 On any operation that requires authentication, the server may raise the
-error ``ReauthenticationRequired`` (391) if the user's credential has expired.
-Drivers MUST immediately attempt to force a reauthenication on the connection
-when this error is raised, and then re-attempt the operation.
+error ``ReauthenticationRequired`` (391), typically if the user's credential
+has expired.  Drivers MUST immediately attempt to force a reauthenication on
+the connection when this error is raised, and then re-attempt the operation.
 This attempt MUST be irrespective of whether the operation is considered
 retryable.   Any errors encountered during reauthentication or the
 subsequent re-attempt of the operation MUST be raised to the user.  Currently
@@ -1405,7 +1405,7 @@ interactions, unless the driver can resolve the local host address as well.
 Note that because we use the server socket address, there will different cache
 keys for each member of a replica set.
 
-The driver MUST cache the serverStep1 reponse as part of the cache value,
+The driver MUST cache the serverStep1 response as part of the cache value,
 to enable skipping serverStep1 on subsequent authentications of the same
 cache key.
 
