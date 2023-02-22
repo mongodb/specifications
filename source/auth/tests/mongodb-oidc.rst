@@ -46,11 +46,6 @@ of the ``test_user1`` generated token file.
 #. Create a client with the url parameters ``?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME=aws``.
 #. Perform a find operation on the client.
 
-#. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
-of the ``test_user2`` generated token file.
-#. Create a client with the url parameters ``?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME=aws``.
-#. Perform a find operation on the client.
-
 
 Multiple Principals
 ===================
