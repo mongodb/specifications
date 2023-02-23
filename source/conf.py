@@ -7,7 +7,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'MongoDB Specifications'
-copyright = '2022, MongoDB'
+copyright = '2023, MongoDB'
 author = 'MongoDB'
 
 # -- General configuration ---------------------------------------------------
