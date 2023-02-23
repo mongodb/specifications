@@ -254,6 +254,22 @@ or "SCRAM-SHA-256").
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
 
+Reauthentication
+~~~~~~~~~~~~~~~~
+
+On any operation that requires authentication, the server may raise the
+error ``ReauthenticationRequired`` (391), typically if the user's credential
+has expired.  Drivers MUST immediately attempt to force a reauthenication on
+the connection when this error is raised, and then re-attempt the operation.
+This attempt MUST be irrespective of whether the operation is considered
+retryable.   Any errors encountered during reauthentication or the
+subsequent re-attempt of the operation MUST be raised to the user.  Currently
+the only auth mechanism on the server that supports reauthentication is OIDC.
+See the OIDC documentation on reauthentication for more details.
+Note that in order to implement the unified spec tests for reauthentication,
+it may be necessary to add reauthentication support for whichever auth
+mechanism is used when running the auth spec tests.
+
 --------------------------------
 Supported Authentication Methods
 --------------------------------
@@ -1158,6 +1174,269 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 
 .. note::
     Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
+
+MONGODB-OIDC
+~~~~~~~~~~~~
+
+:since: 7.0 Enterprise
+
+MONGODB-OIDC authenticates using an `OIDC <https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens.  Drivers MUST support
+both callback-driven OIDC and automatic OIDC authentication for AWS.
+
+
+Conversation
+````````````
+
+Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips between the client and MongoDB.  The requests from the client and the replies from the server are described by the following IDL structs which are encoded in the payload as octet sequences defining BSON objects:
+
+.. code:: idl
+
+  OIDCMechanismClientStep1:
+    description: Client's opening request in saslStart
+    strict: false
+    fields:
+      n:
+        description: "Principal name of client"
+        cpp_name: principalName
+        type: string
+        optional: true
+
+Note that the principal name is optional as it may be provided by the IDP in environments where only one IDP is used.  It is given by the user as the
+username.
+
+.. code:: idl
+
+  OIDCMechanismServerStep1:
+    description: "Server's reply to clientStep1"
+    strict: false
+    fields:
+      authorizationEndpoint:
+        description: >-
+          URL where the IDP may be contacted for end user
+          authentication and authorization code generation.
+        type: string
+        optional: true # Req if deviceAuthorizeEndpoint not present
+      tokenEndpoint:
+        description: >-
+          URL where the IDP may be contacted for authorization
+          code <=> ID/access token exchange.
+        type: string
+        optional: true # Req if deviceAuthorizeEndpoint not present
+      deviceAuthorizationEndpoint:
+        description: >-
+          URL where the IDP may be contacted for device
+          authentication and authorization code generation.
+        type: string
+        optional: true # Req if authorizeEndpoint not present
+      clientId:
+        description: "Unique client ID for this OIDC client"
+        type: string
+      clientSecret:
+        description: "Secret used when communicating with IDP"
+        type: string
+        optional: true
+      requestScopes:
+        description: "Additional scopes to request from IDP"
+        type: array<string>
+        optional: true
+
+Server will use principalName (n) if provided in clientStep1 to select an appropriate IDP.  This IDP's configuration will be returned in serverStep1 to instruct the client on how to acquire an Access Token.  This Access Token will be used in clientStep2 to complete authentication.  The principalName identified within the Access Token MUST match any provided during clientStep1, or the authentication operation will fail.
+
+.. code:: idl
+
+  OIDCMechanismClientStep2:
+      description: "Client's request with signed token"
+      strict: false
+      fields:
+          jwt:
+              description: "Compact serialized JWT with signature"
+              cpp_name: JWT
+              type: string
+
+`MongoCredential`_ Properties
+`````````````````````````````
+
+username
+    MUST specified if more than one OIDC provider is configured and
+    DEVICE_NAME mechanism property is not specified.
+
+source
+    MUST be "$external". Defaults to ``$external``.
+
+password
+    MUST NOT be specified.
+
+mechanism
+    MUST be "MONGODB-OIDC"
+
+mechanism_properties
+    DEVICE_NAME
+        Drivers MUST allow the user to specify a name for the device
+        workflow that is one of "aws", "azure", or "gcp".
+    REQUEST_TOKEN_CALLBACK
+        Drivers MUST allow the user to specify a callback of the form
+        "onOIDCRequestToken" (defined below), if the driver supports
+        providing objects as mechanism property values.
+    REFRESH_TOKEN_CALLBACK
+        Drivers MUST allow the user to specify a callback of the form
+        "onOIDCRefreshToken" (defined below), if the driver supports
+        providing objects as mechanism property values.
+
+Drivers MUST skip client step 1 for device workflows
+or when the server step 1 response value is cached.  When skipping step 1,
+drivers will use ``saslStart`` and a payload with the ``jwt`` value.
+
+User Provided Callbacks
+```````````````````````
+
+Drivers MUST allow the user to provide callbacks for token request and
+token refresh.  The token request callback MUST accept the OIDCMechanismServerStep1 structure and return an OIDCRequestTokenResult of
+the form:
+
+.. code:: idl
+
+  OIDCRequestTokenResult:
+      description: "The result of a token request"
+      strict: false
+      fields:
+          accessToken:
+              description: "The OIDC access token"
+              type: string
+          expiresInSeconds:
+              description: "The expiration time in seconds from the current time"
+              type: int
+              optional: true
+          refreshToken:
+              description: "The OIDC refresh token"
+              type: str
+              optional: true
+
+.. code:: typescript
+
+    function onOIDCRequestToken(principalName: str, serverInfo: OIDCMechanismServerStep1, timeoutSeconds: int): OIDCRequestTokenResult
+
+Callbacks can be synchronous and/or asynchronous, depending on the driver
+and/or language.  Asynchronous callbacks should be preferred when other
+operations in the driver use asynchronous functions.
+
+Before calling a callback, the driver MUST acquire a lock, and verify that
+there are no valid cache credentials before calling the callback.
+This is because request callbacks may involve human interaction, and refresh
+callbacks could use refresh tokens that can only be used once.
+
+The driver MUST provide a way for the callback to be either automatically
+cancelled, or to cancel itself.  This can be as a timeout argument to the
+callback, a cancellation context passed to the callback, or some other
+language-appropriate mechanism.  The timeout duration MUST be 5 minutes,
+to account for the fact that there may be human interaction involved.
+
+If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.   The driver will
+inspect that the correct properties are given, but MUST NOT attempt to validate
+the token(s) directly.
+
+The optional token refresh callback will accept the IDP information as
+well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResult.
+
+
+.. code:: typescript
+
+    function onOIDCRefreshToken(principalName: str, serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult, timeoutSeconds: int): OIDCRequestTokenResult
+
+If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
+
+If the refresh callback is given and the request callback is not given,
+the driver MUST raise an error.  If DEVICE_NAME is given and one or more
+callbacks are given, the driver MUST raise an error.
+
+If no callbacks are given, the driver MUST enforce that a DEVICE_NAME
+mechanism_properties is set and one of ("aws",).
+The callback mechanism can be used to support both Authentication
+Code Workflows or Device workflows that are not explicitly implemented
+by drivers.  If there is no callback and no DEVICE_NAME, or the
+DEVICE_NAME is set but credentials cannot be automatically obtained,
+the driver MUST raise an error.
+
+
+Supported Device Workflows
+``````````````````````````
+
+Drivers MUST support device workflows for "aws", given
+by the DEVICE_NAME mechanism property.  In all cases the acquired token
+will be given as the ``jwt`` argument and the second client step of the
+OIDC SASL exchange MUST be made directly, skipping the clientStep1.
+Drivers MUST raise an error if both a DEVICE_NAME and username are
+given, since the device workflow will not use the username.
+
+AWS
+___
+
+When the DEVICE_NAME mechanism property is set to "aws", the driver MUST
+attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
+interpret it as a file path.  The contents of the file are read as the
+access token.
+
+
+Caching Credentials
+```````````````````
+
+Drivers MUST enable caching when callback(s) are provided to the mongo client.
+When an authorization request is made and there is a valid cached response,
+the driver MUST use the cached authorization token if it has not expired.
+
+A cache value is considered valid if it has been accessed in the past 5 hours.
+The cache is kept alive to preserve the serverStep1 response, as well as
+account for refresh tokens, which typically have an (unknown) lifetime that
+is longer than the access token lifetime.  The refresh token may either be
+stored by the user application, or as part of the request/refresh token
+response in the driver cache. To prevent a memory leak, the driver MUST clear
+invalid cache values at a regular interval, or during every authentication
+attempt.
+
+The cache keys MUST include the username (or empty string) and the
+actually used socket address and port for the current server.  The cache key
+MUST also include a hashes of the callback function(s), if relevant and
+possible in the driver language.
+
+Using the socket address and port accounts for the case when two different
+servers use the same username but could be configurated differently.
+There is an edge case where if the same username is used and two aliases
+to the same local host address are given, there will be duplicate user/device
+interactions, unless the driver can resolve the local host address as well.
+Note that because we use the server socket address, there will different cache
+keys for each member of a replica set.
+
+The driver MUST cache the serverStep1 response as part of the cache value,
+to enable skipping serverStep1 on subsequent authentications of the same
+cache key.
+
+A global cache should be preferred, to prevent multiple browser interactions
+in the case of an authentication code workflow.  However, drivers or dev tools
+can choose to use their own caching scheme if appropriate for their language/
+environment.
+
+A cached ``accessToken`` will expire 5 minutes before the ``expiresInSeconds``
+time, if given.  If there is no ``expiresInSeconds``, the token must be consider expired after first usage.  If a cached value is found but its
+``accessToken`` has expired, the refresh callback will be called (if given)
+with the OIDCMechanismServerStep1 and original OIDCRequestTokenResult
+arguments, and it will return a new OIDCRequestTokenResult response.
+
+In order to prevent a memory leak, the driver MUST loop over the existing cache
+at some interval, or per-authorization, to remove expired credentials from
+the cache.
+
+If there is no refresh callback and no current valid cached value, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent call to any callback for a given cache key.
+
+If a cached value is used and authentication fails, the driver MUST clear the
+cached value.
+
+
+Reauthentication
+````````````````
+When reauthentication is requested and MONGODB-OIDC is in use, the driver MUST
+ensure that a cached ``accessToken`` is not used for direct authentication,
+since it is has been identified as expired by the server.  If a refresh
+callback is given, it will be called as usual.  Otherwise the request callback
+will be called.
 
 -------------------------
 Connection String Options
