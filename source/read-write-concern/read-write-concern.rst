@@ -124,8 +124,8 @@ Server’s Default Read Concern
 When a ``ReadConcern`` is created but no values are specified, it should be
 considered the server’s default ``ReadConcern``.
 
-:javascript:`readConcern: { }` is not the same as
-:javascript:`readConcern: { level=“local” }`. The former is the server’s
+:javascript:`{ readConcern: { } }` is not the same as
+:javascript:`{ readConcern: { level: "local"} }`. The former is the server’s
 default ``ReadConcern`` while the latter is the user explicitly specifying a
 ``ReadConcern`` with a ``level`` of “local”.
 
@@ -679,7 +679,7 @@ Q: Why is specifying a non-default ``ReadConcern`` for servers < 3.2 an error wh
   a non-default ``WriteConcern`` defined globally would have all their
   ``findAndModify`` operations fail.
 
-Q: Why does a driver send :javascript:`{ readConcern: { level: “local” } }` to the server when that is the server’s default?
+Q: Why does a driver send :javascript:`{ readConcern: { level: "local" } }` to the server when that is the server’s default?
   First, to mirror how ``WriteConcern`` already works, ``ReadConcern() does not
   equal ReadConcern(level=local)`` in the same way that ``WriteConcern() does
   not equal WriteConcern(w=1)``. This is true for ``WriteConcern`` because

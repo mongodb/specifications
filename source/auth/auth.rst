@@ -1016,7 +1016,7 @@ using an SDK.
 If not using an AWS SDK, the request must be made manually.  If making a manual request, the ``Version`` should be specified as well. An example manual
 POST request looks like the following:
 
-.. code:: html
+.. code:: text
 
     https://sts.amazonaws.com/
     ?Action=AssumeRoleWithWebIdentity

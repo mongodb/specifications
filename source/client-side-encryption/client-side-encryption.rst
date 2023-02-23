@@ -814,7 +814,7 @@ load. Refer:
 
 
 ``extraOptions.cryptSharedLibRequired``
-````````````````````````````````````
+```````````````````````````````````````
 
 :type: :ts:`boolean`
 :default: |false|
