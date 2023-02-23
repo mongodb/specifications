@@ -1,4 +1,4 @@
-.PHONY: all lint doc8 rstcheck html _build-html run-server clean
+.PHONY: all lint doc8 rstcheck html _build-html serve clean
 
 .SILENT:
 
@@ -28,13 +28,12 @@ build/html.stamp: $(RST_FILES) source/conf.py
 	touch $@
 _build-html:
 	echo "Building HTML pages..."
-	sphinx-build -Wqnaj8 source/ build/html/
+	sphinx-build -Wqnaj12 source/ build/html/
 	echo "HTML Pages were written to ./build/html"
 
 # Run an HTTP server on localhost serving the HTML directory
-run-server:
-	mkdir -p build/html/
-	python3 -m http.server --directory build/html/ --bind 127.0.0.1
+serve:
+	sphinx-autobuild -Wqnaj12 source build/html/
 
 clean:
 	rm build/ -rf
