@@ -3306,7 +3306,7 @@ $$matchAsRoot
 This operator may be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_) and the expected and actual values
 are documents. The test runner MUST treat the expected value as a root-level
-document as described in `Evaluating Matches`_ and match it against the expected
+document as described in `Evaluating Matches`_ and match it against the actual
 value.
 
 Test Runner Implementation
