@@ -233,6 +233,39 @@ This test only applies to drivers that allow authentication to be changed on the
 * Call ``findOne`` using the session as an explicit session
 * Assert that the driver returned an error because the session is owned by a different user
 
+18. Implicit session is ignored if connection does not support sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This test uses a mongocryptd server as the test server; however, in the event that mongocryptd 
+starts supporting sessions or is not a viable option for this test, another server may be substituted
+in these tests as long as it does not return a non-null value for ``logicalSessionTimeoutMinutes``;
+in the event that no such server is readily available, a mock server may be used instead. 
+
+* Ensure a mongocryptd process is running
+* Create a new ``MongoClient`` pointed at the mongocryptd server with command monitoring enabled
+* Verify that the server does NOT define a value for ``logicalSessionTimeoutMinutes`` by sending a hello command to the server and checking the response
+* Send a read command to the server (e.g., ``findOne``), ignoring any errors from the server response
+* Check the corresponding ``commandStarted`` event: verify that ``lsid`` is not set
+* Send a write command to the server (e.g., ``insertOne``), ignoring any errors from the server response
+* Check the corresponding ``commandStarted`` event: verify that lsid is not set
+
+19. Explicit session raises an error if connection does not support sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This test uses a mongocryptd server as the test server; however, in the event that mongocryptd 
+starts supporting sessions or is not a viable option for this test, another server may be substituted
+in these tests as long as it does not return a non-null value for ``logicalSessionTimeoutMinutes``;
+in the event that no such server is readily available, a mock server may be used instead. 
+
+* Ensure a mongocryptd process is running
+* Create a new ``MongoClient`` pointed at the mongocryptd server
+* Verify that the server does NOT define a value for ``logicalSessionTimeoutMinutes`` by sending a hello command to the server and checking the response
+* Create a new explicit session by calling ``startSession`` (this MUST NOT error)
+* Attempt to send a read command to the server (e.g., ``findOne``) with the explicit session passed in
+* Assert that a client-side error is generated indicating that sessions are not supported
+* Attempt to send a write command to the server (e.g., ``insertOne``) with the explicit session passed in
+* Assert that a client-side error is generated indicating that sessions are not supported
+
 Changelog
 =========
 
