@@ -1152,4 +1152,4 @@ Changelog
 :2022-03-24: ServerSession Pooling is required and clarifies session acquisition bounding
 :2022-06-13: Move prose tests to test README and apply new ordering
 :2022-10-05: Remove spec front matter
-:2022-02-24: Defer checking for session support until after connection checkout
+:2023-02-24: Defer checking for session support until after connection checkout

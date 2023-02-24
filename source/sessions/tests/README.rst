@@ -274,3 +274,4 @@ Changelog
 :2021-07-30: Use numbering for prose test
 :2022-02-11: Convert legacy tests to unified format
 :2022-06-13: Relocate prose test from spec document and apply new ordering
+:2023-02-24: Fix formatting and add new prose tests 18 and 19
