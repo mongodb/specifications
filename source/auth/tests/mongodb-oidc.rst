@@ -100,14 +100,14 @@ If desired, the caching tests can be done using mock server responses.
 #. Clear the cache.
 #. Create a new client with a request callback and a refresh callback.  Both callbacks will read the contents of the ``AWS_WEB_IDENTITY_TOKEN_FILE`` location to obtain a valid access token.
 #. Validate the request callback inputs, including the timeout parameter if
-possible.
+   possible.
 #. Give a callback response with a valid accessToken and an expiresInSeconds
-that is within one minute.
+   that is within one minute.
 #. Ensure that a ``find`` operation adds credentials to the cache.
 #. Create a new client with the same request callback and a refresh callback.
 #. Ensure that a ``find`` operation results in a call to the refresh callback.
 #. Validate the refresh callback inputs, including the timeout parameter if
-possible.
+   possible.
 
 #. Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
 #. Create a new client with the a request callback but no refresh callback.
@@ -116,13 +116,13 @@ possible.
 If the driver does not supports using callback hashes as part of the cache key,
 skip the next test.
 
-# Create a new client with a different request callback.
-# Ensure that a ``find`` operation adds a new entry to the cache.
+#. Create a new client with a different request callback.
+#. Ensure that a ``find`` operation adds a new entry to the cache.
 
 #. Clear the cache.
 #. Create a new client with a valid request callback that gives credentials that expire within 5 minutes and a refresh callback that gives invalid
-credentials.
-# Ensure that a ``find`` operation adds a new entry to the cache.
+   credentials.
+#. Ensure that a ``find`` operation adds a new entry to the cache.
 #. Ensure that a subsequent ``find`` operation results in an error.
 #. Ensure that the cache has been cleared.
 
@@ -138,9 +138,9 @@ operation.
 
 #. Clear the cache
 #. Create request and refresh callbacks that return valid credentials
-that will not expire soon.
+   that will not expire soon.
 #. Create a client with the callbacks and an event listener capable
-of listening for SASL commands.
+   of listening for SASL commands.
 #. Perform a find operation.
 #. Assert that the refresh callback has not been called.
 #. Force a reauthenication using a ``failCommand`` of the form:
