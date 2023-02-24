@@ -1000,7 +1000,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
 
 Connection Pool Logging
 ~~~~~~~~~~~~~~~~~~~~~~~
-Please refer to the `logging specification <../logging/logging.rst>`_ for details on logging implementations in general, including log levels, log
+Please refer to the `logging specification <../logging/logging.rst>`__ for details on logging implementations in general, including log levels, log
 components, handling of null values in log messages, and structured versus unstructured logging.
 
 Drivers MUST support logging of connection pool information via the following types of log messages. These messages MUST be logged at ``Debug`` level
@@ -1227,12 +1227,12 @@ In addition to the common fields defined above, this message MUST contain the fo
        - Stale: "Connection became stale because the pool was cleared"
        - Idle: "Connection has been available but unused for longer than the configured max idle time"
        - Error: "An error occurred while using the connection"
-       - Pool closed: "Connection pool was closed" 
+       - Pool closed: "Connection pool was closed"
 
    * - error
      - Flexible
      - If ``reason`` is ``Error``, the associated error. The type and format of this value is flexible; see the
-       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_  for details on representing errors in log messages.
+       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
