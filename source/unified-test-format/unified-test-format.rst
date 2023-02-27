@@ -3305,7 +3305,7 @@ $$matchAsRoot
 `````````````
 This operator may be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_) and the expected and actual values
-are documents. The test runner MUST treat the expected value as a root-level
+are documents. The test runner MUST treat the actual value as a root-level
 document as described in `Evaluating Matches`_ and match it against the expected
 value.
 
@@ -3898,6 +3898,7 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+:2023-02-24: Fix typo in the description of the ``$$matchAsRoot`` matching operator.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
             Add support for logging assertions via the ``observeLogMessages`` field
