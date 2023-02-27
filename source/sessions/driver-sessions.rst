@@ -523,9 +523,8 @@ to the server:
   opened (and reported a value for logicalSessionTimeoutMinutes in the initial
   response to the `handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_),
   but have subsequently been downgraded to not support sessions. The server does
-  not close the socket in this scenario, and the driver will forever conclude that
-  the server at the other end of this connection supports sessions. This scenario
-  will only be a problem until the next heartbeat against that server.
+  not close the socket in this scenario, so the driver will conclude that
+  the server at the other end of this connection supports sessions.
 
 There is nothing that the driver can do about this race condition, and the server 
 will just return an error in this scenario.
