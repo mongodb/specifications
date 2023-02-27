@@ -991,7 +991,7 @@ case where another part the application has refreshed the credentials.
 
 However, if environment variables are not present during initial authorization,
 credentials may be fetched from another source and cached.  Even if the
-environmnet variables are present in subsequent authorization attempts,
+environment variables are present in subsequent authorization attempts,
 the driver MUST use the cached credentials, or refresh them if applicable.
 This behavior is consistent with how the AWS SDKs behave.
 
