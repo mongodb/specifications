@@ -13,26 +13,34 @@ The YAML and JSON files in this directory are platform-independent tests
 meant to exercise a driver's implementation of sessions. These tests utilize the
 `Unified Test Format <../../unified-test-format/unified-test-format.rst>`__.
 
-Several prose tests, which are not easily expressed in YAML, are also presented
-in the Driver Sessions Spec. Those tests will need to be manually implemented
-by each driver.
-
 Snapshot session tests
-======================
-Snapshot sessions tests require server of version 5.0 or higher and
-replica set or a sharded cluster deployment.
-Default snapshot history window on the server is 5 minutes. Running the test in debug mode, or in any other slow configuration
+~~~~~~~~~~~~~~~~~~~~~~
+The default snapshot history window on the server is 5 minutes. Running the test in debug mode, or in any other slow configuration
 may lead to `SnapshotTooOld` errors. Drivers can work around this issue by increasing the server's `minSnapshotHistoryWindowInSeconds` parameter, for example:
 
 .. code:: python
 
-    client.admin.command('setParameter', 1, minSnapshotHistoryWindowInSeconds=60)
+    client.admin.command('setParameter', 1, minSnapshotHistoryWindowInSeconds=600)
+
+Testing against servers that do not support sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Since all regular 3.6+ servers support sessions, the prose tests which test for session non-support SHOULD 
+use a mongocryptd server as the test server (available with server versions 4.2+); however, if future versions of mongocryptd 
+support sessions or if mongocryptd is not a viable option for the driver implementing these tests, another server MAY be
+substituted as long as it does not return a non-null value for ``logicalSessionTimeoutMinutes``;
+in the event that no such server is readily available, a mock server may be used as a last resort.
+
+As part of the test setup for these cases, create a ``MongoClient`` pointed at the test server with the options
+specified in the test case and verify that the test server does NOT define a value for ``logicalSessionTimeoutMinutes``
+by sending a hello command and checking the response.
 
 Prose tests
-```````````
+===========
 
 1. Setting both ``snapshot`` and ``causalConsistency`` to true is not allowed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Snapshot sessions tests require server of version 5.0 or higher and
+replica set or a sharded cluster deployment.
 
 * ``client.startSession(snapshot = true, causalConsistency = true)``
 * Assert that an error was raised by driver
@@ -234,6 +242,29 @@ This test only applies to drivers that allow authentication to be changed on the
 * Call ``findOne`` using the session as an explicit session
 * Assert that the driver returned an error because the session is owned by a different user
 
+18. Implicit session is ignored if connection does not support sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Refer to `Testing against servers that do not support sessions`_ and configure a ``MongoClient``
+with command monitoring enabled.
+
+* Send a read command to the server (e.g., ``findOne``), ignoring any errors from the server response
+* Check the corresponding ``commandStarted`` event: verify that ``lsid`` is not set
+* Send a write command to the server (e.g., ``insertOne``), ignoring any errors from the server response
+* Check the corresponding ``commandStarted`` event: verify that lsid is not set
+
+19. Explicit session raises an error if connection does not support sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Refer to `Testing against servers that do not support sessions`_ and configure a ``MongoClient``
+with default options.
+
+* Create a new explicit session by calling ``startSession`` (this MUST NOT error)
+* Attempt to send a read command to the server (e.g., ``findOne``) with the explicit session passed in
+* Assert that a client-side error is generated indicating that sessions are not supported
+* Attempt to send a write command to the server (e.g., ``insertOne``) with the explicit session passed in
+* Assert that a client-side error is generated indicating that sessions are not supported
+
 Changelog
 =========
 
@@ -242,3 +273,4 @@ Changelog
 :2021-07-30: Use numbering for prose test
 :2022-02-11: Convert legacy tests to unified format
 :2022-06-13: Relocate prose test from spec document and apply new ordering
+:2023-02-24: Fix formatting and add new prose tests 18 and 19
