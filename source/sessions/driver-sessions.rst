@@ -205,7 +205,7 @@ its lifetime.
 
 Drivers MUST NOT check for session support in `startSession`. Instead, if sessions 
 are not supported, the error MUST be reported the first time the session is used
-for an operation (See `How to Check Whether a Connection Supports Sessions`_).
+for an operation (See `How to Tell Whether a Connection Supports Sessions`_).
 
 Explicit vs implicit sessions
 -----------------------------
@@ -437,8 +437,8 @@ operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec. Regardless, please consult the startSession section to
 replicate the required steps for creating a session.
-The driver MUST check for session support, but only after the connection is checked out
-(See `How to Check Whether a Connection Supports Sessions`_) and MUST NOT consume a server  
+The driver MUST NOT use the session if the checked out connection does not support sessions
+(see `How to Tell Whether a Connection Supports Sessions`_) and, in all cases, MUST NOT consume a server
 session id until after the connection is checked out and session support is confirmed.
 
 MongoCollection changes
@@ -479,8 +479,8 @@ operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec. Regardless, please consult the startSession section to
 replicate the required steps for creating a session.
-The driver MUST check for session support, but only after the connection is checked out
-(See `How to Check Whether a Connection Supports Sessions`_) and MUST NOT consume a server  
+The driver MUST NOT use the session if the checked out connection does not support sessions
+(see `How to Tell Whether a Connection Supports Sessions`_) and, in all cases, MUST NOT consume a server
 session id until after the connection is checked out and session support is confirmed.
 
 Sessions and Cursors
@@ -502,7 +502,7 @@ A driver SHOULD NOT attempt to release the acquired session before connection ch
 
 Explicit sessions MAY be changed to allocate a server session similarly.
 
-How to Check Whether a Connection Supports Sessions
+How to Tell Whether a Connection Supports Sessions
 ===================================================
 
 A driver can determine whether a connection supports sessions by checking whether
