@@ -1438,6 +1438,11 @@ since it is has been identified as expired by the server.  If a refresh
 callback is given, it will be called as usual.  Otherwise the request callback
 will be called.
 
+If the command fails and callbacks are in use, the driver
+MUST clear the cache value and attempt to authenticate more time from
+``OIDCMechanismClientStep1``.  In this case the identity provider may have
+been reconfigured, and a new ``OIDCMechanismServerStep1`` is required.
+
 -------------------------
 Connection String Options
 -------------------------

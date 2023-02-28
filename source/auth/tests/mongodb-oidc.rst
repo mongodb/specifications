@@ -140,7 +140,7 @@ operation.
 #. Create request and refresh callbacks that return valid credentials
 that will not expire soon.
 #. Create a client with the callbacks and an event listener capable
-of listening for SASL commands.
+of listening for sensitive commands.
 #. Perform a find operation.
 #. Assert that the refresh callback has not been called.
 #. Force a reauthenication using a ``failCommand`` of the form:
@@ -162,6 +162,8 @@ of listening for SASL commands.
 
 #. Perform another find operation.
 #. Assert that the refresh callback has been called, if possible.
-#. Assert that a ``find`` operation was started twice and a ``saslStart`` operation was started once during the command execution.
-#. Assert that a ``find`` operation succeeeded once and the ``saslStart`` operation succeeded during the command execution.
+#. Assert that a ``find`` operation was started twice.  If your driver logs
+initial ``hello`` messages, assert that one was started once.
+#. Assert that a ``find`` operation succeeeded once.   If your driver logs
+initial ``hello`` messages, assert that one succeeded once.
 #. Assert that a ``find`` operation failed once during the command execution.
