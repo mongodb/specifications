@@ -22,6 +22,17 @@ may lead to `SnapshotTooOld` errors. Drivers can work around this issue by incre
 
     client.admin.command('setParameter', 1, minSnapshotHistoryWindowInSeconds=600)
 
+Testing against servers that do not support sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Since all regular 3.6+ servers support sessions, the prose tests which test for session non-support SHOULD 
+use a mongocryptd server as the test server (available with server versions 4.2+); however, if future versions of mongocryptd 
+support sessions or if mongocryptd is not a viable option for the driver implementing these tests, another server MAY be
+substituted as long as it does not return a non-null value for ``logicalSessionTimeoutMinutes``;
+in the event that no such server is readily available, a mock server may be used as a last resort.
+
+As part of the test setup for these cases, create a ``MongoClient`` pointed at the test server with the options
+specified in the test case and verify that the test server does NOT define a value for ``logicalSessionTimeoutMinutes``
+by sending a hello command and checking the response.
 
 Prose tests
 ===========
@@ -234,14 +245,9 @@ This test only applies to drivers that allow authentication to be changed on the
 18. Implicit session is ignored if connection does not support sessions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This test uses a mongocryptd server as the test server (available with server versions 4.2+); however, in the event that mongocryptd 
-starts supporting sessions or is not a viable option for this test, another server may be substituted
-in these tests as long as it does not return a non-null value for ``logicalSessionTimeoutMinutes``;
-in the event that no such server is readily available, a mock server may be used instead. 
+Refer to `Testing against servers that do not support sessions`_ and configure a ``MongoClient``
+with command monitoring enabled.
 
-* Ensure a mongocryptd process is running
-* Create a new ``MongoClient`` pointed at the mongocryptd server with command monitoring enabled
-* Verify that the server does NOT define a value for ``logicalSessionTimeoutMinutes`` by sending a hello command to the server and checking the response
 * Send a read command to the server (e.g., ``findOne``), ignoring any errors from the server response
 * Check the corresponding ``commandStarted`` event: verify that ``lsid`` is not set
 * Send a write command to the server (e.g., ``insertOne``), ignoring any errors from the server response
@@ -250,14 +256,9 @@ in the event that no such server is readily available, a mock server may be used
 19. Explicit session raises an error if connection does not support sessions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This test uses a mongocryptd server as the test server (available with server versions 4.2+); however, in the event that mongocryptd 
-starts supporting sessions or is not a viable option for this test, another server may be substituted
-in these tests as long as it does not return a non-null value for ``logicalSessionTimeoutMinutes``;
-in the event that no such server is readily available, a mock server may be used instead. 
+Refer to `Testing against servers that do not support sessions`_ and configure a ``MongoClient``
+with default options.
 
-* Ensure a mongocryptd process is running
-* Create a new ``MongoClient`` pointed at the mongocryptd server
-* Verify that the server does NOT define a value for ``logicalSessionTimeoutMinutes`` by sending a hello command to the server and checking the response
 * Create a new explicit session by calling ``startSession`` (this MUST NOT error)
 * Attempt to send a read command to the server (e.g., ``findOne``) with the explicit session passed in
 * Assert that a client-side error is generated indicating that sessions are not supported
