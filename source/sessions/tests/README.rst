@@ -19,6 +19,7 @@ The default snapshot history window on the server is 5 minutes. Running the test
 may lead to `SnapshotTooOld` errors. Drivers can work around this issue by increasing the server's `minSnapshotHistoryWindowInSeconds` parameter, for example:
 
 .. code:: python
+
     client.admin.command('setParameter', 1, minSnapshotHistoryWindowInSeconds=600)
 
 
