@@ -130,6 +130,47 @@ credentials.
 #. Create a new client using the AWS device workflow.
 #. Ensure that a ``find`` operation does not add credentials to the cache.
 
+Speculative Authentication
+==========================
+
+#. Clear the cache.
+#. Create a client with a request callback that returns a valid token
+  that will not expire soon.
+#. Set a fail point for ``saslStart`` commands of the form:
+
+.. code:: javascript
+
+    {
+        "mode": {"times": 2},
+        "data": {"failCommands": ["saslStart"], "errorCode": 18},
+    }
+
+#. Perform a ``find`` operation.
+#. Close the client.
+#. Create a new client with the same properties.
+#. Set a fail point for ``saslStart`` commands.
+#. Perform a ``find`` operation.
+#. Close the client.
+
+#. Clear the cache.
+#. Create a client with a request callback that returns a valid token
+  that will expire soon.
+#. Set a fail point for ``saslStart`` commands of the form:
+
+.. code:: javascript
+
+    {
+        "mode": {"times": 2},
+        "data": {"failCommands": ["saslStart"], "errorCode": 18},
+    }
+
+#. Perform a ``find`` operation that fails.
+#. Close the client.
+#. Create a new client with the same properties.
+#. Set a ``fail`` point for ``saslStart`` commands.
+#. Perform a find operation.
+#. Close the client.
+
 Reauthentication
 ================
 
@@ -140,7 +181,7 @@ operation.
 #. Create request and refresh callbacks that return valid credentials
 that will not expire soon.
 #. Create a client with the callbacks and an event listener capable
-of listening for sensitive commands.
+of listening for SASL commands.
 #. Perform a find operation.
 #. Assert that the refresh callback has not been called.
 #. Force a reauthenication using a ``failCommand`` of the form:
@@ -162,8 +203,6 @@ of listening for sensitive commands.
 
 #. Perform another find operation.
 #. Assert that the refresh callback has been called, if possible.
-#. Assert that a ``find`` operation was started twice.  If your driver logs
-initial ``hello`` messages, assert that one was started once.
-#. Assert that a ``find`` operation succeeeded once.   If your driver logs
-initial ``hello`` messages, assert that one succeeded once.
+#. Assert that a ``find`` operation was started twice and a ``saslStart`` operation was started once during the command execution.
+#. Assert that a ``find`` operation succeeeded once and the ``saslStart`` operation succeeded during the command execution.
 #. Assert that a ``find`` operation failed once during the command execution.
