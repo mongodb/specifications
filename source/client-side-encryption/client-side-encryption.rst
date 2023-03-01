@@ -114,9 +114,9 @@ encryptedFields
    .. code::
 
       {
-          "escCollection": "escCollectionName",
-          "eccCollection": "eccCollectionName",
-          "ecocCollection": "ecocCollectionName",
+          "escCollection": "enxcol_.CollectionName.esc",
+          "eccCollection": "enxcol_.CollectionName.ecc",
+          "ecocCollection": "enxcol_.CollectionName.ecoc",
           "fields": [
               {
                   "path": "firstName",
