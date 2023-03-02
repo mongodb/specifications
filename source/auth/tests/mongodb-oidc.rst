@@ -141,9 +141,20 @@ Speculative Authentication
 .. code:: javascript
 
     {
-        "mode": {"times": 2},
-        "data": {"failCommands": ["saslStart"], "errorCode": 18},
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 2
+      },
+      "data": {
+        "failCommands": [
+          "saslStart"
+        ],
+        "errorCode": 18
+      }
     }
+
+Note: the driver MUST either use a unique ``appName`` or explicitly
+remove the ``failCommand`` after the test to prevent leakage.
 
 #. Perform a ``find`` operation.
 #. Close the client.
@@ -160,8 +171,16 @@ Speculative Authentication
 .. code:: javascript
 
     {
-        "mode": {"times": 2},
-        "data": {"failCommands": ["saslStart"], "errorCode": 18},
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 2
+      },
+      "data": {
+        "failCommands": [
+          "saslStart"
+        ],
+        "errorCode": 18
+      }
     }
 
 #. Perform a ``find`` operation that fails.
@@ -200,6 +219,9 @@ of listening for SASL commands.
         "errorCode": 391
       }
     }
+
+Note: the driver MUST either use a unique ``appName`` or explicitly
+remove the ``failCommand`` after the test to prevent leakage.
 
 #. Perform another find operation.
 #. Assert that the refresh callback has been called, if possible.
