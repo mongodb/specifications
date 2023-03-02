@@ -43,7 +43,7 @@ Drivers Evergreen Tools.
 
 #. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
 of the ``test_user1`` generated token file.
-#. Create a client with the url parameters ``?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws``.
+#. Create a client with the url parameters ``?authMechanism=MONGODB-OIDC&authMechanismProperties=SERVICE_NAME:aws``.
 #. Perform a find operation on the client.
 
 
@@ -68,12 +68,12 @@ file.
 
 #. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
 of the ``test_user1`` generated token file.
-#. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
+#. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=SERVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 #. Perform a ``find`` operation.
 
 #. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
 of the ``test_user2`` generated token file.
-#. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
+#. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=SERVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 #. Perform a ``find`` operation.
 
 #. Create a client with a url of the form  ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
