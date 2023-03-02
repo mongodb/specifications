@@ -972,7 +972,7 @@ The order in which Drivers MUST search for credentials is:
 #. The URI
 #. Environment variables
 #. Using ``AssumeRoleWithWebIdentity`` if ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
-   ``AWS_ROLE_SESSION_NAME``  are set.
+   ``AWS_ROLE_ARN``  are set.
 #. The ECS endpoint if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set. Otherwise, the EC2 endpoint.
 
 .. note::
