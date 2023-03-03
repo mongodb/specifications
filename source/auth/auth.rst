@@ -1258,7 +1258,7 @@ Server will use principalName (n) if provided in clientStep1 to select an approp
 
 username
     MUST specified if more than one OIDC provider is configured and
-    DEVICE_NAME mechanism property is not specified.
+    PROVIDER_NAME mechanism property is not specified.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1270,9 +1270,9 @@ mechanism
     MUST be "MONGODB-OIDC"
 
 mechanism_properties
-    DEVICE_NAME
-        Drivers MUST allow the user to specify a name for the device
-        workflow that is one of "aws", "azure", or "gcp".
+    PROVIDER_NAME
+        Drivers MUST allow the user to specify a name for using a service
+        to obtain credentials that is one of "aws", "azure", or "gcp".
     REQUEST_TOKEN_CALLBACK
         Drivers MUST allow the user to specify a callback of the form
         "onOIDCRequestToken" (defined below), if the driver supports
@@ -1282,7 +1282,7 @@ mechanism_properties
         "onOIDCRefreshToken" (defined below), if the driver supports
         providing objects as mechanism property values.
 
-Drivers MUST skip client step 1 for device workflows
+Drivers MUST skip client step 1 when using a service to obtain credentials
 or when the server step 1 response value is cached.  When skipping step 1,
 drivers will use ``saslStart`` and a payload with the ``jwt`` value.
 
@@ -1345,32 +1345,32 @@ well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResul
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
 
 If the refresh callback is given and the request callback is not given,
-the driver MUST raise an error.  If DEVICE_NAME is given and one or more
+the driver MUST raise an error.  If PROVIDER_NAME is given and one or more
 callbacks are given, the driver MUST raise an error.
 
-If no callbacks are given, the driver MUST enforce that a DEVICE_NAME
+If no callbacks are given, the driver MUST enforce that a PROVIDER_NAME
 mechanism_properties is set and one of ("aws",).
 The callback mechanism can be used to support both Authentication
 Code Workflows or Device workflows that are not explicitly implemented
-by drivers.  If there is no callback and no DEVICE_NAME, or the
-DEVICE_NAME is set but credentials cannot be automatically obtained,
+by drivers.  If there is no callback and no PROVIDER_NAME, or the
+PROVIDER_NAME is set but credentials cannot be automatically obtained,
 the driver MUST raise an error.
 
 
-Supported Device Workflows
-``````````````````````````
+Supported Service Providers
+```````````````````````````
 
-Drivers MUST support device workflows for "aws", given
-by the DEVICE_NAME mechanism property.  In all cases the acquired token
+Drivers MUST support obtaining credentials for a service for "aws", given
+by the PROVIDER_NAME mechanism property.  In all cases the acquired token
 will be given as the ``jwt`` argument and the second client step of the
 OIDC SASL exchange MUST be made directly, skipping the clientStep1.
-Drivers MUST raise an error if both a DEVICE_NAME and username are
-given, since the device workflow will not use the username.
+Drivers MUST raise an error if both a PROVIDER_NAME and username are
+given, since using a service will not use the username.
 
 AWS
 ___
 
-When the DEVICE_NAME mechanism property is set to "aws", the driver MUST
+When the PROVIDER_NAME mechanism property is set to "aws", the driver MUST
 attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
 interpret it as a file path.  The contents of the file are read as the
 access token.
@@ -1400,7 +1400,7 @@ possible in the driver language.
 Using the socket address and port accounts for the case when two different
 servers use the same username but could be configurated differently.
 There is an edge case where if the same username is used and two aliases
-to the same local host address are given, there will be duplicate user/device
+to the same local host address are given, there will be duplicate user/service
 interactions, unless the driver can resolve the local host address as well.
 Note that because we use the server socket address, there will different cache
 keys for each member of a replica set.
