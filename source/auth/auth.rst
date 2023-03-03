@@ -1258,7 +1258,7 @@ Server will use principalName (n) if provided in clientStep1 to select an approp
 
 username
     MUST specified if more than one OIDC provider is configured and
-    SERVICE_NAME mechanism property is not specified.
+    PROVIDER_NAME mechanism property is not specified.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1270,7 +1270,7 @@ mechanism
     MUST be "MONGODB-OIDC"
 
 mechanism_properties
-    SERVICE_NAME
+    PROVIDER_NAME
         Drivers MUST allow the user to specify a name for using a service
         to obtain credentials that is one of "aws", "azure", or "gcp".
     REQUEST_TOKEN_CALLBACK
@@ -1345,32 +1345,32 @@ well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResul
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
 
 If the refresh callback is given and the request callback is not given,
-the driver MUST raise an error.  If SERVICE_NAME is given and one or more
+the driver MUST raise an error.  If PROVIDER_NAME is given and one or more
 callbacks are given, the driver MUST raise an error.
 
-If no callbacks are given, the driver MUST enforce that a SERVICE_NAME
+If no callbacks are given, the driver MUST enforce that a PROVIDER_NAME
 mechanism_properties is set and one of ("aws",).
 The callback mechanism can be used to support both Authentication
 Code Workflows or Device workflows that are not explicitly implemented
-by drivers.  If there is no callback and no SERVICE_NAME, or the
-SERVICE_NAME is set but credentials cannot be automatically obtained,
+by drivers.  If there is no callback and no PROVIDER_NAME, or the
+PROVIDER_NAME is set but credentials cannot be automatically obtained,
 the driver MUST raise an error.
 
 
-Supported Device Workflows
-``````````````````````````
+Supported Service Providers
+```````````````````````````
 
 Drivers MUST support obtaining credentials for a service for "aws", given
-by the SERVICE_NAME mechanism property.  In all cases the acquired token
+by the PROVIDER_NAME mechanism property.  In all cases the acquired token
 will be given as the ``jwt`` argument and the second client step of the
 OIDC SASL exchange MUST be made directly, skipping the clientStep1.
-Drivers MUST raise an error if both a SERVICE_NAME and username are
+Drivers MUST raise an error if both a PROVIDER_NAME and username are
 given, since using a service will not use the username.
 
 AWS
 ___
 
-When the SERVICE_NAME mechanism property is set to "aws", the driver MUST
+When the PROVIDER_NAME mechanism property is set to "aws", the driver MUST
 attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
 interpret it as a file path.  The contents of the file are read as the
 access token.
