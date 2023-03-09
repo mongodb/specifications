@@ -26,13 +26,14 @@ file.
 #. Create a client with a url of the form  ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
+#. Close the client.
 
 #. Create a request callback that reads in the generated ``test_user1`` token
 file.
 #. Create a client with a url of the form  ``mongodb://test_user1@localhost/?authMechanism=MONGODB-OIDC`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
-
+#. Close the client.
 
 AWS Device Auth
 ===============
@@ -45,7 +46,7 @@ Drivers Evergreen Tools.
 of the ``test_user1`` generated token file.
 #. Create a client with the url parameters ``?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws``.
 #. Perform a find operation on the client.
-
+#. Close the client.
 
 Multiple Principals
 ===================
@@ -59,26 +60,30 @@ file.
 #. Create a client with a url of the form  ``mongodb://test_user1@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
+#. Close the client.
 
 #. Create a request callback that reads in the generated ``test_user2`` token
 file.
 #. Create a client with a url of the form  ``mongodb://test_user2@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
 #. Perform a ``find`` operation.
 #. Clear the cache.
+#. Close the client.
 
 #. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
 of the ``test_user1`` generated token file.
 #. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 #. Perform a ``find`` operation.
+#. Close the client.
 
 #. Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable to the location
 of the ``test_user2`` generated token file.
 #. Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=DEVICE_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 #. Perform a ``find`` operation.
+#. Close the client.
 
 #. Create a client with a url of the form  ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
 #. Assert that a ``find`` operation fails.
-
+#. Close the client.
 
 Invalid Callbacks
 =================
@@ -108,16 +113,19 @@ that is within one minute.
 #. Ensure that a ``find`` operation results in a call to the refresh callback.
 #. Validate the refresh callback inputs, including the timeout parameter if
 possible.
+#. Close the client.
 
 #. Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
 #. Create a new client with the a request callback but no refresh callback.
 #. Ensure that a ``find`` operation results in a call to the request callback.
+#. Close the client.
 
 If the driver does not supports using callback hashes as part of the cache key,
 skip the next test.
 
 # Create a new client with a different request callback.
 # Ensure that a ``find`` operation adds a new entry to the cache.
+#. Close the client.
 
 #. Clear the cache.
 #. Create a new client with a valid request callback that gives credentials that expire within 5 minutes and a refresh callback that gives invalid
@@ -125,10 +133,12 @@ credentials.
 # Ensure that a ``find`` operation adds a new entry to the cache.
 #. Ensure that a subsequent ``find`` operation results in an error.
 #. Ensure that the cache has been cleared.
+#. Close the client.
 
 #. Clear the cache.
 #. Create a new client using the AWS device workflow.
 #. Ensure that a ``find`` operation does not add credentials to the cache.
+#. Close the client.
 
 Speculative Authentication
 ==========================
@@ -228,3 +238,26 @@ remove the ``failCommand`` after the test to prevent leakage.
 #. Assert that a ``find`` operation was started twice and a ``saslStart`` operation was started once during the command execution.
 #. Assert that a ``find`` operation succeeeded once and the ``saslStart`` operation succeeded during the command execution.
 #. Assert that a ``find`` operation failed once during the command execution.
+#. Close the client.
+
+#. Create a new client with the same callbacks.
+#. Perform a find operation.
+#. Clear the cache.
+#. Force a reauthenication using a ``failCommand`` of the form:
+
+.. code:: javascript
+
+    {
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 2
+      },
+      "data": {
+        "failCommands": [
+          "find", "saslStart"
+        ],
+        "errorCode": 391
+      }
+    }
+#. Perform a find operation that fails.
+#. Close the client.
