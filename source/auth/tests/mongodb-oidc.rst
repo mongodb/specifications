@@ -259,5 +259,6 @@ remove the ``failCommand`` after the test to prevent leakage.
         "errorCode": 391
       }
     }
+
 #. Perform a find operation that fails.
 #. Close the client.
