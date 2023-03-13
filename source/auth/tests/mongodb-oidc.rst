@@ -301,5 +301,6 @@ remove the ``failCommand`` after the test to prevent leakage.
         "errorCode": 18
       }
     }
+
 #. Perform a ``find`` operation that succeeds.
 #. Close the client.
