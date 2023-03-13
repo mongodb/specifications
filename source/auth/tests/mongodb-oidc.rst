@@ -289,6 +289,7 @@ remove the ``failCommand`` after the test to prevent leakage.
 #. Set a fail point for ``saslStart`` commands of the form
 
 .. code:: javascript
+
     {
       "configureFailPoint": "failCommand",
       "mode": {
