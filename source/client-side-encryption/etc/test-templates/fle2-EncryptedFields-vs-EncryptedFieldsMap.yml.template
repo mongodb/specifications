@@ -15,9 +15,9 @@ tests:
           local: {{ local_provider() }}
         encryptedFieldsMap: {
           "default.default": {
-            "escCollection": "esc",
-            "eccCollection": "ecc",
-            "ecocCollection": "ecoc",
+            "escCollection": "enxcol_.default.esc",
+            "eccCollection": "enxcol_.default.ecc",
+            "ecocCollection": "enxcol_.default.ecoc",
             "fields": []
           }
         }
