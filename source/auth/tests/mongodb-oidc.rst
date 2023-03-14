@@ -133,6 +133,7 @@ possible.
 
 Cache with no refresh
 ~~~~~~~~~~~~~~~~~~~~~
+- Clear the cache.
 - Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
 - Create a new client with the a request callback but no refresh callback.
 - Ensure that a ``find`` operation results in a call to the request callback.
@@ -143,6 +144,7 @@ Cache key includes callback
 If the driver does not support using callback hashes as part of the cache key,
 skip this test.
 
+- Clear the cache.
 - Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
 - Create a new client with a different request callback.
 - Ensure that a ``find`` operation adds a new entry to the cache.
@@ -210,7 +212,7 @@ operation.
 
 Succeeds
 ~~~~~~~~
-- Clear the cache
+- Clear the cache.
 - Create request and refresh callbacks that return valid credentials
 that will not expire soon.
 - Create a client with the callbacks and an event listener capable
