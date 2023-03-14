@@ -143,7 +143,7 @@ Cache key includes callback
 If the driver does not support using callback hashes as part of the cache key,
 skip this test.
 
-- Ensure there is a cache with credentials that will not expire.
+- Ensure there is a cache with credentials that will expire in less than 5 minutes, using a client with an appropriate request callback.
 - Create a new client with a different request callback.
 - Ensure that a ``find`` operation adds a new entry to the cache.
 - Close the client.
@@ -207,7 +207,7 @@ Failure
 - Clear the cache.
 - Create a client with a request callback that returns a valid token
   that will expire soon.
-- Set a fail point for ``saslStart`` and ``isMaster`` commands of the form:
+- Force a failure using a ``failCommand`` of the form:
 
 .. code:: javascript
 
@@ -218,7 +218,7 @@ Failure
       },
       "data": {
         "failCommands": [
-          "isMaster", "saslStart"
+          "isMaster", "hello", "saslStart"
         ],
         "errorCode": 18
       }
