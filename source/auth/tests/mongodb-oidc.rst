@@ -167,9 +167,9 @@ AWS Automatic workflow does not use cache
 
 Speculative Authentication
 ==========================
+We can only test the successful case, by verifying that ``saslStart``
+is not called.
 
-Success
-~~~~~~~
 - Clear the cache.
 - Create a client with a request callback that returns a valid token
   that will not expire soon.
@@ -200,31 +200,6 @@ Success
 - Create a new client with the same properties without clearing the cache.
 - Set a fail point for ``saslStart`` commands.
 - Perform a ``find`` operation that succeeds.
-- Close the client.
-
-Failure
-~~~~~~~
-- Clear the cache.
-- Create a client with a request callback that returns a valid token
-  that will expire soon.
-- Force a failure using a ``failCommand`` of the form:
-
-.. code:: javascript
-
-    {
-      "configureFailPoint": "failCommand",
-      "mode": {
-        "times": 2
-      },
-      "data": {
-        "failCommands": [
-          "isMaster", "hello", "saslStart"
-        ],
-        "errorCode": 18
-      }
-    }
-
-- Perform a ``find`` operation that fails.
 - Close the client.
 
 Reauthentication
