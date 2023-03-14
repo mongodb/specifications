@@ -318,10 +318,15 @@ Information about the Function-as-a-Service (FaaS) environment, captured from en
 variables.  The ``client.env.name`` field is determined by which of the following environment
 variables are populated:
 
-:aws.lambda: ``AWS_EXECUTION_ENV`` or ``AWS_LAMBDA_RUNTIME_API``
-:azure.func: ``FUNCTIONS_WORKER_RUNTIME``
-:gcp.func: ``K_SERVICE`` or ``FUNCTION_NAME``
-:vercel: ``VERCEL``
++----------------+-----------------------------------------------------+
+| ``aws.lambda`` | ``AWS_EXECUTION_ENV`` or ``AWS_LAMBDA_RUNTIME_API`` |
++----------------+-----------------------------------------------------+
+| ``azure.func`` | ``FUNCTIONS_WORKER_RUNTIME``                        |
++----------------+-----------------------------------------------------+
+| ``gcp.func``   | ``K_SERVICE`` or ``FUNCTION_NAME``                  |
++----------------+-----------------------------------------------------+
+| ``vercel``     | ``VERCEL``                                          |
++----------------+-----------------------------------------------------+
 
 If none of those variables or variables for multiple names are populated the ``client.env``
 value MUST be entirely omitted.
@@ -329,23 +334,23 @@ value MUST be entirely omitted.
 Depending on which ``client.env.name`` has been selected, other fields in ``client.env`` SHOULD
 be populated:
 
-+------------+----------------------------+-------------------------------------+---------------+
-| Name       | Field                      | Environment Variable                | Expected Type |
-+============+============================+=====================================+===============+
-| aws.lambda | ``client.env.region``      | ``AWS_REGION``                      | string        |
-+------------+----------------------------+-------------------------------------+---------------+
-|            | ``client.env.memory_mb``   | ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | int32         |
-+------------+----------------------------+-------------------------------------+---------------+
-| gcp.func   | ``client.env.memory_mb``   | ``FUNCTION_MEMORY_MB``              | int32         |
-+------------+----------------------------+-------------------------------------+---------------+
-|            | ``client.env.timeout_sec`` | ``FUNCTION_TIMEOUT_SEC``            | int32         |
-+------------+----------------------------+-------------------------------------+---------------+
-|            | ``client.env.region``      | ``FUNCTION_REGION``                 | string        |
-+------------+----------------------------+-------------------------------------+---------------+
-| vercel     | ``client.env.url``         | ``VERCEL_URL``                      | string        |
-+------------+----------------------------+-------------------------------------+---------------+
-|            | ``client.env.region``      | ``VERCEL_REGION``                   | string        |
-+------------+----------------------------+-------------------------------------+---------------+
++----------------+----------------------------+-------------------------------------+---------------+
+| Name           | Field                      | Environment Variable                | Expected Type |
++================+============================+=====================================+===============+
+| ``aws.lambda`` | ``client.env.region``      | ``AWS_REGION``                      | string        |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.memory_mb``   | ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | int32         |
++----------------+----------------------------+-------------------------------------+---------------+
+| ``gcp.func``   | ``client.env.memory_mb``   | ``FUNCTION_MEMORY_MB``              | int32         |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.timeout_sec`` | ``FUNCTION_TIMEOUT_SEC``            | int32         |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.region``      | ``FUNCTION_REGION``                 | string        |
++----------------+----------------------------+-------------------------------------+---------------+
+| ``vercel``     | ``client.env.url``         | ``VERCEL_URL``                      | string        |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.region``      | ``VERCEL_REGION``                   | string        |
++----------------+----------------------------+-------------------------------------+---------------+
 
 Missing variables or variables with values not matching the expected type MUST cause the
 corresponding ``client.env`` field to be omitted and MUST NOT cause a user-visible error.
@@ -482,41 +487,64 @@ command succeeds in the presence of the following sets of environment variables:
 
 1. Valid AWS
 
-:AWS_EXECUTION_ENV: ``AWS_Lambda_java8``
-:AWS_REGION: ``us-east-2``
-:AWS_LAMBDA_FUNCTION_MEMORY_SIZE: ``1024``
++-------------------------------------+----------------------+
+| ``AWS_EXECUTION_ENV``               | ``AWS_Lambda_java8`` |
++-------------------------------------+----------------------+
+| ``AWS_REGION``                      | ``us-east-2``        |
++-------------------------------------+----------------------+
+| ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | ``1024``             |
++-------------------------------------+----------------------+
 
 2. Valid Azure
 
-:FUNCTIONS_WORKER_RUNTIME: ``node``
++------------------------------+----------+
+| ``FUNCTIONS_WORKER_RUNTIME`` | ``node`` |
++------------------------------+----------+
 
 3. Valid GCP
 
-:K_SERVICE: ``servicename``
-:FUNCTION_MEMORY_MB: ``1024``
-:FUNCTION_TIMEOUT_SEC: ``60``
-:FUNCTION_REGION: ``us-central1``
++--------------------------+-----------------+
+| ``K_SERVICE``            | ``servicename`` |
++--------------------------+-----------------+
+| ``FUNCTION_MEMORY_MB``   | ``1024``        |
++--------------------------+-----------------+
+| ``FUNCTION_TIMEOUT_SEC`` | ``60``          |
++--------------------------+-----------------+
+| ``FUNCTION_REGION``      | ``us-central1`` |
++--------------------------+-----------------+
 
 4. Valid Vercel
 
-:VERCEL: ``1``
-:VERCEL_URL: ``*.vercel.app``
-:VERCEL_REGION: ``cdg1``
++-------------------+------------------+
+| ``VERCEL``        | ``1``            |
++-------------------+------------------+
+| ``VERCEL_URL``    | ``*.vercel.app`` |
++-------------------+------------------+
+| ``VERCEL_REGION`` | ``cdg1``         |
++-------------------+------------------+
 
 5. Invalid - multiple providers
 
-:AWS_EXECUTION_ENV: ``AWS_Lambda_java8``
-:FUNCTIONS_WORKER_RUNTIME: ``node``
++------------------------------+----------------------+
+| ``AWS_EXECUTION_ENV``        | ``AWS_Lambda_java8`` |
++------------------------------+----------------------+
+| ``FUNCTIONS_WORKER_RUNTIME`` | ``node``             |
++------------------------------+----------------------+
 
 6. Invalid - long string
 
-:AWS_EXECUTION_ENV: ``AWS_Lambda_java8``
-:AWS_REGION: ``aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa``
++-----------------------+--------------------------+
+| ``AWS_EXECUTION_ENV`` | ``AWS_Lambda_java8``     |
++-----------------------+--------------------------+
+| ``AWS_REGION``        | ``a`` repeated 512 times |
++-----------------------+--------------------------+
 
 7. Invalid - wrong types
-
-:AWS_EXECUTION_ENV: ``AWS_Lambda_java8``
-:AWS_LAMBDA_FUNCTION_MEMORY_SIZE: ``big``
++-------------------------------------+----------------------+
+| ``AWS_EXECUTION_ENV``               | ``AWS_Lambda_java8`` |
++-------------------------------------+----------------------+
+| ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | ``big``              |
++-------------------------------------+----------------------+
 
 Motivation For Change
 =====================
