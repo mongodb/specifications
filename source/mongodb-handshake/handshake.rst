@@ -540,6 +540,7 @@ command succeeds in the presence of the following sets of environment variables:
 +-----------------------+--------------------------+
 
 7. Invalid - wrong types
+
 +-------------------------------------+----------------------+
 | ``AWS_EXECUTION_ENV``               | ``AWS_Lambda_java8`` |
 +-------------------------------------+----------------------+
