@@ -164,7 +164,15 @@ provided as a BSON object. This object has the following structure::
                 version: "<string>"       /* OPTIONAL */
             },
             /* OPTIONAL */
-            platform: "<string>"
+            platform: "<string>",
+            /* OPTIONAL */
+            env: {
+                name: "<string>",         /* REQUIRED */
+                timeout_sec: 42,          /* OPTIONAL */
+                memory_mb: 1024,          /* OPTIONAL */
+                region: "<string>",       /* OPTIONAL */
+                url: "<string>"           /* OPTIONAL */
+            }
         }
     }
 
@@ -301,6 +309,54 @@ Example::
         - clang 3.8.0 CFLAGS="-mcpu=power8 -mtune=power8 -mcmodel=medium"
         - "Oracle JVM EE 9.1.1"
 
+client.env
+~~~~~~~~~~
+
+This value is optional and is not application configurable.
+
+Information about the Function-as-a-Service (FaaS) environment, captured from environment
+variables.  The ``client.env.name`` field is determined by which of the following environment
+variables are populated:
+
++----------------+-----------------------------------------------------+
+| ``aws.lambda`` | ``AWS_EXECUTION_ENV`` or ``AWS_LAMBDA_RUNTIME_API`` |
++----------------+-----------------------------------------------------+
+| ``azure.func`` | ``FUNCTIONS_WORKER_RUNTIME``                        |
++----------------+-----------------------------------------------------+
+| ``gcp.func``   | ``K_SERVICE`` or ``FUNCTION_NAME``                  |
++----------------+-----------------------------------------------------+
+| ``vercel``     | ``VERCEL``                                          |
++----------------+-----------------------------------------------------+
+
+If none of those variables or variables for multiple names are populated the ``client.env``
+value MUST be entirely omitted.
+
+Depending on which ``client.env.name`` has been selected, other fields in ``client.env`` SHOULD
+be populated:
+
++----------------+----------------------------+-------------------------------------+---------------+
+| Name           | Field                      | Environment Variable                | Expected Type |
++================+============================+=====================================+===============+
+| ``aws.lambda`` | ``client.env.region``      | ``AWS_REGION``                      | string        |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.memory_mb``   | ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | int32         |
++----------------+----------------------------+-------------------------------------+---------------+
+| ``gcp.func``   | ``client.env.memory_mb``   | ``FUNCTION_MEMORY_MB``              | int32         |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.timeout_sec`` | ``FUNCTION_TIMEOUT_SEC``            | int32         |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.region``      | ``FUNCTION_REGION``                 | string        |
++----------------+----------------------------+-------------------------------------+---------------+
+| ``vercel``     | ``client.env.url``         | ``VERCEL_URL``                      | string        |
++----------------+----------------------------+-------------------------------------+---------------+
+|                | ``client.env.region``      | ``VERCEL_REGION``                   | string        |
++----------------+----------------------------+-------------------------------------+---------------+
+
+Missing variables or variables with values not matching the expected type MUST cause the
+corresponding ``client.env`` field to be omitted and MUST NOT cause a user-visible error.
+
+The contents of ``client.env`` MUST be adjusted to keep the handshake below the size limit;
+see `Limitations`_ for specifics.
 
 --------------------------
 Speculative Authentication
@@ -412,17 +468,88 @@ Limitations
 The entire metadata BSON document MUST NOT exceed 512 bytes. This includes all
 BSON overhead.  The ``client.application.name`` cannot exceed 128 bytes.  MongoDB
 will return an error if these limits are not adhered to, which will result in
-handshake failure. Drivers MUST validate these values and truncate driver
-provided values if necessary. Implementors are encouraged to prioritize truncating
-the ``platform`` field before all others. Additionally, implementors are
-encouraged to place high priority information about the platform earlier in the
-string, in order to avoid possible truncating of those details.
+handshake failure. Drivers MUST validate these values and truncate or omit driver
+provided values if necessary.  Implementors SHOULD prioritize fields to preserve in
+this order:
+
+1. ``application.name``
+2. ``driver.*``
+3. ``os.type``
+4. ``env.name``
+5. ``os.*`` (except ``type``)
+6. ``env.*`` (except ``name``)
+7. ``platform``
+
+Additionally, implementors are encouraged to place high priority information about the
+platform earlier in the string, in order to avoid possible truncating of those details.
 
 Test Plan
 =========
 
-Unknown. A set of YAML tests for the connection uri. It’ll implicitly test the
-other fields being provided.
+Drivers that capture values for ``client.env`` should test that a connection and hello
+command succeeds in the presence of the following sets of environment variables:
+
+1. Valid AWS
+
++-------------------------------------+----------------------+
+| ``AWS_EXECUTION_ENV``               | ``AWS_Lambda_java8`` |
++-------------------------------------+----------------------+
+| ``AWS_REGION``                      | ``us-east-2``        |
++-------------------------------------+----------------------+
+| ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | ``1024``             |
++-------------------------------------+----------------------+
+
+2. Valid Azure
+
++------------------------------+----------+
+| ``FUNCTIONS_WORKER_RUNTIME`` | ``node`` |
++------------------------------+----------+
+
+3. Valid GCP
+
++--------------------------+-----------------+
+| ``K_SERVICE``            | ``servicename`` |
++--------------------------+-----------------+
+| ``FUNCTION_MEMORY_MB``   | ``1024``        |
++--------------------------+-----------------+
+| ``FUNCTION_TIMEOUT_SEC`` | ``60``          |
++--------------------------+-----------------+
+| ``FUNCTION_REGION``      | ``us-central1`` |
++--------------------------+-----------------+
+
+4. Valid Vercel
+
++-------------------+------------------+
+| ``VERCEL``        | ``1``            |
++-------------------+------------------+
+| ``VERCEL_URL``    | ``*.vercel.app`` |
++-------------------+------------------+
+| ``VERCEL_REGION`` | ``cdg1``         |
++-------------------+------------------+
+
+5. Invalid - multiple providers
+
++------------------------------+----------------------+
+| ``AWS_EXECUTION_ENV``        | ``AWS_Lambda_java8`` |
++------------------------------+----------------------+
+| ``FUNCTIONS_WORKER_RUNTIME`` | ``node``             |
++------------------------------+----------------------+
+
+6. Invalid - long string
+
++-----------------------+--------------------------+
+| ``AWS_EXECUTION_ENV`` | ``AWS_Lambda_java8``     |
++-----------------------+--------------------------+
+| ``AWS_REGION``        | ``a`` repeated 512 times |
++-----------------------+--------------------------+
+
+7. Invalid - wrong types
+
++-------------------------------------+----------------------+
+| ``AWS_EXECUTION_ENV``               | ``AWS_Lambda_java8`` |
++-------------------------------------+----------------------+
+| ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | ``big``              |
++-------------------------------------+----------------------+
 
 Motivation For Change
 =====================
@@ -511,3 +638,4 @@ Changelog
 :2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
 :2022-02-24: Rename Versioned API to Stable API
 :2022-10-05: Remove spec front matter and reformat changelog.
+:2023-03-13: Add ``env`` to ``client`` document
