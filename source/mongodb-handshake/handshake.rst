@@ -355,8 +355,8 @@ be populated:
 Missing variables or variables with values not matching the expected type MUST cause the
 corresponding ``client.env`` field to be omitted and MUST NOT cause a user-visible error.
 
-Once populated, the contents of ``client.env`` MUST be adjusted to keep the handshake below the
-size limit; see `Limitations`_ for specifics.
+The contents of ``client.env`` MUST be adjusted to keep the handshake below the size limit;
+see `Limitations`_ for specifics.
 
 --------------------------
 Speculative Authentication
@@ -468,16 +468,20 @@ Limitations
 The entire metadata BSON document MUST NOT exceed 512 bytes. This includes all
 BSON overhead.  The ``client.application.name`` cannot exceed 128 bytes.  MongoDB
 will return an error if these limits are not adhered to, which will result in
-handshake failure. Drivers MUST validate these values and truncate driver
-provided values if necessary. Implementors are encouraged to prioritize truncating
-the ``platform`` field before all others. Additionally, implementors are
-encouraged to place high priority information about the platform earlier in the
-string, in order to avoid possible truncating of those details.
+handshake failure. Drivers MUST validate these values and truncate or omit driver
+provided values if necessary.  Implementors SHOULD prioritize fields to preserve in
+this order:
 
-If the ``client.env`` field would be populated but would cause the metadata document
-to exceed the size limit, drivers MUST clear all fields of ``client.env`` except for
-``client.env.name``, and if that would still exceed the size limit drivers MUST omit
-``client.env`` entirely.
+1. ``application.name``
+2. ``driver.*``
+3. ``os.type``
+4. ``env.name``
+5. ``os.*`` (except ``type``)
+6. ``env.*`` (except ``name``)
+7. ``platform``
+
+Additionally, implementors are encouraged to place high priority information about the
+platform earlier in the string, in order to avoid possible truncating of those details.
 
 Test Plan
 =========
