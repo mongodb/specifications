@@ -243,8 +243,8 @@ of listening for SASL commands.
 
 - Perform another find operation that succeeds.
 - Assert that the refresh callback has been called, if possible.
-- Assert that a ``find`` operation was started twice and a ``saslStart`` operation was started once during the command execution.
-- Assert that a ``find`` operation succeeeded once and the ``saslStart`` operation succeeded during the command execution.
+- Assert that the ordering of command started events is `find`, `saslStart` , `find`.
+- Assert that the ordering of command succeeded events is `saslStart`, `find`.
 - Assert that a ``find`` operation failed once during the command execution.
 - Close the client.
 
