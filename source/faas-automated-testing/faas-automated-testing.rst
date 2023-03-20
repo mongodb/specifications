@@ -189,3 +189,42 @@ Run the function locally from the same directory where the template.yaml resides
 
   sam build
   sam local invoke --parameter-overrides "MongoDbUri=${MONGODB_URI}"
+
+
+Running in Continuous Integration
+`````````````````````````````````
+
+Running in CI requires Evergreen to be setup to assume the appropriate role in AWS
+and then execute the script in drivers-evergreen-tools with the required environment
+variables. An explanation of the required environment is as follows:
+
++-------------------------------+----------+--------------------------+
+| Name                          | Description                         |
++===============================+=====================================+
+| LAMBDA_AWS_ROLE_ARN           | The role ARN to assume              |
++-------------------------------+-------------------------------------+
+| TEST_LAMBDA_DIRECTORY         | The lambda function directory       |
++-------------------------------+-------------------------------------+
+| DRIVERS_TOOLS                 | Location of drivers-evergreen-tools |
++-------------------------------+-------------------------------------+
+| DRIVERS_ATLAS_PUBLIC_API_KEY  | The Atlas public API key            |
++-------------------------------+-------------------------------------+
+| DRIVERS_ATLAS_PRIVATE_API_KEY | The Atlas private API key           |
++-------------------------------+-------------------------------------+
+| DRIVERS_ATLAS_LAMBDA_USER     | The Atlas cluster user name         |
++-------------------------------+-------------------------------------+
+| DRIVERS_ATLAS_LAMBDA_PASSWORD | The Atlas cluster user password     |
++-------------------------------+-------------------------------------+
+| DRIVERS_ATLAS_GROUP_ID        | The driver's Atlas group id         |
++-------------------------------+-------------------------------------+
+| LAMBDA_STACK_NAME             | The driver's Lambda stack name      |
++-------------------------------+-------------------------------------+
+| AWS_REGION                    | The function AWS region             |
++-------------------------------+-------------------------------------+
+| AWS_ACCESS_KEY_ID             | Assume role atuomatically sets this |
++-------------------------------+-------------------------------------+
+| AWS_SECRET_ACCESS_KEY         | Assume role automatically sets this |
++-------------------------------+-------------------------------------+
+| AWS_SESSION_TOKEN             | Assume role automatically sets this |
++-------------------------------+-------------------------------------+
+
