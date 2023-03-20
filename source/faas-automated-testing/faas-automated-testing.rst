@@ -228,6 +228,7 @@ variables. An explanation of the required environment is as follows:
 | AWS_SESSION_TOKEN             | Assume role automatically sets this |
 +-------------------------------+-------------------------------------+
 
+
 This is an example function in the Evergreen config that accomplishes this, using
 subprocess.exec to execute a script that calls the drivers-evergreen-tools
 function inside of it:
@@ -265,3 +266,17 @@ The script itself:
   #!/bin/bash
   set -o errexit  # Exit the script with error if any of the commands fail
   . ${DRIVERS_TOOLS}/.evergreen/run-deployed-lambda-aws-tests.sh
+
+Description of the behaviour of run-deployed-lambda-aws-tests.sh:
+
+- Creates a new Atlas cluster in a specific driver project
+- Polls for the cluster SRV record when cluster creation is complete
+- Builds the Lambda function locally
+- Deploys the Lambda function to AWS.
+- Queries for the Lambda function ARN.
+- Invokes the Lambda function cold and frozen.
+- Initiates a primary failover of the cluster in Atlas.
+- Calls the frozen lambda function again.
+- Deletes the Lambda function.
+- Deletes the Atlas cluster.
+
