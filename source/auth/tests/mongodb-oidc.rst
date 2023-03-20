@@ -108,14 +108,15 @@ Valid Callbacks
 - Clear the cache.
 - Create request and refresh callback that validate their inputs and return
   a valid token.  The request callback must return a token that expires in
-  one minute.
+  one minute.  The callbacks must also include an unexpected key in the result
+  to confirm that it is ignored.
 - Create a client that uses the above callbacks.
 - Perform a ``find`` operation that succeeds.  Verify that the request
   callback was called with the appropriate inputs, including the timeout
   parameter if possible.  Ensure that there are no unexpected fields.
-- Perform another ``find`` operation that succeeds.Verify that the refresh
+- Perform another ``find`` operation that succeeds.  Verify that the refresh
   callback was called with the appropriate inputs, including the timeout
-  parameter if possible.  Ensure that there are no unexpected fields.
+  parameter if possible.
 - Close the client.
 
 Request Callback Returns Null
@@ -140,9 +141,6 @@ Request Callback Returns Invalid Data
 - Create a client with a request callback that returns data not conforming to
   the ``OIDCRequestTokenResult`` with missing field(s).
 - Perform a ``find`` operation that fails.
-- Create a client with a request callback that returns data not conforming to
-  the ``OIDCRequestTokenResult`` with added field(s).
-- Perform a ``find`` operation that fails.
 - Close the client.
 
 Refresh Callback Returns Invalid Data
@@ -152,10 +150,6 @@ Refresh Callback Returns Invalid Data
   minute, and a refresh callback that returns data not conforming to
   the ``OIDCRequestTokenResult`` with missing field(s).
 - Perform a ``find`` operation that succeeds.
-- Perform a ``find`` operation that fails.
-- Create request callback that returns a valid token that will expire in a
-  minute, and a refresh callback that returns data not conforming to
-  the ``OIDCRequestTokenResult`` with added field(s).
 - Perform a ``find`` operation that fails.
 - Close the client.
 
