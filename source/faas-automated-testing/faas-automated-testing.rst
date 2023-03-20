@@ -191,6 +191,23 @@ Run the function locally from the same directory where the template.yaml resides
   sam local invoke --parameter-overrides "MongoDbUri=${MONGODB_URI}"
 
 
+Implementing the Function
+`````````````````````````
+
+Drivers MUST setup the function as would be done in their appropriate language. In
+the function implementation driver MUST:
+
+- Create a MongoClient that points to MONGODB_URI.
+- Add listeners for the following monitoring events: ServerHeartbeatStarted, 
+  ServerHeartbeatFailed, CommandSucceeded, CommandFailed, ConnectionCreated,
+  ConnectionClosed.
+- Drivers MUST perform a single insert and then a single delete of the inserted document
+  to force write operations on the primary node.
+- Drivers MUST record the durations and counts of the heartbeats, the durations of the
+  commands, as well as keep track of the number of open connections, and report this information in
+  the function response as JSON.
+
+
 Running in Continuous Integration
 `````````````````````````````````
 
