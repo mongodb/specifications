@@ -66,78 +66,80 @@ Project Initialization
 
 Create the new project via SAM and follow the prompts:
 
-`sam init`
+.. code:: none
+
+  sam init
 
 For the template, select "AWS Quick Start Template".
 
-```
-Which template source would you like to use?
-	1 - AWS Quick Start Templates
-	2 - Custom Template Location
-Choice: 1
-```
+.. code:: none
+
+  Which template source would you like to use?
+    1 - AWS Quick Start Templates
+    2 - Custom Template Location
+  Choice: 1
 
 For the quick start template, select "Hello World Example".
 
-```
-Choose an AWS Quick Start application template
-	1 - Hello World Example
-	2 - Multi-step workflow
-	3 - Serverless API
-	4 - Scheduled task
-	5 - Standalone function
-	6 - Data processing
-	7 - Infrastructure event management
-	8 - Hello World Example With Powertools
-	9 - Serverless Connector Hello World Example
-	10 - Multi-step workflow with Connectors
-	11 - Lambda EFS example
-	12 - DynamoDB Example
-	13 - Machine Learning
-Template: 1
-```
+.. code:: none
+
+  Choose an AWS Quick Start application template
+    1 - Hello World Example
+    2 - Multi-step workflow
+    3 - Serverless API
+    4 - Scheduled task
+    5 - Standalone function
+    6 - Data processing
+    7 - Infrastructure event management
+    8 - Hello World Example With Powertools
+    9 - Serverless Connector Hello World Example
+    10 - Multi-step workflow with Connectors
+    11 - Lambda EFS example
+    12 - DynamoDB Example
+    13 - Machine Learning
+  Template: 1
 
 When prompted for language if the driver language is not Python, select "N".
 
-```
-Use the most popular runtime and package type? (Python and zip) [y/N]: n
-```
+.. code:: none
+
+  Use the most popular runtime and package type? (Python and zip) [y/N]: n
 
 Then select the runtime for your driver:
 
-```
-Which runtime would you like to use?
-	1 - aot.dotnet7 (provided.al2)
-	2 - dotnet6
-	3 - dotnet5.0
-	4 - dotnetcore3.1
-	5 - go1.x
-	6 - go (provided.al2)
-	7 - graalvm.java11 (provided.al2)
-	8 - graalvm.java17 (provided.al2)
-	9 - java11
-	10 - java8.al2
-	11 - java8
-	12 - nodejs18.x
-	13 - nodejs16.x
-	14 - nodejs14.x
-	15 - nodejs12.x
-	16 - python3.9
-	17 - python3.8
-	18 - python3.7
-	19 - ruby2.7
-	20 - rust (provided.al2)
-Runtime: 12
-```
+.. code:: none
+
+  Which runtime would you like to use?
+    1 - aot.dotnet7 (provided.al2)
+    2 - dotnet6
+    3 - dotnet5.0
+    4 - dotnetcore3.1
+    5 - go1.x
+    6 - go (provided.al2)
+    7 - graalvm.java11 (provided.al2)
+    8 - graalvm.java17 (provided.al2)
+    9 - java11
+    10 - java8.al2
+    11 - java8
+    12 - nodejs18.x
+    13 - nodejs16.x
+    14 - nodejs14.x
+    15 - nodejs12.x
+    16 - python3.9
+    17 - python3.8
+    18 - python3.7
+    19 - ruby2.7
+    20 - rust (provided.al2)
+  Runtime: 12
 
 Select Zip package type:
 
-```
-What package type would you like to use?
-	1 - Zip
-	2 - Image
-Package type: 1
-```
+.. code:: none
+
+  What package type would you like to use?
+    1 - Zip
+    2 - Image
+  Package type: 1
 
 Then follow the remaining prompts for the driver language to finish setup. Drivers MAY
 choose to also enable X-Ray tracing and CloudWatch Application Insights during these
@@ -150,40 +152,40 @@ In the newly created project directory modify the template.yaml file:
 
 Change default timeout to 30 seconds:
 
-```yaml
-Globals:
-  Function:
-    Timeout: 30
-```
+.. code:: yaml
+
+  Globals:
+    Function:
+      Timeout: 30
 
 Add a root parameter for for the MongoDB connection string:
 
-```yaml
-Parameters:
-  MongoDbUri:
-    Type: String
-    Description: The MongoDB connection string.
-```
+.. code:: yaml
+
+  Parameters:
+    MongoDbUri:
+      Type: String
+      Description: The MongoDB connection string.
 
 Replace all instances in the template yaml of `HelloWorld` with `MongoDB` and then
 modify the root `Resources` config to add the MONGODB_URI env variable reference
 and change the `CodeUri` to mongodb/ : Then rename the `hello-world` directory to `mongodb`.
 Do not change the `Handler` and `Runtime` properties.
 
-```
-Resources:
-  MongoDBFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: mongodb/
-      Environment:
-        Variables:
-          MONGODB_URI: !Ref MongoDbUri
-```
+.. code:: yaml
+
+  Resources:
+    MongoDBFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        CodeUri: mongodb/
+        Environment:
+          Variables:
+            MONGODB_URI: !Ref MongoDbUri
 
 Run the function locally from the same directory where the template.yaml resides:
 
-```
-sam build
-sam local invoke --parameter-overrides "MongoDbUri=${MONGODB_URI}"
-```
+.. code:: none
+
+  sam build
+  sam local invoke --parameter-overrides "MongoDbUri=${MONGODB_URI}"
