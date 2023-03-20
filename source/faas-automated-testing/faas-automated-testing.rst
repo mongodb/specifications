@@ -228,3 +228,40 @@ variables. An explanation of the required environment is as follows:
 | AWS_SESSION_TOKEN             | Assume role automatically sets this |
 +-------------------------------+-------------------------------------+
 
+This is an example function in the Evergreen config that accomplishes this, using
+subprocess.exec to execute a script that calls the drivers-evergreen-tools
+function inside of it:
+
+.. code:: yaml
+
+  run deployed aws lambda tests:
+  - command: ec2.assume_role
+    params:
+      role_arn: ${LAMBDA_AWS_ROLE_ARN}
+  - command: subprocess.exec
+    params:
+      working_dir: src
+      binary: bash
+      args:
+        - .evergreen/run-deployed-lambda-aws-tests.sh
+      env:
+        TEST_LAMBDA_DIRECTORY: ${PROJECT_DIRECTORY}/test/lambda
+        DRIVERS_TOOLS: ${DRIVERS_TOOLS}
+        DRIVERS_ATLAS_PUBLIC_API_KEY: ${DRIVERS_ATLAS_PUBLIC_API_KEY}
+        DRIVERS_ATLAS_PRIVATE_API_KEY: ${DRIVERS_ATLAS_PRIVATE_API_KEY}
+        DRIVERS_ATLAS_LAMBDA_USER: ${DRIVERS_ATLAS_LAMBDA_USER}
+        DRIVERS_ATLAS_LAMBDA_PASSWORD: ${DRIVERS_ATLAS_LAMBDA_PASSWORD}
+        DRIVERS_ATLAS_GROUP_ID: ${DRIVERS_ATLAS_GROUP_ID}
+        LAMBDA_STACK_NAME: dbx-node-lambda
+        AWS_REGION: us-east-1
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+
+The script itself:
+
+.. code:: none
+
+  #!/bin/bash
+  set -o errexit  # Exit the script with error if any of the commands fail
+  . ${DRIVERS_TOOLS}/.evergreen/run-deployed-lambda-aws-tests.sh
