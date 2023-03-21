@@ -276,6 +276,10 @@ function inside of it:
         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
         AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
 
+Drivers MUST run the function on a single variant in Evergreen, in order to not
+potentially hit the Atlas API rate limit. The variant itself MUST be either a
+RHEL7/8 or Ubuntu 18/20 variant in order to have the SAM CLI installed.
+
 The script itself:
 
 .. code:: none
