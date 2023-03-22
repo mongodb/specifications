@@ -96,9 +96,13 @@ Multiple Principal User 1
 
 Multiple Principal User 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+- Set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable
+  to the location of valid ``test_user2`` credentials.
 - Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
+- Restore the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable
+  to the location of valid ``test_user2`` credentials.
 
 Callback Validation
 ===================
