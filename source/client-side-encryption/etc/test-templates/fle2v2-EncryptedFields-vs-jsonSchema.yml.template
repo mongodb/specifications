@@ -1,0 +1,90 @@
+runOn:
+  - minServerVersion: "6.0.0"
+    # FLE 2 Encrypted collections are not supported on standalone.
+    topology: [ "replicaset", "sharded", "load-balanced" ]
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+data: []
+json_schema: {
+    "properties": {},
+    "bsonType": "object"
+}
+encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.json") }}
+key_vault_data: [ {{ yamlfile ("keys/key1-document.json") }} ]
+tests:
+  - description: "encryptedFields is preferred over jsonSchema"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc0 { _id: 1, encryptedIndexed: "123" }
+      - name: find
+        arguments:
+          filter: { encryptedIndexed: "123" }
+        result: [*doc0]
+    expectations:
+      - command_started_event:
+          command:
+            listCollections: 1
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: {
+                  "$or": [
+                      {
+                          "_id": {
+                              "$in": [
+                                  {{ yamlfile ("keys/key1-id.json") }}
+                              ]
+                          }
+                      },
+                      {
+                          "keyAltNames": {
+                              "$in": []
+                          }
+                      }
+                  ]
+              }
+            $db: keyvault
+            readConcern: { level: "majority" }
+          command_name: find
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - &doc0_encrypted { "_id": 1, "encryptedIndexed": { $$type: "binData" } }
+            ordered: true
+            encryptionInformation:
+              type: 1
+              schema:
+                "default.default": *encrypted_fields
+          command_name: insert
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: {
+                "encryptedIndexed": {
+                  "$eq": {
+                    "$binary": {
+                      "base64": "DIkAAAAFZAAgAAAAAPGmZcUzdE/FPILvRSyAScGvZparGI2y9rJ/vSBxgCujBXMAIAAAAACi1RjmndKqgnXy7xb22RzUbnZl1sOZRXPOC0KcJkAxmQVsACAAAAAApJtKPW4+o9B7gAynNLL26jtlB4+hq5TXResijcYet8USY20AAAAAAAAAAAAA",
+                      "subType": "06"
+                    }
+                  }
+                }
+              }
+            encryptionInformation:
+                type: 1
+                schema:
+                  "default.default": *encrypted_fields
+          command_name: find
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { "_id": 1, "encryptedIndexed": { $$type: "binData" }, "__safeContent__": [{ "$binary" : { "base64" : "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=", "subType" : "00" } }] }
