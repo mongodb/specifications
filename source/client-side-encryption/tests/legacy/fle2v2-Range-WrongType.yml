@@ -2,7 +2,7 @@
 # Does not include command monitoring expectations or outcome assertions to make tests more readable.
 # Requires libmongocrypt 1.7.0.
 runOn:
-  - minServerVersion: "6.2.0"
+  - minServerVersion: "7.0.0"
     # FLE 2 Encrypted collections are not supported on standalone.
     topology: [ "replicaset", "sharded", "load-balanced" ]
 database_name: &database_name "default"
