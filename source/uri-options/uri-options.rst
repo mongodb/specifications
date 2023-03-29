@@ -50,7 +50,7 @@ occur:
    ``tlsDisableCertificateRevocationCheck`` appear in the URI options.
 7. Both ``tlsDisableOCSPEndpointCheck`` and
    ``tlsDisableCertificateRevocationCheck`` appear in the URI options.
-8. All instances of ``tls`` and ``ssl`` in the URI options do not have the
+8. Both ``tls`` and ``ssl`` appear in the URI options and they do not have the
    same value. If all instances of ``tls`` and ``ssl`` have the same
    value, an error MUST NOT be raised.
 
@@ -525,6 +525,7 @@ this specification MUST be updated to reflect those changes.
 Changelog
 ---------
 
+:2023-03-28: Mandate that drivers error on invalid connection string keys and values.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-19: Add the timeoutMS option and deprecate some existing timeout options
 :2021-12-14: Add SOCKS5 options

@@ -140,13 +140,14 @@ A key value pair represents the option key and its associated value. The key is 
 - Key:
    The connection option's key string.  Keys should be normalised and
    character case should be ignored.
-- Value: (optional)
-   The value if provided otherwise it defaults to an empty string.
+- Value:
+   The value associated with a key.  A value MUST be provided for every key.  
 
 ---------------------------
 Defining connection options
 ---------------------------
-Connection option key values MUST be defined in the relevant specification that describes the usage of the key and value.  The value data type MUST also be defined there. The value's default value SHOULD also be defined if it is relevant.
+Connection option key values MUST be defined in the relevant specification that describes the usage of the key and value.  The value data type MUST also be defined there. 
+The value's default value SHOULD also be defined if it is relevant.
 
 Keys
 ----
@@ -154,9 +155,7 @@ Keys are strings and the character case must be normalized by lower casing the u
 
 When defining and documenting keys, specifications should follow the camelCase naming convention with the first letter in lowercase, snake\_case MUST not be used. Keys that aren't supported by a driver MUST be ignored.
 
-Keys that aren't supported by a driver MUST be ignored. A WARN level logging message MUST be issued for unsupported keys. For example::
-
-  Unsupported option 'connectMS'.
+Keys that aren't supported by a driver MUST NOT be ignored. A error MUST be raised for unsupported keys. 
   
 Keys should be descriptive and follow existing conventions:
 
@@ -173,9 +172,9 @@ The values in connection options MUST be URL decoded by the parser. The values c
 - Strings:
     The value
 - Integer:
-  The value parsed as a integer. If the value is the empty string, the key MUST be ignored.
+  The value parsed as a integer. If the value is the empty string, the key MUST NOT be ignored and an error MUST be reported.
 - Boolean:
-  "true" and "false" strings MUST be supported. If the value is the empty string, the key MUST be ignored.
+  "true" and "false" strings MUST be supported. If the value is the empty string, the key MUST NOT be ignored and an error MUST be reported.
 
   - For legacy reasons it is RECOMMENDED that alternative values for true and false be supported:
 
@@ -191,22 +190,28 @@ The values in connection options MUST be URL decoded by the parser. The values c
 - Lists:
     Repeated keys represent a list in the Connection String consisting of the corresponding values in the same order as they appear in the Connection String. For example::
 
-      ?readPreferenceTags=dc:ny,rack:1&readPreferenceTags=dc:ny&readPreferenceTags=
+      ?readPreferenceTags=dc:ny,rack:1&readPreferenceTags=dc:ny
 - Key value pairs:
     A value that represents one or more key and value pairs. Multiple key value pairs are delimited by a comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards. If any keys or values containing a comma (",") or a colon (":") they must be URL encoded. For example::
 
       ?readPreferenceTags=dc:ny,rack:1
+    
+    If the option supports a 
 
-Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example::
+Any invalid Values for a given key MUST NOT be ignored and MUST return an error. The error SHOULD have a useful error message, indicating why the connection string is invalid.  For example::
 
   Unsupported value for "fsync" : "ifPossible"
 
 -------------
 Repeated Keys
 -------------
-If a key is repeated and the corresponding data type is not a List then the precedence of which key value pair will be used is undefined except where defined otherwise by the `URI options spec <https://github.com/mongodb/specifications/blob/master/source/uri-options/uri-options.rst>`_.
+If a key is repeated and the corresponding data type is not a List then an error MUST be reported.
 
-Where possible, a warning SHOULD be raised to inform the user that multiple options were found for the same value.
+If a key is repeated and the corresponding data type is a List and any of the key/value pairs are invalid, an error MUST be reported.  For example,
+
+    ?readPreferenceTags=dc:ny,rack:1&readPreferenceTags=dc:ny&readPreferenceTags=
+
+errors because the key `readPreferenceTags` must have a value provided.
 
 --------------------------
 Deprecated Key Value Pairs
@@ -237,7 +242,7 @@ Connection strings are a mechanism to configure a MongoClient outside the user's
 
 Keys MUST follow existing connection option naming conventions as defined above. Values MUST also follow the existing, specific data types.
 
-Any options that are not supported MUST raise a WARN log level as described in the keys section.
+Any options that are not supported MUST raise a error as described in the keys section.
 
 -----------------------------
 Connection options precedence
@@ -323,9 +328,6 @@ Q: Why is it recommended that Connection Options take precedence over applicatio
   2. MongoClient hosts and options
   3. Connection String hosts and options
 
-Q: Why WARN level warning on unknown options rather than throwing an exception?
- It is responsible to inform users of possible misconfigurations and both methods achieve that.  However, there are conflicting requirements of a  Connection String.  One goal is that any given driver should be configurable by a connection string but different drivers and languages have different feature sets.  Another goal is that Connection Strings should be portable and as such some options supported by language X might not be relevant to language Y. Any given driver does not know is an option is specific to a different driver or is misspelled or just not supported.  So the only way to stay portable and support configuration of all options is to not throw an exception but rather log a warning.
-
 Q: How long should deprecation options be supported?
  This is not declared in this specification. It's not deemed responsible to give a single timeline for how long deprecated options should be supported. As such any specifications that deprecate options that do have the context of the decision should provide the timeline.
 
@@ -389,3 +391,4 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-12-27: Note that host information ends with a "/" character in connection
              options description.
+:2023-03-28: Mandate that drivers error on invalid connection string keys and values.
