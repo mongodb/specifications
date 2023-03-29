@@ -196,8 +196,6 @@ The values in connection options MUST be URL decoded by the parser. The values c
 
       ?readPreferenceTags=dc:ny,rack:1
     
-    If the option supports a 
-
 Any invalid Values for a given key MUST NOT be ignored and MUST return an error. The error SHOULD have a useful error message, indicating why the connection string is invalid.  For example::
 
   Unsupported value for "fsync" : "ifPossible"
