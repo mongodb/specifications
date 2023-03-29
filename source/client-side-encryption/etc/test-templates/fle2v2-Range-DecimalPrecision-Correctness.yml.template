@@ -1,6 +1,7 @@
 # Test correctness results.
 # Does not include command monitoring expectations or outcome assertions to make tests more readable.
-# Requires libmongocrypt 1.7.0.
+
+# Requires libmongocrypt 1.8.0.
 runOn:
   - minServerVersion: "7.0.0"
     serverless: "forbid"

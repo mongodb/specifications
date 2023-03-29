@@ -1,4 +1,5 @@
-# Requires libmongocrypt 1.7.0.
+
+# Requires libmongocrypt 1.8.0.
 runOn:
   - minServerVersion: "7.0.0"
     serverless: "forbid"
