@@ -28,6 +28,10 @@ The following tests have not yet been automated, but MUST still be tested:
 #. A user MUST be able to subscribe to Connection Monitoring Events in a manner idiomatic to their language and driver
 #. When a check out attempt fails because connection set up throws an error,
    assert that a ConnectionCheckOutFailedEvent with reason="connectionError" is emitted.
+#. Drivers MUST update ``ConnectionId.serverConnectionId`` to match the ``connectionId`` field returned in the ``hello`` or
+   legacy hello response by 4.2+ servers. Servers can return ``connectionId`` as an ``int32``, ``double`` (whole numbers only),
+   or ``int64``. Drivers MUST verify that the update succeeds for each data type. 5.0+ servers will no longer return
+   ``connectionId`` as a ``double``, but 4.2 and 4.4 servers can.
 
 Logging Tests
 =============
