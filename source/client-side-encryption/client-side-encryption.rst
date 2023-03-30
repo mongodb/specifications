@@ -912,6 +912,17 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 will be interpreted by the helper method and MUST be passed to the `create`_
 command.
 
+.. note::
+   Users are not expected to set the ``escCollection`` and ``ecocCollection`` in
+   ``encryptedFields``. SERVER-74069 added server-side validation for those fields
+   and no longer allows names to deviate from the following:
+
+   - ``enxcol_.<collectionName>.esc``
+   - ``enxcol_.<collectionName>.ecoc`
+
+   Drivers SHOULD NOT document the ``escCollection`` and ``ecocCollection``
+   options.
+
 For a helper function, ``CreateCollection(collectionName, collectionOptions)``
 with the name of the database associated as `dbName`, look up the encrypted
 fields ``encryptedFields`` for the collection as
@@ -994,6 +1005,17 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 `drop`_ command helpers (e.g. ``Database.dropCollection()``,
 ``Collection.drop()``). This option will only be interpreted by the helper
 method and MUST NOT be passed to the `drop`_ command.
+
+.. note::
+   Users are not expected to set the ``escCollection`` and ``ecocCollection`` in
+   ``encryptedFields``. SERVER-74069 added server-side validation for those fields
+   and no longer allows names to deviate from the following:
+
+   - ``enxcol_.<collectionName>.esc``
+   - ``enxcol_.<collectionName>.ecoc`
+
+   Drivers SHOULD NOT document the ``escCollection`` and ``ecocCollection``
+   options.
 
 For a helper function ``DropCollection(dropOptions)`` with associated collection
 named `collName` and database named `dbName`, look up the encrypted fields
