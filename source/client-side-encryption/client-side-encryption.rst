@@ -115,7 +115,6 @@ encryptedFields
 
       {
           "escCollection": "enxcol_.CollectionName.esc",
-          "eccCollection": "enxcol_.CollectionName.ecc",
           "ecocCollection": "enxcol_.CollectionName.ecoc",
           "fields": [
               {
@@ -134,7 +133,6 @@ encryptedFields
 
    The acronyms within ``encryptedFields`` are defined as follows:
 
-   * ECC: Encrypted Cache Collection
    * ECOC: Encrypted Compaction Collection
    * ESC: Encrypted State Collection
 
@@ -930,11 +928,6 @@ attempted:
   ``encryptedFields["escCollection"]`` is not set, use the collection name
   ``enxcol_.<collectionName>.esc``. Creating this collection MUST NOT check if
   the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["eccCollection"]`` as a
-  clustered collection using the options
-  ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
-  ``encryptedFields["eccCollection"]`` is not set, use the collection name
-  ``enxcol_.<collectionName>.ecc``. Creating this collection MUST NOT check if
   the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
 - Create the collection with name ``encryptedFields["ecocCollection"]`` as a
   clustered collection using the options
@@ -1015,9 +1008,6 @@ are not attempted. A ``namespace not found`` error returned from the server
 - Drop the collection with name ``encryptedFields["escCollection"]``. If
   ``encryptedFields["escCollection"]`` is not set, use the collection name
   ``enxcol_.<collectionName>.esc``.
-- Drop the collection with name ``encryptedFields["eccCollection"]``. If
-  ``encryptedFields["eccCollection"]`` is not set, use the collection name
-  ``enxcol_.<collectionName>.ecc``.
 - Drop the collection with name ``encryptedFields["ecocCollection"]``. If
   ``encryptedFields["ecocCollection"]`` is not set, use the collection name
   ``enxcol_.<collectionName>.ecoc``.
@@ -2714,6 +2704,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2023-03-30: Remove ECC collection
 :2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
 :2023-01-31: ``createEncryptedCollection`` does not check AutoEncryptionOptions for the encryptedFieldsMap.
 :2023-01-30: Return ``encryptedFields`` on ``CreateCollection`` error.
