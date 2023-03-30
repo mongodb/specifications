@@ -40,7 +40,7 @@ Single Principal Implicit Username
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Clear the cache.
 - Create a request callback returns a valid token.
-- Create a client that uses the OIDC url and the request callback.
+- Create a client that uses the default OIDC url and the request callback.
 - Perform a ``find`` operation. that succeeds.
 - Close the client.
 
@@ -56,7 +56,7 @@ Multiple Principal User 1
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 - Clear the cache.
 - Create a request callback that returns a valid token.
-- Create a client with a url of the form  ``mongodb://test_user1@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+- Create a client with a url of the form  ``mongodb://test_user1@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and a valid OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
@@ -64,15 +64,23 @@ Multiple Principal User 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 - Clear the cache.
 - Create a request callback that reads in the generated ``test_user2`` token file.
-- Create a client with a url of the form  ``mongodb://test_user2@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+- Create a client with a url of the form ``mongodb://test_user2@localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and a valid OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 Multiple Principal No User
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Clear the cache.
-- Create a client with a url of the form  ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and the OIDC request callback.
+- Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred``and a valid OIDC request callback.
 - Assert that a ``find`` operation fails.
+- Close the client.
+
+OIDC Allowed Hosts Blocked
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Clear the cache.
+- Create a client that uses the OIDC url and the request callback, and an
+  ``authOIDCAllowHosts`` that is an empty list.
+- Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
 
 AWS Automatic Auth

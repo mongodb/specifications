@@ -1210,24 +1210,12 @@ username.
     description: "Server's reply to clientStep1"
     strict: false
     fields:
-      authorizationEndpoint:
+      issuer:
         description: >-
-          URL where the IDP may be contacted for end user
-          authentication and authorization code generation.
-        type: string
-        optional: true # Req if deviceAuthorizeEndpoint not present
-      tokenEndpoint:
-        description: >-
-          URL where the IDP may be contacted for authorization
-          code <=> ID/access token exchange.
-        type: string
-        optional: true # Req if deviceAuthorizeEndpoint not present
-      deviceAuthorizationEndpoint:
-        description: >-
-          URL where the IDP may be contacted for device
-          authentication and authorization code generation.
-        type: string
-        optional: true # Req if authorizeEndpoint not present
+            URL which describes the Authorization Server. This identifier should be
+            the iss of provided access tokens, and be viable for RFC8414
+            metadata discovery and RFC9207 identification.
+        type:string
       clientId:
         description: "Unique client ID for this OIDC client"
         type: string
@@ -1285,6 +1273,22 @@ mechanism_properties
 Drivers MUST skip client step 1 when using a service to obtain credentials
 or when the server step 1 response value is cached.  When skipping step 1,
 drivers will use ``saslStart`` and a payload with the ``jwt`` value.
+
+MongoClient Configuration
+`````````````````````````
+
+In order to mitigate token phishing attempts, a new client-level
+configuration option MUST be added, ``authOIDCAllowedHosts``.  Drivers SHOULD use
+the defined name but MAY deviate to comply with their existing conventions.
+
+The value MUST NOT be configurable by connection string, and MUST have a
+default value of
+``[*.mongodb.net, *.mongodb-dev.net, *.mongodbgov.net, localhost]``.
+
+When ``MONGODB-OIDC`` authentication is attempted against a hostname that
+does not match any of list of allowed hosts, the driver MUST raise a
+client-side error without invoking any user-provided callbacks.  Matching
+MUST be based on Unix shell-style wildcards.
 
 User Provided Callbacks
 ```````````````````````
