@@ -19,7 +19,6 @@ tests:
         encryptedFieldsMap:
           default.encryptedCollection: &encrypted_fields0 {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -49,11 +48,6 @@ tests:
         object: testRunner
         arguments:
           database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
           collection: "enxcol_.encryptedCollection.ecoc"
       - name: assertCollectionExists
         object: testRunner
@@ -76,11 +70,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -95,12 +84,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -168,11 +151,6 @@ tests:
         object: testRunner
         arguments:
           database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
           collection: "enxcol_.encryptedCollection.ecoc"
       - name: assertCollectionExists
         object: testRunner
@@ -195,11 +173,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -214,12 +187,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -287,11 +254,6 @@ tests:
         object: testRunner
         arguments:
           database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
           collection: "enxcol_.encryptedCollection.ecoc"
       - name: assertCollectionExists
         object: testRunner
@@ -308,11 +270,6 @@ tests:
         object: database
         arguments:
           collection: "encryptedCollection"
-      - name: assertCollectionNotExists
-        object: testRunner
-        arguments:
-          database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionNotExists
         object: testRunner
         arguments:
@@ -339,11 +296,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -358,12 +310,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -398,11 +344,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -422,7 +363,6 @@ tests:
           # encryptedCollection.esc has encryptedCollection as the escCollection.
           default.encryptedCollection: &encrypted_fields3 {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -434,7 +374,6 @@ tests:
             }
           default.encryptedCollection.esc: {
               "escCollection": "enxcol_.encryptedCollection.esc",
-              "eccCollection": "enxcol_.encryptedCollection.ecc",
               "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                   {
@@ -463,11 +402,6 @@ tests:
         object: testRunner
         arguments:
           database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
           collection: "enxcol_.encryptedCollection.ecoc"
       - name: assertCollectionExists
         object: testRunner
@@ -489,11 +423,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -508,12 +437,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -548,7 +471,6 @@ tests:
         encryptedFieldsMap:
           default.encryptedCollection: {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -602,7 +524,6 @@ tests:
         encryptedFieldsMap:
           default.encryptedCollection: &encrypted_fields4 {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -631,11 +552,6 @@ tests:
         object: testRunner
         arguments:
           database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
           collection: "enxcol_.encryptedCollection.ecoc"
       - name: assertCollectionExists
         object: testRunner
@@ -658,11 +574,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -677,12 +588,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -722,7 +627,6 @@ tests:
           collection: "encryptedCollection"
           encryptedFields: {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -738,7 +642,6 @@ tests:
           collection: "encryptedCollection"
           encryptedFields: &encrypted_fields5 {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -753,11 +656,6 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -784,11 +682,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -803,12 +696,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -851,7 +738,6 @@ tests:
         encryptedFieldsMap:
           default.encryptedCollection: {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -871,11 +757,6 @@ tests:
         - command_started_event:
             command:
               drop: "enxcol_.encryptedCollection.esc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
-              drop: "enxcol_.encryptedCollection.ecc"
             command_name: drop
             database_name: *database_name
         - command_started_event:
@@ -903,7 +784,6 @@ tests:
           collection: "encryptedCollection"
           encryptedFields: {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -919,7 +799,6 @@ tests:
           collection: "encryptedCollection"
           encryptedFields: {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -934,11 +813,6 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -961,7 +835,6 @@ tests:
           collection: "encryptedCollection"
           encryptedFields: &encrypted_fields6 {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -976,11 +849,6 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
-      - name: assertCollectionNotExists
-        object: testRunner
-        arguments:
-          database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionNotExists
         object: testRunner
         arguments:
@@ -1000,11 +868,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -1018,12 +881,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -1064,11 +921,6 @@ tests:
             database_name: *database_name
         - command_started_event:
             command:
-              drop: "enxcol_.encryptedCollection.ecc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
               drop: "enxcol_.encryptedCollection.ecoc"
             command_name: drop
             database_name: *database_name
@@ -1094,7 +946,6 @@ tests:
           collection: "encryptedCollection"
           encryptedFields: {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -1110,7 +961,6 @@ tests:
           collection: "encryptedCollection"
           encryptedFields: &encrypted_fields7 {
                 "escCollection": "enxcol_.encryptedCollection.esc",
-                "eccCollection": "enxcol_.encryptedCollection.ecc",
                 "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
@@ -1125,11 +975,6 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
-      - name: assertCollectionExists
-        object: testRunner
-        arguments:
-          database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -1159,11 +1004,6 @@ tests:
         object: testRunner
         arguments:
           database: *database_name
-          collection: "enxcol_.encryptedCollection.ecc"
-      - name: assertCollectionNotExists
-        object: testRunner
-        arguments:
-          database: *database_name
           collection: "enxcol_.encryptedCollection.ecoc"
       - name: assertCollectionNotExists
         object: testRunner
@@ -1176,11 +1016,6 @@ tests:
         - command_started_event:
             command:
               drop: "enxcol_.encryptedCollection.esc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
-              drop: "enxcol_.encryptedCollection.ecc"
             command_name: drop
             database_name: *database_name
         - command_started_event:
@@ -1198,12 +1033,6 @@ tests:
         - command_started_event:
             command:
               create: "enxcol_.encryptedCollection.esc"
-              clusteredIndex: {key: {_id: 1}, unique: true}
-            command_name: create
-            database_name: *database_name
-        - command_started_event:
-            command:
-              create: "enxcol_.encryptedCollection.ecc"
               clusteredIndex: {key: {_id: 1}, unique: true}
             command_name: create
             database_name: *database_name
@@ -1246,11 +1075,6 @@ tests:
         - command_started_event:
             command:
               drop: "enxcol_.encryptedCollection.esc"
-            command_name: drop
-            database_name: *database_name
-        - command_started_event:
-            command:
-              drop: "enxcol_.encryptedCollection.ecc"
             command_name: drop
             database_name: *database_name
         - command_started_event:
