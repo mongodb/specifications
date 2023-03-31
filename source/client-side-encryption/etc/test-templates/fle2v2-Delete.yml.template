@@ -1,0 +1,92 @@
+# Requires libmongocrypt 1.8.0.
+runOn:
+  - minServerVersion: "7.0.0"
+    serverless: "forbid"
+    # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
+    # FLE 2 Encrypted collections are not supported on standalone.
+    topology: [ "replicaset", "sharded", "load-balanced" ]
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+data: []
+encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.json") }}
+key_vault_data: [ {{ yamlfile ("keys/key1-document.json") }} ]
+tests:
+  - description: "Delete can query an FLE2 indexed field"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          local: {{ local_provider() }}
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc0 {"_id": 1, "encryptedIndexed": "value123" }
+      - name: deleteOne
+        arguments:
+          filter: { "encryptedIndexed": "value123" }
+        result:
+          deletedCount: 1
+    expectations:
+      - command_started_event:
+          command:
+            listCollections: 1
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: {
+                  "$or": [
+                      {
+                          "_id": {
+                              "$in": [
+                                  {{ yamlfile ("keys/key1-id.json") }}
+                              ]
+                          }
+                      },
+                      {
+                          "keyAltNames": {
+                              "$in": []
+                          }
+                      }
+                  ]
+              }
+            $db: keyvault
+            readConcern: { level: "majority" }
+          command_name: find
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - { "_id": 1, "encryptedIndexed": { $$type: "binData" } }
+            ordered: true
+            encryptionInformation:
+                type: 1
+                schema:
+                  "default.default": *encrypted_fields
+          command_name: insert
+      - command_started_event:
+          command:
+            delete: *collection_name
+            deletes:
+              - {
+                  "q": {
+                    "encryptedIndexed": { 
+                      "$eq": {
+                        "$binary": {
+                            "base64": "DIkAAAAFZAAgAAAAAPtVteJQAlgb2YMa/+7YWH00sbQPyt7L6Rb8OwBdMmL2BXMAIAAAAAAd44hgVKnEnTFlwNVC14oyc9OZOTspeymusqkRQj57nAVsACAAAAAAaZ9s3G+4znfxStxeOZwcZy1OhzjMGc5hjmdMN+b/w6kSY20AAAAAAAAAAAAA",
+                            "subType": "06"
+                        }
+                      }
+                    }
+                  },
+                  "limit": 1
+                }
+            encryptionInformation:
+              type: 1
+              schema:
+                "default.default": *encrypted_fields
+          command_name: delete
+    outcome:
+      collection:
+        data: []
