@@ -1269,26 +1269,18 @@ mechanism_properties
         Drivers MUST allow the user to specify a callback of the form
         "onOIDCRefreshToken" (defined below), if the driver supports
         providing objects as mechanism property values.
+    ALLOWED_HOSTS
+        The list of allowed hosts for MongoDB connections, allowing Unix shell-style wildcards. This is a security feature and defaults to
+        ``[*.mongodb.net, *.mongodb-dev.net, *.mongodbgov.net, localhost]``.
+        When ``MONGODB-OIDC`` authentication is attempted against a hostname
+        that does not match any of list of allowed hosts, the driver MUST
+        raise a client-side error without invoking any user-provided
+        callbacks.  This value MUST not be allowed in the URI connection
+        string.
 
 Drivers MUST skip client step 1 when using a service to obtain credentials
 or when the server step 1 response value is cached.  When skipping step 1,
 drivers will use ``saslStart`` and a payload with the ``jwt`` value.
-
-MongoClient Configuration
-`````````````````````````
-
-In order to mitigate token phishing attempts, a new client-level
-configuration option MUST be added, ``authOIDCAllowedHosts``.  Drivers SHOULD use
-the defined name but MAY deviate to comply with their existing conventions.
-
-The value MUST NOT be configurable by connection string, and MUST have a
-default value of
-``[*.mongodb.net, *.mongodb-dev.net, *.mongodbgov.net, localhost]``.
-
-When ``MONGODB-OIDC`` authentication is attempted against a hostname that
-does not match any of list of allowed hosts, the driver MUST raise a
-client-side error without invoking any user-provided callbacks.  Matching
-MUST be based on Unix shell-style wildcards.
 
 User Provided Callbacks
 ```````````````````````
