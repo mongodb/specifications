@@ -31,7 +31,6 @@
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
               "escCollection": "enxcol_.default.esc",
-              "eccCollection": "enxcol_.default.ecc",
               "ecocCollection": "enxcol_.default.ecoc",
               "fields": [
                 {
@@ -110,7 +109,6 @@
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
               "escCollection": "enxcol_.default.esc",
-              "eccCollection": "enxcol_.default.ecc",
               "ecocCollection": "enxcol_.default.ecoc",
               "fields": [
                 {
@@ -184,7 +182,6 @@
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
               "escCollection": "enxcol_.default.esc",
-              "eccCollection": "enxcol_.default.ecc",
               "ecocCollection": "enxcol_.default.ecoc",
               "fields": [
                 {
@@ -264,7 +261,6 @@
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
               "escCollection": "enxcol_.default.esc",
-              "eccCollection": "enxcol_.default.ecc",
               "ecocCollection": "enxcol_.default.ecoc",
               "fields": [
                 {
@@ -347,7 +343,6 @@
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
               "escCollection": "enxcol_.default.esc",
-              "eccCollection": "enxcol_.default.ecc",
               "ecocCollection": "enxcol_.default.ecoc",
               "fields": [
                 {
@@ -444,7 +439,6 @@
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
               "escCollection": "enxcol_.default.esc",
-              "eccCollection": "enxcol_.default.ecc",
               "ecocCollection": "enxcol_.default.ecoc",
               "fields": [
                 {
