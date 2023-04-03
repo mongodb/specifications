@@ -30,9 +30,7 @@ document are to be interpreted as described in
 Conflicting TLS options
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Per the `Connection String spec <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst#repeated-keys>`__,
-the behavior of duplicates of most URI options is undefined. However, due
-to the security implications of certain options, drivers MUST raise an
+Due to the security implications of certain options, drivers MUST raise an
 error to the user during parsing if any of the following circumstances
 occur:
 
