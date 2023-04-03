@@ -469,16 +469,12 @@ The entire metadata BSON document MUST NOT exceed 512 bytes. This includes all
 BSON overhead.  The ``client.application.name`` cannot exceed 128 bytes.  MongoDB
 will return an error if these limits are not adhered to, which will result in
 handshake failure. Drivers MUST validate these values and truncate or omit driver
-provided values if necessary.  Implementors SHOULD prioritize fields to preserve in
-this order:
+provided values if necessary.  Implementors SHOULD cumulatively update fields in
+the following order until the document is under the size limit:
 
-1. ``application.name``
-2. ``driver.*``
-3. ``os.type``
-4. ``env.name``
-5. ``os.*`` (except ``type``)
-6. ``env.*`` (except ``name``)
-7. ``platform``
+1. Truncate ``platform``.
+2. Omit fields from ``env`` except ``env.name``.
+3. Omit the ``env`` document entirely.
 
 Additionally, implementors are encouraged to place high priority information about the
 platform earlier in the string, in order to avoid possible truncating of those details.
