@@ -635,3 +635,4 @@ Changelog
 :2022-02-24: Rename Versioned API to Stable API
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2023-03-13: Add ``env`` to ``client`` document
+:2023-04-03: Simplify truncation for metadata
