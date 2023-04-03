@@ -54,7 +54,7 @@ For the initial local setup the following are required:
 - The docker daemon running on the local machine.
 - The [https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html](AWS SAM CLI)
 
-The following environment variables MUST be present (See DRIVERS-2384 google doc for values):
+The following environment variables MUST be present:
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
