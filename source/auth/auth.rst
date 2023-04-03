@@ -1219,10 +1219,6 @@ username.
       clientId:
         description: "Unique client ID for this OIDC client"
         type: string
-      clientSecret:
-        description: "Secret used when communicating with IDP"
-        type: string
-        optional: true
       requestScopes:
         description: "Additional scopes to request from IDP"
         type: array<string>
@@ -1276,7 +1272,8 @@ mechanism_properties
         that does not match any of list of allowed hosts, the driver MUST
         raise a client-side error without invoking any user-provided
         callbacks.  This value MUST not be allowed in the URI connection
-        string.
+        string.  The hostname check MUST be performed after SRV record
+        resolution, if applicable.
 
 Drivers MUST skip client step 1 when using a service to obtain credentials
 or when the server step 1 response value is cached.  When skipping step 1,
@@ -1286,8 +1283,32 @@ User Provided Callbacks
 ```````````````````````
 
 Drivers MUST allow the user to provide callbacks for token request and
-token refresh.  The token request callback MUST accept the OIDCMechanismServerStep1 structure and return an OIDCRequestTokenResult of
-the form:
+token refresh.  The token request callback must have the following signature:
+
+.. code:: typescript
+
+    function onOIDCRequestToken(clientInfo: OIDCClientInfo, serverInfo: OIDCMechanismServerStep1): OIDCRequestTokenResult
+
+
+Where ``OIDCClientInfo`` is defined as:
+
+.. code:: idl
+  OIDCClientInfo:
+    description: "The description of the OIDC client"
+    strict: false
+    fields:
+        principalName:
+            description: "The client identifier provided in the access token,
+            typically the Subject Identifier."
+            type: string
+        timeout_seconds:
+            description: "The number of seconds before a request should time out"
+            optional: true
+        timeout_context:
+            description: "A timeout context variable used to cancel the callback"
+            optional: true
+
+and ``OIDCRequestTokenResult`` is defined as:
 
 .. code:: idl
 
@@ -1307,9 +1328,6 @@ the form:
               type: str
               optional: true
 
-.. code:: typescript
-
-    function onOIDCRequestToken(principalName: str, serverInfo: OIDCMechanismServerStep1, timeoutSeconds: int): OIDCRequestTokenResult
 
 Callbacks can be synchronous and/or asynchronous, depending on the driver
 and/or language.  Asynchronous callbacks should be preferred when other
@@ -1336,7 +1354,7 @@ well as the cached OIDCRequestTokenResult and return a new OIDCRequestTokenResul
 
 .. code:: typescript
 
-    function onOIDCRefreshToken(principalName: str, serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult, timeoutSeconds: int): OIDCRequestTokenResult
+    function onOIDCRefreshToken(OIDCClientInfo: clientInfo, serverInfo: OIDCMechanismServerStep1, tokenResult: OIDCRequestTokenResult): OIDCRequestTokenResult
 
 If the callback does not return an object in the correct form of ``OIDCRequestTokenResult``, the driver MUST raise an error.
 
