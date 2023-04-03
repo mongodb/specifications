@@ -61,8 +61,7 @@ tests:
                 host: "example.com"
                 port: ~
         auth: ~
-        options:
-            replicaset: "test"
+        options: ~
     -
         description: "List option with an invalid option specified"
         uri: "mongodb://example.com/?readPreferenceTags=dc:ny,rack:1&readPreferenceTags=dc:ny&readPreferenceTags=foobarbaz"
@@ -74,8 +73,7 @@ tests:
                 host: "example.com"
                 port: ~
         auth: ~
-        options:
-            replicaset: "test"
+        options: ~
     -
         description: "Error on empty integer option values"
         uri: "mongodb://localhost/?maxIdleTimeMS="

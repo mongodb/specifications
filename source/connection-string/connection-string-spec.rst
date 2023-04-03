@@ -240,7 +240,7 @@ Connection strings are a mechanism to configure a MongoClient outside the user's
 
 Keys MUST follow existing connection option naming conventions as defined above. Values MUST also follow the existing, specific data types.
 
-Any options that are not supported MUST raise a error as described in the keys section.
+Any options that are not supported MUST raise an error as described in the keys section.
 
 -----------------------------
 Connection options precedence
@@ -326,7 +326,7 @@ Q: Why is it recommended that Connection Options take precedence over applicatio
   2. MongoClient hosts and options
   3. Connection String hosts and options
 
-Q: How long should deprecation options be supported?
+Q: How long should deprecated options be supported?
  This is not declared in this specification. It's not deemed responsible to give a single timeline for how long deprecated options should be supported. As such any specifications that deprecate options that do have the context of the decision should provide the timeline.
 
 Q: Why can I not use a standard URI parser?
