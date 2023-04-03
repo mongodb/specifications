@@ -1293,6 +1293,7 @@ token refresh.  The token request callback must have the following signature:
 Where ``OIDCClientInfo`` is defined as:
 
 .. code:: idl
+
   OIDCClientInfo:
     description: "The description of the OIDC client"
     strict: false
