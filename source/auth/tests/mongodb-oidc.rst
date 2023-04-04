@@ -301,6 +301,7 @@ Succeeds
   of listening for SASL commands.
 - Perform a ``find`` operation that succeeds.
 - Assert that the refresh callback has not been called.
+- Clear the listener state if possible.
 - Force a reauthenication using a ``failCommand`` of the form:
 
 .. code:: javascript
@@ -325,7 +326,9 @@ Succeeds
 
 - Perform another find operation that succeeds.
 - Assert that the refresh callback has been called once, if possible.
-- Assert that the ordering of command started events is `find`, `saslStart` , `find`.
+- Assert that the ordering of command started events is ``find``, ``saslStart``
+  , ``find``.  Note that if the listener stat could not be cleared then there
+  will and be extra ``find`` command.
 - Assert that the ordering of command succeeded events is `saslStart`, `find`.
 - Assert that a ``find`` operation failed once during the command execution.
 - Close the client.
