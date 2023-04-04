@@ -64,6 +64,14 @@
           }
         },
         {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
+          }
+        },
+        {
           "name": "assertCollectionExists",
           "object": "testRunner",
           "arguments": {
@@ -243,6 +251,14 @@
           "arguments": {
             "database": "default",
             "collection": "enxcol_.encryptedCollection.esc"
+          }
+        },
+        {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
           }
         },
         {
@@ -429,6 +445,14 @@
           "arguments": {
             "database": "default",
             "collection": "enxcol_.encryptedCollection.esc"
+          }
+        },
+        {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
           }
         },
         {
@@ -686,6 +710,14 @@
           "arguments": {
             "database": "default",
             "collection": "enxcol_.encryptedCollection.esc"
+          }
+        },
+        {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
           }
         },
         {
@@ -951,6 +983,14 @@
           }
         },
         {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
+          }
+        },
+        {
           "name": "assertCollectionExists",
           "object": "testRunner",
           "arguments": {
@@ -1140,6 +1180,14 @@
           "arguments": {
             "database": "default",
             "collection": "enxcol_.encryptedCollection.esc"
+          }
+        },
+        {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
           }
         },
         {
@@ -1411,6 +1459,14 @@
           "arguments": {
             "database": "default",
             "collection": "enxcol_.encryptedCollection.esc"
+          }
+        },
+        {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
           }
         },
         {
@@ -1690,6 +1746,14 @@
           "arguments": {
             "database": "default",
             "collection": "enxcol_.encryptedCollection.esc"
+          }
+        },
+        {
+          "name": "assertCollectionNotExists",
+          "object": "testRunner",
+          "arguments": {
+            "database": "default",
+            "collection": "enxcol_.encryptedCollection.ecc"
           }
         },
         {

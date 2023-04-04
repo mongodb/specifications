@@ -44,6 +44,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -147,6 +152,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -250,6 +260,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -398,6 +413,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -548,6 +568,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -656,6 +681,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -813,6 +843,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -975,6 +1010,11 @@ tests:
         arguments:
           database: *database_name
           collection: "enxcol_.encryptedCollection.esc"
+      - name: assertCollectionNotExists
+        object: testRunner
+        arguments:
+          database: *database_name
+          collection: "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionExists
         object: testRunner
         arguments:
