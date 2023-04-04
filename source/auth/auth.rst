@@ -1266,7 +1266,9 @@ mechanism_properties
         "onOIDCRefreshToken" (defined below), if the driver supports
         providing objects as mechanism property values.
     ALLOWED_HOSTS
-        The list of allowed hosts for MongoDB connections, allowing Unix shell-style wildcards. This is a security feature and defaults to
+        The list of allowed hostnames (ignoring ports) for MongoDB
+        connections, allowing Unix shell-style wildcards. This is a security
+        feature and defaults to
         ``[*.mongodb.net, *.mongodb-dev.net, *.mongodbgov.net, localhost]``.
         When ``MONGODB-OIDC`` authentication is attempted against a hostname
         that does not match any of list of allowed hosts, the driver MUST

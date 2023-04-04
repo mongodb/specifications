@@ -297,8 +297,10 @@ Succeeds
 - Clear the cache.
 - Create request and refresh callbacks that return valid credentials
   that will not expire soon.
-- Create a client with the callbacks and an event listener capable
-  of listening for SASL commands, if possible.
+- Create a client with the callbacks and an event listener.  The following
+  assumes that the driver does not emit ``saslStart`` or ``saslContinue``
+  events.  If the driver does emit those events, ignore/filter them for the
+  purposes of this test.
 - Perform a ``find`` operation that succeeds.
 - Assert that the refresh callback has not been called.
 - Clear the listener state if possible.
@@ -326,11 +328,10 @@ Succeeds
 
 - Perform another find operation that succeeds.
 - Assert that the refresh callback has been called once, if possible.
-- Assert that the ordering of command started events is ``find``, ``saslStart``
+- Assert that the ordering of list started events is [``find``],
   , ``find``.  Note that if the listener stat could not be cleared then there
-  will and be extra ``find`` command.  If the driver does not emit
-  ``saslStart`` events then they are not expected to be present.
-- Assert that the ordering of command succeeded events is `saslStart`, `find`.
+  will and be extra ``find`` command.
+- Assert that the list of command succeeded events is [``find``].
 - Assert that a ``find`` operation failed once during the command execution.
 - Close the client.
 
