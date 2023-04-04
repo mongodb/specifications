@@ -474,8 +474,8 @@ the following order until the document is under the size limit:
 
 1. Omit fields from ``env`` except ``env.name``.
 2. Omit fields from ``os`` except ``os.type``.
-2. Omit the ``env`` document entirely.
-3. Truncate ``platform``.
+3. Omit the ``env`` document entirely.
+4. Truncate ``platform``.
 
 Additionally, implementors are encouraged to place high priority information about the
 platform earlier in the string, in order to avoid possible truncating of those details.
