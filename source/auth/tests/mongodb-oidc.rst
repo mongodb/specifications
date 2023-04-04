@@ -298,7 +298,7 @@ Succeeds
 - Create request and refresh callbacks that return valid credentials
   that will not expire soon.
 - Create a client with the callbacks and an event listener capable
-  of listening for SASL commands.
+  of listening for SASL commands, if possible.
 - Perform a ``find`` operation that succeeds.
 - Assert that the refresh callback has not been called.
 - Clear the listener state if possible.
@@ -328,7 +328,8 @@ Succeeds
 - Assert that the refresh callback has been called once, if possible.
 - Assert that the ordering of command started events is ``find``, ``saslStart``
   , ``find``.  Note that if the listener stat could not be cleared then there
-  will and be extra ``find`` command.
+  will and be extra ``find`` command.  If the driver does not emit
+  ``saslStart`` events then they are not expected to be present.
 - Assert that the ordering of command succeeded events is `saslStart`, `find`.
 - Assert that a ``find`` operation failed once during the command execution.
 - Close the client.
