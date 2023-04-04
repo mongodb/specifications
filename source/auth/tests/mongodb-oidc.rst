@@ -71,7 +71,7 @@ Multiple Principal User 2
 Multiple Principal No User
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Clear the cache.
-- Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred``and a valid OIDC request callback.
+- Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred`` and a valid OIDC request callback.
 - Assert that a ``find`` operation fails.
 - Close the client.
 
