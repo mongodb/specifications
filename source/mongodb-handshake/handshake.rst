@@ -465,20 +465,17 @@ acceptable deviations are as follows:
 Limitations
 ===========
 
-The entire metadata BSON document MUST NOT exceed 512 bytes. This includes all
-BSON overhead.  The ``client.application.name`` cannot exceed 128 bytes.  MongoDB
+The entire ``client`` metadata BSON document MUST NOT exceed 512 bytes. This includes
+all BSON overhead.  The ``client.application.name`` cannot exceed 128 bytes.  MongoDB
 will return an error if these limits are not adhered to, which will result in
 handshake failure. Drivers MUST validate these values and truncate or omit driver
-provided values if necessary.  Implementors SHOULD prioritize fields to preserve in
-this order:
+provided values if necessary.  Implementors SHOULD cumulatively update fields in
+the following order until the document is under the size limit:
 
-1. ``application.name``
-2. ``driver.*``
-3. ``os.type``
-4. ``env.name``
-5. ``os.*`` (except ``type``)
-6. ``env.*`` (except ``name``)
-7. ``platform``
+1. Omit fields from ``env`` except ``env.name``.
+2. Omit fields from ``os`` except ``os.type``.
+3. Omit the ``env`` document entirely.
+4. Truncate ``platform``.
 
 Additionally, implementors are encouraged to place high priority information about the
 platform earlier in the string, in order to avoid possible truncating of those details.
@@ -639,3 +636,4 @@ Changelog
 :2022-02-24: Rename Versioned API to Stable API
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2023-03-13: Add ``env`` to ``client`` document
+:2023-04-03: Simplify truncation for metadata
