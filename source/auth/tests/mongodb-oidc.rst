@@ -75,11 +75,15 @@ Multiple Principal No User
 - Assert that a ``find`` operation fails.
 - Close the client.
 
-OIDC Allowed Hosts Blocked
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Allowed Hosts Blocked
+~~~~~~~~~~~~~~~~~~~~~
 - Clear the cache.
-- Create a client that uses the OIDC url and the request callback, and an
-  ``authOIDCAllowHosts`` that is an empty list.
+- Create a client that uses the OIDC url and a request callback, and an
+  ``ALLOWED_HOSTS`` that is an empty list.
+- Assert that a ``find`` operation fails with a client-side error.
+- Close the client.
+- Create a client that uses the OIDC url and a request callback, and an
+  ``ALLOWED_HOSTS`` that contains ["localhost1"].
 - Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
 
@@ -111,6 +115,13 @@ Multiple Principal User 2
 - Close the client.
 - Restore the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable
   to the location of valid ``test_user2`` credentials.
+
+Allowed Hosts Ignored
+~~~~~~~~~~~~~~~~~~~~~
+- Create a client with a url of the form ``mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:aws``, and an
+  ``ALLOWED_HOSTS`` that is an empty list.
+- Assert that a ``find`` operation succeeds.
+- Close the client.
 
 Callback Validation
 ===================
