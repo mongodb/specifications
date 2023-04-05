@@ -1281,7 +1281,7 @@ EncryptOpts
 
    // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
    // RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
-   // min, max, sparsity, and range must match the values set in the encryptedFields of the destination collection.
+   // min, max, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
    // For double and decimal128, min/max/precision must all be set, or all be unset.
    class RangeOpts {
       // min is required if precision is set.
