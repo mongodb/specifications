@@ -933,6 +933,10 @@ If a set of ``encryptedFields`` was found, then do the following operations. If
 any of the following operations error, the remaining operations are not
 attempted:
 
+- Check the wire version of the writable server. If the wire version is less
+  than 21 (for server 7.0.0), return an error containing the error message:
+  "Driver support of Queryable Encryption is incompatible with server. Upgrade
+  server to use Queryable Encryption."
 - Create the collection with name ``encryptedFields["escCollection"]`` as a
   clustered collection using the options
   ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
