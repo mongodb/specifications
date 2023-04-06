@@ -158,7 +158,7 @@ Change default timeout to 30 seconds:
     Function:
       Timeout: 30
 
-Add a root parameter for for the MongoDB connection string:
+Add a root parameter for the MongoDB connection string:
 
 .. code:: yaml
 
@@ -167,7 +167,7 @@ Add a root parameter for for the MongoDB connection string:
       Type: String
       Description: The MongoDB connection string.
 
-Replace all instances in the template yaml of `HelloWorld` with `MongoDB` and then
+Replace all instances in the template.yaml of `HelloWorld` with `MongoDB` and then
 modify the root `Resources` config to add the MONGODB_URI env variable reference
 and change the `CodeUri` to mongodb/ : Then rename the `hello-world` directory to `mongodb`.
 Do not change the `Handler` and `Runtime` properties.
@@ -195,7 +195,7 @@ Implementing the Function
 `````````````````````````
 
 Drivers MUST setup the function as would be done in their appropriate language. In
-the function implementation driver MUST:
+the function implementation the driver MUST:
 
 - Create a MongoClient that points to MONGODB_URI.
 - Add listeners for the following monitoring events: ServerHeartbeatStarted, 
@@ -278,7 +278,7 @@ function inside of it:
 
 Drivers MUST run the function on a single variant in Evergreen, in order to not
 potentially hit the Atlas API rate limit. The variant itself MUST be either a
-RHEL7/8 or Ubuntu 18/20 variant in order to have the SAM CLI installed.
+RHEL7/8 or Ubuntu 20 variant in order to have the SAM CLI installed.
 
 The script itself:
 
