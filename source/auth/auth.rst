@@ -1269,7 +1269,7 @@ mechanism_properties
         The list of allowed hostnames or ip-addresses (ignoring ports) for
         MongoDB connections, allowing Unix shell-style wildcards. This is a
         security feature and defaults to
-        ``["*.mongodb.net", '*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1"]``.
+        ``["*.mongodb.net", '*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``.
         When ``MONGODB-OIDC`` authentication is attempted against a hostname
         that does not match any of list of allowed hosts, the driver MUST
         raise a client-side error without invoking any user-provided
