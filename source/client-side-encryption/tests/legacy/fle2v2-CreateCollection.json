@@ -651,8 +651,6 @@
           },
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -667,8 +665,6 @@
               ]
             },
             "default.encryptedCollection.esc": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -805,8 +801,6 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                   {
                     "path": "firstName",
