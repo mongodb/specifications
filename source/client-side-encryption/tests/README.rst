@@ -67,6 +67,8 @@ The following matches a command_started_event for an insert of a document where 
 
 The values of `$$type` correspond to `these documented string representations of BSON types <https://www.mongodb.com/docs/manual/reference/bson-types/>`_.
 
+- Addition of `$$exists`. The semantics match the `Unified Test Format <https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.rst#exists>`_.
+
 
 Each YAML file has the following keys:
 
