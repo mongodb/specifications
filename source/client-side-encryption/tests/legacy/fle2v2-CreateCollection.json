@@ -22,8 +22,6 @@
           },
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -160,8 +158,6 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                   {
                     "path": "firstName",
@@ -857,8 +853,6 @@
           },
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -941,8 +935,6 @@
           },
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1079,8 +1071,6 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                   {
                     "path": "firstName",
@@ -1134,8 +1124,6 @@
           "arguments": {
             "collection": "encryptedCollection",
             "encryptedFields": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1157,8 +1145,6 @@
           "arguments": {
             "collection": "encryptedCollection",
             "encryptedFields": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1279,8 +1265,6 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                   {
                     "path": "firstName",
@@ -1339,8 +1323,6 @@
           },
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1413,8 +1395,6 @@
           "arguments": {
             "collection": "encryptedCollection",
             "encryptedFields": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1436,8 +1416,6 @@
           "arguments": {
             "collection": "encryptedCollection",
             "encryptedFields": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1500,8 +1478,6 @@
           "arguments": {
             "collection": "encryptedCollection",
             "encryptedFields": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1605,8 +1581,6 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                   {
                     "path": "firstName",
@@ -1700,8 +1674,6 @@
           "arguments": {
             "collection": "encryptedCollection",
             "encryptedFields": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1723,8 +1695,6 @@
           "arguments": {
             "collection": "encryptedCollection",
             "encryptedFields": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",
@@ -1876,8 +1846,6 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                   {
                     "path": "firstName",

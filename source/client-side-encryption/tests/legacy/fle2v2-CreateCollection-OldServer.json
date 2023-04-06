@@ -22,8 +22,6 @@
           },
           "encryptedFieldsMap": {
             "default.encryptedCollection": {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                 {
                   "path": "firstName",

@@ -16,8 +16,6 @@ tests:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
           default.encryptedCollection: &encrypted_fields0 {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",

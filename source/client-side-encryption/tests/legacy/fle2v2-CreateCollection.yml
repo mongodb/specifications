@@ -17,8 +17,6 @@ tests:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
           default.encryptedCollection: &encrypted_fields0 {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -376,8 +374,6 @@ tests:
           # encryptedCollection has encryptedCollection.esc as the escCollection.
           # encryptedCollection.esc has encryptedCollection as the escCollection.
           default.encryptedCollection: &encrypted_fields3 {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -387,8 +383,6 @@ tests:
                 ]
             }
           default.encryptedCollection.esc: {
-              "escCollection": "enxcol_.encryptedCollection.esc",
-              "ecocCollection": "enxcol_.encryptedCollection.ecoc",
               "fields": [
                   {
                       "path": "firstName",
@@ -489,8 +483,6 @@ tests:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
           default.encryptedCollection: {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -542,8 +534,6 @@ tests:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
           default.encryptedCollection: &encrypted_fields4 {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -650,8 +640,6 @@ tests:
         arguments:
           collection: "encryptedCollection"
           encryptedFields: {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -665,8 +653,6 @@ tests:
         arguments:
           collection: "encryptedCollection"
           encryptedFields: &encrypted_fields5 {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -766,8 +752,6 @@ tests:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
           default.encryptedCollection: {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -812,8 +796,6 @@ tests:
         arguments:
           collection: "encryptedCollection"
           encryptedFields: {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -827,8 +809,6 @@ tests:
         arguments:
           collection: "encryptedCollection"
           encryptedFields: {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -868,8 +848,6 @@ tests:
         arguments:
           collection: "encryptedCollection"
           encryptedFields: &encrypted_fields6 {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -979,8 +957,6 @@ tests:
         arguments:
           collection: "encryptedCollection"
           encryptedFields: {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
@@ -994,8 +970,6 @@ tests:
         arguments:
           collection: "encryptedCollection"
           encryptedFields: &encrypted_fields7 {
-                "escCollection": "enxcol_.encryptedCollection.esc",
-                "ecocCollection": "enxcol_.encryptedCollection.ecoc",
                 "fields": [
                     {
                         "path": "firstName",
