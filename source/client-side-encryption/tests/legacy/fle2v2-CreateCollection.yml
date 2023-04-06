@@ -99,7 +99,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection"
-              encryptedFields: *encrypted_fields0
+              encryptedFields: {
+                # Expect state collections are not included in the encryptedFields sent to the server.
+                "escCollection": { $$exists: false },
+                "ecocCollection": { $$exists: false },
+                "eccCollection": { $$exists: false },
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
+                    }
+                ]
+            }
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
@@ -207,7 +219,25 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection"
-              encryptedFields: *encrypted_fields1
+              encryptedFields: {
+                # Expect state collections are not included in the encryptedFields sent to the server.
+                "escCollection": { $$exists: false },
+                "ecocCollection": { $$exists: false },
+                "eccCollection": { $$exists: false },
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }},
+                        "queries": {
+                            "queryType": "equality",
+                            "contention": {
+                                "$numberLong": "0"
+                            }
+                        }
+                    }
+                ]
+            }
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
@@ -463,7 +493,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection"
-              encryptedFields: *encrypted_fields3
+              encryptedFields: {
+                # Expect state collections are not included in the encryptedFields sent to the server.
+                "escCollection": { $$exists: false },
+                "ecocCollection": { $$exists: false },
+                "eccCollection": { $$exists: false },
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
+                    }
+                ]
+            }
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
@@ -615,7 +657,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection"
-              encryptedFields: *encrypted_fields4
+              encryptedFields: {
+                # Expect state collections are not included in the encryptedFields sent to the server.
+                "escCollection": { $$exists: false },
+                "ecocCollection": { $$exists: false },
+                "eccCollection": { $$exists: false },
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
+                    }
+                ]
+            }
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
@@ -724,7 +778,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection"
-              encryptedFields: *encrypted_fields5
+              encryptedFields: {
+                # Expect state collections are not included in the encryptedFields sent to the server.
+                "escCollection": { $$exists: false },
+                "ecocCollection": { $$exists: false },
+                "eccCollection": { $$exists: false },
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
+                    }
+                ]
+            }
             command_name: create
             database_name: *database_name
         # libmongocrypt requests listCollections to get a schema for the "createIndexes" command.
@@ -905,7 +971,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection"
-              encryptedFields: *encrypted_fields6
+              encryptedFields: {
+                # Expect state collections are not included in the encryptedFields sent to the server.
+                "escCollection": { $$exists: false },
+                "ecocCollection": { $$exists: false },
+                "eccCollection": { $$exists: false },
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
+                    }
+                ]
+            }
             command_name: create
             database_name: *database_name
         # libmongocrypt requests listCollections to get a schema for the "createIndexes" command.
@@ -1058,7 +1136,19 @@ tests:
         - command_started_event:
             command:
               create: "encryptedCollection"
-              encryptedFields: *encrypted_fields7
+              encryptedFields: {
+                # Expect state collections are not included in the encryptedFields sent to the server.
+                "escCollection": { $$exists: false },
+                "ecocCollection": { $$exists: false },
+                "eccCollection": { $$exists: false },
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
+                    }
+                ]
+            }
             command_name: create
             database_name: *database_name
         # libmongocrypt requests listCollections to get a schema for the "createIndexes" command.
