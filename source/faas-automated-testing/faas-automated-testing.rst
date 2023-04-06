@@ -278,7 +278,7 @@ function inside of it:
 
 Drivers MUST run the function on a single variant in Evergreen, in order to not
 potentially hit the Atlas API rate limit. The variant itself MUST be either a
-RHEL7/8 or Ubuntu 20 variant in order to have the SAM CLI installed.
+RHEL8 or Ubuntu 20 variant in order to have the SAM CLI installed.
 
 The script itself:
 
