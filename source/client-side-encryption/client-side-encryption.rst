@@ -920,7 +920,7 @@ command.
    - ``enxcol_.<collectionName>.esc``
    - ``enxcol_.<collectionName>.ecoc`
 
-   Drivers SHOULD NOT document the ``escCollection`` and ``ecocCollection``
+   Drivers MUST NOT document the ``escCollection`` and ``ecocCollection``
    options.
 
 For a helper function, ``CreateCollection(collectionName, collectionOptions)``
