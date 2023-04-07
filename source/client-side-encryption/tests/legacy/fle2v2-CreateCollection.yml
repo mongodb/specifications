@@ -16,7 +16,7 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
-          default.encryptedCollection: &encrypted_fields0 {
+          default.encryptedCollection: &encrypted_fields {
                 "fields": [
                     {
                         "path": "firstName",
@@ -100,7 +100,7 @@ tests:
         - command_started_event:
             command:
               create: *encrypted_collection_name
-              encryptedFields: {
+              encryptedFields: &encrypted_fields_expectation {
                 # Expect state collections are not included in the encryptedFields sent to the server.
                 "escCollection": { $$exists: false },
                 "ecocCollection": { $$exists: false },
@@ -131,21 +131,7 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
-          default.encryptedCollection: &encrypted_fields1 {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }},
-                        "queries": {
-                            "queryType": "equality",
-                            "contention": {
-                                "$numberLong": "0"
-                            }
-                        }
-                    }
-                ]
-            }
+          default.encryptedCollection: *encrypted_fields
 
     operations:
       # Do an initial drop to remove collections that may exist from previous test runs.
@@ -221,25 +207,7 @@ tests:
         - command_started_event:
             command:
               create: *encrypted_collection_name
-              encryptedFields: {
-                # Expect state collections are not included in the encryptedFields sent to the server.
-                "escCollection": { $$exists: false },
-                "ecocCollection": { $$exists: false },
-                "eccCollection": { $$exists: false },
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }},
-                        "queries": {
-                            "queryType": "equality",
-                            "contention": {
-                                "$numberLong": "0"
-                            }
-                        }
-                    }
-                ]
-            }
+              encryptedFields: *encrypted_fields_expectation
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
@@ -258,21 +226,7 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
-          default.encryptedCollection: &encrypted_fields2 {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }},
-                        "queries": {
-                            "queryType": "equality",
-                            "contention": {
-                                "$numberLong": "0"
-                            }
-                        }
-                    }
-                ]
-            }
+          default.encryptedCollection: *encrypted_fields
 
     operations:
       # Do an initial drop to remove collections that may exist from previous test runs.
@@ -370,7 +324,7 @@ tests:
         - command_started_event:
             command:
               create: *encrypted_collection_name
-              encryptedFields: *encrypted_fields2
+              encryptedFields: *encrypted_fields
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
@@ -406,15 +360,7 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
-          default.encryptedCollection: {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          default.encryptedCollection: *encrypted_fields
     operations:
       # Do an initial drop to remove collections that may exist from previous test runs.
       - name: dropCollection
@@ -457,15 +403,7 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
-          default.encryptedCollection: &encrypted_fields4 {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          default.encryptedCollection: *encrypted_fields
     operations:
       # Do an initial drop to remove collections that may exist from previous test runs.
       - name: dropCollection
@@ -540,19 +478,7 @@ tests:
         - command_started_event:
             command:
               create: *encrypted_collection_name
-              encryptedFields: {
-                # Expect state collections are not included in the encryptedFields sent to the server.
-                "escCollection": { $$exists: false },
-                "ecocCollection": { $$exists: false },
-                "eccCollection": { $$exists: false },
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+              encryptedFields: *encrypted_fields_expectation
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
@@ -576,28 +502,12 @@ tests:
         object: database
         arguments:
           collection: *encrypted_collection_name
-          encryptedFields: {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          encryptedFields: *encrypted_fields
       - name: createCollection
         object: database
         arguments:
           collection: *encrypted_collection_name
-          encryptedFields: &encrypted_fields5 {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          encryptedFields: *encrypted_fields
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -662,19 +572,7 @@ tests:
         - command_started_event:
             command:
               create: *encrypted_collection_name
-              encryptedFields: {
-                # Expect state collections are not included in the encryptedFields sent to the server.
-                "escCollection": { $$exists: false },
-                "ecocCollection": { $$exists: false },
-                "eccCollection": { $$exists: false },
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+              encryptedFields: *encrypted_fields_expectation
             command_name: create
             database_name: *database_name
         # libmongocrypt requests listCollections to get a schema for the "createIndexes" command.
@@ -701,15 +599,7 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
-          default.encryptedCollection: {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          default.encryptedCollection: *encrypted_fields
     operations:
       - name: dropCollection
         object: database
@@ -745,28 +635,12 @@ tests:
         object: database
         arguments:
           collection: *encrypted_collection_name
-          encryptedFields: {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          encryptedFields: *encrypted_fields
       - name: createCollection
         object: database
         arguments:
           collection: *encrypted_collection_name
-          encryptedFields: {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          encryptedFields: *encrypted_fields
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -798,15 +672,7 @@ tests:
         object: database
         arguments:
           collection: *encrypted_collection_name
-          encryptedFields: &encrypted_fields6 {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          encryptedFields: *encrypted_fields
       # ecc collection is no longer created for QEv2
       - name: assertCollectionNotExists
         object: testRunner
@@ -859,19 +725,7 @@ tests:
         - command_started_event:
             command:
               create: *encrypted_collection_name
-              encryptedFields: {
-                # Expect state collections are not included in the encryptedFields sent to the server.
-                "escCollection": { $$exists: false },
-                "ecocCollection": { $$exists: false },
-                "eccCollection": { $$exists: false },
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+              encryptedFields: *encrypted_fields_expectation
             command_name: create
             database_name: *database_name
         # libmongocrypt requests listCollections to get a schema for the "createIndexes" command.
@@ -922,28 +776,12 @@ tests:
         object: database
         arguments:
           collection: *encrypted_collection_name
-          encryptedFields: {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          encryptedFields: *encrypted_fields
       - name: createCollection
         object: database
         arguments:
           collection: *encrypted_collection_name
-          encryptedFields: &encrypted_fields7 {
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+          encryptedFields: *encrypted_fields
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -1028,19 +866,7 @@ tests:
         - command_started_event:
             command:
               create: *encrypted_collection_name
-              encryptedFields: {
-                # Expect state collections are not included in the encryptedFields sent to the server.
-                "escCollection": { $$exists: false },
-                "ecocCollection": { $$exists: false },
-                "eccCollection": { $$exists: false },
-                "fields": [
-                    {
-                        "path": "firstName",
-                        "bsonType": "string",
-                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
-                    }
-                ]
-            }
+              encryptedFields: *encrypted_fields_expectation
             command_name: create
             database_name: *database_name
         # libmongocrypt requests listCollections to get a schema for the "createIndexes" command.

@@ -222,12 +222,6 @@
                       "subType": "04",
                       "base64": "AAAAAAAAAAAAAAAAAAAAAA=="
                     }
-                  },
-                  "queries": {
-                    "queryType": "equality",
-                    "contention": {
-                      "$numberLong": "0"
-                    }
                   }
                 }
               ]
@@ -373,12 +367,6 @@
                         "subType": "04",
                         "base64": "AAAAAAAAAAAAAAAAAAAAAA=="
                       }
-                    },
-                    "queries": {
-                      "queryType": "equality",
-                      "contention": {
-                        "$numberLong": "0"
-                      }
                     }
                   }
                 ]
@@ -424,12 +412,6 @@
                     "$binary": {
                       "subType": "04",
                       "base64": "AAAAAAAAAAAAAAAAAAAAAA=="
-                    }
-                  },
-                  "queries": {
-                    "queryType": "equality",
-                    "contention": {
-                      "$numberLong": "0"
                     }
                   }
                 }
@@ -598,12 +580,6 @@
                       "$binary": {
                         "subType": "04",
                         "base64": "AAAAAAAAAAAAAAAAAAAAAA=="
-                      }
-                    },
-                    "queries": {
-                      "queryType": "equality",
-                      "contention": {
-                        "$numberLong": "0"
                       }
                     }
                   }
