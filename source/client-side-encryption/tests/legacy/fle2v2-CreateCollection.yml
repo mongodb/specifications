@@ -1191,3 +1191,34 @@ tests:
             command_name: drop
             database_name: *database_name
         # events from dropCollection ... end
+  - description: "encryptedFields are consulted for metadata collection names"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          aws: {} # Credentials filled in from environment.
+        encryptedFieldsMap:
+          default.encryptedCollection: {
+                "escCollection": "invalid_esc_name",
+                "ecocCollection": "invalid_ecoc_name",
+                "fields": [
+                    {
+                        "path": "firstName",
+                        "bsonType": "string",
+                        "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
+                    }
+                ]
+            }
+
+    operations:
+      # Do an initial drop to remove collections that may exist from previous test runs.
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: "encryptedCollection"
+      - name: createCollection
+        object: database
+        arguments:
+          collection: "encryptedCollection"
+        result:
+          # Expect error due to server constraints added in SERVER-74069
+          errorContains: "Encrypted State Collection name should follow"
