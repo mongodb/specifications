@@ -15,7 +15,7 @@ tests:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
         encryptedFieldsMap:
-          default.encryptedCollection: &encrypted_fields0 {
+          default.encryptedCollection: {
                 "fields": [
                     {
                         "path": "firstName",
