@@ -158,15 +158,9 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": {
-                  "$$exists": false
-                },
-                "ecocCollection": {
-                  "$$exists": false
-                },
-                "eccCollection": {
-                  "$$exists": false
-                },
+                "escCollection": null,
+                "ecocCollection": null,
+                "eccCollection": null,
                 "fields": [
                   {
                     "path": "firstName",
@@ -349,15 +343,9 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": {
-                  "$$exists": false
-                },
-                "ecocCollection": {
-                  "$$exists": false
-                },
-                "eccCollection": {
-                  "$$exists": false
-                },
+                "escCollection": null,
+                "ecocCollection": null,
+                "eccCollection": null,
                 "fields": [
                   {
                     "path": "firstName",
@@ -863,15 +851,9 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": {
-                  "$$exists": false
-                },
-                "ecocCollection": {
-                  "$$exists": false
-                },
-                "eccCollection": {
-                  "$$exists": false
-                },
+                "escCollection": null,
+                "ecocCollection": null,
+                "eccCollection": null,
                 "fields": [
                   {
                     "path": "firstName",
@@ -1066,15 +1048,9 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": {
-                  "$$exists": false
-                },
-                "ecocCollection": {
-                  "$$exists": false
-                },
-                "eccCollection": {
-                  "$$exists": false
-                },
+                "escCollection": null,
+                "ecocCollection": null,
+                "eccCollection": null,
                 "fields": [
                   {
                     "path": "firstName",
@@ -1391,15 +1367,9 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": {
-                  "$$exists": false
-                },
-                "ecocCollection": {
-                  "$$exists": false
-                },
-                "eccCollection": {
-                  "$$exists": false
-                },
+                "escCollection": null,
+                "ecocCollection": null,
+                "eccCollection": null,
                 "fields": [
                   {
                     "path": "firstName",
@@ -1665,15 +1635,9 @@
             "command": {
               "create": "encryptedCollection",
               "encryptedFields": {
-                "escCollection": {
-                  "$$exists": false
-                },
-                "ecocCollection": {
-                  "$$exists": false
-                },
-                "eccCollection": {
-                  "$$exists": false
-                },
+                "escCollection": null,
+                "ecocCollection": null,
+                "eccCollection": null,
                 "fields": [
                   {
                     "path": "firstName",
