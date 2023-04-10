@@ -28,8 +28,8 @@
                   "bsonType": "string",
                   "keyId": {
                     "$binary": {
-                      "subType": "04",
-                      "base64": "AAAAAAAAAAAAAAAAAAAAAA=="
+                      "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                      "subType": "04"
                     }
                   }
                 }
