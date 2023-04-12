@@ -2675,7 +2675,7 @@ Before running each of the following test cases, perform the following Test Setu
 
 Test Setup
 ``````````
-Load the file for the specific data type being tested ``encryptedFields-<type>.json``. For example, for ``Int`` load `range-encryptedFields-Int.json <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/etc/data/range-encryptedFields-Int.json>`_ as ``encryptedFields``.
+Load the file for the specific data type being tested ``range-encryptedFields-<type>.json``. For example, for ``Int`` load `range-encryptedFields-Int.json <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/etc/data/range-encryptedFields-Int.json>`_ as ``encryptedFields``.
 
 Load the file `key1-document.json <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json>`_ as ``key1Document``.
 
