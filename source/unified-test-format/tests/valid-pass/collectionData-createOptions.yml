@@ -1,12 +1,9 @@
 description: collectionData-createOptions
-
 schemaVersion: "1.9"
-
 runOnRequirements:
   - minServerVersion: "3.6"
     # Capped collections cannot be created on serverless instances.
     serverless: forbid
-
 createEntities:
   - client:
       id: &client0 client0
@@ -18,7 +15,6 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name coll0
-
 initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
@@ -28,18 +24,14 @@ initialData:
       size: &cappedSize 4096
     documents:
       - { _id: 1, x: 11 }
-
 tests:
   - description: collection is created with the correct options
     operations:
-      # Execute a collStats command to ensure the collection was created with the correct options.
-      - name: runCommand
-        object: *database0
+      - object: *collection0
+        name: aggregate
         arguments:
-          commandName: collStats
-          command:
-            collStats: *collection0Name
-            scale: 1
+          pipeline:
+            - $collStats: { storageStats: {} }
+            - $project: { capped: '$storageStats.capped', maxSize: '$storageStats.maxSize'}
         expectResult:
-          capped: true
-          maxSize: *cappedSize
+          - { capped: true, maxSize: *cappedSize }
