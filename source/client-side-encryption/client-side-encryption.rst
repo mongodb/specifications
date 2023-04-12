@@ -115,7 +115,6 @@ encryptedFields
 
       {
           "escCollection": "enxcol_.CollectionName.esc",
-          "eccCollection": "enxcol_.CollectionName.ecc",
           "ecocCollection": "enxcol_.CollectionName.ecoc",
           "fields": [
               {
@@ -134,7 +133,6 @@ encryptedFields
 
    The acronyms within ``encryptedFields`` are defined as follows:
 
-   * ECC: Encrypted Cache Collection
    * ECOC: Encrypted Compaction Collection
    * ESC: Encrypted State Collection
 
@@ -914,6 +912,17 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 will be interpreted by the helper method and MUST be passed to the `create`_
 command.
 
+.. note::
+   Users are not expected to set the ``escCollection`` and ``ecocCollection`` in
+   ``encryptedFields``. SERVER-74069 added server-side validation for those fields
+   and no longer allows names to deviate from the following:
+
+   - ``enxcol_.<collectionName>.esc``
+   - ``enxcol_.<collectionName>.ecoc`
+
+   Drivers MUST NOT document the ``escCollection`` and ``ecocCollection``
+   options.
+
 For a helper function, ``CreateCollection(collectionName, collectionOptions)``
 with the name of the database associated as `dbName`, look up the encrypted
 fields ``encryptedFields`` for the collection as
@@ -924,17 +933,16 @@ If a set of ``encryptedFields`` was found, then do the following operations. If
 any of the following operations error, the remaining operations are not
 attempted:
 
+- Check the wire version of the writable server. If the wire version is less
+  than 21 (for server 7.0.0), return an error containing the error message:
+  "Driver support of Queryable Encryption is incompatible with server. Upgrade
+  server to use Queryable Encryption."
 - Create the collection with name ``encryptedFields["escCollection"]`` as a
   clustered collection using the options
   ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
   ``encryptedFields["escCollection"]`` is not set, use the collection name
   ``enxcol_.<collectionName>.esc``. Creating this collection MUST NOT check if
   the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["eccCollection"]`` as a
-  clustered collection using the options
-  ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
-  ``encryptedFields["eccCollection"]`` is not set, use the collection name
-  ``enxcol_.<collectionName>.ecc``. Creating this collection MUST NOT check if
   the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
 - Create the collection with name ``encryptedFields["ecocCollection"]`` as a
   clustered collection using the options
@@ -1002,6 +1010,17 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 ``Collection.drop()``). This option will only be interpreted by the helper
 method and MUST NOT be passed to the `drop`_ command.
 
+.. note::
+   Users are not expected to set the ``escCollection`` and ``ecocCollection`` in
+   ``encryptedFields``. SERVER-74069 added server-side validation for those fields
+   and no longer allows names to deviate from the following:
+
+   - ``enxcol_.<collectionName>.esc``
+   - ``enxcol_.<collectionName>.ecoc`
+
+   Drivers SHOULD NOT document the ``escCollection`` and ``ecocCollection``
+   options.
+
 For a helper function ``DropCollection(dropOptions)`` with associated collection
 named `collName` and database named `dbName`, look up the encrypted fields
 ``encryptedFields`` as `GetEncryptedFields(dropOptions, collName, dbname, true)`
@@ -1015,9 +1034,6 @@ are not attempted. A ``namespace not found`` error returned from the server
 - Drop the collection with name ``encryptedFields["escCollection"]``. If
   ``encryptedFields["escCollection"]`` is not set, use the collection name
   ``enxcol_.<collectionName>.esc``.
-- Drop the collection with name ``encryptedFields["eccCollection"]``. If
-  ``encryptedFields["eccCollection"]`` is not set, use the collection name
-  ``enxcol_.<collectionName>.ecc``.
 - Drop the collection with name ``encryptedFields["ecocCollection"]``. If
   ``encryptedFields["ecocCollection"]`` is not set, use the collection name
   ``enxcol_.<collectionName>.ecoc``.
@@ -2714,6 +2730,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2023-03-30: Remove ECC collection
 :2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
 :2023-01-31: ``createEncryptedCollection`` does not check AutoEncryptionOptions for the encryptedFieldsMap.
 :2023-01-30: Return ``encryptedFields`` on ``CreateCollection`` error.
