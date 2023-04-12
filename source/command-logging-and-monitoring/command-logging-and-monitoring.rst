@@ -417,6 +417,8 @@ The following key-value pairs MUST be included in all command messages:
    * - serverConnectionId
      - Int64
      - The server's ID for the connection used for the command. Optional; only present for server versions 4.2+.
+     - NOTE: Existing drivers may represent this as an Int32 already. For strongly-typed languages, you may have to introduce
+     -       a new Int64 field and deprecate the old Int32 field. The next major version should remove the old Int32 field.
 
    * - serviceId
      - String
