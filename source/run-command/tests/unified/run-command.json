@@ -12,10 +12,29 @@
       }
     },
     {
+      "client": {
+        "id": "stableApiClient",
+        "observeEvents": [
+          "commandStartedEvent"
+        ],
+        "serverApi": {
+          "version": "1",
+          "strict": true
+        }
+      }
+    },
+    {
       "database": {
         "id": "plainDb",
         "client": "client",
         "databaseName": "plainDb"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection",
+        "database": "plainDb",
+        "collectionName": "collection"
       }
     },
     {
@@ -40,9 +59,20 @@
     },
     {
       "session": {
-        "id": "session0",
+        "id": "session",
         "client": "client"
       }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "collection",
+      "databaseName": "plainDb",
+      "documents": [
+        {
+          "_id": 0
+        }
+      ]
     }
   ],
   "tests": [
@@ -91,7 +121,7 @@
             "command": {
               "ping": 1
             },
-            "session": "session0"
+            "session": "session"
           },
           "expectResult": {
             "ok": 1
@@ -107,7 +137,7 @@
                 "command": {
                   "ping": 1,
                   "lsid": {
-                    "$$sessionLsid": "session0"
+                    "$$sessionLsid": "session"
                   },
                   "$db": "plainDb"
                 },
@@ -264,6 +294,141 @@
           "expectError": {
             "isError": true
           }
+        }
+      ]
+    },
+    {
+      "description": "executes a insert via runCommand inside a transaction",
+      "operations": [
+        {
+          "name": "withTransaction",
+          "object": "session",
+          "arguments": {
+            "callback": [
+              {
+                "name": "runCommand",
+                "object": "plainDb",
+                "arguments": {
+                  "session": "session",
+                  "commandName": "insert",
+                  "command": {
+                    "insert": "collection",
+                    "documents": [
+                      {
+                        "_id": 1
+                      }
+                    ],
+                    "ordered": true
+                  }
+                },
+                "expectResult": {
+                  "$$unsetOrMatches": {
+                    "insertedId": {
+                      "$$unsetOrMatches": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "insert": "collection",
+                  "documents": [
+                    {
+                      "_id": 1
+                    }
+                  ],
+                  "ordered": true,
+                  "lsid": {
+                    "$$sessionLsid": "session"
+                  },
+                  "txnNumber": 1,
+                  "startTransaction": true,
+                  "autocommit": false,
+                  "readConcern": {
+                    "$$exists": false
+                  },
+                  "writeConcern": {
+                    "$$exists": false
+                  }
+                },
+                "commandName": "insert",
+                "databaseName": "plainDb"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "commitTransaction": 1,
+                  "lsid": {
+                    "$$sessionLsid": "session"
+                  },
+                  "txnNumber": 1,
+                  "autocommit": false,
+                  "writeConcern": {
+                    "$$exists": false
+                  },
+                  "readConcern": {
+                    "$$exists": false
+                  }
+                },
+                "commandName": "commitTransaction",
+                "databaseName": "admin"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "executes a ping with stableApi fields attached",
+      "runOnRequirements": {
+        "serverParameters": {
+          "requireApiVersion": false
+        }
+      },
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "plainDb",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            }
+          },
+          "expectResult": {
+            "ok": 1
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "ping": 1,
+                  "$db": "plainDb",
+                  "apiVersion": "1",
+                  "apiStrict": true,
+                  "apiDeprecationErrors": {
+                    "$$unsetOrMatches": false
+                  }
+                },
+                "commandName": "ping"
+              }
+            }
+          ]
         }
       ]
     }
