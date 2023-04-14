@@ -108,7 +108,7 @@ To facilitate selecting the server the command should be sent to a driver's runC
 
 * See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
 
-If the provided Read Preference is NOT primary, the final command document MUST include the ``$readPreference`` global command argument.
+If the provided Read Preference is NOT primary, the command sent MUST include the ``$readPreference`` global command argument.
 
 * See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
 
@@ -117,7 +117,7 @@ Driver Sessions
 
 A driver's runCommand API MUST provide an optional session option to support explicit sessions and transactions.
 Every ClientSession has a corresponding Logical Session ID representing the server side session ID.
-The LSID MUST be included under ``lsid`` in the final command sent to the server without modifying user input.
+The LSID MUST be included under ``lsid`` in the command sent to the server without modifying user input.
 
 * See Driver Sessions' section on `Sending the session ID to the server on all commands <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-session-id-to-the-server-on-all-commands>`_
 
@@ -125,7 +125,7 @@ Transactions
 """"""""""""
 
 If RunCommand is used within a Transaction the read preference MUST be sourced from the Transaction's options.
-The final command sent to the server MUST include the transaction specific fields, the following is a summary:
+The command sent to the server MUST include the transaction specific fields, the following is a summary:
 
 * If ``runCommand`` is executing within a transaction:
 
@@ -143,7 +143,7 @@ ReadConcern and WriteConcern
 """"""""""""""""""""""""""""
 
 A RunCommand API MUST NOT support either Read Concern nor Write Concern options.
-Additionally, unless within a transaction the final command MUST not have any Read Concern nor Write Concern fields applied that may be inherited from client, database, or collection options.
+Additionally, unless within a transaction the command sent MUST not have any Read Concern nor Write Concern fields applied that may be inherited from client, database, or collection options.
 
 * See Read Concern's section on `Generic Command Method <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#generic-command-method>`_
 * See Write Concern's section on `Generic Command Method <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#generic-command-method-1>`_
@@ -160,7 +160,7 @@ Drivers MUST NOT inspect the command to determine if it is a write and MUST NOT 
 Stable API
 """"""""""
 
-The final command MUST attach stable API fields as configured on the MongoClient.
+The command sent MUST attach stable API fields as configured on the MongoClient.
 
 * See Stable API's section on `Generic Command Helper Behaviour <https://github.com/mongodb/specifications/blob/master/source/versioned-api/versioned-api.rst#generic-command-helper>`_
 
