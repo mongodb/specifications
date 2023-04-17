@@ -74,7 +74,8 @@ The following represents how a runCommand API SHOULD be exposed.
       session?: ClientSession;
 
       /**
-       * An optional duration the driver should permit the command to run for before timing out the operation.
+       * An optional timeout option to govern the amount of time that a single operation can execute before control is returned to the user.
+       * This timeout applies to all of the work done to execute the operation, including but not limited to server selection, connection checkout, and server-side execution.
        *
        * @ see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
        */
