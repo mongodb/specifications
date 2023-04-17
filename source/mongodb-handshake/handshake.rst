@@ -328,8 +328,9 @@ variables are populated:
 | ``vercel``     | ``VERCEL``                                          |
 +----------------+-----------------------------------------------------+
 
-If none of those variables or variables for multiple names are populated the ``client.env``
-value MUST be entirely omitted.
+If none of those variables are populated the ``client.env`` value MUST be entirely omitted.  When
+variables for multiple ``client.env.name`` values are present, ``vercel`` takes precedence over
+``aws.lambda``; any other combination MUST cause ``client.env`` to be entirely omitted.
 
 Depending on which ``client.env.name`` has been selected, other fields in ``client.env`` SHOULD
 be populated:
@@ -347,9 +348,7 @@ be populated:
 +----------------+----------------------------+-------------------------------------+---------------+
 |                | ``client.env.region``      | ``FUNCTION_REGION``                 | string        |
 +----------------+----------------------------+-------------------------------------+---------------+
-| ``vercel``     | ``client.env.url``         | ``VERCEL_URL``                      | string        |
-+----------------+----------------------------+-------------------------------------+---------------+
-|                | ``client.env.region``      | ``VERCEL_REGION``                   | string        |
+| ``vercel``     | ``client.env.region``      | ``VERCEL_REGION``                   | string        |
 +----------------+----------------------------+-------------------------------------+---------------+
 
 Missing variables or variables with values not matching the expected type MUST cause the
@@ -518,8 +517,6 @@ command succeeds in the presence of the following sets of environment variables:
 
 +-------------------+------------------+
 | ``VERCEL``        | ``1``            |
-+-------------------+------------------+
-| ``VERCEL_URL``    | ``*.vercel.app`` |
 +-------------------+------------------+
 | ``VERCEL_REGION`` | ``cdg1``         |
 +-------------------+------------------+
