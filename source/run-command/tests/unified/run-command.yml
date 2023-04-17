@@ -68,7 +68,7 @@ tests:
                 $db: plainDb
               commandName: ping
 
-  - description: attaches the provided session lsid to ping command
+  - description: attaches the provided session lsid to given command
     operations:
       - name: runCommand
         object: plainDb
@@ -130,7 +130,7 @@ tests:
                 $db: dbWithRC
               commandName: ping
 
-  - description:  does not inherit writeConcern specified at the db level
+  - description: does not inherit writeConcern specified at the db level
     operations:
       - name: runCommand
         object: dbWithWC

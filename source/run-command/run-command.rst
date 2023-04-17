@@ -57,7 +57,7 @@ The following represents how a runCommand API SHOULD be exposed.
     interface RunCommandOptions {
       /**
        * An optional readPreference setting to apply to server selection logic.
-       * Also the value that MUST be applied to the command document as the $readPreference global command argument if not set to primary.
+       * This value MUST be applied to the command document as the $readPreference global command argument if not set to primary.
        *
        * @defaultValue primary
        *
@@ -74,7 +74,7 @@ The following represents how a runCommand API SHOULD be exposed.
       session?: ClientSession;
 
       /**
-       * An optional duration the command should be permitted to run for.
+       * An optional duration the driver should permit the command to run for before timing out the operation.
        *
        * @ see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
        */
@@ -93,7 +93,7 @@ RunCommand provides a way to access MongoDB server commands directly without req
 The API is intended to take a document from a user and apply a number of common driver internal concerns before forwarding the command to a server.
 In general, a driver SHOULD avoid inspecting or modifying the user's command document in an effort to remain forward compatible with any potential server commands.
 
-Drivers that have historically modified user input SHOULD strive to instead clone the input such that appended fields do not effect the user's input.
+Drivers that have historically modified user input SHOULD strive to instead clone the input such that appended fields do not affect the user's input.
 
 OP_MSG
 """"""
