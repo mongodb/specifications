@@ -2,7 +2,7 @@
 FaaS Automated Testing
 ======================
 
-:Status: 
+:Status:
 :Minimum Server Version: 3.6
 
 .. contents::
@@ -52,7 +52,7 @@ Prerequisites
 For the initial local setup the following are required:
 
 - The docker daemon running on the local machine.
-- The [https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html](AWS SAM CLI)
+- The `AWS SAM CLI <https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html>`_
 
 The following environment variables MUST be present:
 
@@ -198,7 +198,7 @@ Drivers MUST setup the function as would be done in their appropriate language. 
 the function implementation the driver MUST:
 
 - Create a MongoClient that points to MONGODB_URI.
-- Add listeners for the following monitoring events: ServerHeartbeatStarted, 
+- Add listeners for the following monitoring events: ServerHeartbeatStarted,
   ServerHeartbeatFailed, CommandSucceeded, CommandFailed, ConnectionCreated,
   ConnectionClosed.
 - Drivers MUST perform a single insert and then a single delete of the inserted document
