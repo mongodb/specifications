@@ -90,6 +90,7 @@ tests:
                   },
                   "u": { "$set": { "foo": "bar"} }
                 }
+            ordered: true
             encryptionInformation:
               type: 1
               schema:
@@ -188,6 +189,7 @@ tests:
                   },
                   "u": { "$set": { "encryptedIndexed": { "$$type": "binData" }} }
                 }
+            ordered: true
             encryptionInformation:
               type: 1
               schema:

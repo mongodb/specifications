@@ -106,6 +106,7 @@ tests:
                       "limit": 1
                   }
               ]
+            ordered: true
             encryptionInformation:
               type: 1
               schema:
