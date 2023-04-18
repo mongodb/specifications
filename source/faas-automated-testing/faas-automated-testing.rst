@@ -145,6 +145,17 @@ Then follow the remaining prompts for the driver language to finish setup. Drive
 choose to also enable X-Ray tracing and CloudWatch Application Insights during these
 next steps.
 
+*NOTE* - If the driver wants to skip prompts in the setup it can provide defaults to the
+sam init command. Example:
+
+.. code:: none
+
+  sam init --name my-hello-world-app \
+      --app-template "hello-world" \
+      --runtime go1.x \
+      --package-type Zip
+
+
 Function Setup
 ``````````````
 
@@ -182,6 +193,18 @@ Do not change the `Handler` and `Runtime` properties.
         Environment:
           Variables:
             MONGODB_URI: !Ref MongoDbUri
+
+If the generated template contains Resources.Events.CatchAll.Properties.Path then change it
+to /mongodb and if it also contains Resources.Handler modify that to mongodb as well.
+
+.. code:: yaml
+
+  Resources:
+    Events:
+      CatchAll:
+        Properties:
+          Path: /mongodb
+    Handler: mongodb
 
 Run the function locally from the same directory where the template.yaml resides:
 
@@ -246,6 +269,23 @@ variables. An explanation of the required environment is as follows:
 +-------------------------------+-------------------------------------+
 
 
+Supported Evergreen variants that have the AWS SAM CLI installed:
+
+- ubuntu2204
+- ubuntu1804
+- ubuntu1804-workstation
+- ubuntu2204-arm64
+- ubuntu2004-arm64
+- ubuntu1804-arm64
+- rhel90
+- rhel80
+- rhel84
+- rhel90-selinux
+- rhel80-selinux
+- rhel90-arm64
+- rhel82-arm64
+
+
 This is an example function in the Evergreen config that accomplishes this, using
 subprocess.exec to execute a script that calls the drivers-evergreen-tools
 function inside of it:
@@ -301,3 +341,8 @@ Description of the behaviour of run-deployed-lambda-aws-tests.sh:
 - Deletes the Lambda function.
 - Deletes the Atlas cluster.
 
+
+Changelog
+=========
+
+:2023-04-14: Added list of supported variants, added additional template config.
