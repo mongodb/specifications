@@ -73,7 +73,7 @@ The following represents how a runCommand API SHOULD be exposed.
 
       /**
        * An optional explicit client session.
-       * The associated logical session id (`lsid`) MUST be applied to the command.
+       * The associated logical session id (`lsid`) the driver MUST apply to the command.
        *
        * @see https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#clientsession
        */
