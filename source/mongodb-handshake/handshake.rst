@@ -170,8 +170,7 @@ provided as a BSON object. This object has the following structure::
                 name: "<string>",         /* REQUIRED */
                 timeout_sec: 42,          /* OPTIONAL */
                 memory_mb: 1024,          /* OPTIONAL */
-                region: "<string>",       /* OPTIONAL */
-                url: "<string>"           /* OPTIONAL */
+                region: "<string>"        /* OPTIONAL */
             }
         }
     }
