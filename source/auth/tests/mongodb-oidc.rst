@@ -82,10 +82,28 @@ Allowed Hosts Blocked
   ``ALLOWED_HOSTS`` that is an empty list.
 - Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
-- Create a client that uses the OIDC url and a request callback, and an
-  ``ALLOWED_HOSTS`` that contains ["localhost1"].
+- Create a client that uses the url ``mongodb://localhost/?authMechanism=MONGODB-OIDC&ignored=example.com`` and a request callback, and an
+  ``ALLOWED_HOSTS`` that contains ["example.com"].
 - Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
+
+Lock Avoids Extra Callback Calls
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Clear the cache.
+- Create a request callback that returns a token that will expire soon, and
+  a refresh callback.  Ensure that the request callback has a time delay, and
+  that we can record the number of times each callback is called.
+- Spawn two threads that do the following:
+  - Create a client with the callbacks.
+  - Run a find operation that succeeds.
+  - Close the client.
+  - Create a new client with the callbacks.
+  - Run a find operation that succeeds.
+  - Close the client.
+- Join the two threads.
+- Ensure that the request callback has been called once, and the refresh
+  callback has been called twice.
 
 AWS Automatic Auth
 ==================
@@ -114,7 +132,7 @@ Multiple Principal User 2
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 - Restore the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable
-  to the location of valid ``test_user2`` credentials.
+  to the location of valid ``test_user1`` credentials.
 
 Allowed Hosts Ignored
 ~~~~~~~~~~~~~~~~~~~~~
@@ -250,7 +268,7 @@ Error clears cache
   credentials.
 - Ensure that a ``find`` operation adds a new entry to the cache.
 - Ensure that a subsequent ``find`` operation results in an error.
-- Ensure that the cached token has been cleared.
+- Ensure that the cached access token has been cleared.
 - Close the client.
 
 AWS Automatic workflow does not use cache
@@ -398,3 +416,38 @@ Retries and Fails with no Cache
 
 - Perform a ``find`` operation that fails.
 - Close the client.
+
+Separate Connections Avoid Extra Callback Calls
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Clear the cache.
+- Create request and refresh callbacks that return tokens that will not expire
+  soon.  Ensure that we can record the number of times each callback is called.
+- Create two clients using the callbacks
+- Peform a find operation on each client that succeeds.
+- Ensure that the request callback has been called once and the refresh
+  callback has not been called.
+- Force a reauthenication on the first client using a ``failCommand`` of the
+  form:
+
+.. code:: javascript
+
+    {
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 1
+      },
+      "data": {
+        "failCommands": [
+          "find"
+        ],
+        "errorCode": 391
+      }
+    }
+
+- Perform a ``find`` operation that succeds.
+- Ensure that the request callback has been called once and the refresh
+  callback has been called once.
+- Repeat the ``failCommand`` and ``find`` operation on the second client.
+- Ensure that the request callback has been called once and the refresh
+  callback has been called once.
+- Close both clients.
