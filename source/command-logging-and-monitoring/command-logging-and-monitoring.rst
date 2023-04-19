@@ -237,10 +237,9 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     /**
      * Returns the server connection id for the command. The server connection id is distinct from
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
-     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
-     * value, but the server's behavior is to return an Int32.
+     * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
      */
-    serverConnectionId: Optional<Int32>;
+    serverConnectionId: Optional<Int64>;
 
     /**
      * Returns the service id for the command when the driver is in load balancer mode.
@@ -291,10 +290,9 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     /**
      * Returns the server connection id for the command. The server connection id is distinct from
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
-     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
-     * value, but the server's behavior is to return an Int32.
+     * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
      */
-    serverConnectionId: Optional<Int32>;
+    serverConnectionId: Optional<Int64>;
 
     /**
      * Returns the service id for the command when the driver is in load balancer mode.
@@ -346,10 +344,9 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     /**
      * Returns the server connection id for the command. The server connection id is distinct from
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
-     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
-     * value, but the server's behavior is to return an Int32.
+     * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
      */
-    serverConnectionId: Optional<Int32>;
+    serverConnectionId: Optional<Int64>;
 
     /**
      * Returns the service id for the command when the driver is in load balancer mode.
@@ -401,7 +398,7 @@ The following key-value pairs MUST be included in all command messages:
      - The driver-generated operation ID. Optional; only present if the driver generated operation IDs and this command has one. 
 
    * - driverConnectionId
-     - Int
+     - Int64
      - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandStartedEvent.connectionId`` defined above,
        but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
        Unlike ``CommandStartedEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
@@ -418,8 +415,10 @@ The following key-value pairs MUST be included in all command messages:
        the user does not specify a port and the default (27017) is used, the driver SHOULD include it here. 
 
    * - serverConnectionId
-     - Int
+     - Int64
      - The server's ID for the connection used for the command. Optional; only present for server versions 4.2+.
+       NOTE: Existing drivers may represent this as an Int32 already. For strongly-typed languages, you may have to introduce
+       a new Int64 field and deprecate the old Int32 field. The next major version should remove the old Int32 field.
 
    * - serviceId
      - String
@@ -560,3 +559,4 @@ Changelog
 :2022-12-13: Updated log message ``serverPort`` field description to clarify drivers should populate it with the
              default port 27017 when relevant. Updated suggested unstructured forms of log messages to more
              clearly label connection IDs and use more readable server address representations.
+:2023-03-23: Updated ``serverConnectionId`` field to be Int64 as long-running servers can return Int64.
