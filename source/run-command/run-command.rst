@@ -122,7 +122,7 @@ Driver Sessions
 """""""""""""""
 
 A driver's RunCommand MUST provide an optional session option to support explicit sessions and transactions.
-If a session is not provided the driver MUST attach an implicit session if the selected server supports sessions.
+If a session is not provided the driver MUST attach an implicit session if the connection supports sessions.
 Drivers MUST NOT attempt to check the command document for the presence of a ``lsid``.
 
 Every ClientSession has a corresponding Logical Session ID representing the server-side session ID.
