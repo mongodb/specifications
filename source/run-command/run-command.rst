@@ -47,7 +47,7 @@ The following represents how a runCommand API SHOULD be exposed.
 
 .. code:: typescript
 
-    interface Db {
+    interface Database {
       /**
        * Takes an argument representing an arbitrary BSON document and executes it against the server.
        */
@@ -59,7 +59,7 @@ The following represents how a runCommand API SHOULD be exposed.
        * An optional readPreference setting to apply to server selection logic.
        * This value MUST be applied to the command document as the $readPreference global command argument if not set to primary.
        *
-       * @defaultValue primary
+       * @defaultValue ReadPreference(mode: primary)
        *
        * @see https://www.mongodb.com/docs/manual/core/read-preference/
        */
@@ -99,7 +99,7 @@ Drivers that have historically modified user input SHOULD strive to instead clon
 OP_MSG
 """"""
 
-The ``$db`` global command argument MUST be sent on the command sent to the server and it MUST correspond to the database name the runCommand API was invoked on.
+The ``$db`` global command argument MUST be set on the command sent to the server and it MUST equal the database name the runCommand API was invoked on.
 
 * See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
 
@@ -107,11 +107,11 @@ ReadPreference
 """"""""""""""
 
 A driver's runCommand implementation MUST assume all commands are read operations.
-To facilitate selecting the server the command should be sent to a driver's runCommand MUST accept an optional Read Preference option.
+To facilitate server selection the runCommand operation MUST accept an optional Read Preference option.
 
 * See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
 
-If the provided Read Preference is NOT primary, the command sent MUST include the ``$readPreference`` global command argument.
+If the provided ReadPreference is NOT ``{mode: primary}``, the command sent MUST include the ``$readPreference`` global command argument.
 
 * See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
 
@@ -121,7 +121,7 @@ Driver Sessions
 A driver's runCommand API MUST provide an optional session option to support explicit sessions and transactions.
 If a session is not provided the driver MUST attach an implicit session if the selected server supports sessions.
 
-Every ClientSession has a corresponding Logical Session ID representing the server side session ID.
+Every ClientSession has a corresponding Logical Session ID representing the server-side session ID.
 The Logical Session ID MUST be included under ``lsid`` in the command sent to the server without modifying user input.
 
 * See Driver Sessions' section on `Sending the session ID to the server on all commands <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-session-id-to-the-server-on-all-commands>`_
@@ -129,7 +129,7 @@ The Logical Session ID MUST be included under ``lsid`` in the command sent to th
 Transactions
 """"""""""""
 
-If RunCommand is used within a Transaction the read preference MUST be sourced from the Transaction's options.
+If runCommand is used within a transaction the read preference MUST be sourced from the transaction's options.
 The command sent to the server MUST include the transaction specific fields, summarized as follows:
 
 * If ``runCommand`` is executing within a transaction:
@@ -140,15 +140,18 @@ The command sent to the server MUST include the transaction specific fields, sum
 * If ``runCommand`` is the first operation of the transaction:
 
   * ``startTransaction`` - MUST be set to true.
-  * ``readConcern`` - MUST be set to the Transaction's readConcern setting if it is NOT the default.
+  * ``readConcern`` - MUST be set to the transaction's read concern if it is NOT the default.
 
-* See Transactions' section on `Generic RunCommand helper within a transaction <https://github.com/mongodb/specifications/blob/master/source/transactions/transactions.rst#generic-runcommand-helper-within-a-transaction>`_
+* See `Generic RunCommand helper within a transaction <https://github.com/mongodb/specifications/blob/master/source/transactions/transactions.rst#generic-runcommand-helper-within-a-transaction>`_ in the Transactions specification.
 
 ReadConcern and WriteConcern
 """"""""""""""""""""""""""""
 
-A RunCommand API MUST NOT support Read Concern and Write Concern options.
-Additionally, unless within a transaction, the command sent MUST NOT have any Read Concern or Write Concern fields applied that may be inherited from client, database, or collection options.
+RunCommand MUST NOT support read concern and write concern options.
+
+Additionally, unless executing within a transaction, the RunCommand operation MUST NOT set the ``readConcern`` or ``writeConcern`` fields in the command document. For example, default values MUST NOT be inherited from client, database, or collection options.
+
+If the user-provided command document already includes ``readConcern`` or ``writeConcern`` fields, the values MUST be left as-is.
 
 * See Read Concern's section on `Generic Command Method <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#generic-command-method>`_
 * See Write Concern's section on `Generic Command Method <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#generic-command-method-1>`_
@@ -172,7 +175,7 @@ The command sent MUST attach stable API fields as configured on the MongoClient.
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""
 
-A driver's runCommand API MUST provide an optional timeoutMS option to support client side operations timeout.
+A driver's runCommand API MUST provide an optional ``timeoutMS`` option to support client side operations timeout.
 Drivers MUST NOT attempt to check the command document for the presence of a ``maxTimeMS`` field.
 Drivers MUST document the behavior of runCommand if a ``maxTimeMS`` field  is already set on the command (such as overwriting the command field).
 
