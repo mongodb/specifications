@@ -102,15 +102,15 @@ Drivers that have historically modified user input SHOULD strive to instead clon
 OP_MSG
 """"""
 
-The ``$db`` global command argument MUST be set on the command sent to the server and it MUST equal the database name the runCommand API was invoked on.
+The ``$db`` global command argument MUST be set on the command sent to the server and it MUST equal the database name RunCommand was invoked on.
 
 * See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
 
 ReadPreference
 """"""""""""""
 
-For the purposes of server selection a RunCommand MUST assume all commands are read operations.
-To facilitate server selection the runCommand operation MUST accept an optional Read Preference option.
+For the purposes of server selection RunCommand MUST assume all commands are read operations.
+To facilitate server selection the RunCommand operation MUST accept an optional Read Preference option.
 
 * See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
 
@@ -121,7 +121,7 @@ If the provided ReadPreference is NOT ``{mode: primary}``, the command sent MUST
 Driver Sessions
 """""""""""""""
 
-A driver's runCommand API MUST provide an optional session option to support explicit sessions and transactions.
+A driver's RunCommand MUST provide an optional session option to support explicit sessions and transactions.
 If a session is not provided the driver MUST attach an implicit session if the selected server supports sessions.
 Drivers MUST NOT attempt to check the command document for the presence of a ``lsid``.
 
@@ -133,7 +133,7 @@ The Logical Session ID MUST be included under ``lsid`` in the command sent to th
 Transactions
 """"""""""""
 
-If runCommand is used within a transaction the read preference MUST be sourced from the transaction's options.
+If RunCommand is used within a transaction the read preference MUST be sourced from the transaction's options.
 The command sent to the server MUST include the transaction specific fields, summarized as follows:
 
 * If ``runCommand`` is executing within a transaction:
@@ -154,7 +154,7 @@ ReadConcern and WriteConcern
 RunCommand MUST NOT support read concern and write concern options.
 Drivers MUST NOT attempt to check the command document for the presence of a ``readConcern`` and ``writeConcern`` field.
 
-Additionally, unless executing within a transaction, the RunCommand operation MUST NOT set the ``readConcern`` or ``writeConcern`` fields in the command document.
+Additionally, unless executing within a transaction, RunCommand MUST NOT set the ``readConcern`` or ``writeConcern`` fields in the command document.
 For example, default values MUST NOT be inherited from client, database, or collection options.
 
 If the user-provided command document already includes ``readConcern`` or ``writeConcern`` fields, the values MUST be left as-is.
@@ -181,9 +181,9 @@ The command sent MUST attach stable API fields as configured on the MongoClient.
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""
 
-A driver's runCommand API MUST provide an optional ``timeoutMS`` option to support client side operations timeout.
+RunCommand MUST provide an optional ``timeoutMS`` option to support client side operations timeout.
 Drivers MUST NOT attempt to check the command document for the presence of a ``maxTimeMS`` field.
-Drivers MUST document the behavior of runCommand if a ``maxTimeMS`` field  is already set on the command (such as overwriting the command field).
+Drivers MUST document the behavior of RunCommand if a ``maxTimeMS`` field  is already set on the command (such as overwriting the command field).
 
 * See Client Side Operations Timeout's section on `runCommand <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand>`_
 * See Client Side Operations Timeout's section on `runCommand behavior <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand-behavior>`_
