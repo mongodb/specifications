@@ -93,9 +93,11 @@ RunCommand implementation details
 
 RunCommand provides a way to access MongoDB server commands directly without requiring a driver to implement a bespoke helper.
 The API is intended to take a document from a user and apply a number of common driver internal concerns before forwarding the command to a server.
-In general, a driver SHOULD avoid inspecting or modifying the user's command document in an effort to remain forward compatible with any potential server commands.
+A driver MUST not inspect the user's command, this includes checking for the fields a driver MUST attach to the command sent as described below.
+Depending on a drivers BSON implementation this can result in these fields being overwritten or duplicated, a driver SHOULD document that using these fields has undefined behavior.
+A driver MUST not modify the user's command, a clone SHOULD be created before the driver attaches any of the required fields to the command.
 
-Drivers that have historically modified user input SHOULD strive to instead clone the input such that appended fields do not affect the user's input.
+Drivers that have historically modified user input SHOULD strive to instead clone the input such that appended fields do not affect the user's input in their next major version.
 
 OP_MSG
 """"""
