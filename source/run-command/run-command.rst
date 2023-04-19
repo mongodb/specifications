@@ -39,6 +39,12 @@ Implementation requirements
 All drivers MAY offer the operations defined in the following sections.
 This does not preclude a driver from offering more.
 
+----------
+Deviations
+----------
+
+Please refer to `The CRUD specification's Guidance <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#guidance>`_ on how APIs may deviate between languages.
+
 --------------
 ``runCommand``
 --------------
@@ -81,11 +87,6 @@ The following represents how a runCommand API SHOULD be exposed.
        */
       timeoutMS?: number;
     }
-
-Deviations
-^^^^^^^^^^
-
-* Drivers MAY rename their API to match the language syntax.
 
 RunCommand implementation details
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
