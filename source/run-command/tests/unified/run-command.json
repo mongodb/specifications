@@ -121,7 +121,7 @@
       ]
     },
     {
-      "description": "attaches the provided session lsid to ping command",
+      "description": "attaches the provided session lsid to given command",
       "operations": [
         {
           "name": "runCommand",

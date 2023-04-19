@@ -4,55 +4,55 @@ schemaVersion: "1.5"
 
 createEntities:
   - client:
-      id: client
+      id: &client client
       observeEvents: [commandStartedEvent]
   - database:
-      id: plainDb
-      client: client
-      databaseName: plainDb
+      id: &plainDb plainDb
+      client: *client
+      databaseName: *plainDb
   - collection:
-      id: collection
-      database: plainDb
-      collectionName: collection
+      id: &collection collection
+      database: *plainDb
+      collectionName: *collection
   - database:
-      id: dbWithRC
-      client: client
-      databaseName: dbWithRC
+      id: &dbWithRC dbWithRC
+      client: *client
+      databaseName: *dbWithRC
       databaseOptions:
         readConcern:
           level: 'local'
   - database:
-      id: dbWithWC
-      client: client
-      databaseName: dbWithWC
+      id: &dbWithWC dbWithWC
+      client: *client
+      databaseName: *dbWithWC
       databaseOptions:
         writeConcern:
           w: 0
   - session:
-      id: session
-      client: client
+      id: &session session
+      client: *client
   # Stable API test
   - client:
-      id: stableApiClient
+      id: &stableApiClient stableApiClient
       observeEvents: [commandStartedEvent]
       serverApi:
         version: "1"
         strict: true
   - database:
-      id: stableApiDb
-      client: stableApiClient
-      databaseName: stableApiDb
+      id: &stableApiDb stableApiDb
+      client: *stableApiClient
+      databaseName: *stableApiDb
 
 initialData:
-- collectionName: collection
-  databaseName: plainDb
+- collectionName: *collection
+  databaseName: *plainDb
   documents: [ { _id: 0 } ]
 
 tests:
   - description: always attaches $db to given command
     operations:
       - name: runCommand
-        object: plainDb
+        object: *plainDb
         arguments:
           commandName: ping
           command:
@@ -60,39 +60,39 @@ tests:
         expectResult:
           ok: 1
     expectEvents:
-      - client: client
+      - client: *client
         events:
         - commandStartedEvent:
               command:
                 ping: 1
-                $db: plainDb
+                $db: *plainDb
               commandName: ping
 
   - description: attaches the provided session lsid to given command
     operations:
       - name: runCommand
-        object: plainDb
+        object: *plainDb
         arguments:
           commandName: ping
           command:
             ping: 1
-          session: session
+          session: *session
         expectResult:
           ok: 1
     expectEvents:
-      - client: client
+      - client: *client
         events:
         - commandStartedEvent:
               command:
                 ping: 1
-                lsid: { $$sessionLsid: session }
-                $db: plainDb
+                lsid: { $$sessionLsid: *session }
+                $db: *plainDb
               commandName: ping
 
   - description: attaches the provided $readPreference to given command
     operations:
       - name: runCommand
-        object: plainDb
+        object: *plainDb
         arguments:
           commandName: ping
           command:
@@ -101,19 +101,19 @@ tests:
         expectResult:
           ok: 1
     expectEvents:
-      - client: client
+      - client: *client
         events:
         - commandStartedEvent:
               command:
                 ping: 1
                 $readPreference: { mode: 'nearest' }
-                $db: plainDb
+                $db: *plainDb
               commandName: ping
 
   - description: does not inherit readConcern specified at the db level
     operations:
       - name: runCommand
-        object: dbWithRC
+        object: *dbWithRC
         arguments:
           commandName: ping
           command:
@@ -121,19 +121,19 @@ tests:
         expectResult:
           ok: 1
     expectEvents:
-      - client: client
+      - client: *client
         events:
         - commandStartedEvent:
               command:
                 ping: 1
                 readConcern: { $$exists: false }
-                $db: dbWithRC
+                $db: *dbWithRC
               commandName: ping
 
   - description: does not inherit writeConcern specified at the db level
     operations:
       - name: runCommand
-        object: dbWithWC
+        object: *dbWithWC
         arguments:
           commandName: ping
           command:
@@ -141,13 +141,13 @@ tests:
         expectResult:
           ok: 1
     expectEvents:
-      - client: client
+      - client: *client
         events:
         - commandStartedEvent:
               command:
                 ping: 1
                 writeConcern: { $$exists: false }
-                $db: dbWithWC
+                $db: *dbWithWC
               commandName: ping
 
   - description: does not retry retryable errors on given command
@@ -155,7 +155,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: client
+          client: *client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -163,7 +163,7 @@ tests:
               failCommands: [ping]
               closeConnection: true
       - name: runCommand
-        object: plainDb
+        object: *plainDb
         arguments:
           commandName: ping
           command:
@@ -177,28 +177,28 @@ tests:
         minServerVersion: '4.4'
     operations:
       - name: withTransaction
-        object: session
+        object: *session
         arguments:
           callback:
             - name: runCommand
-              object: plainDb
+              object: *plainDb
               arguments:
-                session: session
+                session: *session
                 commandName: insert
                 command:
-                  insert: collection
+                  insert: *collection
                   documents: [ { _id: 1 } ]
                   ordered: true
               expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
     expectEvents:
-      - client: client
+      - client: *client
         events:
           - commandStartedEvent:
               command:
-                insert: collection
+                insert: *collection
                 documents: [ { _id: 1 } ]
                 ordered: true
-                lsid: { $$sessionLsid: session }
+                lsid: { $$sessionLsid: *session }
                 txnNumber: 1
                 startTransaction: true
                 autocommit: false
@@ -206,11 +206,11 @@ tests:
                 readConcern: { $$exists: false }
                 writeConcern: { $$exists: false }
               commandName: insert
-              databaseName: plainDb
+              databaseName: *plainDb
           - commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid: { $$sessionLsid: session }
+                lsid: { $$sessionLsid: *session }
                 txnNumber: 1
                 autocommit: false
                 # omitted fields
@@ -222,7 +222,7 @@ tests:
   - description: attaches apiVersion fields to given command when stableApi is configured on the client
     operations:
       - name: runCommand
-        object: stableApiDb
+        object: *stableApiDb
         arguments:
           commandName: ping
           command:
@@ -230,12 +230,12 @@ tests:
         expectResult:
           ok: 1
     expectEvents:
-      - client: stableApiClient
+      - client: *stableApiClient
         events:
         - commandStartedEvent:
               command:
                 ping: 1
-                $db: stableApiDb
+                $db: *stableApiDb
                 apiVersion: "1"
                 apiStrict: true
                 apiDeprecationErrors: { $$unsetOrMatches: false }
