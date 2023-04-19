@@ -107,7 +107,7 @@ The ``$db`` global command argument MUST be set on the command sent to the serve
 ReadPreference
 """"""""""""""
 
-A driver's runCommand implementation MUST assume all commands are read operations.
+For the purposes of server selection a RunCommand MUST assume all commands are read operations.
 To facilitate server selection the runCommand operation MUST accept an optional Read Preference option.
 
 * See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
