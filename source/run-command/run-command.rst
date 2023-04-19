@@ -160,7 +160,7 @@ If the user-provided command document already includes ``readConcern`` or ``writ
 Retryability
 """"""""""""
 
-All commands passed to runCommand are considered non-retryable reads.
+All commands executed via RunCommand are non-retryable operations.
 Drivers MUST NOT inspect the command to determine if it is a write and MUST NOT attach a ``txnNumber``.
 
 * See Retryable Reads' section on `Unsupported Read Operations <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/retryable-reads.rst#unsupported-read-operations>`_
