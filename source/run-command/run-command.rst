@@ -61,7 +61,7 @@ The following represents how a runCommand API SHOULD be exposed.
        *
        * @defaultValue ReadPreference(mode: primary)
        *
-       * @see https://www.mongodb.com/docs/manual/core/read-preference/
+       * @see https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#read-preference
        */
       readPreference?: ReadPreference;
 
@@ -69,7 +69,7 @@ The following represents how a runCommand API SHOULD be exposed.
        * An optional explicit client session.
        * The associated logical session id (`lsid`) MUST be applied to the command.
        *
-       * @see https://www.mongodb.com/docs/manual/core/read-isolation-consistency-recency/#std-label-sessions
+       * @see https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#clientsession
        */
       session?: ClientSession;
 
