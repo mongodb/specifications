@@ -1548,6 +1548,7 @@ Changelog
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-10-14: Add connection pool log messages and associated tests.
+:2023-04-17: Fix duplicate logging test description.
 
 ----
 
