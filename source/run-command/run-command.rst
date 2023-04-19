@@ -121,6 +121,7 @@ Driver Sessions
 
 A driver's runCommand API MUST provide an optional session option to support explicit sessions and transactions.
 If a session is not provided the driver MUST attach an implicit session if the selected server supports sessions.
+Drivers MUST NOT attempt to check the command document for the presence of a ``lsid``.
 
 Every ClientSession has a corresponding Logical Session ID representing the server-side session ID.
 The Logical Session ID MUST be included under ``lsid`` in the command sent to the server without modifying user input.
@@ -149,8 +150,10 @@ ReadConcern and WriteConcern
 """"""""""""""""""""""""""""
 
 RunCommand MUST NOT support read concern and write concern options.
+Drivers MUST NOT attempt to check the command document for the presence of a ``readConcern`` and ``writeConcern`` field.
 
-Additionally, unless executing within a transaction, the RunCommand operation MUST NOT set the ``readConcern`` or ``writeConcern`` fields in the command document. For example, default values MUST NOT be inherited from client, database, or collection options.
+Additionally, unless executing within a transaction, the RunCommand operation MUST NOT set the ``readConcern`` or ``writeConcern`` fields in the command document.
+For example, default values MUST NOT be inherited from client, database, or collection options.
 
 If the user-provided command document already includes ``readConcern`` or ``writeConcern`` fields, the values MUST be left as-is.
 
