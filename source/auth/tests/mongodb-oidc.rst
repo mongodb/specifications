@@ -239,7 +239,7 @@ considered as part of the cache key.
 - Ensure that a ``find`` operation adds credentials to the cache.
 - Close the client.
 - Create a new client with a different request callback.
-- Ensure that a ``find`` operation adds a new entry to the cache.
+- Ensure that a ``find`` operation replaces the one-time use entry and adds a new entry to the cache.
 - Close the client.
 
 Error clears cache
