@@ -1,5 +1,5 @@
 {
-  "description": "runCommand spec requirements",
+  "description": "runCommand",
   "schemaVersion": "1.5",
   "createEntities": [
     {
