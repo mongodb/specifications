@@ -44,7 +44,7 @@ createEntities:
 initialData:
 - collectionName: *collection
   databaseName: *db
-  documents: [ { _id: 0 } ]
+  documents: []
 
 tests:
   - description: always attaches $db to given command
@@ -58,7 +58,7 @@ tests:
     expectEvents:
       - client: *client
         events:
-        - commandStartedEvent:
+          - commandStartedEvent:
               command:
                 ping: 1
                 $db: *db
@@ -76,7 +76,7 @@ tests:
     expectEvents:
       - client: *client
         events:
-        - commandStartedEvent:
+          - commandStartedEvent:
               command:
                 ping: 1
                 lsid: { $$sessionLsid: *session }
@@ -95,7 +95,7 @@ tests:
     expectEvents:
       - client: *client
         events:
-        - commandStartedEvent:
+          - commandStartedEvent:
               command:
                 ping: 1
                 $readPreference: { mode: 'nearest' }
@@ -113,7 +113,7 @@ tests:
     expectEvents:
       - client: *client
         events:
-        - commandStartedEvent:
+          - commandStartedEvent:
               command:
                 ping: 1
                 readConcern: { $$exists: false }
@@ -131,7 +131,7 @@ tests:
     expectEvents:
       - client: *client
         events:
-        - commandStartedEvent:
+          - commandStartedEvent:
               command:
                 ping: 1
                 writeConcern: { $$exists: false }
@@ -218,7 +218,7 @@ tests:
     expectEvents:
       - client: *clientWithStableApi
         events:
-        - commandStartedEvent:
+          - commandStartedEvent:
               command:
                 ping: 1
                 $db: *dbWithStableApi

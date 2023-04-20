@@ -78,11 +78,7 @@
     {
       "collectionName": "collection",
       "databaseName": "db",
-      "documents": [
-        {
-          "_id": 0
-        }
-      ]
+      "documents": []
     }
   ],
   "tests": [
