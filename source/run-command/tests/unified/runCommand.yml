@@ -90,7 +90,7 @@ tests:
         arguments:
           commandName: ping
           command: { ping: 1 }
-          readPreference: 'nearest'
+          readPreference:  &readPreference { mode: 'nearest' }
         expectResult: { ok: 1 }
     expectEvents:
       - client: *client
@@ -98,7 +98,7 @@ tests:
           - commandStartedEvent:
               command:
                 ping: 1
-                $readPreference: { mode: 'nearest' }
+                $readPreference: *readPreference
                 $db: *db
               commandName: ping
 

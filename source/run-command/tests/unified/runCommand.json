@@ -165,7 +165,9 @@
             "command": {
               "ping": 1
             },
-            "readPreference": "nearest"
+            "readPreference": {
+              "mode": "nearest"
+            }
           },
           "expectResult": {
             "ok": 1
