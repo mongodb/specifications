@@ -19,15 +19,13 @@ createEntities:
       client: *client
       databaseName: *dbWithRC
       databaseOptions:
-        readConcern:
-          level: 'local'
+        readConcern: { level: 'local' }
   - database:
       id: &dbWithWC dbWithWC
       client: *client
       databaseName: *dbWithWC
       databaseOptions:
-        writeConcern:
-          w: 0
+        writeConcern: { w: 0 }
   - session:
       id: &session session
       client: *client
