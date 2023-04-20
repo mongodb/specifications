@@ -5,6 +5,7 @@
     {
       "client": {
         "id": "client",
+        "useMultipleMongoses": false,
         "observeEvents": [
           "commandStartedEvent"
         ]
@@ -201,13 +202,11 @@
           "name": "runCommand",
           "object": "dbWithRC",
           "arguments": {
-            "commandName": "ping",
+            "commandName": "aggregate",
             "command": {
-              "ping": 1
+              "aggregate": 1,
+              "pipeline": []
             }
-          },
-          "expectResult": {
-            "ok": 1
           }
         }
       ],
@@ -224,7 +223,7 @@
                   },
                   "$db": "dbWithRC"
                 },
-                "commandName": "ping"
+                "commandName": "aggregate"
               }
             }
           ]
@@ -238,9 +237,15 @@
           "name": "runCommand",
           "object": "dbWithWC",
           "arguments": {
-            "commandName": "ping",
+            "commandName": "insert",
             "command": {
-              "ping": 1
+              "insert": "collection",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true
             }
           },
           "expectResult": {
@@ -255,7 +260,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "ping": 1,
+                  "insert": "collection",
                   "writeConcern": {
                     "$$exists": false
                   },
@@ -334,7 +339,7 @@
                     "insert": "collection",
                     "documents": [
                       {
-                        "_id": 1
+                        "_id": 2
                       }
                     ],
                     "ordered": true
@@ -362,7 +367,7 @@
                   "insert": "collection",
                   "documents": [
                     {
-                      "_id": 1
+                      "_id": 2
                     }
                   ],
                   "ordered": true,

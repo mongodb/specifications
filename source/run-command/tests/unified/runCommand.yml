@@ -5,6 +5,7 @@ schemaVersion: "1.3"
 createEntities:
   - client:
       id: &client client
+      useMultipleMongoses: false
       observeEvents: [commandStartedEvent]
   - database:
       id: &db db
@@ -106,10 +107,12 @@ tests:
     operations:
       - name: runCommand
         object: *dbWithRC
+        # Test with a command that supports a readConcern option.
+        # expectResult is intentionally omitted because some drivers
+        # may automatically convert command responses into cursors.
         arguments:
-          commandName: ping
-          command: { ping: 1 }
-        expectResult: { ok: 1 }
+          commandName: aggregate
+          command: { aggregate: 1, pipeline: [] }
     expectEvents:
       - client: *client
         events:
@@ -118,22 +121,25 @@ tests:
                 ping: 1
                 readConcern: { $$exists: false }
                 $db: *dbWithRC
-              commandName: ping
+              commandName: aggregate
 
   - description: does not inherit writeConcern specified at the db level
     operations:
       - name: runCommand
         object: *dbWithWC
         arguments:
-          commandName: ping
-          command: { ping: 1 }
+          commandName: insert
+          command:
+            insert: *collection
+            documents: [ { _id: 1 } ]
+            ordered: true
         expectResult: { ok: 1 }
     expectEvents:
       - client: *client
         events:
           - commandStartedEvent:
               command:
-                ping: 1
+                insert: *collection
                 writeConcern: { $$exists: false }
                 $db: *dbWithWC
               commandName: ping
@@ -174,7 +180,7 @@ tests:
                 commandName: insert
                 command:
                   insert: *collection
-                  documents: [ { _id: 1 } ]
+                  documents: [ { _id: 2 } ]
                   ordered: true
               expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
     expectEvents:
@@ -183,7 +189,7 @@ tests:
           - commandStartedEvent:
               command:
                 insert: *collection
-                documents: [ { _id: 1 } ]
+                documents: [ { _id: 2 } ]
                 ordered: true
                 lsid: { $$sessionLsid: *session }
                 txnNumber: 1
