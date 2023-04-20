@@ -7,12 +7,12 @@ createEntities:
       id: &client client
       observeEvents: [commandStartedEvent]
   - database:
-      id: &plainDb plainDb
+      id: &db db
       client: *client
-      databaseName: *plainDb
+      databaseName: *db
   - collection:
       id: &collection collection
-      database: *plainDb
+      database: *db
       collectionName: *collection
   - database:
       id: &dbWithRC dbWithRC
@@ -45,40 +45,36 @@ createEntities:
 
 initialData:
 - collectionName: *collection
-  databaseName: *plainDb
+  databaseName: *db
   documents: [ { _id: 0 } ]
 
 tests:
   - description: always attaches $db to given command
     operations:
       - name: runCommand
-        object: *plainDb
+        object: *db
         arguments:
           commandName: ping
-          command:
-            ping: 1
-        expectResult:
-          ok: 1
+          command: { ping: 1 }
+        expectResult: { ok: 1 }
     expectEvents:
       - client: *client
         events:
         - commandStartedEvent:
               command:
                 ping: 1
-                $db: *plainDb
+                $db: *db
               commandName: ping
 
   - description: attaches the provided session lsid to given command
     operations:
       - name: runCommand
-        object: *plainDb
+        object: *db
         arguments:
           commandName: ping
-          command:
-            ping: 1
+          command: { ping: 1 }
           session: *session
-        expectResult:
-          ok: 1
+        expectResult: { ok: 1 }
     expectEvents:
       - client: *client
         events:
@@ -86,20 +82,18 @@ tests:
               command:
                 ping: 1
                 lsid: { $$sessionLsid: *session }
-                $db: *plainDb
+                $db: *db
               commandName: ping
 
   - description: attaches the provided $readPreference to given command
     operations:
       - name: runCommand
-        object: *plainDb
+        object: *db
         arguments:
           commandName: ping
-          command:
-            ping: 1
+          command: { ping: 1 }
           readPreference: 'nearest'
-        expectResult:
-          ok: 1
+        expectResult: { ok: 1 }
     expectEvents:
       - client: *client
         events:
@@ -107,7 +101,7 @@ tests:
               command:
                 ping: 1
                 $readPreference: { mode: 'nearest' }
-                $db: *plainDb
+                $db: *db
               commandName: ping
 
   - description: does not inherit readConcern specified at the db level
@@ -116,10 +110,8 @@ tests:
         object: *dbWithRC
         arguments:
           commandName: ping
-          command:
-            ping: 1
-        expectResult:
-          ok: 1
+          command: { ping: 1 }
+        expectResult: { ok: 1 }
     expectEvents:
       - client: *client
         events:
@@ -136,10 +128,8 @@ tests:
         object: *dbWithWC
         arguments:
           commandName: ping
-          command:
-            ping: 1
-        expectResult:
-          ok: 1
+          command: { ping: 1 }
+        expectResult: { ok: 1 }
     expectEvents:
       - client: *client
         events:
@@ -163,11 +153,10 @@ tests:
               failCommands: [ping]
               closeConnection: true
       - name: runCommand
-        object: *plainDb
+        object: *db
         arguments:
           commandName: ping
-          command:
-            ping: 1
+          command: { ping: 1 }
         expectError:
           isError: true
 
@@ -181,7 +170,7 @@ tests:
         arguments:
           callback:
             - name: runCommand
-              object: *plainDb
+              object: *db
               arguments:
                 session: *session
                 commandName: insert
@@ -206,7 +195,7 @@ tests:
                 readConcern: { $$exists: false }
                 writeConcern: { $$exists: false }
               commandName: insert
-              databaseName: *plainDb
+              databaseName: *db
           - commandStartedEvent:
               command:
                 commitTransaction: 1
@@ -227,8 +216,7 @@ tests:
           commandName: ping
           command:
             ping: 1
-        expectResult:
-          ok: 1
+        expectResult: { ok: 1 }
     expectEvents:
       - client: *stableApiClient
         events:

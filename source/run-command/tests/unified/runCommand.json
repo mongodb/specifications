@@ -1,6 +1,6 @@
 {
   "description": "runCommand",
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.3",
   "createEntities": [
     {
       "client": {
@@ -12,15 +12,15 @@
     },
     {
       "database": {
-        "id": "plainDb",
+        "id": "db",
         "client": "client",
-        "databaseName": "plainDb"
+        "databaseName": "db"
       }
     },
     {
       "collection": {
         "id": "collection",
-        "database": "plainDb",
+        "database": "db",
         "collectionName": "collection"
       }
     },
@@ -77,7 +77,7 @@
   "initialData": [
     {
       "collectionName": "collection",
-      "databaseName": "plainDb",
+      "databaseName": "db",
       "documents": [
         {
           "_id": 0
@@ -91,7 +91,7 @@
       "operations": [
         {
           "name": "runCommand",
-          "object": "plainDb",
+          "object": "db",
           "arguments": {
             "commandName": "ping",
             "command": {
@@ -111,7 +111,7 @@
               "commandStartedEvent": {
                 "command": {
                   "ping": 1,
-                  "$db": "plainDb"
+                  "$db": "db"
                 },
                 "commandName": "ping"
               }
@@ -125,7 +125,7 @@
       "operations": [
         {
           "name": "runCommand",
-          "object": "plainDb",
+          "object": "db",
           "arguments": {
             "commandName": "ping",
             "command": {
@@ -149,7 +149,7 @@
                   "lsid": {
                     "$$sessionLsid": "session"
                   },
-                  "$db": "plainDb"
+                  "$db": "db"
                 },
                 "commandName": "ping"
               }
@@ -163,7 +163,7 @@
       "operations": [
         {
           "name": "runCommand",
-          "object": "plainDb",
+          "object": "db",
           "arguments": {
             "commandName": "ping",
             "command": {
@@ -187,7 +187,7 @@
                   "$readPreference": {
                     "mode": "nearest"
                   },
-                  "$db": "plainDb"
+                  "$db": "db"
                 },
                 "commandName": "ping"
               }
@@ -294,7 +294,7 @@
         },
         {
           "name": "runCommand",
-          "object": "plainDb",
+          "object": "db",
           "arguments": {
             "commandName": "ping",
             "command": {
@@ -328,7 +328,7 @@
             "callback": [
               {
                 "name": "runCommand",
-                "object": "plainDb",
+                "object": "db",
                 "arguments": {
                   "session": "session",
                   "commandName": "insert",
@@ -382,7 +382,7 @@
                   }
                 },
                 "commandName": "insert",
-                "databaseName": "plainDb"
+                "databaseName": "db"
               }
             },
             {
