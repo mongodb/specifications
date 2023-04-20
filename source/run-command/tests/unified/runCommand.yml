@@ -31,15 +31,15 @@ createEntities:
       client: *client
   # Stable API test
   - client:
-      id: &stableApiClient stableApiClient
+      id: &clientWithStableApi clientWithStableApi
       observeEvents: [commandStartedEvent]
       serverApi:
         version: "1"
         strict: true
   - database:
-      id: &stableApiDb stableApiDb
-      client: *stableApiClient
-      databaseName: *stableApiDb
+      id: &dbWithStableApi dbWithStableApi
+      client: *clientWithStableApi
+      databaseName: *dbWithStableApi
 
 initialData:
 - collectionName: *collection
@@ -209,19 +209,19 @@ tests:
   - description: attaches apiVersion fields to given command when stableApi is configured on the client
     operations:
       - name: runCommand
-        object: *stableApiDb
+        object: *dbWithStableApi
         arguments:
           commandName: ping
           command:
             ping: 1
         expectResult: { ok: 1 }
     expectEvents:
-      - client: *stableApiClient
+      - client: *clientWithStableApi
         events:
         - commandStartedEvent:
               command:
                 ping: 1
-                $db: *stableApiDb
+                $db: *dbWithStableApi
                 apiVersion: "1"
                 apiStrict: true
                 apiDeprecationErrors: { $$unsetOrMatches: false }

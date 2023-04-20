@@ -56,7 +56,7 @@
     },
     {
       "client": {
-        "id": "stableApiClient",
+        "id": "clientWithStableApi",
         "observeEvents": [
           "commandStartedEvent"
         ],
@@ -68,9 +68,9 @@
     },
     {
       "database": {
-        "id": "stableApiDb",
-        "client": "stableApiClient",
-        "databaseName": "stableApiDb"
+        "id": "dbWithStableApi",
+        "client": "clientWithStableApi",
+        "databaseName": "dbWithStableApi"
       }
     }
   ],
@@ -414,7 +414,7 @@
       "operations": [
         {
           "name": "runCommand",
-          "object": "stableApiDb",
+          "object": "dbWithStableApi",
           "arguments": {
             "commandName": "ping",
             "command": {
@@ -428,13 +428,13 @@
       ],
       "expectEvents": [
         {
-          "client": "stableApiClient",
+          "client": "clientWithStableApi",
           "events": [
             {
               "commandStartedEvent": {
                 "command": {
                   "ping": 1,
-                  "$db": "stableApiDb",
+                  "$db": "dbWithStableApi",
                   "apiVersion": "1",
                   "apiStrict": true,
                   "apiDeprecationErrors": {
