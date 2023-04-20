@@ -2807,7 +2807,7 @@ Each test listed in the cases below must pass for all supported data types unles
 
 Case 1: can decrypt a payload
 `````````````````````````````
-Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the encoded BSON type matches the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the BSON double value 6.0.
+Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the encoded BSON type matches the type of the encrypted field. For example, if the encrypted field is ``encryptedLong`` encrypt the 64-bit BSON long value 6, not the 32-bit BSON int value 6.
 
 Store the result in ``insertPayload``.
 
