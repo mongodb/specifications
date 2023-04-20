@@ -2,8 +2,7 @@
 Run Command
 ===========
 
-:Title: Run Command
-:Status: Implementing
+:Status: Accepted
 :Minimum Server Version: N/A
 
 .. contents::
@@ -94,7 +93,7 @@ RunCommand implementation details
 RunCommand provides a way to access MongoDB server commands directly without requiring a driver to implement a bespoke helper.
 The API is intended to take a document from a user and apply a number of common driver internal concerns before forwarding the command to a server.
 A driver MUST not inspect the user's command, this includes checking for the fields a driver MUST attach to the command sent as described below.
-Depending on a drivers BSON implementation this can result in these fields being overwritten or duplicated, a driver SHOULD document that using these fields has undefined behavior.
+Depending on a driver's BSON implementation this can result in these fields being overwritten or duplicated, a driver SHOULD document that using these fields has undefined behavior.
 A driver MUST not modify the user's command, a clone SHOULD be created before the driver attaches any of the required fields to the command.
 
 Drivers that have historically modified user input SHOULD strive to instead clone the input such that appended fields do not affect the user's input in their next major version.
@@ -110,7 +109,7 @@ ReadPreference
 """"""""""""""
 
 For the purposes of server selection RunCommand MUST assume all commands are read operations.
-To facilitate server selection the RunCommand operation MUST accept an optional Read Preference option.
+To facilitate server selection the RunCommand operation MUST accept an optional ``readPreference`` option.
 
 * See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
 
@@ -123,10 +122,10 @@ Driver Sessions
 
 A driver's RunCommand MUST provide an optional session option to support explicit sessions and transactions.
 If a session is not provided the driver MUST attach an implicit session if the connection supports sessions.
-Drivers MUST NOT attempt to check the command document for the presence of a ``lsid``.
+Drivers MUST NOT attempt to check the command document for the presence of an ``lsid``.
 
-Every ClientSession has a corresponding Logical Session ID representing the server-side session ID.
-The Logical Session ID MUST be included under ``lsid`` in the command sent to the server without modifying user input.
+Every ClientSession has a corresponding logical session ID representing the server-side session ID.
+The logical session ID MUST be included under ``lsid`` in the command sent to the server without modifying user input.
 
 * See Driver Sessions' section on `Sending the session ID to the server on all commands <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-session-id-to-the-server-on-all-commands>`_
 
