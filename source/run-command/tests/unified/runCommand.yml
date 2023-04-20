@@ -162,12 +162,14 @@ tests:
           commandName: ping
           command: { ping: 1 }
         expectError:
-          isError: true
+          isClientError: true
 
   - description: attaches transaction fields to given command
     runOnRequirements:
-      - topologies: [ replicaset, sharded-replicaset, load-balanced, sharded ]
-        minServerVersion: '4.4'
+      - minServerVersion: "4.0"
+        topologies: [ replicaset ]
+      - minServerVersion: "4.2"
+        topologies: [ sharded-replicaset, load-balanced ]
     operations:
       - name: withTransaction
         object: *session

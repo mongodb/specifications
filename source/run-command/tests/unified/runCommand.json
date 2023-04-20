@@ -305,7 +305,7 @@
             }
           },
           "expectError": {
-            "isError": true
+            "isClientError": true
           }
         }
       ]
@@ -314,13 +314,17 @@
       "description": "attaches transaction fields to given command",
       "runOnRequirements": [
         {
+          "minServerVersion": "4.0",
           "topologies": [
-            "replicaset",
+            "replicaset"
+          ]
+        },
+        {
+          "minServerVersion": "4.2",
+          "topologies": [
             "sharded-replicaset",
-            "load-balanced",
-            "sharded"
-          ],
-          "minServerVersion": "4.4"
+            "load-balanced"
+          ]
         }
       ],
       "operations": [
