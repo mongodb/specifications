@@ -2823,6 +2823,11 @@ Encrypt with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and t
 
 Use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals 6.
 
+.. note::
+
+   The type returned by ``clientEncryption.decrypt()`` may differ from the input type to ``clientEncryption.encrypt()`` depending on how the driver unmarshals BSON numerics to language native types.
+   Example: a driver may unmarshal a BSON long to a numeric type that does not distinguish between int64 and int32.
+
 Case 2: can find encrypted range and return the maximum 
 ```````````````````````````````````````````````````````
 Use ``clientEncryption.encryptExpression()`` to encrypt this query:
