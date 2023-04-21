@@ -3777,7 +3777,7 @@ Determining if a Sharded Cluster Uses Replica Sets
 --------------------------------------------------
 
 When connected to a mongos server, the test runner can query the
-`config.shards <https://www.mongodb.com/docs/manual/reference/config-database/#config.shards>`__
+`config.shards <https://www.mongodb.com/docs/manual/reference/config-database/#mongodb-data-config.shards>`__
 collection. Each shard in the cluster is represented by a document in this
 collection. If the shard is backed by a single server, the ``host`` field will
 contain a single host. If the shard is backed by a replica set, the ``host``
