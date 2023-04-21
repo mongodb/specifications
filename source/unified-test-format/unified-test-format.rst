@@ -396,15 +396,21 @@ The structure of this object is as follows:
 
 - ``topologies``: Optional array of one or more strings. Server topologies
   against which the tests can be run successfully. Valid topologies are
-  "single", "replicaset", "sharded", "load-balanced", and
-  "sharded-replicaset" (i.e. sharded cluster backed by replica sets). If this
-  field is omitted, there is no topology requirement for the test.
+  "single", "replicaset", "sharded", "load-balanced", and "sharded-replicaset"
+  (i.e. sharded cluster backed by replica sets). If this field is omitted, there
+  is no topology requirement for the test.
 
   When matching a "sharded-replicaset" topology, test runners MUST ensure that
   all shards are backed by a replica set. The process for doing so is described
   in `Determining if a Sharded Cluster Uses Replica Sets`_. When matching a
   "sharded" topology, test runners MUST accept any type of sharded cluster (i.e.
   "sharded" implies "sharded-replicaset", but not vice versa).
+
+  The "sharded-replicaset" topology type is deprecated. MongoDB 3.6+ requires
+  that all shard servers be replica sets (see:
+  `release notes <https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-sharded-cluster/#shard-replica-sets>`__).
+  Therefore, tests SHOULD use "sharded" instead of "sharded-replicaset" when
+  targeting 3.6+ server versions in order to avoid unnecessary overhead.
 
 - ``serverless``: Optional string. Whether or not the test should be run on
   Atlas Serverless instances. Valid values are "require", "forbid", and "allow".
@@ -3775,6 +3781,9 @@ contain a single host. If the shard is backed by a replica set, the ``host``
 field contain the name of the replica followed by a forward slash and a
 comma-delimited list of hosts.
 
+Note: MongoDB 3.6+ requires that all shard servers be replica sets (see:
+`release notes <https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-sharded-cluster/#shard-replica-sets>`__).
+
 
 Design Rationale
 ================
@@ -3898,6 +3907,9 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+
+:2023-04-21: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
+             requires replica sets for shards.
 :2023-02-24: Fix typo in the description of the ``$$matchAsRoot`` matching operator.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
