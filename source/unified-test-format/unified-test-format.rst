@@ -1644,7 +1644,7 @@ the topology. For languages that rely on built-in language mechanisms such as re
 counting to automatically close/deinitialize clients once they go out of scope, this may
 require implementing an abstraction to allow a client entity's underlying client to be set
 to null. Because drivers do not consistently propagate errors encountered while closing a
-client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or 
+client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or
 `expectError <operation_expectError_>`_ for this operation. Test files SHOULD NOT
 specify any operations for a client entity or any entity descended from it following
 a `close` operation on it, as driver behavior when an operation is attempted on a closed
@@ -1775,14 +1775,9 @@ The following arguments are supported:
   by languages that are unable preserve the order of keys in the ``command``
   argument when parsing YAML/JSON.
 
-- ``readConcern``: Optional object. See `commonOptions_readConcern`_.
-
 - ``readPreference``: Optional object. See `commonOptions_readPreference`_.
 
 - ``session``: Optional string. See `commonOptions_session`_.
-
-- ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
-
 
 watch
 ~~~~~
@@ -3898,6 +3893,7 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+:2023-04-13: Remove ``readConcern`` and ``writeConcern`` options from ``runCommand`` operation.
 :2023-02-24: Fix typo in the description of the ``$$matchAsRoot`` matching operator.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
