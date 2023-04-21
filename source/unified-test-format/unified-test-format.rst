@@ -412,6 +412,9 @@ The structure of this object is as follows:
   Therefore, tests SHOULD use "sharded" instead of "sharded-replicaset" when
   targeting 3.6+ server versions in order to avoid unnecessary overhead.
 
+  Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded
+  cluster behind a load balancer implicitly uses replica sets for its shards.
+
 - ``serverless``: Optional string. Whether or not the test should be run on
   Atlas Serverless instances. Valid values are "require", "forbid", and "allow".
   If "require", the test MUST only be run on Atlas Serverless instances. If
@@ -3909,7 +3912,8 @@ Changelog
   Please note schema version bumps in changelog entries where applicable.
 
 :2023-04-21: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
-             requires replica sets for shards.
+             requires replica sets for shards, which is also relevant to load
+             balanced topologies.
 :2023-02-24: Fix typo in the description of the ``$$matchAsRoot`` matching operator.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
