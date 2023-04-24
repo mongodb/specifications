@@ -2629,7 +2629,7 @@ when attempting to create a collection with such invalid settings.
 Case 4: Insert encrypted value
 ``````````````````````````````
 
-This test is continuation of the case 1 and provides a way to complete inserting 
+This test is continuation of the case 1 and provides a way to complete inserting
 with encrypted value.
 
 1. Create a new create-collection options `Opts` including the following::
@@ -2737,14 +2737,14 @@ Use ``encryptedClient`` to insert the following documents into ``db.explicit_enc
 
 Test Setup: RangeOpts
 `````````````````````
-This section lists the values to use for ``RangeOpts`` for each of the supported data types, since each data type requires a different ``RangeOpts``. 
+This section lists the values to use for ``RangeOpts`` for each of the supported data types, since each data type requires a different ``RangeOpts``.
 
-Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
+Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped.
 
 #. DecimalNoPrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
          sparsity: 1,
       }
@@ -2752,7 +2752,7 @@ Each test listed in the cases below must pass for all supported data types unles
 #. DecimalPrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: { "$numberDecimal": "0" },
          max: { "$numberDecimal": "200" },
@@ -2763,7 +2763,7 @@ Each test listed in the cases below must pass for all supported data types unles
 #. DoubleNoPrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
          sparsity: 1,
       }
@@ -2771,7 +2771,7 @@ Each test listed in the cases below must pass for all supported data types unles
 #. DoublePrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: { "$numberDouble": "0" },
          max: { "$numberDouble": "200" },
@@ -2782,7 +2782,7 @@ Each test listed in the cases below must pass for all supported data types unles
 #. Date
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: {"$date": { "$numberLong": "0" } } ,
          max: {"$date": { "$numberLong": "200" } },
@@ -2792,7 +2792,7 @@ Each test listed in the cases below must pass for all supported data types unles
 #. Int
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: {"$numberInt": "0" } ,
          max: {"$numberInt": "200" },
@@ -2802,7 +2802,7 @@ Each test listed in the cases below must pass for all supported data types unles
 #. Long
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: {"$numberLong": "0" } ,
          max: {"$numberLong": "200" },
@@ -2834,7 +2834,7 @@ Use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value
    Example: a driver may unmarshal a BSON int64 to a numeric type that does not distinguish between int64 and int32.
 
 
-Case 2: can find encrypted range and return the maximum 
+Case 2: can find encrypted range and return the maximum
 ```````````````````````````````````````````````````````
 Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
@@ -2869,12 +2869,12 @@ Assert the following three documents are returned:
    { "_id": 3, "encrypted<Type>": 200 }
 
 
-Case 3: can find encrypted range and return the minimum 
+Case 3: can find encrypted range and return the minimum
 ```````````````````````````````````````````````````````
-Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
-   
+
    // Convert 0 and 6 to the encrypted field type
    { "$and": [ { "encrypted<Type>": { "$gte": 0 } }, { "encrypted<Type>": { "$lte": 6 } } ] }
 
@@ -2936,9 +2936,9 @@ Assert the following document is returned:
    { "_id": 3, "encrypted<Type>": 200 }
 
 
-Case 5: can run an aggregation expression inside $expr 
+Case 5: can run an aggregation expression inside $expr
 ``````````````````````````````````````````````````````
-Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
