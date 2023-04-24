@@ -1711,20 +1711,20 @@ Create a ClientEncryption object named ``clientEncryption`` with these options:
 
 .. code:: typescript
 
-   ClientEncryptionOpts {
-      keyVaultClient: <keyVaultClient>;
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   class ClientEncryptionOpts {
+      keyVaultClient: <keyVaultClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    }
 
 Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``:
 
 .. code:: typescript
 
-   AutoEncryptionOpts {
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
-      bypassQueryAnalysis: true
+   class AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+      bypassQueryAnalysis: true,
    }
 
 
@@ -1736,9 +1736,9 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``insertPayload``.
@@ -1750,10 +1750,10 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
       queryType: "equality",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``findPayload``.
@@ -1770,9 +1770,9 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
-      contentionFactor: 10
+      contentionFactor: 10,
    }
 
 Store the result in ``insertPayload``.
@@ -1786,10 +1786,10 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
       queryType: "equality",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``findPayload``.
@@ -1803,10 +1803,10 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
       queryType: "equality",
-      contentionFactor: 10
+      contentionFactor: 10,
    }
 
 Store the result in ``findPayload2``.
@@ -1823,8 +1823,8 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "Unindexed"
+      keyId : <key1ID>,
+      algorithm: "Unindexed",
    }
 
 Store the result in ``insertPayload``.
@@ -1843,9 +1843,9 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``payload``.
@@ -1860,7 +1860,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Unindexed",
    }
 
@@ -1943,10 +1943,10 @@ Create a ClientEncryption object named ``clientEncryption`` with these options:
 
 .. code:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    }
 
 Create a data key with the "local" KMS provider. Storing the result in a variable named ``keyID``.
@@ -1955,9 +1955,9 @@ Use ``clientEncryption`` to encrypt the string "hello" with the following ``Encr
 
 .. code:: typescript
 
-   EncryptOpts {
+   class EncryptOpts {
       keyId: <keyID>,
-      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
    }
 
 Store the result in a variable named ``ciphertext``.
@@ -1969,9 +1969,9 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
 
 .. code:: typescript
 
-   AutoEncryptionOpts {
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   class AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    }
 
 Configure ``encryptedClient`` with "retryReads=false".
@@ -2059,7 +2059,7 @@ options:
 
 .. code-block:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
       kmsProviders: { "aws": {} },
@@ -2144,10 +2144,10 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
    .. code:: typescript
 
-      ClientEncryptionOpts {
-         keyVaultClient: <new MongoClient>;
-         keyVaultNamespace: "keyvault.datakeys";
-         kmsProviders: <all KMS providers>
+      class ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>,
+         keyVaultNamespace: "keyvault.datakeys",
+         kmsProviders: <all KMS providers>,
       }
 
 3. Call ``clientEncryption1.createDataKey`` with ``srcProvider`` and these options:
@@ -2155,7 +2155,7 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
    .. code:: typescript
 
       class DataKeyOpts {
-         masterKey: <depends on srcProvider>
+         masterKey: <depends on srcProvider>,
       }
 
    Store the return value in ``keyID``.
@@ -2166,7 +2166,7 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
       class EncryptOpts {
          keyId : keyID,
-         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }
 
    Store the return value in ``ciphertext``.
@@ -2175,10 +2175,10 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
    .. code:: typescript
 
-      ClientEncryptionOpts {
-         keyVaultClient: <new MongoClient>;
-         keyVaultNamespace: "keyvault.datakeys";
-         kmsProviders: <all KMS providers>
+      class ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>,
+         keyVaultNamespace: "keyvault.datakeys",
+         kmsProviders: <all KMS providers>,
       }
 
 6. Call ``clientEncryption2.rewrapManyDataKey`` with an empty ``filter`` and these options:
@@ -2186,8 +2186,8 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
    .. code:: typescript
 
       class RewrapManyDataKeyOpts {
-         provider: dstProvider
-         masterKey: <depends on dstProvider>
+         provider: dstProvider,
+         masterKey: <depends on dstProvider>,
       }
 
    Assert that the returned ``RewrapManyDataKeyResult.bulkWriteResult.modifiedCount`` is 1.
@@ -2207,7 +2207,7 @@ options:
 
 .. code-block:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
       kmsProviders: { "gcp": {} },
@@ -2230,7 +2230,7 @@ following ``DataKeyOpts``:
          "projectId": "devprod-drivers",
          "location": "global",
          "keyRing": "key-ring-csfle",
-         "keyName": "key-name-csfle"
+         "keyName": "key-name-csfle",
       }
    }
 
@@ -2255,7 +2255,7 @@ following ``DataKeyOpts``:
          "projectId": "devprod-drivers",
          "location": "global",
          "keyRing": "key-ring-csfle",
-         "keyName": "key-name-csfle"
+         "keyName": "key-name-csfle",
       }
    }
 
@@ -2405,7 +2405,7 @@ options:
 
 .. code-block:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
       kmsProviders: { "azure": {} },
@@ -2425,7 +2425,7 @@ following ``DataKeyOpts``:
    class DataKeyOpts {
       masterKey: {
          "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
-         "keyName": "KEY-NAME"
+         "keyName": "KEY-NAME",
       }
    }
 
@@ -2448,7 +2448,7 @@ following ``DataKeyOpts``:
    class DataKeyOpts {
       masterKey: {
          "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
-         "keyName": "KEY-NAME"
+         "keyName": "KEY-NAME",
       }
    }
 
