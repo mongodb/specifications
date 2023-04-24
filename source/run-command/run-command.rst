@@ -44,6 +44,8 @@ Deviations
 
 Please refer to `The CRUD specification's Guidance <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#guidance>`_ on how APIs may deviate between languages.
 
+Cursor iterating APIs MAY be offered via language syntax or predefined iterable methods.
+
 --------------
 ``runCommand``
 --------------
@@ -187,7 +189,101 @@ Drivers MUST document the behavior of RunCommand if a ``maxTimeMS`` field  is al
 * See Client Side Operations Timeout's section on `runCommand <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand>`_
 * See Client Side Operations Timeout's section on `runCommand behavior <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand-behavior>`_
 
+
+--------------------
+``runCursorCommand``
+--------------------
+
+The following represents how a runCursorCommand API may be exposed.
+
+.. code:: typescript
+
+    interface Db {
+      /**
+       * Takes an argument representing an arbitrary BSON document and executes it against the server.
+       */
+      runCursorCommand(command: BSONDocument, options: RunCursorCommandOptions): RunCommandCursor;
+    }
+
+    interface RunCursorCommandOptions extends RunCommandOptions {
+      /**
+       * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all next calls. To support both of these use cases, these operations MUST support a timeoutMode option.
+       *
+       * @defaultValue 'CURSOR_LIFETIME'
+       *
+       * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
+       */
+      timeoutMode?: 'ITERATION' | 'CURSOR_LIFETIME';
+    }
+
+RunCursorCommand implementation details
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+RunCursorCommand provides a way to access MongoDB server commands that return a cursor directly without requiring a driver to implement a bespoke cursor implementation.
+The API is intended to be built upon RunCommand and take a document from a user and apply a number of common driver internal concerns before forwarding the command to a server.
+A driver can expect that the result from running this command will return a document with a ``cursor`` field and MUST provide the caller with a language native abstraction to continue iterating the results from the server.
+
+High level RunCursorCommand steps:
+
+* If no session is provided by the caller, create a ClientSession
+* Create a local Cursor instance
+* Run the cursor creating command provided by the caller
+* Store the ``firstBatch``, ``ns``, and ``id`` from the server's response as well as which server the operation was executed on
+* When the current batch has been fully iterated, using the same server the initial command was executed on execute a ``getMore``
+* Store the results of the getMore's ``nextBatch`` and update the cursor's ``id``
+* Continue executing ``getMore`` commands until the cursor is exhausted
+
+Driver Sessions
+"""""""""""""""
+
+A driver MUST create an implicit ClientSession if none is provided and it MUST be attached for the duration of the cursor's lifetime.
+All ``getMore`` commands constructed for this cursor MUST send the same ``lsid`` used on the initial command.
+A cursor is exhausted when the server reports a cursor is equal to zero.
+When the cursor is exhausted the client session MUST be ended and the server session returned to the pool as early as possible rather than waiting for a caller to completely iterate the final batch.
+
+Server Selection
+""""""""""""""""
+
+RunCursorCommand MUST support a ``readPreference`` option that MUST be used to determine server selection.
+
+Iterating the Cursor
+""""""""""""""""""""
+
+Drivers MUST provide an API, typically, a method named ``next()``, that returns one document per invocation.
+If the cursor's batch is empty and the cursor id is nonzero, the driver MUST perform a ``getMore`` operation.
+
+Executing GetMores
+""""""""""""""""""
+
+The cursor API returned to the caller MUST offer a way to configure ``batchSize``, ``maxTimeMS``, and ``comment`` that are sent on the ``getMore`` command.
+
+.. code:: typescript
+
+  interface GetMore {
+    /** Set to the nonzero cursor id */
+    getMore: int64;
+    /** Set to the namespace returned by the initial command response */
+    collection: string;
+    /**
+     * User configurable document count for the batch returned for this getMore.
+     * Only attached to command document if nonzero.
+     */
+    batchSize?: int23;
+    /**
+     * User configurable time limit enforced by the server.
+     */
+    maxTimeMS?: int23;
+    /**
+     * User configurable comment that can be used to identify the operation in logs.
+     * This can be any BSON value.
+     */
+    comment?: BSONValue;
+  }
+
+The driver's cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every getMore response.
+
 Changelog
 =========
 
+:2023-04-24: Add runCursorCommand API specification.
 :2023-04-20: Add run command specification.
