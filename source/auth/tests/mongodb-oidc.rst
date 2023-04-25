@@ -24,7 +24,8 @@ means removing all data from the cache, including ``OIDCMechanismServerStep1``
 information.
 
 Drivers MUST set the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable
-to the location of valid ``test_user1`` credentials.
+to the location of valid ``test_user1`` credentials at the beginning of each
+test, unless otherwise specified.
 
 Unless otherwise specified, tests will use a URL
 of the form ``mongodb://localhost/?authMechanism=MONGODB-OIDC``.
@@ -131,8 +132,6 @@ Multiple Principal User 2
 - Create a client with a url of the form ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:aws&directConnection=true&readPreference=secondaryPreferred``.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
-- Restore the ``AWS_WEB_IDENTITY_TOKEN_FILE`` environment variable
-  to the location of valid ``test_user1`` credentials.
 
 Allowed Hosts Ignored
 ~~~~~~~~~~~~~~~~~~~~~
@@ -154,7 +153,9 @@ Valid Callbacks
 - Perform a ``find`` operation that succeeds.  Verify that the request
   callback was called with the appropriate inputs, including the timeout
   parameter if possible.  Ensure that there are no unexpected fields.
-- Perform another ``find`` operation that succeeds.  Verify that the refresh
+- Close the client.
+- Create a new client with the same configuration.
+- Perform a ``find`` operation that succeeds.  Verify that the refresh
   callback was called with the appropriate inputs, including the timeout
   parameter if possible.
 - Close the client.
@@ -172,6 +173,8 @@ Refresh Callback Returns Null
 - Create request callback that returns a valid token that will expire in a
   minute, and a refresh callback that returns ``null``.
 - Perform a ``find`` operation that succeeds.
+- Close the client.
+- Create a new client with the same configuration.
 - Perform a ``find`` operation that fails.
 - Close the client.
 
