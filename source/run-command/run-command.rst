@@ -245,6 +245,7 @@ Server Selection
 """"""""""""""""
 
 RunCursorCommand MUST support a ``readPreference`` option that MUST be used to determine server selection.
+The selected server MUST be used for subsequent ``getMore`` commands.
 
 Iterating the Cursor
 """"""""""""""""""""
@@ -281,6 +282,21 @@ The cursor API returned to the caller MUST offer a way to configure ``batchSize`
   }
 
 The driver's cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every getMore response.
+
+Resource Cleanup
+""""""""""""""""
+
+Drivers MUST provide an explicit mechanism for releasing the cursor resources, typically a ``.close()`` method.
+If the cursor id is nonzero a KillCursors operation MUST be attempted, the result of the operation SHOULD be ignored.
+The ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.
+
+* See Driver Sessions' section on `When sending a killCursors command <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#when-sending-a-killcursors-command>`_
+
+Client Side Operations Timeout
+""""""""""""""""""""""""""""""
+
+TODO...
+
 
 Changelog
 =========
