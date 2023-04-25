@@ -1779,6 +1779,38 @@ The following arguments are supported:
 
 - ``session``: Optional string. See `commonOptions_session`_.
 
+runCursorCommand
+~~~~~~~~~~~~~~~~
+
+`Generic cursor returning command runner <../run-command/run-command.rst>.`__
+
+This method does not inherit a read concern or write concern (per the
+`Read and Write Concern <../read-write-concern/read-write-concern.rst#generic-command-method>`__
+spec), nor does it inherit a read preference (per the
+`Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
+spec); however, they may be specified as arguments.
+
+This operation proxies the databases's ``runCursorCommand`` method and supports the same arguments and options.
+The resulting cursor MUST either be saved with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ or have an `expectedError`_ assertion.
+
+The following arguments are supported:
+
+- ``command``: Required document. The command to be executed.
+
+- ``commandName``: Required string. The name of the command to run. This is used
+  by languages that are unable preserve the order of keys in the ``command``
+  argument when parsing YAML/JSON.
+
+- ``readPreference``: Optional object. See `commonOptions_readPreference`_.
+
+- ``session``: Optional string. See `commonOptions_session`_.
+
+- ``batchSize``: Optional int32. Use this value to configure the batchSize sent on the getMore command.
+
+- ``maxTimeMS``: Optional int32. Use this value to configure the maxTimeMS sent on the getMore command.
+
+- ``comment``: Optional BSON value. Use this value to configure the comment sent on the getMore command.
+
 watch
 ~~~~~
 
