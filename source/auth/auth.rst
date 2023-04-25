@@ -1310,6 +1310,9 @@ Where ``OIDCClientInfo`` is defined as:
         timeout_context:
             description: "A timeout context variable used to cancel the callback"
             optional: true
+        version:
+            description: "A version identifying breaking changes in the callback protocol, currently 0"
+            type: int
 
 and ``OIDCRequestTokenResult`` is defined as:
 
