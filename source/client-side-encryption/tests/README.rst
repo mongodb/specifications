@@ -3014,7 +3014,7 @@ Ensure that ``RangeOpts`` corresponds to the type of the encrypted field (i.e. e
 Assert that an error was raised.
 
 
-Case 8: setting precision errors if the type is not a floating point
+Case 8: setting precision errors if the type is not double or Decimal128
 ````````````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoublePrecision``, ``encryptedDoubleNoPrecision``, ``encryptedDecimalPrecision``, or ``encryptedDecimalNoPrecision``.
 
