@@ -1400,7 +1400,7 @@ Access Token is rejected by the server with a ``ReauthenticationRequired`` error
 If the callback succeeds, the new Access Token MUST be sent using a JwtStepRequest.  If the request fails with a ReauthenticationRequired error, that error MUST be propagated to the user.
 The driver MUST have a guard or a flag in place to differentiate between a JwtStepRequest ReauthenticationRequired failure that takes place after a PrincipalStepRequest has been made to prevent an infinite loop.
 
-If there is no refresh callback and no unexpired Access Token, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent call to any callback for a given cache key.
+If there is no refresh callback and no unexpired Access Token, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent invocation of the above fallback logic for a given cache key.
 
 If a cached value is used and the authentication step fails or times out, the driver MUST clear the
 cached value.
