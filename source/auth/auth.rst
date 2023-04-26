@@ -1262,7 +1262,7 @@ mechanism_properties
         providing objects as mechanism property values.  Otherwise the driver MUST allow it as a MongoClientOption.
     ALLOWED_HOSTS
         The list of allowed hostnames or ip-addresses (ignoring ports) for
-        MongoDB connections. The hostnames may include a leading "*." wildcard, which allows for matching subdomains. ALLOWED_HOSTS is a
+        MongoDB connections. The hostnames may include a leading "*." wildcard, which allows for matching (potentially  nested) subdomains. ALLOWED_HOSTS is a
         security feature and MUST default to
         ``["*.mongodb.net", '*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``.
         When ``MONGODB-OIDC`` authentication is attempted against a hostname
