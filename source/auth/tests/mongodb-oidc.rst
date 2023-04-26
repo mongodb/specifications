@@ -275,7 +275,7 @@ Error clears cache
   credentials.
 - Ensure that a ``find`` operation adds a new entry to the cache.
 - Ensure that a subsequent ``find`` operation results in an error.
-- Ensure that the cached access token has been cleared.
+- Ensure that the cache value cleared.
 - Close the client.
 
 AWS Automatic workflow does not use cache

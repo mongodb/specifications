@@ -1177,6 +1177,7 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 
 MONGODB-OIDC
 ~~~~~~~~~~~~
+
 :since: 7.0 Enterprise
 
 MONGODB-OIDC authenticates using an `OIDC <https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens.  Drivers MUST support
@@ -1221,7 +1222,7 @@ Note that the principal name is optional as it may be provided by the IDP in env
 
 Server will use principalName (n) if provided in the driver’s PrincipalStepRequest to select an appropriate IDP.  This IDP's configuration will be returned in the server’s response that will be used by the end-user to acquire an Access Token.
 
-This Access Token will be used as the JWT in the driver’s JwtStepRequest to complete authentication. Users implementing callbacks must ensure that the principalName identified within the Access Token must match the principalName provided to the callback, otherwise the JwtStepRequest will fail on the server.
+This Access Token will be used as the JWT in the driver’s JwtStepRequest to complete authentication.
 
 .. code:: idl
 
@@ -1273,7 +1274,7 @@ mechanism_properties
         resolution, if applicable.
 
 Drivers MUST NOT send a PrincipalStepRequest when performing automatic authentication
-or when there is a cached IdPServerResponse .  Drivers must instead  use ``saslStart`` with a JwtStepRequest.
+or when there is a cached IdPServerResponse.  Drivers must instead  use ``saslStart`` with a JwtStepRequest.
 
 Speculative Authentication
 ```````````````````````````````````
@@ -1315,7 +1316,7 @@ Callbacks can be synchronous and/or asynchronous, depending on the driver
 and/or language.  Asynchronous callbacks should be preferred when other
 operations in the driver use asynchronous functions.
 
-Before calling a callback, the driver MUST acquire a lock, and, if there is a non-expired cached Access Token, attempt to authenticate via a JwtStepRequest before calling the callback.  The lock is released after all attempts to authenticate have failed, or a non-recoverable error was encountered.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.
+Before calling a callback, the driver MUST acquire a lock unique to the cache key, and, if there is a non-expired cached Access Token, attempt to authenticate via a JwtStepRequest before calling the callback.  The lock is released after all attempts to authenticate have failed, or a non-recoverable error was encountered.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.
 This is because request callbacks may involve human interaction, and refresh
 callbacks could use refresh tokens that can only be used once.
 
