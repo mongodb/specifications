@@ -1316,7 +1316,7 @@ Callbacks can be synchronous and/or asynchronous, depending on the driver
 and/or language.  Asynchronous callbacks should be preferred when other
 operations in the driver use asynchronous functions.
 
-Before calling a callback, the driver MUST acquire a lock unique to the cache key, and, if there is a non-expired cached Access Token, attempt to authenticate via a JwtStepRequest before calling the callback.  The lock is released after all attempts to authenticate have failed, or a non-recoverable error was encountered.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.
+Before calling a callback, the driver MUST acquire a lock unique to the cache key.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.
 This is because request callbacks may involve human interaction, and refresh
 callbacks could use refresh tokens that can only be used once.
 
