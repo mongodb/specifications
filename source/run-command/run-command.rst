@@ -207,7 +207,8 @@ The following represents how a runCursorCommand API may be exposed.
 
     interface RunCursorCommandOptions extends RunCommandOptions {
       /**
-       * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all next calls. To support both of these use cases, these operations MUST support a timeoutMode option.
+       * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all next calls.
+       * To support both of these use cases, these operations MUST support a timeoutMode option.
        *
        * @defaultValue 'CURSOR_LIFETIME'
        *
@@ -246,6 +247,13 @@ Server Selection
 
 RunCursorCommand MUST support a ``readPreference`` option that MUST be used to determine server selection.
 The selected server MUST be used for subsequent ``getMore`` commands.
+
+Load Balancers
+""""""""""""""
+
+When in ``loadBalanced`` mode, a driver MUST pin the connection the initial operation was executed on and reuse it for subsequent ``getMore`` operations.
+
+* See Load Balancer's section on `Behaviour With Cursors <https://github.com/mongodb/specifications/blob/master/source/load-balancers/load-balancers.rst#behaviour-with-cursors>`_
 
 Iterating the Cursor
 """"""""""""""""""""
@@ -295,8 +303,18 @@ The ClientSession associated with the cursor MUST be ended and the ServerSession
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""
 
-TODO...
+As with RunCommand if the initial command has a ``maxTimeMS`` and CSOT settings are provided the behavior is undefined and drivers MUST NOT inspect the document to detect this.
+Drivers SHOULD not allow both a ``getMore`` ``maxTimeMS`` setting to be provided and CSOT settings.
+Drivers MUST document that attempting to set both can have undefined behavior and is not supported.
 
+When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support timeout functionality as described in the CSOT specification.
+
+TODO:
+* How to differentiate tailable cursors?
+* How to differentiate awaitData cursors?
+* Can the CSOT setting apply only to the init command and we support ``next({timeoutMS})`` only?
+
+* See Client Side Operations Timeout's section on `Cursors <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#cursors>`_
 
 Changelog
 =========
