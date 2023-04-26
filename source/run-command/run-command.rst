@@ -215,6 +215,18 @@ The following represents how a runCursorCommand API may be exposed.
        * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
        */
       timeoutMode?: 'ITERATION' | 'CURSOR_LIFETIME';
+
+      /**
+       * Identifies the type of cursor this is.
+       *
+       * A tailable cursor can receive empty ``nextBatch`` arrays in getMore responses.
+       * However, subsequent ``getMore`` operations may return documents if new data has become available.
+       *
+       * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data become available.
+       *
+       * @defaultValue NON_TAILABLE
+       */
+      cursorType: NON_TAILABLE | TAILABLE | TAILABLE_AWAIT;
     }
 
 RunCursorCommand implementation details
@@ -291,6 +303,21 @@ The cursor API returned to the caller MUST offer a way to configure ``batchSize`
 
 The driver's cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every getMore response.
 
+Tailable and TailableAwait
+""""""""""""""""""""""""""
+
+By default most cursors are non-tailable, for example, a find that exhausts when all results for the filter have been satisfied.
+MongoDB also supports creating cursors that "tail" or follow the target namespace for new data.
+Querying capped collections and change streams are some examples of tailable cursor use cases.
+A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, this does not indicate that the cursor has been exhausted.
+
+In addition to considering a cursor tailable, an ``awaitData`` flag may be sent on the initial command.
+This will request that the server block responding to the ``getMore`` immediately and instead rely on the ``maxTimeMS`` field of the ``getMore`` (or server default).
+If the time does expire an empty batch will be returned and the driver MUST issue another ``getMore``.
+
+It is up to the user to construct their initial command with ``awaitData`` and ``tailable`` flags as well as inform RunCursorCommand of the ``cursorType`` that should be constructed.
+Requesting a ``cursorType`` that does not align with the fields sent to the server on the initial command SHOULD be documented as undefined behavior.
+
 Resource Cleanup
 """"""""""""""""
 
@@ -309,10 +336,6 @@ Drivers MUST document that attempting to set both can have undefined behavior an
 
 When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support timeout functionality as described in the CSOT specification.
 
-TODO:
-* How to differentiate tailable cursors?
-* How to differentiate awaitData cursors?
-* Can the CSOT setting apply only to the init command and we support ``next({timeoutMS})`` only?
 
 * See Client Side Operations Timeout's section on `Cursors <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#cursors>`_
 
