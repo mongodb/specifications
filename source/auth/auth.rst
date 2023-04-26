@@ -259,7 +259,7 @@ Reauthentication
 
 On any operation that requires authentication, the server may raise the
 error ``ReauthenticationRequired`` (391), typically if the user's credential
-has expired.  Drivers MUST immediately attempt a reauthenication on
+has expired.  Drivers MUST immediately attempt a reauthentication on
 the connection using suitable credentials, as specified by the particular authentication mechanism when this error is raised, and then re-attempt the operation.
 This attempt MUST be irrespective of whether the operation is considered
 retryable.   Drivers MUST NOT resend a hello message during reauthentication, instead using SASL messages directly.  Any errors that could not be recovered from during reauthentication, or that were encountered during the
