@@ -1409,8 +1409,8 @@ cached value.
 Reauthentication
 ````````````````
 When reauthentication is requested by the server (as a 391 error code) and MONGODB-OIDC is in use, the driver MUST
-ensure that the Access Token that was most-recently used to authenticate this connection is not used for subsequent authentication, by marking it as expired in the cache.  If a refresh
-callback is given, it will be called as usual.  Otherwise the IdPServerResponse will be cleared and authentication will proceed from the request callback.
+ensure that the Access Token that was most-recently used to authenticate this connection is not used for subsequent authentication, by marking it as expired. If non-expired Access Token is available in the cache, it should be used as usual.  If a refresh
+callback is given, it will be called as usual.  Otherwise the IdPServerResponse will be cleared if present and authentication will proceed from the request callback.
 
 If the ``sasl`` step(s) fail with a 391 error code and the payload of the command contained ``jwt`` , the driver MUST clear the IdPServerResponse and
 attempt to authenticate one more time starting from
