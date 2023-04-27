@@ -270,6 +270,8 @@ Error clears cache
   that expire within 5 minutes and a refresh callback that gives invalid
   credentials.
 - Ensure that a ``find`` operation adds a new entry to the cache.
+- Close the client.
+- Create a new client with the same parameters.
 - Ensure that a subsequent ``find`` operation results in an error.
 - Ensure that the cache value cleared.
 - Close the client.
