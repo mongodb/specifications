@@ -1326,7 +1326,8 @@ The token refresh callback must take the same arguments as the request callback,
 
     function onRefresh(info: IdpServerInfo, params: RefreshParameters): IdpServerResponse
 
-Before calling a callback, the driver MUST acquire a lock unique to the cache key.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.
+Before calling a callback, the driver MUST acquire a lock unique to the cache key.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.  The lock MUST be released
+when the callback call as finished or errored.
 This is because request callbacks may involve human interaction, and refresh
 callbacks could use refresh tokens that can only be used once.
 
