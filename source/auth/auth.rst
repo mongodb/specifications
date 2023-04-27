@@ -1284,13 +1284,23 @@ User Provided Callbacks
 ```````````````````````
 
 Drivers MUST allow the user to provide callbacks for token request and
-token refresh.  The driver MUST pass the following information to the request callback: IdpServerInfo, and either a timeoutSeconds or timeoutContext object for the callback.   The signature of the callback is up to the driver's discretion, but the driver MUST ensure that, in the future, callbacks may have additional optional parameters passed to them.  An example might look like:
+token refresh.  The driver MUST provide a way for the both callbacks to be either automatically
+canceled, or to cancel itself.  This can be as a timeout argument to the
+callback, a cancellation context passed to the callback, or some other
+language-appropriate mechanism.  The timeout duration MUST be 5 minutes,
+to account for the fact that there may be human interaction involved.
+
+Callbacks can be synchronous and/or asynchronous, depending on the driver
+and/or language.  Asynchronous callbacks should be preferred when other
+operations in the driver use asynchronous functions.
+
+The driver MUST pass the following information to the request callback: ``IdpServerInfo``, and either a ``timeoutSeconds`` or ``timeoutContext`` object for the callback.   The signature of the callback is up to the driver's discretion, but the driver MUST ensure that, in the future, callbacks may have additional optional parameters passed to them.  An example might look like:
 
 .. code: typescript
 
-  function onRequest(info: IdpServerInfo, options: CallbackParameters): IdpServerResponse
+  function onRequest(info: IdpServerInfo, params: RequestParameters): IdpServerResponse
 
-In this example, a non-optional timeoutSeconds field would then need to be present on ``CallbackParameters``.  ``IdpServerResponse`` is defined as:
+In this example, one of the timeout values would then need to be present on ``RequestParameters``.  ``IdpServerResponse`` is defined as:
 
 .. code:: idl
 
@@ -1310,30 +1320,18 @@ In this example, a non-optional timeoutSeconds field would then need to be prese
               type: str
               optional: true
 
-The token refresh callback must take the same arguments as the request callback, as well as the ``refreshToken`` string given by the ``IdpServerResponse``.
+The token refresh callback must take the same arguments as the request callback, as well as the ``refreshToken`` string given by the ``IdpServerResponse``, and might look like the following::
 
-Callbacks can be synchronous and/or asynchronous, depending on the driver
-and/or language.  Asynchronous callbacks should be preferred when other
-operations in the driver use asynchronous functions.
+.. code:: typescript
+
+    function onRefresh(info: IdpServerInfo, params: RefreshParameters): IdpServerResponse
 
 Before calling a callback, the driver MUST acquire a lock unique to the cache key.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.
 This is because request callbacks may involve human interaction, and refresh
 callbacks could use refresh tokens that can only be used once.
 
-The driver MUST provide a way for the both callbacks to be either automatically
-canceled, or to cancel itself.  This can be as a timeout argument to the
-callback, a cancellation context passed to the callback, or some other
-language-appropriate mechanism.  The timeout duration MUST be 5 minutes,
-to account for the fact that there may be human interaction involved.
-
-
-.. code:: typescript
-
-    function onRefresh(info: IdpServerInfo, context: CallbackContext): IdpServerResponse
-
 If either callback does not return an object in the correct form of ``IdpServerResponse``, the driver MUST raise an error either using the type system or by raising an error when non-optional properties are missing . The driver MUST NOT attempt to validate
 the token(s) directly.  It is expected that if the server changes the expected fields, the SASL exchange will be updated with a version parameter.  Drivers do not need to attempt to provide old-driver-new-server compatibility.
-
 
 If the refresh callback is given and the request callback is not given,
 the driver MUST raise an error.  If PROVIDER_NAME is given and one or more
