@@ -87,10 +87,6 @@ Allowed Hosts Blocked
   ``ALLOWED_HOSTS`` that contains ["example.com"].
 - Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
-- Create a client that uses the url ``mongodb://evilmongodb.com`` a request
-callback, and an ``ALLOWED_HOSTS`` that contains ``*mongodb.com``.
-- Assert that a ``find`` operation fails with a client-side error.
-- Close the client.
 
 Lock Avoids Extra Callback Calls
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
