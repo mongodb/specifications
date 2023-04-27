@@ -57,3 +57,28 @@ tests:
                 $db: *db
                 lsid: { id: { $$type: binData } }
               commandName: getMore
+
+  - description: creates a cursor and iterates one result
+    operations:
+      - name: createRunCursorCommand
+        object: *db
+        arguments:
+          commandName: find
+          batchSize: 2
+          command: { find: *collection, filter: {}, batchSize: 2 }
+        saveResultAsEntity: &myRunCommandCursor myRunCommandCursor
+      - name: iterateUntilDocumentOrError
+        object: *myRunCommandCursor
+        expectResult: { _id: 1, x: 11 }
+      - name: iterateUntilDocumentOrError
+        object: *myRunCommandCursor
+        expectResult: { _id: 2, x: 22 }
+      - name: iterateUntilDocumentOrError
+        object: *myRunCommandCursor
+        expectResult: { _id: 3, x: 33 }
+      - name: iterateUntilDocumentOrError
+        object: *myRunCommandCursor
+        expectResult: { _id: 4, x: 44 }
+      - name: iterateUntilDocumentOrError
+        object: *myRunCommandCursor
+        expectResult: { _id: 5, x: 55 }

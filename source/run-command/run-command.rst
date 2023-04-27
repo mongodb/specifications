@@ -131,6 +131,10 @@ The logical session ID MUST be included under ``lsid`` in the command sent to th
 
 * See Driver Sessions' section on `Sending the session ID to the server on all commands <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-session-id-to-the-server-on-all-commands>`_
 
+The command sent to the server MUST gossip the ``$clusterTime`` if cluster time support is detected.
+
+* See Driver Sessions' section on `Gossipping the cluster time <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#gossipping-the-cluster-time>`_
+
 Transactions
 """"""""""""
 
@@ -335,7 +339,6 @@ Drivers SHOULD not allow both a ``getMore`` ``maxTimeMS`` setting to be provided
 Drivers MUST document that attempting to set both can have undefined behavior and is not supported.
 
 When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support timeout functionality as described in the CSOT specification.
-
 
 * See Client Side Operations Timeout's section on `Cursors <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#cursors>`_
 
