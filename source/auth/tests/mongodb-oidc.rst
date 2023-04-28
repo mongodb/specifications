@@ -102,7 +102,7 @@ Lock Avoids Extra Callback Calls
   - Create a new client with the callbacks.
   - Run a find operation that succeeds.
   - Close the client.
-- Join the two threads.
+- Join the two threads or simultaneously call the async operations
 - Ensure that the request callback has been called once, and the refresh
   callback has been called twice.
 
