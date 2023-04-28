@@ -223,8 +223,8 @@ The following represents how a runCursorCommand API may be exposed.
       /**
        * Identifies the type of cursor this is.
        *
-       * A tailable cursor can receive empty ``nextBatch`` arrays in getMore responses.
-       * However, subsequent ``getMore`` operations may return documents if new data has become available.
+       * A tailable cursor can receive empty `nextBatch` arrays in `getMore` responses.
+       * However, subsequent `getMore` operations may return documents if new data has become available.
        *
        * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data becomes available.
        *
@@ -242,12 +242,10 @@ A driver can expect that the result from running this command will return a docu
 
 High level RunCursorCommand steps:
 
-* If no session is provided by the caller, create a ClientSession
-* Create a local Cursor instance
-* Run the cursor creating command provided by the caller
-* Store the ``firstBatch``, ``ns``, and ``id`` from the server's response as well as which server the operation was executed on
+* Run the cursor creating command provided by the caller and retain the ClientSession used as well as the server the command was executed on.
+* Create a local Cursor instance and store the ``firstBatch``, ``ns``, and ``id`` from the response.
 * When the current batch has been fully iterated, using the same server the initial command was executed on execute a ``getMore``
-* Store the results of the getMore's ``nextBatch`` and update the cursor's ``id``
+* Store the ``nextBatch`` from the ``getMore`` response and update the cursor's ``id``
 * Continue executing ``getMore`` commands until the cursor is exhausted
 
 Driver Sessions
@@ -257,6 +255,8 @@ A driver MUST create an implicit ClientSession if none is provided and it MUST b
 All ``getMore`` commands constructed for this cursor MUST send the same ``lsid`` used on the initial command.
 A cursor is exhausted when the server reports a cursor is equal to zero.
 When the cursor is exhausted the client session MUST be ended and the server session returned to the pool as early as possible rather than waiting for a caller to completely iterate the final batch.
+
+* See Drivers Sessions' section on `Sessions and Cursors <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sessions-and-cursors>`_
 
 Server Selection
 """"""""""""""""
@@ -305,12 +305,14 @@ The cursor API returned to the caller MUST offer a way to configure ``batchSize`
     comment?: BSONValue;
   }
 
-The driver's cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every getMore response.
+The driver's cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every ``getMore`` response.
+
+* See Find, getMore and killCursors commands' section on `GetMore <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#getmore>`_
 
 Tailable and TailableAwait
 """"""""""""""""""""""""""
 
-By default most cursors are non-tailable, for example, a find that exhausts when all results for the filter have been satisfied.
+By default most cursors are non-tailable, for example, a ``find`` that exhausts when all results for the filter have been satisfied.
 MongoDB also supports creating cursors that "tail" or follow the target namespace for new data.
 Querying capped collections and change streams are some examples of tailable cursor use cases.
 A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, this does not indicate that the cursor has been exhausted.
@@ -330,6 +332,7 @@ If the cursor id is nonzero a KillCursors operation MUST be attempted, the resul
 The ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.
 
 * See Driver Sessions' section on `When sending a killCursors command <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#when-sending-a-killcursors-command>`_
+* See Find, getMore and killCursors commands' section on `killCursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#killcursors>`_
 
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""
