@@ -104,7 +104,8 @@ Lock Avoids Extra Callback Calls
   - Close the client.
 - Join the two threads or simultaneously call the async operations
 - Ensure that the request callback has been called once, and the refresh
-  callback has been called twice.
+  callback has been called twice, or that no async function has been
+  entered simultaneously.
 
 AWS Automatic Auth
 ==================
