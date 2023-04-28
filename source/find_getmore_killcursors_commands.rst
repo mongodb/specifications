@@ -263,17 +263,32 @@ The driver **SHOULD NOT attempt to emulate the behavior seen in 3.0 or earlier**
 Tailable cursors
 ^^^^^^^^^^^^^^^^
 
-Tailable cursors have some fundamental changes compared to the existing **OP_QUERY** implementation. To create a tailable cursor you execute the following command:
+By default most cursors are non-tailable, for example, a ``find`` that exhausts when all results for the filter have been satisfied.
+MongoDB also supports creating cursors that "tail" or follow the target namespace for new data.
+Querying capped collections and change streams are some examples of tailable cursor use cases.
+A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, this does not indicate that the cursor has been exhausted.
 
-.. code:: javascript
+In addition to considering a cursor tailable, an ``awaitData`` flag may be sent on the initial command.
+This will request that the server block responding to the ``getMore`` immediately and instead rely on the ``maxTimeMS`` field of the ``getMore`` (or server default).
+If the time does expire an empty batch will be returned and the driver MUST issue another ``getMore``.
 
-    var b = db.runCommand({ find:"t", tailable: true });
+To create a tailable ``find`` cursor you execute the following command:
 
-To create a tailable cursor with **tailable** and **awaitData**, execute the following command:
+.. code:: typescript
 
-.. code:: javascript
-
-    var b = db.runCommand({ find:"t", tailable: true, awaitData: true });
+  interface FindCommand {
+    /** The namespace to run the find command on */
+    find: string;
+    /** The filter to control what documents are returned */
+    filter: BSONDocument;
+    /** Informs the server whether to keep the cursor open even when there are no results to satisfy the query */
+    tailable?: boolean;
+    /** Informs the server whether to block on `maxTimeMS` before returning an empty `nextBatch` */
+    awaitData?: boolean;
+    /** Controls the amount of milliseconds the server will allow the operations to run for */
+    maxTimeMS?: int32;
+    // ... Non-normative: additional fields omitted
+  }
 
 If **maxTimeMS** is not set in FindOptions, the driver SHOULD refrain from setting **maxTimeMS** on the **find** or **getMore** commands issued by the driver and allow the server to use its internal default value for **maxTimeMS**.
 
@@ -294,22 +309,55 @@ when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
 
 .. _getMore: https://www.mongodb.com/docs/manual/reference/command/getMore/
 
+.. code:: typescript
+
+  interface GetMoreCommand {
+    /** Set to the nonzero cursor id */
+    getMore: int64;
+    /** Set to the namespace returned by the initial command response */
+    collection: string;
+    /**
+     * User configurable document count for the batch returned for this getMore.
+     * Only attached to command document if nonzero.
+     */
+    batchSize?: int32;
+    /**
+     * User configurable time limit enforced by the server.
+     */
+    maxTimeMS?: int32;
+    /**
+     * User configurable comment that can be used to identify the operation in logs.
+     * This can be any BSON value.
+     */
+    comment?: BSONValue;
+  }
+
 The **batchSize** option of **getMore** command MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
 On success, the getMore command will return the following:
 
-.. code:: javascript
+.. code:: typescript
 
-    {
-      "cursor": {
-        "id": <int64>,
-        "ns": <string>,
-        "nextBatch": [
-          ...
-        ]
-      },
-      "ok": 1
+    interface GetMoreResponse {
+      ok: 1;
+      cursor: {
+        /** The cursor id, this may be equal to zero indicating the cursor is exhausted */
+        id: int64;
+        /**
+         * The namespace the cursor is running on.
+         * This value may be different than the namespace the driver started the cursor on, for example, database level aggregations.
+         */
+        ns: string;
+        /**
+         * The next batch of documents.
+         * This array may be empty, in the case of a tailable cursor, which DOES NOT indicate the cursor is exhausted.
+         */
+        nextBatch: BSONArray<BSONDocument>;
+      }
+      // ... Non-normative: additional fields omitted
     }
+
+The driver's local cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every ``getMore`` response.
 
 killCursors
 -----------
@@ -463,6 +511,7 @@ More in depth information about passing read preferences to Mongos can be found 
 Changelog
 =========
 
+:2023-04-28: Improve tailable cursor description and update the ``getMore`` section code blocks
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-02-01: Replace examples/tables for find, getMore, and killCursors with
              server manual links.

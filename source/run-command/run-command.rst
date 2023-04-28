@@ -280,48 +280,17 @@ If the cursor's batch is empty and the cursor id is nonzero, the driver MUST per
 Executing GetMores
 """"""""""""""""""
 
-The cursor API returned to the caller MUST offer a way to configure ``batchSize``, ``maxTimeMS``, and ``comment`` that are sent on the ``getMore`` command.
-
-.. code:: typescript
-
-  interface GetMore {
-    /** Set to the nonzero cursor id */
-    getMore: int64;
-    /** Set to the namespace returned by the initial command response */
-    collection: string;
-    /**
-     * User configurable document count for the batch returned for this getMore.
-     * Only attached to command document if nonzero.
-     */
-    batchSize?: int32;
-    /**
-     * User configurable time limit enforced by the server.
-     */
-    maxTimeMS?: int32;
-    /**
-     * User configurable comment that can be used to identify the operation in logs.
-     * This can be any BSON value.
-     */
-    comment?: BSONValue;
-  }
-
-The driver's cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every ``getMore`` response.
+The cursor API returned to the caller MUST offer an API to configure ``batchSize``, ``maxTimeMS``, and ``comment`` that are sent on the ``getMore`` command.
+If it is overwhelmingly convenient to a driver's language to offer setting these options in the ``RunCursorCommandOptions`` a driver MUST have clear documentation that the options only configure ``getMore`` commands.
 
 * See Find, getMore and killCursors commands' section on `GetMore <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#getmore>`_
 
 Tailable and TailableAwait
 """"""""""""""""""""""""""
 
-By default most cursors are non-tailable, for example, a ``find`` that exhausts when all results for the filter have been satisfied.
-MongoDB also supports creating cursors that "tail" or follow the target namespace for new data.
-Querying capped collections and change streams are some examples of tailable cursor use cases.
-A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, this does not indicate that the cursor has been exhausted.
+* **See first:** Find, getMore and killCursors commands's section on `Tailable cursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#tailable-cursors>`_
 
-In addition to considering a cursor tailable, an ``awaitData`` flag may be sent on the initial command.
-This will request that the server block responding to the ``getMore`` immediately and instead rely on the ``maxTimeMS`` field of the ``getMore`` (or server default).
-If the time does expire an empty batch will be returned and the driver MUST issue another ``getMore``.
-
-It is up to the user to construct their initial command with ``awaitData`` and ``tailable`` flags as well as inform RunCursorCommand of the ``cursorType`` that should be constructed.
+It is the responsibility of the caller to construct their initial command with ``awaitData`` and ``tailable`` flags **as well as** inform RunCursorCommand of the ``cursorType`` that should be constructed.
 Requesting a ``cursorType`` that does not align with the fields sent to the server on the initial command SHOULD be documented as undefined behavior.
 
 Resource Cleanup
@@ -348,5 +317,5 @@ When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support time
 Changelog
 =========
 
-:2023-04-24: Add runCursorCommand API specification.
+:2023-04-28: Add runCursorCommand API specification.
 :2023-04-20: Add run command specification.
