@@ -95,7 +95,7 @@ Lock Avoids Extra Callback Calls
 - Create a request callback that returns a token that will expire soon, and
   a refresh callback.  Ensure that the request callback has a time delay, and
   that we can record the number of times each callback is called.
-- Spawn two threads that do the following:
+- Spawn two threads or async operations that do the following:
   - Create a client with the callbacks.
   - Run a find operation that succeeds.
   - Close the client.
