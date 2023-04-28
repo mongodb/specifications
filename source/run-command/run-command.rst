@@ -202,7 +202,7 @@ The following represents how a runCursorCommand API may be exposed.
 
 .. code:: typescript
 
-    interface Db {
+    interface Database {
       /**
        * Takes an argument representing an arbitrary BSON document and executes it against the server.
        */
@@ -211,7 +211,7 @@ The following represents how a runCursorCommand API may be exposed.
 
     interface RunCursorCommandOptions extends RunCommandOptions {
       /**
-       * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all next calls.
+       * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all subsequent calls.
        * To support both of these use cases, these operations MUST support a timeoutMode option.
        *
        * @defaultValue 'CURSOR_LIFETIME'
@@ -226,7 +226,7 @@ The following represents how a runCursorCommand API may be exposed.
        * A tailable cursor can receive empty ``nextBatch`` arrays in getMore responses.
        * However, subsequent ``getMore`` operations may return documents if new data has become available.
        *
-       * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data become available.
+       * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data becomes available.
        *
        * @defaultValue NON_TAILABLE
        */
@@ -267,7 +267,7 @@ The selected server MUST be used for subsequent ``getMore`` commands.
 Load Balancers
 """"""""""""""
 
-When in ``loadBalanced`` mode, a driver MUST pin the connection the initial operation was executed on and reuse it for subsequent ``getMore`` operations.
+When in ``loadBalanced`` mode, a driver MUST pin the connection used to execute the initial operation, and reuse it for subsequent ``getMore`` operations.
 
 * See Load Balancer's section on `Behaviour With Cursors <https://github.com/mongodb/specifications/blob/master/source/load-balancers/load-balancers.rst#behaviour-with-cursors>`_
 
@@ -293,11 +293,11 @@ The cursor API returned to the caller MUST offer a way to configure ``batchSize`
      * User configurable document count for the batch returned for this getMore.
      * Only attached to command document if nonzero.
      */
-    batchSize?: int23;
+    batchSize?: int32;
     /**
      * User configurable time limit enforced by the server.
      */
-    maxTimeMS?: int23;
+    maxTimeMS?: int32;
     /**
      * User configurable comment that can be used to identify the operation in logs.
      * This can be any BSON value.
