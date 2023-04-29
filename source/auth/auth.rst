@@ -1378,7 +1378,7 @@ is longer than the access token lifetime.   Drivers MUST ensure that the cache d
 
 If a global cache is used, the cache keys MUST include the username (or empty string) and the
 actually used socket address and port for the current server.  The cache key
-MUST also include a hashes of the callback function(s), if hash comparisons are possible in the driver language.  In the case of a global cache, Using the socket address and port accounts for the case when two different servers use the same username but could be configured differently.
+MUST also include hashes of the callback function(s), if hash comparisons are possible in the driver language.  In the case of a global cache, using the socket address and port accounts for the case when two different servers use the same username but could be configured differently.
 There is an edge case where if the same username is used and two aliases
 to the same local host address are given, there will be duplicate user/service
 interactions, unless the driver can resolve the local host address as well.
