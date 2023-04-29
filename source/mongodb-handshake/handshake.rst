@@ -380,6 +380,11 @@ has the same fields as seen in the conversation subsection of the SCRAM-SHA-1 an
 SCRAM-SHA-256 sections in the `Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
 with an additional ``db`` field to specify the name of the authentication database.
 
+When the mechanism is ``MONGODB-OIDC``, ``speculativeAuthenticate`` has the same
+structure as seen in the MONGODB-OIDC conversation section in the
+`Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_.  However,
+the driver MUST not call a callback as part of ``speculativeAuthenticate``.
+
 If the initial handshake command with a ``speculativeAuthenticate`` argument succeeds,
 the client should proceed with the next step of the exchange. If the initial handshake
 response does not include a ``speculativeAuthenticate`` reply and the ``ok`` field
