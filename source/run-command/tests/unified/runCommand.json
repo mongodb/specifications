@@ -84,7 +84,7 @@
   ],
   "tests": [
     {
-      "description": "always attaches $db to given command",
+      "description": "always attaches $db and implicit lsid to given command and omits default readPreference",
       "operations": [
         {
           "name": "runCommand",
@@ -108,7 +108,13 @@
               "commandStartedEvent": {
                 "command": {
                   "ping": 1,
-                  "$db": "db"
+                  "$db": "db",
+                  "lsid": {
+                    "$$exists": true
+                  },
+                  "$readPreference": {
+                    "$$exists": false
+                  }
                 },
                 "commandName": "ping"
               }
@@ -276,6 +282,11 @@
     },
     {
       "description": "does not retry retryable errors on given command",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.2"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",
@@ -419,6 +430,11 @@
     },
     {
       "description": "attaches apiVersion fields to given command when stableApi is configured on the client",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "5.0"
+        }
+      ],
       "operations": [
         {
           "name": "runCommand",

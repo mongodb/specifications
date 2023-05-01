@@ -1711,20 +1711,20 @@ Create a ClientEncryption object named ``clientEncryption`` with these options:
 
 .. code:: typescript
 
-   ClientEncryptionOpts {
-      keyVaultClient: <keyVaultClient>;
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   class ClientEncryptionOpts {
+      keyVaultClient: <keyVaultClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    }
 
 Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``:
 
 .. code:: typescript
 
-   AutoEncryptionOpts {
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
-      bypassQueryAnalysis: true
+   class AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+      bypassQueryAnalysis: true,
    }
 
 
@@ -1736,9 +1736,9 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``insertPayload``.
@@ -1750,10 +1750,10 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
       queryType: "equality",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``findPayload``.
@@ -1770,9 +1770,9 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
-      contentionFactor: 10
+      contentionFactor: 10,
    }
 
 Store the result in ``insertPayload``.
@@ -1786,10 +1786,10 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
       queryType: "equality",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``findPayload``.
@@ -1803,10 +1803,10 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
       queryType: "equality",
-      contentionFactor: 10
+      contentionFactor: 10,
    }
 
 Store the result in ``findPayload2``.
@@ -1823,8 +1823,8 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "Unindexed"
+      keyId : <key1ID>,
+      algorithm: "Unindexed",
    }
 
 Store the result in ``insertPayload``.
@@ -1843,9 +1843,9 @@ Use ``clientEncryption`` to encrypt the value "encrypted indexed value" with the
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Indexed",
-      contentionFactor: 0
+      contentionFactor: 0,
    }
 
 Store the result in ``payload``.
@@ -1860,7 +1860,7 @@ Use ``clientEncryption`` to encrypt the value "encrypted unindexed value" with t
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "Unindexed",
    }
 
@@ -1943,10 +1943,10 @@ Create a ClientEncryption object named ``clientEncryption`` with these options:
 
 .. code:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    }
 
 Create a data key with the "local" KMS provider. Storing the result in a variable named ``keyID``.
@@ -1955,9 +1955,9 @@ Use ``clientEncryption`` to encrypt the string "hello" with the following ``Encr
 
 .. code:: typescript
 
-   EncryptOpts {
+   class EncryptOpts {
       keyId: <keyID>,
-      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
    }
 
 Store the result in a variable named ``ciphertext``.
@@ -1969,9 +1969,9 @@ Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``
 
 .. code:: typescript
 
-   AutoEncryptionOpts {
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   class AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    }
 
 Configure ``encryptedClient`` with "retryReads=false".
@@ -2059,7 +2059,7 @@ options:
 
 .. code-block:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
       kmsProviders: { "aws": {} },
@@ -2144,10 +2144,10 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
    .. code:: typescript
 
-      ClientEncryptionOpts {
-         keyVaultClient: <new MongoClient>;
-         keyVaultNamespace: "keyvault.datakeys";
-         kmsProviders: <all KMS providers>
+      class ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>,
+         keyVaultNamespace: "keyvault.datakeys",
+         kmsProviders: <all KMS providers>,
       }
 
 3. Call ``clientEncryption1.createDataKey`` with ``srcProvider`` and these options:
@@ -2155,7 +2155,7 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
    .. code:: typescript
 
       class DataKeyOpts {
-         masterKey: <depends on srcProvider>
+         masterKey: <depends on srcProvider>,
       }
 
    Store the return value in ``keyID``.
@@ -2166,7 +2166,7 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
       class EncryptOpts {
          keyId : keyID,
-         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }
 
    Store the return value in ``ciphertext``.
@@ -2175,10 +2175,10 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
    .. code:: typescript
 
-      ClientEncryptionOpts {
-         keyVaultClient: <new MongoClient>;
-         keyVaultNamespace: "keyvault.datakeys";
-         kmsProviders: <all KMS providers>
+      class ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>,
+         keyVaultNamespace: "keyvault.datakeys",
+         kmsProviders: <all KMS providers>,
       }
 
 6. Call ``clientEncryption2.rewrapManyDataKey`` with an empty ``filter`` and these options:
@@ -2186,8 +2186,8 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
    .. code:: typescript
 
       class RewrapManyDataKeyOpts {
-         provider: dstProvider
-         masterKey: <depends on dstProvider>
+         provider: dstProvider,
+         masterKey: <depends on dstProvider>,
       }
 
    Assert that the returned ``RewrapManyDataKeyResult.bulkWriteResult.modifiedCount`` is 1.
@@ -2207,7 +2207,7 @@ options:
 
 .. code-block:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
       kmsProviders: { "gcp": {} },
@@ -2230,7 +2230,7 @@ following ``DataKeyOpts``:
          "projectId": "devprod-drivers",
          "location": "global",
          "keyRing": "key-ring-csfle",
-         "keyName": "key-name-csfle"
+         "keyName": "key-name-csfle",
       }
    }
 
@@ -2255,7 +2255,7 @@ following ``DataKeyOpts``:
          "projectId": "devprod-drivers",
          "location": "global",
          "keyRing": "key-ring-csfle",
-         "keyName": "key-name-csfle"
+         "keyName": "key-name-csfle",
       }
    }
 
@@ -2405,7 +2405,7 @@ options:
 
 .. code-block:: typescript
 
-   ClientEncryptionOpts {
+   class ClientEncryptionOpts {
       keyVaultClient: <setupClient>,
       keyVaultNamespace: "keyvault.datakeys",
       kmsProviders: { "azure": {} },
@@ -2425,7 +2425,7 @@ following ``DataKeyOpts``:
    class DataKeyOpts {
       masterKey: {
          "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
-         "keyName": "KEY-NAME"
+         "keyName": "KEY-NAME",
       }
    }
 
@@ -2448,7 +2448,7 @@ following ``DataKeyOpts``:
    class DataKeyOpts {
       masterKey: {
          "keyVaultEndpoint": "https://keyvault-drivers-2411.vault.azure.net/keys/",
-         "keyName": "KEY-NAME"
+         "keyName": "KEY-NAME",
       }
    }
 
@@ -2629,7 +2629,7 @@ when attempting to create a collection with such invalid settings.
 Case 4: Insert encrypted value
 ``````````````````````````````
 
-This test is continuation of the case 1 and provides a way to complete inserting 
+This test is continuation of the case 1 and provides a way to complete inserting
 with encrypted value.
 
 1. Create a new create-collection options `Opts` including the following::
@@ -2657,7 +2657,8 @@ with encrypted value.
    Expect success.
 
 22. Range Explicit Encryption
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The Range Explicit Encryption tests require MongoDB server 7.0+. The tests must not run against a standalone.
 
 .. note::
@@ -2693,194 +2694,214 @@ Create a ClientEncryption object named ``clientEncryption`` with these options:
 
 .. code:: typescript
 
-   ClientEncryptionOpts {
-      keyVaultClient: <keyVaultClient>;
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+   class ClientEncryptionOpts {
+      keyVaultClient: <keyVaultClient>,
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    }
 
 Create a MongoClient named ``encryptedClient`` with these ``AutoEncryptionOpts``:
 
 .. code:: typescript
 
-   AutoEncryptionOpts {
-      keyVaultNamespace: "keyvault.datakeys";
-      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
-      bypassQueryAnalysis: true
+   class AutoEncryptionOpts {
+      keyVaultNamespace: "keyvault.datakeys",
+      kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+      bypassQueryAnalysis: true,
    }
 
 The remaining tasks require setting ``RangeOpts``. `Test Setup: RangeOpts`_ lists the values to use for ``RangeOpts`` for each of the supported data types.
 
-Use ``clientEncryption`` to encrypt these values: 0, 6, 30, and 200. Ensure the type matches with the type of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
+Use ``clientEncryption`` to encrypt these values: 0, 6, 30, and 200. Ensure the type matches that of the encrypted field. For example, if the encrypted field is ``encryptedDoubleNoPrecision`` encrypt the value 6.0.
 
-Encrypt these values with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
-      contentionFactor: 0
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
    }
 
-Use ``encryptedClient`` to insert these documents into ``db.explicit_encryption``:
+Use ``encryptedClient`` to insert the following documents into ``db.explicit_encryption``:
 
-- ``{ "encrypted<Type>": <encrypted 0>, _id: 0 }``
-- ``{ "encrypted<Type>": <encrypted 6>, _id: 1 }``
-- ``{ "encrypted<Type>": <encrypted 30>, _id: 2 }``
-- ``{ "encrypted<Type>": <encrypted 200>, _id: 3 }``
+.. code:: javascript
+
+   { "_id": 0, "encrypted<Type>": <encrypted 0> }
+   { "_id": 1, "encrypted<Type>": <encrypted 6> }
+   { "_id": 2, "encrypted<Type>": <encrypted 30> }
+   { "_id": 3, "encrypted<Type>": <encrypted 200> }
 
 
 Test Setup: RangeOpts
 `````````````````````
-This section lists the values to use for ``RangeOpts`` for each of the supported data types, since each data type requires a different ``RangeOpts``. 
+This section lists the values to use for ``RangeOpts`` for each of the supported data types, since each data type requires a different ``RangeOpts``.
 
-Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped. 
+Each test listed in the cases below must pass for all supported data types unless it is stated the type should be skipped.
 
 #. DecimalNoPrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
-         sparsity: 1
+         sparsity: 1,
       }
 
 #. DecimalPrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: { "$numberDecimal": "0" },
          max: { "$numberDecimal": "200" },
          sparsity: 1,
-         precision: 2
+         precision: 2,
       }
 
 #. DoubleNoPrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
-         sparsity: 1
+         sparsity: 1,
       }
 
 #. DoublePrecision
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: { "$numberDouble": "0" },
          max: { "$numberDouble": "200" },
          sparsity: 1,
-         precision: 2
+         precision: 2,
       }
 
 #. Date
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: {"$date": { "$numberLong": "0" } } ,
          max: {"$date": { "$numberLong": "200" } },
-         sparsity: 1
+         sparsity: 1,
       }
 
 #. Int
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: {"$numberInt": "0" } ,
          max: {"$numberInt": "200" },
-         sparsity: 1
+         sparsity: 1,
       }
 
 #. Long
 
    .. code:: typescript
-   
+
       class RangeOpts {
          min: {"$numberLong": "0" } ,
          max: {"$numberLong": "200" },
-         sparsity: 1
+         sparsity: 1,
       }
 
 Case 1: can decrypt a payload
 `````````````````````````````
-Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the encoded BSON type matches the type of the encrypted field. For example, if the encrypted field is ``encryptedLong`` encrypt the 64-bit BSON long value 6, not the 32-bit BSON int value 6.
+Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the type matches that of the encrypted field. For example, if the encrypted field is ``encryptedLong`` encrypt a BSON int64 type, not a BSON int32 type.
 
-Store the result in ``insertPayload``.
-
-Encrypt with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
-      contentionFactor: 0
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
    }
 
-Use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals 6.
+Store the result in ``insertPayload``.
+
+Use ``clientEncryption`` to decrypt ``insertPayload``. Assert the returned value equals 6 and has the expected type.
 
 .. note::
 
    The type returned by ``clientEncryption.decrypt()`` may differ from the input type to ``clientEncryption.encrypt()`` depending on how the driver unmarshals BSON numerics to language native types.
-   Example: a driver may unmarshal a BSON long to a numeric type that does not distinguish between int64 and int32.
+   Example: a driver may unmarshal a BSON int64 to a numeric type that does not distinguish between int64 and int32.
 
-Case 2: can find encrypted range and return the maximum 
+
+Case 2: can find encrypted range and return the maximum
 ```````````````````````````````````````````````````````
 Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
-   //convert 6 and 200 to match the type of the encrypted field.
-   {"$and": [{"encrypted<Type>": {"$gte": 6}}, {"encrypted<Type>": {"$lte": 200}}]}
+   // Convert 6 and 200 to the encrypted field type
+   { "$and": [ { "encrypted<Type>": { "$gte": 6 } }, { "encrypted<Type>": { "$lte": 200 } } ] }
 
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
       queryType: "rangePreview",
-      contentionFactor: 0
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
    }
 
 Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``findPayload`` and sort the results by ``_id``.
 
-Assert these three documents ``{ "encrypted<Type>": 6 }, { "encrypted<Type>": 30 }, { "encrypted<Type>": 200}`` are returned.
-
-
-Case 3: can find encrypted range and return the minimum 
-```````````````````````````````````````````````````````
-Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
-
+Assert the following three documents are returned:
 
 .. code:: javascript
-   
-   //convert 0 and 6 to match the type of the encrypted field.
-   {"$and": [{"encrypted<Type>": {"$gte": 0}}, {"encrypted<Type>": {"$lte": 6}}]}
 
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
+   // Convert 6, 30, and 200 to the encrypted field type
+   { "_id": 1, "encrypted<Type>": 6 }
+   { "_id": 2, "encrypted<Type>": 30 }
+   { "_id": 3, "encrypted<Type>": 200 }
+
+
+Case 3: can find encrypted range and return the minimum
+```````````````````````````````````````````````````````
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
+
+.. code:: javascript
+
+   // Convert 0 and 6 to the encrypted field type
+   { "$and": [ { "encrypted<Type>": { "$gte": 0 } }, { "encrypted<Type>": { "$lte": 6 } } ] }
+
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
       queryType: "rangePreview",
-      contentionFactor: 0
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
    }
 
 Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``findPayload`` and sort the results by ``_id``.
 
-Assert these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
+Assert the following two documents are returned:
+
+.. code:: javascript
+
+   // Convert 0 and 6 to the encrypted field type
+   { "_id": 0, "encrypted<Type>": 0 }
+   { "_id": 1, "encrypted<Type>": 6 }
+
 
 Case 4: can find encrypted range with an open range query
 `````````````````````````````````````````````````````````
@@ -2888,107 +2909,128 @@ Use ``clientEncryption.encryptExpression()`` to encrypt this query:
 
 .. code:: javascript
 
-   //convert 30 to match the type of the encrypted field.
-   {"$and": [{"encrypted<Type>": {"$gt": 30}}]}
+   // Convert 30 to the encrypted field type
+   { "$and": [ { "encrypted<Type>": { "$gt": 30 } } ] }
 
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
       queryType: "rangePreview",
-      contentionFactor: 0
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
    }
 
 Store the result in ``findPayload``.
 
 Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``findPayload`` and sort the results by ``_id``.
 
-Assert that only this document ``{ "encrypted<Type>": 200 }`` is returned. 
-
-Case 5: can run an aggregation expression inside $expr 
-``````````````````````````````````````````````````````
-Use ``clientEncryption.encryptExpression()`` to encrypt this query: 
+Assert the following document is returned:
 
 .. code:: javascript
 
-   {'$and': [ { '$lt': [ '$encrypted<Type>', 30 ] } ] } }
+   // Convert 200 to the encrypted field type
+   { "_id": 3, "encrypted<Type>": 200 }
 
-Use the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts`` to encrypt the query:
+
+Case 5: can run an aggregation expression inside $expr
+``````````````````````````````````````````````````````
+Use ``clientEncryption.encryptExpression()`` to encrypt this query:
+
+.. code:: javascript
+
+   // Convert 30 to the encrypted field type
+   { "$and": [ { "$lt": [ "$encrypted<Type>", 30 ] } ] } }
+
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
       queryType: "rangePreview",
-      contentionFactor: 0
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
    }
 
 Store the result in ``findPayload``.
 
-Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{'$expr' :  <findPayload> }`` and sort the results by ``_id``.
+Use ``encryptedClient`` to run a "find" operation on the ``db.explicit_encryption`` collection with the filter ``{ "$expr": <findPayload> }`` and sort the results by ``_id``.
 
-Assert that these two documents ``{ "encrypted<Type>": 0 }, { "encrypted<Type>": 6 }`` are returned.
+Assert the following two documents are returned:
+
+.. code:: javascript
+
+   // Convert 0 and 6 to the encrypted field type
+   { "_id": 0, "encrypted<Type>": 0 }
+   { "_id": 1, "encrypted<Type>": 6 }
+
 
 Case 6: encrypting a document greater than the maximum errors
 `````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision`` or ``encryptedDecimalNoPrecision``.
 
-Use ``clientEncryption.encrypt()`` to try to encrypt the value 201 with the matching ``RangeOpts`` listed in `Test Setup: RangeOpts`_ and these ``EncryptOpts``:
+Use ``clientEncryption.encrypt()`` to encrypt the value 201. Ensure the type matches that of the encrypted field.
+
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
-      contentionFactor: 0
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
    }
 
-Ensure 201 matches the type of the encrypted field. The error should be raised because 201 is greater than the maximum value in ``RangeOpts``.
+Assert that an error was raised because 201 is greater than the maximum value in ``RangeOpts``.
+
+
+Case 7: encrypting a value of a different type errors
+`````````````````````````````````````````````````````
+This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision`` or ``encryptedDecimalNoPrecision``.
+
+Use ``clientEncryption.encrypt()`` to encrypt the value 6 with a type that does not match that of the encrypted field.
+
+If the encrypted field is ``encryptedInt`` use a BSON double type. Otherwise, use a BSON int32 type.
+
+Encrypt using the following ``EncryptOpts``:
+
+.. code:: typescript
+
+   class EncryptOpts {
+      keyId : <key1ID>,
+      algorithm: "RangePreview",
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type>,
+   }
+
+Ensure that ``RangeOpts`` corresponds to the type of the encrypted field (i.e. expected type) and not that of the value being passed to ``clientEncryption.encrypt()``.
 
 Assert that an error was raised.
 
-Case 7: encrypting a document of a different type errors 
-````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoubleNoPrecision`` or ``encryptedDecimalNoPrecision``.
 
-For all the tests below use these ``EncryptOpts``:
+Case 8: setting precision errors if the type is not double or Decimal128
+````````````````````````````````````````````````````````````````````
+This test case should be skipped if the encrypted field is ``encryptedDoublePrecision``, ``encryptedDoubleNoPrecision``, ``encryptedDecimalPrecision``, or ``encryptedDecimalNoPrecision``.
 
-.. code:: typescript
+Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the type matches that of the encrypted field.
 
-   class EncryptOpts {
-      keyId : <key1ID>
-      algorithm: "RangePreview",
-      contentionFactor: 0
-   }
+Add ``{ precision: 2 }`` to the encrypted field's ``RangeOpts`` (see: `Test Setup: RangeOpts`_).
 
-If the encrypted field is ``encryptedInt`` encrypt ``{ "encryptedInt": { "$numberDouble": "6" } }``.
-Otherwise, encrypt ``{ "encrypted<Type>": { "$numberInt": "6" }``.
-Assert an error was raised.
-
-
-Case 8: setting precision errors if the type is not a double
-````````````````````````````````````````````````````````````
-This test case should be skipped if the encrypted field is ``encryptedDoublePrecision`` or ``encryptedDoubleNoPrecision`` or ``encryptedDecimalPrecision`` or ``encryptedDecimalNoPrecision``.
-
-Use ``clientEncryption.encrypt()`` to try to encrypt the value 6 with these ``EncryptOpts`` and these ``RangeOpts``:
+Encrypt using the following ``EncryptOpts``:
 
 .. code:: typescript
 
    class EncryptOpts {
-      keyId : <key1ID>
+      keyId : <key1ID>,
       algorithm: "RangePreview",
-      contentionFactor: 0
-   }
-   
-   class RangeOpts {
-      min: 0,
-      max: 200,
-      sparsity: 1,
-      precision: 2,
+      contentionFactor: 0,
+      rangeOpts: <RangeOpts for Type with precision added>,
    }
 
-Assert an error was raised.
+Assert that an error was raised.

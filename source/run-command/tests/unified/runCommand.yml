@@ -48,7 +48,7 @@ initialData:
   documents: []
 
 tests:
-  - description: always attaches $db to given command
+  - description: always attaches $db and implicit lsid to given command and omits default readPreference
     operations:
       - name: runCommand
         object: *db
@@ -63,6 +63,8 @@ tests:
               command:
                 ping: 1
                 $db: *db
+                lsid: { $$exists: true }
+                $readPreference: { $$exists: false }
               commandName: ping
 
   - description: attaches the provided session lsid to given command
@@ -145,6 +147,8 @@ tests:
               commandName: insert
 
   - description: does not retry retryable errors on given command
+    runOnRequirements:
+      - minServerVersion: "4.2"
     operations:
       - name: failPoint
         object: testRunner
@@ -215,6 +219,8 @@ tests:
               databaseName: admin
 
   - description: attaches apiVersion fields to given command when stableApi is configured on the client
+    runOnRequirements:
+      - minServerVersion: "5.0"
     operations:
       - name: runCommand
         object: *dbWithStableApi
