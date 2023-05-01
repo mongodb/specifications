@@ -114,6 +114,9 @@
                   },
                   "$readPreference": {
                     "$$exists": false
+                  },
+                  "$clusterTime": {
+                    "$$exists": true
                   }
                 },
                 "commandName": "ping"
