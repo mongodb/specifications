@@ -1,6 +1,6 @@
 {
   "description": "runCursorCommand",
-  "schemaVersion": "1.3",
+  "schemaVersion": "1.4",
   "createEntities": [
     {
       "client": {
@@ -9,6 +9,12 @@
         "observeEvents": [
           "commandStartedEvent"
         ]
+      }
+    },
+    {
+      "session": {
+        "id": "session",
+        "client": "client"
       }
     },
     {
@@ -23,6 +29,18 @@
         "id": "collection",
         "database": "db",
         "collectionName": "collection"
+      }
+    },
+    {
+      "collection": {
+        "id": "cappedCollection",
+        "database": "db",
+        "collectionName": "cappedCollection",
+        "collectionOptions": {
+          "capped": true,
+          "size": "4096,",
+          "max": 3
+        }
       }
     }
   ],
@@ -52,18 +70,71 @@
           "x": 55
         }
       ]
+    },
+    {
+      "collectionName": "cappedCollection",
+      "databaseName": "db",
+      "documents": [
+        {
+          "_id": 1,
+          "x": 11
+        },
+        {
+          "_id": 2,
+          "x": 22
+        }
+      ]
     }
   ],
   "tests": [
     {
-      "description": "creates a cursor and iterates results from getMores",
+      "description": "successfully executes checkMetadataConsistency cursor creating command",
+      "runOnRequirements": {
+        "minServerVersion": 7
+      },
+      "operations": [
+        {
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "checkMetadataConsistency",
+            "command": {
+              "checkMetadataConsistency": 1
+            }
+          },
+          "expectResult": []
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "checkMetadataConsistency": 1,
+                  "$db": "db",
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "checkMetadataConsistency"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "creates an implicit session that is reused across getMores",
       "operations": [
         {
           "name": "runCursorCommand",
           "object": "db",
           "arguments": {
             "commandName": "find",
-            "batchSize": 2,
             "command": {
               "find": "collection",
               "filter": {},
@@ -92,6 +163,13 @@
               "x": 55
             }
           ]
+        },
+        {
+          "name": "assertSameLsidOnLastTwoCommands",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client"
+          }
         }
       ],
       "expectEvents": [
@@ -130,6 +208,74 @@
                 },
                 "commandName": "getMore"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "accepts an explicit session that is reused across getMores",
+      "operations": [
+        {
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "session": "session",
+            "command": {
+              "find": "collection",
+              "filter": {},
+              "batchSize": 2
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            },
+            {
+              "_id": 5,
+              "x": 55
+            }
+          ]
+        },
+        {
+          "name": "assertSameLsidOnLastTwoCommands",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client"
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "collection",
+                  "filter": {},
+                  "batchSize": 2,
+                  "$db": "db",
+                  "lsid": {
+                    "$$sessionLsid": "session"
+                  }
+                },
+                "commandName": "find"
+              }
             },
             {
               "commandStartedEvent": {
@@ -138,6 +284,263 @@
                     "$$type": "long"
                   },
                   "collection": "collection",
+                  "$db": "db",
+                  "lsid": {
+                    "$$sessionLsid": "session"
+                  }
+                },
+                "commandName": "getMore"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "pinned connections are returned when the cursor is drained",
+      "runOnRequirements": [
+        {
+          "topologies": [
+            "load-balanced"
+          ]
+        }
+      ],
+      "operations": [
+        {
+          "name": "createRunCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "batchSize": 2,
+            "command": {
+              "find": "collection",
+              "filter": {},
+              "batchSize": 2
+            }
+          },
+          "saveResultAsEntity": "myLBCursor"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "connections": 1
+          }
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "myLBCursor",
+          "expectResult": {
+            "_id": 1,
+            "x": 11
+          }
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "myLBCursor",
+          "expectResult": {
+            "_id": 2,
+            "x": 22
+          }
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "myLBCursor",
+          "expectResult": {
+            "_id": 3,
+            "x": 33
+          }
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "myLBCursor",
+          "expectResult": {
+            "_id": 4,
+            "x": 44
+          }
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "myLBCursor",
+          "expectResult": {
+            "_id": 5,
+            "x": 55
+          }
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "connections": 0
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "collection",
+                  "filter": {},
+                  "batchSize": 2,
+                  "$db": "db",
+                  "lsid": {
+                    "$$sessionLsid": "session"
+                  }
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": "collection",
+                  "$db": "db",
+                  "lsid": {
+                    "$$sessionLsid": "session"
+                  }
+                },
+                "commandName": "getMore"
+              }
+            }
+          ]
+        },
+        {
+          "client": "client",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionReadyEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "pinned connections are returned to the pool when the cursor is closed",
+      "runOnRequirements": [
+        {
+          "topologies": [
+            "load-balanced"
+          ]
+        }
+      ],
+      "operations": [
+        {
+          "name": "createRunCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "command": {
+              "find": "collection",
+              "filter": {},
+              "batchSize": 2
+            }
+          },
+          "saveResultAsEntity": "myLBCursor"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "connections": 1
+          }
+        },
+        {
+          "name": "close",
+          "object": "myLBCursor"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "connections": 0
+          }
+        }
+      ]
+    },
+    {
+      "description": "supports configuring getMore batchSize",
+      "operations": [
+        {
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "batchSize": 5,
+            "command": {
+              "find": "collection",
+              "filter": {},
+              "batchSize": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            },
+            {
+              "_id": 5,
+              "x": 55
+            }
+          ]
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "collection",
+                  "filter": {},
+                  "batchSize": 1,
+                  "$db": "db",
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": "collection",
+                  "batchSize": 5,
                   "$db": "db",
                   "lsid": {
                     "id": {
@@ -153,61 +556,158 @@
       ]
     },
     {
-      "description": "creates a cursor and iterates one result",
+      "description": "supports configuring getMore maxTimeMS",
       "operations": [
         {
-          "name": "createRunCursorCommand",
+          "name": "runCursorCommand",
           "object": "db",
           "arguments": {
             "commandName": "find",
-            "batchSize": 2,
+            "maxTimeMS": 300,
             "command": {
               "find": "collection",
               "filter": {},
-              "batchSize": 2
+              "maxTimeMS": 200,
+              "batchSize": 1
             }
           },
-          "saveResultAsEntity": "myRunCommandCursor"
-        },
-        {
-          "name": "iterateUntilDocumentOrError",
-          "object": "myRunCommandCursor",
-          "expectResult": {
-            "_id": 1,
-            "x": 11
+          "expectError": {
+            "isServerError": true
           }
-        },
+        }
+      ],
+      "expectEvents": [
         {
-          "name": "iterateUntilDocumentOrError",
-          "object": "myRunCommandCursor",
-          "expectResult": {
-            "_id": 2,
-            "x": 22
-          }
-        },
+          "client": "client",
+          "ignoreExtraEvents": true,
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "collection",
+                  "filter": {},
+                  "maxTimeMS": 200,
+                  "batchSize": 1,
+                  "$db": "db",
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": "collection",
+                  "$db": "db",
+                  "maxTimeMS": 300,
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "getMore"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "supports configuring getMore comment",
+      "runOnRequirements": {
+        "minServerVersion": 4.5
+      },
+      "operations": [
         {
-          "name": "iterateUntilDocumentOrError",
-          "object": "myRunCommandCursor",
-          "expectResult": {
-            "_id": 3,
-            "x": 33
-          }
-        },
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "comment": {
+              "hello": "mongodb"
+            },
+            "command": {
+              "find": "collection",
+              "filter": {},
+              "batchSize": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            },
+            {
+              "_id": 5,
+              "x": 55
+            }
+          ]
+        }
+      ],
+      "expectEvents": [
         {
-          "name": "iterateUntilDocumentOrError",
-          "object": "myRunCommandCursor",
-          "expectResult": {
-            "_id": 4,
-            "x": 44
-          }
-        },
-        {
-          "name": "iterateUntilDocumentOrError",
-          "object": "myRunCommandCursor",
-          "expectResult": {
-            "_id": 5,
-            "x": 55
-          }
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "collection",
+                  "filter": {},
+                  "batchSize": 1,
+                  "comment": {
+                    "$$exists": false
+                  },
+                  "$db": "db",
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": "collection",
+                  "comment": {
+                    "hello": "mongodb"
+                  },
+                  "$db": "db",
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "getMore"
+              }
+            }
+          ]
         }
       ]
     }

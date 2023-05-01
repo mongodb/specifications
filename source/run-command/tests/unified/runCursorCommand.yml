@@ -1,10 +1,15 @@
 description: runCursorCommand
-schemaVersion: '1.3'
+
+schemaVersion: '1.4'
+
 createEntities:
   - client:
       id: &client client
       useMultipleMongoses: false
       observeEvents: [commandStartedEvent]
+  - session:
+      id: &session session
+      client: *client
   - database:
       id: &db db
       client: *client
@@ -13,6 +18,15 @@ createEntities:
       id: &collection collection
       database: *db
       collectionName: *collection
+  - collection:
+      id: &cappedCollection cappedCollection
+      database: *db
+      collectionName: *cappedCollection
+      collectionOptions:
+        capped: true
+        size: 4096,
+        max: 3
+
 initialData:
   - collectionName: collection
     databaseName: *db
@@ -22,16 +36,47 @@ initialData:
       - { _id: 3, x: 33 }
       - { _id: 4, x: 44 }
       - { _id: 5, x: 55 }
+  - collectionName: cappedCollection
+    databaseName: *db
+    documents: &cappedDocuments
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
+
 tests:
-  - description: creates a cursor and iterates results from getMores
+  # This is what this API was invented to do.
+  - description: successfully executes checkMetadataConsistency cursor creating command
+    runOnRequirements:
+      minServerVersion: 7.0
+    operations:
+      - name: runCursorCommand
+        object: *db
+        arguments:
+          commandName: checkMetadataConsistency
+          command: { checkMetadataConsistency: 1 }
+        expectResult: []
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                checkMetadataConsistency: 1
+                $db: *db
+                lsid: { id: { $$type: binData } }
+              commandName: checkMetadataConsistency
+
+  # Driver Sessions
+  - description: creates an implicit session that is reused across getMores
     operations:
       - name: runCursorCommand
         object: *db
         arguments:
           commandName: find
-          batchSize: 2
           command: { find: *collection, filter: {}, batchSize: 2 }
         expectResult: *documents
+      - name: assertSameLsidOnLastTwoCommands
+        object: testRunner
+        arguments:
+          client: *client
     expectEvents:
       - client: *client
         events:
@@ -50,15 +95,43 @@ tests:
                 $db: *db
                 lsid: { id: { $$type: binData } }
               commandName: getMore
+
+  - description: accepts an explicit session that is reused across getMores
+    operations:
+      - name: runCursorCommand
+        object: *db
+        arguments:
+          commandName: find
+          session: *session
+          command: { find: *collection, filter: {}, batchSize: 2 }
+        expectResult: *documents
+      - name: assertSameLsidOnLastTwoCommands
+        object: testRunner
+        arguments:
+          client: *client
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection
+                filter: {}
+                batchSize: 2
+                $db: *db
+                lsid: { $$sessionLsid: *session }
+              commandName: find
           - commandStartedEvent:
               command:
                 getMore: { $$type: long }
                 collection: *collection
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$sessionLsid: *session }
               commandName: getMore
 
-  - description: creates a cursor and iterates one result
+  # Load Balancers
+  - description: pinned connections are returned when the cursor is drained
+    runOnRequirements:
+    - topologies: [ load-balanced ]
     operations:
       - name: createRunCursorCommand
         object: *db
@@ -66,19 +139,198 @@ tests:
           commandName: find
           batchSize: 2
           command: { find: *collection, filter: {}, batchSize: 2 }
-        saveResultAsEntity: &myRunCommandCursor myRunCommandCursor
+        saveResultAsEntity: &myLBCursor myLBCursor
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client
+          connections: 1
       - name: iterateUntilDocumentOrError
-        object: *myRunCommandCursor
+        object: *myLBCursor
         expectResult: { _id: 1, x: 11 }
       - name: iterateUntilDocumentOrError
-        object: *myRunCommandCursor
+        object: *myLBCursor
         expectResult: { _id: 2, x: 22 }
       - name: iterateUntilDocumentOrError
-        object: *myRunCommandCursor
+        object: *myLBCursor
         expectResult: { _id: 3, x: 33 }
       - name: iterateUntilDocumentOrError
-        object: *myRunCommandCursor
+        object: *myLBCursor
         expectResult: { _id: 4, x: 44 }
       - name: iterateUntilDocumentOrError
-        object: *myRunCommandCursor
+        object: *myLBCursor
         expectResult: { _id: 5, x: 55 }
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client
+          connections: 0
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection
+                filter: {}
+                batchSize: 2
+                $db: *db
+                lsid: { $$sessionLsid: *session }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: long }
+                collection: *collection
+                $db: *db
+                lsid: { $$sessionLsid: *session }
+              commandName: getMore
+      - client: *client
+        eventType: cmap
+        events:
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connections are returned to the pool when the cursor is closed
+    runOnRequirements:
+    - topologies: [ load-balanced ]
+    operations:
+      - name: createRunCursorCommand
+        object: *db
+        arguments:
+          commandName: find
+          command: { find: *collection, filter: {}, batchSize: 2 }
+        saveResultAsEntity: *myLBCursor
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client
+          connections: 1
+      - name: close
+        object: *myLBCursor
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client
+          connections: 0
+
+  # Iterating the Cursor / Executing GetMores
+  - description: supports configuring getMore batchSize
+    operations:
+      - name: runCursorCommand
+        object: *db
+        arguments:
+          commandName: find
+          batchSize: 5
+          command: { find: *collection, filter: {}, batchSize: 1 }
+        expectResult: *documents
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection
+                filter: {}
+                batchSize: 1
+                $db: *db
+                lsid: { id: { $$type: binData } }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: long }
+                collection: *collection
+                batchSize: 5
+                $db: *db
+                lsid: { id: { $$type: binData } }
+              commandName: getMore
+
+  - description: supports configuring getMore maxTimeMS
+    operations:
+      - name: runCursorCommand
+        object: *db
+        arguments:
+          commandName: find
+          maxTimeMS: 300
+          command: { find: *collection, filter: {}, maxTimeMS: 200, batchSize: 1 }
+        expectError:
+          # maxTimeMS can only be used with getMore for tailable, awaitData cursors
+          isServerError: true
+    expectEvents:
+      - client: *client
+        ignoreExtraEvents: true
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection
+                filter: {}
+                maxTimeMS: 200
+                batchSize: 1
+                $db: *db
+                lsid: { id: { $$type: binData } }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: long }
+                collection: *collection
+                $db: *db
+                maxTimeMS: 300
+                lsid: { id: { $$type: binData } }
+              commandName: getMore
+
+  - description: supports configuring getMore comment
+    runOnRequirements:
+      minServerVersion: 4.5
+    operations:
+      - name: runCursorCommand
+        object: *db
+        arguments:
+          commandName: find
+          comment: &comment { hello: 'mongodb' }
+          command: { find: *collection, filter: {}, batchSize: 1 }
+        expectResult: *documents
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection
+                filter: {}
+                batchSize: 1
+                comment: { $$exists: false }
+                $db: *db
+                lsid: { id: { $$type: binData } }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: long }
+                collection: *collection
+                comment: *comment
+                $db: *db
+                lsid: { id: { $$type: binData } }
+              commandName: getMore
+
+  # TODO: Tailable and TailableAwait
+  # - description: Runs a tailable cursor
+  #   operations:
+  #     - name: createRunCursorCommand
+  #       object: *db
+  #       arguments:
+  #         commandName: find
+  #         batchSize: 2
+  #         command: { find: *cappedCollection, filter: {}, batchSize: 2, tailable: true }
+  #       saveResultAsEntity: &myCappedCursor myCappedCursor
+  #     - name: iterateUntilDocumentOrError
+  #       object: *myCappedCursor
+  #       expectResult: { _id: 1, x: 11 }
+  #     - name: iterateUntilDocumentOrError
+  #       object: *myCappedCursor
+  #       expectResult: { _id: 2, x: 22 }
+
+  #   expectEvents:
+  #     - client: *client
+  #       events:
+  #         - commandStartedEvent:
+  #             command:
+  #               checkMetadataConsistency: 1
+  #               $db: *db
+  #               lsid: { id: { $$type: binData } }
+  #             commandName: checkMetadataConsistency

@@ -214,11 +214,11 @@ The following represents how a runCursorCommand API may be exposed.
        * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all subsequent calls.
        * To support both of these use cases, these operations MUST support a timeoutMode option.
        *
-       * @defaultValue 'CURSOR_LIFETIME'
+       * @defaultValue 'cursorLifetime'
        *
        * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
        */
-      timeoutMode?: 'ITERATION' | 'CURSOR_LIFETIME';
+      timeoutMode?: 'iteration' | 'cursorLifetime';
 
       /**
        * Identifies the type of cursor this is.
@@ -228,9 +228,9 @@ The following represents how a runCursorCommand API may be exposed.
        *
        * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data becomes available.
        *
-       * @defaultValue NON_TAILABLE
+       * @defaultValue 'nonTailable'
        */
-      cursorType: NON_TAILABLE | TAILABLE | TAILABLE_AWAIT;
+      cursorType: 'nonTailable' | 'tailable' | 'tailableAwait';
     }
 
 RunCursorCommand implementation details

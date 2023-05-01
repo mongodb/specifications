@@ -1813,6 +1813,9 @@ The following arguments are supported:
 
 - ``comment``: Optional BSON value. Use this value to configure the comment sent on the getMore command.
 
+- ``cursorType``: Optional string enum value, one of ``'tailable' | 'tailableAwait' | 'nonTailable'``. Use this value to configure the enum passed to the ``cursorType`` option.
+
+- ``timeoutMode``: Optional string enum value, one of ``'iteration' | 'cursorLifetime'``. Use this value to configure the enum passed to the ``timeoutMode`` option.
 
 createRunCursorCommand
 ~~~~~~~~~~~~~~~~~~~~~~
