@@ -239,14 +239,15 @@ RunCursorCommand implementation details
 RunCursorCommand provides a way to access MongoDB server commands that return a cursor directly without requiring a driver to implement a bespoke cursor implementation.
 The API is intended to be built upon RunCommand and take a document from a user and apply a number of common driver internal concerns before forwarding the command to a server.
 A driver can expect that the result from running this command will return a document with a ``cursor`` field and MUST provide the caller with a language native abstraction to continue iterating the results from the server.
+If the response from the server does not include a ``cursor`` field the driver MUST throw an error either before returning from ``runCursorCommand`` or upon first iteration of the cursor.
 
 High level RunCursorCommand steps:
 
 * Run the cursor creating command provided by the caller and retain the ClientSession used as well as the server the command was executed on.
-* Create a local Cursor instance and store the ``firstBatch``, ``ns``, and ``id`` from the response.
-* When the current batch has been fully iterated, using the same server the initial command was executed on execute a ``getMore``
-* Store the ``nextBatch`` from the ``getMore`` response and update the cursor's ``id``
-* Continue executing ``getMore`` commands until the cursor is exhausted
+* Create a local cursor instance and store the ``firstBatch``, ``ns``, and ``id`` from the response.
+* When the current batch has been fully iterated, execute a ``getMore`` using the same server the initial command was executed on.
+* Store the ``nextBatch`` from the ``getMore`` response and update the cursor's ``id``.
+* Continue to execute ``getMore`` commands as needed when the caller empties local batches until the cursor is exhausted.
 
 Driver Sessions
 """""""""""""""
@@ -306,8 +307,8 @@ The ClientSession associated with the cursor MUST be ended and the ServerSession
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""
 
-As with RunCommand if the initial command has a ``maxTimeMS`` and CSOT settings are provided the behavior is undefined and drivers MUST NOT inspect the document to detect this.
-Drivers SHOULD not allow both a ``getMore`` ``maxTimeMS`` setting to be provided and CSOT settings.
+As with RunCommand, if the initial command has a ``maxTimeMS`` and CSOT settings are provided the behavior is undefined and drivers MUST NOT inspect the document to detect this.
+Drivers SHOULD raise an error if both a ``getMore`` ``maxTimeMS`` setting and CSOT settings are provided.
 Drivers MUST document that attempting to set both can have undefined behavior and is not supported.
 
 When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support timeout functionality as described in the CSOT specification.
