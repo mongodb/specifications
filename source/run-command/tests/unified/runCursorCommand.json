@@ -89,9 +89,11 @@
   "tests": [
     {
       "description": "successfully executes checkMetadataConsistency cursor creating command",
-      "runOnRequirements": {
-        "minServerVersion": 7
-      },
+      "runOnRequirements": [
+        {
+          "minServerVersion": "7.0"
+        }
+      ],
       "operations": [
         {
           "name": "runCursorCommand",
@@ -297,7 +299,7 @@
       ]
     },
     {
-      "description": "pinned connections are returned when the cursor is drained",
+      "description": "pinned connections are returned when the cursor is exhausted",
       "runOnRequirements": [
         {
           "topologies": [

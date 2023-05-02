@@ -46,7 +46,7 @@ tests:
   # This is what this API was invented to do.
   - description: successfully executes checkMetadataConsistency cursor creating command
     runOnRequirements:
-      minServerVersion: 7.0
+      - minServerVersion: '7.0'
     operations:
       - name: runCursorCommand
         object: *db
@@ -129,7 +129,7 @@ tests:
               commandName: getMore
 
   # Load Balancers
-  - description: pinned connections are returned when the cursor is drained
+  - description: pinned connections are returned when the cursor is exhausted
     runOnRequirements:
     - topologies: [ load-balanced ]
     operations:
@@ -307,30 +307,3 @@ tests:
                 $db: *db
                 lsid: { id: { $$type: binData } }
               commandName: getMore
-
-  # TODO: Tailable and TailableAwait
-  # - description: Runs a tailable cursor
-  #   operations:
-  #     - name: createRunCursorCommand
-  #       object: *db
-  #       arguments:
-  #         commandName: find
-  #         batchSize: 2
-  #         command: { find: *cappedCollection, filter: {}, batchSize: 2, tailable: true }
-  #       saveResultAsEntity: &myCappedCursor myCappedCursor
-  #     - name: iterateUntilDocumentOrError
-  #       object: *myCappedCursor
-  #       expectResult: { _id: 1, x: 11 }
-  #     - name: iterateUntilDocumentOrError
-  #       object: *myCappedCursor
-  #       expectResult: { _id: 2, x: 22 }
-
-  #   expectEvents:
-  #     - client: *client
-  #       events:
-  #         - commandStartedEvent:
-  #             command:
-  #               checkMetadataConsistency: 1
-  #               $db: *db
-  #               lsid: { id: { $$type: binData } }
-  #             commandName: checkMetadataConsistency
