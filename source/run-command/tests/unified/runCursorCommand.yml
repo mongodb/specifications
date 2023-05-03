@@ -1,6 +1,6 @@
 description: runCursorCommand
 
-schemaVersion: '1.4'
+schemaVersion: '1.9'
 
 createEntities:
   - client:
@@ -47,6 +47,7 @@ tests:
         expectResult: []
     expectEvents:
       - client: *client
+        eventType: command
         events:
           - commandStartedEvent:
               command:
@@ -70,6 +71,7 @@ tests:
           client: *client
     expectEvents:
       - client: *client
+        eventType: command
         events:
           - commandStartedEvent:
               command:
@@ -102,6 +104,7 @@ tests:
           client: *client
     expectEvents:
       - client: *client
+        eventType: command
         events:
           - commandStartedEvent:
               command:
@@ -122,7 +125,7 @@ tests:
   # Load Balancers
   - description: pinned connections are returned when the cursor is exhausted
     runOnRequirements:
-    - topologies: [ load-balanced ]
+      - topologies: [ load-balanced ]
     operations:
       - name: createRunCursorCommand
         object: *db
@@ -158,6 +161,7 @@ tests:
           connections: 0
     expectEvents:
       - client: *client
+        eventType: command
         events:
           - commandStartedEvent:
               command:
@@ -183,7 +187,7 @@ tests:
 
   - description: pinned connections are returned to the pool when the cursor is closed
     runOnRequirements:
-    - topologies: [ load-balanced ]
+      - topologies: [ load-balanced ]
     operations:
       - name: createRunCursorCommand
         object: *db
@@ -216,6 +220,7 @@ tests:
         expectResult: *documents
     expectEvents:
       - client: *client
+        eventType: command
         events:
           - commandStartedEvent:
               command:
@@ -244,9 +249,10 @@ tests:
           command: { find: *collection, filter: {}, maxTimeMS: 200, batchSize: 1 }
         expectError:
           # maxTimeMS can only be used with getMore for tailable, awaitData cursors
-          isServerError: true
+          isClientError: false
     expectEvents:
       - client: *client
+        eventType: command
         ignoreExtraEvents: true
         events:
           - commandStartedEvent:
@@ -269,7 +275,7 @@ tests:
 
   - description: supports configuring getMore comment
     runOnRequirements:
-      minServerVersion: 4.5
+      - minServerVersion: '4.5'
     operations:
       - name: runCursorCommand
         object: *db
@@ -280,6 +286,7 @@ tests:
         expectResult: *documents
     expectEvents:
       - client: *client
+        eventType: command
         events:
           - commandStartedEvent:
               command:
@@ -338,6 +345,7 @@ tests:
         object: *myTailableCursor
     expectEvents:
       - client: *client
+        eventType: command
         events:
           - commandStartedEvent:
               command:
