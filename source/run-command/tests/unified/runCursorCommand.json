@@ -1,6 +1,6 @@
 {
   "description": "runCursorCommand",
-  "schemaVersion": "1.4",
+  "schemaVersion": "1.9",
   "createEntities": [
     {
       "client": {
@@ -93,6 +93,7 @@
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "events": [
             {
               "commandStartedEvent": {
@@ -160,6 +161,7 @@
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "events": [
             {
               "commandStartedEvent": {
@@ -247,6 +249,7 @@
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "events": [
             {
               "commandStartedEvent": {
@@ -365,6 +368,7 @@
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "events": [
             {
               "commandStartedEvent": {
@@ -501,6 +505,7 @@
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "events": [
             {
               "commandStartedEvent": {
@@ -557,13 +562,14 @@
             }
           },
           "expectError": {
-            "isServerError": true
+            "isClientError": false
           }
         }
       ],
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "ignoreExtraEvents": true,
           "events": [
             {
@@ -607,9 +613,11 @@
     },
     {
       "description": "supports configuring getMore comment",
-      "runOnRequirements": {
-        "minServerVersion": 4.5
-      },
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.5"
+        }
+      ],
       "operations": [
         {
           "name": "runCursorCommand",
@@ -652,6 +660,7 @@
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "events": [
             {
               "commandStartedEvent": {
@@ -768,6 +777,7 @@
       "expectEvents": [
         {
           "client": "client",
+          "eventType": "command",
           "events": [
             {
               "commandStartedEvent": {
