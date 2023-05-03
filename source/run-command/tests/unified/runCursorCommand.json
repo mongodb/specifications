@@ -4,6 +4,12 @@
   "createEntities": [
     {
       "client": {
+        "id": "failPointClient",
+        "useMultipleMongoses": false
+      }
+    },
+    {
+      "client": {
         "id": "client",
         "useMultipleMongoses": false,
         "observeEvents": [
@@ -29,18 +35,6 @@
         "id": "collection",
         "database": "db",
         "collectionName": "collection"
-      }
-    },
-    {
-      "collection": {
-        "id": "cappedCollection",
-        "database": "db",
-        "collectionName": "cappedCollection",
-        "collectionOptions": {
-          "capped": true,
-          "size": "4096,",
-          "max": 3
-        }
       }
     }
   ],
@@ -70,20 +64,6 @@
           "x": 55
         }
       ]
-    },
-    {
-      "collectionName": "cappedCollection",
-      "databaseName": "db",
-      "documents": [
-        {
-          "_id": 1,
-          "x": 11
-        },
-        {
-          "_id": 2,
-          "x": 22
-        }
-      ]
     }
   ],
   "tests": [
@@ -91,7 +71,10 @@
       "description": "successfully executes checkMetadataConsistency cursor creating command",
       "runOnRequirements": [
         {
-          "minServerVersion": "7.0"
+          "minServerVersion": "7.0",
+          "topologies": [
+            "sharded"
+          ]
         }
       ],
       "operations": [
@@ -707,6 +690,251 @@
                   }
                 },
                 "commandName": "getMore"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "does not close the cursor when receiving an empty batch",
+      "operations": [
+        {
+          "name": "dropCollection",
+          "object": "db",
+          "arguments": {
+            "collection": "cappedCollection"
+          }
+        },
+        {
+          "name": "createCollection",
+          "object": "db",
+          "arguments": {
+            "collection": "cappedCollection",
+            "capped": true,
+            "size": 4096,
+            "max": 3
+          },
+          "saveResultAsEntity": "cappedCollection"
+        },
+        {
+          "name": "insertMany",
+          "object": "cappedCollection",
+          "arguments": {
+            "documents": [
+              {
+                "_id": 1,
+                "x": 11
+              },
+              {
+                "_id": 2,
+                "x": 22
+              }
+            ]
+          }
+        },
+        {
+          "name": "createRunCursorCommand",
+          "object": "db",
+          "arguments": {
+            "cursorType": "tailable",
+            "commandName": "find",
+            "batchSize": 2,
+            "command": {
+              "find": "cappedCollection",
+              "filter": {},
+              "tailable": true
+            }
+          },
+          "saveResultAsEntity": "myTailableCursor"
+        },
+        {
+          "name": "iterateOnce",
+          "object": "myTailableCursor"
+        },
+        {
+          "name": "iterateOnce",
+          "object": "myTailableCursor"
+        },
+        {
+          "name": "iterateOnce",
+          "object": "myTailableCursor"
+        },
+        {
+          "name": "close",
+          "object": "myTailableCursor"
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "drop": "cappedCollection"
+                },
+                "commandName": "drop"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "create": "cappedCollection"
+                },
+                "commandName": "create"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "insert": "cappedCollection"
+                },
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "cappedCollection",
+                  "filter": {},
+                  "$db": "db",
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": "cappedCollection",
+                  "$db": "db",
+                  "lsid": {
+                    "id": {
+                      "$$type": "binData"
+                    }
+                  }
+                },
+                "commandName": "getMore"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "killCursors": "cappedCollection",
+                  "cursors": [
+                    {
+                      "$$type": "long"
+                    }
+                  ]
+                },
+                "commandName": "killCursors"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "runCursorCommand errors if timeoutMode is set and timeoutMS is not",
+      "operations": [
+        {
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "command": {
+              "find": "collection",
+              "filter": {}
+            },
+            "timeoutMode": "cursorLifetime"
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        }
+      ]
+    },
+    {
+      "description": "remaining timeoutMS applied to getMore if timeoutMode is unset",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 2
+              },
+              "data": {
+                "failCommands": [
+                  "find",
+                  "getMore"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 15
+              }
+            }
+          }
+        },
+        {
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "timeoutMS": 20,
+            "command": {
+              "find": "collection",
+              "filter": {},
+              "batchSize": 2
+            }
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "command": {
+                  "find": "collection",
+                  "maxTimeMS": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore",
+                "command": {
+                  "getMore": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  },
+                  "collection": "collection",
+                  "maxTimeMS": {
+                    "$$exists": false
+                  }
+                }
               }
             }
           ]
