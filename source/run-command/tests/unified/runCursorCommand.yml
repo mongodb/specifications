@@ -56,6 +56,17 @@ tests:
                 lsid: { id: { $$type: binData } }
               commandName: checkMetadataConsistency
 
+  - description: errors if the command response is not a cursor
+    operations:
+      - name: createRunCursorCommand
+        object: *db
+        arguments:
+          commandName: ping
+          command: { ping: 1 }
+        expectError:
+          isClientError: true
+
+
   # Driver Sessions
   - description: creates an implicit session that is reused across getMores
     operations:
