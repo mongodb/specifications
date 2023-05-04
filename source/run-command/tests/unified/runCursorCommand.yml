@@ -380,7 +380,7 @@ tests:
               commandName: killCursors
 
   # CSOT
-  - description: runCursorCommand errors if timeoutMode is set and timeoutMS is not
+  - description: errors if timeoutMode is set without timeoutMS
     operations:
       - name: runCursorCommand
         object: *db
