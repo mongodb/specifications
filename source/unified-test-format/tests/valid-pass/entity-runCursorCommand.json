@@ -56,7 +56,7 @@
   ],
   "tests": [
     {
-      "description": "creates a cursor and iterates results from getMores",
+      "description": "runCursorCommand creates and exhausts cursor by running getMores",
       "operations": [
         {
           "name": "runCursorCommand",
@@ -153,7 +153,7 @@
       ]
     },
     {
-      "description": "creates a cursor and iterates one result at a time",
+      "description": "createRunCursorCommand creates a cursor and stores it as an entity that can be iterated one document at a time",
       "operations": [
         {
           "name": "createRunCursorCommand",
@@ -212,7 +212,7 @@
       ]
     },
     {
-      "description": "closing a runCursorCommand entity causes a killCursors operation",
+      "description": "createRunCursorCommand's cursor can be closed and will perform a killCursors operation",
       "operations": [
         {
           "name": "createRunCursorCommand",
