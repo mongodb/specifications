@@ -185,7 +185,7 @@ tests:
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
 
-  - description: pinned connections are returned to the pool when the cursor is closed
+  - description: returns pinned connections to the pool when the cursor is closed
     runOnRequirements:
       - topologies: [ load-balanced ]
     operations:
