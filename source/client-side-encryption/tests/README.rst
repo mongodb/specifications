@@ -2216,7 +2216,7 @@ Drivers MAY chose not to implement this prose test if their implementation of ``
    .. code:: typescript
 
       class RewrapManyDataKeyOpts {
-         masterKey: { "foo": "bar" }
+         masterKey: {}
       }
 
    Assert that `clientEncryption.rewrapManyDataKey` raises a client error indicating that the required ``RewrapManyDataKeyOpts.provider`` field is missing.
