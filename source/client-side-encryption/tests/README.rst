@@ -2196,6 +2196,31 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
 8. Call ``clientEncryption2.decrypt`` with the ``ciphertext``. Assert the return value is "test".
 
+Case 2: Rewrap returns error if masterKey is set, but provider is not set
+`````````````````````````````````````````````````````````````````````````
+
+This test may not apply depending on how the driver models the ``RewrapManyDataKeyOpts`` type.
+Drivers with API that does not permit calling ``ClientEncryption::rewrapManyDataKey`` with the ``masterKey`` set and ``provider`` unset may skip this test.
+
+1. Create a ``ClientEncryption`` object named ``clientEncryption`` with these options:
+
+   .. code:: typescript
+
+      class ClientEncryptionOpts {
+         keyVaultClient: <new MongoClient>,
+         keyVaultNamespace: "keyvault.datakeys",
+         kmsProviders: <all KMS providers>,
+      }
+
+2. Call ``clientEncryption.rewrapManyDataKey`` with an empty ``filter`` and these options:
+
+   .. code:: typescript
+
+      class RewrapManyDataKeyOpts {
+         masterKey: { "foo": "bar" }
+      }
+
+   Assert an error is returned from the driver suggesting that the ``provider`` option is required.
 
 17.  On-demand GCP Credentials
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
