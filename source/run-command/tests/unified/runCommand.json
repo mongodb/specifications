@@ -114,6 +114,67 @@
                   },
                   "$readPreference": {
                     "$$exists": false
+                  }
+                },
+                "commandName": "ping"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "always gossips the $clusterTime on the sent command",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            }
+          },
+          "expectResult": {
+            "ok": 1
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            }
+          },
+          "expectResult": {
+            "ok": 1
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "ping": 1
+                },
+                "commandName": "ping"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "ping": 1,
+                  "$db": "db",
+                  "lsid": {
+                    "$$exists": true
+                  },
+                  "$readPreference": {
+                    "$$exists": false
                   },
                   "$clusterTime": {
                     "$$exists": true
