@@ -2196,11 +2196,10 @@ Include pairs where ``srcProvider`` equals ``dstProvider``.
 
 8. Call ``clientEncryption2.decrypt`` with the ``ciphertext``. Assert the return value is "test".
 
-Case 2: Rewrap returns error if masterKey is set, but provider is not set
+Case 2: RewrapManyDataKeyOpts.provider is not optional
 `````````````````````````````````````````````````````````````````````````
 
-This test may not apply depending on how the driver models the ``RewrapManyDataKeyOpts`` type.
-Drivers with API that does not permit calling ``ClientEncryption::rewrapManyDataKey`` with the ``masterKey`` set and ``provider`` unset may skip this test.
+Drivers MAY chose not to implement this prose test if their implementation of ``RewrapManyDataKeyOpts`` makes it impossible by design to omit ``RewrapManyDataKeyOpts.provider`` when ``RewrapManyDataKeyOpts.masterKey`` is set.
 
 1. Create a ``ClientEncryption`` object named ``clientEncryption`` with these options:
 
@@ -2220,7 +2219,7 @@ Drivers with API that does not permit calling ``ClientEncryption::rewrapManyData
          masterKey: { "foo": "bar" }
       }
 
-   Assert an error is returned from the driver suggesting that the ``provider`` option is required.
+   Assert that `clientEncryption.rewrapManyDataKey` raises a client error indicating that the required ``RewrapManyDataKeyOpts.provider`` field is missing.
 
 17.  On-demand GCP Credentials
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
