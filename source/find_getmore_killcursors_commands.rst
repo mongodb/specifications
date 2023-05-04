@@ -268,7 +268,7 @@ MongoDB also supports creating cursors that "tail" or follow the target namespac
 Querying capped collections and change streams are some examples of tailable cursor use cases.
 A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, this does not indicate that the cursor has been exhausted.
 
-In addition to considering a cursor tailable, an ``awaitData`` flag may be sent on the initial command.
+In addition to considering a cursor tailable, an ``awaitData`` flag MAY be sent on the initial command.
 This will request that the server block responding to the ``getMore`` immediately and instead rely on the ``maxTimeMS`` field of the ``getMore`` (or server default).
 If the time does expire an empty batch will be returned and the driver MUST issue another ``getMore``.
 

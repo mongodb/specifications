@@ -198,7 +198,7 @@ Drivers MUST document the behavior of RunCommand if a ``maxTimeMS`` field  is al
 ``runCursorCommand``
 --------------------
 
-The following represents how a runCursorCommand API may be exposed.
+Drivers MAY expose a runCursorCommand API with the following syntax.
 
 .. code:: typescript
 
