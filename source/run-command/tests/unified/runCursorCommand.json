@@ -285,7 +285,7 @@
       ]
     },
     {
-      "description": "pinned connections are returned when the cursor is exhausted",
+      "description": "returns pinned connections to the pool when the cursor is exhausted",
       "runOnRequirements": [
         {
           "topologies": [
@@ -419,7 +419,7 @@
       ]
     },
     {
-      "description": "pinned connections are returned to the pool when the cursor is closed",
+      "description": "returns pinned connections to the pool when the cursor is closed",
       "runOnRequirements": [
         {
           "topologies": [
@@ -853,7 +853,7 @@
       ]
     },
     {
-      "description": "runCursorCommand errors if timeoutMode is set and timeoutMS is not",
+      "description": "errors if timeoutMode is set without timeoutMS",
       "operations": [
         {
           "name": "runCursorCommand",
