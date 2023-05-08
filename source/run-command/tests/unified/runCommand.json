@@ -163,6 +163,16 @@
     },
     {
       "description": "attaches the provided $readPreference to given command",
+      "runOnRequirements": [
+        {
+          "topologies": [
+            "replicaset",
+            "sharded-replicaset",
+            "load-balanced",
+            "sharded"
+          ]
+        }
+      ],
       "operations": [
         {
           "name": "runCommand",
@@ -191,6 +201,53 @@
                   "ping": 1,
                   "$readPreference": {
                     "mode": "nearest"
+                  },
+                  "$db": "db"
+                },
+                "commandName": "ping"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "does not attach $readPreference to given command on standalone",
+      "runOnRequirements": [
+        {
+          "topologies": [
+            "single"
+          ]
+        }
+      ],
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            },
+            "readPreference": {
+              "mode": "nearest"
+            }
+          },
+          "expectResult": {
+            "ok": 1
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "ping": 1,
+                  "$readPreference": {
+                    "$$exists": false
                   },
                   "$db": "db"
                 },
