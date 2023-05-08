@@ -259,6 +259,46 @@
       ]
     },
     {
+      "description": "does not attach primary $readPreference to given command",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            },
+            "readPreference": {
+              "mode": "primary"
+            }
+          },
+          "expectResult": {
+            "ok": 1
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "ping": 1,
+                  "$readPreference": {
+                    "$$exists": false
+                  },
+                  "$db": "db"
+                },
+                "commandName": "ping"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "does not inherit readConcern specified at the db level",
       "operations": [
         {
