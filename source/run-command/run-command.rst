@@ -115,7 +115,7 @@ To facilitate server selection the RunCommand operation MUST accept an optional 
 
 * See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
 
-If the provided ReadPreference is NOT ``{mode: primary}``, the command sent MUST include the ``$readPreference`` global command argument.
+If the provided ReadPreference is NOT ``{mode: primary}`` and the selected server is NOT a standalone, the command sent MUST include the ``$readPreference`` global command argument.
 
 * See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
 
@@ -318,5 +318,6 @@ When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support time
 Changelog
 =========
 
-:2023-04-28: Add runCursorCommand API specification.
+:2023-05-09: Add runCursorCommand API specification.
+:2023-05-08: ``$readPreference`` is not sent to standalone servers
 :2023-04-20: Add run command specification.

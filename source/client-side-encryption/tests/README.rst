@@ -1006,7 +1006,7 @@ The following tests that loading crypt_shared_ bypasses spawning mongocryptd.
    .. code:: javascript
 
       {
-        "mongocryptdURI": "mongodb://localhost:27021/db?serverSelectionTimeoutMS=1000",
+        "mongocryptdURI": "mongodb://localhost:27021/?serverSelectionTimeoutMS=1000",
         "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"],
         "cryptSharedLibPath": "<path to shared library>",
         "cryptSharedLibRequired": true
@@ -1052,7 +1052,7 @@ The following tests that setting ``mongocryptdBypassSpawn=true`` really does byp
 
       {
         "mongocryptdBypassSpawn": true
-        "mongocryptdURI": "mongodb://localhost:27021/db?serverSelectionTimeoutMS=1000",
+        "mongocryptdURI": "mongodb://localhost:27021/?serverSelectionTimeoutMS=1000",
         "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"]
       }
 
