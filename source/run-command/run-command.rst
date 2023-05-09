@@ -190,5 +190,5 @@ Drivers MUST document the behavior of RunCommand if a ``maxTimeMS`` field  is al
 Changelog
 =========
 
-:2023:05-08: ``$readPreference`` is not sent to standalone servers
+:2023-05-08: ``$readPreference`` is not sent to standalone servers
 :2023-04-20: Add run command specification.
