@@ -7,12 +7,20 @@ createEntities:
       id: &failPointClient failPointClient
       useMultipleMongoses: false
   - client:
+      id: &commandClient commandClient
+      useMultipleMongoses: false
+      observeEvents: [commandStartedEvent, commandSucceededEvent]
+  - client:
       id: &client client
       useMultipleMongoses: false
       observeEvents: [commandStartedEvent]
   - session:
       id: &session session
       client: *client
+  - database: # For tests that need success event assertions
+      id: &commandDb commandDb
+      client: *commandClient
+      databaseName: *commandDb
   - database:
       id: &db db
       client: *client
@@ -144,26 +152,26 @@ tests:
           commandName: find
           batchSize: 2
           command: { find: *collection, filter: {}, batchSize: 2 }
-        saveResultAsEntity: &myLBCursor myLBCursor
+        saveResultAsEntity: &cursor cursor
       - name: assertNumberConnectionsCheckedOut
         object: testRunner
         arguments:
           client: *client
           connections: 1
       - name: iterateUntilDocumentOrError
-        object: *myLBCursor
+        object: *cursor
         expectResult: { _id: 1, x: 11 }
       - name: iterateUntilDocumentOrError
-        object: *myLBCursor
+        object: *cursor
         expectResult: { _id: 2, x: 22 }
       - name: iterateUntilDocumentOrError
-        object: *myLBCursor
+        object: *cursor
         expectResult: { _id: 3, x: 33 }
       - name: iterateUntilDocumentOrError
-        object: *myLBCursor
+        object: *cursor
         expectResult: { _id: 4, x: 44 }
       - name: iterateUntilDocumentOrError
-        object: *myLBCursor
+        object: *cursor
         expectResult: { _id: 5, x: 55 }
       - name: assertNumberConnectionsCheckedOut
         object: testRunner
@@ -205,14 +213,14 @@ tests:
         arguments:
           commandName: find
           command: { find: *collection, filter: {}, batchSize: 2 }
-        saveResultAsEntity: *myLBCursor
+        saveResultAsEntity: *cursor
       - name: assertNumberConnectionsCheckedOut
         object: testRunner
         arguments:
           client: *client
           connections: 1
       - name: close
-        object: *myLBCursor
+        object: *cursor
       - name: assertNumberConnectionsCheckedOut
         object: testRunner
         arguments:
@@ -345,15 +353,15 @@ tests:
           commandName: find
           batchSize: 2
           command: { find: *cappedCollection, filter: {}, tailable: true }
-        saveResultAsEntity: &myTailableCursor myTailableCursor
+        saveResultAsEntity: &cursor cursor
       - name: iterateOnce
-        object: *myTailableCursor
+        object: *cursor
       - name: iterateOnce
-        object: *myTailableCursor
+        object: *cursor
       - name: iterateOnce
-        object: *myTailableCursor
+        object: *cursor
       - name: close
-        object: *myTailableCursor
+        object: *cursor
     expectEvents:
       - client: *client
         eventType: command
@@ -396,10 +404,48 @@ tests:
       - name: runCursorCommand
         object: *db
         arguments:
+          commandName: find
           command: { find: *collection, filter: {} }
           timeoutMode: cursorLifetime
         expectError:
           isClientError: true
+
+  - description: error if timeoutMode is cursor_lifetime and cursorType is tailableAwait
+    operations:
+      - name: runCursorCommand
+        object: *db
+        arguments:
+          commandName: find
+          command: { find: *collection, filter: {} }
+          timeoutMode: cursorLifetime
+          cursorType: tailableAwait
+        expectError:
+          isClientError: true
+
+  - description: error if getMore maxTimeMS setting is greater than timeoutMS
+    operations:
+      - name: runCursorCommand
+        object: *collection
+        arguments:
+          commandName: find
+          command: { find: *collection, filter: {} }
+          timeoutMS: 5
+          maxTimeMS: 10
+        expectError:
+          isClientError: true
+
+  - description: error if getMore maxTimeMS setting is equal to timeoutMS
+    operations:
+      - name: runCursorCommand
+        object: *collection
+        arguments:
+          commandName: find
+          command: { find: *collection, filter: {} }
+          timeoutMS: 5
+          maxTimeMS: 5
+        expectError:
+          isClientError: true
+
 
   # If timeoutMode is unset, it should default to CURSOR_LIFETIME and the time remaining after the find succeeds should be applied to the getMore
   - description: remaining timeoutMS applied to getMore if timeoutMode is unset

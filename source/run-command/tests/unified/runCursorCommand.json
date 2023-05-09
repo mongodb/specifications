@@ -10,6 +10,16 @@
     },
     {
       "client": {
+        "id": "commandClient",
+        "useMultipleMongoses": false,
+        "observeEvents": [
+          "commandStartedEvent",
+          "commandSucceededEvent"
+        ]
+      }
+    },
+    {
+      "client": {
         "id": "client",
         "useMultipleMongoses": false,
         "observeEvents": [
@@ -21,6 +31,13 @@
       "session": {
         "id": "session",
         "client": "client"
+      }
+    },
+    {
+      "database": {
+        "id": "commandDb",
+        "client": "commandClient",
+        "databaseName": "commandDb"
       }
     },
     {
@@ -324,7 +341,7 @@
               "batchSize": 2
             }
           },
-          "saveResultAsEntity": "myLBCursor"
+          "saveResultAsEntity": "cursor"
         },
         {
           "name": "assertNumberConnectionsCheckedOut",
@@ -336,7 +353,7 @@
         },
         {
           "name": "iterateUntilDocumentOrError",
-          "object": "myLBCursor",
+          "object": "cursor",
           "expectResult": {
             "_id": 1,
             "x": 11
@@ -344,7 +361,7 @@
         },
         {
           "name": "iterateUntilDocumentOrError",
-          "object": "myLBCursor",
+          "object": "cursor",
           "expectResult": {
             "_id": 2,
             "x": 22
@@ -352,7 +369,7 @@
         },
         {
           "name": "iterateUntilDocumentOrError",
-          "object": "myLBCursor",
+          "object": "cursor",
           "expectResult": {
             "_id": 3,
             "x": 33
@@ -360,7 +377,7 @@
         },
         {
           "name": "iterateUntilDocumentOrError",
-          "object": "myLBCursor",
+          "object": "cursor",
           "expectResult": {
             "_id": 4,
             "x": 44
@@ -368,7 +385,7 @@
         },
         {
           "name": "iterateUntilDocumentOrError",
-          "object": "myLBCursor",
+          "object": "cursor",
           "expectResult": {
             "_id": 5,
             "x": 55
@@ -457,7 +474,7 @@
               "batchSize": 2
             }
           },
-          "saveResultAsEntity": "myLBCursor"
+          "saveResultAsEntity": "cursor"
         },
         {
           "name": "assertNumberConnectionsCheckedOut",
@@ -469,7 +486,7 @@
         },
         {
           "name": "close",
-          "object": "myLBCursor"
+          "object": "cursor"
         },
         {
           "name": "assertNumberConnectionsCheckedOut",
@@ -773,23 +790,23 @@
               "tailable": true
             }
           },
-          "saveResultAsEntity": "myTailableCursor"
+          "saveResultAsEntity": "cursor"
         },
         {
           "name": "iterateOnce",
-          "object": "myTailableCursor"
+          "object": "cursor"
         },
         {
           "name": "iterateOnce",
-          "object": "myTailableCursor"
+          "object": "cursor"
         },
         {
           "name": "iterateOnce",
-          "object": "myTailableCursor"
+          "object": "cursor"
         },
         {
           "name": "close",
-          "object": "myTailableCursor"
+          "object": "cursor"
         }
       ],
       "expectEvents": [
@@ -877,11 +894,75 @@
           "name": "runCursorCommand",
           "object": "db",
           "arguments": {
+            "commandName": "find",
             "command": {
               "find": "collection",
               "filter": {}
             },
             "timeoutMode": "cursorLifetime"
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        }
+      ]
+    },
+    {
+      "description": "error if timeoutMode is cursor_lifetime and cursorType is tailableAwait",
+      "operations": [
+        {
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "command": {
+              "find": "collection",
+              "filter": {}
+            },
+            "timeoutMode": "cursorLifetime",
+            "cursorType": "tailableAwait"
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        }
+      ]
+    },
+    {
+      "description": "error if getMore maxTimeMS setting is greater than timeoutMS",
+      "operations": [
+        {
+          "name": "runCursorCommand",
+          "object": "collection",
+          "arguments": {
+            "commandName": "find",
+            "command": {
+              "find": "collection",
+              "filter": {}
+            },
+            "timeoutMS": 5,
+            "maxTimeMS": 10
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        }
+      ]
+    },
+    {
+      "description": "error if getMore maxTimeMS setting is equal to timeoutMS",
+      "operations": [
+        {
+          "name": "runCursorCommand",
+          "object": "collection",
+          "arguments": {
+            "commandName": "find",
+            "command": {
+              "find": "collection",
+              "filter": {}
+            },
+            "timeoutMS": 5,
+            "maxTimeMS": 5
           },
           "expectError": {
             "isClientError": true
