@@ -586,9 +586,9 @@
               "find": "collection",
               "maxTimeMS": 200,
               "batchSize": 1
-            },
-            "ignoreResultAndError": true
-          }
+            }
+          },
+          "ignoreResultAndError": true
         }
       ],
       "expectEvents": [
