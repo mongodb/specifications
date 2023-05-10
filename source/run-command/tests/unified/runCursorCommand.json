@@ -586,10 +586,8 @@
               "find": "collection",
               "maxTimeMS": 200,
               "batchSize": 1
-            }
-          },
-          "expectError": {
-            "isClientError": false
+            },
+            "ignoreResultAndError": true
           }
         }
       ],

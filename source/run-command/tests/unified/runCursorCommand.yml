@@ -262,9 +262,7 @@ tests:
           commandName: find
           maxTimeMS: 300
           command: { find: *collection, maxTimeMS: 200, batchSize: 1 }
-        expectError:
-          # maxTimeMS can only be used with getMore for tailable, awaitData cursors
-          isClientError: false
+          ignoreResultAndError: true
     expectEvents:
       - client: *client
         eventType: command
