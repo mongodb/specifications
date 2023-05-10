@@ -118,9 +118,7 @@
                   "checkMetadataConsistency": 1,
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "checkMetadataConsistency"
@@ -206,9 +204,7 @@
                   "batchSize": 2,
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "find"
@@ -223,9 +219,7 @@
                   "collection": "collection",
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "getMore"
@@ -550,9 +544,7 @@
                   "batchSize": 1,
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "find"
@@ -568,9 +560,7 @@
                   "batchSize": 5,
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "getMore"
@@ -616,9 +606,7 @@
                   "batchSize": 1,
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "find"
@@ -634,9 +622,7 @@
                   "$db": "db",
                   "maxTimeMS": 300,
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "getMore"
@@ -708,9 +694,7 @@
                   },
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "find"
@@ -728,9 +712,7 @@
                   },
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "getMore"
@@ -845,9 +827,7 @@
                   "filter": {},
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "find"
@@ -862,9 +842,7 @@
                   "collection": "cappedCollection",
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "getMore"

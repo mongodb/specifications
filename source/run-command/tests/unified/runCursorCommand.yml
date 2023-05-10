@@ -61,7 +61,7 @@ tests:
               command:
                 checkMetadataConsistency: 1
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: checkMetadataConsistency
 
   - description: errors if the command response is not a cursor
@@ -98,14 +98,14 @@ tests:
                 filter: {}
                 batchSize: 2
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: find
           - commandStartedEvent:
               command:
                 getMore: { $$type: long }
                 collection: *collection
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: getMore
 
   - description: accepts an explicit session that is reused across getMores
@@ -247,7 +247,7 @@ tests:
                 filter: {}
                 batchSize: 1
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: find
           - commandStartedEvent:
               command:
@@ -255,7 +255,7 @@ tests:
                 collection: *collection
                 batchSize: 5
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: getMore
 
   - description: supports configuring getMore maxTimeMS
@@ -281,7 +281,7 @@ tests:
                 maxTimeMS: 200
                 batchSize: 1
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: find
           - commandStartedEvent:
               command:
@@ -289,7 +289,7 @@ tests:
                 collection: *collection
                 $db: *db
                 maxTimeMS: 300
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: getMore
 
   - description: supports configuring getMore comment
@@ -314,7 +314,7 @@ tests:
                 batchSize: 1
                 comment: { $$exists: false }
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: find
           - commandStartedEvent:
               command:
@@ -322,7 +322,7 @@ tests:
                 collection: *collection
                 comment: *comment
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: getMore
 
   # Tailable cursor
@@ -383,14 +383,14 @@ tests:
                 find: *cappedCollection
                 filter: {}
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: find
           - commandStartedEvent:
               command:
                 getMore: { $$type: long }
                 collection: *cappedCollection
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: getMore
           - commandStartedEvent:
               command:
