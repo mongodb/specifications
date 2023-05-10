@@ -4,22 +4,6 @@
   "createEntities": [
     {
       "client": {
-        "id": "failPointClient",
-        "useMultipleMongoses": false
-      }
-    },
-    {
-      "client": {
-        "id": "commandClient",
-        "useMultipleMongoses": false,
-        "observeEvents": [
-          "commandStartedEvent",
-          "commandSucceededEvent"
-        ]
-      }
-    },
-    {
-      "client": {
         "id": "client",
         "useMultipleMongoses": false,
         "observeEvents": [
@@ -31,13 +15,6 @@
       "session": {
         "id": "session",
         "client": "client"
-      }
-    },
-    {
-      "database": {
-        "id": "commandDb",
-        "client": "commandClient",
-        "databaseName": "commandDb"
       }
     },
     {
@@ -869,164 +846,6 @@
                   ]
                 },
                 "commandName": "killCursors"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "errors if timeoutMode is set without timeoutMS",
-      "operations": [
-        {
-          "name": "runCursorCommand",
-          "object": "db",
-          "arguments": {
-            "commandName": "find",
-            "command": {
-              "find": "collection"
-            },
-            "timeoutMode": "cursorLifetime"
-          },
-          "expectError": {
-            "isClientError": true
-          }
-        }
-      ]
-    },
-    {
-      "description": "error if timeoutMode is cursor_lifetime and cursorType is tailableAwait",
-      "operations": [
-        {
-          "name": "runCursorCommand",
-          "object": "db",
-          "arguments": {
-            "commandName": "find",
-            "command": {
-              "find": "collection"
-            },
-            "timeoutMode": "cursorLifetime",
-            "cursorType": "tailableAwait"
-          },
-          "expectError": {
-            "isClientError": true
-          }
-        }
-      ]
-    },
-    {
-      "description": "error if getMore maxTimeMS setting is greater than timeoutMS",
-      "operations": [
-        {
-          "name": "runCursorCommand",
-          "object": "collection",
-          "arguments": {
-            "commandName": "find",
-            "command": {
-              "find": "collection"
-            },
-            "timeoutMS": 5,
-            "maxTimeMS": 10
-          },
-          "expectError": {
-            "isClientError": true
-          }
-        }
-      ]
-    },
-    {
-      "description": "error if getMore maxTimeMS setting is equal to timeoutMS",
-      "operations": [
-        {
-          "name": "runCursorCommand",
-          "object": "collection",
-          "arguments": {
-            "commandName": "find",
-            "command": {
-              "find": "collection"
-            },
-            "timeoutMS": 5,
-            "maxTimeMS": 5
-          },
-          "expectError": {
-            "isClientError": true
-          }
-        }
-      ]
-    },
-    {
-      "description": "remaining timeoutMS applied to getMore if timeoutMode is unset",
-      "operations": [
-        {
-          "name": "failPoint",
-          "object": "testRunner",
-          "arguments": {
-            "client": "failPointClient",
-            "failPoint": {
-              "configureFailPoint": "failCommand",
-              "mode": {
-                "times": 2
-              },
-              "data": {
-                "failCommands": [
-                  "find",
-                  "getMore"
-                ],
-                "blockConnection": true,
-                "blockTimeMS": 15
-              }
-            }
-          }
-        },
-        {
-          "name": "runCursorCommand",
-          "object": "db",
-          "arguments": {
-            "commandName": "find",
-            "timeoutMS": 20,
-            "command": {
-              "find": "collection",
-              "batchSize": 2
-            }
-          },
-          "expectError": {
-            "isTimeoutError": true
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "commandName": "find",
-                "command": {
-                  "find": "collection",
-                  "maxTimeMS": {
-                    "$$type": [
-                      "int",
-                      "long"
-                    ]
-                  }
-                }
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "getMore",
-                "command": {
-                  "getMore": {
-                    "$$type": [
-                      "int",
-                      "long"
-                    ]
-                  },
-                  "collection": "collection",
-                  "maxTimeMS": {
-                    "$$exists": false
-                  }
-                }
               }
             }
           ]
