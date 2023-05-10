@@ -101,7 +101,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 $db: *db
                 lsid: { $$exists: true }
@@ -133,7 +133,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 $db: *db
                 lsid: { $$sessionLsid: *session }
@@ -189,7 +189,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 $db: *db
                 lsid: { $$sessionLsid: *session }
@@ -247,7 +247,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 batchSize: 5
                 $db: *db
@@ -280,7 +280,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 $db: *db
                 maxTimeMS: 300
@@ -312,7 +312,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 comment: *comment
                 $db: *db
@@ -380,7 +380,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *cappedCollection
                 $db: *db
                 lsid: { $$exists: true }
@@ -388,7 +388,7 @@ tests:
           - commandStartedEvent:
               command:
                 killCursors: *cappedCollection
-                cursors: [{ $$type: long }]
+                cursors: [{ $$type: [int, long] }]
               commandName: killCursors
 
   # CSOT
@@ -452,7 +452,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 2 }
             data:
-              failCommands: ["find", "getMore"]
+              failCommands: [find, getMore]
               blockConnection: true
               blockTimeMS: 15
       # Run a find with timeoutMS=20 and batchSize=1 to force two batches, which will cause a find and a getMore to be sent.
@@ -472,10 +472,10 @@ tests:
               commandName: find
               command:
                 find: *collection
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$type: [int, long] }
           - commandStartedEvent:
               commandName: getMore
               command:
-                getMore: { $$type: ["int", "long"] }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 maxTimeMS: { $$exists: false }

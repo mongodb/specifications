@@ -212,7 +212,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "$db": "db",
@@ -294,7 +297,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "$db": "db",
@@ -411,7 +417,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "$db": "db",
@@ -545,7 +554,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "batchSize": 5,
@@ -605,7 +617,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "$db": "db",
@@ -691,7 +706,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "comment": {
@@ -822,7 +840,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "cappedCollection",
                   "$db": "db",
@@ -839,7 +860,10 @@
                   "killCursors": "cappedCollection",
                   "cursors": [
                     {
-                      "$$type": "long"
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
                     }
                   ]
                 },
