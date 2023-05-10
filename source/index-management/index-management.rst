@@ -832,7 +832,7 @@ Getting Index Names
 -------------------
 
 Drivers MAY implement a method to enumerate all indexes, and return only
-the index names.
+the index names.  The helper operates the same as the following example:
 
 Example::
 
@@ -848,8 +848,7 @@ Getting Full Index Information
 Drivers MAY implement a method to return the full index specifications that are
 returned from both ``listIndexes`` (in the ``res.cursor.firstBatch`` field, and
 subsequent retrieved documents through getMore on the cursor constructed from
-``res.cursor.ns`` and ``res.cursor.id``), and the query result for
-``system.indexes``.
+``res.cursor.ns`` and ``res.cursor.id``).
 
 In MongoDB 4.4, the ``ns`` field was removed from the index specifications returned from the ``listIndexes`` command.
 
