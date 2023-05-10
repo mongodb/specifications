@@ -6,7 +6,7 @@ Index Management
 ================
 
 :Status: Accepted
-:Minimum Server Version: 2.4
+:Minimum Server Version: 3.6
 
 .. contents::
 
@@ -147,21 +147,8 @@ Standard API
 
     /**
      * Creates multiple indexes in the collection.
-     *
-     * For MongoDB 2.6 and higher this method MUST execute a createIndexes command.
-     *
-     * For MongoDB 2.4 this method MUST insert the index specifications directly into
-     * the system.indexes collection. The write concern provided provided to the server
-     * MUST be { w: 1 }.
-     *
-     * The driver MAY choose NOT to support creating indexes on 2.4 and if so, MUST
-     * document the method as such.
-     *
-     * Note that in MongoDB server versions >= 3.0.0, the server will create the
-     * indexes in parallel.
-     *
-     * As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates
-     * options passed to the createIndexes command.
+     * 
+     * In all server versions, this MUST execute a createIndexes command.
      *
      * @return The names of all the indexes that were created.
      */
@@ -464,22 +451,13 @@ Index View API
     /**
      * Creates multiple indexes in the collection.
      *
-     * For MongoDB 2.6 and higher this method MUST execute a createIndexes command.
-     *
-     * For MongoDB 2.4 this method MUST insert the index specifications directly into
-     * the system.indexes collection. The write concern provided provided to the server
-     * MUST be { w: 1 }.
-     *
-     * The driver MAY choose NOT to support creating indexes on 2.4 and if so, MUST
-     * document the method as such.
+     * For all server versions this method MUST execute a createIndexes command.
      *
      * @return The names of the created indexes.
      *
      * @note Each specification document becomes the "key" field in the document that
      *   is inserted or the command.
-     *
-     * Note that in MongoDB server versions >= 3.0.0, the server will create the
-     * indexes in parallel.
+     *   
      */
     createMany(models: Iterable<IndexModel>, options: Optional<CreateManyIndexesOptions>): Iterable<String>;
 
@@ -840,6 +818,63 @@ Common API Components
      */
     comment: Optional<any>;
   }
+
+-------------------
+Enumerating Indexes
+-------------------
+
+For all server versions, drivers MUST run a ``listIndexes`` command when enumerating indexes.
+
+Drivers SHOULD use the method name ``listIndexes`` for a method that returns
+all indexes with a cursor return type. Drivers MAY use an idiomatic variant
+that fits the language the driver is for.  An exception is made for drivers implementing the
+index view API. 
+
+All methods:
+
+- MUST be on the collection object.
+- MAY allow the ``cursor.batchSize`` option to be passed.
+- SHOULD allow the ``comment`` option to be passed.
+- MUST apply timeouts per the `Client Side Operations Timeout
+  <client-side-operations-timeout/client-side-operations-timeout.rst>`__
+  specification.
+
+All methods that return cursors MUST support the timeout options documented
+in `Client Side Operations Timeout: Cursors
+<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__.
+
+Getting Index Names
+-------------------
+
+Drivers MAY implement a method to enumerate all indexes, and return only
+the index names.
+
+Example::
+
+	> a = [];
+	[ ]
+	> db.runCommand( { listIndexes: 'poiConcat' } ).indexes.forEach(function(i) { a.push(i.name); } );
+	> a
+	[ "_id_", "ty_1", "l_2dsphere", "ts_1" ]
+
+Getting Full Index Information
+------------------------------
+
+Drivers MAY implement a method to return the full index specifications that are
+returned from both ``listIndexes`` (in the ``res.cursor.firstBatch`` field, and
+subsequent retrieved documents through getmore on the cursor constructed from
+``res.cursor.ns`` and ``res.cursor.id``), and the query result for
+``system.indexes``.
+
+In MongoDB 4.4, the ``ns`` field was removed from the index specifications returned from the ``listIndexes`` command.
+
+- For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
+  necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the ``ns`` field
+  will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
+  special mention of the ``ns`` field is necessary.
+- For drivers that report those index specifications in the form of statically defined models, the driver MUST manually populate
+  the ``ns`` field of the models with the appropriate namespace if the server does not report it in the ``listIndexes`` command
+  response. The ``ns`` field is not required to be a part of the models, however.
 
 ---------
 Q & A
