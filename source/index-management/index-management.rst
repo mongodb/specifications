@@ -932,3 +932,5 @@ Changelog
 :2022-04-18: Added the ``clustered`` attribute to ``IndexOptions`` in order to
              support clustered collections.
 :2022-10-05: Remove spec front matter and reformat changelog.
+:2023-5-10: Merge index enumeration and index management specs and get rid of references 
+             to legacy server versions.
