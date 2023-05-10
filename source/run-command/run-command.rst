@@ -233,6 +233,17 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
       cursorType: 'nonTailable' | 'tailable' | 'tailableAwait';
     }
 
+    /**
+     * The following are the configurations a driver MUST provide to control how getMores are constructed.
+     * How the options are controlled should be idiomatic to the driver's language.
+     * See Executing ``getMore`` Commands.
+     */
+    interface RunCursorCommandGetMoreOptions {
+      batchSize?: number;
+      maxTimeMS?: number;
+      comment?: BSONValue;
+    }
+
 RunCursorCommand implementation details
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
