@@ -268,11 +268,15 @@ MongoDB also supports creating cursors that "tail" or follow the target namespac
 Querying capped collections and change streams are some examples of tailable cursor use cases.
 A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, this does not indicate that the cursor has been exhausted.
 
-In addition to considering a cursor tailable, an ``awaitData`` flag MAY be sent on the initial command.
-This will request that the server block responding to the ``getMore`` immediately and instead rely on the ``maxTimeMS`` field of the ``getMore`` (or server default).
-If the time does expire an empty batch will be returned and the driver MUST issue another ``getMore``.
+In addition to considering a find cursor tailable, an ``awaitData`` flag MAY be sent on the initial command.
+This will request that the server wait to respond to the client's ``getMore`` command until new data is available.
+The amount of time the server will wait for new data is based on the ``maxTimeMS`` field of the ``getMore`` (or server default if unspecified).
+If the time does expire an empty batch will be returned.
+A ``maxTimeMS`` field cannot be sent if the cursor was not configured with ``awaitData=true``.
 
 To create a tailable ``find`` cursor you execute the following command:
+
+.. _find: https://www.mongodb.com/docs/manual/reference/command/find/
 
 .. code:: typescript
 
@@ -283,7 +287,10 @@ To create a tailable ``find`` cursor you execute the following command:
     filter: BSONDocument;
     /** Informs the server whether to keep the cursor open even when there are no results to satisfy the query */
     tailable?: boolean;
-    /** Informs the server whether to block on `maxTimeMS` before returning an empty `nextBatch` */
+    /**
+     * Informs the server whether to block on a `getMore`'s `maxTimeMS` before returning an empty `nextBatch`.
+     * This must be set if getMores are to include `maxTimeMS` values.
+     */
     awaitData?: boolean;
     /** Controls the amount of milliseconds the server will allow the operations to run for */
     maxTimeMS?: int32;
@@ -341,7 +348,7 @@ On success, the getMore command will return the following:
     interface GetMoreResponse {
       ok: 1;
       cursor: {
-        /** The cursor id, this may be equal to zero indicating the cursor is exhausted */
+        /** The cursor id, this may be equal to zero indicating the cursor is exhausted or closed */
         id: int64;
         /**
          * The namespace the cursor is running on.
