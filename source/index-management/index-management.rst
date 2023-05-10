@@ -828,6 +828,16 @@ all indexes with a cursor return type. Drivers MAY use an idiomatic variant
 that fits the language the driver is for.  An exception is made for drivers implementing the
 index view API.
 
+In MongoDB 4.4, the ``ns`` field was removed from the index specifications returned from the ``listIndexes`` command.
+
+- For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
+  necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the ``ns`` field
+  will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
+  special mention of the ``ns`` field is necessary.
+- For drivers that report those index specifications in the form of statically defined models, the driver MUST manually populate
+  the ``ns`` field of the models with the appropriate namespace if the server does not report it in the ``listIndexes`` command
+  response. The ``ns`` field is not required to be a part of the models, however.
+
 Getting Index Names
 -------------------
 
@@ -841,24 +851,6 @@ Example::
 	> db.runCommand( { listIndexes: 'poiConcat' } ).indexes.forEach(function(i) { a.push(i.name); } );
 	> a
 	[ "_id_", "ty_1", "l_2dsphere", "ts_1" ]
-
-Getting Full Index Information
-------------------------------
-
-Drivers MAY implement a method to return the full index specifications that are
-returned from both ``listIndexes`` (in the ``res.cursor.firstBatch`` field, and
-subsequent retrieved documents through getMore on the cursor constructed from
-``res.cursor.ns`` and ``res.cursor.id``).
-
-In MongoDB 4.4, the ``ns`` field was removed from the index specifications returned from the ``listIndexes`` command.
-
-- For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
-  necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the ``ns`` field
-  will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
-  special mention of the ``ns`` field is necessary.
-- For drivers that report those index specifications in the form of statically defined models, the driver MUST manually populate
-  the ``ns`` field of the models with the appropriate namespace if the server does not report it in the ``listIndexes`` command
-  response. The ``ns`` field is not required to be a part of the models, however.
 
 ---------
 Q & A
