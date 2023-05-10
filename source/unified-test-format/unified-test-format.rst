@@ -3941,16 +3941,16 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
-:2023-04-25: Add runCursorCommand operation
+:2023-05-10: Add runCursorCommand and createRunCursorCommand operations
 :2023-04-13: Remove ``readConcern`` and ``writeConcern`` options from ``runCommand`` operation.
 :2023-02-24: Fix typo in the description of the ``$$matchAsRoot`` matching operator.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
-            Add support for logging assertions via the ``observeLogMessages`` field
-            for client entities, along with a new top-level field ``expectLogMessages``
-            containing ``expectedLogMessagesForClient`` objects.
-            Add new special matching operators to enable command logging assertions,
-            ``$$matchAsDocument`` and ``$$matchAsRoot``.
+             Add support for logging assertions via the ``observeLogMessages`` field
+             for client entities, along with a new top-level field ``expectLogMessages``
+             containing ``expectedLogMessagesForClient`` objects.
+             Add new special matching operators to enable command logging assertions,
+             ``$$matchAsDocument`` and ``$$matchAsRoot``.
 :2022-10-14: **Schema version 1.12.**
              Add ``errorResponse`` to ``expectedError``.
 :2022-10-05: Remove spec front matter, add "Current Schema Version" field, and
