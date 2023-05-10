@@ -9,7 +9,7 @@ runOn:
 database_name: &database_name "default"
 collection_name: &collection_name "default"
 data: []
-encrypted_fields: &encrypted_fields {{ yamlfile("encryptedFields-Range-DoublePrecision.json") }}
+encrypted_fields: &encrypted_fields {{ yamlfile("range-encryptedFields-DoublePrecision.json") }}
 key_vault_data: [ {{ yamlfile("keys/key1-document.json") }} ]
 tests:
   - description: "FLE2 Range DoublePrecision. Aggregate."
@@ -66,7 +66,11 @@ tests:
             encryptionInformation:
               type: 1
               schema:
-                default.default: *encrypted_fields
+                default.default:
+                  # libmongocrypt applies escCollection and ecocCollection to outgoing command.
+                  escCollection: "enxcol_.default.esc"
+                  ecocCollection: "enxcol_.default.ecoc"
+                  <<: *encrypted_fields
           command_name: insert
       - command_started_event:
           command:
@@ -77,7 +81,11 @@ tests:
             encryptionInformation:
               type: 1
               schema:
-                default.default: *encrypted_fields
+                default.default:
+                  # libmongocrypt applies escCollection and ecocCollection to outgoing command.
+                  escCollection: "enxcol_.default.esc"
+                  ecocCollection: "enxcol_.default.ecoc"
+                  <<: *encrypted_fields
           command_name: insert
       - command_started_event:
           command:
@@ -100,7 +108,11 @@ tests:
             encryptionInformation:
               type: 1
               schema:
-                default.default: *encrypted_fields
+                default.default:
+                  # libmongocrypt applies escCollection and ecocCollection to outgoing command.
+                  escCollection: "enxcol_.default.esc"
+                  ecocCollection: "enxcol_.default.ecoc"
+                  <<: *encrypted_fields
           command_name: aggregate
     outcome:
       collection:

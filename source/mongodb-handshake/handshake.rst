@@ -317,15 +317,17 @@ Information about the Function-as-a-Service (FaaS) environment, captured from en
 variables.  The ``client.env.name`` field is determined by which of the following environment
 variables are populated:
 
-+----------------+-----------------------------------------------------+
-| ``aws.lambda`` | ``AWS_EXECUTION_ENV`` or ``AWS_LAMBDA_RUNTIME_API`` |
-+----------------+-----------------------------------------------------+
-| ``azure.func`` | ``FUNCTIONS_WORKER_RUNTIME``                        |
-+----------------+-----------------------------------------------------+
-| ``gcp.func``   | ``K_SERVICE`` or ``FUNCTION_NAME``                  |
-+----------------+-----------------------------------------------------+
-| ``vercel``     | ``VERCEL``                                          |
-+----------------+-----------------------------------------------------+
++----------------+----------------------------------------------------------+
+| ``aws.lambda`` | ``AWS_EXECUTION_ENV`` [#]_ or ``AWS_LAMBDA_RUNTIME_API`` |
++----------------+----------------------------------------------------------+
+| ``azure.func`` | ``FUNCTIONS_WORKER_RUNTIME``                             |
++----------------+----------------------------------------------------------+
+| ``gcp.func``   | ``K_SERVICE`` or ``FUNCTION_NAME``                       |
++----------------+----------------------------------------------------------+
+| ``vercel``     | ``VERCEL``                                               |
++----------------+----------------------------------------------------------+
+
+.. [#] ``AWS_EXECUTION_ENV`` must start with the string ``"AWS_Lambda_"``.
 
 If none of those variables are populated the ``client.env`` value MUST be entirely omitted.  When
 variables for multiple ``client.env.name`` values are present, ``vercel`` takes precedence over
@@ -379,6 +381,11 @@ When the mechanism is ``SCRAM-SHA-1`` or ``SCRAM-SHA-256``, ``speculativeAuthent
 has the same fields as seen in the conversation subsection of the SCRAM-SHA-1 and
 SCRAM-SHA-256 sections in the `Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
 with an additional ``db`` field to specify the name of the authentication database.
+
+When the mechanism is ``MONGODB-OIDC``, ``speculativeAuthenticate`` has the same
+structure as seen in the MONGODB-OIDC conversation section in the
+`Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_.  However,
+the driver MUST not call a callback as part of ``speculativeAuthenticate``.
 
 If the initial handshake command with a ``speculativeAuthenticate`` argument succeeds,
 the client should proceed with the next step of the exchange. If the initial handshake
@@ -544,6 +551,12 @@ command succeeds in the presence of the following sets of environment variables:
 | ``AWS_LAMBDA_FUNCTION_MEMORY_SIZE`` | ``big``              |
 +-------------------------------------+----------------------+
 
+8. Invalid - ``AWS_EXECUTION_ENV`` does not start with ``"AWS_Lambda_"``
+
++-----------------------+---------+
+| ``AWS_EXECUTION_ENV`` | ``EC2`` |
++-----------------------+---------+
+
 Motivation For Change
 =====================
 
@@ -633,3 +646,4 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2023-03-13: Add ``env`` to ``client`` document
 :2023-04-03: Simplify truncation for metadata
+:2023-05-04: ``AWS_EXECUTION_ENV`` must start with ``"AWS_Lambda_"``

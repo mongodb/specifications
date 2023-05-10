@@ -11,7 +11,7 @@ runOn:
 database_name: &database_name "default"
 collection_name: &collection_name "default"
 data: []
-encrypted_fields: &encrypted_fields {{ yamlfile("encryptedFields-Range-Long.json") }}
+encrypted_fields: &encrypted_fields {{ yamlfile("range-encryptedFields-Long.json") }}
 key_vault_data: [ {{ yamlfile("keys/key1-document.json") }} ]
 tests:
   - description: "Find with $gt"
