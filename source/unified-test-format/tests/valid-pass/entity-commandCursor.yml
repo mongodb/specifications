@@ -1,4 +1,4 @@
-description: runCursorCommand
+description: entity-commandCursor
 schemaVersion: '1.3'
 createEntities:
   - client:
@@ -41,21 +41,21 @@ tests:
                 filter: {}
                 batchSize: 2
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: find
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: getMore
           - commandStartedEvent:
               command:
-                getMore: { $$type: long }
+                getMore: { $$type: [int, long] }
                 collection: *collection
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: getMore
 
   - description: createRunCursorCommand creates a cursor and stores it as an entity that can be iterated one document at a time
@@ -106,7 +106,7 @@ tests:
                 filter: {}
                 batchSize: 2
                 $db: *db
-                lsid: { id: { $$type: binData } }
+                lsid: { $$exists: true }
               commandName: find
           - commandStartedEvent:
               command:
