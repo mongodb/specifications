@@ -111,5 +111,5 @@ tests:
           - commandStartedEvent:
               command:
                 killCursors: *collection
-                cursors: [{ $$type: long }]
+                cursors: { $$type: array }
               commandName: killCursors

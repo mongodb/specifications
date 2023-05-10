@@ -836,14 +836,9 @@
               "commandStartedEvent": {
                 "command": {
                   "killCursors": "cappedCollection",
-                  "cursors": [
-                    {
-                      "$$type": [
-                        "int",
-                        "long"
-                      ]
-                    }
-                  ]
+                  "cursors": {
+                    "$$type": "array"
+                  }
                 },
                 "commandName": "killCursors"
               }

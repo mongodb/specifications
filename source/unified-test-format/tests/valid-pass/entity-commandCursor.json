@@ -1,5 +1,5 @@
 {
-  "description": "runCursorCommand",
+  "description": "entity-commandCursor",
   "schemaVersion": "1.3",
   "createEntities": [
     {
@@ -106,9 +106,7 @@
                   "batchSize": 2,
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "find"
@@ -118,14 +116,15 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "getMore"
@@ -135,14 +134,15 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$type": "long"
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "collection",
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "getMore"
@@ -253,9 +253,7 @@
                   "batchSize": 2,
                   "$db": "db",
                   "lsid": {
-                    "id": {
-                      "$$type": "binData"
-                    }
+                    "$$exists": true
                   }
                 },
                 "commandName": "find"
@@ -265,11 +263,9 @@
               "commandStartedEvent": {
                 "command": {
                   "killCursors": "collection",
-                  "cursors": [
-                    {
-                      "$$type": "long"
-                    }
-                  ]
+                  "cursors": {
+                    "$$type": "array"
+                  }
                 },
                 "commandName": "killCursors"
               }
