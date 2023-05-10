@@ -239,8 +239,8 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
      * See Executing ``getMore`` Commands.
      */
     interface RunCursorCommandGetMoreOptions {
-      batchSize?: number;
-      maxTimeMS?: number;
+      batchSize?: PositiveIntegerNumber;
+      maxTimeMS?: PositiveIntegerNumber;
       comment?: BSONValue;
     }
 

@@ -293,7 +293,7 @@ To create a tailable ``find`` cursor you execute the following command:
      */
     awaitData?: boolean;
     /** Controls the amount of milliseconds the server will allow the operations to run for */
-    maxTimeMS?: int32;
+    maxTimeMS?: PositiveIntegerNumber;
     // ... Non-normative: additional fields omitted
   }
 
@@ -327,11 +327,11 @@ when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
      * User configurable document count for the batch returned for this getMore.
      * Only attached to command document if nonzero.
      */
-    batchSize?: int32;
+    batchSize?: PositiveIntegerNumber;
     /**
      * User configurable time limit enforced by the server.
      */
-    maxTimeMS?: int32;
+    maxTimeMS?: PositiveIntegerNumber;
     /**
      * User configurable comment that can be used to identify the operation in logs.
      * This can be any BSON value.
@@ -339,7 +339,7 @@ when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
     comment?: BSONValue;
   }
 
-The **batchSize** option of **getMore** command MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
+The **batchSize** option of **getMore** command MUST be an unsigned int larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
 On success, the getMore command will return the following:
 

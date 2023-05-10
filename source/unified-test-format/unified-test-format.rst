@@ -1782,7 +1782,7 @@ The following arguments are supported:
 runCursorCommand
 ~~~~~~~~~~~~~~~~
 
-`Generic cursor returning command runner <../run-command/run-command.rst>.`__
+`Generic cursor returning command runner <../run-command/run-command.rst>`__.
 
 This method does not inherit a read concern or write concern (per the
 `Read and Write Concern <../read-write-concern/read-write-concern.rst#generic-command-method>`__
@@ -1807,11 +1807,11 @@ The following arguments are supported:
 
 - ``session``: Optional string. See `commonOptions_session`_.
 
-- ``batchSize``: Optional int32. Use this value to configure the batchSize sent on the getMore command.
+- ``batchSize``: Optional positive integer value. Use this value to configure the ``batchSize`` option sent on subsequent ``getMore`` commands.
 
-- ``maxTimeMS``: Optional int32. Use this value to configure the maxTimeMS sent on the getMore command.
+- ``maxTimeMS``: Optional positive integer value. Use this value to configure the ``maxTimeMS`` option sent on subsequent ``getMore`` commands.
 
-- ``comment``: Optional BSON value. Use this value to configure the comment sent on the getMore command.
+- ``comment``: Optional BSON value. Use this value to configure the ``comment`` option sent on subsequent ``getMore`` commands.
 
 - ``cursorType``: Optional string enum value, one of ``'tailable' | 'tailableAwait' | 'nonTailable'``. Use this value to configure the enum passed to the ``cursorType`` option.
 
