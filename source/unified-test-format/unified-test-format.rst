@@ -265,7 +265,7 @@ Test runners MUST support the following types of entities:
 
 - CommandCursor. These entities are not defined in `createEntities`_ but are
   instead created by using `operation.saveResultAsEntity
-  <operation_saveResultAsEntity_>`_ with a `collection_createCommandCursor`_
+  <operation_saveResultAsEntity_>`_ with a `createCommandCursor`_
   operation.
 
   See `Cursor Operations`_ for a list of operations.
