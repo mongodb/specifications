@@ -638,7 +638,7 @@
       "description": "supports configuring getMore comment",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.5"
+          "minServerVersion": "4.4"
         }
       ],
       "operations": [
@@ -648,11 +648,14 @@
           "arguments": {
             "commandName": "find",
             "comment": {
-              "hello": "mongodb"
+              "hello": "getMore"
             },
             "command": {
               "find": "collection",
-              "batchSize": 1
+              "batchSize": 1,
+              "comment": {
+                "hello": "find"
+              }
             }
           },
           "expectResult": [
@@ -690,7 +693,7 @@
                   "find": "collection",
                   "batchSize": 1,
                   "comment": {
-                    "$$exists": false
+                    "hello": "find"
                   },
                   "$db": "db",
                   "lsid": {
@@ -711,7 +714,7 @@
                   },
                   "collection": "collection",
                   "comment": {
-                    "hello": "mongodb"
+                    "hello": "getMore"
                   },
                   "$db": "db",
                   "lsid": {

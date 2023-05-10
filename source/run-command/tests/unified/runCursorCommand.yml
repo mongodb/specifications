@@ -287,14 +287,14 @@ tests:
 
   - description: supports configuring getMore comment
     runOnRequirements:
-      - minServerVersion: '4.5'
+      - minServerVersion: '4.4'
     operations:
       - name: runCursorCommand
         object: *db
         arguments:
           commandName: find
-          comment: &comment { hello: 'mongodb' }
-          command: { find: *collection, batchSize: 1 }
+          comment: { hello: 'getMore' }
+          command: { find: *collection, batchSize: 1, comment: { hello: 'find' } }
         expectResult: *documents
     expectEvents:
       - client: *client
@@ -304,7 +304,7 @@ tests:
               command:
                 find: *collection
                 batchSize: 1
-                comment: { $$exists: false }
+                comment: { hello: 'find' }
                 $db: *db
                 lsid: { $$exists: true }
               commandName: find
@@ -312,7 +312,7 @@ tests:
               command:
                 getMore: { $$type: [int, long] }
                 collection: *collection
-                comment: *comment
+                comment: { hello: 'getMore' }
                 $db: *db
                 lsid: { $$exists: true }
               commandName: getMore
