@@ -82,7 +82,7 @@ tests:
         object: *db
         arguments:
           commandName: find
-          command: { find: *collection, filter: {}, batchSize: 2 }
+          command: { find: *collection, batchSize: 2 }
         expectResult: *documents
       - name: assertSameLsidOnLastTwoCommands
         object: testRunner
@@ -95,7 +95,6 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection
-                filter: {}
                 batchSize: 2
                 $db: *db
                 lsid: { $$exists: true }
@@ -115,7 +114,7 @@ tests:
         arguments:
           commandName: find
           session: *session
-          command: { find: *collection, filter: {}, batchSize: 2 }
+          command: { find: *collection, batchSize: 2 }
         expectResult: *documents
       - name: assertSameLsidOnLastTwoCommands
         object: testRunner
@@ -128,7 +127,6 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection
-                filter: {}
                 batchSize: 2
                 $db: *db
                 lsid: { $$sessionLsid: *session }
@@ -151,7 +149,7 @@ tests:
         arguments:
           commandName: find
           batchSize: 2
-          command: { find: *collection, filter: {}, batchSize: 2 }
+          command: { find: *collection, batchSize: 2 }
         saveResultAsEntity: &cursor cursor
       - name: assertNumberConnectionsCheckedOut
         object: testRunner
@@ -185,7 +183,6 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection
-                filter: {}
                 batchSize: 2
                 $db: *db
                 lsid: { $$sessionLsid: *session }
@@ -212,7 +209,7 @@ tests:
         object: *db
         arguments:
           commandName: find
-          command: { find: *collection, filter: {}, batchSize: 2 }
+          command: { find: *collection, batchSize: 2 }
         saveResultAsEntity: *cursor
       - name: assertNumberConnectionsCheckedOut
         object: testRunner
@@ -235,7 +232,7 @@ tests:
         arguments:
           commandName: find
           batchSize: 5
-          command: { find: *collection, filter: {}, batchSize: 1 }
+          command: { find: *collection, batchSize: 1 }
         expectResult: *documents
     expectEvents:
       - client: *client
@@ -244,7 +241,6 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection
-                filter: {}
                 batchSize: 1
                 $db: *db
                 lsid: { $$exists: true }
@@ -265,7 +261,7 @@ tests:
         arguments:
           commandName: find
           maxTimeMS: 300
-          command: { find: *collection, filter: {}, maxTimeMS: 200, batchSize: 1 }
+          command: { find: *collection, maxTimeMS: 200, batchSize: 1 }
         expectError:
           # maxTimeMS can only be used with getMore for tailable, awaitData cursors
           isClientError: false
@@ -277,7 +273,6 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection
-                filter: {}
                 maxTimeMS: 200
                 batchSize: 1
                 $db: *db
@@ -301,7 +296,7 @@ tests:
         arguments:
           commandName: find
           comment: &comment { hello: 'mongodb' }
-          command: { find: *collection, filter: {}, batchSize: 1 }
+          command: { find: *collection, batchSize: 1 }
         expectResult: *documents
     expectEvents:
       - client: *client
@@ -310,7 +305,6 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection
-                filter: {}
                 batchSize: 1
                 comment: { $$exists: false }
                 $db: *db
@@ -352,7 +346,7 @@ tests:
           cursorType: tailable
           commandName: find
           batchSize: 2
-          command: { find: *cappedCollection, filter: {}, tailable: true }
+          command: { find: *cappedCollection, tailable: true }
         saveResultAsEntity: &cursor cursor
       - name: iterateOnce
         object: *cursor
@@ -381,7 +375,6 @@ tests:
           - commandStartedEvent:
               command:
                 find: *cappedCollection
-                filter: {}
                 $db: *db
                 lsid: { $$exists: true }
               commandName: find
@@ -405,7 +398,7 @@ tests:
         object: *db
         arguments:
           commandName: find
-          command: { find: *collection, filter: {} }
+          command: { find: *collection }
           timeoutMode: cursorLifetime
         expectError:
           isClientError: true
@@ -416,7 +409,7 @@ tests:
         object: *db
         arguments:
           commandName: find
-          command: { find: *collection, filter: {} }
+          command: { find: *collection }
           timeoutMode: cursorLifetime
           cursorType: tailableAwait
         expectError:
@@ -428,7 +421,7 @@ tests:
         object: *collection
         arguments:
           commandName: find
-          command: { find: *collection, filter: {} }
+          command: { find: *collection }
           timeoutMS: 5
           maxTimeMS: 10
         expectError:
@@ -440,7 +433,7 @@ tests:
         object: *collection
         arguments:
           commandName: find
-          command: { find: *collection, filter: {} }
+          command: { find: *collection }
           timeoutMS: 5
           maxTimeMS: 5
         expectError:
@@ -469,7 +462,7 @@ tests:
         arguments:
           commandName: find
           timeoutMS: 20
-          command: { find: *collection, filter: {}, batchSize: 2 }
+          command: { find: *collection, batchSize: 2 }
         expectError:
           isTimeoutError: true
     expectEvents:

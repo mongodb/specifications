@@ -156,7 +156,6 @@
             "commandName": "find",
             "command": {
               "find": "collection",
-              "filter": {},
               "batchSize": 2
             }
           },
@@ -200,7 +199,6 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "collection",
-                  "filter": {},
                   "batchSize": 2,
                   "$db": "db",
                   "lsid": {
@@ -240,7 +238,6 @@
             "session": "session",
             "command": {
               "find": "collection",
-              "filter": {},
               "batchSize": 2
             }
           },
@@ -284,7 +281,6 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "collection",
-                  "filter": {},
                   "batchSize": 2,
                   "$db": "db",
                   "lsid": {
@@ -331,7 +327,6 @@
             "batchSize": 2,
             "command": {
               "find": "collection",
-              "filter": {},
               "batchSize": 2
             }
           },
@@ -403,7 +398,6 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "collection",
-                  "filter": {},
                   "batchSize": 2,
                   "$db": "db",
                   "lsid": {
@@ -464,7 +458,6 @@
             "commandName": "find",
             "command": {
               "find": "collection",
-              "filter": {},
               "batchSize": 2
             }
           },
@@ -503,7 +496,6 @@
             "batchSize": 5,
             "command": {
               "find": "collection",
-              "filter": {},
               "batchSize": 1
             }
           },
@@ -540,7 +532,6 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "collection",
-                  "filter": {},
                   "batchSize": 1,
                   "$db": "db",
                   "lsid": {
@@ -581,7 +572,6 @@
             "maxTimeMS": 300,
             "command": {
               "find": "collection",
-              "filter": {},
               "maxTimeMS": 200,
               "batchSize": 1
             }
@@ -601,7 +591,6 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "collection",
-                  "filter": {},
                   "maxTimeMS": 200,
                   "batchSize": 1,
                   "$db": "db",
@@ -650,7 +639,6 @@
             },
             "command": {
               "find": "collection",
-              "filter": {},
               "batchSize": 1
             }
           },
@@ -687,7 +675,6 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "collection",
-                  "filter": {},
                   "batchSize": 1,
                   "comment": {
                     "$$exists": false
@@ -768,7 +755,6 @@
             "batchSize": 2,
             "command": {
               "find": "cappedCollection",
-              "filter": {},
               "tailable": true
             }
           },
@@ -824,7 +810,6 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "cappedCollection",
-                  "filter": {},
                   "$db": "db",
                   "lsid": {
                     "$$exists": true
@@ -874,8 +859,7 @@
           "arguments": {
             "commandName": "find",
             "command": {
-              "find": "collection",
-              "filter": {}
+              "find": "collection"
             },
             "timeoutMode": "cursorLifetime"
           },
@@ -894,8 +878,7 @@
           "arguments": {
             "commandName": "find",
             "command": {
-              "find": "collection",
-              "filter": {}
+              "find": "collection"
             },
             "timeoutMode": "cursorLifetime",
             "cursorType": "tailableAwait"
@@ -915,8 +898,7 @@
           "arguments": {
             "commandName": "find",
             "command": {
-              "find": "collection",
-              "filter": {}
+              "find": "collection"
             },
             "timeoutMS": 5,
             "maxTimeMS": 10
@@ -936,8 +918,7 @@
           "arguments": {
             "commandName": "find",
             "command": {
-              "find": "collection",
-              "filter": {}
+              "find": "collection"
             },
             "timeoutMS": 5,
             "maxTimeMS": 5
@@ -980,7 +961,6 @@
             "timeoutMS": 20,
             "command": {
               "find": "collection",
-              "filter": {},
               "batchSize": 2
             }
           },
