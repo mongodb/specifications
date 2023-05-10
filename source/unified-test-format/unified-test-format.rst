@@ -262,6 +262,14 @@ Test runners MUST support the following types of entities:
   operation.
 
   See `Cursor Operations`_ for a list of operations.
+
+- CommandCursor. These entities are not defined in `createEntities`_ but are
+  instead created by using `operation.saveResultAsEntity
+  <operation_saveResultAsEntity_>`_ with a `collection_createCommandCursor`_
+  operation.
+
+  See `Cursor Operations`_ for a list of operations.
+
 - Event list. See
   `storeEventsAsEntities <entity_client_storeEventsAsEntities_>`_. The event
   list MUST store BSON documents. The type of the list itself is not prescribed
@@ -1817,8 +1825,8 @@ The following arguments are supported:
 
 - ``timeoutMode``: Optional string enum value, one of ``'iteration' | 'cursorLifetime'``. Use this value to configure the enum passed to the ``timeoutMode`` option.
 
-createRunCursorCommand
-~~~~~~~~~~~~~~~~~~~~~~
+createCommandCursor
+~~~~~~~~~~~~~~~~~~~
 
 This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options.
 Test runners MUST ensure that the server-side cursor is created (i.e. the command document has executed) as part of this operation and before the resulting cursor might be saved with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
@@ -2118,7 +2126,7 @@ Cursor Operations
 There are no defined APIs for change streams and cursors since the
 mechanisms for iteration may differ between synchronous and asynchronous
 drivers. To account for this, this section explicitly defines the supported
-operations for the ``ChangeStream`` and ``FindCursor`` entity types.
+operations for the ``ChangeStream``, ``FindCursor``, and ``CommandCursor`` entity types.
 
 Test runners MUST ensure that the iteration operations defined in this
 section will not inadvertently skip the first document for a cursor. Albeit
