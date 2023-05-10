@@ -1833,7 +1833,7 @@ Test runners MUST ensure that the server-side cursor is created (i.e. the comman
 Test runners for drivers that lazily execute the ``runCursorCommand`` command on the first iteration of the cursor MUST iterate the resulting cursor once.
 The result from this iteration MUST be used as the result for the first iteration operation on the cursor.
 
-Test runners MUST NOT iterate the resulting cursor when executing this operation and test files MUST NOT specify `operation.expectResult <operation_expectResult_>`_ for this operation.
+Test runners MUST NOT iterate the resulting cursor when executing this operation and test files SHOULD NOT specify `operation.expectResult <operation_expectResult_>`_ for this operation.
 
 watch
 ~~~~~
