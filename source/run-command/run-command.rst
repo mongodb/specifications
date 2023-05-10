@@ -331,6 +331,6 @@ When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support time
 Changelog
 =========
 
-:2023-05-09: Add runCursorCommand API specification.
+:2023-05-10: Add runCursorCommand API specification.
 :2023-05-08: ``$readPreference`` is not sent to standalone servers
 :2023-04-20: Add run command specification.

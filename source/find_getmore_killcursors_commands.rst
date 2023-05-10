@@ -518,7 +518,7 @@ More in depth information about passing read preferences to Mongos can be found 
 Changelog
 =========
 
-:2023-04-28: Improve tailable cursor description and update the ``getMore`` section code blocks
+:2023-05-10: Improve tailable cursor description and update the ``getMore`` section code blocks.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-02-01: Replace examples/tables for find, getMore, and killCursors with
              server manual links.
