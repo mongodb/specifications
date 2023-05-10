@@ -247,14 +247,14 @@ High level RunCursorCommand steps:
 * Create a local cursor instance and store the ``firstBatch``, ``ns``, and ``id`` from the response.
 * When the current batch has been fully iterated, execute a ``getMore`` using the same server the initial command was executed on.
 * Store the ``nextBatch`` from the ``getMore`` response and update the cursor's ``id``.
-* Continue to execute ``getMore`` commands as needed when the caller empties local batches until the cursor is exhausted.
+* Continue to execute ``getMore`` commands as needed when the caller empties local batches until the cursor is exhausted or closed (i.e. ``id`` is zero).
 
 Driver Sessions
 """""""""""""""
 
 A driver MUST create an implicit ClientSession if none is provided and it MUST be attached for the duration of the cursor's lifetime.
 All ``getMore`` commands constructed for this cursor MUST send the same ``lsid`` used on the initial command.
-A cursor is exhausted when the server reports a cursor is equal to zero.
+A cursor is considered exhausted or closed when the server reports its ``id`` as zero.
 When the cursor is exhausted the client session MUST be ended and the server session returned to the pool as early as possible rather than waiting for a caller to completely iterate the final batch.
 
 * See Drivers Sessions' section on `Sessions and Cursors <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sessions-and-cursors>`_
@@ -278,11 +278,11 @@ Iterating the Cursor
 Drivers MUST provide an API, typically, a method named ``next()``, that returns one document per invocation.
 If the cursor's batch is empty and the cursor id is nonzero, the driver MUST perform a ``getMore`` operation.
 
-Executing GetMores
-""""""""""""""""""
+Executing ``getMore`` Commands
+""""""""""""""""""""""""""""""
 
-The cursor API returned to the caller MUST offer an API to configure ``batchSize``, ``maxTimeMS``, and ``comment`` that are sent on the ``getMore`` command.
-If it is overwhelmingly convenient to a driver's language to offer setting these options in the ``RunCursorCommandOptions`` a driver MUST have clear documentation that the options only configure ``getMore`` commands.
+The cursor API returned to the caller MUST offer an API to configure ``batchSize``, ``maxTimeMS``, and ``comment`` options that are sent on subsequent ``getMore`` commands.
+If it is idiomatic for a driver to allow setting these options in ``RunCursorCommandOptions``, the driver MUST document that the options only pertain to ``getMore`` commands.
 
 * See Find, getMore and killCursors commands' section on `GetMore <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#getmore>`_
 
@@ -307,9 +307,11 @@ The ClientSession associated with the cursor MUST be ended and the ServerSession
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""
 
-As with RunCommand, if the initial command has a ``maxTimeMS`` and CSOT settings are provided the behavior is undefined and drivers MUST NOT inspect the document to detect this.
-Drivers SHOULD raise an error if both a ``getMore`` ``maxTimeMS`` setting and CSOT settings are provided.
-Drivers MUST document that attempting to set both can have undefined behavior and is not supported.
+RunCursorCommand MUST provide an optional ``timeoutMS`` option to support client side operations timeout.
+Drivers MUST NOT attempt to check the command document for the presence of a ``maxTimeMS`` field.
+Drivers MUST document the behavior of RunCursorCommand if a ``maxTimeMS`` field is already set on the command.
+Drivers SHOULD raise an error if both ``timeoutMS`` and the ``getMore``-specific ``maxTimeMS`` option are specified (see: `Executing getMore Commands`_).
+Drivers MUST document that attempting to set both options can have undefined behavior and is not supported.
 
 When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support timeout functionality as described in the CSOT specification.
 
