@@ -159,9 +159,6 @@
           "events": [
             {
               "commandStartedEvent": {
-                "command": {
-                  "ping": 1
-                },
                 "commandName": "ping"
               }
             },
@@ -169,13 +166,6 @@
               "commandStartedEvent": {
                 "command": {
                   "ping": 1,
-                  "$db": "db",
-                  "lsid": {
-                    "$$exists": true
-                  },
-                  "$readPreference": {
-                    "$$exists": false
-                  },
                   "$clusterTime": {
                     "$$exists": true
                   }

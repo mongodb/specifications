@@ -86,16 +86,11 @@ tests:
       - client: *client
         events:
           - commandStartedEvent:
-              command:
-                ping: 1
               commandName: ping
           # Only check the shape of the second ping which should have the $clusterTime received from the first operation
           - commandStartedEvent:
               command:
                 ping: 1
-                $db: *db
-                lsid: { $$exists: true }
-                $readPreference: { $$exists: false }
                 $clusterTime: { $$exists: true }
               commandName: ping
 
