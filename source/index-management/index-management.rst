@@ -6,7 +6,7 @@ Index Management
 ================
 
 :Status: Accepted
-:Minimum Server Version: 2.4
+:Minimum Server Version: 3.6
 
 .. contents::
 
@@ -70,7 +70,7 @@ All drivers MUST include the specified parameters in each operation. This does n
 As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates options passed to the ``createIndexes`` command -- drivers should be aware when testing that passing arbitrary options when the driver does not validate them could fail on the server.
 
 Deviations
-**********
+----------
 
 A non-exhaustive list of acceptable deviations are as follows:
 
@@ -83,8 +83,8 @@ Naming
 
 All drivers MUST name operations and parameters as defined in the following sections. Exceptions to this rule are noted in the appropriate section. Class and interface names may vary according to the driver and language best practices.
 
-Deviations
-**********
+Naming Deviations
+-----------------
 
 When deviating from a defined name, an author should consider if the altered name is recognizable and discoverable to the user of another driver.
 
@@ -100,7 +100,7 @@ A non-exhaustive list of acceptable naming deviations are as follows:
 Index Name Generation
 ---------------------
 
-When the client generates a name for an index based on the keys, The driver MUST generate the name as key-direction pairs, separated by underscores. For example, the key ``{ name: 1, dob: -1 }`` MUST generate an index name of ``name_1_dob_-1``.
+When the client generates a name for an index based on the keys, the driver MUST generate the name as key-direction pairs, separated by underscores. For example, the key ``{ name: 1, dob: -1 }`` MUST generate an index name of ``name_1_dob_-1``.
 
 Note there is one exception to this rule on the ``_id`` field. The server uses an index name with no direction, ``_id_``, which cannot be overridden.
 
@@ -147,21 +147,8 @@ Standard API
 
     /**
      * Creates multiple indexes in the collection.
-     *
-     * For MongoDB 2.6 and higher this method MUST execute a createIndexes command.
-     *
-     * For MongoDB 2.4 this method MUST insert the index specifications directly into
-     * the system.indexes collection. The write concern provided provided to the server
-     * MUST be { w: 1 }.
-     *
-     * The driver MAY choose NOT to support creating indexes on 2.4 and if so, MUST
-     * document the method as such.
-     *
-     * Note that in MongoDB server versions >= 3.0.0, the server will create the
-     * indexes in parallel.
-     *
-     * As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates
-     * options passed to the createIndexes command.
+     * 
+     * In all server versions, this MUST execute a createIndexes command.
      *
      * @return The names of all the indexes that were created.
      */
@@ -205,14 +192,9 @@ Standard API
     dropIndexes(options: Optional<DropIndexesOptions>): Result;
 
     /**
-     * Gets index information for all indexes in the collection. This should be
-     * implemented as specified in the Enumerate Indexes specification:
+     * Gets index information for all indexes in the collection. The behavior for 
+     * enumerating indexes is described in the :ref:`Enumerating Indexes` section.
      *
-     * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst
-     *
-     * @note Where the enumerate indexes spec gives the option of returning a
-     *   Cursor or Array for backwards compatibility - here the driver MUST always
-     *   return a Cursor.
      */
     listIndexes(options: Optional<ListIndexesOptions>): Cursor;
   }
@@ -417,7 +399,7 @@ Index View API
 
     /**
      * Enumerates the index information for all indexes in the collection. This should be
-     * implemented as specified in the Enumerate Indexes specification, although the naming
+     * implemented as described in the :ref:`Enumerate Indexes` section, although the naming
      * requirement is dropped in favor of the driver language standard for handling iteration
      * over a sequence of objects.
      *
@@ -432,10 +414,6 @@ Index View API
      * For drivers that cannot make IndexView iterable, they MUST implement this method to
      * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
      *  or language/implementation equivalent.
-     *
-     * @note Where the enumerate indexes spec gives the option of returning a
-     *   Cursor or Array for backwards compatibility - here the driver MUST always
-     *   return a Cursor.
      */
     list(): Cursor;
 
@@ -464,22 +442,13 @@ Index View API
     /**
      * Creates multiple indexes in the collection.
      *
-     * For MongoDB 2.6 and higher this method MUST execute a createIndexes command.
-     *
-     * For MongoDB 2.4 this method MUST insert the index specifications directly into
-     * the system.indexes collection. The write concern provided provided to the server
-     * MUST be { w: 1 }.
-     *
-     * The driver MAY choose NOT to support creating indexes on 2.4 and if so, MUST
-     * document the method as such.
+     * For all server versions this method MUST execute a createIndexes command.
      *
      * @return The names of the created indexes.
      *
      * @note Each specification document becomes the "key" field in the document that
      *   is inserted or the command.
-     *
-     * Note that in MongoDB server versions >= 3.0.0, the server will create the
-     * indexes in parallel.
+     *   
      */
     createMany(models: Iterable<IndexModel>, options: Optional<CreateManyIndexesOptions>): Iterable<String>;
 
@@ -839,7 +808,49 @@ Common API Components
      * @since MongoDB 4.4
      */
     comment: Optional<any>;
+
+    /**
+     * Configures the batch size of the cursor returned from the ``listIndexes`` command.
+     * 
+     * @note drivers MAY chose to support batchSize on the ListIndexesOptions.
+     */
+    batchSize: Optional<Int32>;
   }
+
+-------------------
+Enumerating Indexes
+-------------------
+
+For all server versions, drivers MUST run a ``listIndexes`` command when enumerating indexes.
+
+Drivers SHOULD use the method name ``listIndexes`` for a method that returns
+all indexes with a cursor return type. Drivers MAY use an idiomatic variant
+that fits the language the driver is for.  An exception is made for drivers implementing the
+index view API.
+
+In MongoDB 4.4, the ``ns`` field was removed from the index specifications returned from the ``listIndexes`` command.
+
+- For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
+  necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the ``ns`` field
+  will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
+  special mention of the ``ns`` field is necessary.
+- For drivers that report those index specifications in the form of statically defined models, the driver MUST manually populate
+  the ``ns`` field of the models with the appropriate namespace if the server does not report it in the ``listIndexes`` command
+  response. The ``ns`` field is not required to be a part of the models, however.
+
+Getting Index Names
+-------------------
+
+Drivers MAY implement a method to enumerate all indexes, and return only
+the index names.  The helper operates the same as the following example:
+
+Example::
+
+	> a = [];
+	[ ]
+	> db.runCommand( { listIndexes: 'poiConcat' } ).indexes.forEach(function(i) { a.push(i.name); } );
+	> a
+	[ "_id_", "ty_1", "l_2dsphere", "ts_1" ]
 
 ---------
 Q & A
@@ -897,3 +908,5 @@ Changelog
 :2022-04-18: Added the ``clustered`` attribute to ``IndexOptions`` in order to
              support clustered collections.
 :2022-10-05: Remove spec front matter and reformat changelog.
+:2023-5-10:  Merge index enumeration and index management specs and get rid of references 
+             to legacy server versions.
