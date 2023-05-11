@@ -294,6 +294,8 @@ Executing ``getMore`` Commands
 
 The cursor API returned to the caller MUST offer an API to configure ``batchSize``, ``maxTimeMS``, and ``comment`` options that are sent on subsequent ``getMore`` commands.
 If it is idiomatic for a driver to allow setting these options in ``RunCursorCommandOptions``, the driver MUST document that the options only pertain to ``getMore`` commands.
+A driver MAY permit users to change ``getMore`` field settings at any time during the cursor's lifetime and subsequent ``getMore`` commands MUST be constructed with the changes to those fields.
+If that API is offered drivers MUST write tests asserting ``getMore`` commands are constructed with any updated fields.
 
 * See Find, getMore and killCursors commands' section on `GetMore <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#getmore>`_
 
