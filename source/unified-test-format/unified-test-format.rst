@@ -1817,7 +1817,7 @@ The following arguments are supported:
 
 - ``batchSize``: Optional positive integer value. Use this value to configure the ``batchSize`` option sent on subsequent ``getMore`` commands.
 
-- ``maxTimeMS``: Optional positive integer value. Use this value to configure the ``maxTimeMS`` option sent on subsequent ``getMore`` commands.
+- ``maxTimeMS``: Optional non-negative integer value. Use this value to configure the ``maxTimeMS`` option sent on subsequent ``getMore`` commands.
 
 - ``comment``: Optional BSON value. Use this value to configure the ``comment`` option sent on subsequent ``getMore`` commands.
 
