@@ -1798,7 +1798,7 @@ spec), nor does it inherit a read preference (per the
 `Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
 spec); however, they may be specified as arguments.
 
-This operation proxies the databases's ``runCursorCommand`` method and supports the same arguments and options.
+This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).
 
 When executing the provided command, the test runner MUST fully iterate the cursor.
 This will ensure consistent behavior between drivers that eagerly create a server-side cursor and those that do so lazily when iteration begins.
@@ -1828,9 +1828,9 @@ The following arguments are supported:
 createCommandCursor
 ~~~~~~~~~~~~~~~~~~~
 
-This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options.
+This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).
 Test runners MUST ensure that the server-side cursor is created (i.e. the command document has executed) as part of this operation and before the resulting cursor might be saved with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
-Test runners for drivers that lazily execute the ``runCursorCommand`` command on the first iteration of the cursor MUST iterate the resulting cursor once.
+Test runners for drivers that lazily execute the command on the first iteration of the cursor MUST iterate the resulting cursor once.
 The result from this iteration MUST be used as the result for the first iteration operation on the cursor.
 
 Test runners MUST NOT iterate the resulting cursor when executing this operation and test files SHOULD NOT specify `operation.expectResult <operation_expectResult_>`_ for this operation.
@@ -3949,6 +3949,7 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+
 :2023-05-10: Add ``runCursorCommand`` and ``createRunCursorCommand`` operations.
              Added ``commandCursor`` entity type which can be used with existing cursor operations.
 :2023-04-13: Remove ``readConcern`` and ``writeConcern`` options from ``runCommand`` operation.
