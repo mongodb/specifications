@@ -1769,11 +1769,9 @@ runCommand
 
 Generic command runner.
 
-This method does not inherit a read concern or write concern (per the
-`Read and Write Concern <../read-write-concern/read-write-concern.rst#generic-command-method>`__
-spec), nor does it inherit a read preference (per the
+This method does not inherit a read preference (per the
 `Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
-spec); however, they may be specified as arguments.
+spec); however, ``readPreference`` may be specified as an argument.
 
 The following arguments are supported:
 
@@ -1792,11 +1790,9 @@ runCursorCommand
 
 `Generic cursor returning command runner <../run-command/run-command.rst>`__.
 
-This method does not inherit a read concern or write concern (per the
-`Read and Write Concern <../read-write-concern/read-write-concern.rst#generic-command-method>`__
-spec), nor does it inherit a read preference (per the
+This method does not inherit a read preference (per the
 `Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
-spec); however, they may be specified as arguments.
+spec); however, ``readPreference`` may be specified as an argument.
 
 This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).
 
