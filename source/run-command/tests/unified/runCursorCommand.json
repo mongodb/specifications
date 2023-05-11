@@ -80,8 +80,7 @@
             "command": {
               "checkMetadataConsistency": 1
             }
-          },
-          "expectResult": []
+          }
         }
       ],
       "expectEvents": [

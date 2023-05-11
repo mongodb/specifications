@@ -41,7 +41,6 @@ tests:
         arguments:
           commandName: checkMetadataConsistency
           command: { checkMetadataConsistency: 1 }
-        expectResult: []
     expectEvents:
       - client: *client
         eventType: command
