@@ -254,6 +254,8 @@ tests:
     expectEvents:
       - client: *client
         eventType: command
+        # The getMore should receive an error here because we do not have the right kind of cursor
+        # So drivers should run a killCursors, but neither the error nor the killCursors command is relevant to this test
         ignoreExtraEvents: true
         events:
           - commandStartedEvent:
