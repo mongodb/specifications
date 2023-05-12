@@ -3906,7 +3906,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2023-05-10: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
+:2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
              requires replica sets for shards, which is also relevant to load
              balanced topologies.
 :2023-04-13: Remove ``readConcern`` and ``writeConcern`` options from ``runCommand`` operation.
