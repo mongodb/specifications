@@ -7,7 +7,7 @@ runOnRequirements:
   # SERVER-49220/SERVER-49336.
   - minServerVersion: "4.9"
     # Skip load-balanced and serverless which do not support RTT measurements.
-    topologies: [ single, replicaset, sharded-replicaset, sharded ]
+    topologies: [ single, replicaset, sharded ]
     serverless: forbid
 
 createEntities:
