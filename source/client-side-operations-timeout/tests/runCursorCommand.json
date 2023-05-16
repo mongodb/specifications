@@ -240,6 +240,227 @@
           ]
         }
       ]
+    },
+    {
+      "description": "timeoutMS is refreshed for getMore if timeoutMode is iteration - failure",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "getMore"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 15
+              }
+            }
+          }
+        },
+        {
+          "name": "runCursorCommand",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "command": {
+              "find": "collection",
+              "batchSize": 2
+            },
+            "timeoutMode": "iteration",
+            "timeoutMS": 20,
+            "batchSize": 2
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "databaseName": "db",
+                "command": {
+                  "find": "collection",
+                  "maxTimeMS": {
+                    "$$exists": false
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore",
+                "databaseName": "db",
+                "command": {
+                  "getMore": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  },
+                  "collection": "collection",
+                  "maxTimeMS": {
+                    "$$exists": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "timeoutMS is refreshed for getMore - failure",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "getMore"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 15
+              }
+            }
+          }
+        },
+        {
+          "name": "dropCollection",
+          "object": "db",
+          "arguments": {
+            "collection": "cappedCollection"
+          }
+        },
+        {
+          "name": "createCollection",
+          "object": "db",
+          "arguments": {
+            "collection": "cappedCollection",
+            "capped": true,
+            "size": 4096,
+            "max": 3
+          },
+          "saveResultAsEntity": "cappedCollection"
+        },
+        {
+          "name": "insertMany",
+          "object": "cappedCollection",
+          "arguments": {
+            "documents": [
+              {
+                "_id": 1,
+                "x": 11
+              },
+              {
+                "_id": 2,
+                "x": 22
+              }
+            ]
+          }
+        },
+        {
+          "name": "createRunCommandCursor",
+          "object": "db",
+          "arguments": {
+            "commandName": "find",
+            "command": {
+              "find": "cappedCollection",
+              "batchSize": 1,
+              "tailable": true
+            },
+            "timeoutMode": "iteration",
+            "timeoutMS": 20,
+            "batchSize": 1
+          },
+          "saveResultAsEntity": "tailableCursor"
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "tailableCursor"
+        },
+        {
+          "name": "iterateUntilDocumentOrError",
+          "object": "tailableCursor",
+          "expectError": {
+            "isTimeoutError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "drop"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "create"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "databaseName": "db",
+                "command": {
+                  "find": "cappedCollection",
+                  "tailable": true,
+                  "awaitData": {
+                    "$$exists": false
+                  },
+                  "maxTimeMS": {
+                    "$$exists": false
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore",
+                "databaseName": "db",
+                "command": {
+                  "getMore": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  },
+                  "collection": "cappedCollection",
+                  "maxTimeMS": {
+                    "$$exists": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
