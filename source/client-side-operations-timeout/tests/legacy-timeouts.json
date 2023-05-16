@@ -280,7 +280,7 @@
         {
           "topologies": [
             "replicaset",
-            "sharded-replicaset"
+            "sharded"
           ]
         }
       ],
