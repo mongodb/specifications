@@ -1252,7 +1252,10 @@ mechanism
 mechanism_properties
     PROVIDER_NAME
         Drivers MUST allow the user to specify a name for using a service
-        to obtain credentials that is one of ["aws"].
+        to obtain credentials that is one of ["aws", "azure"].
+    TOKEN_AUDIENCE
+        The authorization token audience claim, needed for the "azure"
+        provider.
     REQUEST_TOKEN_CALLBACK
         Drivers MUST allow the user to specify a callback of the form
         "onRequest" (defined below), if the driver supports
@@ -1349,8 +1352,8 @@ the driver MUST raise an error.
 Supported Service Providers
 ```````````````````````````
 
-Drivers MUST support obtaining credentials for a service for "aws", given
-by the PROVIDER_NAME mechanism property.  In all cases the acquired token
+Drivers MUST support obtaining credentials for a service for "aws" and "azure",
+given by the PROVIDER_NAME mechanism property.  In all cases the acquired token
 will be given as the ``jwt`` argument and the JwtStepRequest MUST be made immediately, as part of speculative authentication if appropriate, skipping the PrincipalStepRequest.
 Drivers MUST raise an error if both a PROVIDER_NAME and username are
 given, since using a service will not use the username.
@@ -1362,6 +1365,20 @@ When the PROVIDER_NAME mechanism property is set to "aws", the driver MUST
 attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
 interpret it as a file path.  The contents of the file are read as the
 access token.  If the path does not exist or cannot be read, or the environment variable does not exist, the driver MUST raise an error.
+
+
+AZURE
+_____
+When the PROVIDER_NAME mechanism property is set to "azure", the driver MUST
+attempt to retrieve a credential from the Azure Instance Metadata Service (IMDS).
+The driver MUST ensure that the TOKEN_AUDIENCE mechanism property is set when
+the PROVIDER_NAME is "azure".
+
+The driver MUST use the same procedure given in :ref:_access-token-azure to
+obtain an access token, with the one exception of using the TOKEN_AUDIENCE as
+the ``resource`` parameter.  The azure credentials MUST be cached by
+TOKEN_AUDIENCE, and expire within 5 minutes of the time given by the
+``expires_in`` parameter of the IMDS response.
 
 
 Caching Credentials

@@ -6,6 +6,7 @@ Drivers MUST test the following scenarios:
 
 - ``Callback-Driven Auth``
 - ``AWS Automatic Auth``
+- ``Azure Automatic Auth``
 - ``Callback Validation``
 - ``Cached Credentials``
 - ``Speculative Authentication``
@@ -140,6 +141,44 @@ Allowed Hosts Ignored
   ``ALLOWED_HOSTS`` that is an empty list.
 - Assert that a ``find`` operation succeeds.
 - Close the client.
+
+Azure Automatic Auth
+==================
+
+Drivers MUST be able to authenticate using the "azure" provider workflow, using
+an Azure VM provisioned using the helper scripts in Drivers Evergreen Tools.
+These tests will most likely need to be run in a separate test file from the
+rest of the tests, to avoid needing to skip multiple tests.
+
+Connect
+~~~~~~~
+- Create a client with a url of the form ``mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:azure,TOKEN_AUDIENCE:<foo>``.
+- Assert that a ``find`` operation succeeds.
+- Close the client.
+
+Allowed Hosts Ignored
+~~~~~~~~~~~~~~~~~~~~~
+- Create a client with a url of the form ``mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:azure,TOKEN_AUDIENCE:<foo>``, and an
+  ``ALLOWED_HOSTS`` that is an empty list.
+- Assert that a ``find`` operation succeeds.
+- Close the client.
+
+Main Cache Not Used
+~~~~~~~~~~~~~~~~~~~
+- Clear the main OIDC cache.
+- Create a client with a url of the form ``mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:azure,TOKEN_AUDIENCE:<foo>``.
+- Assert that a ``find`` operation succeeds.
+- Close the client.
+- Assert that the main OIDC cache is empty.
+
+Azure Cache is Used
+~~~~~~~~~~~~~~~~~~~
+- Clear the Azure OIDC cache.
+- Create a client with a url of the form ``mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:azure,TOKEN_AUDIENCE:<foo>``.
+- Assert that a ``find`` operation succeeds.
+- Close the client.
+- Assert that the Azure OIDC cache has one entry.
+
 
 Callback Validation
 ===================
