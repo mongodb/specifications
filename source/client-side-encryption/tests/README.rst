@@ -2506,7 +2506,7 @@ The following tests that a mongocryptd client is not created when shared library
    .. code:: javascript
 
       {
-        "mongocryptdURI": "mongodb://localhost:27021/db?serverSelectionTimeoutMS=1000"
+        "mongocryptdURI": "mongodb://localhost:27021/?serverSelectionTimeoutMS=1000"
       }
 
 #. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``.
