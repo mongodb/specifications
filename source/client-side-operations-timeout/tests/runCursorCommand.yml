@@ -89,9 +89,8 @@ tests:
         expectError:
           isClientError: true
 
-  # Non-tailable cursor lifetime
   # If timeoutMode is unset, it should default to CURSOR_LIFETIME and the time remaining after the find succeeds should be applied to the getMore
-  - description: remaining timeoutMS applied to getMore if timeoutMode is unset
+  - description: Non-tailable cursor lifetime remaining timeoutMS applied to getMore if timeoutMode is unset
     operations:
       # Block find/getMore for 15ms.
       - name: failPoint
@@ -130,11 +129,10 @@ tests:
                 collection: *collection
                 maxTimeMS: { $$exists: false }
 
-  # Non=tailable cursor iteration
   # If timeoutMode=ITERATION, timeoutMS applies separately to the initial find and the getMore on the cursor. Neither
   # command should have a maxTimeMS field. This is a failure test. The "find" inherits timeoutMS=10 and "getMore"
   # commands are blocked for 15ms, causing iteration to fail with a timeout error.
-  - description: "timeoutMS is refreshed for getMore if timeoutMode is iteration - failure"
+  - description: Non=tailable cursor iteration timeoutMS is refreshed for getMore if timeoutMode is iteration - failure
     operations:
       - name: failPoint
         object: testRunner
@@ -174,11 +172,10 @@ tests:
                 collection: *collection
                 maxTimeMS: { $$exists: false }
 
-  # Tailable cursor iteration
   # The timeoutMS option should apply separately to the initial "find" and each getMore. This is a failure test. The
   # find inherits timeoutMS=10 from the collection and the getMore command blocks for 15ms, causing iteration to fail
   # with a timeout error.
-  - description: timeoutMS is refreshed for getMore - failure
+  - description: Tailable cursor iteration timeoutMS is refreshed for getMore - failure
     operations:
       - name: failPoint
         object: testRunner
@@ -217,6 +214,7 @@ tests:
           timeoutMode: iteration
           timeoutMS: 20
           batchSize: 1
+          cursorType: tailable
         saveResultAsEntity: &tailableCursor tailableCursor
       # Iterate the cursor twice: the first iteration will return the document from the batch in the find and the
       # second will do a getMore.
@@ -250,3 +248,69 @@ tests:
                 getMore: { $$type: ["int", "long"] }
                 collection: *cappedCollection
                 maxTimeMS: { $$exists: false }
+
+  # The timeoutMS value should be refreshed for getMore's. This is a failure test. The find inherits timeoutMS=10 from
+  # the collection and the getMore blocks for 15ms, causing iteration to fail with a timeout error.
+  - description: Tailable cursor awaitData iteration timeoutMS is refreshed for getMore - failure
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["getMore"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: dropCollection
+        object: *db
+        arguments:
+          collection: &cappedCollection cappedCollection
+      - name: createCollection
+        object: *db
+        arguments:
+          collection: *cappedCollection
+          capped: true
+          size: 4096
+          max: 3
+        saveResultAsEntity: *cappedCollection
+      - name: insertMany
+      - name: createRunCommandCursor
+        object: *db
+        arguments:
+          command: { find: *cappedCollection, tailable: true, awaitData: true }
+          cursorType: tailableAwait
+          batchSize: 1
+        saveResultAsEntity: &tailableCursor tailableCursor
+      # Iterate twice to force a getMore.
+      - name: iterateUntilDocumentOrError
+        object: *tailableCursor
+      - name: iterateUntilDocumentOrError
+        object: *tailableCursor
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: drop
+          - commandStartedEvent:
+              commandName: create
+          - commandStartedEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *db
+              command:
+                find: *cappedCollection
+                tailable: true
+                awaitData: true
+                maxTimeMS: { $$exists: true }
+          - commandStartedEvent:
+              commandName: getMore
+              databaseName: *db
+              command:
+                getMore: { $$type: ["int", "long"] }
+                collection: *cappedCollection
