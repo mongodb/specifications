@@ -276,6 +276,7 @@ tests:
           max: 3
         saveResultAsEntity: *cappedCollection
       - name: insertMany
+        object: *cappedCollection
       - name: createCommandCursor
         object: *db
         arguments:
