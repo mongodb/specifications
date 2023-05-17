@@ -103,7 +103,7 @@
       ]
     },
     {
-      "description": "error if timeoutMode is cursor_lifetime and cursorType is tailableAwait",
+      "description": "error if timeoutMode is cursorLifetime and cursorType is tailableAwait",
       "operations": [
         {
           "name": "runCursorCommand",
@@ -378,7 +378,7 @@
           }
         },
         {
-          "name": "createRunCommandCursor",
+          "name": "createCommandCursor",
           "object": "db",
           "arguments": {
             "commandName": "find",
@@ -508,7 +508,7 @@
           "name": "insertMany"
         },
         {
-          "name": "createRunCommandCursor",
+          "name": "createCommandCursor",
           "object": "db",
           "arguments": {
             "command": {

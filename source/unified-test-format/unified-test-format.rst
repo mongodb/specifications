@@ -3958,7 +3958,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2023-05-12: Add ``runCursorCommand`` and ``createRunCursorCommand`` operations.
+:2023-05-17: Add ``runCursorCommand`` and ``createCommandCursor`` operations.
              Added ``commandCursor`` entity type which can be used with existing cursor operations.
 :2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
              requires replica sets for shards, which is also relevant to load

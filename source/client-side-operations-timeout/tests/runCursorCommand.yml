@@ -205,7 +205,7 @@ tests:
           documents:
             - { _id: 1, x: 11 }
             - { _id: 2, x: 22 }
-      - name: createRunCommandCursor
+      - name: createCommandCursor
         object: *db
         arguments:
           commandName: find
@@ -276,7 +276,7 @@ tests:
           max: 3
         saveResultAsEntity: *cappedCollection
       - name: insertMany
-      - name: createRunCommandCursor
+      - name: createCommandCursor
         object: *db
         arguments:
           command: { find: *cappedCollection, tailable: true, awaitData: true }
