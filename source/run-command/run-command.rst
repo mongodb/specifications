@@ -211,16 +211,20 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
 
     interface RunCursorCommandOptions extends RunCommandOptions {
       /**
+       * This option is an enum with possible values CURSOR_LIFETIME and ITERATION.
        * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all subsequent calls.
        * To support both of these use cases, these operations MUST support a timeoutMode option.
        *
-       * @defaultValue 'cursorLifetime'
+       * @defaultValue CURSOR_LIFETIME
        *
        * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
        */
-      timeoutMode?: 'iteration' | 'cursorLifetime';
+      timeoutMode?: ITERATION | CURSOR_LIFETIME;
 
       /**
+       * See the `cursorType` enum defined in the crud specification.
+       * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
+       *
        * Identifies the type of cursor this is.
        *
        * A tailable cursor can receive empty `nextBatch` arrays in `getMore` responses.
@@ -228,9 +232,9 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
        *
        * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data becomes available.
        *
-       * @defaultValue 'nonTailable'
+       * @defaultValue NON_TAILABLE
        */
-      cursorType: 'nonTailable' | 'tailable' | 'tailableAwait';
+      cursorType: CursorType;
     }
 
     /**

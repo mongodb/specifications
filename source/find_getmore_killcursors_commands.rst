@@ -263,13 +263,13 @@ The driver **SHOULD NOT attempt to emulate the behavior seen in 3.0 or earlier**
 Tailable cursors
 ^^^^^^^^^^^^^^^^
 
-By default most cursors are non-tailable, for example, a ``find`` that exhausts when all results for the filter have been satisfied.
-MongoDB also supports creating cursors that "tail" or follow the target namespace for new data.
-Querying capped collections and change streams are some examples of tailable cursor use cases.
-A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, this does not indicate that the cursor has been exhausted.
+By default, most cursors are non-tailable. For example, a typical ``find`` cursor is exhausted when all results for the filter have been returned.
+MongoDB also supports creating cursors that "tail" or follow the target namespace for new data. This is done via the `find` command's `tailable` option.
+Querying a capped collection is one use case for a tailable cursor.
+A tailable cursor can receive ``getMore`` responses with an empty ``nextBatch`` array, which does not indicate that the cursor has been exhausted.
 
-In addition to considering a find cursor tailable, an ``awaitData`` flag MAY be sent on the initial command.
-This will request that the server wait to respond to the client's ``getMore`` command until new data is available.
+Additionally, tailable cursors may "await data" from the server, which means that the server will wait to respond to the client's ``getMore`` command until new data is available or some period of time has elapsed, whichever comes first.
+A tailable ``find`` cursor can be configured using the ``awaitData`` option.
 The amount of time the server will wait for new data is based on the ``maxTimeMS`` field of the ``getMore`` (or server default if unspecified).
 If the time does expire an empty batch will be returned.
 A ``maxTimeMS`` field cannot be sent if the cursor was not configured with ``awaitData=true``.
@@ -294,7 +294,7 @@ To create a tailable ``find`` cursor you execute the following command:
     awaitData?: boolean;
     /** Controls the amount of milliseconds the server will allow the operations to run for */
     maxTimeMS?: PositiveIntegerNumber;
-    // ... Non-normative: additional fields omitted
+    // ... Note: additional options unrelated to tailable cursors omitted
   }
 
 If **maxTimeMS** is not set in FindOptions, the driver SHOULD refrain from setting **maxTimeMS** on the **find** or **getMore** commands issued by the driver and allow the server to use its internal default value for **maxTimeMS**.
@@ -339,8 +339,6 @@ when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
     comment?: BSONValue;
   }
 
-The **batchSize** option of **getMore** command MUST be an unsigned int larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
-
 On success, the getMore command will return the following:
 
 .. code:: typescript
@@ -361,7 +359,7 @@ On success, the getMore command will return the following:
          */
         nextBatch: BSONArray<BSONDocument>;
       }
-      // ... Non-normative: additional fields omitted
+      // ... Note: additional non-relevant fields omitted
     }
 
 The driver's local cursor MUST update its ``id`` and ``ns``, as well as store the ``nextBatch`` from every ``getMore`` response.

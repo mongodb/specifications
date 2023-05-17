@@ -41,7 +41,6 @@ initialData:
       - { _id: 5, x: 55 }
 
 tests:
-  # CSOT
   - description: errors if timeoutMode is set without timeoutMS
     operations:
       - name: runCursorCommand
@@ -53,7 +52,7 @@ tests:
         expectError:
           isClientError: true
 
-  - description: error if timeoutMode is cursor_lifetime and cursorType is tailableAwait
+  - description: error if timeoutMode is cursorLifetime and cursorType is tailableAwait
     operations:
       - name: runCursorCommand
         object: *db
