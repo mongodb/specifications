@@ -370,6 +370,45 @@ Succeeds
 - Assert that a ``find`` operation failed once during the command execution.
 - Close the client.
 
+Succeeds with AWS Auth
+~~~~~~~~~~~~~~~~~~~~~~
+- Clear the cache.
+- Create a client using the "aws" PROVIDER_NAME and an event listener.  The following
+  assumes that the driver does not emit ``saslStart`` or ``saslContinue``
+  events.  If the driver does emit those events, ignore/filter them for the
+  purposes of this test.
+- Perform a ``find`` operation that succeeds.
+- Clear the listener state if possible.
+- Force a reauthenication using a ``failCommand`` of the form:
+
+.. code:: javascript
+
+    {
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 1
+      },
+      "data": {
+        "failCommands": [
+          "find"
+        ],
+        "errorCode": 391
+      }
+    }
+
+.. note::
+
+  the driver MUST either use a unique ``appName`` or explicitly
+  remove the ``failCommand`` after the test to prevent leakage.
+
+- Perform another find operation that succeeds.
+- Assert that the ordering of list started events is [``find``],
+  , ``find``.  Note that if the listener stat could not be cleared then there
+  will and be extra ``find`` command.
+- Assert that the list of command succeeded events is [``find``].
+- Assert that a ``find`` operation failed once during the command execution.
+- Close the client.
+
 Retries and Succeeds with Cache
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Clear the cache.

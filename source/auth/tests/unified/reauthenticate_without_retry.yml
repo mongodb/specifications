@@ -1,6 +1,6 @@
 ---
 description: reauthenticate_without_retry
-schemaVersion: '1.13'
+schemaVersion: '1.12'
 runOnRequirements:
 - minServerVersion: '6.3'
   auth: true
@@ -25,9 +25,12 @@ createEntities:
 initialData:
 - collectionName: collName
   databaseName: db
-  documents: []
+  documents:
+  - _id: 1
+  - _id: 2
+  - _id: 3
 tests:
-- description: Read command should reauthenticate when receive ReauthenticationRequired
+- description: Find command should reauthenticate when receive ReauthenticationRequired
     error code and retryReads=false
   operations:
   - name: failPoint
@@ -62,7 +65,7 @@ tests:
           filter: {}
     - commandSucceededEvent:
         commandName: find
-- description: Write command should reauthenticate when receive ReauthenticationRequired
+- description: Insert command should reauthenticate when receive ReauthenticationRequired
     error code and retryWrites=false
   operations:
   - name: failPoint
@@ -81,7 +84,7 @@ tests:
     object: collection0
     arguments:
       document:
-        _id: 1
+        _id: 4
         x: 1
   expectEvents:
   - client: client0
@@ -90,7 +93,7 @@ tests:
         command:
           insert: collName
           documents:
-          - _id: 1
+          - _id: 4
             x: 1
     - commandFailedEvent:
         commandName: insert
@@ -98,7 +101,58 @@ tests:
         command:
           insert: collName
           documents:
-          - _id: 1
+          - _id: 4
             x: 1
     - commandSucceededEvent:
         commandName: insert
+- description: GetMore command should reauthenticate when receive ReauthenticationRequired
+    error code and retryWrites=false
+  operations:
+  - name: failPoint
+    object: testRunner
+    arguments:
+      client: client0
+      failPoint:
+        configureFailPoint: failCommand
+        mode:
+          times: 1
+        data:
+          failCommands:
+          - getMore
+          errorCode: 391
+  - name: find
+    object: collection0
+    arguments:
+      filter: {}
+      sort:
+        _id: 1
+      batchSize: 2
+  expectEvents:
+  - client: client0
+    events:
+    - commandStartedEvent:
+        command:
+          find: collName
+          filter: {}
+    - commandSucceededEvent:
+        commandName: find
+    - commandStartedEvent:
+        command:
+          getMore:
+            "$$type":
+            - int
+            - long
+          collection: collName
+          batchSize: 2
+    - commandFailedEvent:
+        commandName: getMore
+    - commandStartedEvent:
+        command:
+          getMore:
+            "$$type":
+            - int
+            - long
+          collection: collName
+          batchSize: 2
+    - commandSucceededEvent:
+        commandName: getMore
