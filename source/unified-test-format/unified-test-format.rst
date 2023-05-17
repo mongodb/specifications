@@ -1803,8 +1803,7 @@ specifications:
 
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `CRUD <../crud/crud.rst>`__
-- `Enumerating Indexes <../enumerate-indexes.rst>`__
-- `Index Management <../index-management.rst>`__
+- `Index Management <../index-management/index-management.rst>`__
 
 Collection operations that require special handling or are not documented by an
 existing specification are described below.
@@ -1916,6 +1915,16 @@ Test runners MUST NOT iterate the resulting cursor when executing this
 operation and test files SHOULD NOT specify `operation.expectResult
 <operation_expectResult_>`_ for this operation.
 
+createSearchIndex and createSearchIndexes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These operations proxy the collection's ``createSearchIndex`` and ``createSearchIndexes`` helpers
+with the same arguments.
+
+dropSearchIndex
+~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``dropSearchIndex`` helper with the same arguments.
 
 find
 ~~~~
@@ -1960,6 +1969,18 @@ examples::
       expectResult:
         $$unsetOrMatches:
           insertedId: { $$unsetOrMatches: 2 }
+
+
+listSearchIndexes
+~~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``listSearchIndexes`` helper and returns the result
+of the cursor as a list.
+
+updateSearchIndex
+~~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``updateSearchIndex`` helper with the same arguments.
 
 
 watch
