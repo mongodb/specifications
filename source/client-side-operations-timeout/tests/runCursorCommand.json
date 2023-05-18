@@ -29,6 +29,9 @@
         "useMultipleMongoses": false,
         "observeEvents": [
           "commandStartedEvent"
+        ],
+        "ignoreCommandMonitoringEvents": [
+          "killCursors"
         ]
       }
     },
@@ -181,7 +184,7 @@
                   "getMore"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 15
+                "blockTimeMS": 45
               }
             }
           }
@@ -191,7 +194,7 @@
           "object": "db",
           "arguments": {
             "commandName": "find",
-            "timeoutMS": 20,
+            "timeoutMS": 60,
             "command": {
               "find": "collection",
               "batchSize": 2
@@ -232,7 +235,7 @@
                   },
                   "collection": "collection",
                   "maxTimeMS": {
-                    "$$exists": false
+                    "$$exists": true
                   }
                 }
               }
