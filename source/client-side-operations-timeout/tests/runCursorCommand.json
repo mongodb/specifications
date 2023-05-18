@@ -127,7 +127,7 @@
       "operations": [
         {
           "name": "runCursorCommand",
-          "object": "collection",
+          "object": "db",
           "arguments": {
             "commandName": "find",
             "command": {
@@ -147,7 +147,7 @@
       "operations": [
         {
           "name": "runCursorCommand",
-          "object": "collection",
+          "object": "db",
           "arguments": {
             "commandName": "find",
             "command": {
@@ -505,7 +505,8 @@
           "saveResultAsEntity": "cappedCollection"
         },
         {
-          "name": "insertMany"
+          "name": "insertMany",
+          "object": "cappedCollection"
         },
         {
           "name": "createCommandCursor",

@@ -67,7 +67,7 @@ tests:
   - description: error if getMore maxTimeMS setting is greater than timeoutMS
     operations:
       - name: runCursorCommand
-        object: *collection
+        object: *db
         arguments:
           commandName: find
           command: { find: *collection }
@@ -79,7 +79,7 @@ tests:
   - description: error if getMore maxTimeMS setting is equal to timeoutMS
     operations:
       - name: runCursorCommand
-        object: *collection
+        object: *db
         arguments:
           commandName: find
           command: { find: *collection }
