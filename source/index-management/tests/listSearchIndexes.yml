@@ -43,7 +43,6 @@ tests:
         object: *collection0
         arguments: 
           indexName: &indexName "test index"
-        saveResultAsEntity: &changeStream0 changeStream0
         expectError:
           isError: true
     expectEvents:
@@ -65,7 +64,6 @@ tests:
           indexName: &indexName "test index"
           options: 
             batchSize: 10
-        saveResultAsEntity: &changeStream0 changeStream0
         expectError:
           isError: true
     expectEvents:

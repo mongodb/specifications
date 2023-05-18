@@ -5,11 +5,7 @@ exitCode=0
 
 # $1 - takes a single argument of the path to the JSON file containing a schemaVersion key at the top level.
 function get_schema_version() {
-  node << EOF
-    const { readFileSync } = require('fs')
-    const { load } = require('js-yaml')
-    console.log(load(readFileSync("./$1", { encoding: 'utf-8' })).schemaVersion)
-EOF
+  js-yaml $1 | jq -r .schemaVersion
 }
 
 function get_all_schemaVersion_defining_files () {
