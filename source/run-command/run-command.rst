@@ -225,7 +225,7 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
        * See the `cursorType` enum defined in the crud specification.
        * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
        *
-       * Identifies the type of cursor this is.
+       * Identifies the type of cursor this is for client side operations timeout to properly apply timeoutMode settings.
        *
        * A tailable cursor can receive empty `nextBatch` arrays in `getMore` responses.
        * However, subsequent `getMore` operations may return documents if new data has become available.
@@ -234,7 +234,7 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
        *
        * @defaultValue NON_TAILABLE
        */
-      cursorType: CursorType;
+      cursorType?: CursorType;
     }
 
     /**
