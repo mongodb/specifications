@@ -901,6 +901,15 @@ Common Interfaces
     name: Optional<string>;
   }
 
+  /**
+   * The following interfaces are empty but are provided as placeholders for drivers that cannot 
+   * add options in a non-breaking manner, if options are added in the future.
+   */
+  interface CreateSearchIndexOptions {} 
+  interface UpdateSearchIndexOptions {}
+  interface ListSearchIndexOptions {}
+  interface DropSearchIndexOptions {}
+
 Standard API for Search Indexes
 -------------------------------
 
@@ -1076,3 +1085,4 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2023-5-10:  Merge index enumeration and index management specs and get rid of references 
              to legacy server versions.
+:2023-5-18:  Add the search index management API.
