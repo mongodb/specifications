@@ -25,7 +25,6 @@ tests:
     operations:
       - name: listSearchIndexes
         object: *collection0
-        arguments: {}
         expectError:
           isError: true
     expectEvents:
