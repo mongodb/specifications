@@ -869,13 +869,13 @@ in a non-breaking manner (i.e., method overloading) drivers MAY omit the empty o
 search index management helpers.
 
 ``listSearchIndexes`` is implemented using an aggregation pipeline.  The list helper MUST support a driver's aggregation
-options.  Drivers MAY combine the aggregation options with
+options as outline in the `crud specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_.  Drivers MAY combine the aggregation options with
 any future ``listSearchIndexes`` stage options, if that is idiomatic for a driver's language.
 
 Notes
 -----
 
-The search index commands are asynchronous and return from the server before the index is successfully updated / created.
+The search index commands are asynchronous and return from the server before the index is successfully updated, created or dropped.
 In order to determine when an index has been created / updated, users are expected to run the ``listSearchIndexes`` repeatedly
 until index changes appear.
 
@@ -917,48 +917,49 @@ Standard API for Search Indexes
 
   interface Collection {
     /**
-    * Convenience method for creating a single search index.
-    * 
-    * @return The name of the created search index
-    * @note Drivers MAY opt to implement this method signature, the signature that
-    *   takes an SearchIndexModel as a parameter, or for those languages with method
-    *   overloading MAY decide to implement both.
-    */
+     * Convenience method for creating a single search index.
+     * 
+     * @return The name of the created search index
+     * 
+     * @note Drivers MAY opt to implement this method signature, the signature that
+     *   takes an SearchIndexModel as a parameter, or for those languages with method
+     *   overloading MAY decide to implement both.
+     */
     createSearchIndex(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
 
     /**
-    * Convenience method for creating a single index.
-    * 
-    * @return The name of the created search index
-    * 
-    * @note Drivers MAY opt to implement this method signature, the signature that
-    *   takes an name and a definition as parameters, or for those languages with method
-    *   overloading MAY decide to implement both.
-    */
+     * Convenience method for creating a single index.
+     * 
+     * @return The name of the created search index
+     * 
+     * @note Drivers MAY opt to implement this method signature, the signature that
+     *   takes an name and a definition as parameters, or for those languages with method
+     *   overloading MAY decide to implement both.
+     */
     createSearchIndex(model: SearchIndexModel, options: Optional<CreateSearchIndexOptions>): String;
 
     /**
-    * Creates multiple search indexes on the collection.
-    * 
-    * @return An iterable of the newly created index names.
-    */
+     * Creates multiple search indexes on the collection.
+     * 
+     * @return An iterable of the newly created index names.
+     */
     createSearchIndexes(models: Iterable<SearchIndexModel>, options: CreateSearchIndexOptions): Iterable<String> ;
 
     /**
-    * Updates the search index with the given name to use the provided 
-    * definition.
-    */
+     * Updates the search index with the given name to use the provided 
+     * definition.
+     */
     updateSearchIndex(name: String, definition: Document, options: Optional<UpdateSearchIndexOptions>): void;
 
     /**
-    * Drops the search index with the given name.
-    */
+     * Drops the search index with the given name.
+     */
     dropSearchIndex(name: String, options: Optional<DropSearchIndexOptions>): void;
 
     /**
-    * Gets index information for all search indexes in the collection.
-    */
-    listSearchIndexes(name: Optional<String>, aggregationOptions: Optional<AggregationOptions>, listIndexOptions: Optional<ListSearchIndexOptions>): Cursor<{ name: String }>;
+     * Gets index information for all search indexes in the collection.
+     */
+    listSearchIndexes(name: Optional<String>, aggregationOptions: Optional<AggregationOptions>, listIndexOptions: Optional<ListSearchIndexOptions>): Cursor<Document>;
   }
 
 Index View API for Search Indexes
@@ -985,14 +986,15 @@ Index View API for Search Indexes
      * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
      *   method. See below.
      */
-    iterator(): Iterator<{ name: string }>;
+    iterator(): Iterator<Document>;
 
     /**
      * For drivers that cannot make SearchIndexView iterable, they MUST implement this method to
      * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
      *  or language/implementation equivalent.
      */
-    list(): Cursor<{ name: String }>;
+    list(): Cursor<Document>;
+
 
     /**
      * This is a convenience method for creating a single index.
@@ -1000,31 +1002,38 @@ Index View API for Search Indexes
      * @return The name of the created index.
      *
      * @note Drivers MAY opt to implement this method signature, the signature that
-     *   takes an IndexModel as a parameter, or for those languages with method
+     *   takes an SearchIndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
-     *
-     * @note Drivers MAY combine the two options types into a single one. If the options are
-     *   explicitly typed, the combined options type MUST be named CreateOneIndexOptions or an acceptable
-     *   variation.
      */
-    createOne(definition: SearchIndexDefinition, options: CreateSearchIndexOptions): String;
+    createOne(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
+
+    /**
+     * This is a convenience method for creating a single index.
+     *
+     * @return The name of the created index.
+     *
+     * @note Drivers MAY opt to implement this method signature, the signature that
+     *   takes an name and a definition as parameters, or for those languages with method
+     *   overloading MAY decide to implement both.
+     */
+    createOne(model: SearchIndexModel, options: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * Creates multiple search indexes in the collection.
      *
      * @return The names of the created indexes.
      */
-    createMany(models: Iterable<SearchIndexDefinition>, options: CreateSearchIndexOptions): Iterable<String>;
+    createMany(models: Iterable<SearchIndexModel>, options: Optional<CreateSearchIndexOptions>): Iterable<String>;
 
     /**
      * Drops a single search index from the collection by the index name.
      */
-    dropOne(name: String, options: DropSearchIndexOptions): Result;
+    dropOne(name: String, options: Optional<DropSearchIndexOptions>): Result;
 
     /**
      * Updates a single search index from the collection by the index name.
      */
-    updateOne(name: String, options: UpdateSearchIndexOptions): Result;
+    updateOne(name: String, options: Optional<UpdateSearchIndexOptions>): Result;
   }
 
 ---------
