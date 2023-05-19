@@ -857,7 +857,8 @@ Search Indexes
 --------------
 
 Server 7.0 introduced three new server commands and a new aggregation stage to facilitate management of search indexes.  Drivers MUST provide 
-an API similar to the existing index management API specifically for search indexes.
+an API similar to the existing index management API specifically for search indexes.  Drivers MAY choose to implement either the standard
+API or the index view API.
 
 Search Index Management Helper Options
 --------------------------------------
