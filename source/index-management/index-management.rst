@@ -971,17 +971,12 @@ Index View API for Search Indexes
     /**
      * Returns the search index view for this collection.
      */
-    searchIndexes(options: Optional<ListSearchIndexesOptions>): SearchIndexView;
+    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexesOptions>): SearchIndexView;
   }
 
   interface SearchIndexView extends Iterable<Document> {
     /**
-     * Enumerates the index information for all indexes in the collection. This should be
-     * implemented as described in the :ref:`Enumerate Indexes` section, although the naming
-     * requirement is dropped in favor of the driver language standard for handling iteration
-     * over a sequence of objects.
-     *
-     * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst
+     * Enumerates the index information for all search indexes in the collection. 
      *
      * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
      *   method. See below.
