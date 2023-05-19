@@ -174,14 +174,22 @@ tests:
                 batchSize: 2
                 $db: *db
                 lsid: { $$sessionLsid: *session }
-              commandName: find
+              commandName: find # 2 documents
           - commandStartedEvent:
               command:
                 getMore: { $$type: [int, long] }
                 collection: *collection
                 $db: *db
                 lsid: { $$sessionLsid: *session }
-              commandName: getMore
+              commandName: getMore # 2 documents
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: [int, long] }
+                collection: *collection
+                $db: *db
+                lsid: { $$sessionLsid: *session }
+              commandName: getMore # 1 document
+              # Total documents: 5
       - client: *client
         eventType: cmap
         events:

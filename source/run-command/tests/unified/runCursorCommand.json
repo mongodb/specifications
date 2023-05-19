@@ -406,6 +406,24 @@
                 },
                 "commandName": "getMore"
               }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  },
+                  "collection": "collection",
+                  "$db": "db",
+                  "lsid": {
+                    "$$sessionLsid": "session"
+                  }
+                },
+                "commandName": "getMore"
+              }
             }
           ]
         },
