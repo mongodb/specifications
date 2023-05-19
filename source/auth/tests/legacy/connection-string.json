@@ -80,7 +80,7 @@
     },
     {
       "description": "should accept generic mechanism property (GSSAPI)",
-      "uri": "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:forward,SERVICE_HOST:example.com",
+      "uri": "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:true",
       "valid": true,
       "credential": {
         "username": "user@DOMAIN.COM",
@@ -89,45 +89,9 @@
         "mechanism": "GSSAPI",
         "mechanism_properties": {
           "SERVICE_NAME": "other",
-          "SERVICE_HOST": "example.com",
-          "CANONICALIZE_HOST_NAME": "forward"
+          "CANONICALIZE_HOST_NAME": true
         }
       }
-    },
-    {
-      "description": "should accept forwardAndReverse hostname canonicalization (GSSAPI)",
-      "uri": "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:forwardAndReverse",
-      "valid": true,
-      "credential": {
-        "username": "user@DOMAIN.COM",
-        "password": null,
-        "source": "$external",
-        "mechanism": "GSSAPI",
-        "mechanism_properties": {
-          "SERVICE_NAME": "other",
-          "CANONICALIZE_HOST_NAME": "forwardAndReverse"
-        }
-      }
-    },
-    {
-      "description": "should accept no hostname canonicalization (GSSAPI)",
-      "uri": "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:none",
-      "valid": true,
-      "credential": {
-        "username": "user@DOMAIN.COM",
-        "password": null,
-        "source": "$external",
-        "mechanism": "GSSAPI",
-        "mechanism_properties": {
-          "SERVICE_NAME": "other",
-          "CANONICALIZE_HOST_NAME": "none"
-        }
-      }
-    },
-    {
-      "description": "must raise an error when the hostname canonicalization is invalid",
-      "uri": "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:invalid",
-      "valid": false
     },
     {
       "description": "should accept the password (GSSAPI)",
@@ -618,6 +582,24 @@
     {
       "description": "should throw an exception when unsupported auth property is specified (MONGODB-OIDC)",
       "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=UnsupportedProperty:unexisted",
+      "valid": false,
+      "credential": null
+    },
+    {
+      "description": "should throw an exception if provider name and request callback are specified",
+      "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:aws",
+      "callback": [
+        "oidcRequest"
+      ],
+      "valid": false,
+      "credential": null
+    },
+    {
+      "description": "should throw an exception if provider name and refresh callback are specified",
+      "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=PROVIDER_NAME:aws",
+      "callback": [
+        "oidcRefresh"
+      ],
       "valid": false,
       "credential": null
     }
