@@ -509,7 +509,15 @@
         },
         {
           "name": "insertMany",
-          "object": "cappedCollection"
+          "object": "cappedCollection",
+          "documents": [
+            {
+              "foo": "bar"
+            },
+            {
+              "fizz": "buzz"
+            }
+          ]
         },
         {
           "name": "createCommandCursor",
