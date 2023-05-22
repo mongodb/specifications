@@ -239,3 +239,13 @@ The following tests have not yet been automated, but MUST still be tested. All t
 #. **Removed**
 #. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has not received any results yet MUST include a ``startAfter`` option and MUST NOT include a ``resumeAfter`` option when resuming a change stream.
 #. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has received at least one result MUST include a ``resumeAfter`` option and MUST NOT include a ``startAfter`` option when resuming a change stream.
+
+#. Validate that large ``ChangeStream`` events are split when using ``$changeStreamSplitLargeEvent``:
+
+   #. Run only against servers ``>=7.0``
+   #. Create a new collection _C_ with ``changeStreamPreAndPostImages`` enabled.
+   #. Insert into _C_ a document at least 10mb in size, e.g. ``{ "value": "q"*10*1024*1024 }``
+   #. Create a change stream _S_ by calling ``watch`` on _C_ with pipeline ``[{ "$changeStreamSplitLargeEvent": {} }]`` and ``fullDocumentBeforeChange=required``.
+   #. Call ``updateOne`` on _C_ with an empty ``query`` and an update setting the field to a new large value, e.g. ``{ "$set": { "value": "z"*10*1024*1024 } }``.
+   #. Collect two events from _S_.
+   #. Assert that the events collected have ``splitEvent`` fields ``{ "fragment": 1, "of": 2 }`` and ``{ "fragment": 2, "of": 2 }``, in that order.
