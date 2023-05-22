@@ -285,6 +285,11 @@
     },
     {
       "description": "Tailable cursor iteration timeoutMS is refreshed for getMore - failure",
+      "runOnRequirements": [
+        {
+          "serverless": "forbid"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",
@@ -428,6 +433,11 @@
     },
     {
       "description": "Tailable cursor awaitData iteration timeoutMS is refreshed for getMore - failure",
+      "runOnRequirements": [
+        {
+          "serverless": "forbid"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",

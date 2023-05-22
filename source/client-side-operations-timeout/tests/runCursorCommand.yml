@@ -153,6 +153,8 @@ tests:
   # find inherits timeoutMS=10 from the collection and the getMore command blocks for 15ms, causing iteration to fail
   # with a timeout error.
   - description: Tailable cursor iteration timeoutMS is refreshed for getMore - failure
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
@@ -229,6 +231,8 @@ tests:
   # The timeoutMS value should be refreshed for getMore's. This is a failure test. The find inherits timeoutMS=10 from
   # the collection and the getMore blocks for 15ms, causing iteration to fail with a timeout error.
   - description: Tailable cursor awaitData iteration timeoutMS is refreshed for getMore - failure
+    runOnRequirements:
+      - serverless: forbid
     operations:
       - name: failPoint
         object: testRunner
