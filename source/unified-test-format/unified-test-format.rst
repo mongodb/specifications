@@ -1915,11 +1915,20 @@ Test runners MUST NOT iterate the resulting cursor when executing this
 operation and test files SHOULD NOT specify `operation.expectResult
 <operation_expectResult_>`_ for this operation.
 
-createSearchIndex and createSearchIndexes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createSearchIndex
+~~~~~~~~~~~~~~~~~
 
-These operations proxy the collection's ``createSearchIndex`` and ``createSearchIndexes`` helpers
-with the same arguments.
+This operations proxies the collection's ``createSearchIndex`` helper with the same arguments.
+
+Each ``createSearchIndex`` operation receives a `SearchIndexModel <https://github.com/mongodb/specifications/blob/master/source/index-management/index-management.rst#common-interfaces>`.  
+If a driver has chosen to implement the ``createSearchIndex(name: String, definition: Document)`` overload 
+of ``createSearchIndex``, then the ``SearchIndexModel`` should be parsed by ``createSearchIndex`` unified 
+test runner helper and the correct arguments should be passed into the driver's helper.
+
+createSearchIndexes
+~~~~~~~~~~~~~~~~~~~
+
+This operations proxies the collection's ``createSearchIndexes`` helper with the same arguments.
 
 dropSearchIndex
 ~~~~~~~~~~~~~~~
