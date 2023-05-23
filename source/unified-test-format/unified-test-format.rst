@@ -262,6 +262,14 @@ Test runners MUST support the following types of entities:
   operation.
 
   See `Cursor Operations`_ for a list of operations.
+
+- CommandCursor. These entities are not defined in `createEntities`_ but are
+  instead created by using `operation.saveResultAsEntity
+  <operation_saveResultAsEntity_>`_ with a `createCommandCursor`_
+  operation.
+
+  See `Cursor Operations`_ for a list of operations.
+
 - Event list. See
   `storeEventsAsEntities <entity_client_storeEventsAsEntities_>`_. The event
   list MUST store BSON documents. The type of the list itself is not prescribed
@@ -1770,11 +1778,9 @@ runCommand
 
 Generic command runner.
 
-This method does not inherit a read concern or write concern (per the
-`Read and Write Concern <../read-write-concern/read-write-concern.rst#generic-command-method>`__
-spec), nor does it inherit a read preference (per the
+This method does not inherit a read preference (per the
 `Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
-spec); however, they may be specified as arguments.
+spec); however, ``readPreference`` may be specified as an argument.
 
 The following arguments are supported:
 
@@ -1787,6 +1793,52 @@ The following arguments are supported:
 - ``readPreference``: Optional object. See `commonOptions_readPreference`_.
 
 - ``session``: Optional string. See `commonOptions_session`_.
+
+runCursorCommand
+~~~~~~~~~~~~~~~~
+
+`Generic cursor returning command runner <../run-command/run-command.rst>`__.
+
+This method does not inherit a read preference (per the
+`Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
+spec); however, ``readPreference`` may be specified as an argument.
+
+This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).
+
+When executing the provided command, the test runner MUST fully iterate the cursor.
+This will ensure consistent behavior between drivers that eagerly create a server-side cursor and those that do so lazily when iteration begins.
+
+The following arguments are supported:
+
+- ``command``: Required document. The command to be executed.
+
+- ``commandName``: Required string. The name of the command to run. This is used
+  by languages that are unable preserve the order of keys in the ``command``
+  argument when parsing YAML/JSON.
+
+- ``readPreference``: Optional object. See `commonOptions_readPreference`_.
+
+- ``session``: Optional string. See `commonOptions_session`_.
+
+- ``batchSize``: Optional positive integer value. Use this value to configure the ``batchSize`` option sent on subsequent ``getMore`` commands.
+
+- ``maxTimeMS``: Optional non-negative integer value. Use this value to configure the ``maxTimeMS`` option sent on subsequent ``getMore`` commands.
+
+- ``comment``: Optional BSON value. Use this value to configure the ``comment`` option sent on subsequent ``getMore`` commands.
+
+- ``cursorType``: Optional string enum value, one of ``'tailable' | 'tailableAwait' | 'nonTailable'``. Use this value to configure the enum passed to the ``cursorType`` option.
+
+- ``timeoutMode``: Optional string enum value, one of ``'iteration' | 'cursorLifetime'``. Use this value to configure the enum passed to the ``timeoutMode`` option.
+
+createCommandCursor
+~~~~~~~~~~~~~~~~~~~
+
+This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).
+Test runners MUST ensure that the server-side cursor is created (i.e. the command document has executed) as part of this operation and before the resulting cursor might be saved with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+Test runners for drivers that lazily execute the command on the first iteration of the cursor MUST iterate the resulting cursor once.
+The result from this iteration MUST be used as the result for the first iteration operation on the cursor.
+
+Test runners MUST NOT iterate the resulting cursor when executing this operation and test files SHOULD NOT specify `operation.expectResult <operation_expectResult_>`_ for this operation.
 
 watch
 ~~~~~
@@ -2079,7 +2131,7 @@ Cursor Operations
 There are no defined APIs for change streams and cursors since the
 mechanisms for iteration may differ between synchronous and asynchronous
 drivers. To account for this, this section explicitly defines the supported
-operations for the ``ChangeStream`` and ``FindCursor`` entity types.
+operations for the ``ChangeStream``, ``FindCursor``, and ``CommandCursor`` entity types.
 
 Test runners MUST ensure that the iteration operations defined in this
 section will not inadvertently skip the first document for a cursor. Albeit
@@ -3906,6 +3958,8 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2023-05-17: Add ``runCursorCommand`` and ``createCommandCursor`` operations.
+             Added ``commandCursor`` entity type which can be used with existing cursor operations.
 :2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
              requires replica sets for shards, which is also relevant to load
              balanced topologies.

@@ -44,6 +44,8 @@ Deviations
 
 Please refer to `The CRUD specification's Guidance <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#guidance>`_ on how APIs may deviate between languages.
 
+Cursor iterating APIs MAY be offered via language syntax or predefined iterable methods.
+
 --------------
 ``runCommand``
 --------------
@@ -129,6 +131,10 @@ The logical session ID MUST be included under ``lsid`` in the command sent to th
 
 * See Driver Sessions' section on `Sending the session ID to the server on all commands <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-session-id-to-the-server-on-all-commands>`_
 
+The command sent to the server MUST gossip the ``$clusterTime`` if cluster time support is detected.
+
+* See Driver Sessions' section on `Gossipping the cluster time <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#gossipping-the-cluster-time>`_
+
 Transactions
 """"""""""""
 
@@ -187,8 +193,152 @@ Drivers MUST document the behavior of RunCommand if a ``maxTimeMS`` field  is al
 * See Client Side Operations Timeout's section on `runCommand <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand>`_
 * See Client Side Operations Timeout's section on `runCommand behavior <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand-behavior>`_
 
+
+--------------------
+``runCursorCommand``
+--------------------
+
+Drivers MAY expose a runCursorCommand API with the following syntax.
+
+.. code:: typescript
+
+    interface Database {
+      /**
+       * Takes an argument representing an arbitrary BSON document and executes it against the server.
+       */
+      runCursorCommand(command: BSONDocument, options: RunCursorCommandOptions): RunCommandCursor;
+    }
+
+    interface RunCursorCommandOptions extends RunCommandOptions {
+      /**
+       * This option is an enum with possible values CURSOR_LIFETIME and ITERATION.
+       * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all subsequent calls.
+       * To support both of these use cases, these operations MUST support a timeoutMode option.
+       *
+       * @defaultValue CURSOR_LIFETIME
+       *
+       * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
+       */
+      timeoutMode?: ITERATION | CURSOR_LIFETIME;
+
+      /**
+       * See the `cursorType` enum defined in the crud specification.
+       * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
+       *
+       * Identifies the type of cursor this is for client side operations timeout to properly apply timeoutMode settings.
+       *
+       * A tailable cursor can receive empty `nextBatch` arrays in `getMore` responses.
+       * However, subsequent `getMore` operations may return documents if new data has become available.
+       *
+       * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data becomes available.
+       *
+       * @defaultValue NON_TAILABLE
+       */
+      cursorType?: CursorType;
+    }
+
+    /**
+     * The following are the configurations a driver MUST provide to control how getMores are constructed.
+     * How the options are controlled should be idiomatic to the driver's language.
+     * See Executing ``getMore`` Commands.
+     */
+    interface RunCursorCommandGetMoreOptions {
+      /** Any positive integer is permitted. */
+      batchSize?: int;
+      /** Any non-negative integer is permitted. */
+      maxTimeMS?: int;
+      comment?: BSONValue;
+    }
+
+RunCursorCommand implementation details
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+RunCursorCommand provides a way to access MongoDB server commands that return a cursor directly without requiring a driver to implement a bespoke cursor implementation.
+The API is intended to be built upon RunCommand and take a document from a user and apply a number of common driver internal concerns before forwarding the command to a server.
+A driver can expect that the result from running this command will return a document with a ``cursor`` field and MUST provide the caller with a language native abstraction to continue iterating the results from the server.
+If the response from the server does not include a ``cursor`` field the driver MUST throw an error either before returning from ``runCursorCommand`` or upon first iteration of the cursor.
+
+High level RunCursorCommand steps:
+
+* Run the cursor creating command provided by the caller and retain the ClientSession used as well as the server the command was executed on.
+* Create a local cursor instance and store the ``firstBatch``, ``ns``, and ``id`` from the response.
+* When the current batch has been fully iterated, execute a ``getMore`` using the same server the initial command was executed on.
+* Store the ``nextBatch`` from the ``getMore`` response and update the cursor's ``id``.
+* Continue to execute ``getMore`` commands as needed when the caller empties local batches until the cursor is exhausted or closed (i.e. ``id`` is zero).
+
+Driver Sessions
+"""""""""""""""
+
+A driver MUST create an implicit ClientSession if none is provided and it MUST be attached for the duration of the cursor's lifetime.
+All ``getMore`` commands constructed for this cursor MUST send the same ``lsid`` used on the initial command.
+A cursor is considered exhausted or closed when the server reports its ``id`` as zero.
+When the cursor is exhausted the client session MUST be ended and the server session returned to the pool as early as possible rather than waiting for a caller to completely iterate the final batch.
+
+* See Drivers Sessions' section on `Sessions and Cursors <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sessions-and-cursors>`_
+
+Server Selection
+""""""""""""""""
+
+RunCursorCommand MUST support a ``readPreference`` option that MUST be used to determine server selection.
+The selected server MUST be used for subsequent ``getMore`` commands.
+
+Load Balancers
+""""""""""""""
+
+When in ``loadBalanced`` mode, a driver MUST pin the connection used to execute the initial operation, and reuse it for subsequent ``getMore`` operations.
+
+* See Load Balancer's section on `Behaviour With Cursors <https://github.com/mongodb/specifications/blob/master/source/load-balancers/load-balancers.rst#behaviour-with-cursors>`_
+
+Iterating the Cursor
+""""""""""""""""""""
+
+Drivers MUST provide an API, typically, a method named ``next()``, that returns one document per invocation.
+If the cursor's batch is empty and the cursor id is nonzero, the driver MUST perform a ``getMore`` operation.
+
+Executing ``getMore`` Commands
+""""""""""""""""""""""""""""""
+
+The cursor API returned to the caller MUST offer an API to configure ``batchSize``, ``maxTimeMS``, and ``comment`` options that are sent on subsequent ``getMore`` commands.
+If it is idiomatic for a driver to allow setting these options in ``RunCursorCommandOptions``, the driver MUST document that the options only pertain to ``getMore`` commands.
+A driver MAY permit users to change ``getMore`` field settings at any time during the cursor's lifetime and subsequent ``getMore`` commands MUST be constructed with the changes to those fields.
+If that API is offered drivers MUST write tests asserting ``getMore`` commands are constructed with any updated fields.
+
+* See Find, getMore and killCursors commands' section on `GetMore <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#getmore>`_
+
+Tailable and TailableAwait
+""""""""""""""""""""""""""
+
+* **See first:** Find, getMore and killCursors commands's section on `Tailable cursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#tailable-cursors>`_
+
+It is the responsibility of the caller to construct their initial command with ``awaitData`` and ``tailable`` flags **as well as** inform RunCursorCommand of the ``cursorType`` that should be constructed.
+Requesting a ``cursorType`` that does not align with the fields sent to the server on the initial command SHOULD be documented as undefined behavior.
+
+Resource Cleanup
+""""""""""""""""
+
+Drivers MUST provide an explicit mechanism for releasing the cursor resources, typically a ``.close()`` method.
+If the cursor id is nonzero a KillCursors operation MUST be attempted, the result of the operation SHOULD be ignored.
+The ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.
+
+* See Driver Sessions' section on `When sending a killCursors command <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#when-sending-a-killcursors-command>`_
+* See Find, getMore and killCursors commands' section on `killCursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#killcursors>`_
+
+Client Side Operations Timeout
+""""""""""""""""""""""""""""""
+
+RunCursorCommand MUST provide an optional ``timeoutMS`` option to support client side operations timeout.
+Drivers MUST NOT attempt to check the command document for the presence of a ``maxTimeMS`` field.
+Drivers MUST document the behavior of RunCursorCommand if a ``maxTimeMS`` field is already set on the command.
+Drivers SHOULD raise an error if both ``timeoutMS`` and the ``getMore``-specific ``maxTimeMS`` option are specified (see: `Executing getMore Commands`_).
+Drivers MUST document that attempting to set both options can have undefined behavior and is not supported.
+
+When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support timeout functionality as described in the CSOT specification.
+
+* See Client Side Operations Timeout's section on `Cursors <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#cursors>`_
+
 Changelog
 =========
 
+:2023-05-10: Add runCursorCommand API specification.
 :2023-05-08: ``$readPreference`` is not sent to standalone servers
 :2023-04-20: Add run command specification.
