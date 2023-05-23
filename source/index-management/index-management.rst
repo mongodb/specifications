@@ -870,7 +870,7 @@ in a non-breaking manner (i.e., method overloading) drivers MAY omit the empty o
 search index management helpers.
 
 ``listSearchIndexes`` is implemented using an aggregation pipeline.  The list helper MUST support a driver's aggregation
-options as outline in the `crud specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_.  Drivers MAY combine the aggregation options with
+options as outline in the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_.  Drivers MAY combine the aggregation options with
 any future ``listSearchIndexes`` stage options, if that is idiomatic for a driver's language.
 
 Notes
@@ -895,10 +895,10 @@ Common Interfaces
 .. code:: typescript
 
   interface SearchIndexModel {
-    // Returns the definition for this index.
+    // The definition for this index.
     definition: Document;
 
-    // Returns the name for this index, if present.
+    // The name for this index, if present.
     name: Optional<string>;
   }
 
@@ -944,7 +944,7 @@ Standard API for Search Indexes
      * 
      * @return An iterable of the newly created index names.
      */
-    createSearchIndexes(models: Iterable<SearchIndexModel>, options: CreateSearchIndexOptions): Iterable<String> ;
+    createSearchIndexes(models: Iterable<SearchIndexModel>, options: CreateSearchIndexOptions): Iterable<String>;
 
     /**
      * Updates the search index with the given name to use the provided 
@@ -958,7 +958,9 @@ Standard API for Search Indexes
     dropSearchIndex(name: String, options: Optional<DropSearchIndexOptions>): void;
 
     /**
-     * Gets index information for all search indexes in the collection.
+     * Gets index information for one or more search indexes in the collection.
+     *
+     * If name is not specified, information for all indexes on the specified collection will be returned.
      */
     listSearchIndexes(name: Optional<String>, aggregationOptions: Optional<AggregationOptions>, listIndexOptions: Optional<ListSearchIndexOptions>): Cursor<Document>;
   }
@@ -1088,6 +1090,6 @@ Changelog
 :2022-04-18: Added the ``clustered`` attribute to ``IndexOptions`` in order to
              support clustered collections.
 :2022-10-05: Remove spec front matter and reformat changelog.
-:2023-5-10:  Merge index enumeration and index management specs and get rid of references 
+:2023-05-10:  Merge index enumeration and index management specs and get rid of references 
              to legacy server versions.
-:2023-5-18:  Add the search index management API.
+:2023-05-18:  Add the search index management API.
