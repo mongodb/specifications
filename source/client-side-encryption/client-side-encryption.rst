@@ -918,7 +918,7 @@ command.
    and no longer allows names to deviate from the following:
 
    - ``enxcol_.<collectionName>.esc``
-   - ``enxcol_.<collectionName>.ecoc`
+   - ``enxcol_.<collectionName>.ecoc``
 
    Drivers MUST NOT document the ``escCollection`` and ``ecocCollection``
    options.
