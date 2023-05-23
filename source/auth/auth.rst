@@ -1374,12 +1374,13 @@ attempt to retrieve a credential from the Azure Instance Metadata Service (IMDS)
 The driver MUST ensure that the TOKEN_AUDIENCE mechanism property is set when
 the PROVIDER_NAME is "azure".
 
-The driver MUST use the same procedure given in :ref:_access-token-azure to
+The driver MUST use the same procedure given in `Obtaining an Access Token for Azure Key Vault`_ to
 obtain an access token, with the one exception of using the TOKEN_AUDIENCE as
 the ``resource`` parameter.  The azure credentials MUST be cached by
 TOKEN_AUDIENCE, and expire within 5 minutes of the time given by the
 ``expires_in`` parameter of the IMDS response.
 
+.. _Obtaining an Access Token for Azure Key Vault: https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault
 
 Caching Credentials
 ```````````````````

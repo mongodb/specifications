@@ -616,8 +616,6 @@ message.
 Return "access_token" as the credential.
 
 
-.. _access-token-azure:
-
 Obtaining an Access Token for Azure Key Vault
 `````````````````````````````````````````````
 
