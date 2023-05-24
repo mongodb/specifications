@@ -82,7 +82,3 @@ tests:
                 createSearchIndexes: *collection0
                 indexes: [ { definition: *definition, name: 'test index' } ]
                 $db: *database0
-
-    
-
- 

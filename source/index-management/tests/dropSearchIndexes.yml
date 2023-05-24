@@ -1,4 +1,4 @@
-description: "dropSearchIndexes"
+description: "dropSearchIndex"
 schemaVersion: "1.10"
 createEntities:
   - client:

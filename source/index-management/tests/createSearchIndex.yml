@@ -1,4 +1,4 @@
-description: "createSearchIndex convenience helper"
+description: "createSearchIndex"
 schemaVersion: "1.10"
 createEntities:
   - client:
@@ -26,7 +26,7 @@ tests:
       - name: createSearchIndex
         object: *collection0
         arguments:
-          definition: { definition: &definition { mappings: { dynamic: true } }  }
+          definition: { definition: &definition { mappings: { dynamic: true } } }
         expectError:
           # Search indexes are only available on 7.0+ atlas clusters.  DRIVERS-2630 will add e2e testing 
           # against an Atlas cluster and the expectError will be removed.
@@ -60,7 +60,3 @@ tests:
                 createSearchIndexes: *collection0
                 indexes: [ { definition: *definition, name: 'test index' } ]
                 $db: *database0
-
-    
-
- 
