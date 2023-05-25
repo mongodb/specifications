@@ -1855,8 +1855,7 @@ specifications:
 
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `CRUD <../crud/crud.rst>`__
-- `Enumerating Indexes <../enumerate-indexes.rst>`__
-- `Index Management <../index-management.rst>`__
+- `Index Management <../index-management/index-management.rst>`__
 
 Collection operations that require special handling or are not documented by an
 existing specification are described below.
@@ -1968,6 +1967,25 @@ Test runners MUST NOT iterate the resulting cursor when executing this
 operation and test files SHOULD NOT specify `operation.expectResult
 <operation_expectResult_>`_ for this operation.
 
+createSearchIndex
+~~~~~~~~~~~~~~~~~
+
+This operations proxies the collection's ``createSearchIndex`` helper with the same arguments.
+
+Each ``createSearchIndex`` operation receives a `SearchIndexModel <https://github.com/mongodb/specifications/blob/master/source/index-management/index-management.rst#common-interfaces>`.  
+If a driver has chosen to implement the ``createSearchIndex(name: String, definition: Document)`` overload 
+of ``createSearchIndex``, then the ``SearchIndexModel`` should be parsed by ``createSearchIndex`` unified 
+test runner helper and the correct arguments should be passed into the driver's helper.
+
+createSearchIndexes
+~~~~~~~~~~~~~~~~~~~
+
+This operations proxies the collection's ``createSearchIndexes`` helper with the same arguments.
+
+dropSearchIndex
+~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``dropSearchIndex`` helper with the same arguments.
 
 find
 ~~~~
@@ -2012,6 +2030,18 @@ examples::
       expectResult:
         $$unsetOrMatches:
           insertedId: { $$unsetOrMatches: 2 }
+
+
+listSearchIndexes
+~~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``listSearchIndexes`` helper and returns the result
+of the cursor as a list.
+
+updateSearchIndex
+~~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``updateSearchIndex`` helper with the same arguments.
 
 
 watch

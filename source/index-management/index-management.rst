@@ -852,6 +852,188 @@ Example::
 	> a
 	[ "_id_", "ty_1", "l_2dsphere", "ts_1" ]
 
+--------------
+Search Indexes
+--------------
+
+Server 7.0 introduced three new server commands and a new aggregation stage to facilitate management of search indexes.  Drivers MUST provide 
+an API similar to the existing index management API specifically for search indexes.  Drivers MAY choose to implement either the standard
+API or the index view API.
+
+Search Index Management Helper Options
+--------------------------------------
+
+There are currently no supported options for any of the search index management commands.  To future proof
+drivers implementations so that any options added in the future do not constitute a breaking change to drivers,
+empty options structs have been added as placeholders.  If a driver's language has a mechanism to add options 
+in a non-breaking manner (i.e., method overloading) drivers MAY omit the empty options structs from their
+search index management helpers.
+
+``listSearchIndexes`` is implemented using an aggregation pipeline.  The list helper MUST support a driver's aggregation
+options as outline in the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_.  Drivers MAY combine the aggregation options with
+any future ``listSearchIndexes`` stage options, if that is idiomatic for a driver's language.
+
+Notes
+-----
+
+The search index commands are asynchronous and return from the server before the index is successfully updated, created or dropped.
+In order to determine when an index has been created / updated, users are expected to run the ``listSearchIndexes`` repeatedly
+until index changes appear.
+
+An example, from Javascript:
+
+.. code:: typescript
+
+  const name = await collection.createSearchIndex({ definition: { ... fill out definition } })
+  while (!(await collection.listSearchIndexes({ name }).hasNext())) {
+    await setTimeout(1000);
+  }
+ 
+Common Interfaces
+-----------------
+
+.. code:: typescript
+
+  interface SearchIndexModel {
+    // The definition for this index.
+    definition: Document;
+
+    // The name for this index, if present.
+    name: Optional<string>;
+  }
+
+  /**
+   * The following interfaces are empty but are provided as placeholders for drivers that cannot 
+   * add options in a non-breaking manner, if options are added in the future.
+   */
+  interface CreateSearchIndexOptions {} 
+  interface UpdateSearchIndexOptions {}
+  interface ListSearchIndexOptions {}
+  interface DropSearchIndexOptions {}
+
+Standard API for Search Indexes
+-------------------------------
+
+.. code:: typescript
+
+  interface Collection {
+    /**
+     * Convenience method for creating a single search index.
+     * 
+     * @return The name of the created search index
+     * 
+     * @note Drivers MAY opt to implement this method signature, the signature that
+     *   takes an SearchIndexModel as a parameter, or for those languages with method
+     *   overloading MAY decide to implement both.
+     */
+    createSearchIndex(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
+
+    /**
+     * Convenience method for creating a single index.
+     * 
+     * @return The name of the created search index
+     * 
+     * @note Drivers MAY opt to implement this method signature, the signature that
+     *   takes an name and a definition as parameters, or for those languages with method
+     *   overloading MAY decide to implement both.
+     */
+    createSearchIndex(model: SearchIndexModel, options: Optional<CreateSearchIndexOptions>): String;
+
+    /**
+     * Creates multiple search indexes on the collection.
+     * 
+     * @return An iterable of the newly created index names.
+     */
+    createSearchIndexes(models: Iterable<SearchIndexModel>, options: CreateSearchIndexOptions): Iterable<String>;
+
+    /**
+     * Updates the search index with the given name to use the provided 
+     * definition.
+     */
+    updateSearchIndex(name: String, definition: Document, options: Optional<UpdateSearchIndexOptions>): void;
+
+    /**
+     * Drops the search index with the given name.
+     */
+    dropSearchIndex(name: String, options: Optional<DropSearchIndexOptions>): void;
+
+    /**
+     * Gets index information for one or more search indexes in the collection.
+     *
+     * If name is not specified, information for all indexes on the specified collection will be returned.
+     */
+    listSearchIndexes(name: Optional<String>, aggregationOptions: Optional<AggregationOptions>, listIndexOptions: Optional<ListSearchIndexOptions>): Cursor<Document>;
+  }
+
+Index View API for Search Indexes
+---------------------------------
+
+.. code:: typescript
+
+  interface Collection {
+    /**
+     * Returns the search index view for this collection.
+     */
+    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexesOptions>): SearchIndexView;
+  }
+
+  interface SearchIndexView extends Iterable<Document> {
+    /**
+     * Enumerates the index information for all search indexes in the collection. 
+     *
+     * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
+     *   method. See below.
+     */
+    iterator(): Iterator<Document>;
+
+    /**
+     * For drivers that cannot make SearchIndexView iterable, they MUST implement this method to
+     * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
+     *  or language/implementation equivalent.
+     */
+    list(): Cursor<Document>;
+
+
+    /**
+     * This is a convenience method for creating a single index.
+     *
+     * @return The name of the created index.
+     *
+     * @note Drivers MAY opt to implement this method signature, the signature that
+     *   takes an SearchIndexModel as a parameter, or for those languages with method
+     *   overloading MAY decide to implement both.
+     */
+    createOne(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
+
+    /**
+     * This is a convenience method for creating a single index.
+     *
+     * @return The name of the created index.
+     *
+     * @note Drivers MAY opt to implement this method signature, the signature that
+     *   takes an name and a definition as parameters, or for those languages with method
+     *   overloading MAY decide to implement both.
+     */
+    createOne(model: SearchIndexModel, options: Optional<CreateSearchIndexOptions>): String;
+
+    /**
+     * Creates multiple search indexes in the collection.
+     *
+     * @return The names of the created indexes.
+     */
+    createMany(models: Iterable<SearchIndexModel>, options: Optional<CreateSearchIndexOptions>): Iterable<String>;
+
+    /**
+     * Drops a single search index from the collection by the index name.
+     */
+    dropOne(name: String, options: Optional<DropSearchIndexOptions>): Result;
+
+    /**
+     * Updates a single search index from the collection by the index name.
+     */
+    updateOne(name: String, options: Optional<UpdateSearchIndexOptions>): Result;
+  }
+
 ---------
 Q & A
 ---------
@@ -908,5 +1090,6 @@ Changelog
 :2022-04-18: Added the ``clustered`` attribute to ``IndexOptions`` in order to
              support clustered collections.
 :2022-10-05: Remove spec front matter and reformat changelog.
-:2023-5-10:  Merge index enumeration and index management specs and get rid of references 
+:2023-05-10:  Merge index enumeration and index management specs and get rid of references 
              to legacy server versions.
+:2023-05-18:  Add the search index management API.

@@ -2118,9 +2118,11 @@ endSessions              BYPASS
 startSession             BYPASS
 create                   BYPASS
 createIndexes            BYPASS
+createSearchIndexes      BYPASS
 drop                     BYPASS
 dropDatabase             BYPASS
 dropIndexes              BYPASS
+dropSearchIndex          BYPASS
 killCursors              BYPASS
 listCollections          BYPASS
 listDatabases            BYPASS
@@ -2132,6 +2134,7 @@ killAllSessions          BYPASS
 killSessions             BYPASS
 killAllSessionsByPattern BYPASS
 refreshSessions          BYPASS
+updateSearchIndex        BYPASS
 ======================== ===========
 
 All AUTOENCRYPT commands are sent to mongocryptd, even if there is no
