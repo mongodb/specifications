@@ -586,6 +586,8 @@ The structure of this object is as follows:
 
     - `serverDescriptionChangedEvent <expectedEvent_serverDescriptionChangedEvent_>`_
 
+    - `topologyDescriptionChangedEvent <expectedEvent_topologyDescriptionChangedEvent_>`_
+
   .. _entity_client_ignoreCommandMonitoringEvents:
 
   - ``ignoreCommandMonitoringEvents``: Optional array of one or more strings.
@@ -1376,6 +1378,19 @@ The structure of this object is as follows:
     value. See `SDAM: ServerType
     <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`__
     for a list of valid values.
+
+.. _expectedEvent_topologyDescriptionChangedEvent:
+
+- ``topologyDescriptionChangedEvent``: Optional object. Assertions for one or more
+  `TopologyDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
+
+  The structure of this object is as follows:
+
+  - ``previousDescription``: Optional object. A value corresponding to the topology
+    description as it was before the change that triggered this event.
+
+  - ``newDescription``: Optional object. A value corresponding to the topology
+    description as it was after the change that triggered this event.
 
 hasServiceId
 `````````````
@@ -3987,7 +4002,8 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
-
+:2023-05-26: **Schema version 1.14.** 
+             Add ``topologyDescriptionChangedEvent``.
 :2023-05-17: Add ``runCursorCommand`` and ``createCommandCursor`` operations.
              Added ``commandCursor`` entity type which can be used with existing cursor operations.
 :2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
