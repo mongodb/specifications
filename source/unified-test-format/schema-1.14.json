@@ -520,10 +520,7 @@
           "topologyDescriptionChangedEvent": {
             "type": "object",
             "additionalProperties": false,
-            "properties": {
-              "previousDescription": { "type": "object" },
-              "newDescription": { "type": "object" }
-            }
+            "properties": {}
           }
         }
       },

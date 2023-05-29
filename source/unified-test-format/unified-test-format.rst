@@ -1381,16 +1381,8 @@ The structure of this object is as follows:
 
 .. _expectedEvent_topologyDescriptionChangedEvent:
 
-- ``topologyDescriptionChangedEvent``: Optional object. Assertions for one or more
-  `TopologyDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
-
-  The structure of this object is as follows:
-
-  - ``previousDescription``: Optional object. A value corresponding to the topology
-    description as it was before the change that triggered this event.
-
-  - ``newDescription``: Optional object. A value corresponding to the topology
-    description as it was after the change that triggered this event.
+- ``topologyDescriptionChangedEvent``: Optional object. If present, this object MUST be an
+  empty document as all fields in this event are non-deterministic.
 
 hasServiceId
 `````````````
