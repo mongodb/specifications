@@ -864,7 +864,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
 8. Increment the ``operationCount`` of the selected server and return it. Log a
    `"Server selection succeeded" message`_.  Do not go onto later steps.
 
-9.  Request an immediate topology check, then block the server selection thread
+9. Request an immediate topology check, then block the server selection thread
    until the topology changes or until the server selection timeout has elapsed
 
 10. If server selection has timed out, raise a `server selection error`_ and log
