@@ -513,7 +513,7 @@ Tests MUST assert that the actual command **omits** any field that has a
 ``null`` value in the expected command.
 
 Cursor Id
-^^^^^^^^^
+~~~~~~~~~
 
 A ``getMore`` value of ``"42"`` in a command-started event is a fake cursorId
 that MUST be ignored. (In the Command Monitoring Spec tests, fake cursorIds are
@@ -521,14 +521,14 @@ correlated with real ones, but that is not necessary for Transactions Spec
 tests.)
 
 afterClusterTime
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 A ``readConcern.afterClusterTime`` value of ``42`` in a command-started event
 is a fake cluster time. Drivers MUST assert that the actual command includes an
 afterClusterTime.
 
 recoveryToken
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 A ``recoveryToken`` value of ``42`` in a command-started event is a
 placeholder for an arbitrary recovery token. Drivers MUST assert that the
