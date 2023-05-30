@@ -1382,7 +1382,9 @@ The structure of this object is as follows:
 .. _expectedEvent_topologyDescriptionChangedEvent:
 
 - ``topologyDescriptionChangedEvent``: Optional object. If present, this object MUST be an
-  empty document as all fields in this event are non-deterministic.
+- ``topologyDescriptionChangedEvent``: Optional object. If present, this object
+  MUST be an empty document as no assertions are currently supported for
+  `TopologyDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
 
 hasServiceId
 `````````````

@@ -868,7 +868,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
    until the topology changes or until the server selection timeout has elapsed
 
 10. If server selection has timed out, raise a `server selection error`_ and log
-   a `"Server selection failed" message`_. 
+    a `"Server selection failed" message`_. 
 
 11. Goto Step #2
 
@@ -925,16 +925,16 @@ as follows:
    the filtered servers, and log a `"Server selection succeeded" message`_.;
    otherwise, mark the topology stale and continue to step #9.
 
-1. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
+9. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
    the selection start time, raise a `server selection error`_ and log a
    `"Server selection failed" message`_; otherwise, log a `"Waiting for suitable
    server to become available" message`_ if one has not already been logged for
    this operation, and goto Step #4
 
-1.  If the current time exceeds the maximum time, raise a
+10. If the current time exceeds the maximum time, raise a
     `server selection error`_ and log a `"Server selection failed" message`_.
 
-1.  Goto Step #4
+11. Goto Step #4
 
 Before using a socket to the selected server, drivers MUST check whether
 the socket has been used in `socketCheckIntervalMS`_ milliseconds.  If the
@@ -1189,7 +1189,7 @@ individual read operation.
 
 Logging
 -------
-Please refer to the `logging specification <../logging/logging.rst>`_ for
+Please refer to the `logging specification <../logging/logging.rst>`__ for
 details on logging implementations in general, including log levels, log
 components, and structured versus unstructured logging.
 
@@ -1327,7 +1327,7 @@ This message MUST contain the following key-value pairs:
    * - failure
      - Flexible
      - Representation of the error the driver will throw regarding server selection failing. The type and format of this
-       value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_ 
+       value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__
        for details on representing errors in log messages. Drivers MUST take care to not include any information in this
        field that is already included in the log message; e.g. the topology description should not be duplicated within
        this field.
