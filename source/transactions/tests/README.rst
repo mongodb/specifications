@@ -507,10 +507,10 @@ value "session0" or "session1". Tests MUST assert that the command's actual
 Null Values
 ~~~~~~~~~~~
 
-Some command-started events in ``expectations`` include ``null`` values for
-fields such as ``txnNumber``, ``autocommit``, and ``writeConcern``.
-Tests MUST assert that the actual command **omits** any field that has a
-``null`` value in the expected command.
+Some command-started events in ``expectations`` include ``null`` values for top
+level ```command``` fields such as ``txnNumber``, ``autocommit``, and
+``writeConcern``. Tests MUST assert that the actual command **omits** any field
+that has a ``null`` value in the expected command.
 
 Cursor Id
 ~~~~~~~~~
