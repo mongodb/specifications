@@ -313,7 +313,7 @@ Then for each element in ``tests``:
 
 #. If the test includes a list of command-started events in ``expectations``,
    compare them to the actual command-started events using the
-   same logic as the Command Monitoring Spec Tests runner.
+   same logic as the `Command Monitoring spec legacy test runner <https://github.com/mongodb/specifications/blob/09ee1ebc481f1502e3246971a9419e484d736207/source/command-monitoring/tests/README.rst>`__.
 
 #. For each element in ``outcome``:
 
