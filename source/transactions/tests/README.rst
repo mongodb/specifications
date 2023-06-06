@@ -322,7 +322,7 @@ Then for each element in ``tests``:
 #. Call ``session0.endSession()`` and ``session1.endSession``.
 #. If the test includes a list of command-started events in ``expectations``,
    compare them to the actual command-started events using the
-   same logic as the Command Monitoring Spec Tests runner, plus the rules in
+   same logic as the `legacy Command Monitoring Spec Tests runner <https://github.com/mongodb/specifications/blob/09ee1ebc481f1502e3246971a9419e484d736207/source/command-monitoring/tests/README.rst#expectations>`_, plus the rules in
    the Command-Started Events instructions below.
 #. If ``failPoint`` is specified, disable the fail point to avoid spurious
    failures in subsequent tests. The fail point may be disabled like so::
@@ -507,10 +507,10 @@ value "session0" or "session1". Tests MUST assert that the command's actual
 Null Values
 ~~~~~~~~~~~
 
-Some command-started events in ``expectations`` include ``null`` values for
-fields such as ``txnNumber``, ``autocommit``, and ``writeConcern``.
-Tests MUST assert that the actual command **omits** any field that has a
-``null`` value in the expected command.
+Some command-started events in ``expectations`` include ``null`` values for top
+level ```command``` fields such as ``txnNumber``, ``autocommit``, and
+``writeConcern``. Tests MUST assert that the actual command **omits** any field
+that has a ``null`` value in the expected command.
 
 Cursor Id
 ~~~~~~~~~
