@@ -508,7 +508,7 @@ Null Values
 ~~~~~~~~~~~
 
 Some command-started events in ``expectations`` include ``null`` values for top
-level ```command``` fields such as ``txnNumber``, ``autocommit``, and
+level ``command`` fields such as ``txnNumber``, ``autocommit``, and
 ``writeConcern``. Tests MUST assert that the actual command **omits** any field
 that has a ``null`` value in the expected command.
 
