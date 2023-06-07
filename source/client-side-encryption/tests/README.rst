@@ -1701,9 +1701,6 @@ The Explicit Encryption tests require MongoDB server 7.0+. The tests must not ru
    MongoDB Server 7.0 introduced a backwards breaking change to the Queryable Encryption (QE) protocol: QEv2.
 	libmongocrypt 1.8.0 is configured to use the QEv2 protocol.
 
-.. note::
-   Skip this test on Serverless until MongoDB Serverless enables the QEv2 protocol. Refer: `DRIVERS-2589 <https://jira.mongodb.org/browse/DRIVERS-2589>`_
-
 Before running each of the following test cases, perform the following Test Setup.
 
 Test Setup
@@ -2548,9 +2545,6 @@ The Automatic Data Encryption Keys tests require MongoDB server 7.0+. The tests 
    MongoDB Server 7.0 introduced a backwards breaking change to the Queryable Encryption (QE) protocol: QEv2.
 	libmongocrypt 1.8.0 is configured to use the QEv2 protocol.
 
-.. note::
-   Skip this test on Serverless until MongoDB Serverless enables the QEv2 protocol. Refer: `DRIVERS-2589 <https://jira.mongodb.org/browse/DRIVERS-2589>`_
-
 For each of the following test cases, assume `DB` is a valid open database
 handle, and assume a ClientEncryption_ object `CE` created using the following
 options::
@@ -2704,9 +2698,6 @@ The Range Explicit Encryption tests require MongoDB server 7.0+. The tests must 
 .. note::
    MongoDB Server 7.0 introduced a backwards breaking change to the Queryable Encryption (QE) protocol: QEv2.
 	libmongocrypt 1.8.0 is configured to use the QEv2 protocol.
-
-.. note::
-   Skip this test on Serverless until MongoDB Serverless enables the QEv2 protocol. Refer: `DRIVERS-2589 <https://jira.mongodb.org/browse/DRIVERS-2589>`_
 
 Each of the following test cases must pass for each of the supported types (``DecimalNoPrecision``, ``DecimalPrecision``, ``DoublePrecision``, ``DoubleNoPrecision``, ``Date``, ``Int``, and ``Long``), unless it is stated the type should be skipped.
 
