@@ -565,3 +565,4 @@ Changelog
              default port 27017 when relevant. Updated suggested unstructured forms of log messages to more
              clearly label connection IDs and use more readable server address representations.
 :2023-03-23: Updated ``serverConnectionId`` field to be Int64 as long-running servers can return Int64.
+:2023-06-13: Added ``databaseName`` field to ``CommandFailedEvent``.
