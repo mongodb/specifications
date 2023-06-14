@@ -318,6 +318,11 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     commandName: String;
 
     /**
+     * Returns the database name.
+     */
+    databaseName: String;
+
+    /**
      * Returns the failure. Based on the language, this SHOULD be a message string, exception
      * object, or error document.
      */
