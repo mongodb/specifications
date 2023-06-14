@@ -491,6 +491,8 @@ assertions.  This makes for easier and safer test case development.
 Changelog
 =========
 
+:2023-06-14: Add decimal128 Extended JSON parse tests for clamped zeros with
+             very large exponents.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2021-09-09: Clarify error expectation rules for ``parseErrors``.
 :2021-09-02: Add spec and prose tests for prohibiting null bytes in
