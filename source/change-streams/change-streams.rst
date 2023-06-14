@@ -1000,6 +1000,7 @@ Reference Implementations
 Changelog
 =========
 
+:2023-05-22: Add spec test for ``$changeStreamSplitLargeEvent``.
 :2022-10-20: Reformat changelog.
 :2022-10-05: Remove spec front matter.
 :2022-08-22: Add ``clusterTime`` to ``ChangeStreamDocument``.
