@@ -838,9 +838,10 @@ Server Selection Algorithm
 
 For multi-threaded clients, the server selection algorithm is as follows:
 
-1. Record the server selection start time
+1. Record the server selection start time and log a `"Server selection started" message`_.
 
-2. If the topology wire version is invalid, raise an error
+2. If the topology wire version is invalid, raise an error and log a
+   `"Server selection failed" message`_.
 
 3. Find suitable servers by topology type and operation type
 
@@ -849,7 +850,8 @@ For multi-threaded clients, the server selection algorithm is as follows:
 
 5. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and continue to the next step;
-   otherwise, goto Step #9.
+   otherwise, log a `"Waiting for suitable server to become available" message`_
+   if one has not already been logged for this operation, and goto Step #9.
 
 6. Choose two servers at random from the set of suitable servers in the latency
    window. If there is only 1 server in the latency window, just select that
@@ -859,13 +861,14 @@ For multi-threaded clients, the server selection algorithm is as follows:
    ``operationCount``. If both servers have the same ``operationCount``, select
    arbitrarily between the two of them.
 
-8. Increment the ``operationCount`` of the selected server and return it. Do not
-   go onto later steps.
+8. Increment the ``operationCount`` of the selected server and return it. Log a
+   `"Server selection succeeded" message`_.  Do not go onto later steps.
 
 9. Request an immediate topology check, then block the server selection thread
    until the topology changes or until the server selection timeout has elapsed
 
-10. If server selection has timed out, raise a `server selection error`_
+10. If server selection has timed out, raise a `server selection error`_ and log
+    a `"Server selection failed" message`_. 
 
 11. Goto Step #2
 
@@ -888,7 +891,7 @@ the selection timeout is exceeded.
 Therefore, for single-threaded clients, the server selection algorithm is
 as follows:
 
-1. Record the server selection start time
+1. Record the server selection start time and log a `"Server selection started" message`_.
 
 2. Record the maximum time as start time plus the computed timeout
 
@@ -900,7 +903,8 @@ as follows:
    - record the target scan time as last scan time plus ``minHeartBeatFrequencyMS``
 
    - if `serverSelectionTryOnce`_ is false and the target scan time would
-     exceed the maximum time, raise a `server selection error`_
+     exceed the maximum time, raise a `server selection error`_ and log a
+     `"Server selection failed" message`_.
 
    - if the current time is less than the target scan time, sleep until
      the target scan time
@@ -908,7 +912,8 @@ as follows:
    - do a blocking immediate topology check (which must also update the
      last scan time and mark the topology as no longer stale)
 
-5. If the topology wire version is invalid, raise an error
+5. If the topology wire version is invalid, raise an error and log a
+   `"Server selection failed" message`_.
 
 6. Find suitable servers by topology type and operation type
 
@@ -917,15 +922,17 @@ as follows:
 
 8. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and return one at random from
-   the filtered servers; otherwise, mark the topology stale and continue to step
-   #9.
+   the filtered servers, and log a `"Server selection succeeded" message`_.;
+   otherwise, mark the topology stale and continue to step #9.
 
 9. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
-   the selection start time, raise a `server selection error`_; otherwise,
-   goto Step #4
+   the selection start time, raise a `server selection error`_ and log a
+   `"Server selection failed" message`_; otherwise, log a `"Waiting for suitable
+   server to become available" message`_ if one has not already been logged for
+   this operation, and goto Step #4
 
 10. If the current time exceeds the maximum time, raise a
-    `server selection error`_
+    `server selection error`_ and log a `"Server selection failed" message`_.
 
 11. Goto Step #4
 
@@ -1180,11 +1187,198 @@ server without an explicit ``start_request`` (or comparable) method call.
 Outside a legacy "request" API, drivers MUST use server selection for each
 individual read operation.
 
-Reference Implementation
-========================
+Logging
+-------
+Please refer to the `logging specification <../logging/logging.rst>`__ for
+details on logging implementations in general, including log levels, log
+components, and structured versus unstructured logging.
 
-The single-threaded reference implementation is the Perl master branch (work
-towards v1.0.0).  The multi-threaded reference implementation is TBD.
+Drivers MUST support logging of server selection information via the
+following log messages. These messages MUST use the ``serverSelection`` log
+component.
+
+The types used in the structured message definitions below are demonstrative,
+and drivers MAY use similar types instead so long as the information is present
+(e.g. a double instead of an integer, or a string instead of an integer if the
+structured logging framework does not support numeric types.)
+
+Common Fields
+~~~~~~~~~~~~~
+The following key-value pairs MUST be included in all server selection log messages:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - selector
+     - String
+     - String representation of the selector being used to select the server. This can be
+       a read preference or an application-provided custom selector. The exact content of
+       is flexible depending on what the driver is able to log. At minimum, when the selector
+       is a read preference this string MUST contain all components of the read preference,
+       and when it is an application-provided custom selector the string MUST somehow indicate
+       that it is a custom selector.
+
+   * - operationId
+     - Int
+     - The driver-generated operation ID. Optional; only present if the driver generates
+       operation IDs and this command has one.
+
+   * - operation
+     - String
+     - The name of the operation for which a server is being selected. When server selection is
+       being performed to select a server for a command, this MUST be the command name.
+
+   * - topologyDescription
+     - String
+     - String representation of the current topology description. The format of is flexible
+       and could be e.g. the ``toString()`` implementation for a driver's topology type,
+       or an extended JSON representation of the topology object.
+
+"Server selection started" message
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This message MUST be logged at ``debug`` level. It MUST be emitted on the occasions
+specified either in `Multi-threaded or asynchronous server selection`_ or
+`Single-threaded server selection`_, depending on which algorithm the driver
+implements.
+
+This message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Server selection started"
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to
+fill in placeholders as appropriate:
+
+  Server selection started for operation {{operation}} with ID {{operationId}}.
+  Selector: {{selector}}, topology description: {{topologyDescription}}
+
+"Server selection succeeded" message
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This message MUST be logged at ``debug`` level. It MUST be emitted on the occasions
+specified either in `Multi-threaded or asynchronous server selection`_ or
+`Single-threaded server selection`_, depending on which algorithm the driver
+implements.
+
+This message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Server selection succeeded"
+
+   * - serverHost
+     - String
+     - The hostname, IP address, or Unix domain socket path for the selected server.
+
+   * - serverPort
+     - Int
+     - The port for the selected server. Optional; not present for Unix domain sockets. When
+       the user does not specify a port and the default (27017) is used, the driver SHOULD include it here. 
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to
+fill in placeholders as appropriate:
+
+  Server selection succeeded for operation {{operation}} with ID {{operationId}}.
+  Selected server: {{serverHost}}:{{serverPort}}. Selector: {{selector}},
+  topology description: {{topologyDescription}}
+
+"Server selection failed" message
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This message MUST be logged at ``debug`` level. It MUST be emitted on the occasions
+specified either in `Multi-threaded or asynchronous server selection`_ or
+`Single-threaded server selection`_, depending on which algorithm the driver
+implements.
+
+This message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Server selection failed"
+
+   * - failure
+     - Flexible
+     - Representation of the error the driver will throw regarding server selection failing. The type and format of this
+       value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__
+       for details on representing errors in log messages. Drivers MUST take care to not include any information in this
+       field that is already included in the log message; e.g. the topology description should not be duplicated within
+       this field.
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to
+fill in placeholders as appropriate:
+
+  Server selection failed for operation {{operationName}} with ID {{operationId}}. Failure: {{failure}}. 
+  Selector: {{selector}}, topology description: {{topologyDescription}}
+
+"Waiting for suitable server to become available" message
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This message MUST be logged at ``info`` level. It MUST be emitted on the occasions
+specified either in `Multi-threaded or asynchronous server selection`_ or
+`Single-threaded server selection`_, depending on which algorithm the driver
+implements.
+
+In order to avoid generating redundant log messages, the driver MUST take care to
+only emit this message once per operation. We only log the message once because the
+only values that can change over time are:
+
+- The remaining time: given the initial message's timestamp and the initial timestamp,
+  the time remaining can always be inferred from the original message.
+- The topology description: rather than logging these changes on a per-operation basis, users
+  should observe them with a single set of messages for the entire client via SDAM log messages.
+  
+
+This message MUST contain the following key-value pairs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 1 1 1
+
+   * - Key
+     - Suggested Type
+     - Value
+
+   * - message
+     - String
+     - "Waiting for suitable server to become available"
+
+   * - remainingTimeMS
+     - Int
+     - The remaining time left until server selection will time out. This MAY be omitted if
+       the driver supports disabling server selection timeout altogether. 
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to
+fill in placeholders as appropriate:
+
+  Waiting for server to become available for operation {{operationName}} with ID {{operationId}}.
+  Remaining time: {{remainingTimeMS}} ms. Selector: {{selector}}, topology description: {{topologyDescription}}.
 
 Implementation Notes
 ====================
@@ -1255,11 +1449,13 @@ selection`_::
         now = gettime()
         endTime = now + computed server selection timeout
 
+        log a "server selection started" message
         while true:
             # The topologyDescription keeps track of whether any server has an
             # an invalid wire version range
             if not topologyDescription.compatible:
                 client.lock.release()
+                log a "server selection failed" message
                 throw invalid wire protocol range error with details
 
             if maxStalenessSeconds is set:
@@ -1293,6 +1489,8 @@ selection`_::
                 return selected
 
             request that all monitors check immediately
+            if the message was not logged already for this operation: 
+                log a "waiting for suitable server to become available" message
 
             # Wait for a new TopologyDescription. condition.wait() releases
             # client.lock while waiting and reacquires it before returning.
@@ -1374,6 +1572,9 @@ The following is pseudocode for `single-threaded server selection`_::
                     throw server selection error with details
             else if loopEndTime > maxTime:
                 throw server selection error with details
+
+            if the message was not logged already: 
+                log a "waiting for suitable server to become available" message
 
 .. _server selection error:
 
@@ -1868,3 +2069,4 @@ Changelog
              replica set topology.
 :2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
+:2022-11-09: Add log messages and tests.

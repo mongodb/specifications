@@ -1,6 +1,6 @@
 description: "legacy timeouts continue to work if timeoutMS is not set"
 
-schemaVersion: "1.9"
+schemaVersion: "1.0"
 
 runOnRequirements:
   - minServerVersion: "4.4"
@@ -116,8 +116,8 @@ tests:
                   wtimeout: *wTimeoutMS
 
   # If the maxTimeMS option is set for a specific command, it should be used as the maxTimeMS command field without any
-  # modifications. This is different than timeoutMS because in that case, drivers subtract the target server's 90%
-  # percentile RTT from the remaining timeout to derive a maxTimeMS field.
+  # modifications. This is different from timeoutMS because in that case, drivers subtract the target server's min
+  # RTT from the remaining timeout to derive a maxTimeMS field.
   - description: "maxTimeMS option is used directly as the maxTimeMS field on a command"
     operations:
       - name: createEntities
@@ -153,7 +153,8 @@ tests:
   # Same test as above but with the maxCommitTimeMS option.
   - description: "maxCommitTimeMS option is used directly as the maxTimeMS field on a commitTransaction command"
     runOnRequirements:
-      - topologies: ["replicaset", "sharded-replicaset"]
+      # Note: minServerVersion is specified in top-level runOnRequirements
+      - topologies: ["replicaset", "sharded"]
     operations:
       - name: createEntities
         object: testRunner

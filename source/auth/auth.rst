@@ -254,6 +254,22 @@ or "SCRAM-SHA-256").
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
 
+Reauthentication
+~~~~~~~~~~~~~~~~
+
+On any operation that requires authentication, the server may raise the
+error ``ReauthenticationRequired`` (391), typically if the user's credential
+has expired.  Drivers MUST immediately attempt a reauthentication on
+the connection using suitable credentials, as specified by the particular authentication mechanism when this error is raised, and then re-attempt the operation.
+This attempt MUST be irrespective of whether the operation is considered
+retryable.   Drivers MUST NOT resend a hello message during reauthentication, instead using SASL messages directly.  Any errors that could not be recovered from during reauthentication, or that were encountered during the
+subsequent re-attempt of the operation MUST be raised to the user.  Currently
+the only authentication mechanism on the server that supports reauthentication is OIDC.
+See the OIDC documentation on reauthentication for more details.
+Note that in order to implement the unified spec tests for reauthentication,
+it may be necessary to add reauthentication support for whichever auth
+mechanism is used when running the authentication spec tests.
+
 --------------------------------
 Supported Authentication Methods
 --------------------------------
@@ -956,7 +972,7 @@ The order in which Drivers MUST search for credentials is:
 #. The URI
 #. Environment variables
 #. Using ``AssumeRoleWithWebIdentity`` if ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
-   ``AWS_ROLE_SESSION_NAME``  are set.
+   ``AWS_ROLE_ARN``  are set.
 #. The ECS endpoint if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set. Otherwise, the EC2 endpoint.
 
 .. note::
@@ -991,7 +1007,7 @@ case where another part the application has refreshed the credentials.
 
 However, if environment variables are not present during initial authorization,
 credentials may be fetched from another source and cached.  Even if the
-environmnet variables are present in subsequent authorization attempts,
+environment variables are present in subsequent authorization attempts,
 the driver MUST use the cached credentials, or refresh them if applicable.
 This behavior is consistent with how the AWS SDKs behave.
 
@@ -1158,6 +1174,249 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 
 .. note::
     Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
+
+MONGODB-OIDC
+~~~~~~~~~~~~
+
+:since: 7.0 Enterprise
+
+MONGODB-OIDC authenticates using an `OIDC <https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens.  Drivers MUST support
+both Callback-driven OIDC and Automatic OIDC Authentication for AWS.
+
+
+Conversation
+````````````
+
+Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips between the MongoDB driver and server.  The requests from the driver and the replies from the server are described by the following IDL structs which are encoded in the payload as octet sequences defining BSON objects:
+
+.. code:: idl
+
+  PrincipalStepRequest:
+    description: Driver’s opening request in saslStart
+    fields:
+      n:
+        description: "Name of the OIDC user Principal"
+        type: string
+        optional: true
+
+Note that the principal name is optional as it may be provided by the IDP in environments where only one IDP is used.  The username provided by the user MUST be used as the principalName.
+
+.. code:: idl
+
+  IdPServerInfo:
+    description: "The information used by callbacks to authenticate with the Identity Provider."
+    fields:
+      issuer:
+        description: >-
+            URL which describes the Authentication Server. This identifier should be
+            the iss of provided access tokens, and be viable for RFC8414
+            metadata discovery and RFC9207 identification.
+        type:string
+      clientId:
+        description: "Unique client ID for this OIDC client"
+        type: string
+      requestScopes:
+        description: "Additional scopes to request from IDP"
+        type: array<string>
+        optional: true
+
+Server will use principalName (n) if provided in the driver’s PrincipalStepRequest to select an appropriate IDP.  This IDP's configuration will be returned in the server’s response that will be used by the end-user to acquire an Access Token.
+
+This Access Token will be used as the JWT in the driver’s JwtStepRequest to complete authentication.
+
+.. code:: idl
+
+  JwtStepRequest:
+      description: "Client's request with signed token"
+      fields:
+          jwt:
+              description: "Compact serialized JWT with signature"
+              cpp_name: JWT
+              type: string
+
+`MongoCredential`_ Properties
+`````````````````````````````
+
+username
+    MUST NOT be specified in automatic authentication. Drivers MUST allow the user to specify this in the callback-driven authentication. If a user omits this when multiple OIDC providers are configured, the server will produce an error during authentication.
+
+source
+    MUST be "$external". Defaults to ``$external``.
+
+password
+    MUST NOT be specified.
+
+mechanism
+    MUST be "MONGODB-OIDC"
+
+mechanism_properties
+    PROVIDER_NAME
+        Drivers MUST allow the user to specify a name for using a service
+        to obtain credentials that is one of ["aws"].
+    REQUEST_TOKEN_CALLBACK
+        Drivers MUST allow the user to specify a callback of the form
+        "onRequest" (defined below), if the driver supports
+        providing objects as mechanism property values.  Otherwise the driver MUST allow it as a MongoClientOption.
+    REFRESH_TOKEN_CALLBACK
+        Drivers MUST allow the user to specify a callback of the form
+        "onRefresh" (defined below), if the driver supports
+        providing objects as mechanism property values.  Otherwise the driver MUST allow it as a MongoClientOption.
+    ALLOWED_HOSTS
+        The list of allowed hostnames or ip-addresses (ignoring ports) for
+        MongoDB connections. The hostnames may include a leading "*." wildcard, which allows for matching (potentially  nested) subdomains. ALLOWED_HOSTS is a
+        security feature and MUST default to
+        ``["*.mongodb.net", '*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``.
+        When ``MONGODB-OIDC`` authentication is attempted against a hostname
+        that does not match any of list of allowed hosts, the driver MUST
+        raise a client-side error without invoking any user-provided
+        callbacks.  This value MUST not be allowed in the URI connection
+        string.  The hostname check MUST be performed after SRV record
+        resolution, if applicable.
+
+Drivers MUST NOT send a PrincipalStepRequest when performing automatic authentication
+or when there is a cached IdPServerResponse.  Drivers must instead  use ``saslStart`` with a JwtStepRequest.
+
+Speculative Authentication
+```````````````````````````````````
+Drivers MUST implement speculative authentication for MONGODB-OIDC during the ``hello`` handshake.  If there is an unexpired access token, the JwtStepRequest SASL command will be used as the speculation command.  If there is no cache value, the PrincipalStepRequest will be used as the speculation command.  The driver MUST NOT call any callbacks during speculative authentication.
+
+User Provided Callbacks
+```````````````````````
+
+Drivers MUST allow the user to provide callbacks for token request and
+token refresh.  The driver MUST provide a way for the both callbacks to be either automatically
+canceled, or to cancel itself.  This can be as a timeout argument to the
+callback, a cancellation context passed to the callback, or some other
+language-appropriate mechanism.  The timeout duration MUST be 5 minutes,
+to account for the fact that there may be human interaction involved.
+
+Callbacks can be synchronous and/or asynchronous, depending on the driver
+and/or language.  Asynchronous callbacks should be preferred when other
+operations in the driver use asynchronous functions.
+
+The driver MUST pass the following information to the request callback: ``IdpServerInfo``, and either a ``timeoutSeconds`` or ``timeoutContext`` object for the callback.   The signature of the callback is up to the driver's discretion, but the driver MUST ensure that, in the future, callbacks may have additional optional parameters passed to them.  An example might look like:
+
+.. code: typescript
+
+  function onRequest(info: IdpServerInfo, params: RequestParameters): IdpServerResponse
+
+In this example, one of the timeout values would then need to be present on ``RequestParameters``.  ``IdpServerResponse`` is defined as:
+
+.. code:: idl
+
+  IdPServerResponse:
+      description: "The result of a token request"
+      strict: false
+      fields:
+          accessToken:
+              description: "The OIDC access token"
+              type: string
+          expiresInSeconds:
+              description: "The expiration time in seconds from the current time"
+              type: int
+              optional: true
+          refreshToken:
+              description: "The OIDC refresh token"
+              type: str
+              optional: true
+
+The token refresh callback must take the same arguments as the request callback, as well as the ``refreshToken`` string given by the ``IdpServerResponse``, and might look like the following::
+
+.. code:: typescript
+
+    function onRefresh(info: IdpServerInfo, params: RefreshParameters): IdpServerResponse
+
+Before calling a callback, the driver MUST acquire a lock unique to the cache key.  The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.  The lock MUST be released
+when the callback call as finished or errored.
+This is because request callbacks may involve human interaction, and refresh
+callbacks could use refresh tokens that can only be used once.
+
+If either callback does not return an object in the correct form of ``IdpServerResponse``, the driver MUST raise an error either using the type system or by raising an error when non-optional properties are missing . The driver MUST NOT attempt to validate
+the token(s) directly.  It is expected that if the server changes the expected fields, the SASL exchange will be updated with a version parameter.  Drivers do not need to attempt to provide old-driver-new-server compatibility.
+
+If the refresh callback is given and the request callback is not given,
+the driver MUST raise an error.  If PROVIDER_NAME is given and one or more
+callbacks are given, the driver MUST raise an error.
+
+If no callbacks are given, the driver MUST enforce that a PROVIDER_NAME
+mechanism_properties is set and one of ("aws",).
+The callback mechanism can be used to support both callback-based or automatic  workflows that are not explicitly implemented
+by drivers.  If there is no callback and no PROVIDER_NAME, or the
+PROVIDER_NAME is set but credentials cannot be automatically obtained,
+the driver MUST raise an error.
+
+
+Supported Service Providers
+```````````````````````````
+
+Drivers MUST support obtaining credentials for a service for "aws", given
+by the PROVIDER_NAME mechanism property.  In all cases the acquired token
+will be given as the ``jwt`` argument and the JwtStepRequest MUST be made immediately, as part of speculative authentication if appropriate, skipping the PrincipalStepRequest.
+Drivers MUST raise an error if both a PROVIDER_NAME and username are
+given, since using a service will not use the username.
+
+AWS
+___
+
+When the PROVIDER_NAME mechanism property is set to "aws", the driver MUST
+attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
+interpret it as a file path.  The contents of the file are read as the
+access token.  If the path does not exist or cannot be read, or the environment variable does not exist, the driver MUST raise an error.
+
+
+Caching Credentials
+```````````````````
+
+Drivers MUST use caching for callback-based authentication..
+When an authentication request is made and there is an available cached response,
+the driver MUST use the cached Access Token from that response, if it has not expired.
+
+A cache MUST be able to store the IDPServerInfo, the IdPServerResponse tokens, and the known expiration time of the access token.
+The cache is kept alive even if the Access Token is expired to preserve the IdPServerInfo response, as well as
+account for the Refresh Token, which typically has an (unknown) lifetime that
+is longer than the access token lifetime.   Drivers MUST ensure that the cache does not leak memory, by an appropriate time or space-based cache and auditing the cache at a regular interval.
+
+If a global cache is used, the cache keys MUST include the username (or empty string) and the
+actually used socket address and port for the current server.  The cache key
+MUST also include hashes of the callback function(s), if hash comparisons are possible in the driver language.  In the case of a global cache, using the socket address and port accounts for the case when two different servers use the same username but could be configured differently.
+There is an edge case where if the same username is used and two aliases
+to the same local host address are given, there will be duplicate user/service
+interactions, unless the driver can resolve the local host address as well.
+Note that because we use the server socket address, there will different cache
+keys for each member of a replica set.
+
+The driver MUST cache the IdPServerInfo as part of the cache value,
+to enable skipping the PrincipalStepRequest on subsequent authentications of the same
+cache key.
+
+A global cache SHOULD be preferred, to prevent multiple browser interactions
+in the case of an Authentication Code workflow.  However, drivers or dev tools
+can choose to use their own caching scheme if appropriate for their language/
+environment.
+
+A cached Access Token will expire 5 minutes before the ``expiresInSeconds``
+time, if given.  If there is no ``expiresInSeconds``, the token must be considered expired as soon as the ensuing JwtStepRequest is started.  If a cached value is found but its
+Access Token is rejected by the server with a ``ReauthenticationRequired`` error, the Access Token must be marked expired and the Refresh callback MUST be called (if given) with the IdPServerInfo and Refresh Token, and it will return a new IdpServerResponse.  If the Refresh Callback fails, the error is raised to the user.  If the Refresh Callback succeeds, the new Access Token MUST be sent using a JwtStepRequest.  If the request fails with a ReauthenticationRequired error, the cache should be cleared, and a PrincipalStepRequest MUST be sent.  Next, the Request Callback should be called.  If the callback fails, the error is raised to the user.
+If the callback succeeds, the new Access Token MUST be sent using a JwtStepRequest.  If the request fails with a ReauthenticationRequired error, that error MUST be propagated to the user.
+The driver MUST have a guard or a flag in place to differentiate between a JwtStepRequest ReauthenticationRequired failure that takes place after a PrincipalStepRequest has been made to prevent an infinite loop.
+
+If there is no refresh callback and no unexpired Access Token, the request callback will be called.  Multithreaded drivers MUST ensure that there is at most one concurrent invocation of the above fallback logic for a given cache key.
+
+If a cached value is used and the authentication step fails or times out, the driver MUST clear the
+cached value.
+
+
+Reauthentication
+````````````````
+When reauthentication is requested by the server (as a 391 error code) and MONGODB-OIDC is in use, the driver MUST
+ensure that the Access Token that was most-recently used to authenticate this connection is not used for subsequent authentication, by marking it as expired. If non-expired Access Token is available in the cache, it should be used as usual.  If a refresh
+callback is given, it will be called as usual.  Otherwise the IdPServerResponse will be cleared if present and authentication will proceed from the request callback.
+
+If the ``sasl`` step(s) fail with a 391 error code and the payload of the command contained ``jwt`` , the driver MUST clear the IdPServerResponse and
+attempt to authenticate one more time starting from
+``PrincipalStepRequest``.  An initial reauthentication may fail for various reasons, such as token expiration or identity provider reconfiguration, so a second reauthentication might be needed.
+
+The driver MUST account for the case of multiple connections hitting a reauthentication error at different times, to prevent unnecessary callback calls.   If another connection has already reauthenticated, then the Access Token should not be expired.  The driver can either cache a token generation id per connection as well as in the main cache, or some other equivalent method to track whether a reauthentication has already occurred.
 
 -------------------------
 Connection String Options
@@ -1395,6 +1654,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2023-04-28: Added MONGODB-OIDC auth mechanism
 :2022-11-02: Require environment variables to be read dynamically.
 :2022-10-28: Recommend the use of AWS SDKs where available.
 :2022-10-07: Require caching of AWS credentials fetched by the driver.

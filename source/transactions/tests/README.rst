@@ -322,7 +322,7 @@ Then for each element in ``tests``:
 #. Call ``session0.endSession()`` and ``session1.endSession``.
 #. If the test includes a list of command-started events in ``expectations``,
    compare them to the actual command-started events using the
-   same logic as the Command Monitoring Spec Tests runner, plus the rules in
+   same logic as the `legacy Command Monitoring Spec Tests runner <https://github.com/mongodb/specifications/blob/09ee1ebc481f1502e3246971a9419e484d736207/source/command-monitoring/tests/README.rst#expectations>`_, plus the rules in
    the Command-Started Events instructions below.
 #. If ``failPoint`` is specified, disable the fail point to avoid spurious
    failures in subsequent tests. The fail point may be disabled like so::
@@ -507,13 +507,13 @@ value "session0" or "session1". Tests MUST assert that the command's actual
 Null Values
 ~~~~~~~~~~~
 
-Some command-started events in ``expectations`` include ``null`` values for
-fields such as ``txnNumber``, ``autocommit``, and ``writeConcern``.
-Tests MUST assert that the actual command **omits** any field that has a
-``null`` value in the expected command.
+Some command-started events in ``expectations`` include ``null`` values for top
+level ``command`` fields such as ``txnNumber``, ``autocommit``, and
+``writeConcern``. Tests MUST assert that the actual command **omits** any field
+that has a ``null`` value in the expected command.
 
 Cursor Id
-^^^^^^^^^
+~~~~~~~~~
 
 A ``getMore`` value of ``"42"`` in a command-started event is a fake cursorId
 that MUST be ignored. (In the Command Monitoring Spec tests, fake cursorIds are
@@ -521,14 +521,14 @@ correlated with real ones, but that is not necessary for Transactions Spec
 tests.)
 
 afterClusterTime
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 A ``readConcern.afterClusterTime`` value of ``42`` in a command-started event
 is a fake cluster time. Drivers MUST assert that the actual command includes an
 afterClusterTime.
 
 recoveryToken
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 A ``recoveryToken`` value of ``42`` in a command-started event is a
 placeholder for an arbitrary recovery token. Drivers MUST assert that the
@@ -603,40 +603,6 @@ instead.
 
 Q & A
 =====
-
-Why do some tests appear to hang for 60 seconds on a sharded cluster?
-`````````````````````````````````````````````````````````````````````
-
-There are two cases where this can happen. When the initial commitTransaction
-attempt fails on mongos A and is retried on mongos B, mongos B will block
-waiting for the transaction to complete. However because the initial commit
-attempt failed, the command will only complete after the transaction is
-automatically aborted for exceeding the shard's
-transactionLifetimeLimitSeconds setting. `SERVER-39726`_ requests that
-recovering the outcome of an uncommitted transaction should immediately abort
-the transaction.
-
-The second case is when a *single-shard* transaction is committed successfully
-on mongos A and then explicitly committed again on mongos B. Mongos B will also
-block until the transactionLifetimeLimitSeconds timeout is hit at which point
-``{ok:1}`` will be returned. `SERVER-39349`_ requests that recovering the
-outcome of a completed single-shard transaction should not block.
-Note that this test suite only includes single shard transactions.
-
-To workaround these issues, drivers SHOULD decrease the transaction timeout
-setting by running setParameter **on each shard**. Setting the timeout to 3
-seconds significantly speeds up the test suite without a high risk of
-prematurely timing out any tests' transactions. To decrease the timeout, run::
-
-  db.adminCommand( { setParameter: 1, transactionLifetimeLimitSeconds: 3 } )
-
-Note that mongo-orchestration >=0.6.13 automatically sets this timeout to 3
-seconds so drivers using mongo-orchestration do not need to run these commands
-manually.
-
-.. _SERVER-39726: https://jira.mongodb.org/browse/SERVER-39726
-
-.. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
 
 Why do tests that run distinct sometimes fail with StaleDbVersion?
 ``````````````````````````````````````````````````````````````````

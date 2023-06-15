@@ -4,7 +4,7 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2022-11-30
+:Last Modified: 2023-02-01
 :Version: 1.12.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -114,9 +114,8 @@ encryptedFields
    .. code::
 
       {
-          "escCollection": "escCollectionName",
-          "eccCollection": "eccCollectionName",
-          "ecocCollection": "ecocCollectionName",
+          "escCollection": "enxcol_.CollectionName.esc",
+          "ecocCollection": "enxcol_.CollectionName.ecoc",
           "fields": [
               {
                   "path": "firstName",
@@ -134,7 +133,6 @@ encryptedFields
 
    The acronyms within ``encryptedFields`` are defined as follows:
 
-   * ECC: Encrypted Cache Collection
    * ECOC: Encrypted Compaction Collection
    * ESC: Encrypted State Collection
 
@@ -914,38 +912,61 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 will be interpreted by the helper method and MUST be passed to the `create`_
 command.
 
-A call to a driver helper ``CreateCollection(collectionName, collectionOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
+.. note::
+   Users are not expected to set the ``escCollection`` and ``ecocCollection`` in
+   ``encryptedFields``. SERVER-74069 added server-side validation for those fields
+   and no longer allows names to deviate from the following:
 
-- The ``encryptedFields`` option passed in ``collectionOptions``.
-- The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
+   - ``enxcol_.<collectionName>.esc``
+   - ``enxcol_.<collectionName>.ecoc``
 
-If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted:
+   Drivers MUST NOT document the ``escCollection`` and ``ecocCollection``
+   options.
 
-- Create the collection with name ``encryptedFields["escCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
-  If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["eccCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
-  If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection with name ``encryptedFields["ecocCollection"]`` as a clustered collection using the options ``{clusteredIndex: {key: {_id: 1}, unique: true}}``.
-  If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
-  Creating this collection MUST NOT check if the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
-- Create the collection ``collectionName`` with ``collectionOptions`` and the option ``encryptedFields`` set to the ``encryptedFields``.
-- Create the the index ``{"__safeContent__": 1}`` on collection ``collectionName``.
+For a helper function, ``CreateCollection(collectionName, collectionOptions)``
+with the name of the database associated as `dbName`, look up the encrypted
+fields ``encryptedFields`` for the collection as
+`GetEncryptedFields(collectionOptions, collectionName, dbName, false)`
+(`See here <GetEncryptedFields_>`_).
+
+If a set of ``encryptedFields`` was found, then do the following operations. If
+any of the following operations error, the remaining operations are not
+attempted:
+
+- Check the wire version of the writable server. If the wire version is less
+  than 21 (for server 7.0.0), return an error containing the error message:
+  "Driver support of Queryable Encryption is incompatible with server. Upgrade
+  server to use Queryable Encryption."
+- Create the collection with name ``encryptedFields["escCollection"]`` as a
+  clustered collection using the options
+  ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
+  ``encryptedFields["escCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.esc``. Creating this collection MUST NOT check if
+  the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+  the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection with name ``encryptedFields["ecocCollection"]`` as a
+  clustered collection using the options
+  ``{clusteredIndex: {key: {_id: 1}, unique: true}}``. If
+  ``encryptedFields["ecocCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.ecoc``. Creating this collection MUST NOT check if
+  the collection namespace is in the ``AutoEncryptionOpts.encryptedFieldsMap``.
+- Create the collection ``collectionName`` with ``collectionOptions`` and the
+  option ``encryptedFields`` set to the ``encryptedFields``.
+- Create the the index ``{"__safeContent__": 1}`` on collection
+  ``collectionName``.
 
 
 Create Encrypted Collection Helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To support automatic generation of encryption data keys, a helper
-`CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, dkOpts)`
+`CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, masterKey)`
 is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
-KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
+KMSProviderName_ and `masterKey` is equivalent to the `masterKey` defined in DataKeyOpts_.
+It has the following behavior:
 
-- Let `dbName` be the name of `database`. Look up the encrypted fields `EF` for
-  the new collection as `GetEncryptedFields(collOpts, collName, dbName, false)`
-  (`See here <GetEncryptedFields_>`_).
-- If `EF` is *not-found*, report an error that there are no ``encryptedFields``
+- If `collOpts` contains an ``"encryptedFields"`` property, then `EF` is the value
+  of that property.  Otherwise, report an error that there are no ``encryptedFields``
   defined for the collection.
 - Let `EF'` be a copy of `EF`. Update `EF'` in the following manner:
 
@@ -957,6 +978,7 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
     - Otherwise, if `F` has a ``"keyId"`` named element `K` and `K` is a
       ``null`` value:
 
+      - Create a DataKeyOpts_ named `dkOpts` with the `masterKey` argument.
       - Let `D` be the result of ``CE.createDataKey(kmsProvider, dkOpts)``.
       - If generating `D` resulted in an error `E`, the entire
         `CreateEncryptedCollection` must now fail with error `E`. Return the
@@ -969,7 +991,15 @@ KMSProviderName_ and `dkOpts` is a DataKeyOpts_. It has the following behavior:
 
 - Invoke the ``CreateCollection`` helper as
   `CreateCollection(database, collName, collOpts')`. Return the resulting
-  collection and the generated `EF'`.
+  collection and the generated `EF'`. If an error occurred, return the
+  resulting `EF` with the error so that the caller may know what datakeys
+  have already been created by the helper.
+
+
+Drivers MUST document that `createEncryptedCollection` does not affect any
+auto encryption settings on existing MongoClients that are already configured with 
+auto encryption.  Users must configure auto encryption after creating the 
+encrypted collection with the `createEncryptedCollection` helper.
 
 
 Drop Collection Helper
@@ -980,20 +1010,33 @@ Drivers MUST support a BSON document option named ``encryptedFields`` for any
 ``Collection.drop()``). This option will only be interpreted by the helper
 method and MUST NOT be passed to the `drop`_ command.
 
-A call to a driver helper ``Collection.Drop(dropOptions)`` must check if the collection namespace (``<databaseName>.<collectionName>``) has an associated ``encryptedFields``. Check for an associated ``encryptedFields`` from the following:
+.. note::
+   Users are not expected to set the ``escCollection`` and ``ecocCollection`` in
+   ``encryptedFields``. SERVER-74069 added server-side validation for those fields
+   and no longer allows names to deviate from the following:
 
-- The ``encryptedFields`` option passed in ``dropOptions``.
-- The value of ``AutoEncryptionOpts.encryptedFieldsMap[<databaseName>.<collectionName>]``.
-- If ``AutoEncryptionOpts.encryptedFieldsMap`` is not null, run a ``listCollections`` command on the database ``databaseName`` with the filter ``{ "name": "<collectionName>" }``. Check the returned ``options`` for the ``encryptedFields`` option.
+   - ``enxcol_.<collectionName>.esc``
+   - ``enxcol_.<collectionName>.ecoc`
 
-If the collection namespace has an associated ``encryptedFields``, then do the following operations. If any of the following operations error, the remaining operations are not attempted. A ``namespace not found`` error returned from the server (server error code 26) MUST be ignored:
+   Drivers SHOULD NOT document the ``escCollection`` and ``ecocCollection``
+   options.
 
-- Drop the collection with name ``encryptedFields["escCollection"]``.
-  If ``encryptedFields["escCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.esc``.
-- Drop the collection with name ``encryptedFields["eccCollection"]``.
-  If ``encryptedFields["eccCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecc``.
-- Drop the collection with name ``encryptedFields["ecocCollection"]``.
-  If ``encryptedFields["ecocCollection"]`` is not set, use the collection name ``enxcol_.<collectionName>.ecoc``.
+For a helper function ``DropCollection(dropOptions)`` with associated collection
+named `collName` and database named `dbName`, look up the encrypted fields
+``encryptedFields`` as `GetEncryptedFields(dropOptions, collName, dbname, true)`
+(`See here <GetEncryptedFields_>`_).
+
+If a set of ``encryptedFields`` was found, then perform the following
+operations. If any of the following operations error, the remaining operations
+are not attempted. A ``namespace not found`` error returned from the server
+(server error code 26) MUST be ignored:
+
+- Drop the collection with name ``encryptedFields["escCollection"]``. If
+  ``encryptedFields["escCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.esc``.
+- Drop the collection with name ``encryptedFields["ecocCollection"]``. If
+  ``encryptedFields["ecocCollection"]`` is not set, use the collection name
+  ``enxcol_.<collectionName>.ecoc``.
 - Drop the collection ``collectionName``.
 
 .. default-role:: literal
@@ -1011,7 +1054,7 @@ ClientEncryption
       // create a collection with encrypted fields, automatically allocating and assigning new data encryption
       // keys. It returns a handle to the new collection, as well as a document consisting of the generated
       // "encryptedFields" options. Refer to "Create Encrypted Collection Helper"
-      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, dkOpts: DataKeyOpts): [Collection, Document];
+      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, masterKey: Optional<Document>): [Collection, Document];
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
@@ -1254,7 +1297,7 @@ EncryptOpts
 
    // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
    // RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
-   // min, max, sparsity, and range must match the values set in the encryptedFields of the destination collection.
+   // min, max, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
    // For double and decimal128, min/max/precision must all be set, or all be unset.
    class RangeOpts {
       // min is required if precision is set.
@@ -2075,9 +2118,11 @@ endSessions              BYPASS
 startSession             BYPASS
 create                   BYPASS
 createIndexes            BYPASS
+createSearchIndexes      BYPASS
 drop                     BYPASS
 dropDatabase             BYPASS
 dropIndexes              BYPASS
+dropSearchIndex          BYPASS
 killCursors              BYPASS
 listCollections          BYPASS
 listDatabases            BYPASS
@@ -2089,6 +2134,7 @@ killAllSessions          BYPASS
 killSessions             BYPASS
 killAllSessionsByPattern BYPASS
 refreshSessions          BYPASS
+updateSearchIndex        BYPASS
 ======================== ===========
 
 All AUTOENCRYPT commands are sent to mongocryptd, even if there is no
@@ -2687,6 +2733,11 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2023-03-30: Remove ECC collection
+:2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
+:2023-01-31: ``createEncryptedCollection`` does not check AutoEncryptionOptions for the encryptedFieldsMap.
+:2023-01-30: Return ``encryptedFields`` on ``CreateCollection`` error.
+:2023-01-26: Use GetEncryptedFields_ in more helpers.
 :2022-11-30: Add ``Range``.
 :2022-11-28: Permit `tlsDisableOCSPEndpointCheck` in KMS TLS options.
 :2022-11-27: Fix typo for references to ``cryptSharedLibRequired`` option.

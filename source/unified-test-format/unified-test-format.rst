@@ -262,6 +262,14 @@ Test runners MUST support the following types of entities:
   operation.
 
   See `Cursor Operations`_ for a list of operations.
+
+- CommandCursor. These entities are not defined in `createEntities`_ but are
+  instead created by using `operation.saveResultAsEntity
+  <operation_saveResultAsEntity_>`_ with a `createCommandCursor`_
+  operation.
+
+  See `Cursor Operations`_ for a list of operations.
+
 - Event list. See
   `storeEventsAsEntities <entity_client_storeEventsAsEntities_>`_. The event
   list MUST store BSON documents. The type of the list itself is not prescribed
@@ -396,15 +404,24 @@ The structure of this object is as follows:
 
 - ``topologies``: Optional array of one or more strings. Server topologies
   against which the tests can be run successfully. Valid topologies are
-  "single", "replicaset", "sharded", "load-balanced", and
-  "sharded-replicaset" (i.e. sharded cluster backed by replica sets). If this
-  field is omitted, there is no topology requirement for the test.
+  "single", "replicaset", "sharded", "load-balanced", and "sharded-replicaset"
+  (i.e. sharded cluster backed by replica sets). If this field is omitted, there
+  is no topology requirement for the test.
 
   When matching a "sharded-replicaset" topology, test runners MUST ensure that
   all shards are backed by a replica set. The process for doing so is described
   in `Determining if a Sharded Cluster Uses Replica Sets`_. When matching a
   "sharded" topology, test runners MUST accept any type of sharded cluster (i.e.
   "sharded" implies "sharded-replicaset", but not vice versa).
+
+  The "sharded-replicaset" topology type is deprecated. MongoDB 3.6+ requires
+  that all shard servers be replica sets (see:
+  `release notes <https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-sharded-cluster/#shard-replica-sets>`__).
+  Therefore, tests SHOULD use "sharded" instead of "sharded-replicaset" when
+  targeting 3.6+ server versions in order to avoid unnecessary overhead.
+
+  Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded
+  cluster behind a load balancer implicitly uses replica sets for its shards.
 
 - ``serverless``: Optional string. Whether or not the test should be run on
   Atlas Serverless instances. Valid values are "require", "forbid", and "allow".
@@ -568,6 +585,8 @@ The structure of this object is as follows:
     - `connectionCheckedInEvent <expectedEvent_connectionCheckedInEvent_>`_
 
     - `serverDescriptionChangedEvent <expectedEvent_serverDescriptionChangedEvent_>`_
+
+    - `topologyDescriptionChangedEvent <expectedEvent_topologyDescriptionChangedEvent_>`_
 
   .. _entity_client_ignoreCommandMonitoringEvents:
 
@@ -1360,6 +1379,12 @@ The structure of this object is as follows:
     <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`__
     for a list of valid values.
 
+.. _expectedEvent_topologyDescriptionChangedEvent:
+
+- ``topologyDescriptionChangedEvent``: Optional object. If present, this object
+  MUST be an empty document as no assertions are currently supported for
+  `TopologyDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
+
 hasServiceId
 `````````````
 
@@ -1644,7 +1669,7 @@ the topology. For languages that rely on built-in language mechanisms such as re
 counting to automatically close/deinitialize clients once they go out of scope, this may
 require implementing an abstraction to allow a client entity's underlying client to be set
 to null. Because drivers do not consistently propagate errors encountered while closing a
-client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or 
+client, test files SHOULD NOT specify `expectResult <operation_expectResult_>`_ or
 `expectError <operation_expectError_>`_ for this operation. Test files SHOULD NOT
 specify any operations for a client entity or any entity descended from it following
 a `close` operation on it, as driver behavior when an operation is attempted on a closed
@@ -1761,11 +1786,9 @@ runCommand
 
 Generic command runner.
 
-This method does not inherit a read concern or write concern (per the
-`Read and Write Concern <../read-write-concern/read-write-concern.rst#generic-command-method>`__
-spec), nor does it inherit a read preference (per the
+This method does not inherit a read preference (per the
 `Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
-spec); however, they may be specified as arguments.
+spec); however, ``readPreference`` may be specified as an argument.
 
 The following arguments are supported:
 
@@ -1775,14 +1798,55 @@ The following arguments are supported:
   by languages that are unable preserve the order of keys in the ``command``
   argument when parsing YAML/JSON.
 
-- ``readConcern``: Optional object. See `commonOptions_readConcern`_.
+- ``readPreference``: Optional object. See `commonOptions_readPreference`_.
+
+- ``session``: Optional string. See `commonOptions_session`_.
+
+runCursorCommand
+~~~~~~~~~~~~~~~~
+
+`Generic cursor returning command runner <../run-command/run-command.rst>`__.
+
+This method does not inherit a read preference (per the
+`Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
+spec); however, ``readPreference`` may be specified as an argument.
+
+This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).
+
+When executing the provided command, the test runner MUST fully iterate the cursor.
+This will ensure consistent behavior between drivers that eagerly create a server-side cursor and those that do so lazily when iteration begins.
+
+The following arguments are supported:
+
+- ``command``: Required document. The command to be executed.
+
+- ``commandName``: Required string. The name of the command to run. This is used
+  by languages that are unable preserve the order of keys in the ``command``
+  argument when parsing YAML/JSON.
 
 - ``readPreference``: Optional object. See `commonOptions_readPreference`_.
 
 - ``session``: Optional string. See `commonOptions_session`_.
 
-- ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
+- ``batchSize``: Optional positive integer value. Use this value to configure the ``batchSize`` option sent on subsequent ``getMore`` commands.
 
+- ``maxTimeMS``: Optional non-negative integer value. Use this value to configure the ``maxTimeMS`` option sent on subsequent ``getMore`` commands.
+
+- ``comment``: Optional BSON value. Use this value to configure the ``comment`` option sent on subsequent ``getMore`` commands.
+
+- ``cursorType``: Optional string enum value, one of ``'tailable' | 'tailableAwait' | 'nonTailable'``. Use this value to configure the enum passed to the ``cursorType`` option.
+
+- ``timeoutMode``: Optional string enum value, one of ``'iteration' | 'cursorLifetime'``. Use this value to configure the enum passed to the ``timeoutMode`` option.
+
+createCommandCursor
+~~~~~~~~~~~~~~~~~~~
+
+This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).
+Test runners MUST ensure that the server-side cursor is created (i.e. the command document has executed) as part of this operation and before the resulting cursor might be saved with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+Test runners for drivers that lazily execute the command on the first iteration of the cursor MUST iterate the resulting cursor once.
+The result from this iteration MUST be used as the result for the first iteration operation on the cursor.
+
+Test runners MUST NOT iterate the resulting cursor when executing this operation and test files SHOULD NOT specify `operation.expectResult <operation_expectResult_>`_ for this operation.
 
 watch
 ~~~~~
@@ -1799,8 +1863,7 @@ specifications:
 
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `CRUD <../crud/crud.rst>`__
-- `Enumerating Indexes <../enumerate-indexes.rst>`__
-- `Index Management <../index-management.rst>`__
+- `Index Management <../index-management/index-management.rst>`__
 
 Collection operations that require special handling or are not documented by an
 existing specification are described below.
@@ -1912,6 +1975,25 @@ Test runners MUST NOT iterate the resulting cursor when executing this
 operation and test files SHOULD NOT specify `operation.expectResult
 <operation_expectResult_>`_ for this operation.
 
+createSearchIndex
+~~~~~~~~~~~~~~~~~
+
+This operations proxies the collection's ``createSearchIndex`` helper with the same arguments.
+
+Each ``createSearchIndex`` operation receives a `SearchIndexModel <https://github.com/mongodb/specifications/blob/master/source/index-management/index-management.rst#common-interfaces>`.  
+If a driver has chosen to implement the ``createSearchIndex(name: String, definition: Document)`` overload 
+of ``createSearchIndex``, then the ``SearchIndexModel`` should be parsed by ``createSearchIndex`` unified 
+test runner helper and the correct arguments should be passed into the driver's helper.
+
+createSearchIndexes
+~~~~~~~~~~~~~~~~~~~
+
+This operations proxies the collection's ``createSearchIndexes`` helper with the same arguments.
+
+dropSearchIndex
+~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``dropSearchIndex`` helper with the same arguments.
 
 find
 ~~~~
@@ -1956,6 +2038,18 @@ examples::
       expectResult:
         $$unsetOrMatches:
           insertedId: { $$unsetOrMatches: 2 }
+
+
+listSearchIndexes
+~~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``listSearchIndexes`` helper and returns the result
+of the cursor as a list.
+
+updateSearchIndex
+~~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``updateSearchIndex`` helper with the same arguments.
 
 
 watch
@@ -2075,7 +2169,7 @@ Cursor Operations
 There are no defined APIs for change streams and cursors since the
 mechanisms for iteration may differ between synchronous and asynchronous
 drivers. To account for this, this section explicitly defines the supported
-operations for the ``ChangeStream`` and ``FindCursor`` entity types.
+operations for the ``ChangeStream``, ``FindCursor``, and ``CommandCursor`` entity types.
 
 Test runners MUST ensure that the iteration operations defined in this
 section will not inadvertently skip the first document for a cursor. Albeit
@@ -3305,7 +3399,7 @@ $$matchAsRoot
 `````````````
 This operator may be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_) and the expected and actual values
-are documents. The test runner MUST treat the expected value as a root-level
+are documents. The test runner MUST treat the actual value as a root-level
 document as described in `Evaluating Matches`_ and match it against the expected
 value.
 
@@ -3768,12 +3862,15 @@ Determining if a Sharded Cluster Uses Replica Sets
 --------------------------------------------------
 
 When connected to a mongos server, the test runner can query the
-`config.shards <https://www.mongodb.com/docs/manual/reference/config-database/#config.shards>`__
+`config.shards <https://www.mongodb.com/docs/manual/reference/config-database/#mongodb-data-config.shards>`__
 collection. Each shard in the cluster is represented by a document in this
 collection. If the shard is backed by a single server, the ``host`` field will
 contain a single host. If the shard is backed by a replica set, the ``host``
 field contain the name of the replica followed by a forward slash and a
 comma-delimited list of hosts.
+
+Note: MongoDB 3.6+ requires that all shard servers be replica sets (see:
+`release notes <https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-sharded-cluster/#shard-replica-sets>`__).
 
 
 Design Rationale
@@ -3898,13 +3995,22 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+:2023-05-26: **Schema version 1.14.** 
+             Add ``topologyDescriptionChangedEvent``.
+:2023-05-17: Add ``runCursorCommand`` and ``createCommandCursor`` operations.
+             Added ``commandCursor`` entity type which can be used with existing cursor operations.
+:2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+
+             requires replica sets for shards, which is also relevant to load
+             balanced topologies.
+:2023-04-13: Remove ``readConcern`` and ``writeConcern`` options from ``runCommand`` operation.
+:2023-02-24: Fix typo in the description of the ``$$matchAsRoot`` matching operator.
 :2022-10-17: Add description of a `close` operation for client entities.
 :2022-10-14: **Schema version 1.13.**
-            Add support for logging assertions via the ``observeLogMessages`` field
-            for client entities, along with a new top-level field ``expectLogMessages``
-            containing ``expectedLogMessagesForClient`` objects.
-            Add new special matching operators to enable command logging assertions,
-            ``$$matchAsDocument`` and ``$$matchAsRoot``.
+             Add support for logging assertions via the ``observeLogMessages`` field
+             for client entities, along with a new top-level field ``expectLogMessages``
+             containing ``expectedLogMessagesForClient`` objects.
+             Add new special matching operators to enable command logging assertions,
+             ``$$matchAsDocument`` and ``$$matchAsRoot``.
 :2022-10-14: **Schema version 1.12.**
              Add ``errorResponse`` to ``expectedError``.
 :2022-10-05: Remove spec front matter, add "Current Schema Version" field, and

@@ -906,7 +906,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        *  The ID of the Connection
        */
-      connectionId: number;
+      connectionId: int64;
     }
 
     /**
@@ -921,7 +921,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        *  The ID of the Connection
        */
-      connectionId: number;
+      connectionId: int64;
     }
 
     /**
@@ -936,7 +936,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        *  The ID of the Connection
        */
-      connectionId: number;
+      connectionId: int64;
     
       /**
        * A reason explaining why this Connection was closed.
@@ -993,7 +993,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        *  The ID of the Connection
        */
-      connectionId: number;
+      connectionId: int64;
     }
 
     /**
@@ -1008,7 +1008,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        *  The ID of the Connection
        */
-      connectionId: number;
+      connectionId: int64;
     }
 
 Connection Pool Logging
@@ -1181,7 +1181,7 @@ In addition to the common fields defined above, this message MUST contain the fo
      - "Connection created"
 
    * - driverConnectionId
-     - Int
+     - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -1205,7 +1205,7 @@ In addition to the common fields defined above, this message MUST contain the fo
      - "Connection ready"
 
    * - driverConnectionId
-     - Int
+     - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -1229,7 +1229,7 @@ In addition to the common fields defined above, this message MUST contain the fo
      - "Connection closed"
 
    * - driverConnectionId
-     - Int
+     - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
    * - reason
@@ -1322,7 +1322,7 @@ In addition to the common fields defined above, this message MUST contain the fo
      - "Connection checked out"
 
    * - driverConnectionId
-     - Int
+     - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -1346,7 +1346,7 @@ In addition to the common fields defined above, this message MUST contain the fo
      - "Connection checked in"
 
    * - driverConnectionId
-     - Int
+     - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -1561,7 +1561,8 @@ Changelog
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-10-14: Add connection pool log messages and associated tests.
-:2022-01-20: Clarify error handling semantics and add associated tests.
+:2023-04-17: Fix duplicate logging test description.
+:2023-06-15: Clarify error handling semantics and add associated tests.
 
 ----
 
