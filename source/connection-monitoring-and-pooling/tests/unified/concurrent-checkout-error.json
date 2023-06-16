@@ -1,0 +1,250 @@
+{
+  "description": "concurrent-checkout-error",
+  "schemaVersion": "1.10",
+  "createEntities": [
+    {
+      "client": {
+        "id": "setupClient",
+        "useMultipleMongoses": false
+      }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "cmap-network-error",
+      "databaseName": "cmap-tests",
+      "documents": [
+        {
+          "_id": 1
+        },
+        {
+          "_id": 2
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "description": "Pool properly handles multiple concurrent network errors on check out",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4",
+          "serverless": "forbid",
+          "topologies": [
+            "single",
+            "replicaset",
+            "sharded"
+          ]
+        }
+      ],
+      "operations": [
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "observeEvents": [
+                    "poolReadyEvent",
+                    "poolClearedEvent"
+                  ],
+                  "uriOptions": {
+                    "retryWrites": false,
+                    "retryReads": false,
+                    "appname": "poolConcurrentCheckOutErrorTest",
+                    "serverSelectionTimeoutMS": 100,
+                    "waitQueueTimeoutMS": 30000,
+                    "directConnection": true
+                  }
+                }
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "cmap-tests"
+                }
+              },
+              {
+                "collection": {
+                  "id": "collection",
+                  "database": "database",
+                  "collectionName": "cmap-network-error"
+                }
+              },
+              {
+                "thread": {
+                  "id": "thread0"
+                }
+              },
+              {
+                "thread": {
+                  "id": "thread1"
+                }
+              },
+              {
+                "thread": {
+                  "id": "thread2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "poolReadyEvent": {}
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "setupClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 50
+              },
+              "data": {
+                "failCommands": [
+                  "hello",
+                  "isMaster"
+                ],
+                "appName": "poolConcurrentCheckOutErrorTest",
+                "closeConnection": true,
+                "blockConnection": true,
+                "blockTimeMS": 1000
+              }
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread0",
+            "operation": {
+              "name": "find",
+              "object": "collection",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                }
+              },
+              "expectError": {
+                "isError": true
+              }
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1",
+            "operation": {
+              "name": "find",
+              "object": "collection",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                }
+              },
+              "expectError": {
+                "isError": true
+              }
+            }
+          }
+        },
+        {
+          "name": "runOnThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread2",
+            "operation": {
+              "name": "find",
+              "object": "collection",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                }
+              },
+              "expectError": {
+                "isError": true
+              }
+            }
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread0"
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread1"
+          }
+        },
+        {
+          "name": "waitForThread",
+          "object": "testRunner",
+          "arguments": {
+            "thread": "thread2"
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "poolClearedEvent": {}
+            },
+            "count": 1
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "eventType": "cmap",
+          "events": [
+            {
+              "poolReadyEvent": {}
+            },
+            {
+              "poolClearedEvent": {}
+            }
+          ]
+        }
+      ],
+      "outcome": [
+        {
+          "collectionName": "cmap-network-error",
+          "databaseName": "cmap-tests",
+          "documents": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
