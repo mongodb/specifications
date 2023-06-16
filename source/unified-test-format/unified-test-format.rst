@@ -1253,6 +1253,10 @@ The structure of this object is as follows:
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
 
+  - ``databaseName``: Optional string. Test runners MUST assert that the
+    database name matches this value. The YAML file SHOULD use an `alias node`_
+    for this value (e.g. ``databaseName: *database0Name``).
+
   - ``hasServiceId``: Defined in `hasServiceId`_.
 
   - ``hasServerConnectionId``: Defined in `hasServerConnectionId`_.
@@ -1267,6 +1271,10 @@ The structure of this object is as follows:
 
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
+
+  - ``databaseName``: Optional string. Test runners MUST assert that the
+    database name matches this value. The YAML file SHOULD use an `alias node`_
+    for this value (e.g. ``databaseName: *database0Name``).
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
 
