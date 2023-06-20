@@ -4003,6 +4003,8 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+:2023-06-13: **Schema version 1.15.**
+             Add ``databaseName`` field to ``CommandFailedEvent`` and ``CommandSucceededEvent``.
 :2023-05-26: **Schema version 1.14.** 
              Add ``topologyDescriptionChangedEvent``.
 :2023-05-17: Add ``runCursorCommand`` and ``createCommandCursor`` operations.
