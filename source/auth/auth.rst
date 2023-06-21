@@ -1256,6 +1256,8 @@ mechanism_properties
     TOKEN_AUDIENCE
         The authorization token audience claim, needed for the "azure"
         provider.
+    TOKEN_CLIENT_ID
+        The client id to associate with a token, needed for the "azure" provider.
     REQUEST_TOKEN_CALLBACK
         Drivers MUST allow the user to specify a callback of the form
         "onRequest" (defined below), if the driver supports
@@ -1366,21 +1368,52 @@ attempt to read the value given by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and
 interpret it as a file path.  The contents of the file are read as the
 access token.  If the path does not exist or cannot be read, or the environment variable does not exist, the driver MUST raise an error.
 
-
 AZURE
 _____
 When the PROVIDER_NAME mechanism property is set to "azure", the driver MUST
-attempt to retrieve a credential from the Azure Instance Metadata Service (IMDS).
+attempt to retrieve a credential from the Azure Instance Metadata Service (IMDS).  `See this documentation for more information`__
+
 The driver MUST ensure that the TOKEN_AUDIENCE mechanism property is set when
-the PROVIDER_NAME is "azure".
+the PROVIDER_NAME is "azure".  The TOKEN_AUDIENCE will typically be an encoded
+Application ID URI of the form: ``api%3A%2F%2F<application-id>``.
 
-The driver MUST use the same procedure given in `Obtaining an Access Token for Azure Key Vault`_ to
-obtain an access token, with the one exception of using the TOKEN_AUDIENCE as
-the ``resource`` parameter.  The azure credentials MUST be cached by
-TOKEN_AUDIENCE, and expire within 5 minutes of the time given by the
-``expires_in`` parameter of the IMDS response.
+__ https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
 
-.. _Obtaining an Access Token for Azure Key Vault: https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault
+.. default-role:: math
+
+To obtain an Azure token, the below steps should be taken:
+
+1. Let `U` be a new URL, initialized from the URL string
+   :ts:`"http://169.254.169.254/metadata/identity/oauth2/token"`
+2. Add a query parameter ``api-version=2018-02-01`` to `U`.
+3. Add a query parameter ``resource=TOKEN_AUDIENCE`` to `U`.
+4. If TOKEN_CLIENT_ID is given, add a query parameter ``client_id=TOKEN_CLIENT_ID`` to `U`.
+5. Prepare an HTTP GET request `Req` based on `U`.
+
+   .. note:: All query parameters on `U` should be appropriately percent-encoded
+
+6. Add HTTP headers ``Metadata: true`` and ``Accept: application/json`` to
+   `Req`.
+7. Issue `Req` to the Azure IMDS server ``169.254.169.254:80``. Let `Resp` be
+   the response from the server. If the HTTP response is not completely received
+   within ten seconds, consider the request to have timed out, and return an
+   error instead of an access token.
+8. If `Resp_{status} ≠ 200`, obtaining the access token has failed, and the HTTP
+   response body of `Resp` encodes information about the error that occurred.
+   Return an error including the HTTP response body instead of an access token.
+9. Otherwise, let `J` be the JSON document encoded in the HTTP response body of
+   `Resp`.
+10. The result access token `T` is given as the ``access_token`` string property
+   of `J`. Return `T` as the resulting access token.
+12. The resulting "expires in" duration `d_{exp}` is a count of seconds given as
+    an ASCII-encoded integer string ``expires_in`` property of `J`.
+
+.. note::
+
+   If JSON decoding of `Resp` fails, or the ``access_token`` property is absent
+   from `J`, this is a protocol error from IMDS. Indicate this error to the
+   requester of the access token.
+
 
 Caching Credentials
 ```````````````````
