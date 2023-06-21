@@ -270,6 +270,11 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     commandName: String;
 
     /**
+     * Returns the database name.
+     */
+    databaseName: String;
+
+    /**
      * Returns the driver generated request id.
      */
     requestId: Int64;
@@ -316,6 +321,11 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
      * Returns the command name.
      */
     commandName: String;
+
+    /**
+     * Returns the database name.
+     */
+    databaseName: String;
 
     /**
      * Returns the failure. Based on the language, this SHOULD be a message string, exception
@@ -560,3 +570,4 @@ Changelog
              default port 27017 when relevant. Updated suggested unstructured forms of log messages to more
              clearly label connection IDs and use more readable server address representations.
 :2023-03-23: Updated ``serverConnectionId`` field to be Int64 as long-running servers can return Int64.
+:2023-06-13: Added ``databaseName`` field to ``CommandFailedEvent`` and ``CommandSucceededEvent``.
