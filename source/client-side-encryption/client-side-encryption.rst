@@ -1339,7 +1339,7 @@ NOTE: The Range algorithm is experimental only. It is not intended for public us
 contentionFactor
 ^^^^^^^^^^^^^^^^
 contentionFactor only applies when algorithm is "Indexed" or "RangePreview".
-It is an error to set contentionFactor when algorithm is not "Indexed".
+It is an error to set contentionFactor when algorithm is not "Indexed" or "RangePreview".
 
 NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
