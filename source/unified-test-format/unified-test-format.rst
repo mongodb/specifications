@@ -456,9 +456,17 @@ The structure of this object is as follows:
   If this field is omitted, there is no authentication requirement.
 
 - ``csfle``: Optional boolean. If true, the tests MUST only run if the driver
-  and server support Client-Side Field Level Encryption. A server supports
-  CSFLE if it is version 4.2.0 or higher. If false, tests MUST only run if
-  CSFLE is not enabled. If this field is omitted, there is no CSFLE requirement.
+  and server support Client-Side Field Level Encryption. CSFLE is supported when
+  all of the following are true:
+
+   - Server version is 4.2.0 or higher
+   - Driver has libmongocrypt enabled
+   - At least one of `crypt_shared <../client-side-encryption/client-side-encryption.rst#crypt-shared>`__
+     and/or `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`__
+     is available
+
+  If false, tests MUST NOT run if CSFLE is supported. If this field is omitted,
+  there is no CSFLE requirement.
 
 Test runners MAY evaluate these conditions in any order. For example, it may be
 more efficient to evaluate ``serverless`` or ``auth`` before communicating with
@@ -4003,6 +4011,9 @@ Changelog
 
 ..
   Please note schema version bumps in changelog entries where applicable.
+
+:2023-06-23: ``runOnRequirement.csfle`` should check for crypt_shared and/or
+             mongocryptd.
 :2023-06-13: **Schema version 1.15.**
              Add ``databaseName`` field to ``CommandFailedEvent`` and ``CommandSucceededEvent``.
 :2023-05-26: **Schema version 1.14.** 
