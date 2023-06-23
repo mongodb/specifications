@@ -167,7 +167,7 @@ Do the following before running spec tests:
 - If available for the platform under test, obtain a crypt_shared_ binary and place it
   in a location accessible to the tests. Refer to: `Using crypt_shared`_
 - Start the mongocryptd process.
-- Start a mongod process with **server version 4.1.9 or later**.
+- Start a mongod process with **server version 4.2.0 or later**.
 - Place credentials to an AWS IAM user (access key ID + secret access key) somewhere in the environment outside of tracked code. (If testing on evergreen, project variables are a good place).
 - Start a KMIP test server on port 5698 by running `drivers-evergreen-tools/.evergreen/csfle/kms_kmip_server.py <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
@@ -1324,7 +1324,7 @@ Setup
 
 For both tests, do the following:
 
-#. Start a ``mongod`` process with **server version 4.1.9 or later**.
+#. Start a ``mongod`` process with **server version 4.2.0 or later**.
 
 #. Create a ``MongoClient`` for key vault operations.
 
@@ -1376,7 +1376,7 @@ Invalid Hostname in KMS Certificate
 Setup
 `````
 
-Start a ``mongod`` process with **server version 4.1.9 or later**.
+Start a ``mongod`` process with **server version 4.2.0 or later**.
 
 Four mock KMS server processes must be running:
 
