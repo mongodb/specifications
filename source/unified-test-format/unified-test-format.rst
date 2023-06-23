@@ -452,8 +452,8 @@ The structure of this object is as follows:
 .. _runOnRequirement_auth:
 
 - ``auth``: Optional boolean. If true, the tests MUST only run if authentication
-  is enabled. If false, tests MUST only run if authentication is not enabled.
-  If this field is omitted, there is no authentication requirement.
+  is enabled. If false, tests MUST NOT run if authentication is enabled. If this
+  field is omitted, there is no authentication requirement.
 
 - ``csfle``: Optional boolean. If true, the tests MUST only run if the driver
   and server support Client-Side Field Level Encryption. CSFLE is supported when
