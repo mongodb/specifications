@@ -24,6 +24,18 @@ specification.
 Additional prose tests, that are not represented in the spec tests, are described
 and MUST be implemented by all drivers.
 
+Running spec and prose tests require that the driver and server both support
+Client-Side Field Level Encryption. CSFLE is supported when all of the following
+are true:
+
+- Server version is 4.2.0 or higher. Legacy spec test runners can rely on
+  ``runOn.minServerVersion`` for this check.
+- Driver has libmongocrypt enabled
+- At least one of crypt_shared_ and/or mongocryptd_ is available.
+
+.. _crypt_shared: ../client-side-encryption.rst#crypt_shared
+.. _mongocryptd: ../client-side-encryption.rst#mongocryptd
+
 Spec Test Format
 ================
 
@@ -155,11 +167,9 @@ Do the following before running spec tests:
 - If available for the platform under test, obtain a crypt_shared_ binary and place it
   in a location accessible to the tests. Refer to: `Using crypt_shared`_
 - Start the mongocryptd process.
-- Start a mongod process with **server version 4.1.9 or later**.
+- Start a mongod process with **server version 4.2.0 or later**.
 - Place credentials to an AWS IAM user (access key ID + secret access key) somewhere in the environment outside of tracked code. (If testing on evergreen, project variables are a good place).
 - Start a KMIP test server on port 5698 by running `drivers-evergreen-tools/.evergreen/csfle/kms_kmip_server.py <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
-
-.. _crypt_shared: ../client-side-encryption.rst#crypt_shared
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
@@ -1314,7 +1324,7 @@ Setup
 
 For both tests, do the following:
 
-#. Start a ``mongod`` process with **server version 4.1.9 or later**.
+#. Start a ``mongod`` process with **server version 4.2.0 or later**.
 
 #. Create a ``MongoClient`` for key vault operations.
 
@@ -1366,7 +1376,7 @@ Invalid Hostname in KMS Certificate
 Setup
 `````
 
-Start a ``mongod`` process with **server version 4.1.9 or later**.
+Start a ``mongod`` process with **server version 4.2.0 or later**.
 
 Four mock KMS server processes must be running:
 
