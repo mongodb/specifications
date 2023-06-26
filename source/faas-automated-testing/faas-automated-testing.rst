@@ -267,8 +267,6 @@ variables. An explanation of the required environment is as follows:
 +-------------------------------+-------------------------------------+
 | AWS_SESSION_TOKEN             | Assume role automatically sets this |
 +-------------------------------+-------------------------------------+
-| MONGODB_VERSION               | The major version of the cluster    |
-+-------------------------------+-------------------------------------+
 
 
 Supported Evergreen variants that have the AWS SAM CLI installed:
@@ -295,9 +293,9 @@ functions inside of it for setup, teardown, and execution:
 .. code:: yaml
 
   tasks:
-    - name: test-aws-lambda-deployed
+    - name: "test-aws-lambda-deployed"
       commands:
-        - func: install dependencies
+        - func: "install dependencies"
         - command: ec2.assume_role
           params:
             role_arn: ${LAMBDA_AWS_ROLE_ARN}
@@ -306,20 +304,12 @@ functions inside of it for setup, teardown, and execution:
           params:
             working_dir: src
             binary: bash
+            add_expansions_to_env: true
             args:
               - ${DRIVERS_TOOLS}/.evergreen/aws_lambda/run-deployed-lambda-aws-tests.sh
             env:
-              MONGODB_URI: ${MONGODB_URI}
               TEST_LAMBDA_DIRECTORY: ${PROJECT_DIRECTORY}/test/lambda
-              DRIVERS_TOOLS: ${DRIVERS_TOOLS}
-              DRIVERS_ATLAS_PUBLIC_API_KEY: ${DRIVERS_ATLAS_PUBLIC_API_KEY}
-              DRIVERS_ATLAS_PRIVATE_API_KEY: ${DRIVERS_ATLAS_PRIVATE_API_KEY}
-              DRIVERS_ATLAS_GROUP_ID: ${DRIVERS_ATLAS_GROUP_ID}
-              LAMBDA_STACK_NAME: dbx-node-lambda
               AWS_REGION: us-east-1
-              AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-              AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-              AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
   task_groups:
     - name: test_aws_lambda_task_group
       setup_group:
@@ -328,17 +318,9 @@ functions inside of it for setup, teardown, and execution:
           params:
             working_dir: src
             binary: bash
+            add_expansions_to_env: true
             args:
               - ${DRIVERS_TOOLS}/.evergreen/aws_lambda/setup-atlas-cluster.sh
-            env:
-              DRIVERS_TOOLS: ${DRIVERS_TOOLS}
-              DRIVERS_ATLAS_PUBLIC_API_KEY: ${DRIVERS_ATLAS_PUBLIC_API_KEY}
-              DRIVERS_ATLAS_PRIVATE_API_KEY: ${DRIVERS_ATLAS_PRIVATE_API_KEY}
-              DRIVERS_ATLAS_GROUP_ID: ${DRIVERS_ATLAS_GROUP_ID}
-              DRIVERS_ATLAS_LAMBDA_USER: ${DRIVERS_ATLAS_LAMBDA_USER}
-              DRIVERS_ATLAS_LAMBDA_PASSWORD: ${DRIVERS_ATLAS_LAMBDA_PASSWORD}
-              LAMBDA_STACK_NAME: dbx-node-lambda
-              MONGODB_VERSION: 7.0
         - command: expansions.update
           params:
             file: src/atlas-expansion.yml
@@ -347,18 +329,14 @@ functions inside of it for setup, teardown, and execution:
           params:
             working_dir: src
             binary: bash
+            add_expansions_to_env: true
             args:
               - ${DRIVERS_TOOLS}/.evergreen/aws_lambda/teardown-atlas-cluster.sh
-            env:
-              DRIVERS_TOOLS: ${DRIVERS_TOOLS}
-              DRIVERS_ATLAS_PUBLIC_API_KEY: ${DRIVERS_ATLAS_PUBLIC_API_KEY}
-              DRIVERS_ATLAS_PRIVATE_API_KEY: ${DRIVERS_ATLAS_PRIVATE_API_KEY}
-              DRIVERS_ATLAS_GROUP_ID: ${DRIVERS_ATLAS_GROUP_ID}
-              LAMBDA_STACK_NAME: dbx-node-lambda
       setup_group_can_fail_task: true
       setup_group_timeout_secs: 1800
       tasks:
         - test-aws-lambda-deployed
+
 
 Drivers MUST run the function on a single variant in Evergreen, in order to not
 potentially hit the Atlas API rate limit. The variant itself MUST be either a
