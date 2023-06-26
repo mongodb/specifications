@@ -4012,7 +4012,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2023-06-23: ``runOnRequirement.csfle`` should check for crypt_shared and/or
+:2023-06-26: ``runOnRequirement.csfle`` should check for crypt_shared and/or
              mongocryptd.
 :2023-06-13: **Schema version 1.15.**
              Add ``databaseName`` field to ``CommandFailedEvent`` and ``CommandSucceededEvent``.
