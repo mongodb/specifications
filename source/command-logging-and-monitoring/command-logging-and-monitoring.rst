@@ -399,6 +399,10 @@ The following key-value pairs MUST be included in all command messages:
      - String
      - The command name.
 
+   * - databaseName
+     - String
+     - The database name.
+
    * - requestId
      - Int
      - The driver-generated request ID.
@@ -456,10 +460,6 @@ In addition to the common fields, command started messages MUST contain the foll
        `logging specification <../logging/logging.rst#configurable-max-document-length>`_, and MUST be replaced with an empty document
        "{ }" if the command is considered sensitive.
 
-   * - databaseName
-     - String
-     - The database name.
-
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
   Command "{{commandName}}" started on database "{{databaseName}}" using a connection with driver-generated ID {{driverConnectionId}}
@@ -495,7 +495,7 @@ In addition to the common fields, command succeeded messages MUST contain the fo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Command "{{commandName}}" succeeded in {{durationMS}} ms using a connection with driver-generated ID {{driverConnectionId}} and 
+  Command "{{commandName}}" succeeded on database "{{databaseName}}" in {{durationMS}} ms using a connection with driver-generated ID {{driverConnectionId}} and 
   server-generated ID {{serverConnectionId}} to {{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is
   {{requestId}} and the operation ID is {{operationId}}. Command reply: {{command}}
 
@@ -528,7 +528,7 @@ In addition to the common fields, command failed messages MUST contain the follo
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Command "{{commandName}}" failed in {{durationMS}} ms using a connection with driver-generated ID {{driverConnectionId}} and
+  Command "{{commandName}}" failed on database "{{databaseName}}" in {{durationMS}} ms using a connection with driver-generated ID {{driverConnectionId}} and
   server-generated ID {{serverConnectionId}} to {{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is
   {{requestId}} and the operation ID is {{operationId}}. Error: {{error}}
 
@@ -571,3 +571,4 @@ Changelog
              clearly label connection IDs and use more readable server address representations.
 :2023-03-23: Updated ``serverConnectionId`` field to be Int64 as long-running servers can return Int64.
 :2023-06-13: Added ``databaseName`` field to ``CommandFailedEvent`` and ``CommandSucceededEvent``.
+             Updated suggested unstructured forms of log messages reflecting the changes.
