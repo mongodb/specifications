@@ -238,7 +238,7 @@ Running in CI requires Evergreen to be setup to assume the appropriate role in A
 and then execute the script in drivers-evergreen-tools with the required environment
 variables. An explanation of the required environment is as follows:
 
-+-------------------------------+----------+--------------------------+
++-------------------------------+-------------------------------------+
 | Name                          | Description                         |
 +===============================+=====================================+
 | LAMBDA_AWS_ROLE_ARN           | The role ARN to assume              |
