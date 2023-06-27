@@ -320,7 +320,7 @@ functions inside of it for setup, teardown, and execution:
             binary: bash
             add_expansions_to_env: true
             args:
-              - ${DRIVERS_TOOLS}/.evergreen/aws_lambda/setup-atlas-cluster.sh
+              - ${DRIVERS_TOOLS}/.evergreen/atlas/setup-atlas-cluster.sh
         - command: expansions.update
           params:
             file: src/atlas-expansion.yml
@@ -331,7 +331,7 @@ functions inside of it for setup, teardown, and execution:
             binary: bash
             add_expansions_to_env: true
             args:
-              - ${DRIVERS_TOOLS}/.evergreen/aws_lambda/teardown-atlas-cluster.sh
+              - ${DRIVERS_TOOLS}/.evergreen/atlas/teardown-atlas-cluster.sh
       setup_group_can_fail_task: true
       setup_group_timeout_secs: 1800
       tasks:
