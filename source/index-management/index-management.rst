@@ -896,7 +896,8 @@ An example, from Javascript:
 Where are read concern and write concern?
 -----------------------------------------
 
-Th
+These commands internally proxy the search index management commands to a separate process that runs alongside an Atlas cluster.  As such, read concern and 
+write concern are not relevant for the search index management commands.
 
 Consistency with Existing APIs
 ------------------------------
