@@ -49,13 +49,16 @@ Tests
 Search Index Management Helpers
 -------------------------------
 
-These tests are intended to smoke test the search management helpers e2e.  The search index management commands
-are asynchronous and mongod/mongos returns before the changes to a clusters' search indexes have completed.  When
-these prose tests specify "waiting for the changes", drivers should repeatedly poll the cluster with ``listSearchIndexes``
-until the changes are visible.  Each test specifies the criteria which counts as complete.
+These tests are intended to smoke test the search management helpers end-to-end against a live Atlas cluster.
 
-Since these commands can take a while to run, drivers should raise the timeout for each test to avoid timeout errors.  5 minutes
-is a sufficiently large timeout that any timeout that occurs indicates a real failure.
+The search index management commands are asynchronous and mongod/mongos returns before the changes to a clusters' search indexes have completed.  When
+these prose tests specify "waiting for the changes", drivers should repeatedly poll the cluster with ``listSearchIndexes``
+until the changes are visible.  Each test specifies the condition that is considered "ready".  For example, when creating a 
+new search index, waiting until the inserted index has a status ``queryable: true`` indicates that the index was successfully
+created.
+
+The commands tested in these prose tests take a while to successfully complete.  Drivers should raise the timeout for each test to avoid timeout errors if 
+the test timeout is too low.  5 minutes is a sufficiently large timeout that any timeout that occurs indicates a real failure, but this value is not required and can be tweaked per-driver.
 
 There is a server-side limitation that prevents multiple search indexes from being created with the same name, definition and 
 collection name.  This limitation does not take into account collection uuid.  Because these commands are asynchronous, any cleanup

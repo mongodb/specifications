@@ -414,6 +414,10 @@ Index View API
      * For drivers that cannot make IndexView iterable, they MUST implement this method to
      * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
      *  or language/implementation equivalent.
+     * 
+     *  If drivers are unable to make the IndexView iterable, they MAY opt to provide the options for 
+     *  listing search indexes via the `list` method instead of the `Collection.listSearchIndexes` method.
+
      */
     list(): Cursor;
 
@@ -873,8 +877,8 @@ search index management helpers.
 options as outline in the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_.  Drivers MAY combine the aggregation options with
 any future ``listSearchIndexes`` stage options, if that is idiomatic for a driver's language.
 
-Notes
------
+Asynchronicity
+--------------
 
 The search index commands are asynchronous and return from the server before the index is successfully updated, created or dropped.
 In order to determine when an index has been created / updated, users are expected to run the ``listSearchIndexes`` repeatedly
@@ -888,7 +892,33 @@ An example, from Javascript:
   while (!(await collection.listSearchIndexes({ name }).hasNext())) {
     await setTimeout(1000);
   }
- 
+
+Where are read concern and write concern?
+-----------------------------------------
+
+Th
+
+Consistency with Existing APIs
+------------------------------
+
+Drivers SHOULD strive for a search index management API that is as consistent with their existing search index management API as much as possible.
+
+
+NamespaceNotFound Errors
+------------------------
+
+Some drivers suppress NamespaceNotFound errors for CRUD helpers.  Drivers MAY suppress NamespaceNotFound errors from 
+the search index management helpers.
+
+Drivers MUST suppress NamespaceNotFound errors for the ``dropSearchIndex`` helper.  Drop operations should be idempotent:
+
+.. code:: typescript
+  await collection.dropSearchIndex('my-test-index');
+  // subsequent calls should behave the same for the user as the first call
+  await collection.dropSearchIndex('my-test-index');
+  await collection.dropSearchIndex('my-test-index');
+
+
 Common Interfaces
 -----------------
 
@@ -990,6 +1020,9 @@ Index View API for Search Indexes
      * For drivers that cannot make SearchIndexView iterable, they MUST implement this method to
      * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
      *  or language/implementation equivalent.
+     *  
+     *  If drivers are unable to make the SearchIndexView iterable, they MAY opt to provide the options for 
+     *  listing search indexes via the `list` method instead of the `Collection.listSearchIndexes` method.
      */
     list(): Cursor<Document>;
 
