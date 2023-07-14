@@ -957,7 +957,7 @@ Standard API for Search Indexes
      *   takes an SearchIndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
      */
-    createSearchIndex(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
+    createSearchIndex(definition: Document, name: Optional<string>, options: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * Convenience method for creating a single index.
@@ -1037,7 +1037,7 @@ Index View API for Search Indexes
      *   takes an SearchIndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
      */
-    createOne(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
+    createOne(definition: Document, name: Optional<string>, options: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * This is a convenience method for creating a single index.
