@@ -974,7 +974,7 @@ Index View API for Search Indexes
     /**
      * Returns the search index view for this collection.
      */
-    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexesOptions>): SearchIndexView;
+    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexOptions>): SearchIndexView;
   }
 
   interface SearchIndexView extends Iterable<Document> {
