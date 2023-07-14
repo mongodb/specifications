@@ -1031,7 +1031,7 @@ Index View API for Search Indexes
     /**
      * Updates a single search index from the collection by the index name.
      */
-    updateOne(name: String, options: Optional<UpdateSearchIndexOptions>): Result;
+    updateOne(name: String, definition: Document, options: Optional<UpdateSearchIndexOptions>): Result;
   }
 
 ---------
