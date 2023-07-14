@@ -72,8 +72,9 @@ Setup
 
 These tests must run against an Atlas cluster with a 7.0+ server.  Tools are available drivers-evergreen-tools which can setup and teardown
 Atlas clusters.  To ensure that the Atlas cluster is cleaned up after each CI run, drivers should configure evergreen to run these tests 
-as a part of a task group.  If a driver has an existing task group that creates an Atlas cluster (such as for FAAS testing), this 
-task group may be reused as long as the Atlas cluster provisioned satisfies the needs for these tests.
+as a part of a task group.  Be sure that the cluster gets torn down! 
+
+When working locally on these tests, the same Atlas setup and teardown scripts can be used locally to provision a cluster for development.
 
 Case 1: Driver can successfully create and list search indexes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
