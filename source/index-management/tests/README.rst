@@ -122,10 +122,8 @@ Case 2: Driver can successfully create multiple indexes in batch
 #. Assert that the command does not error and the server responds with a success.
 #. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until the following condition is satisfied.  Store
    the result in ``indexes``.
-   1. An index with the ``name`` of ``test-search-index-1`` is present.  The ``latestDefinition`` property 
-      of the search index has the field ``queryable`` with a value of ``true``.
-   2. An index with the ``name`` of ``test-search-index-2`` is present.  The ``latestDefinition`` property 
-      of the search index has the field ``queryable`` with a value of ``true``.
+   1. An index with the ``name`` of ``test-search-index-1`` is present.  The ``latestDefinition`` property of the search index has the field ``queryable`` with a value of ``true``.
+   2. An index with the ``name`` of ``test-search-index-2`` is present.  The ``latestDefinition`` property of the search index has the field ``queryable`` with a value of ``true``.
 #. For each ``index`` in ``indexDefinitions``
    1. Find the matching index definition in ``indexes`` by matching on ``index.name``.  If no index exists, raise an error.
    2. Assert that the matching index ``mappings``, whose value is ``{ dynamic: false }``
