@@ -914,6 +914,7 @@ the search index management helpers.
 Drivers MUST suppress NamespaceNotFound errors for the ``dropSearchIndex`` helper.  Drop operations should be idempotent:
 
 .. code:: typescript
+
   await collection.dropSearchIndex('my-test-index');
   // subsequent calls should behave the same for the user as the first call
   await collection.dropSearchIndex('my-test-index');
@@ -1005,7 +1006,7 @@ Index View API for Search Indexes
     /**
      * Returns the search index view for this collection.
      */
-    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexesOptions>): SearchIndexView;
+    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexOptions>): SearchIndexView;
   }
 
   interface SearchIndexView extends Iterable<Document> {
@@ -1065,7 +1066,7 @@ Index View API for Search Indexes
     /**
      * Updates a single search index from the collection by the index name.
      */
-    updateOne(name: String, options: Optional<UpdateSearchIndexOptions>): Result;
+    updateOne(name: String, definition: Document, options: Optional<UpdateSearchIndexOptions>): Result;
   }
 
 ---------
