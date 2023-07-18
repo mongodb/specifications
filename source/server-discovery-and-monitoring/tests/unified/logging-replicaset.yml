@@ -1,11 +1,15 @@
-description: "standalone-logging"
+description: "replicaset-logging"
 
-schemaVersion: "1.13"
+schemaVersion: "1.16"
 
 runOnRequirements:
   - topologies:
       - replicaset
     minServerVersion: "4.4" # awaitable hello
+
+createEntities:
+  - client:
+      id: &setupClient setupClient
 
 tests:
   - description: "Topology lifecycle"
@@ -19,21 +23,37 @@ tests:
                 observeLogMessages:
                   topology: debug
                 observeEvents:
-                  - serverDescriptionChangedEvent
+                  - topologyDescriptionChangedEvent
       # ensure the topology has been fully discovered before closing the client.
+      # expected events are initial cluster type change from unknown to ReplicaSet, and connect events for each of 3 servers.
       - name: waitForEvent
         object: testRunner
         arguments:
           client: *client
           event:
-            serverDescriptionChangedEvent:
-              previousDescription:
-                type: Unknown # just look for 3 servers changing from unknown -> anything so the tests work for different RS configurations (e.g. arbiter vs no arbiter.)
-          count: 3
+            topologyDescriptionChangedEvent: {}
+          count: 4
       - name: close
         object: *client
     expectLogMessages:
       - client: *client
+        ignoreMessages:
+          - level: debug
+            component: topology
+            data:
+              message: "Starting server monitoring"
+          - level: debug
+            component: topology
+            data:
+              message: "Server heartbeat started"
+          - level: debug
+            component: topology
+            data:
+              message: "Server heartbeat succeeded"
+          - level: debug
+            component: topology
+            data:
+              message: "Server heartbeat failed"
         messages:
           - level: debug
             component: topology
@@ -46,204 +66,224 @@ tests:
               message: "Topology description changed"
               topologyId: { $$exists: true }
               previousDescription:  { $$exists: true } # unknown topology
-              newDescription: { $$exists: true } # ReplicaSetNoPrimary topology
-          # monitor rs member 1
-          - level: debug
-            component: topology
-            data:
-              message: "Starting server monitoring"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat started"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              # driverConnectionId: { $$exists: true } having the ID up front requires some refactoring for Rust, so commented out for now, but should be possible.
-              serverConnectionId: { $$exists: false } # not yet known so shouldn't be present here.
-              awaited: false # first heartbeat is never awaited
-          # monitor rs member 2
-          - level: debug
-            component: topology
-            data:
-              message: "Starting server monitoring"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat started"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              # driverConnectionId: { $$exists: true } having the ID up front requires some refactoring for Rust, so commented out for now, but should be possible.
-              serverConnectionId: { $$exists: false } # not yet known so shouldn't be present here.
-              awaited: false # first heartbeat is never awaited
-          # monitor rs member 3
-          - level: debug
-            component: topology
-            data:
-              message: "Starting server monitoring"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat started"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              # driverConnectionId: { $$exists: true } having the ID up front requires some refactoring for Rust, so commented out for now, but should be possible.
-              serverConnectionId: { $$exists: false } # not yet known so shouldn't be present here.
-              awaited: false # first heartbeat is never awaited
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat succeeded"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              driverConnectionId: { $$exists: true }
-              serverConnectionId: { $$exists: true } # TODO: only true on 4.2+... write separate tests for < 4.2 and > 4.2?
-              awaited: false
-              durationMS: { $$type: [int, long] }
-              # TODO: this may implicitly require drivers increase max logged doc length in tests. we already say to do this
-              # in the CLAM tests README, should prob mention in SDAM tests README too.
-              reply: 
-                $$matchAsDocument:
-                  $$matchAsRoot:
-                    ok: 1
-          # mark first server with its type and start next awaitable hello
+              newDescription: { $$exists: true } # ReplicaSet topology
           - level: debug
             component: topology
             data:
               message: "Topology description changed"
               topologyId: { $$exists: true }
-              previousDescription:  { $$exists: true } # unknown topology
-              newDescription: { $$exists: true } # single topology
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat started"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              driverConnectionId: { $$exists: true }
-              serverConnectionId: { $$exists: true }
-              awaited: true # only 4.4+; would need separate version of test for < 4.4 with this false.
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat succeeded"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              driverConnectionId: { $$exists: true }
-              serverConnectionId: { $$exists: true } # TODO: only true on 4.2+... write separate tests for < 4.2 and > 4.2?
-              awaited: false
-              durationMS: { $$type: [int, long] }
-              # TODO: this may implicitly require drivers increase max logged doc length in tests. we already say to do this
-              # in the CLAM tests README, should prob mention in SDAM tests README too.
-              reply: 
-                $$matchAsDocument:
-                  $$matchAsRoot:
-                    ok: 1
-          # mark second server with its type and start next awaitable hello
+              previousDescription:  { $$exists: true }
+              newDescription: { $$exists: true } # server connected
           - level: debug
             component: topology
             data:
               message: "Topology description changed"
               topologyId: { $$exists: true }
-              previousDescription:  { $$exists: true } # unknown topology
-              newDescription: { $$exists: true } # single topology
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat started"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              driverConnectionId: { $$exists: true }
-              serverConnectionId: { $$exists: true }
-              awaited: true # only 4.4+; would need separate version of test for < 4.4 with this false.
-          - level: debug
-            component: topology
-            data:
-              message: "Server heartbeat succeeded"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              driverConnectionId: { $$exists: true }
-              serverConnectionId: { $$exists: true } # TODO: only true on 4.2+... write separate tests for < 4.2 and > 4.2?
-              awaited: false
-              durationMS: { $$type: [int, long] }
-              # TODO: this may implicitly require drivers increase max logged doc length in tests. we already say to do this
-              # in the CLAM tests README, should prob mention in SDAM tests README too.
-              reply: 
-                $$matchAsDocument:
-                  $$matchAsRoot:
-                    ok: 1
-          # mark third server with its type and start next awaitable hello
+              previousDescription:  { $$exists: true }
+              newDescription: { $$exists: true } # server connected
           - level: debug
             component: topology
             data:
               message: "Topology description changed"
               topologyId: { $$exists: true }
-              previousDescription:  { $$exists: true } # unknown topology
-              newDescription: { $$exists: true } # single topology
+              previousDescription:  { $$exists: true }
+              newDescription: { $$exists: true } # server connected
+          - level: debug
+            component: topology
+            data:
+              message: "Stopped server monitoring"
+              topologyId: { $$exists: true }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+          - level: debug
+            component: topology
+            data:
+              message: "Stopped server monitoring"
+              topologyId: { $$exists: true }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+          - level: debug
+            component: topology
+            data:
+              message: "Stopped server monitoring"
+              topologyId: { $$exists: true }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+          - level: debug
+            component: topology
+            data:
+              message: "Topology description changed"
+              topologyId: { $$exists: true }
+              previousDescription:  { $$exists: true } # ReplicaSet topology
+              newDescription: { $$exists: true } # unknown topology
+          - level: debug
+            component: topology
+            data:
+              message: "Stopped topology monitoring"
+              topologyId: { $$exists: true }
+  - description: Successful heartbeat
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+          - client:
+              id: *client
+              observeLogMessages:
+                topology: debug
+              observeEvents:
+              - serverHeartbeatSucceededEvent
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            serverHeartbeatSucceededEvent: {}
+          count: 3
+    expectLogMessages:
+      - client: *client
+        ignoreExtraMessages: true
+        ignoreMessages:
           - level: debug
             component: topology
             data:
               message: "Server heartbeat started"
-              topologyId: { $$exists: true }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              driverConnectionId: { $$exists: true }
-              serverConnectionId: { $$exists: true }
-              awaited: true # only 4.4+; would need separate version of test for < 4.4 with this false.
           - level: debug
             component: topology
             data:
-              message: "Server heartbeat failed" # since client is shut down, this heartbeat should be canceled before hitting maxAwaitTimeMS. 
+              message: "Starting server monitoring"
+          - level: debug
+            component: topology
+            data:
+              message: "Stopped server monitoring"
+          - level: debug
+            component: topology
+            data:
+              message: "Topology description changed"
+        messages:
+          - level: debug
+            component: topology
+            data:
+              message: "Starting topology monitoring"
+              topologyId: { $$exists: true }
+          - level: debug
+            component: topology
+            data:
+              message: "Server heartbeat succeeded"
+              awaited: { $$exists: true }
               topologyId: { $$exists: true }
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
               driverConnectionId: { $$exists: true }
               serverConnectionId: { $$exists: true }
-              awaited: { $$type: bool }
               durationMS: { $$type: [int, long] }
-              failure: { $$exists: true }
+              reply:
+                $$matchAsDocument:
+                  "$$matchAsRoot":
+                    ok: 1
           - level: debug
             component: topology
             data:
-              message: "Server heartbeat failed" # since client is shut down, this heartbeat should be canceled before hitting maxAwaitTimeMS. 
+              message: "Server heartbeat succeeded"
+              awaited: { $$exists: true }
               topologyId: { $$exists: true }
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
               driverConnectionId: { $$exists: true }
               serverConnectionId: { $$exists: true }
-              awaited: { $$type: bool }
               durationMS: { $$type: [int, long] }
-              failure: { $$exists: true }
+              reply:
+                $$matchAsDocument:
+                  "$$matchAsRoot":
+                    ok: 1
           - level: debug
             component: topology
             data:
-              message: "Server heartbeat failed" # since client is shut down, this heartbeat should be canceled before hitting maxAwaitTimeMS. 
+              message: "Server heartbeat succeeded"
+              awaited: { $$exists: true }
               topologyId: { $$exists: true }
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
               driverConnectionId: { $$exists: true }
               serverConnectionId: { $$exists: true }
-              awaited: { $$type: bool }
               durationMS: { $$type: [int, long] }
-              failure: { $$exists: true }         
+              reply:
+                $$matchAsDocument:
+                  "$$matchAsRoot":
+                    ok: 1
+  - description: Failing heartbeat
+    operations:
+    - name: createEntities
+      object: testRunner
+      arguments:
+        entities:
+        - client:
+            id: *client
+            observeLogMessages:
+              topology: debug
+            observeEvents:
+            - serverHeartbeatFailedEvent
+            uriOptions:
+              appname: failingHeartbeatLoggingTest
+    - name: failPoint
+      object: testRunner
+      arguments:
+        failPoint:
+          configureFailPoint: failCommand
+          mode: "alwaysOn"
+          data:
+            failCommands:
+            - hello
+            - isMaster
+            appName: failingHeartbeatLoggingTest
+            closeConnection: true
+        client: *setupClient
+    - name: waitForEvent
+      object: testRunner
+      arguments:
+        client: *client
+        event:
+          serverHeartbeatFailedEvent: {}
+        count: 1
+    expectLogMessages:
+      - client: *client
+        ignoreExtraMessages: true
+        ignoreMessages:
           - level: debug
             component: topology
             data:
-              message: "Stopping topology monitoring"
-              topologyId: { $$exists: true }
+              message: "Server heartbeat started"
+          - level: debug
+            component: topology
+            data:
+              message: "Server heartbeat succeeded"
+          - level: debug
+            component: topology
+            data:
+              message: "Starting server monitoring"
+          - level: debug
+            component: topology
+            data:
+              message: "Stopped server monitoring"
+          - level: debug
+            component: topology
+            data:
+              message: "Topology description changed"
+        messages:
+        - level: debug
+          component: topology
+          data:
+            message: "Starting topology monitoring"
+            topologyId:
+              "$$exists": true
+        - level: debug
+          component: topology
+          data:
+            message: "Server heartbeat failed"
+            awaited: { $$exists: true }
+            topologyId: { $$exists: true }
+            serverHost: { $$type: string }
+            serverPort: { $$type: [int, long] }
+            driverConnectionId: { $$exists: true }
+            durationMS: { $$type: [int, long] }
+            failure: { $$exists: true }

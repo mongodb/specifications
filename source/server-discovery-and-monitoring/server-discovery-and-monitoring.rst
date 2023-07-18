@@ -853,7 +853,7 @@ type Unknown.
 TopologyType LoadBalanced
 `````````````````````````
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-and-monitoring>`__ for details.
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-logging-and-monitoring>`__ for details.
 
 Other TopologyTypes
 ```````````````````

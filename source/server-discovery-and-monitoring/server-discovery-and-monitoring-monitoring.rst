@@ -15,9 +15,7 @@ SDAM Logging and Monitoring Specification
 Abstract
 ========
 
-The SDAM logging and monitoring specification defines a set of behaviour in the drivers for providing runtime information about server discovery and monitoring (SDAM) in log
-messages as well as in events which users can consume programmatically, either directly or by integrating with third-party APM libraries.
-
+The SDAM logging and monitoring specification defines a set of behaviors in the driver for providing runtime information about server discovery and monitoring (SDAM) in log messages, as well as in events that users can consume programmatically, either directly or by integrating with third-party APM libraries.
 
 -----------
 Definitions
@@ -55,7 +53,7 @@ Guidance
 Documentation
 -------------
 
-The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
+The documentation provided in the code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
 
 Messages and Events
 -------------------
@@ -469,7 +467,7 @@ The following key-value pairs are common to all or several log messages and MUST
 
 "Starting Topology Monitoring" Log Message
 ------------------------------------------
-This message MUST be published under the same circumstances as a ``TopologyOpeningEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``TopologyOpeningEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pair:
 
@@ -489,9 +487,9 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 
   Starting monitoring for topology with ID {{topologyId}}
 
-"Stopping Topology Monitoring" Log Message
+"Stopped Topology Monitoring" Log Message
 ------------------------------------------
-This message MUST be published under the same circumstances as a ``TopologyClosedEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``TopologyClosedEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pair:
 
@@ -505,15 +503,15 @@ In addition to the relevant common fields, these messages MUST contain the follo
 
    * - message
      - String
-     - "Stopping topology monitoring"
+     - "Stopped topology monitoring"
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Stopping monitoring for topology with ID {{topologyId}}
+  Stopped monitoring for topology with ID {{topologyId}}
 
 "Starting Server Monitoring" Log Message
 ----------------------------------------
-This message MUST be published under the same circumstances as a ``ServerOpeningEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``ServerOpeningEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pair:
 
@@ -533,9 +531,9 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 
   Starting monitoring for server {{serverHost}}:{{serverPort}} in topology with ID {{topologyId}}
 
-"Stopping Server Monitoring" Log Message
+"Stopped Server Monitoring" Log Message
 ----------------------------------------
-This message MUST be published under the same circumstances as a ``ServerClosedEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``ServerClosedEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pair:
 
@@ -549,15 +547,15 @@ In addition to the relevant common fields, these messages MUST contain the follo
 
    * - message
      - String
-     - "Stopping server monitoring"
+     - "Stopped server monitoring"
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Stopping monitoring for server {{serverHost}}:{{serverPort}} in topology with ID {{topologyId}}
+  Stopped monitoring for server {{serverHost}}:{{serverPort}} in topology with ID {{topologyId}}
 
 "Topology Description Changed" Log Message
 ------------------------------------------
-This message MUST be published under the same circumstances as a ``TopologyDescriptionChangedEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``TopologyDescriptionChangedEvent`` as detailed in `Events API <#events-api>`.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pairs:
 
@@ -589,7 +587,7 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 
 "Server Heartbeat Started" Log Message
 --------------------------------------
-This message MUST be published under the same circumstances as a ``ServerHeartbeatStartedEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``ServerHeartbeatStartedEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pairs:
 
@@ -616,7 +614,7 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 
 "Server Heartbeat Succeeded" Log Message
 ----------------------------------------
-This message MUST be published under the same circumstances as a ``ServerHeartbeatSucceededEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``ServerHeartbeatSucceededEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pairs:
 
@@ -638,7 +636,7 @@ In addition to the relevant common fields, these messages MUST contain the follo
 
    * - durationMS
      - Int
-     - The execution time for the heartbeat in milliseconds. See ``ServerHeartbeatSucceededEvent`` in `Events API <#events-api>_` for details
+     - The execution time for the heartbeat in milliseconds. See ``ServerHeartbeatSucceededEvent`` in `Events API <#events-api>`_ for details
        on calculating this value.
 
    * - reply
@@ -652,7 +650,7 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 
 "Server Heartbeat Failed" Log Message
 -------------------------------------
-This message MUST be published under the same circumstances as a ``ServerHeartbeatFailedEvent`` as detailed in `Events API <#events-api>_`.
+This message MUST be published under the same circumstances as a ``ServerHeartbeatFailedEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pairs:
 
@@ -674,7 +672,7 @@ In addition to the relevant common fields, these messages MUST contain the follo
 
    * - durationMS
      - Int
-     - The execution time for the heartbeat in milliseconds. See ``ServerHeartbeatFailedEvent`` in `Events API <#events-api>_` for details
+     - The execution time for the heartbeat in milliseconds. See ``ServerHeartbeatFailedEvent`` in `Events API <#events-api>`_ for details
        on calculating this value.
 
    * - failure
@@ -698,7 +696,7 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
-:2023-01-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
+:2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2021-05-06: Updated to use modern terminology.
