@@ -902,7 +902,7 @@ write concern are not relevant for the search index management commands.
 Consistency with Existing APIs
 ------------------------------
 
-Drivers SHOULD strive for a search index management API that is as consistent with their existing search index management API as much as possible.
+Drivers SHOULD strive for a search index management API that is as consistent with their existing index management API as much as possible.
 
 
 NamespaceNotFound Errors
