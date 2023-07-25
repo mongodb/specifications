@@ -92,7 +92,7 @@ Case 1: Driver can successfully create and list search indexes
     }
 
 #. Assert that the command returns the name of the index: ``"test-search-index"``.
-#. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until the following condition is satisfied:
+#. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index``:
    1. An index with the ``name`` of ``test-search-index`` is present and the index has a field ``queryable`` with a value of ``true``.
 
 #. Assert that ``index`` has a property ``mappings`` whose value is ``{ dynamic: false }``
