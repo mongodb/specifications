@@ -902,8 +902,7 @@ write concern are not relevant for the search index management commands.
 Consistency with Existing APIs
 ------------------------------
 
-Drivers SHOULD strive for a search index management API that is as consistent with their existing index management API as much as possible.
-
+Drivers SHOULD strive for a search index management API that is as consistent as possible with their existing index management API.
 
 NamespaceNotFound Errors
 ------------------------
@@ -934,6 +933,11 @@ Common Interfaces
     name: Optional<string>;
   }
 
+  interface SearchIndexOptions {
+    // The name for this index, if present.
+    name: Optional<string>;
+  }
+
   /**
    * The following interfaces are empty but are provided as placeholders for drivers that cannot 
    * add options in a non-breaking manner, if options are added in the future.
@@ -957,8 +961,10 @@ Standard API for Search Indexes
      * @note Drivers MAY opt to implement this method signature, the signature that
      *   takes an SearchIndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
+     *   
+     * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
      */
-    createSearchIndex(definition: Document, name: Optional<string>, options: Optional<CreateSearchIndexOptions>): String;
+    createSearchIndex(definition: Document, indexOptions: SearchIndexOptions, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * Convenience method for creating a single index.
@@ -1037,8 +1043,10 @@ Index View API for Search Indexes
      * @note Drivers MAY opt to implement this method signature, the signature that
      *   takes an SearchIndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
+     *   
+     * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
      */
-    createOne(definition: Document, name: Optional<string>, options: Optional<CreateSearchIndexOptions>): String;
+    createOne(definition: Document, indexOptions: SearchIndexOptions, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * This is a convenience method for creating a single index.
