@@ -54,7 +54,8 @@ For the initial local setup the following are required:
 - The docker daemon running on the local machine.
 - The `AWS SAM CLI <https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html>`_
 
-The following environment variables MUST be present:
+AWS access MUST be configured, either through `` $HOME/.aws/credentials`` or
+with the following environment variables:
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
@@ -206,6 +207,14 @@ to /mongodb and if it also contains Resources.Handler modify that to mongodb as 
           Path: /mongodb
     Handler: mongodb
 
+If possible, install the current driver under test into the lambda environment,
+to avoid having to release the driver in order to test features or catch
+regressions.  See docs on https://docs.aws.amazon.com/lambda/latest/dg/configuration-function-zip.html for how to create a .zip file deployment with
+dependencies.
+
+Start the local MongoDB instance.  If using Docker Desktop on MacOS, set ``MONGODB_URI=mongodb://host.docker.internal:27017`` in order for the function
+to be able to access the host port.
+
 Run the function locally from the same directory where the template.yaml resides:
 
 .. code:: none
@@ -261,7 +270,7 @@ variables. An explanation of the required environment is as follows:
 +-------------------------------+-------------------------------------+
 | AWS_REGION                    | The function AWS region             |
 +-------------------------------+-------------------------------------+
-| AWS_ACCESS_KEY_ID             | Assume role atuomatically sets this |
+| AWS_ACCESS_KEY_ID             | Assume role automatically sets this |
 +-------------------------------+-------------------------------------+
 | AWS_SECRET_ACCESS_KEY         | Assume role automatically sets this |
 +-------------------------------+-------------------------------------+
@@ -339,8 +348,7 @@ functions inside of it for setup, teardown, and execution:
 
 
 Drivers MUST run the function on a single variant in Evergreen, in order to not
-potentially hit the Atlas API rate limit. The variant itself MUST be either a
-RHEL8 or Ubuntu 20 variant in order to have the SAM CLI installed.
+potentially hit the Atlas API rate limit. The variant itself MUST have the SAM CLI installed.
 
 Description of the behaviour of run-deployed-lambda-aws-tests.sh:
 
