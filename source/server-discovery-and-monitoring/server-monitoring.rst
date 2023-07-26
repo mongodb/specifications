@@ -1176,7 +1176,7 @@ Changelog
 .. _Network error when reading or writing: server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
 .. _connection handshake: mongodb-handshake/handshake.rst
 .. _localThresholdMS: /source/server-selection/server-selection.rst#localThresholdMS
-.. _SDAM Monitoring spec: server-discovery-and-monitoring-monitoring.rst#heartbeats
+.. _SDAM Monitoring spec: server-discovery-and-monitoring-logging-and-monitoring.rst#heartbeats
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
 .. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Connection-Pool

@@ -1177,7 +1177,7 @@ The structure of each object is as follows:
   `CMAP
   <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
   events, and ``sdam`` for `SDAM
-  <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__
+  <../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events>`__
   events. Defaults to ``command`` if omitted.
 
 - ``events``: Required array of `expectedEvent`_ objects. List of events, which
@@ -1376,7 +1376,7 @@ The structure of this object is as follows:
 .. _expectedEvent_serverDescriptionChangedEvent:
 
 - ``serverDescriptionChangedEvent``: Optional object. Assertions for one or more
-  `ServerDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
+  `ServerDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events>`__ fields.
 
   The structure of this object is as follows:
 
@@ -1399,7 +1399,7 @@ The structure of this object is as follows:
 
 - ``topologyDescriptionChangedEvent``: Optional object. If present, this object
   MUST be an empty document as no assertions are currently supported for
-  `TopologyDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`__ fields.
+  `TopologyDescriptionChangedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events>`__ fields.
 
 hasServiceId
 `````````````

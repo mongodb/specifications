@@ -2551,7 +2551,7 @@ Changelog
 .. _hello or legacy hello: /source/mongodb-handshake/handshake.rst#terms
 .. _connection string: https://www.mongodb.com/docs/manual/reference/connection-string/
 .. _Server Monitoring spec: server-monitoring.rst
-.. _SDAM Monitoring Specification: server-discovery-and-monitoring-monitoring.rst
+.. _SDAM Monitoring Specification: server-discovery-and-monitoring-logging-and-monitoring.rst
 .. _requesting an immediate check: server-monitoring.rst#requesting-an-immediate-check
 .. _request an immediate check: server-monitoring.rst#requesting-an-immediate-check
 .. _scanning order: server-monitoring.rst#scanning-order
