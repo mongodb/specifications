@@ -54,7 +54,7 @@ For the initial local setup the following are required:
 - The docker daemon running on the local machine.
 - The `AWS SAM CLI <https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html>`_
 
-AWS access MUST be configured, either through `` $HOME/.aws/credentials`` or
+AWS access MUST be configured, either through ``$HOME/.aws/credentials`` or
 with the following environment variables:
 
 - `AWS_ACCESS_KEY_ID`
