@@ -964,7 +964,7 @@ Standard API for Search Indexes
      *   
      * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
      */
-    createSearchIndex(definition: Document, indexOptions: SearchIndexOptions, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
+    createSearchIndex(definition: Document, indexOptions: Optional<SearchIndexOptions>, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * Convenience method for creating a single index.
@@ -1046,7 +1046,7 @@ Index View API for Search Indexes
      *   
      * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
      */
-    createOne(definition: Document, indexOptions: SearchIndexOptions, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
+    createOne(definition: Document, indexOptions: Optional<SearchIndexOptions>, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * This is a convenience method for creating a single index.

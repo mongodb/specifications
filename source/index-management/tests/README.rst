@@ -79,7 +79,7 @@ When working locally on these tests, the same Atlas setup and teardown scripts c
 Case 1: Driver can successfully create and list search indexes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Create a collection with a randomly generated name (referred to as ``coll0``).
+#. Create a collection with the "create" command using a randomly generated name (referred to as ``coll0``).
 #. Create a new search index on ``coll0`` with the ``createSearchIndex`` helper.  Use the following definition:
 
   .. code:: typescript
@@ -95,12 +95,12 @@ Case 1: Driver can successfully create and list search indexes
 #. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index``:
    1. An index with the ``name`` of ``test-search-index`` is present and the index has a field ``queryable`` with a value of ``true``.
 
-#. Assert that ``index`` has a property ``mappings`` whose value is ``{ dynamic: false }``
+#. Assert that ``index`` has a property ``latestDefinition`` whose value is ``{ 'mappings': { 'dynamic': false } }``
 
 Case 2: Driver can successfully create multiple indexes in batch
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Create a collection with a randomly generated name (referred to as ``coll0``).
+#. Create a collection with the "create" command using a randomly generated name (referred to as ``coll0``).
 #. Create two new search indexes on ``coll0`` with the ``createSearchIndexes`` helper.  Use the following
    definitions when creating the indexes.  These definitions are referred to as ``indexDefinitions``.
 
@@ -120,18 +120,14 @@ Case 2: Driver can successfully create multiple indexes in batch
     }
 
 #. Assert that the command returns an array containing the new indexes' names: ``["test-search-index-1", "test-search-index-2"]``.
-#. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until the following condition is satisfied.  Store
-   the result in ``indexes``.
-   1. An index with the ``name`` of ``test-search-index-1`` is present and index has a field ``queryable`` with the value of ``true``.
-   2. An index with the ``name`` of ``test-search-index-2`` is present and index has a field ``queryable`` with the value of ``true``.
-#. For each ``index`` in ``indexDefinitions``
-   1. Find the matching index definition in ``indexes`` by matching on ``index.name``.  If no index exists, raise an error.
-   2. Assert that the matching index ``mappings``, whose value is ``{ dynamic: false }``
-
+#. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until the following condition is satisfied.
+   1. An index with the ``name`` of ``test-search-index-1`` is present and index has a field ``queryable`` with the value of ``true``. Store result in ``index1``.
+   2. An index with the ``name`` of ``test-search-index-2`` is present and index has a field ``queryable`` with the value of ``true``. Store result in ``index2``.
+#. Assert that ``index1`` and ``index2`` have the property ``latestDefinition`` whose value is ``{ "mappings" : { "dynamic" : false } }``
 Case 3: Driver can successfully drop search indexes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Create a collection with a randomly generated name (referred to as ``coll0``).
+#. Create a collection with the "create" command using a randomly generated name (referred to as ``coll0``).
 #. Create a new search index on ``coll0`` with the following definition:
 
   .. code:: typescript
@@ -147,7 +143,7 @@ Case 3: Driver can successfully drop search indexes
 #. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until the following condition is satisfied:
    1. An index with the ``name`` of ``test-search-index`` is present and index has a field ``queryable`` with the value of ``true``.
 
-#. Run a ``dropSearchIndexes`` on ``coll0``, using ``test-search-index`` for the name.
+#. Run a ``dropSearchIndex`` on ``coll0``, using ``test-search-index`` for the name.
 #. Run ``coll0.listSearchIndexes()`` repeatedly every 5 seconds until ``listSearchIndexes`` returns an empty array.
 
 This test fails if it times out waiting for the deletion to succeed.
@@ -155,7 +151,7 @@ This test fails if it times out waiting for the deletion to succeed.
 Case 4: Driver can update a search index
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Create a collection with a randomly generated name (referred to as ``coll0``).
+#. Create a collection with the "create" command using a randomly generated name (referred to as ``coll0``).
 #. Create a new search index on ``coll0`` with the following definition:
 
   .. code:: typescript
@@ -188,7 +184,7 @@ Case 4: Driver can update a search index
    2. The index has a field ``queryable`` with a value of ``true`` and has a field ``status`` with the value of ``READY``.
   
 #. Assert that an index is present with the name ``test-search-index`` and the definition has a
-  property ``mappings``, whose value is ``{ dynamic: true }``
+  property ``latestDefinition`` whose value is ``{ 'mappings': { 'dynamic': true } }``.
 
 Case 5: ``dropSearchIndex`` suppresses namespace not found errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
