@@ -131,7 +131,7 @@ specifications:
 - `Enumerating Collections <../enumerate-collections.rst>`__
 - `Enumerating Databases <../enumerate-databases.rst>`__
 - `GridFS <../gridfs/gridfs-spec.rst>`__
-- `Index Management <../index-management.rst>`__
+- `Index Management <../index-management/index-management.rst>`__
 - `Transactions <../transactions/transactions.rst>`__
 - `Convenient API for Transactions <../transactions-convenient-api/transactions-convenient-api.rst>`__
 

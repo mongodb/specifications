@@ -414,6 +414,10 @@ Index View API
      * For drivers that cannot make IndexView iterable, they MUST implement this method to
      * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
      *  or language/implementation equivalent.
+     * 
+     *  If drivers are unable to make the IndexView iterable, they MAY opt to provide the options for 
+     *  listing search indexes via the `list` method instead of the `Collection.indexes` method.
+
      */
     list(): Cursor;
 
@@ -873,8 +877,8 @@ search index management helpers.
 options as outline in the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_.  Drivers MAY combine the aggregation options with
 any future ``listSearchIndexes`` stage options, if that is idiomatic for a driver's language.
 
-Notes
------
+Asynchronicity
+--------------
 
 The search index commands are asynchronous and return from the server before the index is successfully updated, created or dropped.
 In order to determine when an index has been created / updated, users are expected to run the ``listSearchIndexes`` repeatedly
@@ -888,7 +892,34 @@ An example, from Javascript:
   while (!(await collection.listSearchIndexes({ name }).hasNext())) {
     await setTimeout(1000);
   }
- 
+
+Where are read concern and write concern?
+-----------------------------------------
+
+These commands internally proxy the search index management commands to a separate process that runs alongside an Atlas cluster.  As such, read concern and 
+write concern are not relevant for the search index management commands.
+
+Consistency with Existing APIs
+------------------------------
+
+Drivers SHOULD strive for a search index management API that is as consistent as possible with their existing index management API.
+
+NamespaceNotFound Errors
+------------------------
+
+Some drivers suppress NamespaceNotFound errors for CRUD helpers.  Drivers MAY suppress NamespaceNotFound errors from 
+the search index management helpers.
+
+Drivers MUST suppress NamespaceNotFound errors for the ``dropSearchIndex`` helper.  Drop operations should be idempotent:
+
+.. code:: typescript
+
+  await collection.dropSearchIndex('my-test-index');
+  // subsequent calls should behave the same for the user as the first call
+  await collection.dropSearchIndex('my-test-index');
+  await collection.dropSearchIndex('my-test-index');
+
+
 Common Interfaces
 -----------------
 
@@ -898,6 +929,11 @@ Common Interfaces
     // The definition for this index.
     definition: Document;
 
+    // The name for this index, if present.
+    name: Optional<string>;
+  }
+
+  interface SearchIndexOptions {
     // The name for this index, if present.
     name: Optional<string>;
   }
@@ -925,8 +961,10 @@ Standard API for Search Indexes
      * @note Drivers MAY opt to implement this method signature, the signature that
      *   takes an SearchIndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
+     *   
+     * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
      */
-    createSearchIndex(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
+    createSearchIndex(definition: Document, indexOptions: Optional<SearchIndexOptions>, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * Convenience method for creating a single index.
@@ -974,7 +1012,7 @@ Index View API for Search Indexes
     /**
      * Returns the search index view for this collection.
      */
-    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexesOptions>): SearchIndexView;
+    searchIndexes(name: Optional<String>, aggregateOptions: Optional<AggregationOptions>, options: Optional<ListSearchIndexOptions>): SearchIndexView;
   }
 
   interface SearchIndexView extends Iterable<Document> {
@@ -990,6 +1028,9 @@ Index View API for Search Indexes
      * For drivers that cannot make SearchIndexView iterable, they MUST implement this method to
      * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
      *  or language/implementation equivalent.
+     *  
+     *  If drivers are unable to make the SearchIndexView iterable, they MAY opt to provide the options for 
+     *  listing search indexes via the `list` method instead of the `Collection.searchIndexes` method.
      */
     list(): Cursor<Document>;
 
@@ -1002,8 +1043,10 @@ Index View API for Search Indexes
      * @note Drivers MAY opt to implement this method signature, the signature that
      *   takes an SearchIndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
+     *   
+     * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
      */
-    createOne(name: String, definition: Document, options: Optional<CreateSearchIndexOptions>): String;
+    createOne(definition: Document, indexOptions: Optional<SearchIndexOptions>, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
 
     /**
      * This is a convenience method for creating a single index.
@@ -1031,7 +1074,7 @@ Index View API for Search Indexes
     /**
      * Updates a single search index from the collection by the index name.
      */
-    updateOne(name: String, options: Optional<UpdateSearchIndexOptions>): Result;
+    updateOne(name: String, definition: Document, options: Optional<UpdateSearchIndexOptions>): Result;
   }
 
 ---------
@@ -1093,3 +1136,4 @@ Changelog
 :2023-05-10:  Merge index enumeration and index management specs and get rid of references 
              to legacy server versions.
 :2023-05-18:  Add the search index management API.
+:2023-07-27:  Add search index management clarifications.
