@@ -70,7 +70,7 @@ ObjectId (``new ObjectId().toHexString()`` in Node).
 Setup
 ~~~~~
 
-These tests must run against an Atlas cluster with a 7.0+ server.  Tools are available drivers-evergreen-tools which can setup and teardown
+These tests must run against an Atlas cluster with a 7.0+ server.  `Scripts are available <https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/atlas>`_ in drivers-evergreen-tools which can setup and teardown
 Atlas clusters.  To ensure that the Atlas cluster is cleaned up after each CI run, drivers should configure evergreen to run these tests 
 as a part of a task group.  Be sure that the cluster gets torn down! 
 

@@ -416,7 +416,7 @@ Index View API
      *  or language/implementation equivalent.
      * 
      *  If drivers are unable to make the IndexView iterable, they MAY opt to provide the options for 
-     *  listing search indexes via the `list` method instead of the `Collection.listSearchIndexes` method.
+     *  listing search indexes via the `list` method instead of the `Collection.indexes` method.
 
      */
     list(): Cursor;
@@ -1030,7 +1030,7 @@ Index View API for Search Indexes
      *  or language/implementation equivalent.
      *  
      *  If drivers are unable to make the SearchIndexView iterable, they MAY opt to provide the options for 
-     *  listing search indexes via the `list` method instead of the `Collection.listSearchIndexes` method.
+     *  listing search indexes via the `list` method instead of the `Collection.searchIndexes` method.
      */
     list(): Cursor<Document>;
 
