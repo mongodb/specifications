@@ -57,7 +57,7 @@
         },
         {
             "description": "subtype 0x08",
-            "canonical_bson": "1D000000057800100000000773FFD26444B34C6990E8E7D1DFC035D400",
+            "canonical_bson": "1D000000057800100000000873FFD26444B34C6990E8E7D1DFC035D400",
             "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"08\"}}}"
         },
         {
