@@ -1,0 +1,287 @@
+---
+description: cmap-network-error
+
+schemaVersion: "1.10"
+
+createEntities:
+  - client:
+      id: &setupClient setupClient
+      useMultipleMongoses: false
+
+initialData: &initialData
+  - collectionName: &collectionName cmap-network-error
+    databaseName: &databaseName cmap-tests
+    documents:
+      - _id: 1
+      - _id: 2
+
+tests:
+  - description: Pool properly handles network error on checked out connection
+    runOnRequirements:
+      # failCommand appName requirements
+      - minServerVersion: "4.4"
+        serverless: forbid
+        topologies: [ single, replicaset, sharded ]
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - find
+              closeConnection: true
+              appName: &appName cmapNetworkErrorTest
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - connectionCheckOutStartedEvent
+                  - connectionCheckedOutEvent
+                  - connectionCheckOutFailedEvent
+                  - connectionCheckedInEvent
+                  - connectionClosedEvent
+                  - poolClearedEvent
+                uriOptions:
+                  retryWrites: false
+                  retryReads: false
+                  appname: *appName
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+      - name: find
+        object: *collection
+        arguments:
+          filter:
+            _id: 1
+        expectError:
+          isError: true
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionClosedEvent: {}
+          count: 1
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - connectionCheckOutStartedEvent: {}
+          - connectionCheckedOutEvent: {}
+          # SDAM error handling needs to be performed before the connection is checked into the pool.
+          - poolClearedEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              # Even though the connection is also stale, the reason it is being closed
+              # is due to an error.
+              reason: error
+
+    outcome:
+      - collectionName: *collectionName
+        databaseName: *databaseName
+        documents:
+          - _id: 1
+          - _id: 2
+
+  - description: Pool properly handles network error during checkout
+    runOnRequirements:
+      # failCommand appName requirements
+      - minServerVersion: "4.4"
+        serverless: forbid
+        topologies: [ single, sharded ]
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - connectionCheckOutStartedEvent
+                  - connectionCheckedOutEvent
+                  - connectionCheckOutFailedEvent
+                  - connectionCheckedInEvent
+                  - connectionClosedEvent
+                  - poolClearedEvent
+                  - connectionCreatedEvent
+                  - connectionReadyEvent
+                  - poolReadyEvent
+                uriOptions:
+                  retryWrites: false
+                  retryReads: false
+                  appName: &networkErrorCheckOutAppName cmapNetworkErrorCheckOutTest
+                  # Use a high frequency so that server does not get marked unknown before the find
+                  # can be executed.
+                  heartbeatFrequencyMS: 30000
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+      # wait for the server to be discovered before enabling the failpoint
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolReadyEvent: {}
+          count: 1
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - isMaster
+                - hello
+              closeConnection: true
+              appName: *networkErrorCheckOutAppName
+      - name: find
+        object: *collection
+        arguments:
+          filter:
+            _id: 1
+        expectError:
+          isError: true
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionCheckOutFailedEvent: {}
+          count: 1
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - poolReadyEvent: {}
+          - connectionCheckOutStartedEvent: {}
+          - connectionCreatedEvent: {}
+          # SDAM needs to handle the error before the pool proceeds with cleaning up the connection.
+          - poolClearedEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          - connectionCheckOutFailedEvent:
+              reason: connectionError
+
+    outcome:
+      - collectionName: *collectionName
+        databaseName: *databaseName
+        documents:
+          - _id: 1
+          - _id: 2
+
+  - description: Pool properly handles network error during minPoolSize background connection creation
+    runOnRequirements:
+      # failCommand appName requirements
+      - minServerVersion: "4.4"
+        serverless: forbid
+        topologies: [ single, sharded ]
+        auth: true
+    operations:
+      # Configure the initial monitor handshake to succeed but the
+      # first background minPoolSize establishment to fail.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - saslContinue
+              appName: &minPoolSizeAppName CMAPminPoolSizeError
+              closeConnection: true
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - poolClearedEvent
+                  - poolReadyEvent
+                  - connectionCreatedEvent
+                  - connectionReadyEvent
+                  - connectionClosedEvent
+                  - connectionCheckOutStartedEvent
+                  - connectionCheckedOutEvent
+                  - connectionCheckOutFailedEvent
+                  - connectionCheckedInEvent
+                uriOptions:
+                  heartbeatFrequencyMS: 500
+                  appname: *minPoolSizeAppName
+                  minPoolSize: 1
+      # Wait for monitor to succeed handshake and mark the pool as ready.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolReadyEvent: {}
+          count: 1
+      # Background connection establishment due to minPoolSize should fail,
+      # causing the connection to close.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionClosedEvent:
+              reason: error
+          count: 1
+      # Wait for monitor to rediscover server and mark pool as ready again.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            poolReadyEvent: {}
+          count: 2
+      # Now that the failpoint has been disabled (was set to times: 1), background
+      # connection creation should succeed.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            connectionReadyEvent: {}
+          count: 1
+
+    expectEvents:
+      - client: *client
+        eventType: cmap
+        events:
+          - poolReadyEvent: {}
+          - connectionCreatedEvent: {}
+          - poolClearedEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          - poolReadyEvent: {}
+          - connectionCreatedEvent: {}
+          - connectionReadyEvent: {}

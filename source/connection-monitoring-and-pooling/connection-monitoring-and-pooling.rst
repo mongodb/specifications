@@ -452,6 +452,11 @@ Before a `Connection <#connection>`_ can be marked as either "available" or "in 
 must be established. This process involves performing the initial
 handshake, handling OP_COMPRESSED, and performing authentication.
 
+If an error is encountered while attempting to establish a connection, it MUST be handled according
+to the `Application Errors`_ section in the SDAM specification. After the SDAM machinery has handled the error,
+the connection MUST be `closed <#closing-a-connection-internal-implementation>`_. The error can then be propagated
+to the context that initiated the connection establishment attempt.
+
 .. code::
 
     try:
@@ -462,8 +467,11 @@ handshake, handling OP_COMPRESSED, and performing authentication.
       emit ConnectionReadyEvent and equivalent log message
       return connection
     except error:
+      # Handle error according to SDAM. This may entail clearing the pool.
+      topology.handle_pre_handshake_error(error)
       close connection
-      throw error # Propagate error in manner idiomatic to language.
+      # Propagate error in manner idiomatic to language.
+      throw error
 
 
 Closing a Connection (Internal Implementation)
@@ -519,10 +527,6 @@ Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
-If an error is encountered while populating a connection, it MUST be handled via
-the SDAM machinery according to the `Application Errors`_ section in the SDAM
-specification.
-
 If minPoolSize is set, the `Connection <#connection>`_ Pool MUST be populated
 until it has at least minPoolSize total `Connections <#connection>`_. This MUST
 occur only while the pool is "ready". If the pool implements a background
@@ -544,12 +548,9 @@ established as a result of populating the Pool.
 
    wait until pendingConnectionCount < maxConnecting and pool is "ready"
    create connection
-   try:
-     establish connection
-     mark connection as available
-   except error:
-     # Defer error handling to SDAM.
-     topology.handle_pre_handshake_error(error)
+   try establish connection
+   mark connection as available
+   decrement pendingConnectionCount
 
 Checking Out a Connection
 -------------------------
@@ -573,17 +574,26 @@ available `Connection`_ is found or the list of available `Connections
 
 If the list is exhausted, the total number of `Connections <#connection>`_ is
 less than maxPoolSize, and pendingConnectionCount < maxConnecting, the pool MUST
-create a `Connection`_, establish it, mark it as "in use" and return it. If
-totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting,
-then the pool MUST wait to service the request until neither of those two
-conditions are met or until a `Connection`_ becomes available, re-entering the
-checkOut loop in either case. This waiting MUST NOT prevent `Connections
-<#connection>`_ from being checked into the pool. Additionally, the Pool MUST
-NOT service any newer checkOut requests before fulfilling the original one which
-could not be fulfilled. For drivers that implement the WaitQueue via a fair
-semaphore, a condition variable may also be needed to to meet this
-requirement. Waiting on the condition variable SHOULD also be limited by the
-WaitQueueTimeout, if the driver supports one and it was specified by the user.
+create a `Connection`_ (as described in `Creating a Connection
+<#creating-a-connection-internal-implementation>`_), establish it (as described
+in `Establishing a Connection
+<#establishing-a-connection-internal-implementation>`_), mark it as "in use" and
+return it. If an error is encountered while attempting to establish the
+connection, the pool MUST emit a ConnectionCheckOutFailed event with reason
+"connectionError" and a corresponding log message before propagating the error
+to connection requester.
+
+If the list is exhausted and totalConnectionCount == maxPoolSize or
+pendingConnectionCount == maxConnecting, then the pool MUST wait to service the
+request until neither of those two conditions are met or until a `Connection`_
+becomes available, re-entering the checkOut loop in either case. This waiting
+MUST NOT prevent `Connections <#connection>`_ from being checked into the
+pool. Additionally, the Pool MUST NOT service any newer checkOut requests before
+fulfilling the original one which could not be fulfilled. For drivers that
+implement the WaitQueue via a fair semaphore, a condition variable may also be
+needed to to meet this requirement. Waiting on the condition variable SHOULD
+also be limited by the WaitQueueTimeout, if the driver supports one and it was
+specified by the user.
 
 If the pool is "closed" or "paused", any attempt to check out a `Connection
 <#connection>`_ MUST throw an Error. The error thrown as a result of the pool
@@ -654,15 +664,14 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     if connection state is "pending":
       try:
         establish connection
+        set connection state to "in use"
+        decrement pendingConnectionCount
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
-        decrement totalConnectionCount
         throw
-      finally:
-        decrement pendingConnectionCount
     else:
+        set connection state to "in use"
         decrement availableConnectionCount
-    set connection state to "in use"
     emit ConnectionCheckedOutEvent and equivalent log message
     return connection
 
@@ -682,6 +691,10 @@ true:
 -  The pool has been closed.
 
 Otherwise, the `Connection <#connection>`_ is marked as available.
+
+If an error is encountered while reading from or writing to a checked out `Connection <#connection>`_, the error MUST
+be handled according to the `Application Errors`_ section of the SDAM specification *before* the connection is checked
+back into the pool.
 
 .. code::
 
@@ -1549,6 +1562,7 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-10-14: Add connection pool log messages and associated tests.
 :2023-04-17: Fix duplicate logging test description.
+:2023-06-15: Clarify error handling semantics and add associated tests.
 
 ----
 

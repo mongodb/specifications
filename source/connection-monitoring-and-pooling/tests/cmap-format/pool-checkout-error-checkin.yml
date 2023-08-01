@@ -1,0 +1,55 @@
+version: 1
+style: integration
+description: checking in a connection after checkout fails closes connection
+runOn:
+  -
+    # Required for appName in fail point
+    minServerVersion: "4.9.0"
+    auth: true
+poolOptions:
+  appName: &appName "poolCheckOutErrorCheckInTest"
+failPoint:
+  configureFailPoint: failCommand
+  # Skip the first so that the first checkOut succeeds.
+  mode: { skip: 1 }
+  data:
+    # Use saslContinue so that monitor checks won't interfere with this failpoint.
+    failCommands: ["saslContinue"]
+    closeConnection: true
+    appName: *appName
+operations:
+  - name: ready
+  - name: checkOut
+    label: conn
+  # Perform check out in another thread so the main thread can continue to
+  # execute operations.
+  - name: start
+    target: thread1
+  - name: checkOut
+    thread: thread1
+  # Wait for the check out to fail
+  - name: waitForEvent
+    event: ConnectionCheckOutFailed
+    count: 1
+  - name: checkIn
+    connection: conn
+events:
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCreated
+  - type: ConnectionReady
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCreated
+  - type: ConnectionPoolCleared
+  - type: ConnectionClosed
+    reason: error
+    connectionId: 2
+  - type: ConnectionCheckOutFailed
+    reason: connectionError
+  - type: ConnectionCheckedIn
+  - type: ConnectionClosed
+    connectionId: 1
+    reason: stale
+ignore:
+  - ConnectionPoolCreated
+  - ConnectionPoolReady

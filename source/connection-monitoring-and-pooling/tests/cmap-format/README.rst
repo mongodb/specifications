@@ -54,7 +54,14 @@ All Unit Tests have some of the following fields:
 
 - ``error``: Indicates that the main thread is expected to error during this test. An error may include of the following fields:
 
-  - ``type``: the type of error emitted
+  - ``type``: the type of error emitted. Currently, only the following error types are supported:
+
+    - WaitQueueTimeoutError
+    - PoolClosedError
+    - PoolClearedError
+    - AuthenticationError
+    - NetworkError
+
   - ``message``: the message associated with that error
   - ``address``: Address of pool emitting error
 
@@ -125,6 +132,10 @@ the addition of the following fields to each test:
     against which the tests can be run successfully. If this field is omitted,
     it should be assumed that there is no upper bound on the required server
     version.
+
+  - ``auth`` (optional): If true, the tests MUST only run if authentication
+    is enabled. If false, tests MUST only run if authentication is not enabled.
+    If this field is omitted, there is no authentication requirement.
 
 - ``failPoint``: optional, a document containing a ``configureFailPoint``
   command to run against the endpoint being used for the test.
