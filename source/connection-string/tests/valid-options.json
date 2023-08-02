@@ -28,11 +28,9 @@
       "warning": false,
       "hosts": null,
       "auth": null,
-      "options": [
-        {
-          "tls": true
-        }
-      ]
+      "options": {
+        "tls": true
+      }
     }
   ]
 }
