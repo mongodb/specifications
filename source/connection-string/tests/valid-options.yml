@@ -17,9 +17,11 @@ tests:
             authmechanism: "MONGODB-CR"
     -
         description: "Missing delimiting slash between hosts and options"
-        uri: "mongodb://example.com?w=1"
+        uri: "mongodb://example.com?tls=true"
         valid: true
-        warning: ~
+        warning: false
         hosts: ~
         auth: ~
-        options: ~
+        options:
+          -
+              tls: true
