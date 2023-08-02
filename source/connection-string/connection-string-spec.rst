@@ -389,3 +389,5 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-12-27: Note that host information ends with a "/" character in connection
              options description.
+:2023-08-02: Make delimiting slash between host information and connection options
+             optional and update tests
