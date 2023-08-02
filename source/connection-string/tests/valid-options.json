@@ -20,6 +20,15 @@
       "options": {
         "authmechanism": "MONGODB-CR"
       }
+    },
+    {
+      "description": "Missing delimiting slash between hosts and options",
+      "uri": "mongodb://example.com?w=1",
+      "valid": true,
+      "warning": null,
+      "hosts": null,
+      "auth": null,
+      "options": null
     }
   ]
 }
