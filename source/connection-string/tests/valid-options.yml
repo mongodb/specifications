@@ -20,7 +20,11 @@ tests:
         uri: "mongodb://example.com?tls=true"
         valid: true
         warning: false
-        hosts: ~
+        hosts:
+            -
+                type: "hostname"
+                host: "example.com"
+                port: ~
         auth: ~
         options:
               tls: true
