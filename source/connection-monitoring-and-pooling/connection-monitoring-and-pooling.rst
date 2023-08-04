@@ -1014,8 +1014,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *  - the `ConnectionCreatedEvent` emitted by the same checking out, if this checking out emitted `ConnectionCreatedEvent`;
        *  - this event, otherwise.
        *
-       * Naturally, this duration is usually smaller than `ConnectionPoolOptions.waitQueueTimeoutMS`,
-       * but MAY occasionally be greater than or equal to it, because a driver does not provide hard real-time guarantees.
+       * Naturally, this duration is usually smaller than or equal to `ConnectionPoolOptions.waitQueueTimeoutMS`,
+       * but MAY occasionally be greater than that, because a driver does not provide hard real-time guarantees.
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
        * the time to deliver the `ConnectionCheckOutStartedEvent`, `ConnectionCreatedEvent`.
