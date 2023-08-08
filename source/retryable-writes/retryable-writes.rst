@@ -395,11 +395,12 @@ of the following conditions is reached:
   <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. If the driver
-cannot select a server for a retry attempt or the selected server does not
-support retryable writes, retrying is not possible and drivers MUST raise the
-retryable error from the previous attempt. In both cases, the caller is able
-to infer that an attempt was made.
+For each retry attempt, drivers MUST select a writable server. Server on wich
+the operation failed should be provided to the server selection mechanism as
+a de-prioritized server. If the drivercannot select a server for a retry attempt
+or the selected server does not support retryable writes, retrying is not
+possible and drivers MUST raise the retryable error from the previous attempt.
+In both cases, the caller is able to infer that an attempt was made.
 
 If a retry attempt also fails, drivers MUST update their topology according to
 the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
@@ -492,11 +493,14 @@ The above rules are implemented in the following pseudo-code:
         }
       }
 
-      /* If we cannot select a writable server, do not proceed with retrying and
+      /*
+       * We try to select another
+       * If we cannot select a writable server, do not proceed with retrying and
        * throw the previous error. The caller can then infer that an attempt was
        * made and failed. */
       try {
-        server = selectServer("writable");
+        deprioritizedServers = [ server ];
+        server = selectServer("writable", deprioritizedServers);
       } catch (Exception ignoredError) {
         throw previousError;
       }

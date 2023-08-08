@@ -846,7 +846,8 @@ For multi-threaded clients, the server selection algorithm is as follows:
 3. Find suitable servers by topology type and operation type
 
 4. Filter the suitable servers by calling the optional, application-provided server
-   selector.
+   selector. The selector may be provided with a list of de-prioritized servers;
+   these servers should be selected only if there are no other suitable servers.
 
 5. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and continue to the next step;
@@ -918,7 +919,8 @@ as follows:
 6. Find suitable servers by topology type and operation type
 
 7. Filter the suitable servers by calling the optional, application-provided
-   server selector.
+   server selector. The selector may be provided with a list of de-prioritized servers;
+   these servers should be selected only if there are no other suitable servers.
 
 8. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and return one at random from
