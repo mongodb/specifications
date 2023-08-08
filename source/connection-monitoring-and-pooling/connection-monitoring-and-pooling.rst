@@ -1017,7 +1017,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        * The time it took to check out the connection.
        * More specifically, the time elapsed between
-       * the `ConnectionCheckOutStartedEvent` and this event.
+       * the `ConnectionCheckOutStartedEvent`
+       * emitted by the same checking out and this event.
        *
        * Naturally, if a new connection was not created (`ConnectionCreatedEvent`)
        * and established (`ConnectionReadyEvent`) as part of checking out,
