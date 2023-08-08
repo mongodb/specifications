@@ -133,7 +133,8 @@ Additionally, Drivers that implement a Connection Pool MUST support the followin
       /**
        *  NOTE: This option has been deprecated in favor of timeoutMS.
        *
-       *  The maximum amount of time a thread can wait for either an available non-perished connection (limited by `maxPoolSize`),
+       *  The maximum amount of time a thread can wait for
+       *  either an available non-perished connection (limited by `maxPoolSize`),
        *  or a pending connection (limited by `maxConnecting`).
        *  If specified, MUST be a number >= 0.
        *  A value of 0 means there is no limit.
@@ -915,19 +916,24 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
 
       /**
        * The time it took to establish the connection.
-       * In accordance with the definition of establishment of a connection specified by `ConnectionPoolOptions.maxConnecting`,
-       * it is the time elapsed between the `ConnectionCreatedEvent` emitted by the same checking out and this event.
+       * In accordance with the definition of establishment of a connection
+       * specified by `ConnectionPoolOptions.maxConnecting`,
+       * it is the time elapsed between the `ConnectionCreatedEvent`
+       * emitted by the same checking out and this event.
        *
-       * Naturally, this duration does not include any part of `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.waited`.
+       * Naturally, this duration does not include any part of
+       * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.waited`.
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
        * the time to deliver the `ConnectionCreatedEvent`.
        * Doing so eliminates a thing to worry about in support cases related to this duration,
        * because the time to deliver synchronously is affected by user code.
-       * The driver MUST document this behavior as well as explicitly warn users that the behavior may change in the future.
+       * The driver MUST document this behavior
+       * as well as explicitly warn users that the behavior may change in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
-       * If the type chosen does not convey units, e.g., `int64`, then the driver MAY include units in the name, e.g., `durationMS`.
+       * If the type chosen does not convey units, e.g., `int64`,
+       * then the driver MAY include units in the name, e.g., `durationMS`.
        */
       duration: Duration;
     }
@@ -1009,22 +1015,28 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       connectionId: int64;
 
       /**
-       * The time elapsed waiting for conditions specified by `ConnectionPoolOptions.waitQueueTimeoutMS`.
+       * The time elapsed waiting for conditions
+       * specified by `ConnectionPoolOptions.waitQueueTimeoutMS`.
        * More specifically, the time elapsed between the `ConnectionCheckOutStartedEvent` and:
-       *  - the `ConnectionCreatedEvent` emitted by the same checking out, if this checking out emitted `ConnectionCreatedEvent`;
+       *  - the `ConnectionCreatedEvent` emitted by the same checking out,
+       *    if this checking out emitted `ConnectionCreatedEvent`;
        *  - this event, otherwise.
        *
-       * Naturally, this duration is usually smaller than or equal to `ConnectionPoolOptions.waitQueueTimeoutMS`,
-       * but MAY occasionally be greater than that, because a driver does not provide hard real-time guarantees.
+       * Naturally, this duration is usually
+       * smaller than or equal to `ConnectionPoolOptions.waitQueueTimeoutMS`,
+       * but MAY occasionally be greater than that,
+       * because a driver does not provide hard real-time guarantees.
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
        * the time to deliver the `ConnectionCheckOutStartedEvent`, `ConnectionCreatedEvent`.
        * Doing so eliminates a thing to worry about in support cases related to this duration,
        * because the time to deliver synchronously is affected by user code.
-       * The driver MUST document this behavior as well as explicitly warn users that the behavior may change in the future.
+       * The driver MUST document this behavior
+       * as well as explicitly warn users that the behavior may change in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
-       * If the type chosen does not convey units, e.g., `int64`, then the driver MAY include units in the name, e.g., `waitedMS`.
+       * If the type chosen does not convey units, e.g., `int64`,
+       * then the driver MAY include units in the name, e.g., `waitedMS`.
        */
       waited: Duration;
     }
