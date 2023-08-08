@@ -1023,7 +1023,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * Naturally, if a new connection was not created (`ConnectionCreatedEvent`)
        * and established (`ConnectionReadyEvent`) as part of checking out,
        * this duration is usually
-       * smaller than or equal to `ConnectionPoolOptions.waitQueueTimeoutMS`,
+       * not greater than `ConnectionPoolOptions.waitQueueTimeoutMS`,
        * but MAY occasionally be greater than that,
        * because a driver does not provide hard real-time guarantees.
        *
