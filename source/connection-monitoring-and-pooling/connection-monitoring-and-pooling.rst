@@ -921,8 +921,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * it is the time elapsed between the `ConnectionCreatedEvent`
        * emitted by the same checking out and this event.
        *
-       * Naturally, this duration does not include any part of
-       * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.waited`.
+       * Naturally, this duration is not greater than
+       * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.duration`.
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
        * the time to deliver the `ConnectionCreatedEvent`.
@@ -995,9 +995,9 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       reason: string|Enum;
 
       /**
-       * See `ConnectionCheckedOutEvent.waited`.
+       * See `ConnectionCheckedOutEvent.duration`.
        */
-      waited: Duration;
+      duration: Duration;
     }
 
     /**
@@ -1015,20 +1015,20 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       connectionId: int64;
 
       /**
-       * The time elapsed waiting for conditions
-       * specified by `ConnectionPoolOptions.waitQueueTimeoutMS`.
-       * More specifically, the time elapsed between the `ConnectionCheckOutStartedEvent` and:
-       *  - the `ConnectionCreatedEvent` emitted by the same checking out,
-       *    if this checking out emitted `ConnectionCreatedEvent`;
-       *  - this event, otherwise.
+       * The time it took to check out the connection.
+       * More specifically, the time elapsed between the `ConnectionCheckOutStartedEvent` and
+       * the `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent`
+       * emitted by the same checking out.
        *
-       * Naturally, this duration is usually
+       * Naturally, if a new connection was not created (`ConnectionCreatedEvent`)
+       * and established (`ConnectionReadyEvent`) as part of checking out,
+       * this duration is usually
        * smaller than or equal to `ConnectionPoolOptions.waitQueueTimeoutMS`,
        * but MAY occasionally be greater than that,
        * because a driver does not provide hard real-time guarantees.
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
-       * the time to deliver the `ConnectionCheckOutStartedEvent`, `ConnectionCreatedEvent`.
+       * the time to deliver the `ConnectionCheckOutStartedEvent`.
        * Doing so eliminates a thing to worry about in support cases related to this duration,
        * because the time to deliver synchronously is affected by user code.
        * The driver MUST document this behavior
@@ -1036,9 +1036,9 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
-       * then the driver MAY include units in the name, e.g., `waitedMS`.
+       * then the driver MAY include units in the name, e.g., `durationMS`.
        */
-      waited: Duration;
+      duration: Duration;
     }
 
     /**
@@ -1350,13 +1350,13 @@ In addition to the common fields defined above, this message MUST contain the fo
      - If ``reason`` is ``ConnectionError``, the associated error. The type and format of this value is flexible; see the
        `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_  for details on representing errors in log messages.
 
-   * - waitedMS
+   * - durationMS
      - Int64
-     - ``ConnectionCheckOutFailedEvent.waited`` converted to milliseconds.
+     - ``ConnectionCheckOutFailedEvent.duration`` converted to milliseconds.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}. Waited: {{waitedMS}} ms
+  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}. Duration: {{durationMS}} ms
 
 Connection Checked Out
 -----------------------
@@ -1378,13 +1378,13 @@ In addition to the common fields defined above, this message MUST contain the fo
      - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
-   * - waitedMS
+   * - durationMS
      - Int64
-     - ``ConnectionCheckedOutEvent.waited`` converted to milliseconds.
+     - ``ConnectionCheckedOutEvent.duration`` converted to milliseconds.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection checked out: address={serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, waited={{waitedMS}} ms
+  Connection checked out: address={serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, duration={{durationMS}} ms
 
 Connection Checked In
 ---------------------

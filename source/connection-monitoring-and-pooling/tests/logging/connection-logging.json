@@ -170,7 +170,7 @@
                     "long"
                   ]
                 },
-                "waitedMS": {
+                "durationMS": {
                   "$$type": [
                     "double",
                     "int",
@@ -237,7 +237,7 @@
                     "long"
                   ]
                 },
-                "waitedMS": {
+                "durationMS": {
                   "$$type": [
                     "double",
                     "int",
@@ -506,7 +506,7 @@
                 "error": {
                   "$$exists": true
                 },
-                "waitedMS": {
+                "durationMS": {
                   "$$type": [
                     "double",
                     "int",
