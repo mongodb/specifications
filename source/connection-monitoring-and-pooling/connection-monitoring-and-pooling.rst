@@ -921,7 +921,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * it is the time elapsed between the `ConnectionCreatedEvent`
        * emitted by the same checking out and this event.
        *
-       * Naturally, this duration is not greater than
+       * Naturally, when establishing a connection is part of checking out,
+       * this duration is not greater than
        * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.duration`.
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
