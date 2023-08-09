@@ -12,6 +12,8 @@ Abstract
 
 Drivers currently support a variety of options that allow users to configure connection pooling behavior. Users are confused by drivers supporting different subsets of these options. Additionally, drivers implement their connection pools differently, making it difficult to design cross-driver pool functionality. By unifying and codifying pooling options and behavior across all drivers, we will increase user comprehension and code base maintainability.
 
+This specification does not apply to drivers that do not support multitasking.
+
 META 
 ====
 
@@ -131,8 +133,9 @@ Additionally, Drivers that implement a Connection Pool MUST support the followin
       /**
        *  NOTE: This option has been deprecated in favor of timeoutMS.
        *
-       *  The maximum amount of time a thread can wait for a connection
-       *  to become available.
+       *  The maximum amount of time a thread can wait for
+       *  either an available non-perished connection (limited by `maxPoolSize`),
+       *  or a pending connection (limited by `maxConnecting`).
        *  If specified, MUST be a number >= 0.
        *  A value of 0 means there is no limit.
        *  Defaults to 0.
@@ -641,12 +644,6 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       # This must be done in all drivers
       leave wait queue
 
-    # If there is no background thread, the pool MUST ensure that
-    # there are at least minPoolSize total connections.
-    # This MUST be done in a non-blocking manner
-    while totalConnectionCount < minPoolSize:
-      populate the pool with a connection
-
     # If the Connection has not been established yet (TCP, TLS,
     # handshake, compression, and auth), it must be established
     # before it is returned.
@@ -663,6 +660,13 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     else:
         decrement availableConnectionCount
     set connection state to "in use"
+
+    # If there is no background thread, the pool MUST ensure that
+    # there are at least minPoolSize total connections.
+    do asynchronously:
+      while totalConnectionCount < minPoolSize:
+        populate the pool with a connection
+
     emit ConnectionCheckedOutEvent and equivalent log message
     return connection
 
@@ -909,6 +913,30 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *  The ID of the Connection
        */
       connectionId: int64;
+
+      /**
+       * The time it took to establish the connection.
+       * In accordance with the definition of establishment of a connection
+       * specified by `ConnectionPoolOptions.maxConnecting`,
+       * it is the time elapsed between the `ConnectionCreatedEvent`
+       * emitted by the same checking out and this event.
+       *
+       * Naturally, when establishing a connection is part of checking out,
+       * this duration is not greater than
+       * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.duration`.
+       *
+       * A driver that delivers events synchronously MUST NOT include in this duration
+       * the time to deliver the `ConnectionCreatedEvent`.
+       * Doing so eliminates a thing to worry about in support cases related to this duration,
+       * because the time to deliver synchronously is affected by user code.
+       * The driver MUST document this behavior
+       * as well as explicitly warn users that the behavior may change in the future.
+       *
+       * A driver MAY choose the type idiomatic to the driver.
+       * If the type chosen does not convey units, e.g., `int64`,
+       * then the driver MAY include units in the name, e.g., `durationMS`.
+       */
+      duration: Duration;
     }
 
     /**
@@ -966,6 +994,11 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *   - "connectionError": The Connection check out attempt experienced an error while setting up a new Connection
        */
       reason: string|Enum;
+
+      /**
+       * See `ConnectionCheckedOutEvent.duration`.
+       */
+      duration: Duration;
     }
 
     /**
@@ -981,6 +1014,32 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *  The ID of the Connection
        */
       connectionId: int64;
+
+      /**
+       * The time it took to check out the connection.
+       * More specifically, the time elapsed between
+       * the `ConnectionCheckOutStartedEvent`
+       * emitted by the same checking out and this event.
+       *
+       * Naturally, if a new connection was not created (`ConnectionCreatedEvent`)
+       * and established (`ConnectionReadyEvent`) as part of checking out,
+       * this duration is usually
+       * not greater than `ConnectionPoolOptions.waitQueueTimeoutMS`,
+       * but MAY occasionally be greater than that,
+       * because a driver does not provide hard real-time guarantees.
+       *
+       * A driver that delivers events synchronously MUST NOT include in this duration
+       * the time to deliver the `ConnectionCheckOutStartedEvent`.
+       * Doing so eliminates a thing to worry about in support cases related to this duration,
+       * because the time to deliver synchronously is affected by user code.
+       * The driver MUST document this behavior
+       * as well as explicitly warn users that the behavior may change in the future.
+       *
+       * A driver MAY choose the type idiomatic to the driver.
+       * If the type chosen does not convey units, e.g., `int64`,
+       * then the driver MAY include units in the name, e.g., `durationMS`.
+       */
+      duration: Duration;
     }
 
     /**
@@ -1195,9 +1254,13 @@ In addition to the common fields defined above, this message MUST contain the fo
      - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
+   * - durationMS
+     - Int64
+     - ``ConnectionReadyEvent.duration`` converted to milliseconds.
+
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection ready: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
+  Connection ready: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, established in={{durationMS}} ms
 
 Connection Closed Message
 -------------------------
@@ -1288,9 +1351,13 @@ In addition to the common fields defined above, this message MUST contain the fo
      - If ``reason`` is ``ConnectionError``, the associated error. The type and format of this value is flexible; see the
        `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_  for details on representing errors in log messages.
 
+   * - durationMS
+     - Int64
+     - ``ConnectionCheckOutFailedEvent.duration`` converted to milliseconds.
+
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}
+  Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}. Duration: {{durationMS}} ms
 
 Connection Checked Out
 -----------------------
@@ -1312,9 +1379,13 @@ In addition to the common fields defined above, this message MUST contain the fo
      - Int64
      - The driver-generated ID for the connection as defined in `Connection <#connection>`_.
 
+   * - durationMS
+     - Int64
+     - ``ConnectionCheckedOutEvent.duration`` converted to milliseconds.
+
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
-  Connection checked out: address={serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
+  Connection checked out: address={serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, duration={{durationMS}} ms
 
 Connection Checked In
 ---------------------
@@ -1549,6 +1620,7 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-10-14: Add connection pool log messages and associated tests.
 :2023-04-17: Fix duplicate logging test description.
+:2023-08-04: Add durations to connection pool events.
 
 ----
 
