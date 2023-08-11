@@ -843,11 +843,12 @@ For multi-threaded clients, the server selection algorithm is as follows:
 2. If the topology wire version is invalid, raise an error and log a
    `"Server selection failed" message`_.
 
-3. Find suitable servers by topology type and operation type
+3. Find suitable servers by topology type and operation type. In the case of
+   sharded clusters, a list of de-prioritized servers may be provided;
+   these servers should be selected only if there are no other suitable servers.
 
 4. Filter the suitable servers by calling the optional, application-provided server
-   selector. The selector may be provided with a list of de-prioritized servers;
-   these servers should be selected only if there are no other suitable servers.
+   selector.
 
 5. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and continue to the next step;
@@ -916,11 +917,12 @@ as follows:
 5. If the topology wire version is invalid, raise an error and log a
    `"Server selection failed" message`_.
 
-6. Find suitable servers by topology type and operation type
+6. Find suitable servers by topology type and operation type. In the case of
+   sharded clusters, a list of de-prioritized servers may be provided;
+   these servers should be selected only if there are no other suitable servers.
 
 7. Filter the suitable servers by calling the optional, application-provided
-   server selector. The selector may be provided with a list of de-prioritized servers;
-   these servers should be selected only if there are no other suitable servers.
+   server selector.
 
 8. If there are any suitable servers, filter them according to `Filtering
    suitable servers based on the latency window`_ and return one at random from

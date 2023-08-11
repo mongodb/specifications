@@ -268,10 +268,11 @@ selecting a server for a retry attempt.
 3a. Selecting the server for retry
 ''''''''''''''''''''''''''''''''''
 
-If the driver cannot select a server for a retry attempt or the newly selected
-server does not support retryable reads, retrying is not possible and drivers
-MUST raise the previous retryable error. In both cases, the caller is able to
-infer that an attempt was made.
+Server on wich the operation failed MUST be provided to the server selection
+mechanism as a de-prioritized server. If the driver cannot select a server for
+a retry attempt or the newly selected server does not support retryable reads,
+retrying is not possible and drivers MUST raise the previous retryable error.
+In both cases, the caller is able to infer that an attempt was made.
 
 3b. Sending an equivalent command for a retry attempt
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -357,9 +358,17 @@ and reflects the flow described above.
    */
   function executeRetryableRead(command, session) {
     Exception previousError = null;
+    Server previousServer = null;
     while true {
       try {
-        server = selectServer();
+        if (previousServer == null) {
+          server = selectServer();
+        } else {
+          // If a previous attempt was made, deprioritize the previous server
+          // where the command failed.
+          deprioritizedServers = [ previousServer ];
+          server = selectServer(deprioritizedServers);
+        }
       } catch (ServerSelectionException exception) {
         if (previousError == null) {
           // If this is the first attempt, propagate the exception.
@@ -416,9 +425,11 @@ and reflects the flow described above.
       } catch (NetworkException networkError) {
         updateTopologyDescriptionForNetworkError(server, networkError);
         previousError = networkError;
+        previousServer = server;
       } catch (NotWritablePrimaryException notPrimaryError) {
         updateTopologyDescriptionForNotWritablePrimaryError(server, notPrimaryError);
         previousError = notPrimaryError;
+        previousServer = server;
       } catch (DriverException error) {
         if ( previousError != null ) {
           throw previousError;

@@ -396,8 +396,8 @@ of the following conditions is reached:
 - CSOT is not enabled and one retry was attempted.
 
 For each retry attempt, drivers MUST select a writable server. Server on wich
-the operation failed should be provided to the server selection mechanism as
-a de-prioritized server. If the drivercannot select a server for a retry attempt
+the operation failed MUST be provided to the server selection mechanism as
+a de-prioritized server. If the driver cannot select a server for a retry attempt
 or the selected server does not support retryable writes, retrying is not
 possible and drivers MUST raise the retryable error from the previous attempt.
 In both cases, the caller is able to infer that an attempt was made.
@@ -494,7 +494,8 @@ The above rules are implemented in the following pseudo-code:
       }
 
       /*
-       * We try to select another
+       * We try to select server that is not the one that failed by passing the
+       * failed server as a deprioritized server.
        * If we cannot select a writable server, do not proceed with retrying and
        * throw the previous error. The caller can then infer that an attempt was
        * made and failed. */
