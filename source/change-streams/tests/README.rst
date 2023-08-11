@@ -242,7 +242,7 @@ The following tests have not yet been automated, but MUST still be tested. All t
 
 #. Validate that large ``ChangeStream`` events are split when using ``$changeStreamSplitLargeEvent``:
 
-   #. Run only against servers ``>=7.0``
+   #. Run only against servers ``>=6.0.9 && <6.1`` or ``>=7.0``.
    #. Create a new collection _C_ with ``changeStreamPreAndPostImages`` enabled.
    #. Insert into _C_ a document at least 10mb in size, e.g. ``{ "value": "q"*10*1024*1024 }``
    #. Create a change stream _S_ by calling ``watch`` on _C_ with pipeline ``[{ "$changeStreamSplitLargeEvent": {} }]`` and ``fullDocumentBeforeChange=required``.
