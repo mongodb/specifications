@@ -91,6 +91,28 @@ Round trip time. The client's measurement of the duration of one hello or legacy
 The RTT is used to support `localThresholdMS`_ from the Server Selection spec
 and `timeoutMS`_ from the `Client Side Operations Timeout Spec`_.
 
+FaaS
+````
+
+A Function-as-a-Service (FaaS) environment like AWS Lambda.
+
+sdamMode
+````````
+
+The sdamMode option configures which server monitoring protocol to use. Valid modes are
+"stream", "poll", or "auto". The default value MUST be "auto":
+
+- With "stream" mode, the client MUST use the streaming protocol when the server supports
+  it or fall back to the polling protocol otherwise.
+- With "poll" mode, the client MUST use the polling protocol.
+- With "auto" mode, the client MUST behave the same as "poll" mode when running on a FaaS
+  platform or the same as "stream" mode otherwise. The client detects that it's
+  running on a FaaS platform via the same rules for generating the ``client.env``
+  handshake metadata field in the `MongoDB Handshake spec`_.
+
+Multi-threaded or asynchronous drivers MUST implement this option.
+See `Why disable the streaming protocol on FaaS platforms like AWS Lambda?`_ and
+`Why introduce a knob for sdamMode?`_
 
 Monitoring
 ''''''''''
@@ -203,7 +225,7 @@ Clients use the streaming protocol when supported
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When a monitor discovers that the server supports the streamable hello or legacy hello
-command, it MUST use the `streaming protocol`_.
+command and the client does not have `streaming disabled`_, it MUST use the `streaming protocol`_.
 
 Single-threaded monitoring
 ``````````````````````````
@@ -491,6 +513,22 @@ connected to a server that supports the awaitable hello or legacy hello commands
 This protocol requires an extra thread and an extra socket for
 each monitor to perform RTT calculations.
 
+.. _streaming is disabled:
+
+Streaming disabled
+``````````````````
+
+The streaming protocol MUST be disabled when either:
+
+- the client is configured with sdamMode=poll, or
+- the client is configured with sdamMode=auto and a FaaS platform is detected, or
+- the server does not support streaming (eg MongoDB <4.4).
+
+When the streaming protocol is disabled the client MUST use the `polling protocol`_
+and MUST NOT start an extra thread or connection for `Measuring RTT`_.
+
+See `Why disable the streaming protocol on FaaS platforms like AWS Lambda?`_.
+
 Streaming hello or legacy hello
 ```````````````````````````````
 
@@ -584,8 +622,8 @@ current monitoring connection. (See `Drivers cancel in-progress monitor checks`_
 Polling Protocol
 ''''''''''''''''
 
-The polling protocol is used to monitor MongoDB <= 4.4 servers. The client
-`checks`_ a server with a hello or legacy hello command and then sleeps for
+The polling protocol is used to monitor MongoDB <= 4.4 servers or when `streaming is disabled`_.
+The client `checks`_ a server with a hello or legacy hello command and then sleeps for
 heartbeatFrequencyMS before running another check.
 
 Marking the connection pool as ready (CMAP only)
@@ -661,6 +699,12 @@ The event API here is assumed to be like the standard `Python Event
         heartbeatFrequencyMS = heartbeatFrequencyMS
         minHeartbeatFrequencyMS = 500
         stableApi = stableApi
+        if sdamMode == "stream":
+            streamingEnabled = True
+        elif sdamMode == "poll":
+            streamingEnabled = False
+        else:  # sdamMode == "auto"
+            streamingEnabled = not isFaas()
 
         # Internal Monitor state:
         connection = Null
@@ -671,8 +715,6 @@ The event API here is assumed to be like the standard `Python Event
         rttMonitor = RttMonitor(serverAddress, stableApi)
 
     def run():
-        # Start the RttMonitor.
-        rttMonitor.run()
         while this monitor is not stopped:
             previousDescription = description
             try:
@@ -700,7 +742,10 @@ The event API here is assumed to be like the standard `Python Event
             serverSupportsStreaming = description.type != Unknown and description.topologyVersion != Null
             connectionIsStreaming = connection != Null and connection.moreToCome
             transitionedWithNetworkError = isNetworkError(description.error) and previousDescription.type != Unknown
-            if serverSupportsStreaming or connectionIsStreaming or transitionedWithNetworkError:
+            if streamingEnabled and serverSupportsStreaming and not rttMonitor.started:
+                # Start the RttMonitor.
+                rttMonitor.run()
+            if (streamingEnabled and (serverSupportsStreaming or connectionIsStreaming)) or transitionedWithNetworkError:
                 continue
 
             wait()
@@ -733,13 +778,13 @@ The event API here is assumed to be like the standard `Python Event
                 response = connection.handshakeResponse
             elif connection.moreToCome:
                 response = read next helloCommand exhaust response
-            elif previousDescription.topologyVersion:
+            elif streamingEnabled and previousDescription.topologyVersion:
                 # Initiate streaming hello or legacy hello
                 if connectTimeoutMS != 0:
                     set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
                 response = call {helloCommand: 1, helloOk: True, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
             else:
-                # The server does not support topologyVersion.
+                # The server does not support topologyVersion or streamingEnabled=False.
                 response = call {helloCommand: 1, helloOk: True}
 
             # If the server supports hello, then response.helloOk will be true
@@ -1140,6 +1185,32 @@ the "awaited" field on server heartbeat events so that applications can
 differentiate a slow heartbeat in the polling protocol from a normal
 awaitable hello or legacy hello heartbeat in the new protocol.
 
+Why disable the streaming protocol on FaaS platforms like AWS Lambda?
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+The streaming protocol requires an extra connection and thread per monitored
+server which is expensive on platforms like AWS Lambda. The extra connection
+is particularly inefficient when thousands of AWS instances and thus
+thousands of clients are used.
+
+Additionally, the streaming protocol relies on the assumption that the client
+can read the server's heartbeat responses in a timely manner, otherwise the
+client will be acting on stale information. In many FaaS platforms, like AWS
+Lambda, host applications will be suspended and resumed many minutes later.
+This behavior causes a build up of heartbeat responses and the client can end
+up spending a long time in a catch up phase processing outdated responses.
+This problem was discovered in `DRIVERS-2246`_.
+
+We decided to make polling the default behavior when running on FaaS platforms
+like AWS Lambda to improve scalability, performance, and reliability.
+
+Why introduce a knob for sdamMode?
+''''''''''''''''''''''''''''''''''
+
+The sdamMode knob provides an workaround in cases where the polling
+protocol would be a better choice but the driver is not running on a FaaS
+platform. It also provides a workaround in case the FaaS detection
+logic becomes outdated or inaccurate.
 
 Changelog
 ---------
@@ -1159,6 +1230,7 @@ Changelog
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter reformat changelog.
 :2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
+:2023-08-21: Add sdamMode and default to the Polling Protocol on FaaS.
 
 ----
 
@@ -1184,3 +1256,5 @@ Changelog
 .. _Client Side Operations Timeout Spec: /source/client-side-operations-timeout/client-side-operations-timeout.rst
 .. _timeoutMS: /source/client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS
 .. _Why does the pool need to support closing in use connections as part of its clear logic?: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Why-does-the-pool-need-to-support-closing-in-use-connections-as-part-of-its-clear-logic?
+.. _DRIVERS-2246: https://jira.mongodb.org/browse/DRIVERS-2246
+.. _MongoDB Handshake spec: /source/mongodb-handshake/handshake.rst#client-env
