@@ -395,7 +395,7 @@ of the following conditions is reached:
   <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. Server on wich
+For each retry attempt, drivers MUST select a writable server. Server on which
 the operation failed MUST be provided to the server selection mechanism as
 a de-prioritized server. If the driver cannot select a server for a retry attempt
 or the selected server does not support retryable writes, retrying is not
