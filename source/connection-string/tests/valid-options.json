@@ -26,7 +26,13 @@
       "uri": "mongodb://example.com?tls=true",
       "valid": true,
       "warning": false,
-      "hosts": null,
+      "hosts": [
+        {
+          "type": "hostname",
+          "host": "example.com",
+          "port": null
+        }
+      ],
       "auth": null,
       "options": {
         "tls": true
