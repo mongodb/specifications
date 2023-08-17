@@ -474,7 +474,7 @@ and sharded clusters.
        providing the two selected mongos-es as seeds.
 
     4. Enable command monitoring, and execute a write command that is
-       supposed to fail on both mongos-es.
+       supposed to fail on both mongoses.
 
     5. Asserts that there were failed command events from each mongos.
 
