@@ -485,7 +485,7 @@ and sharded clusters.
    This test MUST be executed against a sharded cluster
 
     1. Ensure that a test is run against a sharded cluster. If there are multiple
-       mongos-es in the cluster, pick one to test against.
+       mongoses in the cluster, pick one to test against.
 
     2. Create a client that connects to the mongos using the direct connection,
        and configure a fail point so that the mongos raises a retryable error once.
