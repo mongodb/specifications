@@ -463,7 +463,7 @@ and sharded clusters.
    mongos instances.
 
     1. Ensure that a test is run against a sharded cluster that has at least two
-       mongos-es. If there are more than two mongos-es in the cluster, pick two to
+       mongoses. If there are more than two mongoses in the cluster, pick two to
        test against.
 
     2. Create a client per mongos using the direct connection, and configure fail
