@@ -918,7 +918,7 @@ as follows:
    `"Server selection failed" message`_.
 
 6. Find suitable servers by topology type and operation type. In the case of
-   sharded clusters, a list of de-prioritized servers may be provided;
+   sharded clusters, a list of deprioritized servers may be provided;
    these servers should be selected only if there are no other suitable servers.
 
 7. Filter the suitable servers by calling the optional, application-provided
