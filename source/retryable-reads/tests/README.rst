@@ -249,7 +249,7 @@ mongos instances.
    test against.
 
 2. Create a client per mongos using the direct connection, and configure fail
-   points on each of the picked mongos-es, so that each mongos raises
+   points on each of the picked mongoses, so that each mongos raises
    a retryable error once.
 
 3. Create a client with ``retryReads=true`` that connects to the cluster,
