@@ -471,7 +471,7 @@ and sharded clusters.
        a retryable error once.
 
     3. Create a client with ``retryWrites=true`` that connects to the cluster,
-       providing the two selected mongos-es as seeds.
+       providing the two selected mongoses as seeds.
 
     4. Enable command monitoring, and execute a write command that is
        supposed to fail on both mongoses.
