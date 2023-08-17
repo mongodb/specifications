@@ -268,8 +268,8 @@ selecting a server for a retry attempt.
 3a. Selecting the server for retry
 ''''''''''''''''''''''''''''''''''
 
-Server on which the operation failed MUST be provided to the server selection
-mechanism as a de-prioritized server. If the driver cannot select a server for
+The server on which the operation failed MUST be provided to the server selection
+mechanism as a deprioritized server. If the driver cannot select a server for
 a retry attempt or the newly selected server does not support retryable reads,
 retrying is not possible and drivers MUST raise the previous retryable error.
 In both cases, the caller is able to infer that an attempt was made.
