@@ -513,6 +513,11 @@ The above rules are implemented in the following pseudo-code:
       if (timeoutMS != null && isExpired(timeoutMS) {
         throw previousError;
       }
+
+      /* If CSOT is not enabled attempt one retry before giving up. */
+      if (timeoutMS == null) {
+        return executeCommand(server, retryableCommand);
+      }
     }
   }
 
