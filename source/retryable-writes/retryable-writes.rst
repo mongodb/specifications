@@ -397,7 +397,7 @@ of the following conditions is reached:
 
 For each retry attempt, drivers MUST select a writable server. Server on which
 the operation failed MUST be provided to the server selection mechanism as
-a de-prioritized server. If the driver cannot select a server for a retry attempt
+a deprioritized server. If the driver cannot select a server for a retry attempt
 or the selected server does not support retryable writes, retrying is not
 possible and drivers MUST raise the retryable error from the previous attempt.
 In both cases, the caller is able to infer that an attempt was made.
