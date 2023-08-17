@@ -256,7 +256,7 @@ mongos instances.
    providing the two selected mongoses as seeds.
 
 4. Enable command monitoring, and execute a read command that is
-   supposed to fail on both mongos-es.
+   supposed to fail on both mongoses.
 
 5. Asserts that there were failed command events from each mongos.
 
