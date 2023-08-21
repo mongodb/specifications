@@ -462,46 +462,69 @@ and sharded clusters.
    This test MUST be executed against a sharded cluster that has at least two
    mongos instances.
 
-    1. Ensure that a test is run against a sharded cluster that has at least two
-       mongoses. If there are more than two mongoses in the cluster, pick two to
-       test against.
+   1. Ensure that a test is run against a sharded cluster that has at least two
+      mongoses. If there are more than two mongoses in the cluster, pick two to
+      test against.
 
-    2. Create a client per mongos using the direct connection, and configure fail
-       points on each of the picked mongoses, so that each mongos raises
-       a retryable error once.
+   2. Create a client per mongos using the direct connection, and configure the
+      following fail point on each mongos::
 
-    3. Create a client with ``retryWrites=true`` that connects to the cluster,
-       providing the two selected mongoses as seeds.
+        {
+            configureFailPoint: "failCommand",
+            mode: { times: 1 },
+            data: {
+                failCommands: ["insert"],
+                errorCode: 6,
+                errorLabels: ["RetryableWriteError"],
+                closeConnection: true
+            }
+        }
 
-    4. Enable command monitoring, and execute a write command that is
-       supposed to fail on both mongoses.
+   3. Create a client with ``retryWrites=true`` that connects to the cluster,
+      providing the two selected mongoses as seeds.
 
-    5. Asserts that there were failed command events from each mongos.
+   4. Enable command monitoring, and execute a write command that is
+      supposed to fail on both mongoses.
 
-    6. Disable the fail points.
+   5. Asserts that there were failed command events from each mongos.
+
+   6. Disable the fail points.
 
 #. Test that in a sharded cluster on the same mongos if no other available
 
    This test MUST be executed against a sharded cluster
 
-    1. Ensure that a test is run against a sharded cluster. If there are multiple
-       mongoses in the cluster, pick one to test against.
+   1. Ensure that a test is run against a sharded cluster. If there are multiple
+      mongoses in the cluster, pick one to test against.
 
-    2. Create a client that connects to the mongos using the direct connection,
-       and configure a fail point so that the mongos raises a retryable error once.
+   2. Create a client that connects to the mongos using the direct connection,
+      and configure the following fail point on the mongos::
 
-    3. Create a client with ``retryWrites=true`` that connects to the cluster,
-       providing the selected mongos as the seed.
+        {
+            configureFailPoint: "failCommand",
+            mode: { times: 1 },
+            data: {
+                failCommands: ["insert"],
+                errorCode: 6,
+                errorLabels: ["RetryableWriteError"],
+                closeConnection: true
+            }
+        }
 
-    4. Enable command monitoring, and execute a write command that is
-       supposed to fail.
+   3. Create a client with ``retryWrites=true`` that connects to the cluster,
+      providing the selected mongos as the seed.
 
-    5. Asserts that there was a failed command and a successful command event.
+   4. Enable command monitoring, and execute a write command that is
+      supposed to fail.
 
-    6. Disable the fail point.
+   5. Asserts that there was a failed command and a successful command event.
+
+   6. Disable the fail point.
 
 Changelog
 =========
+
+:2023-08-??: Add prose tests for retrying in a sharded cluster.
 
 :2022-08-30: Add prose test verifying correct error handling for errors with
              the NoWritesPerformed label, which is to return the original
@@ -529,3 +552,4 @@ Changelog
              which are now expressed within ``runOn`` elements.
 
              Add test-level ``useMultipleMongoses`` field.
+``

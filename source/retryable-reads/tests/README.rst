@@ -248,14 +248,23 @@ mongos instances.
    mongoses. If there are more than two mongoses in the cluster, pick two to
    test against.
 
-2. Create a client per mongos using the direct connection, and configure fail
-   points on each of the picked mongoses, so that each mongos raises
-   a retryable error once.
+2. Create a client per mongos using the direct connection, and configure the
+   following fail points on each mongos::
+
+     {
+         configureFailPoint: "failCommand",
+         mode: { times: 1 },
+         data: {
+             failCommands: ["find"],
+             errorCode: 6,
+             closeConnection: true
+         }
+     }
 
 3. Create a client with ``retryReads=true`` that connects to the cluster,
    providing the two selected mongoses as seeds.
 
-4. Enable command monitoring, and execute a read command that is
+4. Enable command monitoring, and execute ``find`` command that is
    supposed to fail on both mongoses.
 
 5. Asserts that there were failed command events from each mongos.
@@ -270,13 +279,22 @@ Retryable Reads Are Retried on the Same Mongos if No Other Available
    mongoses in the cluster, pick one to test against.
 
 2. Create a client that connects to the mongos using the direct connection,
-   and configure a fail point so that the mongos raises a retryable error once.
+   and configure the following fail point on the mongos::
+
+     {
+         configureFailPoint: "failCommand",
+         mode: { times: 1 },
+         data: {
+             failCommands: ["find"],
+             errorCode: 6,
+             closeConnection: true
+         }
+     }
 
 3. Create a client with ``retryReads=true`` that connects to the cluster,
    providing the selected mongos as the seed.
 
-4. Enable command monitoring, and execute a read command that is
-   supposed to fail.
+4. Enable command monitoring, and execute ``find`` command.
 
 5. Asserts that there was a failed command and a successful command event.
 
@@ -285,6 +303,8 @@ Retryable Reads Are Retried on the Same Mongos if No Other Available
 
 Changelog
 =========
+
+:2023-08-??: Add prose tests for retrying in a sharded cluster.
 
 :2022-04-22: Clarifications to ``serverless`` and ``useMultipleMongoses``.
 
