@@ -395,8 +395,8 @@ of the following conditions is reached:
   <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. In sharded
-topology, the server on which the operation failed MUST be provided to
+For each retry attempt, drivers MUST select a writable server. In a sharded
+cluster, the server on which the operation failed MUST be provided to
 the server selection mechanism as a deprioritized server.
 
 If the driver cannot select a server for a retry attempt
@@ -829,7 +829,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
-:2023-08-??: Require that in a sharded topology the server on which the
+:2023-08-??: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
              mechanism as a deprioritized server.
 :2022-11-17: Add logic for persisting "currentError" as "previousError" on first
