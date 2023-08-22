@@ -96,10 +96,10 @@ FaaS
 
 A Function-as-a-Service (FaaS) environment like AWS Lambda.
 
-sdamMode
-````````
+serverMonitoringMode
+````````````````````
 
-The sdamMode option configures which server monitoring protocol to use. Valid modes are
+The serverMonitoringMode option configures which server monitoring protocol to use. Valid modes are
 "stream", "poll", or "auto". The default value MUST be "auto":
 
 - With "stream" mode, the client MUST use the streaming protocol when the server supports
@@ -112,7 +112,7 @@ The sdamMode option configures which server monitoring protocol to use. Valid mo
 
 Multi-threaded or asynchronous drivers MUST implement this option.
 See `Why disable the streaming protocol on FaaS platforms like AWS Lambda?`_ and
-`Why introduce a knob for sdamMode?`_
+`Why introduce a knob for serverMonitoringMode?`_
 
 Monitoring
 ''''''''''
@@ -520,8 +520,8 @@ Streaming disabled
 
 The streaming protocol MUST be disabled when either:
 
-- the client is configured with sdamMode=poll, or
-- the client is configured with sdamMode=auto and a FaaS platform is detected, or
+- the client is configured with serverMonitoringMode=poll, or
+- the client is configured with serverMonitoringMode=auto and a FaaS platform is detected, or
 - the server does not support streaming (eg MongoDB <4.4).
 
 When the streaming protocol is disabled the client MUST use the `polling protocol`_
@@ -699,11 +699,11 @@ The event API here is assumed to be like the standard `Python Event
         heartbeatFrequencyMS = heartbeatFrequencyMS
         minHeartbeatFrequencyMS = 500
         stableApi = stableApi
-        if sdamMode == "stream":
+        if serverMonitoringMode == "stream":
             streamingEnabled = True
-        elif sdamMode == "poll":
+        elif serverMonitoringMode == "poll":
             streamingEnabled = False
-        else:  # sdamMode == "auto"
+        else:  # serverMonitoringMode == "auto"
             streamingEnabled = not isFaas()
 
         # Internal Monitor state:
@@ -1204,10 +1204,10 @@ This problem was discovered in `DRIVERS-2246`_.
 We decided to make polling the default behavior when running on FaaS platforms
 like AWS Lambda to improve scalability, performance, and reliability.
 
-Why introduce a knob for sdamMode?
-''''''''''''''''''''''''''''''''''
+Why introduce a knob for serverMonitoringMode?
+''''''''''''''''''''''''''''''''''''''''''''''
 
-The sdamMode knob provides an workaround in cases where the polling
+The serverMonitoringMode knob provides an workaround in cases where the polling
 protocol would be a better choice but the driver is not running on a FaaS
 platform. It also provides a workaround in case the FaaS detection
 logic becomes outdated or inaccurate.
@@ -1230,7 +1230,7 @@ Changelog
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter reformat changelog.
 :2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
-:2023-08-21: Add sdamMode and default to the Polling Protocol on FaaS.
+:2023-08-21: Add serverMonitoringMode and default to the Polling Protocol on FaaS.
 
 ----
 

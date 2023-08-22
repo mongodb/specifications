@@ -1,9 +1,9 @@
-description: sdamMode
+description: serverMonitoringMode
 
 schemaVersion: "1.3"
 
 tests:
-  - description: "connect with sdamMode=auto"
+  - description: "connect with serverMonitoringMode=auto"
     operations:
       - name: createEntities
         object: testRunner
@@ -12,7 +12,7 @@ tests:
             - client:
                 id: &client0 client0
                 uriOptions:
-                  sdamMode: "auto"
+                  serverMonitoringMode: "auto"
             - database:
                 id: &dbSdamModeAuto dbSdamModeAuto
                 client: *client0
@@ -24,7 +24,7 @@ tests:
           command: { ping: 1 }
         expectResult: { ok: 1 }
 
-  - description: "connect with sdamMode=stream"
+  - description: "connect with serverMonitoringMode=stream"
     operations:
       - name: createEntities
         object: testRunner
@@ -33,7 +33,7 @@ tests:
             - client:
                 id: &client1 client1
                 uriOptions:
-                  sdamMode: "stream"
+                  serverMonitoringMode: "stream"
             - database:
                 id: &dbSdamModeStream dbSdamModeStream
                 client: *client1
@@ -45,7 +45,7 @@ tests:
           command: { ping: 1 }
         expectResult: { ok: 1 }
 
-  - description: "connect with sdamMode=poll"
+  - description: "connect with serverMonitoringMode=poll"
     operations:
       - name: createEntities
         object: testRunner
@@ -54,7 +54,7 @@ tests:
             - client:
                 id: &client2 client2
                 uriOptions:
-                  sdamMode: "poll"
+                  serverMonitoringMode: "poll"
             - database:
                 id: &dbSdamModePoll dbSdamModePoll
                 client: *client2

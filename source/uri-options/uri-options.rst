@@ -293,9 +293,9 @@ pertaining to URI options apply here.
      - no
      - Enables retryable writes on server 3.6+
 
-   * - sdamMode
+   * - serverMonitoringMode
      - "stream", "poll", or "auto"
-     - defined in `SDAM spec <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#sdammode>`__
+     - defined in `SDAM spec <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servermonitoringmode>`__
      - required for multi-threaded or asynchronous drivers
      - Configures which server monitoring protocol to use.
 
@@ -531,7 +531,7 @@ this specification MUST be updated to reflect those changes.
 Changelog
 ---------
 
-:2023-08-21: Add sdamMode option.
+:2023-08-21: Add serverMonitoringMode option.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-19: Add the timeoutMS option and deprecate some existing timeout options
 :2021-12-14: Add SOCKS5 options
