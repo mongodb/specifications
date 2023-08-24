@@ -167,10 +167,15 @@ provided as a BSON object. This object has the following structure::
             platform: "<string>",
             /* OPTIONAL */
             env: {
-                name: "<string>",         /* REQUIRED */
+                name: "<string>",         /* OPTIONAL */
                 timeout_sec: 42,          /* OPTIONAL */
                 memory_mb: 1024,          /* OPTIONAL */
-                region: "<string>"        /* OPTIONAL */
+                region: "<string>",       /* OPTIONAL */
+                /* OPTIONAL */
+                container: {
+                    runtime: "<string>",  /* OPTIONAL */
+                    orchestrator: "<string>"  /* OPTIONAL */
+                }
             }
         }
     }
@@ -313,8 +318,11 @@ client.env
 
 This value is optional and is not application configurable.
 
-Information about the Function-as-a-Service (FaaS) environment, captured from environment
-variables.  The ``client.env.name`` field is determined by which of the following environment
+Information about the execution environment, including Function-as-a-Service (FaaS)
+identification and container runtime.
+
+FaaS details are captured in the ``name``, ``timeout_sec``, ``memory_mb``, and ``region`` fields
+of ``client.env``. The ``name`` field is determined by which of the following environment
 variables are populated:
 
 +----------------+----------------------------------------------------------+
@@ -329,12 +337,12 @@ variables are populated:
 
 .. [#] ``AWS_EXECUTION_ENV`` must start with the string ``"AWS_Lambda_"``.
 
-If none of those variables are populated the ``client.env`` value MUST be entirely omitted.  When
+If none of those variables are populated the other FaaS values MUST be entirely omitted.  When
 variables for multiple ``client.env.name`` values are present, ``vercel`` takes precedence over
-``aws.lambda``; any other combination MUST cause ``client.env`` to be entirely omitted.
+``aws.lambda``; any other combination MUST cause the other FaaS values to be entirely omitted.
 
-Depending on which ``client.env.name`` has been selected, other fields in ``client.env`` SHOULD
-be populated:
+Depending on which ``client.env.name`` has been selected, other FaaS fields in ``client.env``
+SHOULD be populated:
 
 +----------------+----------------------------+-------------------------------------+---------------+
 | Name           | Field                      | Environment Variable                | Expected Type |
@@ -354,6 +362,18 @@ be populated:
 
 Missing variables or variables with values not matching the expected type MUST cause the
 corresponding ``client.env`` field to be omitted and MUST NOT cause a user-visible error.
+
+Container runtime information is captured in ``client.env.container``.
+
+``client.env.container.runtime`` SHOULD be set to ``"docker"`` if the file ``.dockerenv``
+exists in the root directory.
+
+``client.env.container.orchestrator`` SHOULD be set to ``"kubernetes"`` if the environment
+variable ``KUBERNETES_SERVICE_HOST`` is populated.
+
+If no fields of ``client.env.container`` would be populated, ``client.env.container`` MUST
+be entirely omitted.  Similarly, if no fields of ``client.env`` would be populated,
+``client.env`` MUST be entirely omitted.
 
 The contents of ``client.env`` MUST be adjusted to keep the handshake below the size limit;
 see `Limitations`_ for specifics.
