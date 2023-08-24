@@ -222,6 +222,11 @@ Run the function locally from the same directory where the template.yaml resides
   sam build
   sam local invoke --parameter-overrides "MongoDbUri=${MONGODB_URI}"
 
+*NOTE* "127.0.0.1" in the MONGODB_URI MUST be replaced with "host.docker.internal" to test
+a local MongoDB deployment. If "host.docker.internal" does not work (can occur on M1
+machines), drivers MAY choose to use a [bridged docker container](https://docs.docker.com/network/bridge/)
+to test locally.
+
 
 Implementing the Function
 `````````````````````````
@@ -346,7 +351,6 @@ functions inside of it for setup, teardown, and execution:
       tasks:
         - test-aws-lambda-deployed
 
-
 Drivers MUST run the function on a single variant in Evergreen, in order to not
 potentially hit the Atlas API rate limit. The variant itself MUST have the SAM CLI installed.
 
@@ -364,5 +368,6 @@ Description of the behaviour of run-deployed-lambda-aws-tests.sh:
 Changelog
 =========
 
+:2023-08-17: Fixed URI typo, added host note, increase assume role duration.
 :2023-06-22: Updated evergreen configuration to use task groups.
 :2023-04-14: Added list of supported variants, added additional template config.

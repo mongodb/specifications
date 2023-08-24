@@ -627,10 +627,9 @@ The spec concerns itself with retrying read operations that encounter a
 retryable error (i.e. no response due to network error or a response indicating
 that the node is no longer a primary). A retryable error may be classified as
 either a transient error (e.g. dropped connection, replica set failover) or
-persistent outage. In the case of a transient error, the driver will mark the
-server as "unknown" per the `SDAM`_
-spec. A subsequent retry attempt will allow the driver to rediscover the primary
-within the designated server selection timeout period (30 seconds by
+persistent outage. If a transient error results in the server being marked as
+"unknown", a subsequent retry attempt will allow the driver to rediscover the
+primary within the designated server selection timeout period (30 seconds by
 default). If server selection times out during this retry attempt, we can
 reasonably assume that there is a persistent outage. In the case of a persistent
 outage, multiple retry attempts are fruitless and would waste time. See `How To
@@ -695,6 +694,7 @@ Changelog
 :2023-08-??: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
              mechanism as a deprioritized server.
+:2023-08-21: Update Q&A that contradicts SDAM transient error logic
 :2022-11-09: CLAM must apply both events and log messages.
 :2022-10-18: When CSOT is enabled multiple retry attempts may occur.
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
