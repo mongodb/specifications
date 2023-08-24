@@ -674,3 +674,4 @@ Changelog
 :2023-03-13: Add ``env`` to ``client`` document
 :2023-04-03: Simplify truncation for metadata
 :2023-05-04: ``AWS_EXECUTION_ENV`` must start with ``"AWS_Lambda_"``
+:2023-08-24: Added container awareness
