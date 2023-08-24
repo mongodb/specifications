@@ -321,6 +321,14 @@ This value is optional and is not application configurable.
 Information about the execution environment, including Function-as-a-Service (FaaS)
 identification and container runtime.
 
+The contents of ``client.env`` MUST be adjusted to keep the handshake below the size limit;
+see `Limitations`_ for specifics.
+
+If no fields of ``client.env`` would be populated, ``client.env`` MUST be entirely omitted.
+
+FaaS
+^^^^
+
 FaaS details are captured in the ``name``, ``timeout_sec``, ``memory_mb``, and ``region`` fields
 of ``client.env``. The ``name`` field is determined by which of the following environment
 variables are populated:
@@ -363,6 +371,9 @@ SHOULD be populated:
 Missing variables or variables with values not matching the expected type MUST cause the
 corresponding ``client.env`` field to be omitted and MUST NOT cause a user-visible error.
 
+Container
+^^^^^^^^^
+
 Container runtime information is captured in ``client.env.container``.
 
 ``client.env.container.runtime`` SHOULD be set to ``"docker"`` if the file ``.dockerenv``
@@ -372,11 +383,7 @@ exists in the root directory.
 variable ``KUBERNETES_SERVICE_HOST`` is populated.
 
 If no fields of ``client.env.container`` would be populated, ``client.env.container`` MUST
-be entirely omitted.  Similarly, if no fields of ``client.env`` would be populated,
-``client.env`` MUST be entirely omitted.
-
-The contents of ``client.env`` MUST be adjusted to keep the handshake below the size limit;
-see `Limitations`_ for specifics.
+be entirely omitted.
 
 --------------------------
 Speculative Authentication
