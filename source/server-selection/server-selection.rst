@@ -920,7 +920,7 @@ as follows:
    `"Server selection failed" message`_.
 
 6. Find suitable servers by topology type and operation type. If a list of
-   deprioritized servers is provided, and the topology is sharded cluster,
+   deprioritized servers is provided, and the topology is a sharded cluster,
    these servers should be selected only if there are no other suitable servers.
    The server selection algorithm MUST ignore the deprioritized servers if the
    topology is not a sharded cluster.
