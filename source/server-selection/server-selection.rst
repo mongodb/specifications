@@ -923,7 +923,7 @@ as follows:
    deprioritized servers is provided, and the topology is sharded cluster,
    these servers should be selected only if there are no other suitable servers.
    The server selection algorithm MUST ignore the deprioritized servers if the
-   topology is not sharded cluster.
+   topology is not a sharded cluster.
 
 7. Filter the suitable servers by calling the optional, application-provided
    server selector.
