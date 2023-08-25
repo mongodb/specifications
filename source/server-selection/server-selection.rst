@@ -847,7 +847,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
    deprioritized servers is provided, and the topology is a sharded cluster,
    these servers should be selected only if there are no other suitable servers.
    The server selection algorithm MUST ignore the deprioritized servers if the
-   topology is not sharded cluster.
+   topology is not a sharded cluster.
 
 4. Filter the suitable servers by calling the optional, application-provided server
    selector.
