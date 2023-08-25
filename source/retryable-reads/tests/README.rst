@@ -238,8 +238,8 @@ Retrying Reads in a Sharded Cluster
 These tests will be used to ensure drivers properly retry reads on a different
 mongos.
 
-Retryable Reads Are Retried on a Different Mongos if One Available
-------------------------------------------------------------------
+Retryable Reads Are Retried on a Different mongos if One is Available
+---------------------------------------------------------------------
 
 This test MUST be executed against a sharded cluster that has at least two
 mongos instances.
