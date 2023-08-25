@@ -294,7 +294,7 @@ Retryable Reads Are Retried on the Same mongos if No Others are Available
 3. Create a client with ``retryReads=true`` that connects to the cluster,
    providing the selected mongos as the seed.
 
-4. Enable command monitoring, and execute ``find`` command.
+4. Enable command monitoring, and execute a ``find`` command.
 
 5. Asserts that there was a failed command and a successful command event.
 
