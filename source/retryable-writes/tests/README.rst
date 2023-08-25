@@ -490,7 +490,7 @@ and sharded clusters.
 
    6. Disable the fail points.
 
-#. Test that in a sharded cluster on the same mongos if no other available
+#. Test that in a sharded cluster on the same mongos if no other is available
 
    This test MUST be executed against a sharded cluster
 
