@@ -272,8 +272,8 @@ mongos instances.
 6. Disable the fail points.
 
 
-Retryable Reads Are Retried on the Same Mongos if No Other Available
---------------------------------------------------------------------
+Retryable Reads Are Retried on the Same mongos if No Others are Available
+-------------------------------------------------------------------------
 
 1. Ensure that a test is run against a sharded cluster. If there are multiple
    mongoses in the cluster, pick one to test against.
