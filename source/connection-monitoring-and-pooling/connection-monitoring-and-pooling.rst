@@ -929,8 +929,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * the time to deliver the `ConnectionCreatedEvent`.
        * Doing so eliminates a thing to worry about in support cases related to this duration,
        * because the time to deliver synchronously is affected by user code.
-       * The driver MUST document this behavior
-       * as well as explicitly warn users that the behavior may change in the future.
+       * We MAY reconsider this decision in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1032,8 +1031,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * the time to deliver the `ConnectionCheckOutStartedEvent`.
        * Doing so eliminates a thing to worry about in support cases related to this duration,
        * because the time to deliver synchronously is affected by user code.
-       * The driver MUST document this behavior
-       * as well as explicitly warn users that the behavior may change in the future.
+       * We MAY reconsider this decision in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1621,6 +1619,7 @@ Changelog
 :2022-10-14: Add connection pool log messages and associated tests.
 :2023-04-17: Fix duplicate logging test description.
 :2023-08-04: Add durations to connection pool events.
+:2023-08-25: Relax the documentation requirement for durations in events.
 
 ----
 
