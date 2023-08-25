@@ -929,7 +929,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * the time to deliver the `ConnectionCreatedEvent`.
        * Doing so eliminates a thing to worry about in support cases related to this duration,
        * because the time to deliver synchronously is affected by user code.
-       * We MAY reconsider this decision in the future.
+       * We may reconsider this decision in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1031,7 +1031,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * the time to deliver the `ConnectionCheckOutStartedEvent`.
        * Doing so eliminates a thing to worry about in support cases related to this duration,
        * because the time to deliver synchronously is affected by user code.
-       * We MAY reconsider this decision in the future.
+       * We may reconsider this decision in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
