@@ -268,7 +268,7 @@ selecting a server for a retry attempt.
 3a. Selecting the server for retry
 ''''''''''''''''''''''''''''''''''
 
-In sharded cluster, the server on which the operation failed MUST be provided
+In a sharded cluster, the server on which the operation failed MUST be provided
 to the server selection mechanism as a deprioritized server.
 
 If the driver cannot select a server for
