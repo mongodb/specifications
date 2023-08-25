@@ -395,11 +395,14 @@ of the following conditions is reached:
   <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. If the driver
-cannot select a server for a retry attempt or the selected server does not
-support retryable writes, retrying is not possible and drivers MUST raise the
-retryable error from the previous attempt. In both cases, the caller is able
-to infer that an attempt was made.
+For each retry attempt, drivers MUST select a writable server. In a sharded
+cluster, the server on which the operation failed MUST be provided to
+the server selection mechanism as a deprioritized server.
+
+If the driver cannot select a server for a retry attempt
+or the selected server does not support retryable writes, retrying is not
+possible and drivers MUST raise the retryable error from the previous attempt.
+In both cases, the caller is able to infer that an attempt was made.
 
 If a retry attempt also fails, drivers MUST update their topology according to
 the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
@@ -492,11 +495,15 @@ The above rules are implemented in the following pseudo-code:
         }
       }
 
-      /* If we cannot select a writable server, do not proceed with retrying and
+      /*
+       * We try to select server that is not the one that failed by passing the
+       * failed server as a deprioritized server.
+       * If we cannot select a writable server, do not proceed with retrying and
        * throw the previous error. The caller can then infer that an attempt was
        * made and failed. */
       try {
-        server = selectServer("writable");
+        deprioritizedServers = [ server ];
+        server = selectServer("writable", deprioritizedServers);
       } catch (Exception ignoredError) {
         throw previousError;
       }
@@ -822,6 +829,9 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2023-08-??: Require that in a sharded cluster the server on which the
+             operation failed MUST be provided to the server selection
+             mechanism as a deprioritized server.
 :2022-11-17: Add logic for persisting "currentError" as "previousError" on first
              retry attempt, avoiding raising "null" errors.
 :2022-11-09: CLAM must apply both events and log messages.

@@ -268,10 +268,13 @@ selecting a server for a retry attempt.
 3a. Selecting the server for retry
 ''''''''''''''''''''''''''''''''''
 
-If the driver cannot select a server for a retry attempt or the newly selected
-server does not support retryable reads, retrying is not possible and drivers
-MUST raise the previous retryable error. In both cases, the caller is able to
-infer that an attempt was made.
+In a sharded cluster, the server on which the operation failed MUST be provided
+to the server selection mechanism as a deprioritized server.
+
+If the driver cannot select a server for
+a retry attempt or the newly selected server does not support retryable reads,
+retrying is not possible and drivers MUST raise the previous retryable error.
+In both cases, the caller is able to infer that an attempt was made.
 
 3b. Sending an equivalent command for a retry attempt
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -357,9 +360,17 @@ and reflects the flow described above.
    */
   function executeRetryableRead(command, session) {
     Exception previousError = null;
+    Server previousServer = null;
     while true {
       try {
-        server = selectServer();
+        if (previousServer == null) {
+          server = selectServer();
+        } else {
+          // If a previous attempt was made, deprioritize the previous server
+          // where the command failed.
+          deprioritizedServers = [ previousServer ];
+          server = selectServer(deprioritizedServers);
+        }
       } catch (ServerSelectionException exception) {
         if (previousError == null) {
           // If this is the first attempt, propagate the exception.
@@ -416,9 +427,11 @@ and reflects the flow described above.
       } catch (NetworkException networkError) {
         updateTopologyDescriptionForNetworkError(server, networkError);
         previousError = networkError;
+        previousServer = server;
       } catch (NotWritablePrimaryException notPrimaryError) {
         updateTopologyDescriptionForNotWritablePrimaryError(server, notPrimaryError);
         previousError = notPrimaryError;
+        previousServer = server;
       } catch (DriverException error) {
         if ( previousError != null ) {
           throw previousError;
@@ -614,8 +627,8 @@ The spec concerns itself with retrying read operations that encounter a
 retryable error (i.e. no response due to network error or a response indicating
 that the node is no longer a primary). A retryable error may be classified as
 either a transient error (e.g. dropped connection, replica set failover) or
-persistent outage. If a transient error results in the server being marked as 
-"unknown", a subsequent retry attempt will allow the driver to rediscover the 
+persistent outage. If a transient error results in the server being marked as
+"unknown", a subsequent retry attempt will allow the driver to rediscover the
 primary within the designated server selection timeout period (30 seconds by
 default). If server selection times out during this retry attempt, we can
 reasonably assume that there is a persistent outage. In the case of a persistent
@@ -678,6 +691,9 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2023-08-??: Require that in a sharded cluster the server on which the
+             operation failed MUST be provided to the server selection
+             mechanism as a deprioritized server.
 :2023-08-21: Update Q&A that contradicts SDAM transient error logic
 :2022-11-09: CLAM must apply both events and log messages.
 :2022-10-18: When CSOT is enabled multiple retry attempts may occur.
