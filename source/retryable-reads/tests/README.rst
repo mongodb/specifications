@@ -264,7 +264,7 @@ mongos instances.
 3. Create a client with ``retryReads=true`` that connects to the cluster,
    providing the two selected mongoses as seeds.
 
-4. Enable command monitoring, and execute ``find`` command that is
+4. Enable command monitoring, and execute a ``find`` command that is
    supposed to fail on both mongoses.
 
 5. Asserts that there were failed command events from each mongos.
