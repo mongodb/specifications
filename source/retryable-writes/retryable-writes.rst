@@ -829,7 +829,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
-:2023-08-??: Require that in a sharded cluster the server on which the
+:2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
              mechanism as a deprioritized server.
 :2022-11-17: Add logic for persisting "currentError" as "previousError" on first

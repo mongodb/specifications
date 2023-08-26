@@ -304,7 +304,7 @@ Retryable Reads Are Retried on the Same mongos if No Others are Available
 Changelog
 =========
 
-:2023-08-??: Add prose tests for retrying in a sharded cluster.
+:2023-08-26 Add prose tests for retrying in a sharded cluster.
 
 :2022-04-22: Clarifications to ``serverless`` and ``useMultipleMongoses``.
 

@@ -2078,4 +2078,4 @@ Changelog
 :2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
 :2022-11-09: Add log messages and tests.
-:2023-08-??: Add list of deprioritized servers for sharded cluster topology.
+:2023-08-26: Add list of deprioritized servers for sharded cluster topology.
