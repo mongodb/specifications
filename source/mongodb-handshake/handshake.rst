@@ -379,7 +379,7 @@ Container runtime information is captured in ``client.env.container``.
 ``client.env.container.runtime`` SHOULD be set to ``"docker"`` if the file ``.dockerenv``
 exists in the root directory.
 
-``client.env.container.orchestrator`` SHOULD be set to ``"kubernetes"`` if the environment
+``client.env.container.orchestrator`` MUST be set to ``"kubernetes"`` if the environment
 variable ``KUBERNETES_SERVICE_HOST`` is populated.
 
 If no fields of ``client.env.container`` would be populated, ``client.env.container`` MUST
