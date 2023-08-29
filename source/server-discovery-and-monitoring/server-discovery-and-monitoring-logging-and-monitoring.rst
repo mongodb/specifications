@@ -555,7 +555,7 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 
 "Topology Description Changed" Log Message
 ------------------------------------------
-This message MUST be published under the same circumstances as a ``TopologyDescriptionChangedEvent`` as detailed in `Events API <#events-api>`.
+This message MUST be published under the same circumstances as a ``TopologyDescriptionChangedEvent`` as detailed in `Events API <#events-api>`_.
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pairs:
 
