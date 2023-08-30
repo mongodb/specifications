@@ -927,9 +927,6 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
        * the time to deliver the `ConnectionCreatedEvent`.
-       * Doing so eliminates a thing to worry about in support cases related to this duration,
-       * because the time to deliver synchronously is affected by user code.
-       * We may reconsider this decision in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1029,9 +1026,6 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *
        * A driver that delivers events synchronously MUST NOT include in this duration
        * the time to deliver the `ConnectionCheckOutStartedEvent`.
-       * Doing so eliminates a thing to worry about in support cases related to this duration,
-       * because the time to deliver synchronously is affected by user code.
-       * We may reconsider this decision in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1564,6 +1558,18 @@ it's possible that we can find some equavalent configuration, but this configura
 require target frameworks higher than or equal to .net 5.0. The advantage of using Background Thread to 
 manage perished connections is that it will work regardless of environment setup.
 
+Why don't we include the time to synchronously deliver some events in durations reported via other events?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Doing so eliminates a thing to worry about in support cases related to durations,
+because the time to deliver synchronously is affected by user code.
+
+As for the time to deliver ``ConnectionCheckOutStartedEvent`` specifically,
+excluding it from ``ConnectionCheckedOutEvent``/``ConnectionCheckOutFailedEvent.duration``
+is consistent with the pseudocode for `Checking Out a Connection <#checking-out-a-connection>`_,
+where the time to deliver this event synchronously is not counted towards ``waitQueueTimeoutMS``,
+because the event is emitted before entering the WaitQueue.
+
 Backwards Compatibility
 =======================
 
@@ -1619,7 +1625,7 @@ Changelog
 :2022-10-14: Add connection pool log messages and associated tests.
 :2023-04-17: Fix duplicate logging test description.
 :2023-08-04: Add durations to connection pool events.
-:2023-08-25: Relax the documentation requirement for durations in events.
+:2023-08-25: Commit to the currently specified requirements regadring durations in events.
 
 ----
 
