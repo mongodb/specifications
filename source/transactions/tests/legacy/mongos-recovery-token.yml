@@ -1,7 +1,7 @@
 runOn:
     -
         minServerVersion: "4.1.8"
-        topology: ["sharded"]
+        topology: ["sharded", "load-balanced"]
         # serverless proxy doesn't use recovery tokens
         serverless: "forbid"
 
