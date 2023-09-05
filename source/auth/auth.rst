@@ -1205,7 +1205,7 @@ mechanism_properties
         providing objects as mechanism property values.  Otherwise the driver MUST allow it as a MongoClientOption.
     ALLOWED_HOSTS
         The list of allowed hostnames or ip-addresses (ignoring ports) for
-        MongoDB connections. The hostnames may include a leading "*." wildcard, which allows for matching
+        MongoDB connections. The hostnames may include a leading "\*." wildcard, which allows for matching
         (potentially  nested) subdomains. ALLOWED_HOSTS is a
         security feature and MUST default to
         ``["*.mongodb.net", '*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``.
@@ -1338,6 +1338,9 @@ An example might look like:
   interface RequestParameters {
       // Timeout in seconds for the callback.  Optionally, timeoutContext instead if applicable to language.
       timeoutSeconds: int;
+
+      // The version of the callback parameter interface.
+      version: int;
 
       // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
       refreshToken?: str;
