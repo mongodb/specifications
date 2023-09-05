@@ -1295,7 +1295,7 @@ If using the ``JwtStepRequest`` directly, the conversation will look like:
 | S: :javascript:`{conversationId : 1, payload: BinData(0,"..."), done: true, ok: 1}`
 
 Drivers MUST NOT send a ``PrincipalStepRequest`` when performing machine authentication
-or when there is a cached Access Token.  Drivers must instead  use ``saslStart`` with a ``JwtStepRequest``.
+or when there is a cached Access Token.  Drivers MUST instead  use ``saslStart`` with a ``JwtStepRequest``.
 
 Caching
 ```````
