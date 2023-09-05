@@ -244,6 +244,7 @@ Fails
 - Force a reauthenication using a failCommand of the form:
 
 .. code:: javascript
+
   {
     "configureFailPoint": "failCommand",
     "mode": {
