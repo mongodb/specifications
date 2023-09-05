@@ -15,28 +15,20 @@ Drivers MUST test the following scenarios:
 
 Drivers MUST be able to authenticate against a server configured with either one or two configured identity providers.
 
-Note that typically the preconfigured Atlas Dev clusters are used for testing.  The URIs can be fetched
-from the ``drivers/oidc`` Secrets vault, see vault instructions <TODO LINK>.  Use ``OIDC_ATLAS_URI_SINGLE`` for ``MONGODB_URI_SINGLE`` and
+Note that typically the preconfigured Atlas Dev clusters are used for testing, in Evergreen and localy.  The URIs can be fetched
+from the ``drivers/oidc`` Secrets vault, see `vault instructions`_.  Use ``OIDC_ATLAS_URI_SINGLE`` for ``MONGODB_URI_SINGLE`` and
 ``OIDC_ATLAS_URI_MULTI`` for ``OIDC_ATLAS_URI_MULTI``.
 
-If using local servers is preferred, using the ``drivers-evergreen-tools`` Local Testing method <TODO LINK>,
+If using local servers is preferred, using the `Local Testing`_ method,
 use ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` for ``MONGODB_URI_SINGLE`` and
 ``mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred``
 for ``MONGODB_URI_MULTI`` because the other server is a secondary on a replica set, on port ``27018``.
 
-The driver MUST generate valid local tokens at the location given by ``OIDC_TOKEN_DIR``, see ``drivers-evergreen-tools`` for example <TODO LINK>.
-<TODO add notes in DET about OIDC_TOKEN_DIR>.
-
-Drivers will need to be able to internally query and clear the cached
-credentials to verify usage for testing purposes.  Clearing the cache
-means removing all data from the cache, including ``OIDCMechanismServerStep1``
-information.
-
 The default OIDC client used in the tests will be configured with ``MONGODB_URI_SINGLE`` and a valid request callback handler
-that returns the ``test_user1`` local token.
+that returns the ``test_user1`` local token in ``OIDC_TOKEN_DIR`` as the "access_token", and a dummy "refresh_token".
 
-https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets
-https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md
+.. _Local Testing: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md#local-testing
+.. _vault instructions: https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets
 
 Callback-Driven Auth
 ====================
@@ -189,6 +181,59 @@ Succeeds
   will and be extra ``find`` command.
 - Assert that the list of command succeeded events is [``find``].
 - Assert that a ``find`` operation failed once during the command execution.
+- Close the client.
+
+Succeeds no refresh
+~~~~~~~~~~~~~~~~~~~
+- Create a default OIDC client with a request callback that does not return
+  a refresh token.
+- Perform a ``find`` operation that succeeds.
+- Assert that the request callback has been called once.
+- Force a reauthenication using a ``failCommand`` of the form:
+
+.. code:: javascript
+
+    {
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 1
+      },
+      "data": {
+        "failCommands": [
+          "find"
+        ],
+        "errorCode": 391
+      }
+    }
+
+- Perform a ``find`` operation that succeeds.
+- Assert that the request callback has been called twice.
+- Close the client.
+
+Succeeds after refresh fails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Create a default OIDC client.
+- Perform a ``find`` operation that succeeds.
+- Assert that the request callback has been called once.
+- Force a reauthenication using a ``failCommand`` of the form:
+
+.. code:: javascript
+
+    {
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 2
+      },
+      "data": {
+        "failCommands": [
+          "find", "saslContinue"
+        ],
+        "errorCode": 391
+      }
+    }
+
+- Perform a ``find`` operation that succeeds.
+- Assert that the request callback has been called three times.
 - Close the client.
 
 Fails
