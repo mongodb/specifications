@@ -1181,8 +1181,7 @@ MONGODB-OIDC
 :since: 7.0 Enterprise
 
 MONGODB-OIDC authenticates using an `OIDC <https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens.
-Drivers MAY implement the human authentication workflow with ``REQUEST_TOKEN_CALLBACK``, but it is only currently required in the Node driver,
-to support usage in the MongoDB Shell.  The machine authentication workflow is currently not supported.
+Drivers MAY implement the human authentication workflow with ``REQUEST_TOKEN_CALLBACK``.
 
 `MongoCredential`_ Properties
 `````````````````````````````
