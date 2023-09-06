@@ -78,6 +78,10 @@ Iterable
   spec uses this as the return value for ``find`` and permit API flexibility
   rather than stipulate that a cursor object be returned directly.
 
+Server Compatibility
+--------------------
+
+The unified test format is intended to only run against enterprise servers.
 
 Schema Version
 --------------
