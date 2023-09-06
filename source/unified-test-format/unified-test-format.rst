@@ -4028,6 +4028,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2023-09-05: Clarify that the UTR is intended to be run against enterprise servers.
 :2022-07-18: **Schema version 1.16.**
              Add ``ignoreMessages`` and ``ignoreExtraMessages`` fields
              to ``expectedLogMessagesForClient`` section.
