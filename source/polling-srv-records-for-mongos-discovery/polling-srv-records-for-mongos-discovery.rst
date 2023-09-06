@@ -162,7 +162,7 @@ a connection URI. Although this makes the initial configuration of a set of
 mongos servers a lot easier, it does not provide a method for updating the
 list of mongos servers in the topology.
 
-Since the introduction of the ``mongo+srv://`` schema to provide an initial
+Since the introduction of the ``mongodb+srv://`` schema to provide an initial
 seedlist, some users have requested additional functionality to be able to
 update the configured list of mongos hosts that make up the initially seeded
 topology:
