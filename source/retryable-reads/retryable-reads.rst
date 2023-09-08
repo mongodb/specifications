@@ -691,7 +691,7 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
-:2023-08-??: Require that in a sharded cluster the server on which the
+:2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
              mechanism as a deprioritized server.
 :2023-08-21: Update Q&A that contradicts SDAM transient error logic

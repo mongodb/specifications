@@ -524,7 +524,7 @@ and sharded clusters.
 Changelog
 =========
 
-:2023-08-??: Add prose tests for retrying in a sharded cluster.
+:2023-08-26: Add prose tests for retrying in a sharded cluster.
 
 :2022-08-30: Add prose test verifying correct error handling for errors with
              the NoWritesPerformed label, which is to return the original
