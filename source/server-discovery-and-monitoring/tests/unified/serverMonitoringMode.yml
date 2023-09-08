@@ -14,11 +14,11 @@ tests:
                 uriOptions:
                   serverMonitoringMode: "auto"
             - database:
-                id: &dbSdamModeAuto dbSdamModeAuto
+                id: &dbServerMonitoringModeAuto dbServerMonitoringModeAuto
                 client: *client0
                 databaseName: sdam-tests
       - name: runCommand
-        object: *dbSdamModeAuto
+        object: *dbServerMonitoringModeAuto
         arguments:
           commandName: ping
           command: { ping: 1 }
@@ -35,11 +35,11 @@ tests:
                 uriOptions:
                   serverMonitoringMode: "stream"
             - database:
-                id: &dbSdamModeStream dbSdamModeStream
+                id: &dbServerMonitoringModeStream dbServerMonitoringModeStream
                 client: *client1
                 databaseName: sdam-tests
       - name: runCommand
-        object: *dbSdamModeStream
+        object: *dbServerMonitoringModeStream
         arguments:
           commandName: ping
           command: { ping: 1 }
@@ -56,11 +56,11 @@ tests:
                 uriOptions:
                   serverMonitoringMode: "poll"
             - database:
-                id: &dbSdamModePoll dbSdamModePoll
+                id: &dbServerMonitoringModePoll dbServerMonitoringModePoll
                 client: *client2
                 databaseName: sdam-tests
       - name: runCommand
-        object: *dbSdamModePoll
+        object: *dbServerMonitoringModePoll
         arguments:
           commandName: ping
           command: { ping: 1 }
