@@ -130,7 +130,7 @@ tests:
 
   - description: "createCollection with bucketing options"
     runOnRequirements:
-      - minServerVersion: "7.0"
+      - minServerVersion: "6.3"
     operations:
       - name: dropCollection
         object: *database0
