@@ -34,10 +34,10 @@
       }
     },
     {
-      "description": "invalid serverMonitoringMode",
+      "description": "serverMonitoringMode=invalid",
       "uri": "mongodb://example.com/?serverMonitoringMode=invalid",
-      "valid": true,
-      "warning": true,
+      "valid": false,
+      "warning": false,
       "hosts": null,
       "auth": null,
       "options": {}
