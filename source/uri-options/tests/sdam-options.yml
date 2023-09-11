@@ -26,10 +26,10 @@ tests:
       options:
           serverMonitoringMode: "poll"
 
-    - description: "serverMonitoringMode=invalid"
+    - description: "invalid serverMonitoringMode"
       uri: "mongodb://example.com/?serverMonitoringMode=invalid"
-      valid: false
-      warning: false
+      valid: true
+      warning: true
       hosts: ~
       auth: ~
       options: {}
