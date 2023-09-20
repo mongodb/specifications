@@ -1187,7 +1187,7 @@ Drivers MAY implement the human authentication workflow with ``REQUEST_TOKEN_CAL
 `````````````````````````````
 
 username
-    MUST NOT be specified in machine authentication. Drivers MUST allow the user to specify this in the human authentication.
+    MUST NOT be specified in machine authentication. Drivers MUST allow the user to specify this in the human authentication workflow.
     If a user omits this when multiple OIDC providers are configured, the server will produce an error during authentication.
 
 source
@@ -1229,7 +1229,7 @@ in the payload as octet sequences defining BSON objects:
   // Driver’s opening request in saslStart.
   interface PrincipalStepRequest {
     // Name of the OIDC user Principal.
-    n?: str;
+    n: Optional<string>;
   }
 
 Note that the principal name is optional as it may be provided by the IdP in environments where only one IdP is used.
@@ -1242,13 +1242,13 @@ If given, then ``username`` provided by the user MUST be used as the Principal `
     // URL which describes the Authentication Server. This identifier should be
     // the iss of provided access tokens, and be viable for RFC8414
     // metadata discovery and RFC9207 identification.
-    issuer: str;
+    issuer: string;
 
     // Unique client ID for this OIDC client.
-    clientId: str;
+    clientId: string;
 
     // Additional scopes to request from IdP.
-    requestScopes?: Array<str>;
+    requestScopes: Optional<Array<string>>;
   }
 
 The server will use Principal ``(n)`` if provided in the driver’s ``PrincipalStepRequest`` to select an appropriate IdP.
@@ -1261,7 +1261,7 @@ This Access Token will be used as the JWT in the driver’s ``JwtStepRequest`` t
   // Client's request with signed token.
   interface JwtStepRequest:
       // Compact serialized JWT with signature.
-      jwt: str;
+      jwt: string;
   }
 
 The IdP response that is expected to be returned by the ``REQUEST_TOKEN_CALLBACK`` is as follows:
@@ -1271,13 +1271,13 @@ The IdP response that is expected to be returned by the ``REQUEST_TOKEN_CALLBACK
     // The result of a token request.
     interface IdPResponse {
         // The oidc access token.
-        accessToken: str;
+        accessToken: string;
 
         // The OIDC refresh token.
-        refreshToken?: str;
+        refreshToken: Optional<string>;
 
         // The expiration time in seconds from the current time (ignored).
-        expiresInSeconds?: str;
+        expiresInSeconds: Optional<string>;
     }
 
 Conversation
@@ -1343,7 +1343,7 @@ An example might look like:
       version: int;
 
       // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
-      refreshToken?: str;
+      refreshToken: Optional<string>;
   }
 
 .. code: typescript
