@@ -266,7 +266,8 @@ Separate Connections Avoid Extra Callback Calls
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The following test assumes that the driver will be able to share a cache between
 two MongoClient objects, or ensure that the same MongoClient is used with two
-different connections.  If that is not possible, the test may be skipped.
+different connections.  Otherwise, the test would have a race condition.
+If neither is possible, the test may be skipped.
 
 - Create a request callback that returns valid, and ensure that we can record the number
    of times the callback is called.
