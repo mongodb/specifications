@@ -1353,7 +1353,7 @@ An example might look like:
 Before calling the callback, the driver MUST acquire a lock unique to the ``MongoClient``.
 The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.  The lock MUST be released
 when the callback call as finished or errored.
-This is because the ``REQUEST_TOKEN_CALLBACK`` may involve human interaction, and refresh tokens migh only be able to be used used once.
+This is because the ``REQUEST_TOKEN_CALLBACK`` may involve human interaction, and refresh tokens might only be able to be used used once.
 
 If the callback does not return an object in the correct form of ``IdpResponse``, the driver MUST raise an error either using the type
 system or by raising an error when non-optional properties are missing .
