@@ -3098,9 +3098,10 @@ Warm up the benchmark:
 
 - Use the handle to decrypt the document repeatedly for one second.
 
-Run the benchmark:
+Run the benchmark. Repeat benchmark for thread counts: (1, 2, 8, 64):
 
-- Use the same handle to decrypt the document repeatedly for one second.
+- Start threads. Use the same handle between all threads (``mongocrypt_t`` is thread-safe).
+- In each thread: decrypt the document repeatedly for one second.
 - Count the number of decrypt operations performed (ops/sec).
 - Repeat 10 times.
 
