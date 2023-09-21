@@ -3095,14 +3095,17 @@ Set up the benchmark data:
 - Create a handle to ``mongocrypt_t``. This may be through the bindings API (preferred) or through a ``MongoClient`` configured with ``AutoEncryptionOpts``.
 
 Warm up the benchmark:
+
 - Use the handle to decrypt the document repeatedly for one second.
 
 Run the benchmark:
+
 - Use the same handle to decrypt the document repeatedly for one second.
 - Count the number of decrypt operations performed (ops/sec).
 - Repeat 10 times.
 
 Produce results:
+
 - Report the median result of the ops/sec.
 
 **Note:**
