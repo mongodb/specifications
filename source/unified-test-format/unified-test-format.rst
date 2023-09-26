@@ -78,6 +78,10 @@ Iterable
   spec uses this as the return value for ``find`` and permit API flexibility
   rather than stipulate that a cursor object be returned directly.
 
+Server Compatibility
+--------------------
+
+The unified test format is intended to only run against enterprise servers. Additionally, many tests make use of `Server Fail Points`_, so servers MUST be launched with the ``enableTestCommands`` parameter enabled.
 
 Schema Version
 --------------
@@ -4024,6 +4028,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2023-09-25: Clarify that the UTR is intended to be run against enterprise servers.
 :2022-07-18: **Schema version 1.16.**
              Add ``ignoreMessages`` and ``ignoreExtraMessages`` fields
              to ``expectedLogMessagesForClient`` section.
