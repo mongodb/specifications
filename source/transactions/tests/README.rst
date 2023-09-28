@@ -629,7 +629,7 @@ is the only command allowed in a sharded transaction that uses the
 Changelog
 =========
 
-:2023-09-01: Add ``load-balanced`` to test topology requirements.
+:2023-09-28: Add ``load-balanced`` to test topology requirements.
 :2022-04-22: Clarifications to ``serverless`` and ``useMultipleMongoses``.
 :2019-05-15: Add operation level ``error`` field to assert any error.
 :2019-03-25: Add workaround for StaleDbVersion on distinct.
