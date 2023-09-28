@@ -609,7 +609,7 @@ Test Plan
 =========
 
 See the `README.rst
-<https://github.com/divjotarora/specifications/blob/csot-tests/source/client-side-operations-timeout/tests/README.rst>`__
+<https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/tests/README.rst>`__
 in the tests directory.
 
 Motivation for Change
