@@ -1,8 +1,17 @@
 runOn:
     -
+        minServerVersion: "4.0"
+        topology: ["replicaset"]
+    -
         minServerVersion: "4.1.8"
         topology: ["sharded", "load-balanced"]
-        # serverless proxy doesn't use recovery tokens
+        # This file contains tests originally found in retryable-commit.yml that
+        # are incompatible with serverless:
+        #
+        #  * Failing commitTransaction with closeConnection:true may abort the
+        #    transaction (CLOUDP-202309).
+        #  * Fail points using state change errors (e.g. InterruptedAtShutdown,
+        #    ShutdownInProgress) may remain enabled indefinitely (CLOUDP-84573).
         serverless: "forbid"
 
 database_name: &database_name "transaction-tests"
@@ -11,8 +20,18 @@ collection_name: &collection_name "test"
 data: []
 
 tests:
-  - description: commitTransaction explicit retries include recoveryToken
-    useMultipleMongoses: true
+  - description: commitTransaction fails after two errors
+
+    clientOptions:
+      retryWrites: false
+
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 2 }
+      data:
+          failCommands: ["commitTransaction"]
+          closeConnection: true
+
     operations:
       - name: startTransaction
         object: session0
@@ -24,10 +43,13 @@ tests:
             _id: 1
         result:
           insertedId: 1
+      # First call to commit fails after a single retry attempt.
       - name: commitTransaction
         object: session0
-      - name: commitTransaction
-        object: session0
+        result:
+          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["TransientTransactionError"]
+      # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
         object: session0
 
@@ -56,7 +78,6 @@ tests:
             startTransaction:
             autocommit: false
             writeConcern:
-            recoveryToken: 42
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -69,7 +90,6 @@ tests:
             autocommit: false
             # commitTransaction applies w:majority on retries
             writeConcern: { w: majority, wtimeout: 10000 }
-            recoveryToken: 42
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -80,9 +100,7 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            # commitTransaction applies w:majority on retries
             writeConcern: { w: majority, wtimeout: 10000 }
-            recoveryToken: 42
           command_name: commitTransaction
           database_name: admin
 
@@ -91,15 +109,24 @@ tests:
         data:
           - _id: 1
 
-  - description: commitTransaction retry succeeds on new mongos
-    useMultipleMongoses: true
+  - description: commitTransaction applies majority write concern on retries
+
+    clientOptions:
+      retryWrites: false
+
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 2 }
+      data:
+          failCommands: ["commitTransaction"]
+          closeConnection: true
+
     operations:
       - name: startTransaction
         object: session0
         arguments:
           options:
-            writeConcern:
-              w: majority
+            writeConcern: { w: 2, j: true, wtimeout: 5000 }
       - name: insertOne
         object: collection
         arguments:
@@ -108,24 +135,13 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      # Enable the fail point only on the Mongos that session0 is pinned to.
-      - name: targetedFailPoint
-        object: testRunner
-        arguments:
-          session: session0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["commitTransaction"]
-              errorLabels: ["RetryableWriteError"]
-              writeConcernError:
-                code: 91
-                errmsg: Replication is being shut down
-      # The client sees a retryable writeConcernError on the first
-      # commitTransaction due to the fail point but it actually succeeds on the
-      # server (SERVER-39346). The retry will succeed both on a new mongos and
-      # on the original.
+      # First call to commit fails after a single retry attempt.
+      - name: commitTransaction
+        object: session0
+        result:
+          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["TransientTransactionError"]
+      # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
         object: session0
 
@@ -153,9 +169,7 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
-              w: majority
-            recoveryToken: 42
+            writeConcern: { w: 2, j: true, wtimeout: 5000 }
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -167,8 +181,18 @@ tests:
             startTransaction:
             autocommit: false
             # commitTransaction applies w:majority on retries
-            writeConcern: { w: majority, wtimeout: 10000 }
-            recoveryToken: 42
+            writeConcern:  { w: majority, j: true, wtimeout: 5000 }
+          command_name: commitTransaction
+          database_name: admin
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern: { w: majority, j: true, wtimeout: 5000 }
           command_name: commitTransaction
           database_name: admin
 
@@ -177,13 +201,15 @@ tests:
         data:
           - _id: 1
 
-  - description: commitTransaction retry fails on new mongos
-    useMultipleMongoses: true
-    clientOptions:
-      # Increase heartbeatFrequencyMS to avoid the race condition where an in
-      # flight heartbeat refreshes the first mongoes' SDAM state in between
-      # the initial commitTransaction and the retry attempt.
-      heartbeatFrequencyMS: 30000
+  - description: commitTransaction succeeds after connection error
+
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 1 }
+      data:
+          failCommands: ["commitTransaction"]
+          closeConnection: true
+
     operations:
       - name: startTransaction
         object: session0
@@ -195,36 +221,8 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      # Enable the fail point only on the Mongos that session0 is pinned to.
-      # Fail hello/legacy hello to prevent the heartbeat requested directly after the
-      # retryable commit error from racing with server selection for the retry.
-      # Note: times: 7 is slightly artbitrary but it accounts for one failed
-      # commit and some SDAM heartbeats. A test runner will have multiple
-      # clients connected to this server so this fail point configuration
-      # is also racy.
-      - name: targetedFailPoint
-        object: testRunner
-        arguments:
-          session: session0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 7 }
-            data:
-              failCommands: ["commitTransaction", "isMaster", "hello"]
-              closeConnection: true
-      # The first commitTransaction sees a retryable connection error due to
-      # the fail point and also fails on the server. The retry attempt on a
-      # new mongos will wait for the transaction to timeout and will fail
-      # because the transaction was aborted. Note that the retry attempt should
-      # not select the original mongos because that server's SDAM state is
-      # reset by the connection error, heartbeatFrequencyMS is high, and
-      # subsequent heartbeats should fail.
       - name: commitTransaction
         object: session0
-        result:
-          errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
-          errorCodeName: NoSuchTransaction
 
     expectations:
       - command_started_event:
@@ -251,7 +249,6 @@ tests:
             startTransaction:
             autocommit: false
             writeConcern:
-            recoveryToken: 42
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -264,16 +261,25 @@ tests:
             autocommit: false
             # commitTransaction applies w:majority on retries
             writeConcern: { w: majority, wtimeout: 10000 }
-            recoveryToken: 42
           command_name: commitTransaction
           database_name: admin
 
     outcome:
       collection:
-        data: []
+        data:
+          - _id: 1
 
-  - description: abortTransaction sends recoveryToken
-    useMultipleMongoses: true
+  - description: commitTransaction succeeds after InterruptedAtShutdown
+
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 1 }
+      data:
+          failCommands: ["commitTransaction"]
+          errorCode: 11600
+          errorLabels: ["RetryableWriteError"]
+          closeConnection: false
+
     operations:
       - name: startTransaction
         object: session0
@@ -285,23 +291,7 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      # Enable the fail point only on the Mongos that session0 is pinned to.
-      - name: targetedFailPoint
-        object: testRunner
-        arguments:
-          session: session0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["abortTransaction"]
-              closeConnection: true
-      # The first abortTransaction sees a retryable connection error due to
-      # the fail point. The retry attempt on a new mongos will send the
-      # recoveryToken. Note that the retry attempt will also fail because the
-      # server does not yet support aborting from a new mongos, however this
-      # operation should "succeed" since abortTransaction ignores errors.
-      - name: abortTransaction
+      - name: commitTransaction
         object: session0
 
     expectations:
@@ -322,29 +312,99 @@ tests:
           database_name: *database_name
       - command_started_event:
           command:
-            abortTransaction: 1
+            commitTransaction: 1
             lsid: session0
             txnNumber:
               $numberLong: "1"
             startTransaction:
             autocommit: false
             writeConcern:
-            recoveryToken: 42
-          command_name: abortTransaction
+          command_name: commitTransaction
           database_name: admin
       - command_started_event:
           command:
-            abortTransaction: 1
+            commitTransaction: 1
             lsid: session0
             txnNumber:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
-            recoveryToken: 42
-          command_name: abortTransaction
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
+          command_name: commitTransaction
           database_name: admin
 
     outcome:
       collection:
-        data: []
+        data:
+          - _id: 1
+
+  - description: commitTransaction succeeds after ShutdownInProgress
+
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 1 }
+      data:
+          failCommands: ["commitTransaction"]
+          errorCode: 91
+          errorLabels: ["RetryableWriteError"]
+          closeConnection: false
+
+    operations:
+      - name: startTransaction
+        object: session0
+      - name: insertOne
+        object: collection
+        arguments:
+          session: session0
+          document:
+            _id: 1
+        result:
+          insertedId: 1
+      - name: commitTransaction
+        object: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: commitTransaction
+          database_name: admin
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
+          command_name: commitTransaction
+          database_name: admin
+
+    outcome:
+      collection:
+        data:
+          - _id: 1
