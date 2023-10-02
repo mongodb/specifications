@@ -38,7 +38,7 @@ Run the benchmark. Repeat benchmark for thread counts: (1, 2, 8, 64):
 
 Produce results:
 
-- Report the median result of the ops/sec.
+- Report the median result of the ops/sec for each thread count.
 
 **Note:**
 The ``mongocrypt_t`` handle caches the decrypted Data Encryption Key (DEK) for a fixed time period of one minute.
