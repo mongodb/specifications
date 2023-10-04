@@ -1609,7 +1609,7 @@ Changelog
 :2022-10-14: Add connection pool log messages and associated tests.
 :2023-04-17: Fix duplicate logging test description.
 :2023-08-04: Add durations to connection pool events.
-:2023-10-04: Commit to the currently specified requirements regadring durations in events.
+:2023-10-04: Commit to the currently specified requirements regarding durations in events.
 
 ----
 
