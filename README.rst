@@ -112,6 +112,26 @@ Store all source documents in the ``source/`` directory.
 
 .. _`reStructuredText`: http://docutils.sourceforge.net/rst.html
 
+Linting
+-------
+
+This repo uses `pre-commit <https://pypi.org/project/pre-commit/>`_
+for managing linting.
+``pre-commit`` performs various checks on the files and uses tools
+that help follow a consistent style within the repo.
+
+To set up ``pre-commit`` locally, run:
+
+.. code:: bash
+    pip install pre-commit  # or brew install pre-commit
+    pre-commit install
+To run ``pre-commit`` manually, run ``pre-commit run --all-files``.
+
+To run a manual hook like ``rstcheck`` manually, run:
+
+.. code:: bash
+    pre-commit run --all-files --hook-stage manual rstcheck
+
 Prose test numbering
 --------------------
 

@@ -1,0 +1,48 @@
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: check-case-conflict
+  - id: check-executables-have-shebangs
+  - id: check-added-large-files
+  - id: check-case-conflict
+  - id: check-merge-conflict
+  #- id: end-of-file-fixer
+  #- id: check-json
+
+# We use the Python version instead of the original version which seems to require Docker
+# https://github.com/koalaman/shellcheck-precommit
+- repo: https://github.com/shellcheck-py/shellcheck-py
+  rev: v0.9.0.6
+  hooks:
+    - id: shellcheck
+      name: shellcheck
+      args: ["--severity=error"]
+      stages: [manual]
+
+- repo: https://github.com/rstcheck/rstcheck
+  rev: v6.2.0
+  hooks:
+  - id: rstcheck
+    additional_dependencies: [sphinx]
+    args: ["--ignore-languages=c,python,java", "--report-level=error"]
+    stages: [manual]
+
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.26.3
+  hooks:
+    - id: check-github-workflows
+
+- repo: https://github.com/pre-commit/pygrep-hooks
+  rev: "v1.10.0"
+  hooks:
+    # - id: rst-backticks
+    - id: rst-directive-colons
+    - id: rst-inline-touching-normal
+
+# - repo: https://github.com/codespell-project/codespell
+#   rev: "v2.2.6"
+#   hooks:
+#   - id: codespell
+#     exclude_types: [json,yaml]
