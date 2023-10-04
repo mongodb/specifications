@@ -9,6 +9,7 @@ repos:
   - id: check-case-conflict
   - id: check-merge-conflict
   #- id: end-of-file-fixer
+  #- id: trailing-whitespace
   #- id: check-json
 
 # We use the Python version instead of the original version which seems to require Docker

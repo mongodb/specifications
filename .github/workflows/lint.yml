@@ -1,4 +1,4 @@
-name: Check RST file syntax
+name: Lint Files
 
 on:
   push:
@@ -36,4 +36,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
       - run:  pip install sphinx
-      - run:  cd source && sphinx-build -b html . html index.rst
+      - run:  cd source && sphinx-build -W -b text . docs_build index.rst

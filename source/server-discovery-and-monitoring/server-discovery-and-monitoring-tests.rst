@@ -169,7 +169,7 @@ Outcome: Verify that the write succeeded or failed depending on existing
 driver behavior with respect to the starting topology.
 
 Monitors sleep at least minHeartbeatFrequencyMS between checks
--------------------------------------------------------------
+--------------------------------------------------------------
 
 This test will be used to ensure monitors sleep for an appropriate amount of
 time between failed server checks so as to not flood the server with new

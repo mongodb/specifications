@@ -812,7 +812,7 @@ load. Refer:
 
 
 ``extraOptions.cryptSharedLibRequired``
-````````````````````````````````````
+```````````````````````````````````````
 
 :type: :ts:`boolean`
 :default: |false|
@@ -1016,7 +1016,7 @@ method and MUST NOT be passed to the `drop`_ command.
    and no longer allows names to deviate from the following:
 
    - ``enxcol_.<collectionName>.esc``
-   - ``enxcol_.<collectionName>.ecoc`
+   - ``enxcol_.<collectionName>.ecoc``
 
    Drivers SHOULD NOT document the ``escCollection`` and ``ecocCollection``
    options.
