@@ -468,7 +468,7 @@ The above rules are implemented in the following pseudo-code:
          * numbers" MUST be re-raised with an actionable error message.
          */
         if (!currentError.hasErrorLabel("RetryableWriteError")) {
-          if ( currentError.code == 20 && originalError.errmsg.startsWith("Transaction numbers") ) {
+          if ( currentError.code == 20 && previousError.errmsg.startsWith("Transaction numbers") ) {
             currentError.errmsg = "This MongoDB deployment does not support retryable...";
           }
           throw currentError;
@@ -490,7 +490,7 @@ The above rules are implemented in the following pseudo-code:
          * from the connection pool), we should raise the previous error if there
          * was one.
          */
-        if (currentError is not DriverException && ! originalError.hasErrorLabel("NoWritesPerformed")) {
+        if (currentError is not DriverException && ! previousError.hasErrorLabel("NoWritesPerformed")) {
           previousError = currentError;
         }
       }
@@ -516,8 +516,24 @@ The above rules are implemented in the following pseudo-code:
         throw previousError;
       }
 
-      /* CSOT is enabled and the operation has timed out. */
-      if (timeoutMS != null && isExpired(timeoutMS) {
+      if (timeoutMS == null) {
+        /* If CSOT is not enabled, allow any retryable error from the second
+         * attempt to propagate to our caller, as it will be just as relevant
+         * (if not more relevant) than the original error. For exceptions that
+         * originate from the driver, we should raise the previous error. Other
+         * exceptions originating from the server should be allowed to
+         * propagate. */
+        try {
+          return executeCommand(server, retryableCommand);
+        } catch (DriverException ignoredError) {
+          throw previousError;
+        } catch (Exception secondError) {
+          handleError(secondError);
+          throw secondError;
+        }
+        break
+      } else if (isExpired(timeoutMS)) {
+        /* CSOT is enabled and the operation has timed out. */
         throw previousError;
       }
     }
@@ -829,6 +845,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
              mechanism as a deprioritized server.
