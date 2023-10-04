@@ -86,7 +86,7 @@ Above and beyond that restriction, drivers SHOULD require connection string user
 ----------------
 Host Information
 ----------------
-Unlike a standard URI, the connection string allows for identifying multiple hosts. The host information section of the connection string is delimited by the trailing slash ("/") or end of string.
+Unlike a standard URI, the connection string allows for identifying multiple hosts. The host information section of the connection string MAY be delimited by the trailing slash ("/") or end of string.
 
 The host information must contain at least one host identifier but may contain more (see the alternative hosts / ports in the general syntax diagram above). Multiple host identifiers are delimited by a comma (",").
 
@@ -389,3 +389,5 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-12-27: Note that host information ends with a "/" character in connection
              options description.
+:2023-08-02: Make delimiting slash between host information and connection options
+             optional and update tests

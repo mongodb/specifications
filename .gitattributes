@@ -1,0 +1,32 @@
+# Hide generated JSON spec test files from displaying in diffs by default
+# https://docs.github.com/en/repositories/working-with-files/managing-files/customizing-how-changed-files-appear-on-github
+
+/source/atlas-data-lake-testing/tests/*.json linguist-generated=true
+/source/auth/tests/**/*.json linguist-generated=true
+/source/change-streams/tests/unified/*.json linguist-generated=true
+/source/client-side-encryption/tests/**/*.json linguist-generated=true
+/source/client-side-operations-timeout/tests/*.json linguist-generated=true
+/source/collection-management/tests/*.json linguist-generated=true
+/source/command-logging-and-monitoring/tests/**/*.json linguist-generated=true
+/source/connection-monitoring-and-pooling/tests/**/*.json linguist-generated=true
+/source/connection-string/tests/*.json linguist-generated=true
+/source/crud/tests/**/*.json linguist-generated=true
+/source/gridfs/tests/*.json linguist-generated=true
+/source/index-management/tests/*.json linguist-generated=true
+/source/initial-dns-seedlist-discovery/tests/**/*.json linguist-generated=true
+/source/load-balancers/tests/*.json linguist-generated=true
+/source/max-staleness/tests/**/*.json linguist-generated=true
+/source/read-write-concern/tests/**/*.json linguist-generated=true
+/source/retryable-reads/tests/legacy/*.json linguist-generated=true
+/source/retryable-reads/tests/unified/*.json linguist-generated=true
+/source/retryable-writes/tests/legacy/*.json linguist-generated=true
+/source/retryable-writes/tests/unified/*.json linguist-generated=true
+/source/run-command/tests/unified/*.json linguist-generated=true
+/source/server-discovery-and-monitoring/tests/**/*.json linguist-generated=true
+/source/server-selection/tests/**/*.json linguist-generated=true
+/source/sessions/tests/*.json linguist-generated=true
+/source/transactions-convenient-api/tests/*.json linguist-generated=true
+/source/transactions/tests/**/*.json linguist-generated=true
+/source/unified-test-format/tests/**/*.json linguist-generated=true
+/source/uri-options/tests/*.json linguist-generated=true
+/source/versioned-api/tests/*.json linguist-generated=true

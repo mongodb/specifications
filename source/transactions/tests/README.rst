@@ -109,8 +109,8 @@ Each YAML file has the following keys:
 
   - ``topology`` (optional): An array of server topologies against which the
     tests can be run successfully. Valid topologies are "single", "replicaset",
-    and "sharded". If this field is omitted, the default is all topologies (i.e.
-    ``["single", "replicaset", "sharded"]``).
+    "sharded", and "load-balanced". If this field is omitted, the default is all
+    topologies (i.e. ``["single", "replicaset", "sharded", "load-balanced"]``).
 
   - ``serverless``: (optional): Whether or not the test should be run on Atlas
     Serverless instances. Valid values are "require", "forbid", and "allow". If
@@ -629,6 +629,7 @@ is the only command allowed in a sharded transaction that uses the
 Changelog
 =========
 
+:2023-09-28: Add ``load-balanced`` to test topology requirements.
 :2022-04-22: Clarifications to ``serverless`` and ``useMultipleMongoses``.
 :2019-05-15: Add operation level ``error`` field to assert any error.
 :2019-03-25: Add workaround for StaleDbVersion on distinct.
