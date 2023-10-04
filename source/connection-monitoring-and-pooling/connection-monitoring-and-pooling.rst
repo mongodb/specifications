@@ -70,6 +70,8 @@ Connection Pool Monitoring
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All drivers that implement a connection pool MUST provide an API that allows users to subscribe to events emitted from the pool.
+Conceptually, event emission is instantaneous, i.e., one may talk about the instant an event is emitted,
+and represents the start of an activity of delivering the event to a subscribed user.
 
 Detailed Design
 ===============
@@ -918,15 +920,12 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * The time it took to establish the connection.
        * In accordance with the definition of establishment of a connection
        * specified by `ConnectionPoolOptions.maxConnecting`,
-       * it is the time elapsed between the `ConnectionCreatedEvent`
-       * emitted by the same checking out and this event.
+       * it is the time elapsed between emitting a `ConnectionCreatedEvent`
+       * and emitting this event as part of the same checking out.
        *
        * Naturally, when establishing a connection is part of checking out,
        * this duration is not greater than
        * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.duration`.
-       *
-       * A driver that delivers events synchronously MUST NOT include in this duration
-       * the time to deliver the `ConnectionCreatedEvent`.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1014,8 +1013,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        * The time it took to check out the connection.
        * More specifically, the time elapsed between
-       * the `ConnectionCheckOutStartedEvent`
-       * emitted by the same checking out and this event.
+       * emitting a `ConnectionCheckOutStartedEvent`
+       * and emitting this event as part of the same checking out.
        *
        * Naturally, if a new connection was not created (`ConnectionCreatedEvent`)
        * and established (`ConnectionReadyEvent`) as part of checking out,
@@ -1023,9 +1022,6 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * not greater than `ConnectionPoolOptions.waitQueueTimeoutMS`,
        * but MAY occasionally be greater than that,
        * because a driver does not provide hard real-time guarantees.
-       *
-       * A driver that delivers events synchronously MUST NOT include in this duration
-       * the time to deliver the `ConnectionCheckOutStartedEvent`.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1558,18 +1554,6 @@ it's possible that we can find some equavalent configuration, but this configura
 require target frameworks higher than or equal to .net 5.0. The advantage of using Background Thread to 
 manage perished connections is that it will work regardless of environment setup.
 
-Why don't we include the time to synchronously deliver some events in durations reported via other events?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Doing so eliminates a thing to worry about in support cases related to durations,
-because the time to deliver synchronously is affected by user code.
-
-As for the time to deliver ``ConnectionCheckOutStartedEvent`` specifically,
-excluding it from ``ConnectionCheckedOutEvent``/``ConnectionCheckOutFailedEvent.duration``
-is consistent with the pseudocode for `Checking Out a Connection <#checking-out-a-connection>`_,
-where the time to deliver this event synchronously is not counted towards ``waitQueueTimeoutMS``,
-because the event is emitted before entering the WaitQueue.
-
 Backwards Compatibility
 =======================
 
@@ -1625,7 +1609,7 @@ Changelog
 :2022-10-14: Add connection pool log messages and associated tests.
 :2023-04-17: Fix duplicate logging test description.
 :2023-08-04: Add durations to connection pool events.
-:2023-08-25: Commit to the currently specified requirements regadring durations in events.
+:2023-10-04: Commit to the currently specified requirements regadring durations in events.
 
 ----
 
