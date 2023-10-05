@@ -1206,7 +1206,7 @@ like AWS Lambda to improve scalability, performance, and reliability.
 Why introduce a knob for serverMonitoringMode?
 ''''''''''''''''''''''''''''''''''''''''''''''
 
-The serverMonitoringMode knob provides an workaround in cases where the polling
+The serverMonitoringMode knob provides a workaround in cases where the polling
 protocol would be a better choice but the driver is not running on a FaaS
 platform. It also provides a workaround in case the FaaS detection
 logic becomes outdated or inaccurate.
