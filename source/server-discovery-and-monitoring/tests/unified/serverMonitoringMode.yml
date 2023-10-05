@@ -29,21 +29,23 @@ tests:
                 id: db
                 client: client
                 databaseName: sdam-tests
-      - name: runCommand
+      - &ping
+        name: runCommand
         object: db
         arguments:
           commandName: ping
           command: { ping: 1 }
         expectResult: { ok: 1 }
       # Wait for the second serverHeartbeatStartedEvent to ensure we start streaming.
-      - name: waitForEvent
+      - &waitForSecondHeartbeatStarted
+        name: waitForEvent
         object: testRunner
         arguments:
           client: client
           event:
             serverHeartbeatStartedEvent: {}
           count: 2
-    expectEvents:
+    expectEvents: &streamingStartedEvents
       - client: client
         eventType: sdam
         ignoreExtraEvents: true
@@ -76,31 +78,10 @@ tests:
                 id: db
                 client: client
                 databaseName: sdam-tests
-      - name: runCommand
-        object: db
-        arguments:
-          commandName: ping
-          command: { ping: 1 }
-        expectResult: { ok: 1 }
+      - *ping
       # Wait for the second serverHeartbeatStartedEvent to ensure we start streaming.
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: client
-          event:
-            serverHeartbeatStartedEvent: {}
-          count: 2
-    expectEvents:
-      - client: client
-        eventType: sdam
-        ignoreExtraEvents: true
-        events:
-          - serverHeartbeatStartedEvent:
-              awaited: False
-          - serverHeartbeatSucceededEvent:
-              awaited: False
-          - serverHeartbeatStartedEvent:
-              awaited: True
+      - *waitForSecondHeartbeatStarted
+    expectEvents: *streamingStartedEvents
 
   - description: "connect with serverMonitoringMode=poll"
     operations:
@@ -122,21 +103,10 @@ tests:
                 id: db
                 client: client
                 databaseName: sdam-tests
-      - name: runCommand
-        object: db
-        arguments:
-          commandName: ping
-          command: { ping: 1 }
-        expectResult: { ok: 1 }
+      - *ping
       # Wait for the second serverHeartbeatStartedEvent to ensure we do not stream.
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: client
-          event:
-            serverHeartbeatStartedEvent: {}
-          count: 2
-    expectEvents:
+      - *waitForSecondHeartbeatStarted
+    expectEvents: &pollingStartedEvents
       - client: client
         eventType: sdam
         ignoreExtraEvents: true
