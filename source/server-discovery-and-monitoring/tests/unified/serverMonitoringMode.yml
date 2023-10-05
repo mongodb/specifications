@@ -8,14 +8,16 @@ runOnRequirements:
   - topologies: [single, sharded, sharded-replicaset]
     serverless: forbid
 tests:
-  - description: "connect with serverMonitoringMode=auto"
+  - description: "connect with serverMonitoringMode=auto >=4.4"
+    runOnRequirements:
+      - minServerVersion: "4.4"
     operations:
       - name: createEntities
         object: testRunner
         arguments:
           entities:
             - client:
-                id: &client0 client0
+                id: client
                 uriOptions:
                   serverMonitoringMode: "auto"
                 useMultipleMongoses: false
@@ -24,17 +26,25 @@ tests:
                   - serverHeartbeatSucceededEvent
                   - serverHeartbeatFailedEvent
             - database:
-                id: &dbServerMonitoringModeAuto dbServerMonitoringModeAuto
-                client: *client0
+                id: db
+                client: client
                 databaseName: sdam-tests
       - name: runCommand
-        object: *dbServerMonitoringModeAuto
+        object: db
         arguments:
           commandName: ping
           command: { ping: 1 }
         expectResult: { ok: 1 }
+      # Wait for the second serverHeartbeatStartedEvent to ensure we start streaming.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: client
+          event:
+            serverHeartbeatStartedEvent: {}
+          count: 2
     expectEvents:
-      - client: *client0
+      - client: client
         eventType: sdam
         ignoreExtraEvents: true
         events:
@@ -45,14 +55,16 @@ tests:
           - serverHeartbeatStartedEvent:
               awaited: True
 
-  - description: "connect with serverMonitoringMode=stream"
+  - description: "connect with serverMonitoringMode=stream >=4.4"
+    runOnRequirements:
+      - minServerVersion: "4.4"
     operations:
       - name: createEntities
         object: testRunner
         arguments:
           entities:
             - client:
-                id: &client1 client1
+                id: client
                 uriOptions:
                   serverMonitoringMode: "stream"
                 useMultipleMongoses: false
@@ -61,17 +73,25 @@ tests:
                   - serverHeartbeatSucceededEvent
                   - serverHeartbeatFailedEvent
             - database:
-                id: &dbServerMonitoringModeStream dbServerMonitoringModeStream
-                client: *client1
+                id: db
+                client: client
                 databaseName: sdam-tests
       - name: runCommand
-        object: *dbServerMonitoringModeStream
+        object: db
         arguments:
           commandName: ping
           command: { ping: 1 }
         expectResult: { ok: 1 }
+      # Wait for the second serverHeartbeatStartedEvent to ensure we start streaming.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: client
+          event:
+            serverHeartbeatStartedEvent: {}
+          count: 2
     expectEvents:
-      - client: *client1
+      - client: client
         eventType: sdam
         ignoreExtraEvents: true
         events:
@@ -89,7 +109,7 @@ tests:
         arguments:
           entities:
             - client:
-                id: &client2 client2
+                id: client
                 uriOptions:
                   serverMonitoringMode: "poll"
                   heartbeatFrequencyMS: 500
@@ -99,11 +119,11 @@ tests:
                   - serverHeartbeatSucceededEvent
                   - serverHeartbeatFailedEvent
             - database:
-                id: &dbServerMonitoringModePoll dbServerMonitoringModePoll
-                client: *client2
+                id: db
+                client: client
                 databaseName: sdam-tests
       - name: runCommand
-        object: *dbServerMonitoringModePoll
+        object: db
         arguments:
           commandName: ping
           command: { ping: 1 }
@@ -112,12 +132,12 @@ tests:
       - name: waitForEvent
         object: testRunner
         arguments:
-          client: *client2
+          client: client
           event:
             serverHeartbeatStartedEvent: {}
           count: 2
     expectEvents:
-      - client: *client2
+      - client: client
         eventType: sdam
         ignoreExtraEvents: true
         events:
