@@ -566,9 +566,8 @@ Measuring RTT
 
 When using the streaming protocol, clients MUST issue a hello or legacy hello
 command to each server to measure RTT every heartbeatFrequencyMS. The RTT command
-MUST be run on a dedicated connection to each server. For consistency,
-clients MAY use dedicated connections to measure RTT for all servers, even
-those that do not support awaitable hello or legacy hello. (See
+MUST be run on a dedicated connection to each server. Clients MUST NOT use
+dedicated connections to measure RTT when the streaming protocol is not used. (See
 `Monitors MUST use a dedicated connection for RTT commands`_.)
 
 Clients MUST update the RTT from the hello or legacy hello duration of the initial
@@ -1188,18 +1187,18 @@ awaitable hello or legacy hello heartbeat in the new protocol.
 Why disable the streaming protocol on FaaS platforms like AWS Lambda?
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-The streaming protocol requires an extra connection and thread per monitored
-server which is expensive on platforms like AWS Lambda. The extra connection
-is particularly inefficient when thousands of AWS instances and thus
-thousands of clients are used.
-
-Additionally, the streaming protocol relies on the assumption that the client
+The streaming protocol relies on the assumption that the client
 can read the server's heartbeat responses in a timely manner, otherwise the
 client will be acting on stale information. In many FaaS platforms, like AWS
 Lambda, host applications will be suspended and resumed many minutes later.
 This behavior causes a build up of heartbeat responses and the client can end
 up spending a long time in a catch up phase processing outdated responses.
 This problem was discovered in `DRIVERS-2246`_.
+
+Additionally, the streaming protocol requires an extra connection and thread
+per monitored server which is expensive on platforms like AWS Lambda. The
+extra connection is particularly inefficient when thousands of AWS instances
+and thus thousands of clients are used.
 
 We decided to make polling the default behavior when running on FaaS platforms
 like AWS Lambda to improve scalability, performance, and reliability.
@@ -1230,7 +1229,8 @@ Changelog
 :2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.
 :2022-10-05: Remove spec front matter reformat changelog.
 :2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
-:2023-08-21: Add serverMonitoringMode and default to the Polling Protocol on FaaS.
+:2023-10-05: Add serverMonitoringMode and default to the polling protocol on FaaS.
+             Clients MUST NOT use dedicated connections to measure RTT when using the polling protocol.
 
 ----
 
