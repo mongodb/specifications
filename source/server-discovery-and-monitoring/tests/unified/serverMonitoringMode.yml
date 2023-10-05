@@ -90,6 +90,7 @@ tests:
                 id: &client2 client2
                 uriOptions:
                   serverMonitoringMode: "poll"
+                  heartbeatFrequencyMS: 500
                 useMultipleMongoses: false
                 observeEvents:
                   - serverHeartbeatStartedEvent
@@ -105,6 +106,14 @@ tests:
           commandName: ping
           command: { ping: 1 }
         expectResult: { ok: 1 }
+      # Wait for the second serverHeartbeatStartedEvent to ensure we do not stream.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client2
+          event:
+            serverHeartbeatStartedEvent: {}
+          count: 2
     expectEvents:
       - client: *client2
         eventType: sdam
