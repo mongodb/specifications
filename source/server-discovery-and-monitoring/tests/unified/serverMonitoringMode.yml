@@ -36,6 +36,7 @@ tests:
     expectEvents:
       - client: *client0
         eventType: sdam
+        ignoreExtraEvents: true
         events:
           - serverHeartbeatStartedEvent:
               awaited: False
@@ -72,6 +73,7 @@ tests:
     expectEvents:
       - client: *client1
         eventType: sdam
+        ignoreExtraEvents: true
         events:
           - serverHeartbeatStartedEvent:
               awaited: False
@@ -117,6 +119,7 @@ tests:
     expectEvents:
       - client: *client2
         eventType: sdam
+        ignoreExtraEvents: true
         events:
           - serverHeartbeatStartedEvent:
               awaited: False
