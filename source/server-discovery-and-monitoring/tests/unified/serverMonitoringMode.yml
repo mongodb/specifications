@@ -10,7 +10,7 @@ runOnRequirements:
 tests:
   - description: "connect with serverMonitoringMode=auto >=4.4"
     runOnRequirements:
-      - minServerVersion: "4.4"
+      - minServerVersion: "4.4.0"
     operations:
       - name: createEntities
         object: testRunner
@@ -57,9 +57,9 @@ tests:
           - serverHeartbeatStartedEvent:
               awaited: True
 
-  - description: "connect with serverMonitoringMode=stream >=4.4"
+  - description: "connect with serverMonitoringMode=auto <4.4"
     runOnRequirements:
-      - minServerVersion: "4.4"
+      - maxServerVersion: "4.2.99"
     operations:
       - name: createEntities
         object: testRunner
@@ -68,31 +68,7 @@ tests:
             - client:
                 id: client
                 uriOptions:
-                  serverMonitoringMode: "stream"
-                useMultipleMongoses: false
-                observeEvents:
-                  - serverHeartbeatStartedEvent
-                  - serverHeartbeatSucceededEvent
-                  - serverHeartbeatFailedEvent
-            - database:
-                id: db
-                client: client
-                databaseName: sdam-tests
-      - *ping
-      # Wait for the second serverHeartbeatStartedEvent to ensure we start streaming.
-      - *waitForSecondHeartbeatStarted
-    expectEvents: *streamingStartedEvents
-
-  - description: "connect with serverMonitoringMode=poll"
-    operations:
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
-            - client:
-                id: client
-                uriOptions:
-                  serverMonitoringMode: "poll"
+                  serverMonitoringMode: "auto"
                   heartbeatFrequencyMS: 500
                 useMultipleMongoses: false
                 observeEvents:
@@ -117,3 +93,81 @@ tests:
               awaited: False
           - serverHeartbeatStartedEvent:
               awaited: False
+
+  - description: "connect with serverMonitoringMode=stream >=4.4"
+    runOnRequirements:
+      - minServerVersion: "4.4.0"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: client
+                uriOptions:
+                  serverMonitoringMode: "stream"
+                useMultipleMongoses: false
+                observeEvents:
+                  - serverHeartbeatStartedEvent
+                  - serverHeartbeatSucceededEvent
+                  - serverHeartbeatFailedEvent
+            - database:
+                id: db
+                client: client
+                databaseName: sdam-tests
+      - *ping
+      # Wait for the second serverHeartbeatStartedEvent to ensure we start streaming.
+      - *waitForSecondHeartbeatStarted
+    expectEvents: *streamingStartedEvents
+
+  - description: "connect with serverMonitoringMode=stream <4.4"
+    runOnRequirements:
+      - maxServerVersion: "4.2.99"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: client
+                uriOptions:
+                  serverMonitoringMode: "stream"
+                  heartbeatFrequencyMS: 500
+                useMultipleMongoses: false
+                observeEvents:
+                  - serverHeartbeatStartedEvent
+                  - serverHeartbeatSucceededEvent
+                  - serverHeartbeatFailedEvent
+            - database:
+                id: db
+                client: client
+                databaseName: sdam-tests
+      - *ping
+      # Wait for the second serverHeartbeatStartedEvent to ensure we do not stream.
+      - *waitForSecondHeartbeatStarted
+    expectEvents: *pollingStartedEvents
+
+  - description: "connect with serverMonitoringMode=poll"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: client
+                uriOptions:
+                  serverMonitoringMode: "poll"
+                  heartbeatFrequencyMS: 500
+                useMultipleMongoses: false
+                observeEvents:
+                  - serverHeartbeatStartedEvent
+                  - serverHeartbeatSucceededEvent
+                  - serverHeartbeatFailedEvent
+            - database:
+                id: db
+                client: client
+                databaseName: sdam-tests
+      - *ping
+      # Wait for the second serverHeartbeatStartedEvent to ensure we do not stream.
+      - *waitForSecondHeartbeatStarted
+    expectEvents: *pollingStartedEvents
