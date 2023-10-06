@@ -447,6 +447,7 @@ performs no I/O.
     increment totalConnectionCount
     increment pendingConnectionCount
     set connection state to "pending"
+    tConnectionCreated = current instant (use a monotonic clock if possible)
     emit ConnectionCreatedEvent and equivalent log message
     return connection
 
@@ -464,7 +465,8 @@ handshake, handling OP_COMPRESSED, and performing authentication.
       perform connection handshake
       handle OP_COMPRESSED
       perform connection authentication
-      emit ConnectionReadyEvent and equivalent log message
+      tConnectionReady = current instant (use a monotonic clock if possible)
+      emit ConnectionReadyEvent(duration = tConnectionReady - tConnectionCreated) and equivalent log message
       return connection
     except error:
       close connection
@@ -611,6 +613,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
 .. code::
 
     connection = Null
+    tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
     emit ConnectionCheckOutStartedEvent and equivalent log message
     try:
       enter WaitQueue
@@ -634,13 +637,16 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
             continue
           
     except pool is "closed":
-      emit ConnectionCheckOutFailedEvent(reason="poolClosed") and equivalent log message
+      tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+      emit ConnectionCheckOutFailedEvent(reason="poolClosed", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
       throw PoolClosedError
     except pool is "paused":
-      emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
+      tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+      emit ConnectionCheckOutFailedEvent(reason="connectionError", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
       throw PoolClearedError
     except timeout:
-      emit ConnectionCheckOutFailedEvent(reason="timeout") and equivalent log message
+      tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+      emit ConnectionCheckOutFailedEvent(reason="timeout", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
       throw WaitQueueTimeoutError
     finally:
       # This must be done in all drivers
@@ -654,7 +660,8 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       try:
         establish connection
       except connection establishment error:
-        emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
+        tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+        emit ConnectionCheckOutFailedEvent(reason="connectionError", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
         decrement totalConnectionCount
         throw
       finally:
@@ -669,7 +676,8 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       while totalConnectionCount < minPoolSize:
         populate the pool with a connection
 
-    emit ConnectionCheckedOutEvent and equivalent log message
+    tConnectionCheckedOut = current instant (use a monotonic clock if possible)
+    emit ConnectionCheckedOutEvent(duration = tConnectionCheckedOut - tConnectionCheckOutStarted) and equivalent log message
     return connection
 
 Checking In a Connection
