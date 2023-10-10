@@ -70,6 +70,8 @@ Connection Pool Monitoring
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All drivers that implement a connection pool MUST provide an API that allows users to subscribe to events emitted from the pool.
+Conceptually, event emission is instantaneous, i.e., one may talk about the instant an event is emitted,
+and represents the start of an activity of delivering the event to a subscribed user.
 
 Detailed Design
 ===============
@@ -445,6 +447,7 @@ performs no I/O.
     increment totalConnectionCount
     increment pendingConnectionCount
     set connection state to "pending"
+    tConnectionCreated = current instant (use a monotonic clock if possible)
     emit ConnectionCreatedEvent and equivalent log message
     return connection
 
@@ -462,7 +465,8 @@ handshake, handling OP_COMPRESSED, and performing authentication.
       perform connection handshake
       handle OP_COMPRESSED
       perform connection authentication
-      emit ConnectionReadyEvent and equivalent log message
+      tConnectionReady = current instant (use a monotonic clock if possible)
+      emit ConnectionReadyEvent(duration = tConnectionReady - tConnectionCreated) and equivalent log message
       return connection
     except error:
       close connection
@@ -609,6 +613,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
 .. code::
 
     connection = Null
+    tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
     emit ConnectionCheckOutStartedEvent and equivalent log message
     try:
       enter WaitQueue
@@ -632,13 +637,16 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
             continue
           
     except pool is "closed":
-      emit ConnectionCheckOutFailedEvent(reason="poolClosed") and equivalent log message
+      tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+      emit ConnectionCheckOutFailedEvent(reason="poolClosed", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
       throw PoolClosedError
     except pool is "paused":
-      emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
+      tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+      emit ConnectionCheckOutFailedEvent(reason="connectionError", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
       throw PoolClearedError
     except timeout:
-      emit ConnectionCheckOutFailedEvent(reason="timeout") and equivalent log message
+      tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+      emit ConnectionCheckOutFailedEvent(reason="timeout", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
       throw WaitQueueTimeoutError
     finally:
       # This must be done in all drivers
@@ -652,7 +660,8 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       try:
         establish connection
       except connection establishment error:
-        emit ConnectionCheckOutFailedEvent(reason="connectionError") and equivalent log message
+        tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+        emit ConnectionCheckOutFailedEvent(reason="connectionError", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
         decrement totalConnectionCount
         throw
       finally:
@@ -667,7 +676,8 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       while totalConnectionCount < minPoolSize:
         populate the pool with a connection
 
-    emit ConnectionCheckedOutEvent and equivalent log message
+    tConnectionCheckedOut = current instant (use a monotonic clock if possible)
+    emit ConnectionCheckedOutEvent(duration = tConnectionCheckedOut - tConnectionCheckOutStarted) and equivalent log message
     return connection
 
 Checking In a Connection
@@ -918,19 +928,12 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * The time it took to establish the connection.
        * In accordance with the definition of establishment of a connection
        * specified by `ConnectionPoolOptions.maxConnecting`,
-       * it is the time elapsed between the `ConnectionCreatedEvent`
-       * emitted by the same checking out and this event.
+       * it is the time elapsed between emitting a `ConnectionCreatedEvent`
+       * and emitting this event as part of the same checking out.
        *
        * Naturally, when establishing a connection is part of checking out,
        * this duration is not greater than
        * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.duration`.
-       *
-       * A driver that delivers events synchronously MUST NOT include in this duration
-       * the time to deliver the `ConnectionCreatedEvent`.
-       * Doing so eliminates a thing to worry about in support cases related to this duration,
-       * because the time to deliver synchronously is affected by user code.
-       * The driver MUST document this behavior
-       * as well as explicitly warn users that the behavior may change in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1018,8 +1021,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
       /**
        * The time it took to check out the connection.
        * More specifically, the time elapsed between
-       * the `ConnectionCheckOutStartedEvent`
-       * emitted by the same checking out and this event.
+       * emitting a `ConnectionCheckOutStartedEvent`
+       * and emitting this event as part of the same checking out.
        *
        * Naturally, if a new connection was not created (`ConnectionCreatedEvent`)
        * and established (`ConnectionReadyEvent`) as part of checking out,
@@ -1027,13 +1030,6 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * not greater than `ConnectionPoolOptions.waitQueueTimeoutMS`,
        * but MAY occasionally be greater than that,
        * because a driver does not provide hard real-time guarantees.
-       *
-       * A driver that delivers events synchronously MUST NOT include in this duration
-       * the time to deliver the `ConnectionCheckOutStartedEvent`.
-       * Doing so eliminates a thing to worry about in support cases related to this duration,
-       * because the time to deliver synchronously is affected by user code.
-       * The driver MUST document this behavior
-       * as well as explicitly warn users that the behavior may change in the future.
        *
        * A driver MAY choose the type idiomatic to the driver.
        * If the type chosen does not convey units, e.g., `int64`,
@@ -1621,6 +1617,7 @@ Changelog
 :2022-10-14: Add connection pool log messages and associated tests.
 :2023-04-17: Fix duplicate logging test description.
 :2023-08-04: Add durations to connection pool events.
+:2023-10-04: Commit to the currently specified requirements regarding durations in events.
 
 ----
 
