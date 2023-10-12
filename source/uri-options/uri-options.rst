@@ -282,16 +282,22 @@ pertaining to URI options apply here.
      - The name of the replica set to connect to
 
    * - retryReads
-     - "true" or "false
+     - "true" or "false"
      - defined in `retryable reads spec <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/retryable-reads.rst#retryreads>`_
      - no
      - Enables retryable reads on server 3.6+
 
    * - retryWrites
-     - "true" or "false
+     - "true" or "false"
      - defined in `retryable writes spec <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#retrywrites>`_
      - no
      - Enables retryable writes on server 3.6+
+
+   * - serverMonitoringMode
+     - "stream", "poll", or "auto"
+     - defined in `SDAM spec <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servermonitoringmode>`__
+     - required for multi-threaded or asynchronous drivers
+     - Configures which server monitoring protocol to use.
 
    * - serverSelectionTimeoutMS
      - positive integer; a driver may also accept 0 to be used for a special case, provided that it documents the meaning
@@ -525,6 +531,7 @@ this specification MUST be updated to reflect those changes.
 Changelog
 ---------
 
+:2023-08-21: Add serverMonitoringMode option.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-19: Add the timeoutMS option and deprecate some existing timeout options
 :2021-12-14: Add SOCKS5 options

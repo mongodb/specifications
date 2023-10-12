@@ -4,7 +4,7 @@ Unified Test Format
 
 :Status: Accepted
 :Minimum Server Version: N/A
-:Current Schema Version: 1.13.0
+:Current Schema Version: 1.17.0
 
 .. contents::
 
@@ -597,6 +597,12 @@ The structure of this object is as follows:
     - `connectionCheckedInEvent <expectedEvent_connectionCheckedInEvent_>`_
 
     - `serverDescriptionChangedEvent <expectedEvent_serverDescriptionChangedEvent_>`_
+
+    - `serverHeartbeatStartedEvent <expectedEvent_serverHeartbeatStartedEvent_>`_
+
+    - `serverHeartbeatSucceededEvent <expectedEvent_serverHeartbeatSucceededEvent_>`_
+
+    - `serverHeartbeatFailedEvent <expectedEvent_serverHeartbeatFailedEvent_>`_
 
     - `topologyDescriptionChangedEvent <expectedEvent_topologyDescriptionChangedEvent_>`_
 
@@ -1398,6 +1404,33 @@ The structure of this object is as follows:
     value. See `SDAM: ServerType
     <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype>`__
     for a list of valid values.
+
+.. _expectedEvent_serverHeartbeatStartedEvent:
+
+- ``serverHeartbeatStartedEvent``: Optional object. Assertions for one or more
+  `ServerHeartbeatStartedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events>`__ fields.
+
+  The structure of this object is as follows:
+
+  - ``awaited``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
+
+.. _expectedEvent_serverHeartbeatSucceededEvent:
+
+- ``serverHeartbeatSucceededEvent``: Optional object. Assertions for one or more
+  `ServerHeartbeatSucceededEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events>`__ fields.
+
+  The structure of this object is as follows:
+
+  - ``awaited``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
+
+.. _expectedEvent_serverHeartbeatFailedEvent:
+
+- ``serverHeartbeatFailedEvent``: Optional object. Assertions for one or more
+  `ServerHeartbeatFailedEvent <../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events>`__ fields.
+
+  The structure of this object is as follows:
+
+  - ``awaited``: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
 .. _expectedEvent_topologyDescriptionChangedEvent:
 
@@ -4028,6 +4061,9 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2023-10-04: **Schema version 1.17.**
+             Add ``serverHeartbeatStartedEvent``, ``serverHeartbeatSucceededEvent``, and
+             ``serverHeartbeatFailedEvent`` for asserting on SDAM server heartbeat events.
 :2023-09-25: Clarify that the UTR is intended to be run against enterprise servers.
 :2022-07-18: **Schema version 1.16.**
              Add ``ignoreMessages`` and ``ignoreExtraMessages`` fields
