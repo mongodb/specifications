@@ -455,6 +455,7 @@ The above rules are implemented in the following pseudo-code:
     retryableCommand = addTransactionIdToCommand(command, session);
 
     Exception previousError = null;
+    retrying = false;
     while true {
       try {
         return executeCommand(server, retryableCommand);
@@ -519,23 +520,15 @@ The above rules are implemented in the following pseudo-code:
       if (timeoutMS == null) {
         /* If CSOT is not enabled, allow any retryable error from the second
          * attempt to propagate to our caller, as it will be just as relevant
-         * (if not more relevant) than the original error. For exceptions that
-         * originate from the driver, we should raise the previous error. Other
-         * exceptions originating from the server should be allowed to
-         * propagate. */
-        try {
-          return executeCommand(server, retryableCommand);
-        } catch (DriverException ignoredError) {
+         * (if not more relevant) than the original error. */
+        if (retrying) {
           throw previousError;
-        } catch (Exception secondError) {
-          handleError(secondError);
-          throw secondError;
         }
-        break
       } else if (isExpired(timeoutMS)) {
         /* CSOT is enabled and the operation has timed out. */
         throw previousError;
       }
+      retrying = true;
     }
   }
 
