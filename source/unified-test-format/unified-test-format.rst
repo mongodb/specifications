@@ -459,6 +459,14 @@ The structure of this object is as follows:
   is enabled. If false, tests MUST NOT run if authentication is enabled. If this
   field is omitted, there is no authentication requirement.
 
+- ``authMechanism``: Optional string. Specifies an authentication mechanism that
+  the database needs to support for the test. If set, tests MUST only run if the
+  given string matches (case-insensitive) one of the strings in the
+  `authenticationMechanisms
+  https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.authenticationMechanisms`__
+  server parameter. If this field is omitted, there is no authentication
+  mechanism requirement.
+
 - ``csfle``: Optional boolean. If true, the tests MUST only run if the driver
   and server support Client-Side Field Level Encryption. CSFLE is supported when
   all of the following are true:
@@ -514,15 +522,24 @@ The structure of this object is as follows:
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &client0 client0``).
 
-  - ``uriOptions``: Optional object. Additional URI options to apply to the
-    test suite's connection string that is used to create this client. Any keys
-    in this object MUST override conflicting keys in the connection string.
+  - ``uriOptions``: Optional object. Additional URI options to apply to the test
+    suite's connection string that is used to create this client. Any keys in
+    this object MUST override conflicting keys in the connection string.
 
     Documentation for supported options may be found in the
     `URI Options <../uri-options/uri-options.rst>`__ spec, with one notable
     exception: if ``readPreferenceTags`` is specified in this object, the key
     will map to an array of strings, each representing a tag set, since it is
     not feasible to define multiple ``readPreferenceTags`` keys in the object.
+
+    Any field in ``uriOptions`` may be a `$$placeholder`_ document and the test
+    runner MUST support replacing the placeholder document with values loaded
+    from the test environment. For example::
+
+      uriOptions:
+        authMechanism: "MONGODB-OIDC"
+        authMechanismProperties:
+          PROVIDER_NAME: { $$placeholder: 1 }
 
   .. _entity_client_useMultipleMongoses:
 
@@ -4061,6 +4078,9 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2023-10-16: **Schema version 1.18.**
+             Add ``authMechanism`` to ``runOnRequirement`` and require that
+             ``uriOptions`` supports placeholder documents.
 :2023-10-04: **Schema version 1.17.**
              Add ``serverHeartbeatStartedEvent``, ``serverHeartbeatSucceededEvent``, and
              ``serverHeartbeatFailedEvent`` for asserting on SDAM server heartbeat events.
