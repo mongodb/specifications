@@ -1712,8 +1712,7 @@ sleep 6 seconds
 Changelog
 =========
 
-:2023-10-17: Updated ``maxWriteBatchSize`` default as being 100,000 instead
-             of 1000
+:2023-10-17: Updated ``maxWriteBatchSize`` default to 100,000 from 1000
 :2022-10-05: Remove spec front matter and reformat changelog. Consolidated
              changelog entries prior to the first published version of this
              document, since exact dates were unavailable.
