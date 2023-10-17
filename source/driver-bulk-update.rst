@@ -215,7 +215,7 @@ Both of these limits can be found using hello or legacy hello:
   the command itself is guaranteed not to trigger an error from the server, except in the case of 
   `SERVER-12305 <https://jira.mongodb.org/browse/SERVER-12305>`_.
 
-* ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that 
+* ``maxWriteBatchSize`` : currently 100,000 (as of MongoDB 3.6 via `SERVER-13061 <https://jira.mongodb.org/browse/SERVER-13061>), this is the maximum number of inserts, updates, or deletes that 
   can be included in a write batch.  If more than this number of writes are included, the server cannot
   guarantee space in the response document to reply to the batch. 
 
