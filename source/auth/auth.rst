@@ -1180,15 +1180,26 @@ MONGODB-OIDC
 
 :since: 7.0 Enterprise
 
-MONGODB-OIDC authenticates using an `OIDC <https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens.
-Drivers MAY implement the human authentication workflow with ``REQUEST_TOKEN_CALLBACK``.
+MONGODB-OIDC authenticates using an `OIDC
+<https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens. There
+are two workflows:
+
+- Machine authentication workflow
+- Human authentication workflow
+
+Drivers MUST implement the machine authentication workflow with
+``CUSTOM_TOKEN_CALLBACK``. Drivers MAY implement the human authentication
+workflow with ``REQUEST_TOKEN_CALLBACK``.
+
 
 `MongoCredential`_ Properties
 `````````````````````````````
 
 username
-    MUST NOT be specified in machine authentication. Drivers MUST allow the user to specify this in the human authentication workflow.
-    If a user omits this when multiple OIDC providers are configured, the server will produce an error during authentication.
+    MUST NOT be specified in the machine authentication workflow. Drivers MUST
+    allow the user to specify this in the human authentication workflow. If a
+    user omits this when multiple OIDC providers are configured, the server will
+    produce an error during authentication.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1200,9 +1211,20 @@ mechanism
     MUST be "MONGODB-OIDC"
 
 mechanism_properties
+    PROVIDER_NAME
+        Drivers MUST allow the user to specify the name of the OIDC service to
+        use to obtain credentials. MUST be one of ["aws", "custom"].
+
+    CUSTOM_TOKEN_CALLBACK
+        Drivers MUST allow the user to specify a callback of the form
+        "getToken" (defined below), if the driver supports providing objects as
+        mechanism property values.  Otherwise the driver MUST allow it as a
+        MongoClientOption.
+
     REQUEST_TOKEN_CALLBACK
         Drivers MUST allow the user to specify a callback of the form "onRequest" (defined below), if the driver supports
         providing objects as mechanism property values.  Otherwise the driver MUST allow it as a MongoClientOption.
+
     ALLOWED_HOSTS
         The list of allowed hostnames or ip-addresses (ignoring ports) for
         MongoDB connections. The hostnames may include a leading "\*." wildcard, which allows for matching
@@ -1314,14 +1336,56 @@ If there is a cached Access Token the ``JwtStepRequest`` SASL command will be us
 If there is no cached Access Token, the ``PrincipalStepRequest`` will be used as the speculation command.
 The driver MUST NOT call the callback during speculative authentication.
 
+
+CUSTOM_TOKEN_CALLBACK
+`````````````````````
+Drivers MUST provide a way for the ``CUSTOM_TOKEN_CALLBACK`` to be either
+automatically canceled, or to cancel itself.  This can be as a timeout argument
+to the callback, a cancellation context passed to the callback, or some other
+language-appropriate mechanism.  The timeout deadline MUST be the same as the
+connection establishment deadline (TODO: Does that make sense?).
+
+Callbacks can be synchronous and/or asynchronous, depending on the driver
+and/or language.  Asynchronous callbacks should be preferred when other
+operations in the driver use asynchronous functions.
+
+The driver MUST pass the following information to the callback:
+
+- ``timeoutMS``: A timeout, in milliseconds, deadline, or ``timeoutContext``.
+- ``mechanismProperties``: All key-value pairs from the
+  AUTH_MECHANISM_PROPERTIES parameter.
+- ``invalidatedToken``: Optional. The previous token that was invalidated after
+  receiving a ``ReauthenticationRequired`` error.
+
+The callback MUST return an OIDC JWT.
+
+The signature of the callback is up to the driver's discretion, but the driver
+MUST ensure that, in the future, callbacks may have additional optional
+parameters passed to them. An example might look like:
+
+.. code: typescript
+
+  interface CallbackParameters {
+      // All key-value pairs from the AUTH_MECHANISM_PROPERTIES parameter.
+      mechanismProperties Object;
+
+      // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
+      invalidatedToken: Optional<string>;
+  }
+
+.. code: typescript
+
+  function getToken(timeoutMS: int, params CallbackParameters): string
+
 REQUEST_TOKEN_CALLBACK
 ``````````````````````
-The driver MUST provide a way for the ``REQUEST_TOKEN_CALLBACK`` to be either automatically
-canceled, or to cancel itself.  This can be as a timeout argument to the
-callback, a cancellation context passed to the callback, or some other
-language-appropriate mechanism.  The timeout duration MUST be 5 minutes,
-to account for the fact that there may be human interaction involved.
-This callback is not subject to CSOT.
+Drivers that implement ``REQUEST_TOKEN_CALLBACK`` (i.e. the human authentication
+workflow) MUST provide a way for the ``REQUEST_TOKEN_CALLBACK`` to be either
+automatically canceled, or to cancel itself.  This can be as a timeout argument
+to the callback, a cancellation context passed to the callback, or some other
+language-appropriate mechanism.  The timeout duration MUST be 5 minutes, to
+account for the fact that there may be human interaction involved. This callback
+is not subject to CSOT.
 
 Callbacks can be synchronous and/or asynchronous, depending on the driver
 and/or language.  Asynchronous callbacks should be preferred when other
