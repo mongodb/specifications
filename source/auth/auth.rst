@@ -1246,9 +1246,7 @@ The driver MUST pass the following information to the callback:
 - ``invalidatedToken``: Optional. The previous token that was invalidated after
   receiving a ``ReauthenticationRequired`` error.
 
-The callback MUST return an OIDC access token, formatted as a base64-encoded
-JWT.
-TODO: Is that correct?
+The callback MUST return an OIDC access token in JWT format.
 
 The signature of the callback is up to the driver's discretion, but the driver
 MUST ensure that additional optional parameters can be added to the callback
@@ -1258,7 +1256,7 @@ signature in the future. An example might look like:
 
   interface CallbackParameters {
       // All key-value pairs from the AUTH_MECHANISM_PROPERTIES parameter.
-      mechanismProperties Object;
+      mechanismProperties: Object;
 
       // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
       invalidatedToken: Optional<string>;
