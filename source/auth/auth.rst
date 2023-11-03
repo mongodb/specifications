@@ -1175,31 +1175,39 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 .. note::
     Five minutes was chosen based on the AWS documentation for `IAM roles for EC2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html>`_ : "We make new credentials available at least five minutes before the expiration of the old credentials". The intent is to have some buffer between when the driver fetches the credentials and when the server verifies them.
 
+
 MONGODB-OIDC
 ~~~~~~~~~~~~
 
 :since: 7.0 Enterprise
 
-MONGODB-OIDC authenticates using an `OIDC
-<https://openid.net/specs/openid-connect-core-1_0.html>`_ access tokens. There
-are two workflows:
+MONGODB-OIDC authenticates using an `OpenID Connect (OIDC)
+<https://openid.net/specs/openid-connect-core-1_0.html>`_ access token. Most
+OIDC Identity Providers (*IdP*) support two identity federation flows:
 
-- Machine authentication workflow
-- Human authentication workflow
+- Workload Identity Federation - Also called the "machine authentication flow",
+  this flow is intended to authorize access for software and services without
+  requiring human interaction.
 
-Drivers MUST implement the machine authentication workflow with
-``CUSTOM_TOKEN_CALLBACK``. Drivers MAY implement the human authentication
-workflow with ``REQUEST_TOKEN_CALLBACK``.
+  TODO: Is there a 1:1 corresponding OIDC spec flow?
 
+- Workforce Identity Federation - Also called the "human authentication flow",
+  this flow is intended to authorize access for end users and typically requires
+  human interaction to complete (e.g. clicking a button in a browser).
+
+  TODO: Is there a 1:1 corresponding OIDC spec flow?
+
+Drivers MUST implement the Workload Identity Federation flow. Drivers MAY
+implement the Workforce Identity Federation flow.
+
+
+Workload Identity Federation
+----------------------------
 
 `MongoCredential`_ Properties
 `````````````````````````````
-
 username
-    MUST NOT be specified in the machine authentication workflow. Drivers MUST
-    allow the user to specify this in the human authentication workflow. If a
-    user omits this when multiple OIDC providers are configured, the server will
-    produce an error during authentication.
+    MUST NOT be specified.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1213,14 +1221,113 @@ mechanism
 mechanism_properties
     PROVIDER_NAME
         Drivers MUST allow the user to specify the name of the OIDC service to
-        use to obtain credentials. MUST be one of ["aws", "custom"].
+        use to obtain credentials. MUST be one of ["aws"].
 
-    CUSTOM_TOKEN_CALLBACK
-        Drivers MUST allow the user to specify a callback of the form
-        "getToken" (defined below), if the driver supports providing objects as
-        mechanism property values.  Otherwise the driver MUST allow it as a
-        MongoClientOption.
+Interfaces
+``````````
 
+Custom Callback
+```````````````
+Drivers MUST provide a way for the callback to be either
+automatically canceled, or to cancel itself.  This can be as a timeout argument
+to the callback, a cancellation context passed to the callback, or some other
+language-appropriate mechanism.  The timeout deadline MUST be the same as the
+connection establishment deadline (TODO: Does that make sense?).
+
+Callbacks can be synchronous and/or asynchronous, depending on the driver
+and/or language.  Asynchronous callbacks should be preferred when other
+operations in the driver use asynchronous functions.
+
+The driver MUST pass the following information to the callback:
+
+- ``timeoutMS``: A timeout, in milliseconds, deadline, or ``timeoutContext``.
+- ``mechanismProperties``: All key-value pairs from the
+  AUTH_MECHANISM_PROPERTIES parameter.
+- ``invalidatedToken``: Optional. The previous token that was invalidated after
+  receiving a ``ReauthenticationRequired`` error.
+
+The callback MUST return an OIDC access token, formatted as a base64-encoded
+JWT.
+TODO: Is that correct?
+
+The signature of the callback is up to the driver's discretion, but the driver
+MUST ensure that additional optional parameters can be added to the callback
+signature in the future. An example might look like:
+
+.. code:: typescript
+
+  interface CallbackParameters {
+      // All key-value pairs from the AUTH_MECHANISM_PROPERTIES parameter.
+      mechanismProperties Object;
+
+      // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
+      invalidatedToken: Optional<string>;
+  }
+
+.. code:: typescript
+
+  function workloadToken(timeoutMS: int, params CallbackParameters): string
+
+Conversation
+````````````
+The SASL conversation uses a ``JwtStepRequest``. An example looks like:
+
+| C: :javascript:`{saslStart: 1, mechanism: "MONGODB-OIDC", payload: BinData(0, BSON({"jwt": "<access token string>"}))}`
+| S: :javascript:`{conversationId : 1, payload: BinData(0, "..."), done: true, ok: 1}`
+
+Access Token Caching
+```````
+Drivers MUST cache the access token returned either by a built-in or custom
+workload callback on the connection object (TODO: on the ``MongoClient``?). If
+any operation fails with ``ReauthenticationRequired`` (391), the driver MUST
+clear the cached access token and reauthenticate the connection.
+
+TODO: Is token generation ID required? What is it used for?
+
+Speculative Authentication
+``````````````````````````
+Drivers MUST implement speculative authentication for MONGODB-OIDC during the
+``hello`` handshake. Drivers MUST call the configured workload callback to
+retrieve a new access token for the new connection and send that access token
+with the ``JwtStepRequest`` SASL command.
+
+TODO: What if we cache on the ``MongoClient`` instead?
+
+Reauthentication
+````````````````
+When reauthentication is requested by the server (as a 391 error code) and
+MONGODB-OIDC is in use, the driver MUST perform a reauthentication. The
+following algorithm is used to handle a reauthenication error:
+
+#. Clear the cached JWT from the connection.
+#. Call the configured workload callback to retrieve a new JWT.
+#. Cache the new JWT on the connection.
+#. Attempt to authenticate the connection.
+
+
+Workforce Identity Federation
+-----------------------------
+See more information about workforce identity federation on Atlas here:
+https://www.mongodb.com/docs/atlas/security-oidc/
+
+`MongoCredential`_ Properties
+`````````````````````````````
+
+username
+    Drivers MUST allow the user to specify this in the workforce identity
+    federation flow. If a user omits this when multiple OIDC providers are
+    configured, the server will produce an error during authentication.
+
+source
+    MUST be "$external". Defaults to ``$external``.
+
+password
+    MUST NOT be specified.
+
+mechanism
+    MUST be "MONGODB-OIDC"
+
+mechanism_properties
     REQUEST_TOKEN_CALLBACK
         Drivers MUST allow the user to specify a callback of the form "onRequest" (defined below), if the driver supports
         providing objects as mechanism property values.  Otherwise the driver MUST allow it as a MongoClientOption.
@@ -1241,14 +1348,13 @@ mechanism_properties
 
 Interfaces
 ``````````
-
 Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips between the MongoDB driver and server.
 The requests from the driver and the replies from the server are described by the following interfaces which are encoded
 in the payload as octet sequences defining BSON objects:
 
 .. code:: typescript
 
-  // Driver’s opening request in saslStart.
+  // Driver's opening request in saslStart.
   interface PrincipalStepRequest {
     // Name of the OIDC user Principal.
     n: Optional<string>;
@@ -1273,10 +1379,10 @@ If given, then ``username`` provided by the user MUST be used as the Principal `
     requestScopes: Optional<Array<string>>;
   }
 
-The server will use Principal ``(n)`` if provided in the driver’s ``PrincipalStepRequest`` to select an appropriate IdP.
-This IdP's configuration will be returned in the server’s response that will be used by the end-user to acquire an Access Token.
+The server will use Principal ``(n)`` if provided in the driver's ``PrincipalStepRequest`` to select an appropriate IdP.
+This IdP's configuration will be returned in the server's response that will be used by the end-user to acquire an Access Token.
 
-This Access Token will be used as the JWT in the driver’s ``JwtStepRequest`` to complete authentication.
+This Access Token will be used as the JWT in the driver's ``JwtStepRequest`` to complete authentication.
 
 .. code:: typescript
 
@@ -1322,7 +1428,7 @@ or when there is a cached Access Token.  Drivers MUST instead  use ``saslStart``
 Caching
 ```````
 Drivers MUST cache the ``IdPInfo``, Access Token, and Refresh Token associated with each
-``MongoClient``.  If any operation fails the driver MUST clear the Access Token.  The Refresh Token is handled differently,
+``MongoClient``.  If any operation fails the driver MUST clear the Access Token. The Refresh Token is handled differently,
 see the ``Reauthentication`` section below.
 
 Drivers MUST also use a token generation id that is incremented whenever a new Access Token is retrieved.
@@ -1336,51 +1442,10 @@ If there is a cached Access Token the ``JwtStepRequest`` SASL command will be us
 If there is no cached Access Token, the ``PrincipalStepRequest`` will be used as the speculation command.
 The driver MUST NOT call the callback during speculative authentication.
 
-
-CUSTOM_TOKEN_CALLBACK
-`````````````````````
-Drivers MUST provide a way for the ``CUSTOM_TOKEN_CALLBACK`` to be either
-automatically canceled, or to cancel itself.  This can be as a timeout argument
-to the callback, a cancellation context passed to the callback, or some other
-language-appropriate mechanism.  The timeout deadline MUST be the same as the
-connection establishment deadline (TODO: Does that make sense?).
-
-Callbacks can be synchronous and/or asynchronous, depending on the driver
-and/or language.  Asynchronous callbacks should be preferred when other
-operations in the driver use asynchronous functions.
-
-The driver MUST pass the following information to the callback:
-
-- ``timeoutMS``: A timeout, in milliseconds, deadline, or ``timeoutContext``.
-- ``mechanismProperties``: All key-value pairs from the
-  AUTH_MECHANISM_PROPERTIES parameter.
-- ``invalidatedToken``: Optional. The previous token that was invalidated after
-  receiving a ``ReauthenticationRequired`` error.
-
-The callback MUST return an OIDC JWT.
-
-The signature of the callback is up to the driver's discretion, but the driver
-MUST ensure that, in the future, callbacks may have additional optional
-parameters passed to them. An example might look like:
-
-.. code: typescript
-
-  interface CallbackParameters {
-      // All key-value pairs from the AUTH_MECHANISM_PROPERTIES parameter.
-      mechanismProperties Object;
-
-      // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
-      invalidatedToken: Optional<string>;
-  }
-
-.. code: typescript
-
-  function getToken(timeoutMS: int, params CallbackParameters): string
-
 REQUEST_TOKEN_CALLBACK
 ``````````````````````
 Drivers that implement ``REQUEST_TOKEN_CALLBACK`` (i.e. the human authentication
-workflow) MUST provide a way for the ``REQUEST_TOKEN_CALLBACK`` to be either
+flow) MUST provide a way for the ``REQUEST_TOKEN_CALLBACK`` to be either
 automatically canceled, or to cancel itself.  This can be as a timeout argument
 to the callback, a cancellation context passed to the callback, or some other
 language-appropriate mechanism.  The timeout duration MUST be 5 minutes, to
@@ -1677,6 +1742,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2023-11-01: Separated MONGODB-OIDC machine and human authentication flow specs.
 :2023-04-28: Added MONGODB-OIDC auth mechanism
 :2022-11-02: Require environment variables to be read dynamically.
 :2022-10-28: Recommend the use of AWS SDKs where available.
