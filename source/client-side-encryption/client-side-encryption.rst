@@ -590,7 +590,7 @@ following process:
 
 6. Return `P` as the additional KMS providers to libmongocrypt_.
 
-__ ../auth/auth.html#obtaining-credentials
+__ ../auth/auth.rst#obtaining-credentials
 
 .. default-role:: literal
 
