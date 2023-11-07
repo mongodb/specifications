@@ -360,8 +360,12 @@ and reflects the flow described above.
    */
   function executeRetryableRead(command, session) {
     Exception previousError = null;
+    retrying = false;
     Server previousServer = null;
     while true {
+      if (previousError != null) {
+        retrying = true;
+      }
       try {
         if (previousServer == null) {
           server = selectServer();
@@ -438,8 +442,16 @@ and reflects the flow described above.
         }
         throw error;
       }
-      /* CSOT is enabled and the operation has timed out. */
-      if (timeoutMS != null && isExpired(timeoutMS) {
+
+      if (timeoutMS == null) {
+        /* If CSOT is not enabled, allow any retryable error from the second
+         * attempt to propagate to our caller, as it will be just as relevant
+         * (if not more relevant) than the original error. */
+        if (retrying) {
+          throw previousError;
+        }
+      } else if (isExpired(timeoutMS)) {
+        /* CSOT is enabled and the operation has timed out. */
         throw previousError;
       }
     }
