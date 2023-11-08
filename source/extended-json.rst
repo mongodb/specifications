@@ -371,8 +371,8 @@ JSON as::
   {"$uuid": <canonical textual representation of a UUID>}
 
 The rules for generating the canonical string representation of a
-UUID are defined in `
-RFC 4122 Section 3 <https://tools.ietf.org/html/rfc4122#section-3>`_.
+UUID are defined in
+`RFC 4122 Section 3 <https://tools.ietf.org/html/rfc4122#section-3>`_.
 Use of this format result in a more readable extended JSON
 representation of the UUID from the previous example::
 
