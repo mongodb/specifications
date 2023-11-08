@@ -899,6 +899,8 @@ Where are read concern and write concern?
 These commands internally proxy the search index management commands to a separate process that runs alongside an Atlas cluster.  As such, read concern and 
 write concern are not relevant for the search index management commands.
 
+Drivers MUST NOT apply a read concern or write concern to the commands. Atlas search index management commands return an error if a ``readConcern`` or ``writeConcern`` field is present in the command.
+
 Consistency with Existing APIs
 ------------------------------
 
