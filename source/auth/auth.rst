@@ -1338,7 +1338,7 @@ mechanism_properties
         MongoDB connections. The hostnames may include a leading "\*." wildcard, which allows for matching
         (potentially  nested) subdomains. ALLOWED_HOSTS is a
         security feature and MUST default to
-        ``["*.mongodb.net", '*.mongodb-qa.net", '*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``.
+        ``["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``.
         When ``MONGODB-OIDC`` authentication is attempted against a hostname
         that does not match any of list of allowed hosts, the driver MUST
         raise a client-side error without invoking any user-provided
