@@ -1233,12 +1233,9 @@ operations in the driver use asynchronous functions.
 The driver MUST pass the following information to the callback:
 
 - ``timeoutMS``: A timeout, in milliseconds, deadline, or ``timeoutContext``.
-- ``mechanismProperties``: All key-value pairs from the
-  AUTH_MECHANISM_PROPERTIES parameter.
-- ``invalidatedToken``: Optional. The previous token that was invalidated after
-  receiving a ``ReauthenticationRequired`` error.
 
-The callback MUST return an OIDC access token in JWT format.
+The callback MUST return an OIDC access token in JWT format and, if available,
+the expiry timestamp for that access token.
 
 The signature of the callback is up to the driver's discretion, but the driver
 MUST ensure that additional optional parameters can be added to the callback
@@ -1246,27 +1243,30 @@ signature in the future. An example might look like:
 
 .. code:: typescript
 
-  interface CallbackParameters {
-      // All key-value pairs from the AUTH_MECHANISM_PROPERTIES parameter.
-      mechanismProperties: Object;
+  interface TokenParameters {
+      timeoutMS: int;
+  }
 
-      // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
-      invalidatedToken: Optional<string>;
+  interface TokenResult {
+      accessToken: string;
+      expiresInSeconds: Optional<int>;
   }
 
 .. code:: typescript
 
-  function oidcToken(timeoutMS: int, params CallbackParameters): string
+  function token(params: TokenParameters): TokenResult
 
 Conversation
 ````````````
 
-As an example, given the OIDC token JWT string "abcd1234", the SASL conversation looks like:
+As an example, given the OIDC token JWT string "abcd1234", the SASL conversation
+looks like:
 
-| C: :javascript:`{saslStart: 1, mechanism: "MONGODB-OIDC", payload: BinData(0, BSON({"jwt": "abcd1234"}))}`
-| S: :javascript:`{conversationId : 1, payload: BinData(0, "..."), done: true, ok: 1}`
+| C: :javascript:`{saslStart: 1, mechanism: "MONGODB-OIDC", payload: BinData(0, "FwAAAAJqd3QACQAAAGFiY2QxMjM0AAA=")}`
+| S: :javascript:`{conversationId : 1, payload: BinData(0, ""), done: true, ok: 1}`
 
-Where the sent ``payload`` is a generic binary blob containing a BSON-encoded document ``{"jwt": "abcd1234"}``.
+Where the sent ``payload`` is a generic binary blob containing a BSON document
+in the form ``{"jwt": "abcd1234"}``.
 
 Access Token Caching
 ````````````````````
