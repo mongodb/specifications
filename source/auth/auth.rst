@@ -1213,38 +1213,56 @@ Supported Service Providers
 
 AWS
 ___
-
 TODO: Add.
 
 Custom
 ______
-
 Drivers MUST allow the user to integrate with other OIDC providers by
-implementing a custom callback that returns an OIDC token. Drivers MUST provide
-a way for the callback to be either automatically canceled, or to cancel itself.
-This can be as a timeout argument to the callback, a cancellation context passed
-to the callback, or some other language-appropriate mechanism.  The timeout
-deadline MUST be the same as the connection establishment deadline.
+implementing a custom callback that returns an OIDC token. Callbacks can be
+synchronous and/or asynchronous, depending on the driver and/or language.
+Asynchronous callbacks should be preferred when other operations in the driver
+use asynchronous functions.
 
-Callbacks can be synchronous and/or asynchronous, depending on the driver
-and/or language.  Asynchronous callbacks should be preferred when other
-operations in the driver use asynchronous functions.
+Drivers MUST provide a way for the callback to be either automatically canceled,
+or to cancel itself. This can be as a timeout argument to the callback, a
+cancellation context passed to the callback, or some other language-appropriate
+mechanism. The timeout value MUST be ``min(remaining connectTimeoutMS, remaining
+timeoutMS)`` as described in the Server Selection section of the CSOT spec.
 
 The driver MUST pass the following information to the callback:
 
-- ``timeoutMS``: A timeout, in milliseconds, deadline, or ``timeoutContext``.
+- ``timeout``: A timeout, in milliseconds, deadline, or ``timeoutContext``.
+- ``version``: The callback API version number. The version number is used to
+  communicate callback API changes that are not breaking but that users may want
+  to know about and review their implementation. Drivers MUST pass ``1`` for the
+  current callback API version number. Maintainers MUST increment the callback
+  API version whenever the callback signature is changed.
 
-The callback MUST return an OIDC access token in JWT format and, if available,
-the expiry timestamp for that access token.
+  For example, users may add the following check in their callback:
+
+  .. code:: typescript
+
+    if(params.version > 1) {
+        throw new Error("OIDC callback API has changed!");
+    }
+
+The callback MUST allow implementers to return the following information:
+
+- ``accessToken``: An OIDC access token string. The driver MUST NOT attempt to
+  validate ``accessToken`` directly.
+- ``expiresIn``: The expiry time for the access token. Drivers MUST support and
+  document values for both an expiry time and a value that indicates there is no
+  expiry time, like 0 or ``null``.
 
 The signature of the callback is up to the driver's discretion, but the driver
-MUST ensure that additional optional parameters can be added to the callback
-signature in the future. An example might look like:
+MUST ensure that additional optional input parameters and return values can be
+added to the callback signature in the future. An example might look like:
 
 .. code:: typescript
 
   interface TokenParameters {
-      timeoutMS: int;
+      callbackTimeoutMS: int;
+      version: int;
   }
 
   interface TokenResult {
@@ -1258,7 +1276,6 @@ signature in the future. An example might look like:
 
 Conversation
 ````````````
-
 As an example, given the OIDC token JWT string "abcd1234", the SASL conversation
 looks like:
 
@@ -1270,7 +1287,6 @@ in the form ``{"jwt": "abcd1234"}``.
 
 Access Token Caching
 ````````````````````
-
 Drivers MUST cache the Access Token used to authenticate a connection on the
 connection object. Additionally, drivers MUST cache the most recent access Token
 on the ``MongoClient``. If any operation fails with ``ReauthenticationRequired``
@@ -1280,7 +1296,6 @@ section below.
 
 Speculative Authentication
 ``````````````````````````
-
 Drivers MUST implement speculative authentication for MONGODB-OIDC during the
 ``hello`` handshake. If there is a cached Access Token on the ``MongoClient``,
 use it for authentication. Otherwise, call the configured workload callback to
@@ -1289,7 +1304,6 @@ with the ``saslStart`` SASL command.
 
 Reauthentication
 ````````````````
-
 When reauthentication is requested by the server (as a 391 error code) and
 MONGODB-OIDC is in use, the driver MUST perform a reauthentication. The
 following algorithm is used to handle a reauthenication error:
@@ -1304,7 +1318,6 @@ TODO: Attempt authentication first or cache new token first?
 
 Human Authentication Flow
 `````````````````````````
-
 TODO: Why is this section separate?
 
 
@@ -1349,7 +1362,6 @@ mechanism_properties
 
 Interfaces
 ``````````
-
 Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips between the MongoDB driver and server.
 The requests from the driver and the replies from the server are described by the following interfaces which are encoded
 in the payload as octet sequences defining BSON objects:
@@ -1412,7 +1424,6 @@ The IdP response that is expected to be returned by the ``REQUEST_TOKEN_CALLBACK
 
 Conversation
 ````````````
-
 If using the ``PrincipalStepRequest`` first, the conversation will look like:
 
 | C: :javascript:`{saslStart: 1, mechanism: "MONGODB-OIDC", payload: BinData(0, "...")}`
@@ -1430,7 +1441,6 @@ or when there is a cached Access Token.  Drivers MUST instead  use ``saslStart``
 
 Caching
 ```````
-
 Drivers MUST cache the ``IdPInfo``, Access Token, and Refresh Token associated with each
 ``MongoClient``.  If any operation fails the driver MUST clear the Access Token. The Refresh Token is handled differently,
 see the ``Reauthentication`` section below.
@@ -1441,7 +1451,6 @@ This value is used in the ``Reauthentication`` section below.
 
 Speculative Authentication
 ``````````````````````````
-
 Drivers MUST implement speculative authentication for MONGODB-OIDC during the ``hello`` handshake.
 If there is a cached Access Token the ``JwtStepRequest`` SASL command will be used as the speculation command.
 If there is no cached Access Token, the ``PrincipalStepRequest`` will be used as the speculation command.
@@ -1449,7 +1458,6 @@ The driver MUST NOT call the callback during speculative authentication.
 
 REQUEST_TOKEN_CALLBACK
 ``````````````````````
-
 Drivers that implement ``REQUEST_TOKEN_CALLBACK`` (i.e. the human authentication
 flow) MUST provide a way for the ``REQUEST_TOKEN_CALLBACK`` to be either
 automatically canceled, or to cancel itself.  This can be as a timeout argument
@@ -1500,7 +1508,6 @@ If no callback is given, the driver MUST must raise a validation error.
 
 Reauthentication
 ````````````````
-
 When reauthentication is requested by the server (as a 391 error code) and MONGODB-OIDC is in use, the driver MUST perform a reauthentication.
 The driver MUST account for the case of multiple connections hitting a reauthentication error at different times.
 The driver MUST also account for a reauthenication that results from an IdP configuration change on the server.
