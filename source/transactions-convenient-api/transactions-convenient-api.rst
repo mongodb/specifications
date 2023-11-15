@@ -302,14 +302,22 @@ already provide access to a client object.
 Handling errors inside the callback
 -----------------------------------
 
-Drivers MUST document that the callback MUST NOT silently swallow errors that
-do not have the "TransientTransactionError" label. Such errors abort
-the transaction on the server; trying to commit an aborted transaction will
-result in an error.
+Drivers MUST document that the callback MUST NOT silently handle errors that
+do not have the "TransientTransactionError" label without allowing such errors
+to propagate. Such errors may abort the transaction on the server.
+
+For example, ``DuplicateKeyError`` is an error that aborts a transaction on the
+server. If the callback catches ``DuplicateKeyError`` and does not re-throw it,
+the driver will attempt to commit the transaction. The server will reject the
+commit attempt with ``NoSuchTransaction`` error. This error has the
+"TransientTransactionError" label and the driver will retry the commit. This
+will result in an infinite loop.
+
 
 Drivers SHOULD recommend that the callback re-throw errors that do not have
-the "TransientTransactionError" label. Drivers SHOULD also recommend using
-Core Transaction API if a user wants to handle errors in a custom way.
+the "TransientTransactionError" label if they need to be handled inside the
+callback. Drivers SHOULD also recommend using Core Transaction API if
+a user wants to handle errors in a custom way.
 
 Test Plan
 =========
