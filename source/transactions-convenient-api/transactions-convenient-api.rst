@@ -299,7 +299,7 @@ MongoClient within the callback in order to execute operations within the
 transaction. Per the `Driver Session`_ specification, ClientSessions should
 already provide access to a client object.
 
-Errors handling inside the callback
+Handling errors inside the callback
 -----------------------------------
 
 Drivers MUST document that the callback MUST NOT silently swallow errors that
