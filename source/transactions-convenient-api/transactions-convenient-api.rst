@@ -299,6 +299,18 @@ MongoClient within the callback in order to execute operations within the
 transaction. Per the `Driver Session`_ specification, ClientSessions should
 already provide access to a client object.
 
+Errors handling inside the callback
+-----------------------------------
+
+Drivers MUST document that the callback MUST NOT silently swallow errors that
+do not have the "TransientTransactionError" label. Such errors abort the
+transaction on the server; trying to commit aborted transaction will result in
+an error.
+
+Drivers SHOULD recommend that the callback re-throw errors that do not have the
+"TransientTransactionError" label or otherwise using Core Transaction API if
+they want to handle errors in a custom way.
+
 Test Plan
 =========
 
