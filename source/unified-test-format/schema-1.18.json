@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-  
+
     "title": "Unified Test Format",
     "type": "object",
     "additionalProperties": false,
@@ -33,13 +33,13 @@
         "additionalProperties": true
       }
     },
-  
+
     "definitions": {
       "version": {
         "type": "string",
         "pattern": "^[0-9]+(\\.[0-9]+){1,2}$"
       },
-  
+
       "runOnRequirement": {
         "type": "object",
         "additionalProperties": false,
@@ -68,7 +68,7 @@
           "csfle": { "type": "boolean" }
         }
       },
-  
+
       "entity": {
         "type": "object",
         "additionalProperties": false,
@@ -194,7 +194,7 @@
           }
         }
       },
-  
+
       "logComponent": {
         "type": "string",
         "enum": ["command", "topology", "serverSelection", "connection"]
@@ -215,7 +215,7 @@
           "kmsProviders": { "$ref": "#/definitions/kmsProviders" }
         }
       },
-  
+
       "kmsProviders": {
         "$defs": {
           "stringOrPlaceholder": {
@@ -281,7 +281,7 @@
           }
         }
       },
-  
+
       "storeEventsAsEntity": {
         "type": "object",
         "additionalProperties": false,
@@ -315,7 +315,7 @@
           }
         }
       },
-  
+
       "collectionData": {
         "type": "object",
         "additionalProperties": false,
@@ -335,7 +335,7 @@
           }
         }
       },
-  
+
       "expectedEventsForClient": {
         "type": "object",
         "additionalProperties": false,
@@ -393,7 +393,7 @@
           }
         ]
       },
-  
+
       "expectedCommandEvent": {
         "type": "object",
         "additionalProperties": false,
@@ -434,7 +434,7 @@
           }
         }
       },
-  
+
       "expectedCmapEvent": {
         "type": "object",
         "additionalProperties": false,
@@ -505,7 +505,7 @@
           }
         }
       },
-  
+
       "expectedSdamEvent": {
         "type": "object",
         "additionalProperties": false,
@@ -548,12 +548,12 @@
           }
         }
       },
-  
+
       "serverDescription": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "type": { 
+          "type": {
             "type": "string",
             "enum": [
               "Standalone",
@@ -611,7 +611,7 @@
           "timeoutMS": { "type": "integer" }
         }
       },
-  
+
       "serverApi": {
         "type": "object",
         "additionalProperties": false,
@@ -622,7 +622,7 @@
           "deprecationErrors": { "type":  "boolean" }
         }
       },
-  
+
       "operation": {
         "type": "object",
         "additionalProperties": false,
@@ -644,7 +644,7 @@
           { "not": { "required": ["ignoreResultAndError", "saveResultAsEntity"] } }
         ]
       },
-  
+
       "expectedError": {
         "type": "object",
         "additionalProperties": false,
@@ -675,7 +675,7 @@
           "expectResult": {}
         }
       },
-  
+
       "test": {
         "type": "object",
         "additionalProperties": false,

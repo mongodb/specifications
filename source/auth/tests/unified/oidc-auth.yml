@@ -24,14 +24,14 @@ createEntities:
 - database:
     id: database0
     client: client0
-    databaseName: db
+    databaseName: test
 - collection:
     id: collection0
     database: database0
     collectionName: collName
 initialData:
 - collectionName: collName
-  databaseName: db
+  databaseName: test
   documents: []
 tests:
 - description: A simple find operation should succeed

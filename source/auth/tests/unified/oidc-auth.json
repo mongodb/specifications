@@ -31,7 +31,7 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "db"
+        "databaseName": "test"
       }
     },
     {
@@ -45,7 +45,7 @@
   "initialData": [
     {
       "collectionName": "collName",
-      "databaseName": "db",
+      "databaseName": "test",
       "documents": []
     }
   ],
