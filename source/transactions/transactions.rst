@@ -982,6 +982,15 @@ label. For example:
                 continue
             raise
 
+Handling command errors
+-----------------------
+
+Drivers MUST document that command errors that do not have the
+"TransientTransactionError" label may abort the transaction on the server.
+For example, ``DuplicateKeyError`` is an error that aborts a transaction;
+an attempt to commit such transaction will be rejected with
+``NoSuchTransaction`` error.
+
 **Test Plan**
 -------------
 
