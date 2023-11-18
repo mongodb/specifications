@@ -1184,7 +1184,19 @@ MONGODB-OIDC
 MONGODB-OIDC authenticates using an `OpenID Connect (OIDC)
 <https://openid.net/specs/openid-connect-core-1_0.html>`_ access token.
 
+Drivers MUST support the machine-to-machine authentication flow, which is
+described in this section. The machine-to-machine authentication flow is
+intended to be used in cases where human interaction is not practical or
+necessary, such as for web services.  sometimes called "Workforce Identity
+Federation" in OIDC Identity Provider documentation.
+
+Drivers MAY support the human-in-the-loop authentication flow described in the
+`Human Authentication Flow`_ section.
+
 TODO: Add background on what part of the auth flow drivers play specifically.
+
+The machine-to-machine OIDC authentication flow is called "Workforce Identity
+Federation" by many Identity Providers.
 
 `MongoCredential`_ Properties
 `````````````````````````````
@@ -1294,6 +1306,8 @@ on the ``MongoClient``. If any operation fails with ``ReauthenticationRequired``
 and and reauthenticate the connection as described in ``Reauthentication``
 section below.
 
+TODO: Examples of how to evict cache, either comapring token values or by using token generation.
+
 Speculative Authentication
 ``````````````````````````
 Drivers MUST implement speculative authentication for MONGODB-OIDC during the
@@ -1318,7 +1332,7 @@ TODO: Attempt authentication first or cache new token first?
 
 Human Authentication Flow
 `````````````````````````
-TODO: Why is this section separate?
+The human-in-the-loop authentication flow is
 
 
 `MongoCredential`_ Properties

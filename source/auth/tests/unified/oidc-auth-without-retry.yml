@@ -1,11 +1,13 @@
 ---
-description: reauthenticate_with_retry
-schemaVersion: '1.12'
+description: "OIDC authentication without retry"
+schemaVersion: "1.18"
 runOnRequirements:
-- minServerVersion: '6.3'
+- minServerVersion: "7.0"
   auth: true
   authMechanism: "MONGODB-OIDC"
 createEntities:
+- client:
+    id: authClient
 - client:
     id: client0
     uriOptions:
