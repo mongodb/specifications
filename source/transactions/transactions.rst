@@ -1416,6 +1416,8 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2023-11-20: Specify that non-transient transaction errors abort the transaction
+             on the server.
 :2022-10-05: Remove spec front matter and reformat changelog
 :2022-01-25: Mention the additional case of a retryable handshake error
 :2022-01-19: Deprecate maxCommitTimeMS in favor of timeoutMS.

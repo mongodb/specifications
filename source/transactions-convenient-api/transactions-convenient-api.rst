@@ -514,7 +514,7 @@ client-side operation timeout, withTransaction can continue to use the
 Changes
 =======
 
-:2023-11-15: Document error handling inside the callback.
+:2023-11-20: Document error handling inside the callback.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-19: withTransaction applies timeouts per the client-side operations
              timeout specification.
