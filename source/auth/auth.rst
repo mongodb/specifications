@@ -1217,23 +1217,28 @@ mechanism_properties
     PROVIDER_NAME
         Drivers MUST allow the user to specify the name of the OIDC service to
         use to obtain credentials. MUST be one of ["aws"]. If PROVIDER_NAME is
-        given and a Custom provider callback is configured, the driver MUST
+        given and a custom callback is configured (either via , the driver MUST
         raise an error.
+
+    OIDC_TOKEN_CALLBACK
+        Drivers MAY allow the user to specify a custom OIDC callback using a
+        mechanism property. Drivers MUST only support OIDCToken
 
 Supported Service Providers
 ```````````````````````````
 
 AWS
 ___
-TODO: Add.
+If ``PROVIDER_NAME:aws`` is specified, drivers should read the file ``AWS_WEB_IDENTITY_TOKEN_FILE``
+TODO
 
-Custom
-______
-Drivers MUST allow the user to integrate with other OIDC providers by
-implementing a custom callback that returns an OIDC token. Callbacks can be
-synchronous and/or asynchronous, depending on the driver and/or language.
-Asynchronous callbacks should be preferred when other operations in the driver
-use asynchronous functions.
+Custom Callback
+_______________
+Drivers MUST allow the user to integrate with OIDC providers not supported by
+built-in logic by implementing a custom callback that returns an OIDC token.
+Callbacks can be synchronous or asynchronous, depending on the driver and/or
+language. Asynchronous callbacks should be preferred when other operations in
+the driver use asynchronous functions.
 
 Drivers MUST provide a way for the callback to be either automatically canceled,
 or to cancel itself. This can be as a timeout argument to the callback, a
@@ -1272,19 +1277,19 @@ added to the callback signature in the future. An example might look like:
 
 .. code:: typescript
 
-  interface TokenParameters {
+  interface OIDCTokenParams {
       callbackTimeoutMS: int;
       version: int;
   }
 
-  interface TokenResult {
+  interface OIDCToken {
       accessToken: string;
       expiresInSeconds: Optional<int>;
   }
 
 .. code:: typescript
 
-  function token(params: TokenParameters): TokenResult
+  function oidcToken(params: OIDCTokenParams): OIDCToken
 
 Conversation
 ````````````
@@ -1299,14 +1304,82 @@ in the form ``{"jwt": "abcd1234"}``.
 
 Access Token Caching
 ````````````````````
-Drivers MUST cache the Access Token used to authenticate a connection on the
-connection object. Additionally, drivers MUST cache the most recent access Token
-on the ``MongoClient``. If any operation fails with ``ReauthenticationRequired``
-(391), the driver MUST clear the access Token cached on the connection object
-and and reauthenticate the connection as described in ``Reauthentication``
-section below.
+Drivers MUST cache the most recent Access Token per ``MongoClient`` (henceforth
+referred to as the Client Cache). Drivers MAY store the Client Cache on the
+``MongoClient`` object or any object that guarantees exactly 1 cached Access
+Token per ``MongoClient``. Additionally, drivers MUST cache the Access Token
+used to authenticate a connection on the connection object (henceforth referred
+to as the Connection Cache).
 
-TODO: Examples of how to evict cache, either comapring token values or by using token generation.
+If any operation fails with ``ReauthenticationRequired`` (error code 391), the
+driver MUST consider the Access Token from the Connection Cache expired and
+refresh the Connection Cache using the following algorithm before performing
+`reauthentication`_:
+
+#. Acquire the lock for the Client Cache.
+#. Check if the Access Token in the Client Cache is the same as the expired
+   Access Token.
+  #. If the Client Cache is empty or has the same Access Token as the expired
+     Access Token, fetch a new Access Token from the Token Provider or custom callback
+     and store it in the Client Cache.
+#. Release the lock for the Client Cache.
+#. Store the Access Token from the Client Cache in the Connection Cache.
+
+If the MongoDB authentication handshake for a new connection fails with
+``AuthenticationFailed`` (error code 18), the driver MUST check if the Access
+Token used for the authentication handshake was from the Client Cache or was a
+new Access Token from the Token Provider. If the Access Token was from the
+Client Cache, it's possible the cached Access Token has expired, so the driver
+MUST fetch a new Access Token from the Token Provider and attempt authentication
+handshake a second time.
+
+Example code for Access Token caching during authentication and
+reauthentication:
+
+.. code:: python
+
+  def auth(conn):
+    token, is_cache = client_cache(None)
+    try:
+      sasl_conversation(conn, {"jwt": token})
+    except AuthenticationFailed as err:
+      # If the Access Token is cached, it's possible that the token has expired,
+      # so fetch a new token and attempt another SASL conversation. If the
+      # second SASL conversation fails, raise an exception.
+      if is_cache:
+        invalid_token = token
+        token = client_cache(invalid_token)
+        sasl_conversation(conn, {"jwt": token})
+      else:
+        raise err
+    conn.oidc_cache.token = token
+
+  def reauth(conn):
+    invalid_token = conn.oidc_cache.token
+    token, is_cache = client_cache(invalid_token)
+    sasl_conversation(conn, {"jwt": token})
+    conn.oidc_cache.token = token
+
+  def client_cache(invalid_token):
+    # Lock the Client Cache so that only one caller can modify the cache and
+    # call the provider or custom callback at a time.
+    client.oidc_cache.lock()
+    token = client.oidc_cache.token
+    # Check if we need to fetch and cache a new token from the OIDC provider or
+    # custom callback.
+    is_cache = True
+    if token is None or token == invalid_token:
+      token = oidc_provider()
+      is_cache = False
+      client.oidc_cache.token = token
+    client.cached_token.unlock()
+
+    return token, is_cache
+
+To avoid adding a bottleneck that would override the ``maxConnecting`` setting,
+the driver MUST not hold an exclusive a lock while performing the authentication
+handshake.
+
 
 Speculative Authentication
 ``````````````````````````
@@ -1316,6 +1389,7 @@ use it for authentication. Otherwise, call the configured workload callback to
 retrieve a new Access Token for the new connection and send that Access Token
 with the ``saslStart`` SASL command.
 
+.. _reauthentication:
 Reauthentication
 ````````````````
 When reauthentication is requested by the server (as a 391 error code) and
