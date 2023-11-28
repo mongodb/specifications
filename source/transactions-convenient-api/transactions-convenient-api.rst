@@ -314,7 +314,6 @@ commit attempt with ``NoSuchTransaction`` error. This error has the
 "TransientTransactionError" label and the driver will retry the commit. This
 will result in an infinite loop.
 
-
 Drivers MUST recommend that the callback re-throw command errors if they
 need to be handled inside the callback. Drivers SHOULD also recommend using
 Core Transaction API if a user wants to handle errors in a custom way.
