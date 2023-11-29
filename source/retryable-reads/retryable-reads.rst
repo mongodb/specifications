@@ -705,7 +705,7 @@ Changelog
 =========
 
 :2023-11-28: Add ExceededTimeLimit to the list of error codes that should
-             receive a RetryableReadError label.
+             be retried.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
              mechanism as a deprioritized server.
