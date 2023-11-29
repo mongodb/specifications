@@ -1187,16 +1187,11 @@ MONGODB-OIDC authenticates using an `OpenID Connect (OIDC)
 Drivers MUST support the machine-to-machine authentication flow, which is
 described in this section. The machine-to-machine authentication flow is
 intended to be used in cases where human interaction is not practical or
-necessary, such as for web services.  sometimes called "Workforce Identity
-Federation" in OIDC Identity Provider documentation.
+necessary, such as for web services. Some OIDC documentation refers to
+authentication for services as "workload" authentication.
 
 Drivers MAY support the human-in-the-loop authentication flow described in the
 `Human Authentication Flow`_ section.
-
-TODO: Add background on what part of the auth flow drivers play specifically.
-
-The machine-to-machine OIDC authentication flow is called "Workforce Identity
-Federation" by many Identity Providers.
 
 `MongoCredential`_ Properties
 `````````````````````````````
@@ -1222,15 +1217,22 @@ mechanism_properties
 
     OIDC_TOKEN_CALLBACK
         Drivers MAY allow the user to specify a custom OIDC callback using a
-        mechanism property. Drivers MUST only support OIDCToken
+        mechanism property. Drivers MUST support either the ``MongoClient``
+        configuration method or the mechanism property, but MUST NOT support
+        both.
 
-Supported Service Providers
-```````````````````````````
+Supported Providers
+```````````````````
+
+Drivers MUST support all of the following OIDC authentication providers.
 
 AWS
 ___
-If ``PROVIDER_NAME:aws`` is specified, drivers should read the file ``AWS_WEB_IDENTITY_TOKEN_FILE``
-TODO
+The AWS provider is enabled by setting auth mechanism property
+``PROVIDER_NAME:aws``. If enabled, drivers MUST read the file path from
+environment variable ``AWS_WEB_IDENTITY_TOKEN_FILE`` and then read the OIDC
+Access Token from that file. The driver MUST use the contents of that file as
+value in the ``jwt`` field of the ``saslStart`` payload.
 
 Custom Callback
 _______________
@@ -1265,9 +1267,9 @@ The driver MUST pass the following information to the callback:
 
 The callback MUST allow implementers to return the following information:
 
-- ``accessToken``: An OIDC access token string. The driver MUST NOT attempt to
+- ``accessToken``: An OIDC access Token string. The driver MUST NOT attempt to
   validate ``accessToken`` directly.
-- ``expiresIn``: The expiry time for the access token. Drivers MUST support and
+- ``expiresIn``: The expiry time for the access Token. Drivers MUST support and
   document values for both an expiry time and a value that indicates there is no
   expiry time, like 0 or ``null``.
 
@@ -1304,37 +1306,42 @@ in the form ``{"jwt": "abcd1234"}``.
 
 Access Token Caching
 ````````````````````
-Drivers MUST cache the most recent Access Token per ``MongoClient`` (henceforth
-referred to as the Client Cache). Drivers MAY store the Client Cache on the
-``MongoClient`` object or any object that guarantees exactly 1 cached Access
-Token per ``MongoClient``. Additionally, drivers MUST cache the Access Token
+Drivers MUST cache the most recent access token per ``MongoClient`` (henceforth
+referred to as the *Client Cache*). Drivers MAY store the *Client Cache* on the
+``MongoClient`` object or any object that guarantees exactly 1 cached access
+token per ``MongoClient``. Additionally, drivers MUST cache the access token
 used to authenticate a connection on the connection object (henceforth referred
-to as the Connection Cache).
+to as the *Connection Cache*).
 
 If any operation fails with ``ReauthenticationRequired`` (error code 391), the
-driver MUST consider the Access Token from the Connection Cache expired and
-refresh the Connection Cache using the following algorithm before performing
+driver MUST consider the access token from the *Connection Cache* expired and
+refresh the *Connection Cache* using the following algorithm before performing
 `reauthentication`_:
 
-#. Acquire the lock for the Client Cache.
-#. Check if the Access Token in the Client Cache is the same as the expired
-   Access Token.
-  #. If the Client Cache is empty or has the same Access Token as the expired
-     Access Token, fetch a new Access Token from the Token Provider or custom callback
-     and store it in the Client Cache.
-#. Release the lock for the Client Cache.
-#. Store the Access Token from the Client Cache in the Connection Cache.
+- Check if the access token in the *Client Cache* is different than the access
+  token in the *Connection Cache*.
+    - If they are different, cache the returned access token in *Connection
+      Cache* and optimisitically try to authenticate using the access token. On
+      error, continue.
+- Call the access token function for the configured provider (or the custom
+  provider callback).
+- Cache the returned access token in the *Client Cache* and *Connection Cache*.
+- Attempt to authenticate. Raise any errors to the user.
 
 If the MongoDB authentication handshake for a new connection fails with
-``AuthenticationFailed`` (error code 18), the driver MUST check if the Access
-Token used for the authentication handshake was from the Client Cache or was a
-new Access Token from the Token Provider. If the Access Token was from the
-Client Cache, it's possible the cached Access Token has expired, so the driver
-MUST fetch a new Access Token from the Token Provider and attempt authentication
+``AuthenticationFailed`` (error code 18), the driver MUST check if the access
+token used for the authentication handshake was from the *Client Cache* or was a
+new access token from the Token Provider. If the access token was from the
+*Client Cache*, it's possible the cached access token has expired, so the driver
+MUST fetch a new access token from the Token Provider and attempt authentication
 handshake a second time.
 
-Example code for Access Token caching during authentication and
-reauthentication:
+The driver MUST ensure that only one call to the configured provider or custom
+provider callback can happen at a time. To avoid adding a bottleneck that would
+override the ``maxConnecting`` setting, the driver MUST NOT hold an exclusive
+lock while performing the authentication handshake.
+
+Example code for access token caching using the read-through cache pattern:
 
 .. code:: python
 
@@ -1343,7 +1350,7 @@ reauthentication:
     try:
       sasl_conversation(conn, {"jwt": token})
     except AuthenticationFailed as err:
-      # If the Access Token is cached, it's possible that the token has expired,
+      # If the access token is cached, it's possible that the token has expired,
       # so fetch a new token and attempt another SASL conversation. If the
       # second SASL conversation fails, raise an exception.
       if is_cache:
@@ -1352,12 +1359,6 @@ reauthentication:
         sasl_conversation(conn, {"jwt": token})
       else:
         raise err
-    conn.oidc_cache.token = token
-
-  def reauth(conn):
-    invalid_token = conn.oidc_cache.token
-    token, is_cache = client_cache(invalid_token)
-    sasl_conversation(conn, {"jwt": token})
     conn.oidc_cache.token = token
 
   def client_cache(invalid_token):
@@ -1376,38 +1377,63 @@ reauthentication:
 
     return token, is_cache
 
-To avoid adding a bottleneck that would override the ``maxConnecting`` setting,
-the driver MUST not hold an exclusive a lock while performing the authentication
-handshake.
-
 
 Speculative Authentication
 ``````````````````````````
 Drivers MUST implement speculative authentication for MONGODB-OIDC during the
-``hello`` handshake. If there is a cached Access Token on the ``MongoClient``,
+``hello`` handshake. If there is a cached access token on the ``MongoClient``,
 use it for authentication. Otherwise, call the configured workload callback to
-retrieve a new Access Token for the new connection and send that Access Token
+retrieve a new access token for the new connection and send that access token
 with the ``saslStart`` SASL command.
 
+
 .. _reauthentication:
+
 Reauthentication
 ````````````````
 When reauthentication is requested by the server (as a 391 error code) and
 MONGODB-OIDC is in use, the driver MUST perform a reauthentication. The
 following algorithm is used to handle a reauthenication error:
 
-- First, see if the Access Token on the ``MongoClient`` is different than the Access Token on the connection object.
-   - If they are different, optimisitically try to authenticate using the Access Token from the ``MongoClient``.  On error, continue.
-- Call the Access Token function for the configured provider (or the custom provider callback).
-- Cache the returned Access Token on the current connection object and on the ``MongoClient``.
-- Attempt to authenticate.  Raise any errors to the user.
+- Check if the access token in the *Client Cache* is different than the
+  access token on the connection object.
+    - If they are different, cache the returned access token in *Connection
+      Cache* and optimisitically try to authenticate using the access token. On
+      error, continue.
+- Call the access token function for the configured provider (or the custom
+  provider callback).
+- Cache the returned access token in the *Client Cache* and *Connection Cache*.
+- Attempt to authenticate. Raise any errors to the user.
 
-TODO: Attempt authentication first or cache new token first?
+
+Example code for reauthentication using the ``client_cache`` function from
+`Access Token Caching`_:
+
+.. code:: python
+
+  def reauth(conn):
+    invalid_token = conn.oidc_cache.token
+    token, is_cache = client_cache(invalid_token)
+
+    if is_cache:
+      try:
+        conn.oidc_cache.token = token
+        sasl_conversation(conn, {"jwt": token})
+        return
+      except AuthenticationFailed:
+        invalid_token = token
+        token = client_cache(invalid_token)
+
+    conn.oidc_cache.token = token
+    sasl_conversation(conn, {"jwt": token})
 
 Human Authentication Flow
 `````````````````````````
-The human-in-the-loop authentication flow is
-
+Drivers MAY support the human-in-the-loop authentication flow, which is
+described in this section. The human-in-the-loop authentication flow is intended
+to be used for applications that require direct human interaction, such as
+database tools or CLIs. Some OIDC documentation refers to authentication for
+humans as "workforce" authentication.
 
 `MongoCredential`_ Properties
 _____________________________
