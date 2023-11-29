@@ -11,7 +11,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      useMultipleMongoses: false
+      useMultipleMongoses: false # Ensure the `configureFailpoint` and `find` command are run on the same mongos.
       observeEvents: [ commandStartedEvent ]
   - database:
       id: &database0 database0
@@ -42,7 +42,6 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [ "find" ]
-              closeConnection: false
               errorCode: 262 # ExceededTimeLimit
       - name: find
         arguments:
