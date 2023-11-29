@@ -45,7 +45,7 @@ tests:
             data:
               failCommands: [ "find" ]
               closeConnection: false
-              errorCode: 262
+              errorCode: 262 # ExceededTimeLimit
       - name: find
         arguments:
           filter: { _id: { $gt: 1 } }
