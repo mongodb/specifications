@@ -1187,8 +1187,8 @@ MONGODB-OIDC authenticates using an `OpenID Connect (OIDC)
 Drivers MUST support the machine-to-machine authentication flow, which is
 described in this section. The machine-to-machine authentication flow is
 intended to be used in cases where human interaction is not practical or
-necessary, such as for web services. Some OIDC documentation refers to
-authentication for services as "workload" authentication.
+necessary, such as for web services. Some OIDC documentation refers to this type
+of OIDC authentication as "workload" authentication.
 
 Drivers MAY support the human-in-the-loop authentication flow described in the
 `Human Authentication Flow`_ section.
@@ -1223,7 +1223,6 @@ mechanism_properties
 
 Supported Providers
 ```````````````````
-
 Drivers MUST support all of the following OIDC authentication providers.
 
 AWS
@@ -1304,8 +1303,29 @@ looks like:
 Where the sent ``payload`` is a generic binary blob containing a BSON document
 in the form ``{"jwt": "abcd1234"}``.
 
+Speculative Authentication
+``````````````````````````
+Drivers MUST implement speculative authentication for MONGODB-OIDC during the
+``hello`` handshake. If there is a cached access token on the ``MongoClient``,
+use it for authentication. Otherwise, call the configured workload callback to
+retrieve a new access token for the new connection and send that access token
+with the ``saslStart`` SASL command.
+
+.. _reauthentication:
+
+Reauthentication
+````````````````
+When an operation fails with ``ReauthenticationRequired`` (error code 391) and
+MONGODB-OIDC is in use, the driver MUST reauthenticate the connection.
+Reauthenticating a connection requires fetching a new access token and
+re-running the SASL conversation.
+
 Access Token Caching
 ````````````````````
+Some OIDC access token providers may impose rate limits, incur per-request
+costs, or be slow to return. To minimize those issues, drivers MUST cache and
+reuse access tokens returned by OIDC access token providers.
+
 Drivers MUST cache the most recent access token per ``MongoClient`` (henceforth
 referred to as the *Client Cache*). Drivers MAY store the *Client Cache* on the
 ``MongoClient`` object or any object that guarantees exactly 1 cached access
@@ -1313,30 +1333,7 @@ token per ``MongoClient``. Additionally, drivers MUST cache the access token
 used to authenticate a connection on the connection object (henceforth referred
 to as the *Connection Cache*).
 
-If any operation fails with ``ReauthenticationRequired`` (error code 391), the
-driver MUST consider the access token from the *Connection Cache* expired and
-refresh the *Connection Cache* using the following algorithm before performing
-`reauthentication`_:
-
-- Check if the access token in the *Client Cache* is different than the access
-  token in the *Connection Cache*.
-    - If they are different, cache the returned access token in *Connection
-      Cache* and optimisitically try to authenticate using the access token. On
-      error, continue.
-- Call the access token function for the configured provider (or the custom
-  provider callback).
-- Cache the returned access token in the *Client Cache* and *Connection Cache*.
-- Attempt to authenticate. Raise any errors to the user.
-
-If the MongoDB authentication handshake for a new connection fails with
-``AuthenticationFailed`` (error code 18), the driver MUST check if the access
-token used for the authentication handshake was from the *Client Cache* or was a
-new access token from the Token Provider. If the access token was from the
-*Client Cache*, it's possible the cached access token has expired, so the driver
-MUST fetch a new access token from the Token Provider and attempt authentication
-handshake a second time.
-
-The driver MUST ensure that only one call to the configured provider or custom
+Driver MUST ensure that only one call to the configured provider or custom
 provider callback can happen at a time. To avoid adding a bottleneck that would
 override the ``maxConnecting`` setting, the driver MUST NOT hold an exclusive
 lock while performing the authentication handshake.
@@ -1345,27 +1342,12 @@ Example code for access token caching using the read-through cache pattern:
 
 .. code:: python
 
-  def auth(conn):
-    token, is_cache = client_cache(None)
-    try:
-      sasl_conversation(conn, {"jwt": token})
-    except AuthenticationFailed as err:
-      # If the access token is cached, it's possible that the token has expired,
-      # so fetch a new token and attempt another SASL conversation. If the
-      # second SASL conversation fails, raise an exception.
-      if is_cache:
-        invalid_token = token
-        token = client_cache(invalid_token)
-        sasl_conversation(conn, {"jwt": token})
-      else:
-        raise err
-    conn.oidc_cache.token = token
-
   def client_cache(invalid_token):
     # Lock the Client Cache so that only one caller can modify the cache and
-    # call the provider or custom callback at a time.
+    # call the configured provider or custom callback at a time.
     client.oidc_cache.lock()
     token = client.oidc_cache.token
+
     # Check if we need to fetch and cache a new token from the OIDC provider or
     # custom callback.
     is_cache = True
@@ -1377,44 +1359,32 @@ Example code for access token caching using the read-through cache pattern:
 
     return token, is_cache
 
+Handshake Authentication
+________________________
+Use the following algorithm to manage the caches during handshake
+authentication:
 
-Speculative Authentication
-``````````````````````````
-Drivers MUST implement speculative authentication for MONGODB-OIDC during the
-``hello`` handshake. If there is a cached access token on the ``MongoClient``,
-use it for authentication. Otherwise, call the configured workload callback to
-retrieve a new access token for the new connection and send that access token
-with the ``saslStart`` SASL command.
-
-
-.. _reauthentication:
-
-Reauthentication
-````````````````
-When reauthentication is requested by the server (as a 391 error code) and
-MONGODB-OIDC is in use, the driver MUST perform a reauthentication. The
-following algorithm is used to handle a reauthenication error:
-
-- Check if the access token in the *Client Cache* is different than the
-  access token on the connection object.
-    - If they are different, cache the returned access token in *Connection
-      Cache* and optimisitically try to authenticate using the access token. On
-      error, continue.
-- Call the access token function for the configured provider (or the custom
-  provider callback).
+- Check if the the *Client Cache* has an access token.
+    - If it does, cache the returned access token in *Connection Cache* and
+      optimisitically try to authenticate using the access token. If the server
+      returns ``AuthenticationFailed`` (error code 18), continue.
+- Call the access token function for the configured provider or the custom
+  provider callback.
 - Cache the returned access token in the *Client Cache* and *Connection Cache*.
 - Attempt to authenticate. Raise any errors to the user.
 
-
-Example code for reauthentication using the ``client_cache`` function from
-`Access Token Caching`_:
+Example code for handshake authentication using the ``client_cache`` function
+described above:
 
 .. code:: python
 
-  def reauth(conn):
-    invalid_token = conn.oidc_cache.token
-    token, is_cache = client_cache(invalid_token)
+  def auth(conn):
+    token, is_cache = client_cache(None)
 
+    # If there is a cached access token, try to authenticate with it. If
+    # authentication fails, it's possible the cached token is expired. In that
+    # case, invalidate the token, fetch a new token, and try to authenticate
+    # again.
     if is_cache:
       try:
         conn.oidc_cache.token = token
@@ -1426,6 +1396,48 @@ Example code for reauthentication using the ``client_cache`` function from
 
     conn.oidc_cache.token = token
     sasl_conversation(conn, {"jwt": token})
+
+Reauthentication
+________________
+If any operation fails with ``ReauthenticationRequired`` (error code 391), the
+driver MUST consider the access token from the *Connection Cache* expired. Use
+the following algorithm to manage the caches during `reauthentication`_:
+
+- Check if the access token in the *Client Cache* is different than the access
+  token in the *Connection Cache*.
+    - If they are different, cache the returned access token in *Connection
+      Cache* and optimisitically try to authenticate using the access token. If
+      the server returns ``AuthenticationFailed`` (error code 18), continue.
+- Call the access token function for the configured provider or the custom
+  provider callback.
+- Cache the returned access token in the *Client Cache* and *Connection Cache*.
+- Attempt to authenticate. Raise any errors to the user.
+
+Example code for reauthentication using the ``client_cache`` function described
+above:
+
+.. code:: python
+
+  def reauth(conn):
+    invalid_token = conn.oidc_cache.token
+    token, is_cache = client_cache(invalid_token)
+
+    # If there is a cached access token, try to authenticate with it. If
+    # authentication fails, it's possible the cached token is expired. In that
+    # case, invalidate the token, fetch a new token, and try to authenticate
+    # again.
+    if is_cache:
+      try:
+        conn.oidc_cache.token = token
+        sasl_conversation(conn, {"jwt": token})
+        return
+      except AuthenticationFailed:
+        invalid_token = token
+        token = client_cache(invalid_token)
+
+    conn.oidc_cache.token = token
+    sasl_conversation(conn, {"jwt": token})
+
 
 Human Authentication Flow
 `````````````````````````
