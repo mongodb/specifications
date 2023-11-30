@@ -11,7 +11,8 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      useMultipleMongoses: false # Ensure the `configureFailpoint` and `find` command are run on the same mongos.
+      # Ensure the `configureFailpoint` and `find` commands are run on the same mongos
+      useMultipleMongoses: false
       observeEvents: [ commandStartedEvent ]
   - database:
       id: &database0 database0
