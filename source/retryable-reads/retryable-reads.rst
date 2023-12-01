@@ -51,22 +51,23 @@ An error is considered retryable if it meets any of the following criteria:
 
 - a server error response with any the following codes:
 
-=============================== ==============
-**Error Name**                  **Error Code**
-=============================== ==============
-ExceededTimeLimit               262
-InterruptedAtShutdown           11600
-InterruptedDueToReplStateChange 11602
-NotWritablePrimary              10107
-NotPrimaryNoSecondaryOk         13435
-NotPrimaryOrSecondary           13436
-PrimarySteppedDown              189
-ShutdownInProgress              91
-HostNotFound                    7
-HostUnreachable                 6
-NetworkTimeout                  89
-SocketException                 9001
-=============================== ==============
+================================== ==============
+**Error Name**                     **Error Code**
+================================== ==============
+ExceededTimeLimit                  262
+InterruptedAtShutdown              11600
+InterruptedDueToReplStateChange    11602
+NotWritablePrimary                 10107
+NotPrimaryNoSecondaryOk            13435
+NotPrimaryOrSecondary              13436
+PrimarySteppedDown                 189
+ReadConcernMajorityNotAvailableYet 134
+ShutdownInProgress                 91
+HostNotFound                       7
+HostUnreachable                    6
+NetworkTimeout                     89
+SocketException                    9001
+================================== ==============
 
 - a `PoolClearedError`_
 
@@ -704,6 +705,8 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes
+             that should be retried.
 :2023-11-28: Add ExceededTimeLimit to the list of error codes that should
              be retried.
 :2023-08-26: Require that in a sharded cluster the server on which the
