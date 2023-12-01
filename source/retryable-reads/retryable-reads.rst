@@ -705,7 +705,7 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
-:2023-11-30: Add to ReadConcernMajorityNotAvailableYet the list of error codes
+:2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes
              that should be retried.
 :2023-11-28: Add ExceededTimeLimit to the list of error codes that should
              be retried.
