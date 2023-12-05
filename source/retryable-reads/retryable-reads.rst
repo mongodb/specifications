@@ -331,6 +331,13 @@ other error originating from the server, that error should be raised instead as
 the caller can infer that an attempt was made and the second error is likely
 more relevant (with respect to the current topology state).
 
+If a driver associates server information (e.g. the server address or
+description) with an error, the driver MUST ensure the server information
+reported with that error corresponds to the server that was selected when the
+error occurred. Specifically, if a retry attempt fails, the server reported
+with the error MUST correspond to the server that was selected for the retry
+and MUST NOT simply be carried over from the original error.
+
 4. Implementation constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
