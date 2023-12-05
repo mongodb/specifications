@@ -845,6 +845,9 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2023-12-05: Add that any server information associated with retryable
+             exceptions MUST reflect the originating server, even in the
+             presence of retries.
 :2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection

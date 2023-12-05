@@ -712,6 +712,9 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2023-12-05: Add that any server information associated with retryable
+             exceptions MUST reflect the originating server, even in the
+             presence of retries.
 :2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes
              that should be retried.
 :2023-11-28: Add ExceededTimeLimit to the list of error codes that should
