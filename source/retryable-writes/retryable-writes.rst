@@ -850,7 +850,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
-:2023-12-06: Clarify that writes are not retried with transactions
+:2023-12-06: Clarify that writes are not retried with transactions.
 :2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
