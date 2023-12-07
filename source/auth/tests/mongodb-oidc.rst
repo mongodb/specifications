@@ -2,8 +2,6 @@
 MongoDB OIDC
 ============
 
-TODO
-
 Local Testing
 ~~~~~~~~~~~~~
 
@@ -25,34 +23,33 @@ For example, if the selected AWS profile ID is "drivers-test", run:
 Prose Tests
 ===========
 
-
 1. Custom Callback
 ~~~~~~~~~~~~~~~~~~
 
-- Create a ``MongoClient`` configured with an ``OIDCCallback`` set to the
-  built-in AWS provider callback.
+- Create a ``MongoClient`` configured with a custom OIDC callback that
+  implements the AWS provider logic.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 2. Callback is called during reauthentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Create a ``MongoClient`` configured with an ``OIDCCallback`` set to the
-  built-in AWS provider callback.
+- Create a ``MongoClient`` configured with a custom OIDC callback that
+  implements the AWS provider logic.
 - Set a fail point for ``find`` commands of the form:
 
 .. code:: javascript
 
     {
-      "configureFailPoint": "failCommand",
-      "mode": {
-        "times": 1
+      configureFailPoint: "failCommand",
+      mode: {
+        times: 1
       },
-      "data": {
-        "failCommands": [
+      data: {
+        failCommands: [
           "find"
         ],
-        "errorCode": 391
+        errorCode: 391
       }
     }
 
@@ -61,37 +58,91 @@ Prose Tests
   handshake, and again during reauthentication).
 - Close the client.
 
-3. Callback is called twice on handshake authentication failure
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3. Authentication failures with cached tokens retry with a new token
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Create a ``MongoClient`` configured with an ``OIDCCallback`` set to the
-  built-in AWS provider callback.
+- Create a ``MongoClient`` configured with ``retryReads=false`` and a custom
+  OIDC callback that implements the AWS provider logic.
+- Set a fail point for ``find`` commands of the form:
+
+.. code:: javascript
+
+    {
+      configureFailPoint: "failCommand",
+      mode: {
+        times: 1
+      },
+      data: {
+        failCommands: [
+          "find"
+        ],
+        closeConnection: true
+      }
+    }
+
+- Perform a ``find`` operation that fails. This is to force the ``MongoClient``
+  to cache an access token.
 - Set a fail point for ``saslStart`` commands of the form:
 
 .. code:: javascript
 
     {
-      "configureFailPoint": "failCommand",
-      "mode": {
-        "times": 1
+      configureFailPoint: "failCommand",
+      mode: {
+        times: 2
       },
-      "data": {
-        "failCommands": [
+      data: {
+        failCommands: [
           "saslStart"
         ],
-        "errorCode": 18
+        errorCode: 18
       }
     }
 
-- Perform a ``find`` operation that succeeds.
+- Perform a ``find`` operation that fails.
 - Verify that the callback was called 2 times during connection handshake (once
   to get the initial token, and once to refresh the token after the
   authentication failure).
 - Close the client.
 
-4. Reauthentication messages are sent.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-TODO
+4. Reauthentication messages are sent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Create a ``MongoClient`` configured with a custom OIDC callback that
+  implements the AWS provider logic.
+- Perform a ``find`` operation that succeeds.
+- Set fail points for ``find`` and ``saslStart`` of the form:
+
+.. code:: javascript
+
+    {
+      configureFailPoint: "failCommand",
+      mode: {
+        times: 1
+      },
+      data: {
+        failCommands: [
+          "find"
+        ],
+        errorCode: 391
+      }
+    }
+
+    {
+      configureFailPoint: "failCommand",
+      mode: {
+        times: 2
+      },
+      data: {
+        failCommands: [
+          "saslStart"
+        ],
+        errorCode: 18
+      }
+    }
+
+- Perform a ``find`` operation that fails.
+- Close the client.
 
 =========================
 Human Authentication Flow

@@ -1211,15 +1211,15 @@ mechanism
 mechanism_properties
     PROVIDER_NAME
         Drivers MUST allow the user to specify the name of the OIDC service to
-        use to obtain credentials. MUST be one of ["aws"]. If PROVIDER_NAME is
-        given and a custom callback is configured (either via , the driver MUST
-        raise an error.
+        use to obtain credentials. The value MUST be one of ["aws"]. If both
+        ``PROVIDER_NAME`` and a `custom callback`_ are configured for the same
+        ``MongoClient``, the driver MUST raise an error.
 
     OIDC_TOKEN_CALLBACK
         Drivers MAY allow the user to specify a custom OIDC callback using a
-        mechanism property. Drivers MUST support either the ``MongoClient``
-        configuration method or the mechanism property, but MUST NOT support
-        both.
+        mechanism property. Drivers MUST support specifying a callback either as
+        a ``MongoClient`` configuration or a mechanism property, but MUST NOT
+        support both.
 
 Supported Providers
 ```````````````````
@@ -1232,6 +1232,12 @@ The AWS provider is enabled by setting auth mechanism property
 environment variable ``AWS_WEB_IDENTITY_TOKEN_FILE`` and then read the OIDC
 Access Token from that file. The driver MUST use the contents of that file as
 value in the ``jwt`` field of the ``saslStart`` payload.
+
+Drivers MAY implement the AWS provider so that it conforms to the function
+signature of the `custom callback`_ to prevent having to re-implement the AWS
+provider logic in the OIDC prose tests.
+
+.. _`custom callback`:
 
 Custom Callback
 _______________
@@ -1278,7 +1284,7 @@ added to the callback signature in the future. An example might look like:
 
 .. code:: typescript
 
-  interface OIDCTokenParams {
+  interface OIDCCallbackParams {
       callbackTimeoutMS: int;
       version: int;
   }
@@ -1290,7 +1296,7 @@ added to the callback signature in the future. An example might look like:
 
 .. code:: typescript
 
-  function oidcToken(params: OIDCTokenParams): OIDCToken
+  function oidcCallback(params: OIDCCallbackParams): OIDCToken
 
 Conversation
 ````````````
@@ -1308,8 +1314,8 @@ Speculative Authentication
 Drivers MUST implement speculative authentication for MONGODB-OIDC during the
 ``hello`` handshake. If there is a cached access token on the ``MongoClient``,
 use it for authentication. Otherwise, call the configured workload callback to
-retrieve a new access token for the new connection and send that access token
-with the ``saslStart`` SASL command.
+retrieve a new access token and send that access token with the speculative
+authentication document.
 
 .. _reauthentication:
 
@@ -1367,7 +1373,8 @@ authentication:
 - Check if the the *Client Cache* has an access token.
     - If it does, cache the returned access token in *Connection Cache* and
       optimisitically try to authenticate using the access token. If the server
-      returns ``AuthenticationFailed`` (error code 18), continue.
+      returns ``AuthenticationFailed`` (error code 18), slep 100ms then
+      continue.
 - Call the access token function for the configured provider or the custom
   provider callback.
 - Cache the returned access token in the *Client Cache* and *Connection Cache*.
@@ -1391,6 +1398,7 @@ described above:
         sasl_conversation(conn, {"jwt": token})
         return
       except AuthenticationFailed:
+        sleep(0.1)
         invalid_token = token
         token = client_cache(invalid_token)
 
@@ -1407,7 +1415,8 @@ the following algorithm to manage the caches during `reauthentication`_:
   token in the *Connection Cache*.
     - If they are different, cache the returned access token in *Connection
       Cache* and optimisitically try to authenticate using the access token. If
-      the server returns ``AuthenticationFailed`` (error code 18), continue.
+      the server returns ``AuthenticationFailed`` (error code 18), sleep 100ms
+      then continue.
 - Call the access token function for the configured provider or the custom
   provider callback.
 - Cache the returned access token in the *Client Cache* and *Connection Cache*.
@@ -1432,6 +1441,7 @@ above:
         sasl_conversation(conn, {"jwt": token})
         return
       except AuthenticationFailed:
+        sleep(0.1)
         invalid_token = token
         token = client_cache(invalid_token)
 
