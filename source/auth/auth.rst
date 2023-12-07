@@ -1371,10 +1371,12 @@ Use the following algorithm to manage the caches during handshake
 authentication:
 
 - Check if the the *Client Cache* has an access token.
+
     - If it does, cache the returned access token in *Connection Cache* and
       optimisitically try to authenticate using the access token. If the server
       returns ``AuthenticationFailed`` (error code 18), slep 100ms then
       continue.
+
 - Call the access token function for the configured provider or the custom
   provider callback.
 - Cache the returned access token in the *Client Cache* and *Connection Cache*.
@@ -1413,10 +1415,12 @@ the following algorithm to manage the caches during `reauthentication`_:
 
 - Check if the access token in the *Client Cache* is different than the access
   token in the *Connection Cache*.
+
     - If they are different, cache the returned access token in *Connection
       Cache* and optimisitically try to authenticate using the access token. If
       the server returns ``AuthenticationFailed`` (error code 18), sleep 100ms
       then continue.
+
 - Call the access token function for the configured provider or the custom
   provider callback.
 - Cache the returned access token in the *Client Cache* and *Connection Cache*.
