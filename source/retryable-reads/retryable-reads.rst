@@ -658,7 +658,7 @@ during planned maintenance events.
 
 .. _SDAM: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst
 .. _How To Write Resilient MongoDB Applications: https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/
-.. _Client Side Operations Timeout: ../client-side-operations-timeout/client-side-operations-timeout.rst
+.. _Client Side Operations Timeout: ../client-side-operations-timeout/client-side-operations-timeout.md
 
 Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------

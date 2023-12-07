@@ -269,12 +269,12 @@ All methods:
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MUST apply timeouts per the `Client Side Operations Timeout
-  <client-side-operations-timeout/client-side-operations-timeout.rst>`__
+  <client-side-operations-timeout/client-side-operations-timeout.md>`__
   specification.
 
 All methods that return cursors MUST support the timeout options documented
 in `Client Side Operations Timeout: Cursors
-<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__.
+<client-side-operations-timeout/client-side-operations-timeout.md#Cursors>`__.
 
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~

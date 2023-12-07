@@ -392,7 +392,7 @@ of the following conditions is reached:
 - the operation fails with a non-retryable error.
 - CSOT is enabled and the operation times out per `Client Side
   Operations Timeout: Retryability
-  <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
+  <../client-side-operations-timeout/client-side-operations-timeout.md#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
 For each retry attempt, drivers MUST select a writable server. In a sharded
@@ -692,7 +692,7 @@ during planned maintenance events.
 
 .. _SDAM: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst
 .. _How To Write Resilient MongoDB Applications: https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/
-.. _Client Side Operations Timeout: ../client-side-operations-timeout/client-side-operations-timeout.rst
+.. _Client Side Operations Timeout: ../client-side-operations-timeout/client-side-operations-timeout.md
 
 What if the transaction number overflows?
 -----------------------------------------

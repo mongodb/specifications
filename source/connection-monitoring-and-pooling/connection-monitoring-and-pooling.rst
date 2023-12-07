@@ -567,7 +567,7 @@ once that request reaches the front of the queue, having the Pool find or create
 a `Connection`_ to fulfill that request. Requests MUST be subject to a timeout
 which is computed per the rules in
 `Client Side Operations Timeout: Server Selection
-<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.md#server-selection>`_.
 
 To service a request for a `Connection`_, the Pool MUST first iterate over the
 list of available `Connections <#connection>`_, searching for a non-perished one
@@ -805,7 +805,7 @@ thread SHOULD
 -  Remove and close perished available `Connections <#connection>`_ including "in use" connections if `interruptInUseConnections` option was set to true in the most recent pool clear.
 - Apply timeouts to connection establishment per `Client Side Operations
   Timeout: Background Connection Pooling
-  <../client-side-operations-timeout/client-side-operations-timeout.rst#background-connection-pooling>`__.
+  <../client-side-operations-timeout/client-side-operations-timeout.md#background-connection-pooling>`__.
 
 A pool SHOULD allow immediate scheduling of the next background thread iteration after a clear is performed. 
 

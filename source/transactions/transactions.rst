@@ -299,7 +299,7 @@ maxCommitTimeMS
 ^^^^^^^^^^^^^^^
 
 NOTE: This option is deprecated in favor of `timeoutMS
-<../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.md#timeoutMS>`_.
 
 The maximum amount of time to allow a single commitTransaction command to run.
 

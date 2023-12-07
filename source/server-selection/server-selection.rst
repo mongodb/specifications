@@ -797,7 +797,7 @@ Multi-threaded drivers and single-threaded drivers with
 ``serverSelectionTryOnce`` set to false MUST enforce a timeout for the server
 selection process. The timeout MUST be computed as described in
 `Client Side Operations Timeout: Server Selection
-<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.md#server-selection>`_.
 
 Multi-threaded or asynchronous server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

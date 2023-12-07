@@ -113,7 +113,7 @@ need to change it. Do not break backwards compatibility when adding new methods.
 All methods SHOULD be implemented on the MongoClient object.
 
 All methods MUST apply timeouts per the `Client Side Operations Timeout
-<client-side-operations-timeout/client-side-operations-timeout.rst>`__
+<client-side-operations-timeout/client-side-operations-timeout.md>`__
 specification.
 
 Enumerating Full Database Information
