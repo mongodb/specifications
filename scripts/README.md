@@ -5,6 +5,14 @@
 Use this file to automate the process of converting a
 specification from rst to GitHub Flavored Markdown.
 
+The goal of the script is to do most of the work, including
+updating relative links to the new document from other files.
+Note that all known features will translate, including explicit
+cross-reference markers (e.g. `.. _foo`) which are translated
+to a `<div id="foo">`.
+It will also create a new changelog entry with today's date
+marking the conversion.
+
 ### Prerequisites
 
 ```bash
@@ -22,16 +30,12 @@ pre-commit install
 python3 scripts/migrate_to_md.py "source/<path_to_rst_file>"
 ```
 
+- Address any errors that were printed during the run.
+
 - Ensure that the generated markdown file is properly formatted.
 
-- Add a changelog entry for the migration of the spec.
-
-- Ensure the links in the file are up to date.  As we migrate files, relative links that point to `.rst` files will need to be updated.
-
-  - Run `pre-commit run markdown-link-check` and address failures until that passes.
-  - Run a `git grep` for the converted source file name
-    and update any relative links to use the new `.md`
-    extension.
+- Ensure that the links in the new file are working, by running
+  `pre-commit run markdown-link-check` and addressing failures until that passes.
 
 - Remove the rst file using `git rm`.
 

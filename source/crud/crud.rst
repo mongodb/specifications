@@ -113,10 +113,10 @@ Timeouts
 
 Drivers MUST enforce timeouts for all operations per the `Client Side
 Operations Timeout
-<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+<../client-side-operations-timeout/client-side-operations-timeout.md>`__
 specification. All operations that return cursors MUST support the timeout
 options documented in the `Cursors
-<../client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__
+<../client-side-operations-timeout/client-side-operations-timeout.md#Cursors>`__
 section of that specification.
 
 ---
