@@ -18,7 +18,7 @@ The ``timeoutMS.yml``/``timeoutMS.json`` files in this directory contain tests
 for the ``timeoutMS`` option and its application to the client-side encryption
 feature. Drivers MUST only run these tests after implementing the
 `Client Side Operations Timeout
-<../client-side-operations-timeout/client-side-operations-timeout.md>`__
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
 specification.
 
 Additional prose tests, that are not represented in the spec tests, are described

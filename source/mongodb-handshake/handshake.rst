@@ -88,7 +88,7 @@ connections and newly discovered members of a cluster. It MUST be the first
 command sent over the respective socket. If the command fails the client MUST
 disconnect. Timeouts MUST be applied to this command per the `Client Side
 Operations Timeout
-<../client-side-operations-timeout/client-side-operations-timeout.md>`__
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
 specification.
 
 ``hello`` and legacy hello commands issued after the initial connection handshake

@@ -80,7 +80,7 @@ Unacknowledged/Acknowledged Writes
 A non-default write concern MUST be included in the published command. The default write concern is not required to be included.
 
 Succeeded or Failed
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 Commands that executed on the server and return a status of ``{ ok: 1.0 }`` are considered
 successful commands and MUST generate a ``CommandSucceededEvent`` and "command succeeded" log message. 

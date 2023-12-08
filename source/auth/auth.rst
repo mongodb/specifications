@@ -182,7 +182,7 @@ SDAM's `Why mark a server Unknown after an auth error`_ for rationale.)
 
 All blocking operations executed as part of the authentication handshake MUST
 apply timeouts per the `Client Side Operations Timeout
-<../client-side-operations-timeout/client-side-operations-timeout.md>`__
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
 specification.
 
 Mechanism Negotiation via Handshake

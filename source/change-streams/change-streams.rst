@@ -836,7 +836,7 @@ All drivers MUST document how users can iterate a change stream and receive *all
 Timeouts
 ^^^^^^^^
 
-Drivers MUST apply timeouts to change stream establishment, iteration, and resume attempts per `Client Side Operations Timeout: Change Streams <../client-side-operations-timeout/client-side-operations-timeout.md#Change-Streams>`__.
+Drivers MUST apply timeouts to change stream establishment, iteration, and resume attempts per `Client Side Operations Timeout: Change Streams <../client-side-operations-timeout/client-side-operations-timeout.rst#Change-Streams>`__.
 
 Notes and Restrictions
 ^^^^^^^^^^^^^^^^^^^^^^

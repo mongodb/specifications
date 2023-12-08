@@ -84,7 +84,7 @@ The following represents how a runCommand API SHOULD be exposed.
        * An optional timeout option to govern the amount of time that a single operation can execute before control is returned to the user.
        * This timeout applies to all of the work done to execute the operation, including but not limited to server selection, connection checkout, and server-side execution.
        *
-       * @ see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md
+       * @ see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
        */
       timeoutMS?: number;
     }
@@ -190,8 +190,8 @@ RunCommand MUST provide an optional ``timeoutMS`` option to support client side 
 Drivers MUST NOT attempt to check the command document for the presence of a ``maxTimeMS`` field.
 Drivers MUST document the behavior of RunCommand if a ``maxTimeMS`` field  is already set on the command (such as overwriting the command field).
 
-* See Client Side Operations Timeout's section on `runCommand <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md#runcommand>`_
-* See Client Side Operations Timeout's section on `runCommand behavior <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md#runcommand-behavior>`_
+* See Client Side Operations Timeout's section on `runCommand <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand>`_
+* See Client Side Operations Timeout's section on `runCommand behavior <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#runcommand-behavior>`_
 
 
 --------------------
@@ -217,7 +217,7 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
        *
        * @defaultValue CURSOR_LIFETIME
        *
-       * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md
+       * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
        */
       timeoutMode?: ITERATION | CURSOR_LIFETIME;
 
@@ -334,7 +334,7 @@ Drivers MUST document that attempting to set both options can have undefined beh
 
 When ``timeoutMS`` and ``timeoutMode`` are provided the driver MUST support timeout functionality as described in the CSOT specification.
 
-* See Client Side Operations Timeout's section on `Cursors <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md#cursors>`_
+* See Client Side Operations Timeout's section on `Cursors <https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst#cursors>`_
 
 Changelog
 =========

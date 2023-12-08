@@ -198,7 +198,7 @@ Timeouts
 
 Drivers MUST enforce timeouts for all operations per `Client Side Operations
 Timeout: GridFS API
-<../client-side-operations-timeout/client-side-operations-timeout.md#gridfs-api>`__.
+<../client-side-operations-timeout/client-side-operations-timeout.rst#gridfs-api>`__.
 
 Naming
 ------
