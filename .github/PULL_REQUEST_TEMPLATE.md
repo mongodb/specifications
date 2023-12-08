@@ -8,4 +8,3 @@ Please complete the following before merging:
 - [ ] Test these changes against all server versions and topologies (including standalone, replica set, sharded clusters, and serverless).
 
 <!-- See also: https://wiki.corp.mongodb.com/pages/viewpage.action?pageId=80806719 -->
-
