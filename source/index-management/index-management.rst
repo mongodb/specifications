@@ -1137,7 +1137,7 @@ Changelog
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2023-05-10:  Merge index enumeration and index management specs and get rid of references 
              to legacy server versions.
-:2023-05-18:  Add the search index management API.
+:2023-05-18: Add the search index management API.
 :2023-07-27: Add search index management clarifications.
 :2023-11-08: Clarify that ``readConcern`` and ``writeConcern`` must not be
              applied to search index managment commands.
