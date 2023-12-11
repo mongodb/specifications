@@ -435,7 +435,8 @@ omitted when sending ``findAndModify`` with MaxWireVersion < 4.
 If the findAndModify helper accepts writeConcern as a parameter, the driver
 MUST raise an error with MaxWireVersion < 4.
 
-.. note ::
+.. note::
+
     Driver documentation SHOULD include a warning in their server 3.2
     compatible releases that an elevated ``WriteConcern`` may cause
     performance degradation when using ``findAndModify``. This is because

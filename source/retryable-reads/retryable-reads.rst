@@ -51,21 +51,23 @@ An error is considered retryable if it meets any of the following criteria:
 
 - a server error response with any the following codes:
 
-=============================== ==============
-**Error Name**                  **Error Code**
-=============================== ==============
-InterruptedAtShutdown           11600
-InterruptedDueToReplStateChange 11602
-NotWritablePrimary              10107
-NotPrimaryNoSecondaryOk         13435
-NotPrimaryOrSecondary           13436
-PrimarySteppedDown              189
-ShutdownInProgress              91
-HostNotFound                    7
-HostUnreachable                 6
-NetworkTimeout                  89
-SocketException                 9001
-=============================== ==============
+================================== ==============
+**Error Name**                     **Error Code**
+================================== ==============
+ExceededTimeLimit                  262
+InterruptedAtShutdown              11600
+InterruptedDueToReplStateChange    11602
+NotWritablePrimary                 10107
+NotPrimaryNoSecondaryOk            13435
+NotPrimaryOrSecondary              13436
+PrimarySteppedDown                 189
+ReadConcernMajorityNotAvailableYet 134
+ShutdownInProgress                 91
+HostNotFound                       7
+HostUnreachable                    6
+NetworkTimeout                     89
+SocketException                    9001
+================================== ==============
 
 - a `PoolClearedError`_
 
@@ -360,8 +362,12 @@ and reflects the flow described above.
    */
   function executeRetryableRead(command, session) {
     Exception previousError = null;
+    retrying = false;
     Server previousServer = null;
     while true {
+      if (previousError != null) {
+        retrying = true;
+      }
       try {
         if (previousServer == null) {
           server = selectServer();
@@ -438,8 +444,16 @@ and reflects the flow described above.
         }
         throw error;
       }
-      /* CSOT is enabled and the operation has timed out. */
-      if (timeoutMS != null && isExpired(timeoutMS) {
+
+      if (timeoutMS == null) {
+        /* If CSOT is not enabled, allow any retryable error from the second
+         * attempt to propagate to our caller, as it will be just as relevant
+         * (if not more relevant) than the original error. */
+        if (retrying) {
+          throw previousError;
+        }
+      } else if (isExpired(timeoutMS)) {
+        /* CSOT is enabled and the operation has timed out. */
         throw previousError;
       }
     }
@@ -466,7 +480,7 @@ either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent`` and tha
 every "command started" log message has either a correlating "command succeeded"
 log message or "command failed" log message. If the first attempt of a retryable
 read operation encounters a retryable error, drivers MUST fire a ``CommandFailedEvent`` and emit a "command failed" log message
-for the retryable error and fire a separate ``CommandStartedEvent``and emit a separate "command started" log message when executing
+for the retryable error and fire a separate ``CommandStartedEvent`` and emit a separate "command started" log message when executing
 the subsequent retry attempt. Note that the second ``CommandStartedEvent`` and "command started" log message may have
 a different ``connectionId``, since a server is reselected for a retry attempt.
 
@@ -691,6 +705,10 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes
+             that should be retried.
+:2023-11-28: Add ExceededTimeLimit to the list of error codes that should
+             be retried.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
              mechanism as a deprioritized server.

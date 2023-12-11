@@ -18,55 +18,53 @@ Specification
 The command logging and monitoring specification defines a set of behaviour in the drivers for providing runtime information about commands in log messages as well as in events which users
 can consume programmatically, either directly or by integrating with third-party APM libraries.
 
------------
 Definitions
 -----------
 
 META
-----
+^^^^
 
 The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
 
 Terms
------
+^^^^^
 
 Document
   The term ``Document`` refers to the implementation in the driver's language of a BSON document.
 
---------
 Guidance
 --------
 
 Documentation
--------------
+^^^^^^^^^^^^^
 
 The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
 
 
 Messages and Events
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 All drivers MUST implement the specified event types as well as log messages. 
 
 Implementation details are noted in the comments when a specific implementation is required. Within each event and log message, all properties are REQUIRED unless noted otherwise.
 
 Naming
-------
+^^^^^^
 
 All drivers MUST name types, properties, and log message values as defined in the following sections. Exceptions to this rule are noted in the appropriate section. Class and interface names may vary according to the driver and language best practices.
 
 
 Publishing & Subscribing
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
 
-Similarly, as described in the `logging specification <../logging/logging.rst#implementation-requirements>`_ the driver SHOULD emit log messages in a manner that is standard for the language.
+Similarly, as described in the `logging specification <../logging/logging.rst#implementation-requirements>`__ the driver SHOULD emit log messages in a manner that is standard for the language.
 
 
 Guarantees
-----------
+^^^^^^^^^^
 
 The driver MUST guarantee that every ``CommandStartedEvent`` has either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``, and that every "command started" log message has either a
 correlating "command succeeded" log message or "command failed" log message.
@@ -75,33 +73,33 @@ The driver MUST guarantee that the ``requestId`` of the ``CommandStartedEvent`` 
 the "command started" log message and the corresponding "command succeeded" or "command failed" log message is the same.
 
 Unacknowledged/Acknowledged Writes
-----------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
  Unacknowledged writes must provide a ``CommandSucceededEvent`` and a "command succeeded" log message with a ``{ ok: 1 }`` reply.
 
 A non-default write concern MUST be included in the published command. The default write concern is not required to be included.
 
 Succeeded or Failed
--------------------
+^^^^^^^^^^^^^^^^^^
 
 Commands that executed on the server and return a status of ``{ ok: 1.0 }`` are considered
 successful commands and MUST generate a ``CommandSucceededEvent`` and "command succeeded" log message. 
 Commands that have write errors are included since the actual command did succeed, only writes failed.
 
 Error Handling
---------------
+^^^^^^^^^^^^^^
 
 If an exception occurs while sending the operation to the server, the driver MUST generate a ``CommandFailedEvent`` and "command failed" log message with the exception or message, and re-raise the exception.
 
 Bulk Writes
------------
+^^^^^^^^^^^
 
 This specification defines the monitoring and logging of individual commands and in that respect MUST generate
 events and log messages for each command a bulk write executes. Each of these commands, however, must be linked
 together via the same ``operationId``.
 
 Implementation Notes
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 When a driver sends an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in ``CommandStartedEvent.command``.
 The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver sends an ``update`` command using OP_MSG, and sends a
@@ -110,7 +108,6 @@ document sequence as a separate section of payload type 1 with identifier ``upda
 
 See "Why are document sequences included as BSON arrays?" in the `rationale`_.
 
----------
 Rationale
 ---------
 
@@ -144,7 +141,6 @@ Rather than specify a duration rule that would be hard to satisfy consistently,
 we allow duration to include BSON serialization/deserialization or not based on
 the architecture needs of each driver.
 
---------
 Security
 --------
 
@@ -191,7 +187,6 @@ See the `MongoDB Handshake spec <https://github.com/mongodb/specifications/blob/
 for more information on ``hello`` and legacy hello. Note that legacy hello has two different letter casings that must be taken
 into account. See the previously mentioned MongoDB Handshake spec for details.
 
-----------
 Events API
 ----------
 
@@ -366,10 +361,9 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     serviceId: Optional<ObjectId>;
   }
 
-------------
 Log Messages
 ------------
-Please refer to the `logging specification <../logging/logging.rst>`_ for details on logging implementations in general, including log levels, log
+Please refer to the `logging specification <../logging/logging.rst>`__ for details on logging implementations in general, including log levels, log
 components, and structured versus unstructured logging.
 
 Drivers MUST support logging of command information via the following types of log messages. These messages MUST be logged at ``Debug`` level and use
@@ -384,7 +378,7 @@ is present (e.g. a double instead of an integer, or a string instead of an integ
 Drivers MUST not emit command log messages for commands issued as part of the handshake with the server, or heartbeat commands issued by server monitors. 
 
 Common Fields
--------------
+^^^^^^^^^^^^^
 The following key-value pairs MUST be included in all command messages:
 
 .. list-table::
@@ -439,7 +433,7 @@ The following key-value pairs MUST be included in all command messages:
      - The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.
 
 Command Started Message
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 In addition to the common fields, command started messages MUST contain the following key-value pairs:
 
 .. list-table::
@@ -457,7 +451,7 @@ In addition to the common fields, command started messages MUST contain the foll
    * - command
      - String
      - Relaxed extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
-       `logging specification <../logging/logging.rst#configurable-max-document-length>`_, and MUST be replaced with an empty document
+       `logging specification <../logging/logging.rst#configurable-max-document-length>`__, and MUST be replaced with an empty document
        "{ }" if the command is considered sensitive.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -467,7 +461,7 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
   {{requestId}} and the operation ID is {{operationId}}. Command: {{command}}
 
 Command Succeeded Message
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 In addition to the common fields, command succeeded messages MUST contain the following key-value pairs:
 
 .. list-table::
@@ -490,7 +484,7 @@ In addition to the common fields, command succeeded messages MUST contain the fo
    * - reply
      - String
      - Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the 
-       `logging specification <../logging/logging.rst#configurable-max-document-length>`_, and MUST be replaced with an empty document
+       `logging specification <../logging/logging.rst#configurable-max-document-length>`__, and MUST be replaced with an empty document
        "{ }" if the command is considered sensitive.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -500,7 +494,7 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
   {{requestId}} and the operation ID is {{operationId}}. Command reply: {{command}}
 
 Command Failed Message
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 In addition to the common fields, command failed messages MUST contain the following key-value pairs:
 
 .. list-table::
@@ -522,7 +516,7 @@ In addition to the common fields, command failed messages MUST contain the follo
 
    * - failure
      - Flexible
-     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`_ 
+     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__ 
        for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a 
        language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.
 
@@ -532,12 +526,18 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
   server-generated ID {{serverConnectionId}} to {{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is
   {{requestId}} and the operation ID is {{operationId}}. Error: {{error}}
 
--------
 Testing
 -------
 
 See the README in the test directory for requirements and guidance.
 
+Q&A
+===
+
+Why is the command document only available in the ``CommandStartEvent``?
+------------------------------------------------------------------------
+
+Some drivers may realize the command document as raw BSON, treating it as a component of the message transmitted to the server and stored in an internal buffer. By the time the server's response is received, this buffer may have been released. Requiring the retention of this buffer until command completion could result in unacceptable performance penalties, particularly when event listeners are introduced.
 
 Changelog
 =========
@@ -572,3 +572,4 @@ Changelog
 :2023-03-23: Updated ``serverConnectionId`` field to be Int64 as long-running servers can return Int64.
 :2023-06-13: Added ``databaseName`` field to ``CommandFailedEvent`` and ``CommandSucceededEvent``.
              Updated suggested unstructured forms of log messages reflecting the changes.
+:2023-10-19: Add Q&A section

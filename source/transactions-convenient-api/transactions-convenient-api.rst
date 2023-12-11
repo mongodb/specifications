@@ -299,6 +299,25 @@ MongoClient within the callback in order to execute operations within the
 transaction. Per the `Driver Session`_ specification, ClientSessions should
 already provide access to a client object.
 
+Handling errors inside the callback
+-----------------------------------
+
+Drivers MUST document that the callback MUST NOT silently handle command errors
+without allowing such errors to propagate. Command errors may abort the transaction
+on the server, and an attempt to commit the transaction will be rejected with
+``NoSuchTransaction`` error.
+
+For example, ``DuplicateKeyError`` is an error that aborts a transaction on the
+server. If the callback catches ``DuplicateKeyError`` and does not re-throw it,
+the driver will attempt to commit the transaction. The server will reject the
+commit attempt with ``NoSuchTransaction`` error. This error has the
+"TransientTransactionError" label and the driver will retry the commit. This
+will result in an infinite loop.
+
+Drivers MUST recommend that the callback re-throw command errors if they
+need to be handled inside the callback. Drivers SHOULD also recommend using
+Core Transaction API if a user wants to handle errors in a custom way.
+
 Test Plan
 =========
 
@@ -494,6 +513,7 @@ client-side operation timeout, withTransaction can continue to use the
 Changes
 =======
 
+:2023-11-22: Document error handling inside the callback.
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-19: withTransaction applies timeouts per the client-side operations
              timeout specification.

@@ -112,6 +112,29 @@ Store all source documents in the ``source/`` directory.
 
 .. _`reStructuredText`: http://docutils.sourceforge.net/rst.html
 
+Linting
+-------
+
+This repo uses `pre-commit <https://pypi.org/project/pre-commit/>`_
+for managing linting.
+``pre-commit`` performs various checks on the files and uses tools
+that help follow a consistent style within the repo.
+
+To set up ``pre-commit`` locally, run:
+
+.. code:: bash
+
+    pip install pre-commit  # or brew install pre-commit
+    pre-commit install
+
+To run ``pre-commit`` manually, run ``pre-commit run --all-files``.
+
+To run a manual hook like ``rstcheck`` manually, run:
+
+.. code:: bash
+
+    pre-commit run --all-files --hook-stage manual rstcheck
+
 Prose test numbering
 --------------------
 
@@ -125,28 +148,15 @@ by striking through or replacing the entire test with a note (e.g. **Removed**).
 Building Documents
 ------------------
 
-To build documents issue the ``make`` command in a local copy of this
-repository. The output PDFs end up in the ``build/`` directory. The
-build depends on:
+We build the docs in ``text`` mode in CI to make sure they build without errors.
+We don't actually support building html, since we rely on GitHub to render the documents.
+To build locally, run:
 
-- `Python Docutils <http://pypi.python.org/pypi/docutils>`_
+.. code:: bash 
 
-- A functioning basic LaTeX/TeX install with ``pdflatex``. If you run
-  OS X, use `MacTeX`_
-
-``make all`` will build all documents in the ``source/`` folder.  The
-system builds all targets in ``build/``.
-
-Run ``make setup`` to generate (or regenerate) a ``makefile.generated``
-file which provides specific targets for all files in the source file
-so you can choose to compile only some of the files that you
-need. Once generated, running "``make [file-name-without-extension]``"
-will rebuild only those files (if needed.)
-
-Use ``make clean`` to remove the ``build/`` directory and "``make
-cleanup``" to remove the LaTeX by-products from ``build/``.
-
-.. _`MacTeX` : http://www.tug.org/mactex/
+  pip install sphinx
+  cd source 
+  sphinx-build -W -b text . docs_build index.rst
 
 Converting to JSON
 ------------------
