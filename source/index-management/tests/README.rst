@@ -203,7 +203,7 @@ Case 6: Driver can successfully create and list search indexes with non-default 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #. Create a collection with the "create" command using a randomly generated name (referred to as ``coll0``).
-#. Apply a write concern ``WriteConcern(w=1)`` and a read concern with ``ReadConcern(level="local")`` to ``coll0``.
+#. Apply a write concern ``WriteConcern(w=1)`` and a read concern with ``ReadConcern(level="majority")`` to ``coll0``.
 #. Create a new search index on ``coll0`` with the ``createSearchIndex`` helper.  Use the following definition:
 
    .. code:: typescript
