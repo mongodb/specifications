@@ -315,7 +315,7 @@ pertaining to URI options apply here.
      - non-negative integer; 0 means no timeout
      - no timeout
      - no
-     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`__
 
        Amount of time spent attempting to send or receive on a socket before timing out; note that this only applies to application operations, not SDAM.
 
