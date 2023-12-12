@@ -121,7 +121,7 @@ pre-commit run --all-files --hook-stage manual rstcheck
 
 ## Prose test numbering
 
-When numbering prose tests, always use relative numbered bullets (`#.`).
+When numbering prose tests, always use relative numbered bullets (`1.`).
 New tests must be appended at the end of the test list, since drivers
 may refer to existing tests by number.
 
