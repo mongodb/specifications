@@ -92,7 +92,7 @@ testing the change.
 ## Writing Documents
 
 Write documents using
-[reStructuredText](http://docutils.sourceforge.net/rst.html), following
+[GitHub Flavored Markdown](https://github.github.com/gfm/), following
 the [MongoDB Documentation Style
 Guidelines](https://www.mongodb.com/docs/meta/style-guide/).
 
@@ -113,10 +113,10 @@ pre-commit install
 
 To run `pre-commit` manually, run `pre-commit run --all-files`.
 
-To run a manual hook like `rstcheck` manually, run:
+To run a manual hook like `shellcheck` manually, run:
 
 ```bash
-pre-commit run --all-files --hook-stage manual rstcheck
+pre-commit run --all-files --hook-stage manual shellcheck
 ```
 
 ## Prose test numbering
@@ -127,7 +127,7 @@ may refer to existing tests by number.
 
 Outdated tests must not be removed completely, but may be marked as such
 (e.g. by striking through or replacing the entire test with a note (e.g.
-**Removed**).
+*Removed*).
 
 ## Building Documents
 
