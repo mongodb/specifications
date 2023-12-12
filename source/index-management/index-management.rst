@@ -112,7 +112,7 @@ Operations Timeout
 <../client-side-operations-timeout/client-side-operations-timeout.md>`__
 specification. All operations that return cursors MUST support the timeout
 options documented in the `Cursors
-<../client-side-operations-timeout/client-side-operations-timeout.md#Cursors>`__
+<../client-side-operations-timeout/client-side-operations-timeout.md#cursors>`__
 section of that specification.
 
 ------------
