@@ -274,7 +274,7 @@ All methods:
 
 All methods that return cursors MUST support the timeout options documented
 in `Client Side Operations Timeout: Cursors
-<./client-side-operations-timeout/client-side-operations-timeout.md#Cursors>`__.
+<./client-side-operations-timeout/client-side-operations-timeout.md#cursors>`__.
 
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
