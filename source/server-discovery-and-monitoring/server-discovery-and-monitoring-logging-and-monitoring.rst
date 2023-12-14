@@ -263,7 +263,7 @@ Events that MUST be published (with their conditions) are as follows.
      * The name of this field is flexible to match the object that is returned from the driver.
      * Examples are, but not limited to, 'address', 'serverAddress', 'connectionId',
      */
-    connectionId: ConnectionId;
+    connectionId: Optional<ConnectionId>;
 
    /**
      * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello.
@@ -462,7 +462,7 @@ The following key-value pairs are common to all or several log messages and MUST
    * - serverConnectionId
      - Heartbeat-related log messages
      - Int
-     - The server's ID for the monitoring connection, if known. This value will be unknown and can be omitted in certain cases, e.g. the first
+     - The server's ID for the monitoring connection, if known. This value will be unknown and MAY be omitted in certain cases, e.g. the first
        "heartbeat started" message for a monitoring connection. Only present on server versions 4.2+.
 
 "Starting Topology Monitoring" Log Message
