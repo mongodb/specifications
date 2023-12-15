@@ -197,7 +197,7 @@ response.
 .. _findAndModify: https://www.mongodb.com/docs/manual/reference/command/findAndModify/
 .. _aggregate: https://www.mongodb.com/docs/manual/reference/command/aggregate/
 
-Retryable Writes Withing Transactions
+Retryable Writes Within Transactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In MongoDB 4.0 the only supported retryable write commands within a transaction
