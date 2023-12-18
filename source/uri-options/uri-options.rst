@@ -422,7 +422,7 @@ pertaining to URI options apply here.
      - positive number
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools, with exceptions described in the `Connection Pooling spec`_
-     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutMS>`_
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_
 
        Amount of time spent attempting to check out a connection from a server's
        connection pool before timing out
