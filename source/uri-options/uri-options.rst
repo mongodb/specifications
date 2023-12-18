@@ -431,7 +431,7 @@ pertaining to URI options apply here.
      - non-negative 64-bit integer; 0 means no timeout
      - no timeout
      - no
-     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutMS>`_
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_
 
        Default write concern "wtimeout" field for the client
 
