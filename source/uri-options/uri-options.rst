@@ -343,7 +343,7 @@ pertaining to URI options apply here.
    *
      - timeoutMS
      - non-negative integer; 0 or unset means no timeout
-     - Defined in `Client Side Operations Timeout: timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutMS>`_.
+     - Defined in `Client Side Operations Timeout: timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_.
      - no
      - Time limit for the full execution of an operation
 
