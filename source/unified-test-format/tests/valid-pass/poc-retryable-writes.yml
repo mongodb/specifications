@@ -191,6 +191,7 @@ tests:
             mode: { times: 2 }
             data:
               failCommands: [ insert ]
+              errorLabels: [ RetryableWriteError ]
               writeConcernError:
                 code: 91 # ShutdownInProgress
                 errmsg: "Replication is being shut down"
