@@ -2,10 +2,6 @@ description: "poc-retryable-writes"
 
 schemaVersion: "1.0"
 
-runOnRequirements:
-  - minServerVersion: "3.6"
-    topologies: [ replicaset ]
-
 createEntities:
   - client:
       id: &client0 client0
@@ -42,6 +38,9 @@ initialData:
 
 tests:
   - description: "FindOneAndUpdate is committed on first attempt"
+    runOnRequirements: &onPrimaryTransactionalWrite_requirements
+      - minServerVersion: "3.6"
+        topologies: [ replicaset ]
     operations:
       - name: failPoint
         object: testRunner
@@ -65,6 +64,7 @@ tests:
           - { _id: 2, x: 22 }
 
   - description: "FindOneAndUpdate is not committed on first attempt"
+    runOnRequirements: *onPrimaryTransactionalWrite_requirements
     operations:
       - name: failPoint
         object: testRunner
@@ -89,6 +89,7 @@ tests:
           - { _id: 2, x: 22 }
 
   - description: "FindOneAndUpdate is never committed"
+    runOnRequirements: *onPrimaryTransactionalWrite_requirements
     operations:
       - name: failPoint
         object: testRunner
