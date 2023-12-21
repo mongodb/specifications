@@ -197,6 +197,18 @@ response.
 .. _findAndModify: https://www.mongodb.com/docs/manual/reference/command/findAndModify/
 .. _aggregate: https://www.mongodb.com/docs/manual/reference/command/aggregate/
 
+Retryable Writes Within Transactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In MongoDB 4.0 the only supported retryable write commands within a transaction
+are ``commitTransaction`` and ``abortTransaction``. Therefore drivers MUST NOT
+retry write commands within transactions even when ``retryWrites`` has been
+set to true on the ``MongoClient``. In addition, drivers MUST NOT add
+the ``RetryableWriteError`` label to any error that occurs during a write
+command within a transaction (excepting ``commitTransation``
+and ``abortTransaction``), even when ``retryWrites`` has been set to true on
+the ``MongoClient``.
+
 Implementing Retryable Writes
 -----------------------------
 
@@ -842,6 +854,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2023-12-06: Clarify that writes are not retried within transactions.
 :2023-12-05: Add that any server information associated with retryable
              exceptions MUST reflect the originating server, even in the
              presence of retries.

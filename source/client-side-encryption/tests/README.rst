@@ -1159,7 +1159,7 @@ Proceed to run the test case.
 
 Each test case configures a ``MongoClient`` with automatic encryption (named ``client_encrypted``).
 
-Each test must assert the number of unique ``MongoClient``s created. This can be accomplished by capturing ``TopologyOpeningEvent``, or by checking command started events for a client identifier (not possible in all drivers).
+Each test must assert the number of unique ``MongoClient`` objects created. This can be accomplished by capturing ``TopologyOpeningEvent``, or by checking command started events for a client identifier (not possible in all drivers).
 
 Running a test case
 ```````````````````
@@ -1177,7 +1177,7 @@ Running a test case
 - Use ``client_encrypted`` to run a ``findOne`` operation on ``db.coll``, with the filter ``{ "_id": 0 }``.
 - Expect the result to be ``{ "_id": 0, "encrypted": "string0" }``.
 - Check captured events against ``TestCase.Expectations``.
-- Check the number of unique ``MongoClient``s created is equal to ``TestCase.ExpectedNumberOfClients``.
+- Check the number of unique ``MongoClient`` objects created is equal to ``TestCase.ExpectedNumberOfClients``.
 
 Case 1
 ``````
@@ -3056,7 +3056,7 @@ Assert that an error was raised.
 
 
 Case 8: setting precision errors if the type is not double or Decimal128
-````````````````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````````````````````
 This test case should be skipped if the encrypted field is ``encryptedDoublePrecision``, ``encryptedDoubleNoPrecision``, ``encryptedDecimalPrecision``, or ``encryptedDecimalNoPrecision``.
 
 Use ``clientEncryption.encrypt()`` to encrypt the value 6. Ensure the type matches that of the encrypted field.

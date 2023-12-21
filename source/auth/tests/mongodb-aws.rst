@@ -69,6 +69,7 @@ Drivers MUST be able to authentiate using a valid OIDC token and associated
 role ARN taken from environment variables, respectively:
 
 .. code-block::
+
   AWS_WEB_IDENTITY_TOKEN_FILE
   AWS_ROLE_ARN
   AWS_ROLE_SESSION_NAME (optional)
@@ -82,6 +83,7 @@ A sample URI in for a web identity test would be:
 Drivers MUST test with and without AWS_ROLE_SESSION_NAME set.
 
 .. note:: No username, password or session token is passed into the URI.
+  
 Drivers MUST check the environment variables listed above and make an `AssumeRoleWithWebIdentity request <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html>`_ to obtain
 credentials.
 

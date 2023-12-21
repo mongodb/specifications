@@ -1,0 +1,39 @@
+name: Lint Files
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  # Run "pre-commit run --all-files"
+  pre-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+
+      # ref: https://github.com/pre-commit/action
+      - uses: pre-commit/action@v3.0.0
+      - name: Help message if pre-commit fail
+        if: ${{ failure() }}
+        run: |
+          echo "You can install pre-commit hooks to automatically run formatting"
+          echo "on each commit with:"
+          echo "    pre-commit install"
+          echo "or you can run by hand on staged files with"
+          echo "    pre-commit run"
+          echo "or after-the-fact on already committed files with"
+          echo "    pre-commit run --all-files --hook-stage manual"
+
+  sphinx-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+      - run:  pip install sphinx
+      - run:  cd source && sphinx-build -W -b text . docs_build index.rst
