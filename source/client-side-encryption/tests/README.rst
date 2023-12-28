@@ -1415,7 +1415,7 @@ Four mock KMS server processes must be running:
 
 4. The mock `KMS KMIP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
-Create the following four ``ClientEncryption`` objects.
+Create the following ``ClientEncryption`` objects.
 
 Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
 
@@ -1540,6 +1540,59 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
 
    - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
 
+5. Create a ``ClientEncryption`` object named ``client_encryption_with_names`` with the following KMS providers:
+
+   .. code:: javascript
+
+      {
+            "aws:no_client_cert": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure:no_client_cert": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:9002"
+            },
+            "gcp:no_client_cert": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:9002"
+            },
+            "kmip:no_client_cert" {
+               "endpoint": "127.0.0.1:5698"
+            },
+            "aws:with_tls": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure:with_tls": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:9002"
+            },
+            "gcp:with_tls": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:9002"
+            },
+            "kmip:with_tls" {
+               "endpoint": "127.0.0.1:5698"
+            }
+      }
+
+   Add TLS options for the ``aws:no_client_cert``, ``azure:no_client_cert``, ``gcp:no_client_cert``, and ``kmip:no_client_cert`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
+
+   Add TLS options for the ``aws:with_tls``, ``azure:with_tls``, ``gcp:with_tls``, and ``kmip:with_tls`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
+   - ``tlsCertificateKeyFile`` (or equivalent) set to `client.pem`_
+
+
 Case 1: AWS
 ```````````
 
@@ -1556,6 +1609,10 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
+Call `client_encryption_with_names.createDataKey()` with "aws:no_client_cert" as the provider and the same masterKey.
+
+Expect an error indicating TLS handshake failed.
+
 Call `client_encryption_with_tls.createDataKey()` with "aws" as the provider and the
 following masterKey:
 
@@ -1569,6 +1626,10 @@ following masterKey:
 
 Expect an error from libmongocrypt with a message containing the string: "parse
 error". This implies TLS handshake succeeded.
+
+Call `client_encryption_with_names.createDataKey()` with "aws:with_tls" as the provider and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "parse error". This implies TLS handshake succeeded.
 
 Call `client_encryption_expired.createDataKey()` with "aws" as the provider and the
 following masterKey:
@@ -1608,7 +1669,17 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
+Call `client_encryption_with_names.createDataKey()` with "azure:no_client_cert" as the provider and the same masterKey.
+
+Expect an error indicating TLS handshake failed.
+
 Call `client_encryption_with_tls.createDataKey()` with "azure" as the provider
+and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP
+status=404". This implies TLS handshake succeeded.
+
+Call `client_encryption_with_names.createDataKey()` with "azure:with_tls" as the provider
 and the same masterKey.
 
 Expect an error from libmongocrypt with a message containing the string: "HTTP
@@ -1636,7 +1707,18 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
+Call `client_encryption_with_names.createDataKey()` with "gcp:no_client_cert" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed.
+
 Call `client_encryption_with_tls.createDataKey()` with "gcp" as the provider and
+the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP
+status=404". This implies TLS handshake succeeded.
+
+Call `client_encryption_with_names.createDataKey()` with "gcp:with_tls" as the provider and
 the same masterKey.
 
 Expect an error from libmongocrypt with a message containing the string: "HTTP
@@ -1664,7 +1746,17 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
+Call `client_encryption_with_names.createDataKey()` with "kmip:no_client_cert" as the provider
+and the same masterKey.
+
+Expect an error indicating TLS handshake failed.
+
 Call `client_encryption_with_tls.createDataKey()` with "kmip" as the provider
+and the same masterKey.
+
+Expect success.
+
+Call `client_encryption_with_names.createDataKey()` with "kmip:with_tls" as the provider
 and the same masterKey.
 
 Expect success.
