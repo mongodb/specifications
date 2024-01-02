@@ -252,7 +252,8 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   errors that meet the following criteria if the retryWrites option is set to
   true on the client performing the relevant operation:
 
-  - a server error response with any the following codes:
+  - a mongod or mongos response with any the following error codes in the
+    top-level ``code`` field:
 
     .. list-table::
       :header-rows: 1
@@ -284,8 +285,14 @@ The RetryableWriteError label might be added to an error in a variety of ways:
       * - ExceededTimeLimit
         - 262
 
-  - a server response with a write concern error response containing any of the
-    previously listed codes
+  - a mongod response with any of the previously listed codes in the
+    ``writeConcernError.code`` field.
+
+  Drivers MUST NOT add a RetryableWriteError label based on the following:
+
+  - any ``writeErrors[].code`` fields in a mongod or mongos response
+
+  - the ``writeConcernError.code`` field in a mongos response
 
   The criteria for retryable errors is similar to the discussion in the SDAM
   spec's section on `Error Handling`_, but includes additional error codes. See
@@ -854,6 +861,9 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2024-01-02: Do not use ``writeConcernError.code`` in pre-4.4 mongos response to
+             determine retryability. Do not use ``writeErrors[].code`` in
+             pre-4.4 server responses to determine retryability.
 :2023-12-06: Clarify that writes are not retried within transactions.
 :2023-12-05: Add that any server information associated with retryable
              exceptions MUST reflect the originating server, even in the
