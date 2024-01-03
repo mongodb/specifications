@@ -31,6 +31,8 @@ initialData:
 
 tests:
   - description: "InsertOne succeeds after retryable writeConcernError"
+    runOnRequirements:
+      - minServerVersion: "4.3.1" # failCommand errorLabels option
     operations:
       - name: failPoint
         object: testRunner

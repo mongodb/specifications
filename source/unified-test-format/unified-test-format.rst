@@ -3883,6 +3883,12 @@ an error for commands listed in the ``data.failCommands`` field. Additionally,
 this fail point is documented in server wiki:
 `The failCommand Fail Point <https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point>`__.
 
+The ``failCommand`` fail point was introduced in mongod 4.0.0
+(`SERVER-34551) <https://jira.mongodb.org/browse/SERVER-34551>`__) and mongos
+4.1.5 (`SERVER-35518 <https://jira.mongodb.org/browse/SERVER-35518>`__);
+however, the fail point was not usable for testing on mongos until version 4.1.7
+(`SERVER-34943 <https://jira.mongodb.org/browse/SERVER-34943>`__).
+
 The ``failCommand`` fail point may be configured like so::
 
     db.adminCommand({
@@ -3892,6 +3898,7 @@ The ``failCommand`` fail point may be configured like so::
           failCommands: [<string>, ...],
           closeConnection: <boolean>,
           errorCode: <integer>,
+          errorLabels: [<string>, ...],
           writeConcernError: <object>,
           appName: <string>,
           blockConnection: <boolean>,
@@ -3909,17 +3916,21 @@ if desired:
 * ``errorCode``: Optional integer, which is unset by default. If set, the
   command will not be executed and the specified command error code will be
   returned as a command error.
+* ``errorLabels``: Optional array of strings. If set, this list overrides the
+  server's normal behavior for adding error labels. An empty array may be used
+  to suppress the server from adding error labels to the response. New in server
+  4.3.1 (`SERVER-43941 <https://jira.mongodb.org/browse/SERVER-43941>`__).
 * ``appName``: Optional string, which is unset by default. If set, the fail
   point will only apply to connections for MongoClients created with this
   ``appname``. New in server 4.4.0-rc2
   (`SERVER-47195 <https://jira.mongodb.org/browse/SERVER-47195>`_).
 * ``blockConnection``: Optional boolean, which defaults to ``false``. If
   ``true``, the server should block the affected commands for ``blockTimeMS``.
-  New in server 4.3.4
+  New in server 4.3.4 and backported to 4.2.9
   (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
 * ``blockTimeMS``: Optional integer, which is required when ``blockConnection``
   is ``true``. The number of milliseconds for which the affected commands should
-  be blocked. New in server 4.3.4
+  be blocked. New in server 4.3.4 and backported to 4.2.9
   (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
 
 
@@ -4061,6 +4072,8 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2024-01-03: Document server version requirements for ``errorLabels`` and
+             ``blockConnection`` options for ``failCommand`` fail point.
 :2023-10-04: **Schema version 1.17.**
              Add ``serverHeartbeatStartedEvent``, ``serverHeartbeatSucceededEvent``, and
              ``serverHeartbeatFailedEvent`` for asserting on SDAM server heartbeat events.
