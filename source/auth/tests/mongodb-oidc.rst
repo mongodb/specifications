@@ -13,6 +13,7 @@ login using the SSO flow.
 For example, if the selected AWS profile ID is "drivers-test", run:
 
 .. code:: shell
+
   aws configure sso
   AWS_PROFILE="drivers-test" ./oidc_get_tokens.sh
   AWS_WEB_IDENTITY_TOKEN_FILE="/tmp/tokens/test_user1" /my/test/command
