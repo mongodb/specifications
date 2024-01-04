@@ -652,7 +652,7 @@ timeout for each database operation. This would mimic using `timeoutMode=ITERATI
 
 ## Changelog
 
-- 2023-12-07: Migrated from reStructuredText to Markdown
+- 2023-12-07: Migrated from reStructuredText to Markdown.
+- 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.
 - 2022-10-05: Remove spec front matter.
 - 2022-01-19: Initial version.
-- 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.
