@@ -254,21 +254,26 @@ or "SCRAM-SHA-256").
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
 
+.. _reauthentication:
+
 Reauthentication
 ~~~~~~~~~~~~~~~~
 
-On any operation that requires authentication, the server may raise the
-error ``ReauthenticationRequired`` (391), typically if the user's credential
-has expired.  Drivers MUST immediately attempt a reauthentication on
-the connection using suitable credentials, as specified by the particular authentication mechanism when this error is raised, and then re-attempt the operation.
-This attempt MUST be irrespective of whether the operation is considered
-retryable.   Drivers MUST NOT resend a hello message during reauthentication, instead using SASL messages directly.  Any errors that could not be recovered from during reauthentication, or that were encountered during the
-subsequent re-attempt of the operation MUST be raised to the user.  Currently
-the only authentication mechanism on the server that supports reauthentication is OIDC.
-See the OIDC documentation on reauthentication for more details.
-Note that in order to implement the unified spec tests for reauthentication,
-it may be necessary to add reauthentication support for whichever auth
-mechanism is used when running the authentication spec tests.
+On any operation that requires authentication, the server may raise the error
+``ReauthenticationRequired`` (391), typically if the user's credential has
+expired. Drivers MUST immediately attempt a reauthentication on the connection
+using suitable credentials, as specified by the particular authentication
+mechanism when this error is raised, and then re-attempt the operation. This
+attempt MUST be irrespective of whether the operation is considered retryable.
+Drivers MUST NOT resend a hello message during reauthentication, instead using
+SASL messages directly. Any errors that could not be recovered from during
+reauthentication, or that were encountered during the subsequent re-attempt of
+the operation MUST be raised to the user. Currently the only authentication
+mechanism on the server that supports reauthentication is OIDC. See the OIDC
+documentation on reauthentication for more details. Note that in order to
+implement the unified spec tests for reauthentication, it may be necessary to
+add reauthentication support for whichever auth mechanism is used when running
+the authentication spec tests.
 
 --------------------------------
 Supported Authentication Methods
@@ -1197,7 +1202,7 @@ Drivers MAY support the human-in-the-loop authentication flow described in the
 `````````````````````````````
 
 username
-    MUST NOT be specified.
+    MAY be specified. Its meaning depends on the OIDC provider used.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1220,6 +1225,28 @@ mechanism_properties
         mechanism property. Drivers MUST support specifying a callback either as
         a ``MongoClient`` configuration or a mechanism property, but MUST NOT
         support both.
+
+    REQUEST_TOKEN_CALLBACK
+        This property is only required for drivers that support the `Human
+        Authentication Flow`_. Drivers MUST allow the user to specify a callback
+        of the form "onRequest" (defined below), if the driver supports
+        providing objects as mechanism property values.  Otherwise the driver
+        MUST allow it as a MongoClientOption.
+
+    ALLOWED_HOSTS
+        This property is only required for drivers that support the `Human
+        Authentication Flow`_. The list of allowed hostnames or ip-addresses
+        (ignoring ports) for MongoDB connections. The hostnames may include a
+        leading "\*." wildcard, which allows for matching (potentially  nested)
+        subdomains. ALLOWED_HOSTS is a security feature and MUST default to
+        ``["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net",
+        "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``. When
+        ``MONGODB-OIDC`` authentication is attempted against a hostname that
+        does not match any of list of allowed hosts, the driver MUST raise a
+        client-side error without invoking any user-provided callbacks.  This
+        value MUST not be allowed in the URI connection string.  The hostname
+        check MUST be performed after SRV record resolution, if applicable. This
+        property is only applicable when ``REQUEST_TOKEN_CALLBACK`` is given.
 
 Supported Providers
 ```````````````````
@@ -1317,8 +1344,6 @@ use it for authentication. Otherwise, call the configured workload callback to
 retrieve a new access token and send that access token with the speculative
 authentication document.
 
-.. _reauthentication:
-
 Reauthentication
 ````````````````
 When an operation fails with ``ReauthenticationRequired`` (error code 391) and
@@ -1374,7 +1399,7 @@ authentication:
 
     - If it does, cache the returned access token in *Connection Cache* and
       optimisitically try to authenticate using the access token. If the server
-      returns ``AuthenticationFailed`` (error code 18), slep 100ms then
+      returns ``AuthenticationFailed`` (error code 18), sleep 100ms then
       continue.
 
 - Call the access token function for the configured provider or the custom
@@ -1460,45 +1485,6 @@ described in this section. The human-in-the-loop authentication flow is intended
 to be used for applications that require direct human interaction, such as
 database tools or CLIs. Some OIDC documentation refers to authentication for
 humans as "workforce" authentication.
-
-`MongoCredential`_ Properties
-_____________________________
-
-username
-    Drivers MUST allow the user to specify this in the workforce identity
-    federation flow. If a user omits this when multiple OIDC providers are
-    configured, the server will produce an error during authentication.
-
-source
-    MUST be "$external". Defaults to ``$external``.
-
-password
-    MUST NOT be specified.
-
-mechanism
-    MUST be "MONGODB-OIDC"
-
-mechanism_properties
-    PROVIDER_NAME
-        MUST NOT be specified.
-
-    REQUEST_TOKEN_CALLBACK
-        Drivers MUST allow the user to specify a callback of the form "onRequest" (defined below), if the driver supports
-        providing objects as mechanism property values.  Otherwise the driver MUST allow it as a MongoClientOption.
-
-    ALLOWED_HOSTS
-        The list of allowed hostnames or ip-addresses (ignoring ports) for
-        MongoDB connections. The hostnames may include a leading "\*." wildcard, which allows for matching
-        (potentially  nested) subdomains. ALLOWED_HOSTS is a
-        security feature and MUST default to
-        ``["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``.
-        When ``MONGODB-OIDC`` authentication is attempted against a hostname
-        that does not match any of list of allowed hosts, the driver MUST
-        raise a client-side error without invoking any user-provided
-        callbacks.  This value MUST not be allowed in the URI connection
-        string.  The hostname check MUST be performed after SRV record
-        resolution, if applicable.
-        This property is only applicable when ``REQUEST_TOKEN_CALLBACK`` is given.
 
 Interfaces
 ``````````
