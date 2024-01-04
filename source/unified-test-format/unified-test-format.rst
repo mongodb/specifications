@@ -463,7 +463,7 @@ The structure of this object is as follows:
   the database needs to support for the test. If set, tests MUST only run if the
   given string matches (case-insensitive) one of the strings in the
   `authenticationMechanisms
-  https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.authenticationMechanisms`__
+  <https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.authenticationMechanisms>`__
   server parameter. If this field is omitted, there is no authentication
   mechanism requirement.
 

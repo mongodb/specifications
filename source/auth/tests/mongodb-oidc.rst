@@ -3,7 +3,7 @@ MongoDB OIDC
 ============
 
 Local Testing
-~~~~~~~~~~~~~
+=============
 
 To test locally, use the `oidc_get_tokens.sh`_ script from
 drivers-evergreen-tools_ to download a set of OIDC tokens, including
@@ -24,16 +24,16 @@ For example, if the selected AWS profile ID is "drivers-test", run:
 Prose Tests
 ===========
 
-1. Custom Callback
-~~~~~~~~~~~~~~~~~~
+(1) Custom Callback
+~~~~~~~~~~~~~~~~~~~
 
 - Create a ``MongoClient`` configured with a custom OIDC callback that
   implements the AWS provider logic.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
-2. Callback is called during reauthentication
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(2) Callback is called during reauthentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Create a ``MongoClient`` configured with a custom OIDC callback that
   implements the AWS provider logic.
@@ -59,8 +59,8 @@ Prose Tests
   handshake, and again during reauthentication).
 - Close the client.
 
-3. Authentication failures with cached tokens retry with a new token
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(3) Authentication failures with cached tokens retry with a new token
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Create a ``MongoClient`` configured with ``retryReads=false`` and a custom
   OIDC callback that implements the AWS provider logic.
@@ -106,8 +106,8 @@ Prose Tests
   authentication failure).
 - Close the client.
 
-4. Reauthentication messages are sent
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(4) Reauthentication messages are sent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Create a ``MongoClient`` configured with a custom OIDC callback that
   implements the AWS provider logic.
@@ -145,9 +145,10 @@ Prose Tests
 - Perform a ``find`` operation that fails.
 - Close the client.
 
-=========================
-Human Authentication Flow
-=========================
+----------
+
+Human Authentication Flow Prose Tests
+=====================================
 
 Drivers that implement the Human Authentication Flow MUST test the following scenarios:
 
@@ -181,45 +182,45 @@ dummy "refresh_token".
 .. _Local Testing: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md#local-testing
 .. _vault instructions: https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets
 
-1. Callback-Driven Auth
-=======================
+(1) Callback-Driven Auth
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MUST be able to authenticate using OIDC callback(s) when there
 is one principal configured.
 
-1.1 Single Principal Implicit Username
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**1.1 Single Principal Implicit Username**
+
 - Create default OIDC client with `authMechanism=MONGODB-OIDC`.
 - Perform a ``find`` operation. that succeeds.
 - Close the client.
 
-1.2 Single Principal Explicit Username
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**1.2 Single Principal Explicit Username**
+
 - Create a client with ``MONGODB_URI_SINGLE``, a username of ``test_user1``, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
-1.3 Multiple Principal User 1
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**1.3 Multiple Principal User 1**
+
 - Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user1``, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
-1.4 Multiple Principal User 2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**1.4 Multiple Principal User 2**
+
 - Create a request callback that reads in the generated ``test_user2`` token file.
 - Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user2``, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
-1.5 Multiple Principal No User
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**1.5 Multiple Principal No User**
+
 - Create a client with ``MONGODB_URI_MULTI``, no username, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Assert that a ``find`` operation fails.
 - Close the client.
 
-1.6 Allowed Hosts Blocked
-~~~~~~~~~~~~~~~~~~~~~~~~~
+**1.6 Allowed Hosts Blocked**
+
 - Create a default OIDC client, with an ``ALLOWED_HOSTS`` that is an empty list.
 - Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
@@ -228,11 +229,11 @@ is one principal configured.
 - Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
 
-2. Callback Validation
-======================
+(2) Callback Validation
+~~~~~~~~~~~~~~~~~~~~~~~
 
-2.1 Valid Callbacks
-~~~~~~~~~~~~~~~~~~~
+**2.1 Valid Callbacks**
+
 - Create request callback that validates its inputs and returns a valid token.
 - Create a client that uses the above callbacks.
 - Perform a ``find`` operation that succeeds.  Verify that the request
@@ -240,14 +241,14 @@ is one principal configured.
   parameter if possible.  Ensure that there are no unexpected fields.
 - Close the client.
 
-2.2 Request Callback Returns Null
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**2.2 Request Callback Returns Null**
+
 - Create a client with a request callback that returns ``null``.
 - Perform a ``find`` operation that fails.
 - Close the client.
 
-2.3 Request Callback Returns Invalid Data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**2.3 Request Callback Returns Invalid Data**
+
 - Create a client with a request callback that returns data not conforming to
   the ``OIDCRequestTokenResult`` with missing field(s).
 - Perform a ``find`` operation that fails.
@@ -257,8 +258,8 @@ is one principal configured.
 - Perform a ``find`` operation that fails.
 - Close the client.
 
-3. Speculative Authentication
-=============================
+(3) Speculative Authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 We can only test the successful case, by verifying that ``saslStart``
 is not called.
 
@@ -288,14 +289,14 @@ is not called.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
-4. Reauthentication
-===================
+(4) Reauthentication
+~~~~~~~~~~~~~~~~~~~~
 
 The driver MUST test reauthentication with MONGODB-OIDC for a read
 operation.
 
-4.1 Succeeds
-~~~~~~~~~~~~
+**4.1 Succeeds**
+
 - Create a default OIDC client and add an event listener.  The following
   assumes that the driver does not emit ``saslStart`` or ``saslContinue``
   events.  If the driver does emit those events, ignore/filter them for the
@@ -334,8 +335,8 @@ operation.
 - Assert that a ``find`` operation failed once during the command execution.
 - Close the client.
 
-4.2 Succeeds no refresh
-~~~~~~~~~~~~~~~~~~~~~~~
+**4.2 Succeeds no refresh**
+
 - Create a default OIDC client with a request callback that does not return
   a refresh token.
 - Perform a ``find`` operation that succeeds.
@@ -361,8 +362,8 @@ operation.
 - Assert that the request callback has been called twice.
 - Close the client.
 
-4.3 Succeeds after refresh fails
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**4.3 Succeeds after refresh fails**
+
 - Create a default OIDC client.
 - Perform a ``find`` operation that succeeds.
 - Assert that the request callback has been called once.
@@ -387,8 +388,8 @@ operation.
 - Assert that the request callback has been called three times.
 - Close the client.
 
-4.4 Fails
-~~~~~~~~~
+**4.4 Fails**
+
 - Create a default OIDC client.
 - Perform a find operation that succeeds (to force a speculative auth).
 - Assert that the request callback has been called once.
@@ -413,8 +414,8 @@ operation.
 - Assert that the request callback has been called twice.
 - Close the client.
 
-4.5 Separate Connections Avoid Extra Callback Calls
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**4.5 Separate Connections Avoid Extra Callback Calls**
+
 The following test assumes that the driver will be able to share a cache between
 two MongoClient objects, or ensure that the same MongoClient is used with two
 different connections.  Otherwise, the test would have a race condition.
