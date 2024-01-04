@@ -188,32 +188,32 @@ is one principal configured.
 
 1.1 Single Principal Implicit Username
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Create default OIDC client.
+- Create default OIDC client with `authMechanism=MONGODB-OIDC`.
 - Perform a ``find`` operation. that succeeds.
 - Close the client.
 
 1.2 Single Principal Explicit Username
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Create a client with ``MONGODB_URI_SINGLE``, a username of ``test_user1``, and the OIDC request callback.
+- Create a client with ``MONGODB_URI_SINGLE``, a username of ``test_user1``, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 1.3 Multiple Principal User 1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user1``, and the OIDC request callback.
+- Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user1``, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 1.4 Multiple Principal User 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Create a request callback that reads in the generated ``test_user2`` token file.
-- Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user2``, and the OIDC request callback.
+- Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user2``, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 1.5 Multiple Principal No User
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Create a client with ``MONGODB_URI_MULTI``, no username, and the OIDC request callback.
+- Create a client with ``MONGODB_URI_MULTI``, no username, `authMechanism=MONGODB-OIDC`, and the OIDC request callback.
 - Assert that a ``find`` operation fails.
 - Close the client.
 
