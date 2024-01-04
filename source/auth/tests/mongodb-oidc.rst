@@ -21,6 +21,8 @@ For example, if the selected AWS profile ID is "drivers-test", run:
 .. _oidc_get_tokens.sh: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/oidc_get_tokens.sh
 .. _drivers-evergreen-tools: https://github.com/mongodb-labs/drivers-evergreen-tools/
 
+----------
+
 Prose Tests
 ===========
 
@@ -59,90 +61,23 @@ Prose Tests
   handshake, and again during reauthentication).
 - Close the client.
 
-(3) Authentication failures with cached tokens retry with a new token
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(3) Authentication failures with cached tokens fetch a new token and retry
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Create a ``MongoClient`` configured with ``retryReads=false`` and a custom
   OIDC callback that implements the AWS provider logic.
-- Set a fail point for ``find`` commands of the form:
-
-.. code:: javascript
-
-    {
-      configureFailPoint: "failCommand",
-      mode: {
-        times: 1
-      },
-      data: {
-        failCommands: [
-          "find"
-        ],
-        closeConnection: true
-      }
-    }
-
-- Perform a ``find`` operation that fails. This is to force the ``MongoClient``
-  to cache an access token.
-- Set a fail point for ``saslStart`` commands of the form:
-
-.. code:: javascript
-
-    {
-      configureFailPoint: "failCommand",
-      mode: {
-        times: 2
-      },
-      data: {
-        failCommands: [
-          "saslStart"
-        ],
-        errorCode: 18
-      }
-    }
-
-- Perform a ``find`` operation that fails.
-- Verify that the callback was called 2 times during connection handshake (once
-  to get the initial token, and once to refresh the token after the
-  authentication failure).
+- Poison the cache with an invalid access token.
+- Perform a ``find`` operation that succeeds.
+- Verify that the callback was called 1 time.
 - Close the client.
 
-(4) Reauthentication messages are sent
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(4) Authentication failures without cached tokens return an error
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Create a ``MongoClient`` configured with a custom OIDC callback that
-  implements the AWS provider logic.
-- Perform a ``find`` operation that succeeds.
-- Set fail points for ``find`` and ``saslStart`` of the form:
-
-.. code:: javascript
-
-    {
-      configureFailPoint: "failCommand",
-      mode: {
-        times: 1
-      },
-      data: {
-        failCommands: [
-          "find"
-        ],
-        errorCode: 391
-      }
-    }
-
-    {
-      configureFailPoint: "failCommand",
-      mode: {
-        times: 2
-      },
-      data: {
-        failCommands: [
-          "saslStart"
-        ],
-        errorCode: 18
-      }
-    }
-
+- Create a ``MongoClient`` configured with ``retryReads=false`` and a custom
+  OIDC callback that always returns invalid access tokens.
 - Perform a ``find`` operation that fails.
+- Verify that the callback was called 1 time.
 - Close the client.
 
 ----------
