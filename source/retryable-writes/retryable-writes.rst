@@ -404,7 +404,7 @@ of the following conditions is reached:
 - the operation fails with a non-retryable error.
 - CSOT is enabled and the operation times out per `Client Side
   Operations Timeout: Retryability
-  <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
+  <../client-side-operations-timeout/client-side-operations-timeout.md#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
 For each retry attempt, drivers MUST select a writable server. In a sharded
