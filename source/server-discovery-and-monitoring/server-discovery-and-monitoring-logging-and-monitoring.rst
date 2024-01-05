@@ -694,6 +694,17 @@ Tests
 
 See the `README <https://github.com/mongodb/specifications/server-discovery-and-monitoring/tests/monitoring/README.rst>`_.
 
+---------
+Rationale
+---------
+
+Why is the ``ServerHeartbeatStartedEvent`` emitted before monitor connection establishment?
+-------------------------------------------------------------------------------------------
+
+In the event that a driver fails to create a connection, this would result in the emission of the
+``ServerHeartbeatFailedEvent``, implying that the creation of the monitor connection is a part the
+initial heartbeat and so should be accounted for in the ``duration`` field of the
+``ServerHeartbeatFailedEvent`` and ``ServerHeartbeatSucceededEvent``.
 
 Changelog
 =========
