@@ -493,7 +493,8 @@ and sharded clusters.
 
    6. Disable the fail points.
 
-#. Test that in a sharded cluster on the same mongos if no other is available
+#. Test that in a sharded cluster writes are retried on the same mongos if no
+   other is available
 
    This test MUST be executed against a sharded cluster and requires MongoDB
    4.3.1+ for the ``errorLabels`` fail point option.
@@ -527,6 +528,8 @@ and sharded clusters.
 
 Changelog
 =========
+
+:2024-01-05: Fix typo in prose test title.
 
 :2024-01-03: Note server version requirements for fail point options and revise
              tests to specify the ``errorLabels`` option at the top-level
