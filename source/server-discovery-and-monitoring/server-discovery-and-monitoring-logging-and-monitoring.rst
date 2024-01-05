@@ -138,7 +138,7 @@ Events that MUST be published (with their conditions) are as follows.
    * - ``TopologyClosedEvent``
      - When a topology is shut down - this MUST be the last SDAM event fired.
    * - ``ServerHeartbeatStartedEvent``
-     - Published when the server monitor sends its ``hello`` or legacy hello call to the server.
+     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. First published just before the monitor creates the socket for this connection.
    * - ``ServerHeartbeatSucceededEvent``
      - Published on successful completion of the server monitor's ``hello`` or legacy hello call.
    * - ``ServerHeartbeatFailedEvent``
@@ -251,6 +251,8 @@ Events that MUST be published (with their conditions) are as follows.
   /**
    * Fired when the server monitor's ``hello`` or legacy hello command is started - immediately before
    * the ``hello`` or legacy hello command is serialized into raw BSON and written to the socket.
+   * When the monitor is just starting, the first instance of this event is fired just before the
+   * socket is opened.
    */
   interface ServerHeartbeatStartedEvent {
 
@@ -263,7 +265,7 @@ Events that MUST be published (with their conditions) are as follows.
      * The name of this field is flexible to match the object that is returned from the driver.
      * Examples are, but not limited to, 'address', 'serverAddress', 'connectionId',
      */
-    connectionId: Optional<ConnectionId>;
+    connectionId: ConnectionId;
 
    /**
      * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello.
@@ -462,8 +464,8 @@ The following key-value pairs are common to all or several log messages and MUST
    * - serverConnectionId
      - Heartbeat-related log messages
      - Int
-     - The server's ID for the monitoring connection, if known. This value will be unknown and MAY be omitted in certain cases, e.g. the first
-       "heartbeat started" message for a monitoring connection. Only present on server versions 4.2+.
+     - The server's ID for the monitoring connection, if known. This value will be unknown and MUST be omitted in certain cases, e.g. the first
+       "heartbeat started" message for a monitoring connection. This value MUST never be given a default value if it is unknown. Only present on server versions 4.2+.
 
 "Starting Topology Monitoring" Log Message
 ------------------------------------------
@@ -696,6 +698,7 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
+:2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent and when the serverConnectionId should be undefined.
 :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 
 :2022-10-05: Remove spec front matter and reformat changelog.
