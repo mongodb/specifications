@@ -1474,7 +1474,7 @@ management.
 
 Drivers MUST apply timeouts to operations executed as part of client-side encryption per `Client Side Operations
 Timeout: Client Side Encryption
-<../client-side-operations-timeout/client-side-operations-timeout.rst#client-side-encryption>`__.
+<../client-side-operations-timeout/client-side-operations-timeout.md#client-side-encryption>`__.
 
 Integrating with libmongocrypt
 ==============================
