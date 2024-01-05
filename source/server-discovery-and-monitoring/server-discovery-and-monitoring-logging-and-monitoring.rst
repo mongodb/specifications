@@ -138,7 +138,7 @@ Events that MUST be published (with their conditions) are as follows.
    * - ``TopologyClosedEvent``
      - When a topology is shut down - this MUST be the last SDAM event fired.
    * - ``ServerHeartbeatStartedEvent``
-     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. First published just before the monitor creates the socket for this connection.
+     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. First published just after the monitor creates the socket for this connection and just before the ``hello`` or legacy hello call.
    * - ``ServerHeartbeatSucceededEvent``
      - Published on successful completion of the server monitor's ``hello`` or legacy hello call.
    * - ``ServerHeartbeatFailedEvent``
@@ -251,7 +251,7 @@ Events that MUST be published (with their conditions) are as follows.
   /**
    * Fired when the server monitor's ``hello`` or legacy hello command is started - immediately before
    * the ``hello`` or legacy hello command is serialized into raw BSON and written to the socket.
-   * When the monitor is just starting, the first instance of this event is fired just before the
+   * When the monitor is just starting, the first instance of this event is fired just after the
    * socket is opened.
    */
   interface ServerHeartbeatStartedEvent {
@@ -693,18 +693,6 @@ Tests
 -----
 
 See the `README <https://github.com/mongodb/specifications/server-discovery-and-monitoring/tests/monitoring/README.rst>`_.
-
----------
-Rationale
----------
-
-Why is the ``ServerHeartbeatStartedEvent`` emitted before monitor connection establishment?
--------------------------------------------------------------------------------------------
-
-In the event that a driver fails to create a connection, this would result in the emission of the
-``ServerHeartbeatFailedEvent``, implying that the creation of the monitor connection is a part the
-initial heartbeat and so should be accounted for in the ``duration`` field of the
-``ServerHeartbeatFailedEvent`` and ``ServerHeartbeatSucceededEvent``.
 
 Changelog
 =========
