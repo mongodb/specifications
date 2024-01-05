@@ -262,13 +262,13 @@ Run the following test(s) on MongoDB 4.4+.
              mode: "off",
          });
 
-Heartbeat Started Tests
+Heartbeat Tests
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+Run the following test(s) against MongoDB 4.2+ standalone server.
 
 All drivers should test the following scenario, making any adjustments necessary to accommodate your
 language.
-
-Run the following test(s) against MongoDB 4.2+ standalone server.
 
 1. Test that ``ServerHeartbeatStartedEvent`` is emitted after the monitoring socket was created and before the ``hello`` call was made.
 
