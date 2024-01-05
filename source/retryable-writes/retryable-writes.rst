@@ -197,6 +197,18 @@ response.
 .. _findAndModify: https://www.mongodb.com/docs/manual/reference/command/findAndModify/
 .. _aggregate: https://www.mongodb.com/docs/manual/reference/command/aggregate/
 
+Retryable Writes Within Transactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In MongoDB 4.0 the only supported retryable write commands within a transaction
+are ``commitTransaction`` and ``abortTransaction``. Therefore drivers MUST NOT
+retry write commands within transactions even when ``retryWrites`` has been
+set to true on the ``MongoClient``. In addition, drivers MUST NOT add
+the ``RetryableWriteError`` label to any error that occurs during a write
+command within a transaction (excepting ``commitTransation``
+and ``abortTransaction``), even when ``retryWrites`` has been set to true on
+the ``MongoClient``.
+
 Implementing Retryable Writes
 -----------------------------
 
@@ -392,7 +404,7 @@ of the following conditions is reached:
 - the operation fails with a non-retryable error.
 - CSOT is enabled and the operation times out per `Client Side
   Operations Timeout: Retryability
-  <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
+  <../client-side-operations-timeout/client-side-operations-timeout.md#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
 For each retry attempt, drivers MUST select a writable server. In a sharded
@@ -838,6 +850,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2023-12-06: Clarify that writes are not retried within transactions.
 :2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
