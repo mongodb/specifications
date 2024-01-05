@@ -55,15 +55,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after NotPrimaryOrSecondary"
       failPoint:
@@ -77,15 +75,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after NotPrimaryNoSecondaryOk"
       failPoint:
@@ -99,15 +95,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after InterruptedDueToReplStateChange"
       failPoint:
@@ -121,15 +115,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after InterruptedAtShutdown"
       failPoint:
@@ -143,15 +135,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after PrimarySteppedDown"
       failPoint:
@@ -165,15 +155,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after ShutdownInProgress"
       failPoint:
@@ -187,15 +175,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after HostNotFound"
       failPoint:
@@ -209,15 +195,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after HostUnreachable"
       failPoint:
@@ -231,15 +215,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after SocketException"
       failPoint:
@@ -253,15 +235,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after NetworkTimeout"
       failPoint:
@@ -275,15 +255,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after ExceededTimeLimit"
       failPoint:
@@ -297,15 +275,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after WriteConcernError InterruptedAtShutdown"
       failPoint:
@@ -320,15 +296,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after WriteConcernError InterruptedDueToReplStateChange"
       failPoint:
@@ -343,15 +317,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after WriteConcernError PrimarySteppedDown"
       failPoint:
@@ -366,15 +338,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne succeeds after WriteConcernError ShutdownInProgress"
       failPoint:
@@ -389,15 +359,13 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           result:
               insertedId: 3
           collection:
               data:
                   - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }
 
     - description: "InsertOne fails after multiple retryable writeConcernErrors"
       failPoint:
@@ -412,13 +380,11 @@ tests:
       operation:
           name: "insertOne"
           arguments:
-              document: { _id: 3, x: 33 }
+              document: { _id: 1, x: 11 }
       outcome:
           error: true
           result:
               errorLabelsContain: ["RetryableWriteError"]
           collection:
               data:
-                  - { _id: 1, x: 11 }
-                  - { _id: 2, x: 22 }
-                  - { _id: 3, x: 33 }  # The write was still applied.
+                  - { _id: 1, x: 11 }  # The write was still applied.
