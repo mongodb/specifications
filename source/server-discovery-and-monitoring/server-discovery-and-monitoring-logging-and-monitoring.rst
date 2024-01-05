@@ -465,7 +465,7 @@ The following key-value pairs are common to all or several log messages and MUST
      - Heartbeat-related log messages
      - Int
      - The server's ID for the monitoring connection, if known. This value will be unknown and MUST be omitted in certain cases, e.g. the first
-       "heartbeat started" message for a monitoring connection. This value MUST be given a value that explicitly communicates that the value is undefined if it is unknown (e.g.: ``undefined`` in Javascript or ``None`` in Python). Only present on server versions 4.2+.
+       "heartbeat started" message for a monitoring connection. Only present on server versions 4.2+.
 
 "Starting Topology Monitoring" Log Message
 ------------------------------------------
