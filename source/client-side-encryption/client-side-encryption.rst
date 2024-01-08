@@ -484,7 +484,7 @@ the following as a template:
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
 .. _KMSProviders:
-.. _KMSProviderName:
+.. _KMSProvider:
 .. _AWSKMSOptions:
 .. _GCPKMSOptions:
 .. _AzureAccessToken:
@@ -494,29 +494,24 @@ kmsProviders
 
 The ``kmsProviders`` property may be specified on ClientEncryptionOpts_ or
 AutoEncryptionOpts_. Multiple KMS providers may be specified, each using a
-specific property on the KMSProviders_ object. The options for each type of
-provider differ by the provider name (:ts:`"aws"`, :ts:`"azure"`, :ts:`"gcp"`,
-:ts:`"local"`, and :ts:`"kmip"`). The "local" provider is configured with master
-key material. The external providers are configured with credentials to
+specific property on the KMSProviders_ object. The options differ for each KMS
+provider type. The "local" KMS provider type is configured with master key
+material. The external providers are configured with credentials to
 authenticate.
 
-Throughout this document, the provider name is annotated as
-:ts:`KMSProviderName`, but this name is for *exposition only*: drivers MUST
+Throughout this document, the KMS provider is annotated as
+:ts:`KMSProvider`, but this name is for *exposition only*: drivers MUST
 accept arbitrary strings at runtime for forward-compatibility.
 
 .. code:: typescript
 
    interface KMSProviders {
-      aws?: AWSKMSOptions | { /* Empty (See "Automatic Credentials") */ };
-      azure?: AzureKMSOptions | { /* Empty (See "Automatic Credentials") */ };
-      gcp?: GCPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
-      local?: LocalKMSOptions;
-      kmip?: KMIPKMSOptions;
+      [provider: KMSProvider]: AWSKMSOptions | AzureKMSOptions | GCPKMSOptions | LocalKMSOptions | KMIPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
    };
 
-   // KMSProviderName is a string name of any of the providers. Note: For forward
+   // KMSProvider is a string identifying a KMS provider. Note: For forward
    // compatibility, any string should be accepted.
-   type KMSProviderName = keyof KMSProviders | string;
+   type KMSProvider = string;
 
    interface AWSKMSOptions {
       accessKeyId: string;
@@ -719,14 +714,14 @@ The following is an example:
 .. code:: typescript
 
    class AutoEncryptionOpts {
-      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // setTLSOptions accepts a map of KMS providers to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
       setTLSOptions (opts: KMSProvidersTLSOptions)
    }
 
    class ClientEncryptionOpts {
-      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // setTLSOptions accepts a map of KMS providers to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
       setTLSOptions (opts: KMSProvidersTLSOptions)
@@ -988,7 +983,7 @@ Create Encrypted Collection Helper
 To support automatic generation of encryption data keys, a helper
 `CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, masterKey)`
 is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
-KMSProviderName_ and `masterKey` is equivalent to the `masterKey` defined in DataKeyOpts_.
+KMSProvider_ and `masterKey` is equivalent to the `masterKey` defined in DataKeyOpts_.
 It has the following behavior:
 
 - If `collOpts` contains an ``"encryptedFields"`` property, then `EF` is the value
@@ -1080,11 +1075,11 @@ ClientEncryption
       // create a collection with encrypted fields, automatically allocating and assigning new data encryption
       // keys. It returns a handle to the new collection, as well as a document consisting of the generated
       // "encryptedFields" options. Refer to "Create Encrypted Collection Helper"
-      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, masterKey: Optional<Document>): [Collection, Document];
+      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProvider, masterKey: Optional<Document>): [Collection, Document];
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
-      createDataKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
+      createDataKey(kmsProvider: KMSProvider, opts: DataKeyOpts | null): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
       // The updated fields of each rewrapped data key is updated in the key vault collection as part of a single bulk write operation.
@@ -1152,8 +1147,8 @@ ClientEncryption
    };
 
    interface KMSProvidersTLSOptions {
-      // Map the KMS providers (by name) to a set of TLS options
-      [provider: KMSProviderName]: TLSOptionsMap;
+      // Map the KMS providers to a set of TLS options
+      [provider: KMSProvider]: TLSOptionsMap;
    };
 
 The ClientEncryption encapsulates explicit operations on a key vault
