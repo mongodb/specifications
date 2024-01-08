@@ -566,6 +566,11 @@ When such a state is detected, libmongocrypt_ will call back to the driver by
 entering the ``MONGOCRYPT_CTX_NEED_KMS_CREDENTIALS`` state, upon which the
 driver should fill in the KMS options automatically.
 
+Automatic credentials are only supported for the KMS provider types ``aws``,
+``gcp``, and ``azure``. KMS providers containing a name (e.g. ``aws:myname``) do
+not support automatic credentials. Attempting to configure a KMS provider with a
+name for automatic credentials results in a runtime error from libmongocrypt_.
+
 .. note:: Drivers MUST NOT eagerly fill an empty KMS options property.
 
 .. default-role:: math
