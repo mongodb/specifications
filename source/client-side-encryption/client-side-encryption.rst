@@ -64,7 +64,7 @@ MongoDB key vault collection
    A MongoDB collection designated to contain data keys. This can either be co-located with the data-bearing cluster, or in a separate external MongoDB cluster.
 
 Key Management Service (KMS)
-   An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS. Only AWS KMS (and a local service) is supported.
+   An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS.
 
 Customer Master Key (CMK)
    The underlying key AWS KMS uses to encrypt and decrypt. See `AWS Key Management Service Concepts <https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys>`_.
