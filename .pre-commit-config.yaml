@@ -59,5 +59,4 @@ repos:
   rev: "v2.2.6"
   hooks:
   - id: codespell
-    exclude_types: [json,yaml]
-    args: ["-L", "fle,re-use,merchantibility,synching,crate"]
+    args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te"]
