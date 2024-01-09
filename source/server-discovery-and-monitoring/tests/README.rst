@@ -280,7 +280,7 @@ Heartbeat Tests
         });
         server.listen(9999);
 
-   #. Create a client with ``serverSelectionTimeoutMS: 500, maxPoolSize: 1, minPoolSize: 0`` and listen to ``ServerHeartbeatStartedEvent`` and ``ServerHeartbeatFailedEvent``, pushing the event name to the same shared array as the mock TCP server.
+   #. Create a client with ``serverSelectionTimeoutMS: 500`` and listen to ``ServerHeartbeatStartedEvent`` and ``ServerHeartbeatFailedEvent``, pushing the event name to the same shared array as the mock TCP server.
 
    #. Attempt to connect client to previously created TCP server, catching the error when the client fails to connect 
 
