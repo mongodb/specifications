@@ -284,15 +284,9 @@ Heartbeat Tests
 
    #. Attempt to connect client to previously created TCP server, catching the error when the client fails to connect 
 
-   #. Assert that the event array has a length of 4
+   #. Assert that the event array has the following contents in the same order:: 
 
-   #. Assert that the first event is the ``client connected`` event
-
-   #. Assert that the second event is the ``serverHeartbeatStartedEvent``
-
-   #. Assert that the third event is the ``client hello received`` event
-
-   #. Assert that the fourth event is the ``serverHeartbeatFailedEvent``
+        ``['client connected', 'serverHeartbeatStartedEvent', 'client hello received', 'serverHeartbeatFailedEvent']``
 
 .. Section for links.
 

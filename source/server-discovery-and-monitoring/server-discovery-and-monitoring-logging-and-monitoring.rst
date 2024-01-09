@@ -251,7 +251,7 @@ Events that MUST be published (with their conditions) are as follows.
   /**
    * Fired when the server monitor's ``hello`` or legacy hello command is started - immediately before
    * the ``hello`` or legacy hello command is serialized into raw BSON and written to the socket.
-   * When the monitor is just starting, the first instance of this event is fired just after the
+   * When the monitor is creating a new monitoring connection, this event is fired just after the
    * socket is opened.
    */
   interface ServerHeartbeatStartedEvent {
