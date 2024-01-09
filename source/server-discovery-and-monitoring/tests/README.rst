@@ -263,30 +263,6 @@ Run the following test(s) on MongoDB 4.4+.
          });
 
 Heartbeat Tests
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Run the following test(s) against MongoDB 4.2+ standalone server.
-
-All drivers should test the following scenario, making any adjustments necessary to accommodate your
-language.
-
-1. Test that ``ServerHeartbeatStartedEvent`` is emitted after the monitoring socket was created and before the ``hello`` call was made.
-
-   #. Create a client with ``heartbeatFrequencyMS=10000``, ``appName=heartbeatTest``, ``minPoolSize=0``, ``maxPoolSize=1`` and listen to server events.
-
-   #. Connect to the server
-
-   #. Assert that one ``ServerHeartbeatStartedEvent`` has been emitted
-
-   #. Assert that the client has created one socket and that it was created before the ``ServerHeartbeatStartedEvent`` was emitted
-
-   #. Assert that the ``hello`` was sent after the ``ServerHeartbeatStartedEvent`` was emitted.
-
-   #. Assert that the ``ServerHeartbeatSucceededEvent`` was emitted
-
-   #. Close the client
-
-Heartbeat Tests
 ~~~~~~~~~~~~~~~
 
 1. Test that ``ServerHeartbeatStartedEvent`` is emitted after the monitoring socket was created and before the ``hello`` is sent to the server
