@@ -423,6 +423,10 @@ from the driver) or the error is labeled "NoWritesPerformed", the error from
 the previous attempt should be raised. If all server errors are labeled
 "NoWritesPerformed", then the first error should be raised.
 
+If a driver associates server information (e.g. the server address or
+description) with an error, the driver MUST ensure that the reported server
+information corresponds to the server that originated the error.
+
 The above rules are implemented in the following pseudo-code:
 
 .. code-block:: typescript
@@ -851,6 +855,9 @@ Changelog
 =========
 
 :2023-12-06: Clarify that writes are not retried within transactions.
+:2023-12-05: Add that any server information associated with retryable
+             exceptions MUST reflect the originating server, even in the
+             presence of retries.
 :2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection
