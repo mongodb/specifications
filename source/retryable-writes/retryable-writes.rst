@@ -786,7 +786,7 @@ operations (e.g. ``renameCollection``) are rare.
 
 That said, drivers will need to clearly document exactly which operations
 support retryable behavior. In the case ``bulkWrite()``, which may or may not
-support retryability, drivers should discuss how elegibility is determined.
+support retryability, drivers should discuss how eligibility is determined.
 
 Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------

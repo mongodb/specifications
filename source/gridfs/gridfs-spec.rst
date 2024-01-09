@@ -616,7 +616,7 @@ Note that this differs from the case where an attempt to insert a chunk
 fails, in which case drivers immediately report the failure without
 attempting to delete any chunks already uploaded.
 
-Abort MUST raise an error if it is unable to succesfully abort the
+Abort MUST raise an error if it is unable to successfully abort the
 upload (for example, if an error occurs while deleting any chunks
 already uploaded). However, if the upload is being aborted because
 the source stream provided to upload_from_stream raised an error

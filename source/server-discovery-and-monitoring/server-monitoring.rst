@@ -663,7 +663,7 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
 
    - Note that even in the streaming protocol, a monitor in this state will
      wait for an application operation to `request an immediate check`_ or
-     for the heartbeatFrequencyMS timeout to expire before begining the next
+     for the heartbeatFrequencyMS timeout to expire before beginning the next
      check.
 
 See the pseudocode in the `Monitor thread` section.
@@ -1075,7 +1075,7 @@ determine the RTT by calculating the difference between the initial request, or 
 and the ``awaitedTimeMS``.
 
 We rejected this design because of a number of issue with the unreliability of clocks in
-distributed sytems. Clocks skew between local and remote system clocks. This approach mixes
+distributed systems. Clocks skew between local and remote system clocks. This approach mixes
 two notions of time: the local clock times the whole operation while the remote clock times
 the wait. This means that if these clocks tick at different rates, or there are anomalies
 like clock changes, you will get bad results. To make matters worse, you will be comparing
