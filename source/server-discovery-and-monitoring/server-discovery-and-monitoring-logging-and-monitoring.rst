@@ -138,7 +138,7 @@ Events that MUST be published (with their conditions) are as follows.
    * - ``TopologyClosedEvent``
      - When a topology is shut down - this MUST be the last SDAM event fired.
    * - ``ServerHeartbeatStartedEvent``
-     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. First published just after the monitor creates the socket for this connection and just before the ``hello`` or legacy hello call.
+     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. When the monitor is creating a new connection, this event is published just after the socket is created and just before the ``hello`` or legacy hello.
    * - ``ServerHeartbeatSucceededEvent``
      - Published on successful completion of the server monitor's ``hello`` or legacy hello call.
    * - ``ServerHeartbeatFailedEvent``
