@@ -276,10 +276,6 @@ language.
 
    #. Connect to the server
 
-   #. Sleep for 2 seconds
-
-   #. Close the client
-
    #. Assert that one ``ServerHeartbeatStartedEvent`` has been emitted
 
    #. Assert that the client has created one socket and that it was created before the ``ServerHeartbeatStartedEvent`` was emitted
@@ -287,6 +283,40 @@ language.
    #. Assert that the ``hello`` was sent after the ``ServerHeartbeatStartedEvent`` was emitted.
 
    #. Assert that the ``ServerHeartbeatSucceededEvent`` was emitted
+
+   #. Close the client
+
+Heartbeat Tests
+~~~~~~~~~~~~~~~
+
+1. Test that ``ServerHeartbeatStartedEvent`` is emitted after the monitoring socket was created and before the ``hello`` is sent to the server
+
+   #. Create a mock TCP server (example shown below) that pushes a ``client connected`` event to a shared array when a client connects and a ``client hello received`` event when the server receives the client hello and then closes the connection::
+         
+        let events = [];
+        server = createServer(clientSocket => {
+          events.push('client connected');
+
+          clientSocket.on('data', () => {
+            events.push('client hello received');
+            clientSocket.end();
+          });
+        });
+        server.listen(9999);
+
+   #. Create a client with ``serverSelectionTimeoutMS: 500, maxPoolSize: 1, minPoolSize: 0`` and listen to ``ServerHeartbeatStartedEvent`` and ``ServerHeartbeatFailedEvent``, pushing the event name to the same shared array as the mock TCP server.
+
+   #. Attempt to connect client to previously created TCP server, catching the error when the client fails to connect 
+
+   #. Assert that the event array has a length of 4
+
+   #. Assert that the first event is the ``client connected`` event
+
+   #. Assert that the second event is the ``serverHeartbeatStartedEvent``
+
+   #. Assert that the third event is the ``client hello received`` event
+
+   #. Assert that the fourth event is the ``serverHeartbeatFailedEvent``
 
 .. Section for links.
 
