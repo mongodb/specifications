@@ -1,10 +1,15 @@
 runOn:
     -
-        minServerVersion: "4.0"
-        topology: ["replicaset"]
-    -
-        minServerVersion: "4.1.8"
-        topology: ["sharded", "load-balanced"]
+        minServerVersion: "4.3.1" # failCommand errorLabels option
+        topology: ["replicaset", "sharded", "load-balanced"]
+        # This file contains tests originally found in retryable-commit.yml that
+        # are incompatible with serverless:
+        #
+        #  * Failing commitTransaction with closeConnection:true may abort the
+        #    transaction (CLOUDP-202309).
+        #  * Fail points using state change errors (e.g. InterruptedAtShutdown,
+        #    ShutdownInProgress) may remain enabled indefinitely (CLOUDP-84573).
+        serverless: "forbid"
 
 database_name: &database_name "transaction-tests"
 collection_name: &collection_name "test"
@@ -12,16 +17,15 @@ collection_name: &collection_name "test"
 data: []
 
 tests:
-  - description: commitTransaction fails after Interrupted
-
+  - description: commitTransaction succeeds after InterruptedAtShutdown
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 1 }
       data:
           failCommands: ["commitTransaction"]
-          errorCode: 11601
+          errorCode: 11600
+          errorLabels: ["RetryableWriteError"]
           closeConnection: false
-
     operations:
       - name: startTransaction
         object: session0
@@ -35,10 +39,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        result:
-          errorCodeName: Interrupted
-          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError", "UnknownTransactionCommitResult"]
-
     expectations:
       - command_started_event:
           command:
@@ -66,29 +66,35 @@ tests:
             writeConcern:
           command_name: commitTransaction
           database_name: admin
-
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
+          command_name: commitTransaction
+          database_name: admin
     outcome:
       collection:
-        data: []
+        data:
+          - _id: 1
 
-  - description: commitTransaction is not retried after UnsatisfiableWriteConcern error
-
+  - description: commitTransaction succeeds after ShutdownInProgress
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 1 }
       data:
           failCommands: ["commitTransaction"]
-          writeConcernError:
-            code: 100
-            errmsg: Not enough data-bearing nodes
-
+          errorCode: 91
+          errorLabels: ["RetryableWriteError"]
+          closeConnection: false
     operations:
       - name: startTransaction
         object: session0
-        arguments:
-          options:
-            writeConcern:
-              w: majority
       - name: insertOne
         object: collection
         arguments:
@@ -99,9 +105,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        result:
-          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError", "UnknownTransactionCommitResult"]
-
     expectations:
       - command_started_event:
           command:
@@ -127,10 +130,20 @@ tests:
             startTransaction:
             autocommit: false
             writeConcern:
-              w: majority
           command_name: commitTransaction
           database_name: admin
-
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
+          command_name: commitTransaction
+          database_name: admin
     outcome:
       collection:
         data:

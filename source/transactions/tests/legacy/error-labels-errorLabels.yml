@@ -1,17 +1,9 @@
 runOn:
     -
-        minServerVersion: "4.0"
-        topology: ["replicaset"]
-    -
-        minServerVersion: "4.1.8"
-        topology: ["sharded", "load-balanced"]
-        # This file contains tests originally found in retryable-commit.yml that
-        # are incompatible with serverless:
-        #
-        #  * Failing commitTransaction with closeConnection:true may abort the
-        #    transaction (CLOUDP-202309).
-        #  * Fail points using state change errors (e.g. InterruptedAtShutdown,
-        #    ShutdownInProgress) may remain enabled indefinitely (CLOUDP-84573).
+        minServerVersion: "4.3.1" # failCommand errorLabels option
+        topology: ["replicaset", "sharded", "load-balanced"]
+        # serverless proxy doesn't append error labels to errors in transactions
+        # caused by failpoints (CLOUDP-88216)
         serverless: "forbid"
 
 database_name: &database_name "transaction-tests"
@@ -20,18 +12,14 @@ collection_name: &collection_name "test"
 data: []
 
 tests:
-  - description: commitTransaction fails after two errors
-
-    clientOptions:
-      retryWrites: false
-
+  - description: add RetryableWriteError and UnknownTransactionCommitResult labels to retryable commit errors
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 2 }
       data:
           failCommands: ["commitTransaction"]
-          closeConnection: true
-
+          errorCode: 11602  # InterruptedDueToReplStateChange
+          errorLabels: ["RetryableWriteError"]
     operations:
       - name: startTransaction
         object: session0
@@ -43,16 +31,13 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      # First call to commit fails after a single retry attempt.
       - name: commitTransaction
         object: session0
         result:
           errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
           errorLabelsOmit: ["TransientTransactionError"]
-      # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
         object: session0
-
     expectations:
       - command_started_event:
           command:
@@ -103,30 +88,28 @@ tests:
             writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
-
     outcome:
       collection:
         data:
           - _id: 1
 
-  - description: commitTransaction applies majority write concern on retries
-
-    clientOptions:
-      retryWrites: false
-
+  - description: add RetryableWriteError and UnknownTransactionCommitResult labels to writeConcernError ShutdownInProgress
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 2 }
       data:
           failCommands: ["commitTransaction"]
-          closeConnection: true
-
+          errorLabels: ["RetryableWriteError"]
+          writeConcernError:
+            code: 91
+            errmsg: Replication is being shut down
     operations:
       - name: startTransaction
         object: session0
         arguments:
           options:
-            writeConcern: { w: 2, j: true, wtimeout: 5000 }
+            writeConcern:
+              w: majority
       - name: insertOne
         object: collection
         arguments:
@@ -135,95 +118,13 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      # First call to commit fails after a single retry attempt.
       - name: commitTransaction
         object: session0
         result:
           errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
           errorLabelsOmit: ["TransientTransactionError"]
-      # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
         object: session0
-
-    expectations:
-      - command_started_event:
-          command:
-            insert: *collection_name
-            documents:
-              - _id: 1
-            ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
-          command_name: insert
-          database_name: *database_name
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            writeConcern: { w: 2, j: true, wtimeout: 5000 }
-          command_name: commitTransaction
-          database_name: admin
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            # commitTransaction applies w:majority on retries
-            writeConcern:  { w: majority, j: true, wtimeout: 5000 }
-          command_name: commitTransaction
-          database_name: admin
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            writeConcern: { w: majority, j: true, wtimeout: 5000 }
-          command_name: commitTransaction
-          database_name: admin
-
-    outcome:
-      collection:
-        data:
-          - _id: 1
-
-  - description: commitTransaction succeeds after connection error
-
-    failPoint:
-      configureFailPoint: failCommand
-      mode: { times: 1 }
-      data:
-          failCommands: ["commitTransaction"]
-          closeConnection: true
-
-    operations:
-      - name: startTransaction
-        object: session0
-      - name: insertOne
-        object: collection
-        arguments:
-          session: session0
-          document:
-            _id: 1
-        result:
-          insertedId: 1
-      - name: commitTransaction
-        object: session0
-
     expectations:
       - command_started_event:
           command:
@@ -249,6 +150,7 @@ tests:
             startTransaction:
             autocommit: false
             writeConcern:
+              w: majority
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -263,7 +165,18 @@ tests:
             writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
-
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
+          command_name: commitTransaction
+          database_name: admin
     outcome:
       collection:
         data:
