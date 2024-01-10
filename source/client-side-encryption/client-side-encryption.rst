@@ -4,8 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2023-02-01
-:Version: 1.12.0
+:Last Modified: 2024-01-10
+:Version: 1.13.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -2760,6 +2760,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2024-01-10: Add named KMS providers
 :2023-03-30: Remove ECC collection
 :2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
 :2023-01-31: ``createEncryptedCollection`` does not check AutoEncryptionOptions for the encryptedFieldsMap.
