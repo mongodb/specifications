@@ -191,7 +191,7 @@ Mechanism Negotiation via Handshake
 :since: 4.0
 
 If an application provides a username but does not provide an
-authentication mechanism, drivers MUST negotiate a mechanism via an
+authentication mechanism, drivers MUST negotiate a mechanism via a
 ``hello`` or legacy hello command requesting a user's supported SASL mechanisms::
 
     {hello: 1, saslSupportedMechs: "<dbname>.<username>"}
