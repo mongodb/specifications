@@ -715,6 +715,10 @@ The structure of this object is as follows:
       This is to permit testing conditions where invalid KMS credentials are
       provided.
 
+      See the `Client-Side Encryption test README
+      <../client-side-encryption/tests/README.rst/credentials>`__ for
+      instructions to obtain test credentials.
+
 .. _entity_database:
 
 - ``database``: Optional object. Defines a Database object.
@@ -1782,6 +1786,10 @@ Drivers MUST load appropriate KMS credentials (i.e. from the environment or a
 configuration file) when prompted by a test providing a placeholder value in a
 corresponding ``kmsProviders`` field as described under `entity.clientEncryption
 <_entity_clientEncryption>`_.
+
+See the `Client-Side Encryption test README
+<../client-side-encryption/tests/README.rst/credentials>`__ for instructions to
+obtain test credentials.
 
 Drivers MUST be running the mock `KMS KMIP server
 <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_
@@ -4072,6 +4080,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2024-01-11: Note location of Client-Side Encryption test credentials.
 :2024-01-03: Document server version requirements for ``errorLabels`` and
              ``blockConnection`` options for ``failCommand`` fail point.
 :2023-10-04: **Schema version 1.17.**

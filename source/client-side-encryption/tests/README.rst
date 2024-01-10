@@ -158,6 +158,14 @@ Each YAML file has the following keys:
   - ``outcome``: |txn|
 
 
+Credentials
+===========
+
+Test credentials are available in AWS Secrets Manager. See https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets for more background on how the secrets are managed.
+
+Test credentials to KMS are located in "drivers/client-side-encryption".
+
+Test credentials to create environments are available in "drivers/gcpkms" and "drivers/azurekms".
 
 Use as integration tests
 ========================
@@ -168,7 +176,7 @@ Do the following before running spec tests:
   in a location accessible to the tests. Refer to: `Using crypt_shared`_
 - Start the mongocryptd process.
 - Start a mongod process with **server version 4.2.0 or later**.
-- Place credentials to an AWS IAM user (access key ID + secret access key) somewhere in the environment outside of tracked code. (If testing on evergreen, project variables are a good place).
+- Place credentials somewhere in the environment outside of tracked code. (If testing on evergreen, project variables are a good place).
 - Start a KMIP test server on port 5698 by running `drivers-evergreen-tools/.evergreen/csfle/kms_kmip_server.py <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
