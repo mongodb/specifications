@@ -506,6 +506,7 @@ accept arbitrary strings at runtime for forward-compatibility.
 .. code:: typescript
 
    interface KMSProviders {
+      // Map of KMS providers to credentials
       [provider: KMSProvider]: AWSKMSOptions | AzureKMSOptions | GCPKMSOptions | LocalKMSOptions | KMIPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
    };
 
