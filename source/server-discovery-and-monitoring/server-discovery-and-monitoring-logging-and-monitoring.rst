@@ -614,7 +614,7 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
   Heartbeat started for {{serverHost}}:{{serverPort}} on connection with driver-generated ID {{driverConnectionId}} and server-generated ID
   {{serverConnectionId}} in topology with ID {{topologyId}}. Awaited: {{awaited}}
 
-If the ``serverConnectionId`` is not yet known at the time this log is emitted, the unstructured form should be as follows:
+If the ``serverConnectionId`` is not yet known at the time this log is emitted, the unstructured form SHOULD be as follows:
 
   Heartbeat started for {{serverHost}}:{{serverPort}} on connection with driver-generated ID {{driverConnectionId}} in topology with ID
   {{topologyId}}. Awaited: {{awaited}}
