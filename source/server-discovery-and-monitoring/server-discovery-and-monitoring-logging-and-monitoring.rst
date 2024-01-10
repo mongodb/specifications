@@ -138,7 +138,7 @@ Events that MUST be published (with their conditions) are as follows.
    * - ``TopologyClosedEvent``
      - When a topology is shut down - this MUST be the last SDAM event fired.
    * - ``ServerHeartbeatStartedEvent``
-     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. When the monitor is creating a new connection, this event MUST be published just after the socket is created and just before the ``hello`` or legacy hello.
+     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. When the monitor is creating a new connection, this event MUST be published just before the socket is created
    * - ``ServerHeartbeatSucceededEvent``
      - Published on successful completion of the server monitor's ``hello`` or legacy hello call.
    * - ``ServerHeartbeatFailedEvent``
@@ -251,7 +251,7 @@ Events that MUST be published (with their conditions) are as follows.
   /**
    * Fired when the server monitor's ``hello`` or legacy hello command is started - immediately before
    * the ``hello`` or legacy hello command is serialized into raw BSON and written to the socket.
-   * When the monitor is creating a new monitoring connection, this event is fired just after the
+   * When the monitor is creating a new monitoring connection, this event is fired just before the
    * socket is opened.
    */
   interface ServerHeartbeatStartedEvent {
@@ -613,6 +613,11 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 
   Heartbeat started for {{serverHost}}:{{serverPort}} on connection with driver-generated ID {{driverConnectionId}} and server-generated ID
   {{serverConnectionId}} in topology with ID {{topologyId}}. Awaited: {{awaited}}
+
+If the ``serverConnectionId`` is not yet known at the time this log is emitted, the unstructured form should be as follows:
+
+  Heartbeat started for {{serverHost}}:{{serverPort}} on connection with driver-generated ID {{driverConnectionId}} in topology with ID
+  {{topologyId}}. Awaited: {{awaited}}
 
 "Server Heartbeat Succeeded" Log Message
 ----------------------------------------

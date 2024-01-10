@@ -286,7 +286,7 @@ Heartbeat Tests
 
    #. Assert that the event array has the following contents in the same order:: 
 
-        ['client connected', 'serverHeartbeatStartedEvent', 'client hello received', 'serverHeartbeatFailedEvent']
+        ['serverHeartbeatStartedEvent', 'client connected', 'client hello received', 'serverHeartbeatFailedEvent']
 
 .. Section for links.
 
