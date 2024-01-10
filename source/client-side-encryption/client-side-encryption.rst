@@ -1189,7 +1189,7 @@ DataKeyOpts
 masterKey
 ^^^^^^^^^
 The masterKey document identifies a KMS-specific key used to encrypt the new data
-key. If the kmsProvider is "aws" it is required and has the following fields:
+key. If kmsProvider has KMS provider type "aws", the masterKey is required and has the following fields:
 
 .. code:: typescript
 
@@ -1199,7 +1199,7 @@ key. If the kmsProvider is "aws" it is required and has the following fields:
       endpoint: Optional<String> // An alternate host identifier to send KMS requests to. May include port number. Defaults to "kms.<region>.amazonaws.com"
    }
 
-If the kmsProvider is "azure" the masterKey is required and has the following fields:
+If the kmsProvider has KMS provider type "azure", the masterKey is required and has the following fields:
 
 .. code:: typescript
 
@@ -1209,7 +1209,7 @@ If the kmsProvider is "azure" the masterKey is required and has the following fi
       keyVersion: Optional<String> // A specific version of the named key, defaults to using the key's primary version.
    }
 
-If the kmsProvider is "gcp" the masterKey is required and has the following fields:
+If the kmsProvider has KMS provider type "gcp", the masterKey is required and has the following fields:
 
 .. code:: typescript
 
@@ -1222,9 +1222,9 @@ If the kmsProvider is "gcp" the masterKey is required and has the following fiel
       endpoint: Optional<String> // Host with optional port. Defaults to "cloudkms.googleapis.com".
    }
 
-If the kmsProvider is "local" the masterKey is not applicable.
+If the kmsProvider has KMS provider type "local", the masterKey is not applicable.
 
-If the kmsProvider is "kmip" the masterKey is required and has the following fields:
+If the kmsProvider has KMS provider type "kmip", the masterKey is required and has the following fields:
 
 .. code-block:: javascript
 
@@ -1235,8 +1235,8 @@ If the kmsProvider is "kmip" the masterKey is required and has the following fie
    }
 
 Drivers MUST document the expected fields in the masterKey document for the
-"aws", "azure", "gcp", and "kmip" KMS providers. Additionally, they MUST
-document that masterKey is **required** for these providers and is not optional.
+"aws", "azure", "gcp", and "kmip" KMS provider types. Additionally, they MUST
+document that masterKey is **required** for these KMS provider types and is not optional.
 
 The value of `endpoint` or `keyVaultEndpoint` is a host name with optional port
 number separated by a colon. E.g. "kms.us-east-1.amazonaws.com" or
