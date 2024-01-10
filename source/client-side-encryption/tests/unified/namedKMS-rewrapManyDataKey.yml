@@ -23,6 +23,8 @@ createEntities:
           local:name1: { key: { $$placeholder: 1 } }
           # Use a different local master key for `local:name2`.
           local:name2: { key: "local+name2+YUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk" }
+          # Use a different AWS account to test wrapping between different AWS accounts.
+          aws:name2: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
   - database:
       id: &database0 database0
       client: *client0
@@ -383,6 +385,48 @@ tests:
                 updates:
                   - q: { _id: { $$type: binData } }
                     u: { $set: { masterKey: { provider: local:name2 }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                writeConcern: { w: majority }
+
+  - description: "rewrap from aws:name1 to aws:name2"
+    operations:
+      - name: rewrapManyDataKey
+        object: *clientEncryption0
+        arguments:
+          filter: { keyAltNames: { $eq: aws:name1_key } }
+          opts:
+            provider: aws:name2
+            masterKey: &new_awsname2_masterkey
+              # aws:name1 account does not have permissions to access this key.
+              key: arn:aws:kms:us-east-1:857654397073:key/0f8468f0-f135-4226-aa0b-bd05c4c30df5
+              region: us-east-1
+        expectResult:
+          bulkWriteResult:
+            insertedCount: 0
+            matchedCount: 1
+            modifiedCount: 1
+            deletedCount: 0
+            upsertedCount: 0
+            upsertedIds: {}
+            insertedIds: { $$unsetOrMatches: {} }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: { keyAltNames: { $eq: aws:name1_key } }
+                readConcern: { level: majority }
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                update: *collection0Name
+                ordered: true
+                updates:
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: aws:name2, <<: *new_awsname2_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
