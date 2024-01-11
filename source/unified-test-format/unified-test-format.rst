@@ -944,7 +944,7 @@ The structure of this object is as follows:
 
   These requirements SHOULD be more restrictive than those specified in the
   top-level `runOnRequirements`_ (if any) and SHOULD NOT be more permissive.
-  This is advised because both sets of requirements MUST be satisified in order
+  This is advised because both sets of requirements MUST be satisfied in order
   for a test to be executed and more permissive requirements at the test-level
   could be taken out of context on their own.
 
@@ -2213,7 +2213,7 @@ methods. The structure of ``source`` is as follows::
 
     { $$hexBytes: <string> }
 
-The string MUST contain an even number of hexademical characters
+The string MUST contain an even number of hexadecimal characters
 (case-insensitive) and MAY be empty. The test runner MUST raise an error if the
 structure of ``source`` or its string is malformed. The test runner MUST convert
 the string to a byte sequence denoting the stream's readable data (if any). For
@@ -2737,7 +2737,7 @@ The following arguments are supported:
   - ``time``: the number of (floating-point) seconds since the Unix epoch
     when the failure was encountered.
 
-- ``storeSuccessesAsEntity``: Optional string. If specfied, the runner MUST keep
+- ``storeSuccessesAsEntity``: Optional string. If specified, the runner MUST keep
   track of the number of sub-operations that completed successfully, and store
   that number in the specified entity. For example, if the loop contains
   two sub-operations, and they complete successfully, each loop execution
@@ -3361,7 +3361,7 @@ An example of this operator follows::
 $$matchesHexBytes
 `````````````````
 
-Syntax, where ``hexBytes`` is an even number of hexademical characters
+Syntax, where ``hexBytes`` is an even number of hexadecimal characters
 (case-insensitive) and MAY be empty::
 
     { $$matchesHexBytes: <hexBytes> }
@@ -3541,7 +3541,7 @@ For each element in `tests`_, follow the process in `Executing a Test`_.
 Executing a Test
 ~~~~~~~~~~~~~~~~
 
-The instructions in this section apply for each `test`_ occuring in a test file
+The instructions in this section apply for each `test`_ occurring in a test file
 loaded by the test runner. After processing a test, test runners MUST reset
 any internal state that resulted from doing so. For example, the `Entity Map`_
 created for one test MUST NOT be shared with another.
@@ -3611,7 +3611,7 @@ events for the following:
   spec) unless
   `observeSensitiveCommands <entity_client_observeSensitiveCommands_>`_ is true.
   Note that drivers will redact commands and replies for sensitive commands. For
-  ``hello`` and legacy hello, which are conditionally sensistive based on the
+  ``hello`` and legacy hello, which are conditionally sensitive based on the
   presence of a ``speculativeAuthenticate`` field, the test runner may need to
   infer that the events are sensitive based on whether or not the command and
   reply documents are redacted (i.e. empty documents).
@@ -3670,7 +3670,7 @@ Proceed to the subsequent test.
 Executing an Operation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The instructions in this section apply for each `operation`_ occuring in a
+The instructions in this section apply for each `operation`_ occurring in a
 `test`_ contained within a test file loaded by the test runner.
 
 If at any point while executing an operation an unexpected error is encountered
@@ -3803,7 +3803,7 @@ Server Fail Points
 
 Many tests utilize the ``configureFailPoint`` command to trigger server-side
 errors such as dropped connections or command errors. Tests can configure fail
-points using the special `failPoint`_ or `targetedFailPoint`_ opertions.
+points using the special `failPoint`_ or `targetedFailPoint`_ operations.
 
 This internal command is not documented in the MongoDB manual (pending
 `DOCS-10784`_); however, there is scattered documentation available on the

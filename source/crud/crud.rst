@@ -1833,12 +1833,12 @@ drivers MUST adjust the index accordingly for ``BulkWriteError.index``.
     writeResult: Optional<BulkWriteResult>;
 
     /**
-     * The error that occured on account of write concern failure. If the error was a Write Concern related, this field must be present.
+     * The error that occurred on account of write concern failure. If the error was a Write Concern related, this field must be present.
      */
     writeConcernError: Optional<WriteConcernError>;
 
     /**
-     * The error that occured on account of a non-write concern failure. This might be empty if the error was a Write Concern related error.
+     * The error that occurred on account of a non-write concern failure. This might be empty if the error was a Write Concern related error.
      */
     writeErrors: Optional<Iterable<BulkWriteError>>;
 
@@ -1883,11 +1883,11 @@ Find And Modify
 
   enum ReturnDocument {
     /**
-     * Indicates to return the document before the update, replacement, or insert occured.
+     * Indicates to return the document before the update, replacement, or insert occurred.
      */
      BEFORE,
     /**
-     * Indicates to return the document after the update, replacement, or insert occured.
+     * Indicates to return the document after the update, replacement, or insert occurred.
      */
      AFTER
   }
@@ -2278,7 +2278,7 @@ Current drivers have chosen slightly different names and semantics for the same 
 Backwards Compatibility
 =======================
 
-This spec should be mostly backwards compatible as it is very lenient. Drivers finding a backwards compatibility problem should attempt to work around it using an acceptable deviation. In rare cases, a driver may need to break backwards compatibility. This should be done in accordance with a versioning scheme indicating that a backwards compatible break may have occured in conjunction with release documentation and warnings.
+This spec should be mostly backwards compatible as it is very lenient. Drivers finding a backwards compatibility problem should attempt to work around it using an acceptable deviation. In rare cases, a driver may need to break backwards compatibility. This should be done in accordance with a versioning scheme indicating that a backwards compatible break may have occurred in conjunction with release documentation and warnings.
 
 
 Reference Implementation
@@ -2326,7 +2326,7 @@ Q: How do I throttle unacknowledged writes now that write concern is no longer d
 Q: What is the logic for adding "One" or "Many" into the method and model names?
   If the maximum number of documents affected can only be one, we added "One" into the name. This makes it explicit that the maximum number of documents that could be affected is one vs. infinite.
 
-  In addition, the current API exposed by all our drivers has the default value for "one" or "many" set differently for update and delete. This generally causes some issues for new developers and is a minor annoyance for existing developers. The safest way to combat this without introducing discrepencies between drivers/driver versions or breaking backwards compatibility was to use multiple methods, each signifying the number of documents that could be affected.
+  In addition, the current API exposed by all our drivers has the default value for "one" or "many" set differently for update and delete. This generally causes some issues for new developers and is a minor annoyance for existing developers. The safest way to combat this without introducing discrepancies between drivers/driver versions or breaking backwards compatibility was to use multiple methods, each signifying the number of documents that could be affected.
 
 Q: Speaking of "One", where is ``findOne``?
   If your driver wishes to offer a ``findOne`` method, that is perfectly fine. If you choose to implement ``findOne``, please keep to the naming conventions followed by the ``FindOptions`` and keep in mind that certain things don't make sense like limit (which should be -1), tailable, awaitData, etc...
@@ -2363,7 +2363,7 @@ Q: Why does reverting to using ``count`` instead of ``aggregate`` with ``$collSt
 Changelog
 =========
 
-:2022-10-05: Remove spec front matter and reformat changlog.
+:2022-10-05: Remove spec front matter and reformat changelog.
 :2022-04-21: Revert to using the ``count`` command for ``estimatedDocumentCount``
 :2022-02-18: Add let to BulkWriteOptions.
 :2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.

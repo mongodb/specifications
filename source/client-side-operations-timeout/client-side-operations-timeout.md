@@ -392,8 +392,8 @@ private to ensure that a user can not modify it while a `withTransaction` call i
 this field private MUST signal that the field should not be accessed or modified by users if there is an idiomatic way
 to do so in the language (e.g. underscore-prefixed variable names in Python) and MUST document that modification of the
 field can cause unintended correctness issues for applications. Drivers MUST document that the remaining timeout will
-not be applied to callback operations that do not use the ClientSession. Drivers MUST also document that overridding
-`timeoutMS` for operations executed using the explict session inside the provided callback will result in a client-side
+not be applied to callback operations that do not use the ClientSession. Drivers MUST also document that overriding
+`timeoutMS` for operations executed using the explicit session inside the provided callback will result in a client-side
 error, as defined in [Validation and Overrides](#validation-and-overrides). If the callback returns an error and the
 transaction must be aborted, drivers MUST refresh the `timeoutMS` value for the `abortTransaction` operation.
 
@@ -627,7 +627,7 @@ expected.
 ### timeoutMS cannot be overridden for startSession calls
 
 In general, users can override `timeoutMS` at the level of a single operation. The `startSession` operation, however,
-only inherits `timeoutMS` from the MongoClient and does not allow the option to be overridden. This was a consious API
+only inherits `timeoutMS` from the MongoClient and does not allow the option to be overridden. This was a conscious API
 design decision because drivers are moving towards only supporting MongoDB versions 3.6 and higher, so sessions will
 always be supported. Adding an override for `startSession` would introduce a new knob and increase the API surface of
 drivers without providing a significant benefit.
@@ -646,7 +646,7 @@ until at least 2 samples have been recorded.
 As explained in the design rationale, drivers use `timeoutMS` to cap the entire lifetime of streams created by GridFS
 operations. If we find that users are often encountering timeout errors when using these APIs due to the time spent
 during non-MongoDB operations (e.g. streaming data read from a GridFS stream into another data store), we could consider
-toggling GridFS behavior via an option similiar to `timeoutMode` for cursors. To avoid backwards-breaking behavioral
+toggling GridFS behavior via an option similar to `timeoutMode` for cursors. To avoid backwards-breaking behavioral
 changes, the default would continue to cap the stream lifetime but there could be another mode that refreshes the
 timeout for each database operation. This would mimic using `timeoutMode=ITERATION` for cursors.
 

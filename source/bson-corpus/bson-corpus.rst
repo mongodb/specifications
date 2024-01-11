@@ -46,7 +46,7 @@ Goals
 Non-Goals
 ---------
 
-* Replace or extend the offical BSON spec at http://bsonspec.org.
+* Replace or extend the official BSON spec at http://bsonspec.org.
 
 * Provide a formal specification for ``extjson``.
 

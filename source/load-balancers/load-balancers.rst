@@ -68,7 +68,7 @@ MUST throw an exception in the following cases:
 
 If a URI is provided with the ``mongodb+srv`` scheme, the driver MUST first do
 the SRV and TXT lookup and then perform the validation. For drivers that do SRV
-lookup asynchrounously this may result in a ``MongoClient`` being instantiated
+lookup asynchronously this may result in a ``MongoClient`` being instantiated
 but erroring later during operation execution.
 
 

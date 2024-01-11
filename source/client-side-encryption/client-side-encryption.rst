@@ -1539,7 +1539,7 @@ for explicit encryption only (i.e. on the ClientEncryption class).
 For purposes of testing, a driver may use a different set of search paths.
 
 
-.. rubric:: Explaination
+.. rubric:: Explanation
 
 The `search paths`_ array in libmongocrypt_ allows the driver to customize the
 way that libmongocrypt_ searches and loads the crypt_shared_ library. For testing
@@ -2419,7 +2419,7 @@ Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drive
 By default, single threaded clients set serverSelectionTryOnce to true, which
 means server selection fails if a topology scan fails the first time (i.e. it
 will not make repeat attempts until serverSelectionTimeoutMS expires). This
-behavior is overriden since there may be a small delay between spawning
+behavior is overridden since there may be a small delay between spawning
 mongocryptd (which the driver may be responsible for) and for mongocryptd to
 listen on sockets. See the Server Selection spec description of `serverSelectionTryOnce <../server-selection/server-selection.rst#serverselectiontryonce>`_.
 
@@ -2427,7 +2427,7 @@ Similarly, single threaded clients will by default wait for 5 second cooldown
 period after failing to connect to a server before making another attempt.
 Meaning if the first attempt to mongocryptd fails to connect, then the user
 would observe a 5 second delay. This is not configurable in the URI, so this
-must be overriden internally. Since mongocryptd is a local process, there should
+must be overridden internally. Since mongocryptd is a local process, there should
 only be a very short delay after spawning mongocryptd for it to start listening
 on sockets. See the SDAM spec description of `cooldownMS <../source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__.
 

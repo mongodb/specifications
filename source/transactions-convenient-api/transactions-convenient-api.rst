@@ -184,7 +184,7 @@ This method should perform the following sequence of actions:
       back to step two.
 
    c. If the callback's error includes a "UnknownTransactionCommitResult" label,
-      the callback must have manually commited a transaction, propagate the
+      the callback must have manually committed a transaction, propagate the
       callback's error to the caller of ``withTransaction`` and return
       immediately.
 

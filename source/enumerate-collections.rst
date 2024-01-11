@@ -221,7 +221,7 @@ following algorithm (just like the
     loop through res.cursor.firstBatch
 
     use getmore with res.cursor.id and res.cursor.ns information to loop over
-    remaing results
+    remaining results
 
 If you need to fall back to querying ``system.namespaces``, then you need to
 filter out all return documents that contain a ``$`` in the ``name`` field.
@@ -244,7 +244,7 @@ driver MAY alternatively implement it as::
     loop through res.cursor.firstBatch
 
     use getmore with res.cursor.id and res.cursor.ns information to loop over
-    remaing results
+    remaining results
 
   else
     fall back to querying system.namespaces.

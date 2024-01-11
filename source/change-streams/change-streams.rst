@@ -597,7 +597,7 @@ The stage has the following shape:
 
 The first parameter of the helpers specifies an array of aggregation pipeline stages which MUST be appended to the initial stage. Drivers MUST support an empty pipeline. Languages which support default parameters MAY specify an empty array as the default value for this parameter. Drivers SHOULD otherwise make specification of a pipeline as similar as possible to the `aggregate <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ CRUD method.
 
-Additionally, implementors MAY provide a form of these methods which require no parameters, assuming no options and no additional stages beyond the initial ``$changeStream`` stage:
+Additionally, implementers MAY provide a form of these methods which require no parameters, assuming no options and no additional stages beyond the initial ``$changeStream`` stage:
 
 .. code:: python
 
@@ -616,7 +616,7 @@ A driver MUST NOT throw an exception if any unsupported stage is provided, but i
 
 A driver MUST NOT throw an exception if a user adds, removes, or modifies fields using ``$project``. The server will produce an error if ``_id``
 is projected out, but a user should otherwise be able to modify the shape of the change stream event as desired. This may require the result
-to be deserialized to a ``BsonDocument`` or custom-defined type rather than a ``ChangeStreamDocument``. It is the responsiblity of the
+to be deserialized to a ``BsonDocument`` or custom-defined type rather than a ``ChangeStreamDocument``. It is the responsibility of the
 user to ensure that the deserialized type is compatible with the specified ``$project`` stage.
 
 The aggregate helper methods MUST have no new logic related to the ``$changeStream`` stage. Drivers MUST be capable of handling `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_  cursors from the aggregate command in the same way they handle such cursors from find.
@@ -679,7 +679,7 @@ Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``c
 ChangeStream
 ------------
 
-A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method.
+A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementers MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementer MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method.
 
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
@@ -705,7 +705,7 @@ The server expects ``startAtOperationTime`` as a BSON Timestamp. Drivers MUST al
 
 ``startAtOperationTime``, ``resumeAfter``, and ``startAfter`` are all mutually exclusive; if any two are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-The ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` response when the following critera are met:
+The ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` response when the following criteria are met:
 
 - None of ``startAtOperationTime``,  ``resumeAfter``, ``startAfter`` were specified in the ``ChangeStreamOptions``.
 - The max wire version is >= ``7``.

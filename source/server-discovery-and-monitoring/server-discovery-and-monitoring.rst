@@ -838,7 +838,7 @@ clientMinWireVersion is 2 and it connects to MongoDB 2.4, format the error like:
   of My Driver requires at least 2 (MongoDB 2.6)."
 
 In this second case, the exact required MongoDB version is known and can be
-named in the error message, whereas in the first case the implementor does not
+named in the error message, whereas in the first case the implementer does not
 know which MongoDB versions will be compatible or incompatible in the future.
 
 Verifying setName with TopologyType Single
