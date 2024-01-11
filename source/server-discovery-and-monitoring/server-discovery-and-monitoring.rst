@@ -536,8 +536,11 @@ when the first operation is attempted.
 Client closing
 ''''''''''''''
 
-When a client is closing, before it emits the ``TopologyClosedEvent``, it should remove all servers from its ``TopologyDescription`` and set its
-``TopologyType`` to ``Unknown``, emitting the corresponding ``TopologyDescriptionChangedEvent``.
+When a client is closing, before it emits the ``TopologyClosedEvent`` as per the
+`Events API <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events-api>`_, 
+it SHOULD `remove`_ all servers from its ``TopologyDescription`` and set its
+``TopologyType`` to ``Unknown``, emitting the corresponding
+``TopologyDescriptionChangedEvent``.
 
 Monitoring
 ''''''''''
