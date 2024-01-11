@@ -265,28 +265,16 @@ Run the following test(s) on MongoDB 4.4+.
 Heartbeat Tests
 ~~~~~~~~~~~~~~~
 
-1. Test that ``ServerHeartbeatStartedEvent`` is emitted after the monitoring socket was created and before the ``hello`` is sent to the server
+1. Test that a failure to create a monitoring connection results in the emission of a
+   ``ServerHeartbeatStartedEvent`` and a ``ServerHeartbeatFailedEvent``
 
-   #. Create a mock TCP server (example shown below) that pushes a ``client connected`` event to a shared array when a client connects and a ``client hello received`` event when the server receives the client hello and then closes the connection::
-         
-        let events = [];
-        server = createServer(clientSocket => {
-          events.push('client connected');
+   #. Create a client with ``serverSelectionTimeoutMS: 500`` and listen to ``ServerHeartbeatStartedEvent`` and ``ServerHeartbeatFailedEvent``, pushing the event names to an array.
 
-          clientSocket.on('data', () => {
-            events.push('client hello received');
-            clientSocket.end();
-          });
-        });
-        server.listen(9999);
-
-   #. Create a client with ``serverSelectionTimeoutMS: 500`` and listen to ``ServerHeartbeatStartedEvent`` and ``ServerHeartbeatFailedEvent``, pushing the event name to the same shared array as the mock TCP server.
-
-   #. Attempt to connect client to previously created TCP server, catching the error when the client fails to connect 
+   #. Attempt to connect client to a local port that is not listening for connections. e.g. ``mongodb://localhost:9999``
 
    #. Assert that the event array has the following contents in the same order:: 
 
-        ['serverHeartbeatStartedEvent', 'client connected', 'client hello received', 'serverHeartbeatFailedEvent']
+        ['serverHeartbeatStartedEvent', 'serverHeartbeatFailedEvent']
 
 .. Section for links.
 
