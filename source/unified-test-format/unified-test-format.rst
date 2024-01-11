@@ -4,7 +4,7 @@ Unified Test Format
 
 :Status: Accepted
 :Minimum Server Version: N/A
-:Current Schema Version: 1.17.0
+:Current Schema Version: 1.18.0
 
 .. contents::
 
@@ -4080,7 +4080,8 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2024-01-11: Note location of Client-Side Encryption test credentials.
+:2024-01-11: **Schema version 1.18** Allow additional properties on ``kmsProviders`` to test named KMS providers.
+             Note location of Client-Side Encryption test credentials.
 :2024-01-03: Document server version requirements for ``errorLabels`` and
              ``blockConnection`` options for ``failCommand`` fail point.
 :2023-10-04: **Schema version 1.17.**
