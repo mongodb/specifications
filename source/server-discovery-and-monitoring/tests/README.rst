@@ -272,7 +272,7 @@ Heartbeat Tests
 
    #. Attempt to connect client to a local port that is not listening for connections. e.g. ``mongodb://localhost:9999``
 
-   #. Assert that the event array has the following contents in the same order:: 
+   #. Assert that the first two elements in the array are: ::
 
         ['serverHeartbeatStartedEvent', 'serverHeartbeatFailedEvent']
 

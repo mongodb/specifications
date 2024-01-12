@@ -464,7 +464,7 @@ The following key-value pairs are common to all or several log messages and MUST
    * - serverConnectionId
      - Heartbeat-related log messages
      - Int
-     - The server's ID for the monitoring connection, if known. This value will be unknown and MUST be omitted in certain cases, e.g. the first
+     - The server's ID for the monitoring connection, if known. This value will be unknown and can be omitted in certain cases, e.g. the first
        "heartbeat started" message for a monitoring connection. Only present on server versions 4.2+.
 
 "Starting Topology Monitoring" Log Message
@@ -698,7 +698,7 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
-:2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted and when the serverConnectionId should be undefined.
+:2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
 :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 
 :2022-10-05: Remove spec front matter and reformat changelog.
