@@ -861,7 +861,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
-:2024-01-02: Do not use ``writeConcernError.code`` in pre-4.4 mongos response to
+:2024-01-16: Do not use ``writeConcernError.code`` in pre-4.4 mongos response to
              determine retryability. Do not use ``writeErrors[].code`` in
              pre-4.4 server responses to determine retryability.
 :2023-12-06: Clarify that writes are not retried within transactions.
