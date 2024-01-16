@@ -113,8 +113,10 @@ the following series of SDAM events:
   :code:`TopologyType` :code:`LoadBalanced` and one server with :code:`ServerType`
   :code:`LoadBalancer`.
 
-Drivers MUST also emit a :code:`ServerClosedEvent` and :code:`TopologyClosedEvent` when
-the topology is closed and MUST NOT emit any other events when operating in this mode.
+Drivers MUST also emit a :code:`ServerClosedEvent`, followed by a
+``TopologyDescriptionChangedEvent`` that transitions the ``Topology`` to the ``UNKNOWN`` state and a
+:code:`TopologyClosedEvent` when the topology is closed and MUST NOT emit any other
+events when operating in this mode.
 
 Log Messages
 ^^^^^^^^^^^^
