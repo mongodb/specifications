@@ -117,6 +117,12 @@ Initial Topology Description
 
 The first ``TopologyDescriptionChangedEvent`` to be emitted from a monitored Topology MUST set its ``previousDescription`` property to be a ``TopologyDescription`` object in the "unknown" state.
 
+Closing Topology Description
+----------------------------
+
+When a ``Topology`` object or equivalent is being shut-down or closed, the driver SHOULD change the
+``TopologyDescription`` to an "unknown" state.
+
 ----------
 Events API
 ----------
