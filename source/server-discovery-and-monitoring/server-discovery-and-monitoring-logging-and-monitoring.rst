@@ -111,6 +111,12 @@ Initial Server Description
 
 ``ServerDescription`` objects MUST be initialized with a default description in an “unknown” state, guaranteeing that the previous description in the events and log messages will never be null.
 
+Closing Topology Description
+----------------------------
+
+When a ``Topology`` object or equivalent is being shut-down or closed, the driver SHOULD change the
+``TopologyDescription`` to an "unknown" state.
+
 ----------
 Events API
 ----------
