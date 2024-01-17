@@ -757,7 +757,7 @@ The event API here is assumed to be like the standard `Python Event
             helloOk = stableApi != Null
             connection = new Connection(serverAddress)
 
-            if connectTimeoutMS !=0:
+            if connectTimeoutMS != 0:
               set connection timeout to connectTimeoutMS
 
         # Do any potentially blocking operations after releasing the mutex.
