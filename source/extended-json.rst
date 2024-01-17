@@ -96,7 +96,7 @@ Notes on grammar
   define the following subtypes:
 
   * Type *integer* means a JSON *number* without *frac* or *exp* components;
-    this is expressed in the JSON spec grammer as ``[minus] int``.
+    this is expressed in the JSON spec grammar as ``[minus] int``.
 
   * Type *non-integer* means a JSON *number* that is not an *integer*; it
     must include either a *frac* or *exp* component or both.
@@ -161,7 +161,7 @@ Conversion table
 |                    |"$id": *ObjectId*}}                                       |                                                       |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Datetime            |{"$date": {"$numberLong": <64-bit signed integer          | {"$date": <ISO-8601 Internet Date/Time Format         |
-|\[year from 1970    |giving millisecs relative to the epoch, as a *string*>}}  | as decribed in RFC-3339 [#]_ with maximum time        |
+|\[year from 1970    |giving millisecs relative to the epoch, as a *string*>}}  | as described in RFC-3339 [#]_ with maximum time       |
 |to 9999 inclusive\] |                                                          | precision of milliseconds [#]_ as a *string*>}        |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Datetime            |{"$date": {"$numberLong": <64-bit signed integer          | <Same as Canonical Extended JSON>                     |
@@ -752,7 +752,7 @@ canonicalises the form where the Javascript code is quoted, since the latter
 form adheres to the JSON specification and the former does not. As an
 additional note, the NPM mongodb-extended-json module uses the form ``{"code":
 "<javascript code>"}, omitting the dollar sign (``$``) from the key. This
-specification does not accomodate the eccentricity of a single library.
+specification does not accommodate the eccentricity of a single library.
 
 CodeWithScope
 '''''''''''''

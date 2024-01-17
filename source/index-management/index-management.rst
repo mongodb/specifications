@@ -109,10 +109,10 @@ Timeouts
 
 Drivers MUST enforce timeouts for all operations per the `Client Side
 Operations Timeout
-<client-side-operations-timeout/client-side-operations-timeout.rst>`__
+<../client-side-operations-timeout/client-side-operations-timeout.md>`__
 specification. All operations that return cursors MUST support the timeout
 options documented in the `Cursors
-<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__
+<../client-side-operations-timeout/client-side-operations-timeout.md#cursors>`__
 section of that specification.
 
 ------------
@@ -1108,7 +1108,7 @@ Q: What is the difference between write concern and ``commitQuorum``?
   Also note that, since indexes are built simultaneously, higher values of ``commitQuorum`` are not as expensive as higher values of ``writeConcern``.
 
 Q: Why does the driver manually throw errors if the ``commitQuorum`` option is specified against a pre 4.4 server?
-  Starting in 3.4, the server validates all options passed to the ``createIndexes`` command, but due to a bug in versions 4.2.0-4.2.5 of the server (SERVER-47193), specifying ``commitQuorum`` does not result in an error. The option is used interally by the server on those versions, and its value could have adverse effects on index builds. To prevent users from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
+  Starting in 3.4, the server validates all options passed to the ``createIndexes`` command, but due to a bug in versions 4.2.0-4.2.5 of the server (SERVER-47193), specifying ``commitQuorum`` does not result in an error. The option is used internally by the server on those versions, and its value could have adverse effects on index builds. To prevent users from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 Changelog
 ---------
@@ -1140,5 +1140,4 @@ Changelog
 :2023-05-18: Add the search index management API.
 :2023-07-27: Add search index management clarifications.
 :2023-11-08: Clarify that ``readConcern`` and ``writeConcern`` must not be
-             applied to search index managment commands.
-
+             applied to search index management commands.

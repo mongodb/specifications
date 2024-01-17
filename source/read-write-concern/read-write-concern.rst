@@ -327,7 +327,7 @@ wtimeoutMS
 ----------
 
 ``wtimeoutMS`` MUST be considered deprecated in favor of `timeoutMS
-<client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`__.
+<../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`__.
 
 
 Server’s Default WriteConcern

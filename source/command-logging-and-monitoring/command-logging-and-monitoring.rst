@@ -121,8 +121,8 @@ The command listener API is responsible only for receiving and handling events s
 level of the driver, and is only about informing listeners about what commands are sent and what
 replies are received. As such, it would be innappropiate at this level for a driver to execute
 custom logic around particular commands to determine what failure or success means for a particular
-command. Implementators of the API are free to handle these events as they see fit, which may include
-code that futher interprets replies to specific commands based on the presence or absence of other
+command. Implementers of the API are free to handle these events as they see fit, which may include
+code that further interprets replies to specific commands based on the presence or absence of other
 fields in the reply beyond the ``ok`` field.
 
 *2. Why are document sequences included as BSON arrays?*

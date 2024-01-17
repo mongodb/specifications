@@ -699,7 +699,7 @@ the command and how it is invoked:
     preference, e.g.  not calling ``renameCollection`` with a ``mode`` of
     'secondary'.
 
-    N.B.: "used for server selection" does not supercede rules for server
+    N.B.: "used for server selection" does not supersede rules for server
     selection on "Standalone" topologies, which ignore any requested read
     preference.
 
@@ -797,7 +797,7 @@ Multi-threaded drivers and single-threaded drivers with
 ``serverSelectionTryOnce`` set to false MUST enforce a timeout for the server
 selection process. The timeout MUST be computed as described in
 `Client Side Operations Timeout: Server Selection
-<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.md#server-selection>`_.
 
 Multi-threaded or asynchronous server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1927,7 +1927,7 @@ accordingly.
 .. _SERVER-11956: https://jira.mongodb.org/browse/SERVER-11956
 .. _SERVER-12273: https://jira.mongodb.org/browse/SERVER-12273
 
-Why change from mongos High Availablity (HA) to random selection?
+Why change from mongos High Availability (HA) to random selection?
 ---------------------------------------------------------------------
 
 Mongos HA has similar problems with pinning, in that one can wind up pinned

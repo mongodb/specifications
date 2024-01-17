@@ -313,7 +313,7 @@ has the following properties:
        *                      ready() method.
        *
        *   - "closed":        The pool is destroyed. No more Connections may ever be checked out nor any
-       *                      created in the background. The pool can be set to this sate via the close()
+       *                      created in the background. The pool can be set to this state via the close()
        *                      method. The pool cannot transition to any other state after being closed.
        */
       state: "paused" | "ready" | "closed";
@@ -567,7 +567,7 @@ once that request reaches the front of the queue, having the Pool find or create
 a `Connection`_ to fulfill that request. Requests MUST be subject to a timeout
 which is computed per the rules in
 `Client Side Operations Timeout: Server Selection
-<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.md#server-selection>`_.
 
 To service a request for a `Connection`_, the Pool MUST first iterate over the
 list of available `Connections <#connection>`_, searching for a non-perished one
@@ -805,7 +805,7 @@ thread SHOULD
 -  Remove and close perished available `Connections <#connection>`_ including "in use" connections if `interruptInUseConnections` option was set to true in the most recent pool clear.
 - Apply timeouts to connection establishment per `Client Side Operations
   Timeout: Background Connection Pooling
-  <../client-side-operations-timeout/client-side-operations-timeout.rst#background-connection-pooling>`__.
+  <../client-side-operations-timeout/client-side-operations-timeout.md#background-connection-pooling>`__.
 
 A pool SHOULD allow immediate scheduling of the next background thread iteration after a clear is performed. 
 
@@ -1549,7 +1549,7 @@ including "in use" connections are no longer healthy. In some cases connections
 will fail to detect the network timeout fast enough. For example, a server request 
 can hang at the OS level in TCP retry loop up for 17 minutes before failing. Therefore 
 these connections MUST be proactively interrupted in the case of a server monitor network timeout. 
-Requesting an immediate backround thread run will speed up this process.
+Requesting an immediate background thread run will speed up this process.
 
 Why don't we configure TCP_USER_TIMEOUT?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1557,8 +1557,8 @@ Ideally, a reasonable TCP_USER_TIMEOUT can help with detecting stale connections
 alternative to `interruptInUseConnections` in Clear. 
 Unfortunately this approach is platform dependent and not each driver allows easily configuring it.
 For example, C# driver can configure this socket option on linux only with target frameworks 
-higher or equal to .net 5.0. On macOS, there is no straight equavalent for this option, 
-it's possible that we can find some equavalent configuration, but this configuration will also 
+higher or equal to .net 5.0. On macOS, there is no straight equivalent for this option, 
+it's possible that we can find some equivalent configuration, but this configuration will also 
 require target frameworks higher than or equal to .net 5.0. The advantage of using Background Thread to 
 manage perished connections is that it will work regardless of environment setup.
 

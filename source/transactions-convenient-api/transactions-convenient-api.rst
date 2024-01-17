@@ -114,7 +114,7 @@ allowed to execute other operations not associated with the transaction.
 Since ``withTransaction`` includes logic to retry transactions and commits,
 drivers MUST apply timeouts per `Client Side Operations Timeout: Convenient
 Transactions API
-<../client-side-operations-timeout/client-side-operations-timeout.rst#convenient-transactions-api>`__.
+<../client-side-operations-timeout/client-side-operations-timeout.md#convenient-transactions-api>`__.
 If ``timeoutMS`` is unset for a ``withTransaction`` call, drivers MUST
 enforce a 120-second timeout to limit retry behavior and safeguard
 applications from long-running (or infinite) retry loops. Drivers SHOULD use
@@ -184,7 +184,7 @@ This method should perform the following sequence of actions:
       back to step two.
 
    c. If the callback's error includes a "UnknownTransactionCommitResult" label,
-      the callback must have manually commited a transaction, propagate the
+      the callback must have manually committed a transaction, propagate the
       callback's error to the caller of ``withTransaction`` and return
       immediately.
 

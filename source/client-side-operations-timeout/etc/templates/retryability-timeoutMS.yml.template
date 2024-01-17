@@ -88,6 +88,8 @@ tests:
         expectError:
           isTimeoutError: true
   - description: "operation is retried multiple times for non-zero timeoutMS - {{operation.operation_name}} on {{operation.object}}"
+    runOnRequirements:
+      - minServerVersion: "4.3.1" # failCommand errorLabels option
     operations:
       - name: failPoint
         object: testRunner
@@ -130,6 +132,8 @@ tests:
                 {{operation.command_name}}: {{get_command_object(operation.object)}}
                 maxTimeMS: { $$type: ["int", "long"] }
   - description: "operation is retried multiple times if timeoutMS is zero - {{operation.operation_name}} on {{operation.object}}"
+    runOnRequirements:
+      - minServerVersion: "4.3.1" # failCommand errorLabels option
     operations:
       - name: failPoint
         object: testRunner

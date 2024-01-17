@@ -360,24 +360,27 @@ and sharded clusters.
 
 #. Test that drivers properly retry after encountering PoolClearedErrors. This
    test MUST be implemented by any driver that implements the CMAP
-   specification. This test requires MongoDB 4.2.9+ for ``blockConnection`` support in the failpoint.
+   specification.
+
+   This test requires MongoDB 4.3.4+ for both the ``errorLabels`` and
+   ``blockConnection`` fail point options.
 
    1. Create a client with maxPoolSize=1 and retryWrites=true. If testing
       against a sharded deployment, be sure to connect to only a single mongos.
 
    2. Enable the following failpoint::
 
-       {
-           configureFailPoint: "failCommand",
-           mode: { times: 1 },
-           data: {
-               failCommands: ["insert"],
-               errorCode: 91,
-               blockConnection: true,
-               blockTimeMS: 1000,
-               errorLabels: ["RetryableWriteError"]
-           }
-       }
+        {
+            configureFailPoint: "failCommand",
+            mode: { times: 1 },
+            data: {
+                failCommands: ["insert"],
+                errorCode: 91,
+                blockConnection: true,
+                blockTimeMS: 1000,
+                errorLabels: ["RetryableWriteError"]
+            }
+        }
 
    3. Start two threads and attempt to perform an ``insertOne`` simultaneously on both.
 
@@ -416,31 +419,29 @@ and sharded clusters.
 
    2. Configure a fail point with error code ``91`` (ShutdownInProgress)::
 
-        db.adminCommand({
-                configureFailPoint: "failCommand",
-                mode: {times: 1},
-                data: {
-                        writeConcernError: {
-                                code: 91,
-                                errorLabels: ["RetryableWriteError"],
-                        },
-                        failCommands: ["insert"],
-                },
-        });
+        {
+            configureFailPoint: "failCommand",
+            mode: {times: 1},
+            data: {
+                failCommands: ["insert"],
+                errorLabels: ["RetryableWriteError"],
+                writeConcernError: { code: 91 }
+            }
+        }
 
    3. Via the command monitoring CommandSucceededEvent, configure a fail point
       with error code ``10107`` (NotWritablePrimary) and a NoWritesPerformed
       label::
 
-        db.adminCommand({
-                configureFailPoint: "failCommand",
-                mode: {times: 1},
-                data: {
-                        errorCode: 10107,
-                        errorLabels: ["RetryableWriteError", "NoWritesPerformed"],
-                        failCommands: ["insert"],
-                },
-        });
+        {
+            configureFailPoint: "failCommand",
+            mode: {times: 1},
+            data: {
+                failCommands: ["insert"],
+                errorCode: 10107,
+                errorLabels: ["RetryableWriteError", "NoWritesPerformed"]
+            }
+        }
 
       Drivers SHOULD only configure the ``10107`` fail point command if the the
       succeeded event is for the ``91`` error configured in step 2.
@@ -451,16 +452,18 @@ and sharded clusters.
 
    5. Disable the fail point::
 
-        db.adminCommand({
-                configureFailPoint: "failCommand",
-                mode: "off",
-        })
+        {
+            configureFailPoint: "failCommand",
+            mode: "off"
+        }
 
 #. Test that in a sharded cluster writes are retried on a different mongos if
    one available
 
    This test MUST be executed against a sharded cluster that has at least two
    mongos instances.
+
+   This test requires MongoDB 4.3.1+ for the ``errorLabels`` fail point option.
 
    1. Ensure that a test is run against a sharded cluster that has at least two
       mongoses. If there are more than two mongoses in the cluster, pick two to
@@ -490,9 +493,11 @@ and sharded clusters.
 
    6. Disable the fail points.
 
-#. Test that in a sharded cluster on the same mongos if no other is available
+#. Test that in a sharded cluster writes are retried on the same mongos if no
+   other is available
 
-   This test MUST be executed against a sharded cluster
+   This test MUST be executed against a sharded cluster and requires MongoDB
+   4.3.1+ for the ``errorLabels`` fail point option.
 
    1. Ensure that a test is run against a sharded cluster. If there are multiple
       mongoses in the cluster, pick one to test against.
@@ -523,6 +528,12 @@ and sharded clusters.
 
 Changelog
 =========
+
+:2024-01-05: Fix typo in prose test title.
+
+:2024-01-03: Note server version requirements for fail point options and revise
+             tests to specify the ``errorLabels`` option at the top-level
+             instead of within ``writeConcernError``.
 
 :2023-08-26: Add prose tests for retrying in a sharded cluster.
 

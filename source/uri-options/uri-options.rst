@@ -315,7 +315,7 @@ pertaining to URI options apply here.
      - non-negative integer; 0 means no timeout
      - no timeout
      - no
-     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`__
 
        Amount of time spent attempting to send or receive on a socket before timing out; note that this only applies to application operations, not SDAM.
 
@@ -343,7 +343,7 @@ pertaining to URI options apply here.
    *
      - timeoutMS
      - non-negative integer; 0 or unset means no timeout
-     - Defined in `Client Side Operations Timeout: timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_.
+     - Defined in `Client Side Operations Timeout: timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_.
      - no
      - Time limit for the full execution of an operation
 
@@ -422,7 +422,7 @@ pertaining to URI options apply here.
      - positive number
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools, with exceptions described in the `Connection Pooling spec`_
-     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_
 
        Amount of time spent attempting to check out a connection from a server's
        connection pool before timing out
@@ -431,7 +431,7 @@ pertaining to URI options apply here.
      - non-negative 64-bit integer; 0 means no timeout
      - no timeout
      - no
-     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_
 
        Default write concern "wtimeout" field for the client
 

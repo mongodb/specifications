@@ -116,7 +116,7 @@ constituent parts. If so:
 
 - Drivers MUST solicit a string value for ``$ref``.
 
-- Drivers MUST solicit an arbitary value for ``$id``. Drivers SHOULD NOT enforce
+- Drivers MUST solicit an arbitrary value for ``$id``. Drivers SHOULD NOT enforce
   any restrictions on this value; however, this may be necessary if the driver
   is unable to differentiate between certain BSON types (e.g. ``null``,
   ``undefined``) and the parameter being unspecified.

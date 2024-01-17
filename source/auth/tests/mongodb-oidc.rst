@@ -429,7 +429,7 @@ Separate Connections Avoid Extra Callback Calls
 - Create request and refresh callbacks that return tokens that will not expire
   soon.  Ensure that we can record the number of times each callback is called.
 - Create two clients using the callbacks
-- Peform a find operation on each client that succeeds.
+- Perform a find operation on each client that succeeds.
 - Ensure that the request callback has been called once and the refresh
   callback has not been called.
 - Force a reauthenication on the first client using a ``failCommand`` of the
@@ -450,7 +450,7 @@ Separate Connections Avoid Extra Callback Calls
       }
     }
 
-- Perform a ``find`` operation that succeds.
+- Perform a ``find`` operation that succeeds.
 - Ensure that the request callback has been called once and the refresh
   callback has been called once.
 - Repeat the ``failCommand`` and ``find`` operation on the second client.

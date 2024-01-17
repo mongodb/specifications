@@ -221,7 +221,7 @@ following algorithm (just like the
     loop through res.cursor.firstBatch
 
     use getmore with res.cursor.id and res.cursor.ns information to loop over
-    remaing results
+    remaining results
 
 If you need to fall back to querying ``system.namespaces``, then you need to
 filter out all return documents that contain a ``$`` in the ``name`` field.
@@ -244,7 +244,7 @@ driver MAY alternatively implement it as::
     loop through res.cursor.firstBatch
 
     use getmore with res.cursor.id and res.cursor.ns information to loop over
-    remaing results
+    remaining results
 
   else
     fall back to querying system.namespaces.
@@ -269,12 +269,12 @@ All methods:
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MUST apply timeouts per the `Client Side Operations Timeout
-  <client-side-operations-timeout/client-side-operations-timeout.rst>`__
+  <./client-side-operations-timeout/client-side-operations-timeout.md>`__
   specification.
 
 All methods that return cursors MUST support the timeout options documented
 in `Client Side Operations Timeout: Cursors
-<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__.
+<./client-side-operations-timeout/client-side-operations-timeout.md#cursors>`__.
 
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
