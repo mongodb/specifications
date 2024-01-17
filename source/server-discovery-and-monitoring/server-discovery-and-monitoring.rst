@@ -2552,6 +2552,7 @@ Changelog
 :2022-09-30: Update ``updateRSFromPrimary`` to include logic before and after 6.0 servers
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
 :2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
+:2024-01-17: Add section on expected client close behaviour
 
 ----
 

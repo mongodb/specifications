@@ -712,6 +712,7 @@ Changelog
 
 :2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's
              previousDescription field
+:2024-01-17: Updated to require that ``TopologyDescriptionChangedEvent`` should be emitted before just ``TopologyClosedEvent`` is emitted
 :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
 :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 
