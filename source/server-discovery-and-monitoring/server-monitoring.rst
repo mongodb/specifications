@@ -756,7 +756,9 @@ The event API here is assumed to be like the standard `Python Event
             # Server API versioning implies that the server supports hello.
             helloOk = stableApi != Null
             connection = new Connection(serverAddress)
-            set connection timeout to connectTimeoutMS
+
+            if connectTimeoutMS !=0:
+              set connection timeout to connectTimeoutMS
 
         # Do any potentially blocking operations after releasing the mutex.
         create the socket and perform connection handshake
