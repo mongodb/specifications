@@ -1233,6 +1233,7 @@ Changelog
 :2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
 :2023-10-05: Add serverMonitoringMode and default to the polling protocol on FaaS.
              Clients MUST NOT use dedicated connections to measure RTT when using the polling protocol.
+:2024-01-17: Clarify zero-case connectTimeoutMS in SDAM setupConnection.
 
 ----
 
