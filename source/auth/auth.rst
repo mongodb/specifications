@@ -1189,20 +1189,48 @@ MONGODB-OIDC
 MONGODB-OIDC authenticates using an `OpenID Connect (OIDC)
 <https://openid.net/specs/openid-connect-core-1_0.html>`_ access token.
 
-Drivers MUST support the machine-to-machine authentication flow, which is
-described in this section. The machine-to-machine authentication flow is
-intended to be used in cases where human interaction is not practical or
-necessary, such as for web services. Some OIDC documentation refers to this type
-of OIDC authentication as "workload" authentication.
+There are two OIDC authentication flows that drivers can support:
+machine-to-machine ("machine") and human-in-the-loop ("human"). Drivers MUST
+support the machine authentication flow. Drivers MAY support the human
+authentication flow.
 
-Drivers MAY support the human-in-the-loop authentication flow described in the
-`Human Authentication Flow`_ section.
+Machine Authentication Flow
+```````````````````````````
+The machine authentication flow is intended to be used in cases where human
+interaction is not necessary or practical, such as to authenticate database
+access for a web service. Some OIDC documentation refers to the machine
+authentication flow as "workload authentication".
+
+Drivers MUST implement all behaviors described in the ``MONGODB-OIDC``
+specification, unless the section or block specifically says that it only
+applies to the `Human Authentication Flow`_.
+
+Human Authentication Flow
+`````````````````````````
+The human authentication flow is intended to be used for applications that
+involve direct human interaction, such as database tools or CLIs. Some OIDC
+documentation refers to the human authentication flow as "workforce
+authentication".
+
+In addition to the **access token**, the human authentication flow introduces
+some additional concepts:
+
+- **Identity Provider (IdP)**: A service that manages user accounts and
+  authenticates users, such as Okta or OneLogin.
+- **Refresh token**: Some OIDC providers may return a refresh token in addition
+  to an access token. A refresh token can be used to retrieve new access tokens
+  without requiring a human to re-authorize the application.
+
+Drivers that support the `Human Authentication Flow`_ MUST implement all
+behaviors described in the ``MONGODB-OIDC`` specification, including sections or
+blocks that specifically say that it only applies the `Human Authentication
+Flow`_.
 
 `MongoCredential`_ Properties
 `````````````````````````````
 
 username
-    MAY be specified. Its meaning depends on the OIDC provider used.
+    MAY be specified. Its meaning varies depending on the OIDC provider used.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1215,64 +1243,67 @@ mechanism
 
 mechanism_properties
     PROVIDER_NAME
-        Drivers MUST allow the user to specify the name of the OIDC service to
-        use to obtain credentials. The value MUST be one of ["aws"]. If both
-        ``PROVIDER_NAME`` and a `custom callback`_ are configured for the same
-        ``MongoClient``, the driver MUST raise an error.
+        The name of a built-in OIDC provider integration to use to obtain
+        credentials. The value MUST be one of ["aws"]. If both ``PROVIDER_NAME``
+        and an `OIDC Callback`_ are provided for the same ``MongoClient``
+        (either via the ``CALLBACK`` mechanism property or a ``MongoClient``
+        configuration), the driver MUST raise an error.
 
-    OIDC_TOKEN_CALLBACK
-        Drivers MAY allow the user to specify a custom OIDC callback using a
-        mechanism property. Drivers MUST support specifying a callback either as
-        a ``MongoClient`` configuration or a mechanism property, but MUST NOT
-        support both.
+    CALLBACK
+        An `OIDC Callback` that returns credentials for OIDC providers that do
+        not have a built-in integraiton. Drivers MAY allow the user to specify
+        an `OIDC Callback`_ using a ``MongoClient`` configuration instead of a
+        mechanism property, depending on what is conventional for the driver.
+        Drivers MUST NOT support both the ``CALLBACK`` mechanism property and
+        the ``MongoClient`` configuration.
 
-    REQUEST_TOKEN_CALLBACK
-        This property is only required for drivers that support the `Human
-        Authentication Flow`_. Drivers MUST allow the user to specify a callback
-        of the form "onRequest" (defined below), if the driver supports
-        providing objects as mechanism property values.  Otherwise the driver
-        MUST allow it as a MongoClientOption.
+    CALLBACK_TYPE
+        The type of `OIDC Callback`. The value MUST be one of ["machine",
+        "human"]. If an `OIDC Callback`_ is configured and ``CALLBACK_TYPE`` is
+        not specified, the driver MUST raise an error. This property is only
+        required for drivers that support the `Human Authentication Flow`_.
 
     ALLOWED_HOSTS
-        This property is only required for drivers that support the `Human
-        Authentication Flow`_. The list of allowed hostnames or ip-addresses
-        (ignoring ports) for MongoDB connections. The hostnames may include a
-        leading "\*." wildcard, which allows for matching (potentially  nested)
-        subdomains. ALLOWED_HOSTS is a security feature and MUST default to
+        The list of allowed hostnames or ip-addresses (ignoring ports) for
+        MongoDB connections. The hostnames may include a leading "\*." wildcard,
+        which allows for matching (potentially  nested) subdomains.
+        ``ALLOWED_HOSTS`` is a security feature and MUST default to
         ``["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net",
         "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``. When
-        ``MONGODB-OIDC`` authentication is attempted against a hostname that
-        does not match any of list of allowed hosts, the driver MUST raise a
-        client-side error without invoking any user-provided callbacks.  This
-        value MUST not be allowed in the URI connection string.  The hostname
-        check MUST be performed after SRV record resolution, if applicable. This
-        property is only applicable when ``REQUEST_TOKEN_CALLBACK`` is given.
+        ``MONGODB-OIDC`` authentication using a `Human Callback`_ is attempted
+        against a hostname that does not match any of list of allowed hosts, the
+        driver MUST raise a client-side error without invoking any user-provided
+        callbacks. This value MUST NOT be allowed in the URI connection string.
+        The hostname check MUST be performed after SRV record resolution, if
+        applicable. This property is only required for drivers that support the
+        `Human Authentication Flow`_.
 
-Supported Providers
-```````````````````
-Drivers MUST support all of the following OIDC authentication providers.
+Built-in Provider Integrations
+``````````````````````````````
+Drivers MUST support all of the following built-in OIDC providers.
 
 AWS
 ___
 The AWS provider is enabled by setting auth mechanism property
-``PROVIDER_NAME:aws``. If enabled, drivers MUST read the file path from
+``PROVIDER_NAME:aws``.
+
+If enabled, drivers MUST read the file path from
 environment variable ``AWS_WEB_IDENTITY_TOKEN_FILE`` and then read the OIDC
 Access Token from that file. The driver MUST use the contents of that file as
 value in the ``jwt`` field of the ``saslStart`` payload.
 
 Drivers MAY implement the AWS provider so that it conforms to the function
-signature of the `custom callback`_ to prevent having to re-implement the AWS
+signature of the `OIDC Callback`_ to prevent having to re-implement the AWS
 provider logic in the OIDC prose tests.
 
-.. _`custom callback`:
-
-Custom Callback
-_______________
-Drivers MUST allow the user to integrate with OIDC providers not supported by
-built-in logic by implementing a custom callback that returns an OIDC token.
-Callbacks can be synchronous or asynchronous, depending on the driver and/or
-language. Asynchronous callbacks should be preferred when other operations in
-the driver use asynchronous functions.
+OIDC Callback
+`````````````
+Drivers MUST allow users to provide a callback that returns an OIDC access
+token. The purpose of the callback is to allow users to integrate with OIDC
+providers not supported by the `Built-in Provider Integrations`_. Callbacks can
+be synchronous or asynchronous, depending on the driver and/or language.
+Asynchronous callbacks should be preferred when other operations in the driver
+use asynchronous functions.
 
 Drivers MUST provide a way for the callback to be either automatically canceled,
 or to cancel itself. This can be as a timeout argument to the callback, a
@@ -1282,12 +1313,11 @@ timeoutMS)`` as described in the Server Selection section of the CSOT spec.
 
 The driver MUST pass the following information to the callback:
 
-- ``timeout``: A timeout, in milliseconds, deadline, or ``timeoutContext``.
+- ``timeout``: A timeout, in milliseconds, a deadline, or a ``timeoutContext``.
 - ``version``: The callback API version number. The version number is used to
   communicate callback API changes that are not breaking but that users may want
   to know about and review their implementation. Drivers MUST pass ``1`` for the
-  current callback API version number. Maintainers MUST increment the callback
-  API version whenever the callback signature is changed.
+  current callback API version number.
 
   For example, users may add the following check in their callback:
 
@@ -1297,17 +1327,18 @@ The driver MUST pass the following information to the callback:
         throw new Error("OIDC callback API has changed!");
     }
 
-The callback MUST allow implementers to return the following information:
+The callback MUST be able to return the following information:
 
 - ``accessToken``: An OIDC access Token string. The driver MUST NOT attempt to
   validate ``accessToken`` directly.
-- ``expiresIn``: The expiry time for the access Token. Drivers MUST support and
+- ``expiresIn``: An optional expiry time for the access Token. Drivers MUST support and
   document values for both an expiry time and a value that indicates there is no
   expiry time, like 0 or ``null``.
 
 The signature of the callback is up to the driver's discretion, but the driver
 MUST ensure that additional optional input parameters and return values can be
-added to the callback signature in the future. An example might look like:
+added to the callback signature in the future. An example callback API might
+look like:
 
 .. code:: typescript
 
@@ -1316,46 +1347,231 @@ added to the callback signature in the future. An example might look like:
       version: int;
   }
 
-  interface OIDCToken {
+  interface OIDCCredential {
       accessToken: string;
       expiresInSeconds: Optional<int>;
   }
 
+  function oidcCallback(params: OIDCCallbackParams): OIDCCredential
+
+Human Callback
+______________
+Drivers that support the `Human Authentication Flow`_ MUST implement the human
+callback version of the `OIDC Callback`.
+
+In addition to the information described in the `OIDC Callback` section,
+drivers MUST be able to pass the following information to the callback:
+
+- ``idpInfo``: Information used to authenticate with the IdP.
+
+  - ``issuer``: A URL which describes the Authentication Server. This identifier
+    should be the iss of provided access tokens, and be viable for RFC8414
+    metadata discovery and RFC9207 identification.
+  - ``clientId``: A unique client ID for this OIDC client.
+  - ``requestScopes``: A list of additional scopes to request from IdP.
+
+- ``refreshToken``: The refresh token, if applicable, to be used by the callback
+  to request a new token from the issuer.
+
+In addition to the information described in the `OIDC Callback` section, the
+callback MUST be able to return the following information:
+
+- ``refreshToken``: An optional refresh token that can be used to fetch new
+  access tokens.
+
+An example callback API that supports the human callback might look like:
+
 .. code:: typescript
 
-  function oidcCallback(params: OIDCCallbackParams): OIDCToken
+  interface IdpInfo {
+    issuer: string;
+    clientId: string;
+    requestScopes: Optional<Array<string>>;
+  }
+
+  interface OIDCCallbackParams {
+      callbackTimeoutMS: int;
+      version: int;
+      idpInfo: Optional<IdpInfo>;
+      refreshToken: Optional<string>;
+  }
+
+  interface OIDCCredential {
+      accessToken: string;
+      refreshToken: Optional<string>;
+      expiresInSeconds: Optional<int>;
+  }
+
+  function oidcCallback(params: OIDCCallbackParams): OIDCCredential
+
+Users enable the human callback behavior by setting mechanism property
+``CALLBACK_TYPE:human``. When the human callback behavior is enabled, drivers
+MUST use the following behaviors when calling the callback:
+
+- The driver MUST pass the ``IdpInfo`` and the ``refreshToken`` (if available)
+  to the callback.
+- The timeout duration MUST be 5 minutes. This is to account for the human
+  interaction required to complete the callback. In this case, the callback is
+  not subject to CSOT.
+
+If ``CALLBACK_TYPE:machine`` drivers MUST use the callback behavior described in
+the `OIDC Callback`_ section.
 
 Conversation
 ````````````
-As an example, given the OIDC token JWT string "abcd1234", the SASL conversation
+OIDC supports two conversation styles: one-step and two-step. The server detects
+whether the driver is using a one-step or two-step conversation based on the
+structure of the ``saslStart`` payload.
+
+One-Step
+________
+A one-step conversation is used for OIDC providers that allow direct access to
+an access token. For example, an OIDC provider configured for machine-to-machine
+authentication may provide an access token via a local file pre-loaded on an
+application host.
+
+Drivers MUST use a one-step conversation when using a cached access token, one
+of the `Built-in Provider Integrations`_, an `OIDC Callback` (not a `Human
+Callback`_).
+
+The one-step conversation starts with a ``saslStart`` containing a
+``JwtStepRequest`` payload. The value of ``jwt`` is the OIDC access token
+string.
+
+.. code:: typescript
+
+  interface JwtStepRequest:
+      // Compact serialized JWT with signature.
+      jwt: string;
+  }
+
+An example OIDC one-step SASL conversation with access token string "abcd1234"
 looks like:
 
-| C: :javascript:`{saslStart: 1, mechanism: "MONGODB-OIDC", payload: BinData(0, "FwAAAAJqd3QACQAAAGFiY2QxMjM0AAA=")}`
-| S: :javascript:`{conversationId : 1, payload: BinData(0, ""), done: true, ok: 1}`
+.. code:: javascript
 
-Where the sent ``payload`` is a generic binary blob containing a BSON document
-in the form ``{"jwt": "abcd1234"}``.
+  // Client:
+  {
+    saslStart: 1,
+    mechanism: "MONGODB-OIDC",
+    // payload is a BSON generic binary field containing a JwtStepRequest BSON
+    // document: {"jwt": "abcd1234"}
+    payload: BinData(0, "FwAAAAJqd3QACQAAAGFiY2QxMjM0AAA=")
+  }
 
-Speculative Authentication
-``````````````````````````
-Drivers MUST implement speculative authentication for MONGODB-OIDC during the
-``hello`` handshake. If there is a cached access token on the ``MongoClient``,
-use it for authentication. Otherwise, call the configured workload callback to
-retrieve a new access token and send that access token with the speculative
-authentication document.
+  // Server:
+  {
+    conversationId : 1,
+    payload: BinData(0, ""),
+    done: true,
+    ok: 1
+  }
 
-Reauthentication
-````````````````
-When an operation fails with ``ReauthenticationRequired`` (error code 391) and
-MONGODB-OIDC is in use, the driver MUST reauthenticate the connection.
-Reauthenticating a connection requires fetching a new access token and
-re-running the SASL conversation.
+Two-Step
+________
+A two-step conversation is used for OIDC providers that require an extra
+authorization step before issuing a credential. For example, an OIDC provider
+configured for end-user authentication may require redirecting the user to a
+webpage so they can authorize the request.
 
-Access Token Caching
-````````````````````
-Some OIDC access token providers may impose rate limits, incur per-request
-costs, or be slow to return. To minimize those issues, drivers MUST cache and
-reuse access tokens returned by OIDC access token providers.
+Drivers that support the `Human Authentication Flow`_ MUST implement the
+two-step conversation. Drivers MUST use a two-step conversation when using a
+`Human Callback`_ and when there is no cached access token.
+
+The two-step conversation starts with a ``saslStart`` containing a
+``PrincipalStepRequest`` payload. The value of ``n`` is the ``username`` from
+the connection string. If a ``username`` is not provided, field ``n`` should be
+omitted.
+
+.. code:: typescript
+
+  interface PrincipalStepRequest {
+    // Name of the OIDC user principal.
+    n: Optional<string>;
+  }
+
+The server uses ``n`` (if provided) to select an appropriate IdP. Note that the
+principal name is optional as it may be provided by the IdP in environments
+where only one IdP is used.
+
+The server responds to the ``PrincipalStepRequest`` with ``IdpInfo`` for the
+selected IdP:
+
+.. code:: typescript
+
+  interface IdpInfo {
+    // A URL which describes the Authentication Server. This identifier should
+    // be the iss of provided access tokens, and be viable for RFC8414 metadata
+    // discovery and RFC9207 identification.
+    issuer: string;
+
+    // A unique client ID for this OIDC client.
+    clientId: string;
+
+    // A list of additional scopes to request from IdP.
+    requestScopes: Optional<Array<string>>;
+  }
+
+The driver passes the IdP information to the `Human Callback`_, which should
+return an OIDC credential containing an access token and, optionally, a refresh
+token.
+
+The driver then sends a ``saslContinue`` with a ``JwtStepRequest`` payload to
+complete authentication. The value of ``jwt`` is the OIDC access token string.
+
+.. code:: typescript
+
+  interface JwtStepRequest:
+      // Compact serialized JWT with signature.
+      jwt: string;
+  }
+
+An example OIDC two-step SASL conversation with username "myidp" and access
+token string "abcd1234" looks like:
+
+.. code:: javascript
+
+  // Client:
+  {
+    saslStart: 1,
+    mechanism: "MONGODB-OIDC",
+    // payload is a BSON generic binary field containing a PrincipalStepRequest
+    // BSON document: {"n": "myidp"}
+    payload: BinData(0, "EgAAAAJuAAYAAABteWlkcAAA")
+  }
+
+  // Server:
+  {
+    conversationId : 1,
+    // payload is a BSON generic binary field containing an IdpInfo BSON document:
+    // {"issuer": "https://issuer", "clientId": "abcd", "requestScopes": ["a","b"]}
+    payload: BinData(0, "WQAAAAJpc3N1ZXIADwAAAGh0dHBzOi8vaXNzdWVyAAJjbGllbnRJZAAFAAAAYWJjZAAEcmVxdWVzdFNjb3BlcwAXAAAAAjAAAgAAAGEAAjEAAgAAAGIAAAA="),
+    done: false,
+    ok: 1
+  }
+
+  // Client:
+  {
+    saslContinue: 1,
+    conversationId: 1,
+    // payload is a BSON generic binary field containing a JwtStepRequest BSON
+    // document: {"jwt": "abcd1234"}
+    payload: BinData(0, "FwAAAAJqd3QACQAAAGFiY2QxMjM0AAA=")
+  }
+
+  // Server:
+  {
+    conversationId: 1,
+    payload: BinData(0, ""),
+    done: true,
+    ok: 1
+  }
+
+Credential Caching
+``````````````````
+Some OIDC providers may impose rate limits, incur per-request costs, or be slow
+to return. To minimize those issues, drivers MUST cache and reuse access tokens
+returned by OIDC providers.
 
 Drivers MUST cache the most recent access token per ``MongoClient`` (henceforth
 referred to as the *Client Cache*). Drivers MAY store the *Client Cache* on the
@@ -1364,287 +1580,174 @@ token per ``MongoClient``. Additionally, drivers MUST cache the access token
 used to authenticate a connection on the connection object (henceforth referred
 to as the *Connection Cache*).
 
-Driver MUST ensure that only one call to the configured provider or custom
-provider callback can happen at a time. To avoid adding a bottleneck that would
-override the ``maxConnecting`` setting, the driver MUST NOT hold an exclusive
-lock while performing the authentication handshake.
+Drivers MUST ensure that only one call to the configured provider or OIDC
+callback can happen at a time. To avoid adding a bottleneck that would override
+the ``maxConnecting`` setting, the driver MUST NOT hold an exclusive lock while
+running ``saslStart`` or ``saslContinue``.
 
-Example code for access token caching using the read-through cache pattern:
+Example code for credential caching using the read-through cache pattern:
 
 .. code:: python
 
-  def client_cache(invalid_token):
-    # Lock the Client Cache so that only one caller can modify the cache and
-    # call the configured provider or custom callback at a time.
+  def get_access_token():
+    # Lock the OIDC authenticator so that only one caller can modify the cache
+    # and call the configured OIDC provider at a time.
     client.oidc_cache.lock()
-    token = client.oidc_cache.token
 
-    # Check if we need to fetch and cache a new token from the OIDC provider or
-    # custom callback.
+    # Check if we can use the access token from the Client Cache or if we need
+    # to fetch and cache a new access token from the OIDC provider.
+    access_token = client.oidc_cache.access_token
     is_cache = True
-    if token is None or token == invalid_token:
-      token = oidc_provider()
+    if access_token is None
+      credential = oidc_provider()
       is_cache = False
-      client.oidc_cache.token = token
-    client.cached_token.unlock()
+      client.oidc_cache.access_token = credential.access_token
 
-    return token, is_cache
+    client.oidc_cache.unlock()
 
-Handshake Authentication
-________________________
-Use the following algorithm to manage the caches during handshake
-authentication:
+    return access_token, is_cache
+
+Drivers MUST have a way to invalidate a specific access token from the *Client
+Cache*. Invalidation MUST only clear the cached access token if it is the same
+as the invalid access token and MUST be an atomic operation (e.g. using a mutex
+or a compare-and-swap operation).
+
+Example code for invalidation:
+
+.. code:: python
+
+  def invalidate(access_token):
+    client.oidc_cache.lock()
+
+    if client.oidc_cache.access_token == access_token:
+      client.oidc_cache.access_token = None
+
+    client.oidc_cache.unlock()
+
+Drivers that support the `Human Authentication Flow`_ MUST also cache the
+``IdPInfo`` and refresh token in the *Client Cache* when a `Human
+Callback`_ is configured.
+
+Authentication
+______________
+Use the following algorithm to authenticate a new connection:
 
 - Check if the the *Client Cache* has an access token.
 
-    - If it does, cache the returned access token in *Connection Cache* and
-      optimisitically try to authenticate using the access token. If the server
-      returns ``AuthenticationFailed`` (error code 18), sleep 100ms then
-      continue.
+  - If it does, cache the access token in the *Connection Cache* and perform a
+    `One-Step` SASL conversation using the access token in the *Client Cache*.
+    If the server returns an error, invalidate that access token, sleep 100ms
+    then continue.
 
-- Call the access token function for the configured provider or the custom
-  provider callback.
-- Cache the returned access token in the *Client Cache* and *Connection Cache*.
-- Attempt to authenticate. Raise any errors to the user.
+- Call the configured built-in provider integration or the OIDC callback to
+  retrieve a new access token.
+- Cache the new access token in the *Client Cache* and *Connection Cache*.
+- Perform a `One-Step` SASL conversation using the new access token.
+  Raise any errors to the user.
 
-Example code for handshake authentication using the ``client_cache`` function
-described above:
+Example code to authenticate a connection using the ``get_access_token`` and
+``invalidate`` functions described above:
 
 .. code:: python
 
-  def auth(conn):
-    token, is_cache = client_cache(None)
+  def auth(connection):
+    access_token, is_cache = get_access_token()
 
     # If there is a cached access token, try to authenticate with it. If
-    # authentication fails, it's possible the cached token is expired. In that
-    # case, invalidate the token, fetch a new token, and try to authenticate
-    # again.
+    # authentication fails, it's possible the cached access token is expired. In
+    # that case, invalidate the access token, fetch a new access token, and try
+    # to authenticate again.
     if is_cache:
       try:
-        conn.oidc_cache.token = token
-        sasl_conversation(conn, {"jwt": token})
+        connection.oidc_cache.access_token = access_token
+        sasl_conversation(connection, {"jwt": access_token})
         return
       except AuthenticationFailed:
+        invalidate(access_token)
         sleep(0.1)
-        invalid_token = token
-        token = client_cache(invalid_token)
+        access_token, _ = get_access_token()
 
-    conn.oidc_cache.token = token
-    sasl_conversation(conn, {"jwt": token})
+    connection.oidc_cache.access_token = access_token
+    sasl_conversation(connection, {"jwt": access_token})
+
+For drivers that support the `Human Authentication Flow`_, use the following
+algorithm to authenticate a new connection when a `Human Callback`_ is
+configured:
+
+- Check if the *Client Cache* has an access token.
+
+  - If it does, cache the access token in the *Connection Cache* and perform a
+    `One-Step`_ SASL conversation using that access token. If the server returns
+    an error, invalidate that access token token from the *Client Cache* and
+    *Connection Cache* and continue.
+
+- Check if the *Client Cache* has a refresh token.
+
+  - If it does, call the `Human Callback`_ with the cached refresh token and
+    ``IdpInfo`` to get a new access token. Cache the new access token in the
+    *Client Cache* and *Connection Cache*. Perform a `One-Step`_ SASL
+    conversation using the new access token. If any errors occur, invalidate the
+    refresh token from the *Client Cache* and the access token from the *Client
+    Cache* and *Connection Cache* and continue.
+
+- Start a new `Two-Step`_ SASL conversation.
+- Run a ``PrincipalStepRequest`` to get the ``IdpInfo``.
+- Call the `Human Callback`_ with the new ``IdpInfo`` to get a new access token
+  and optional refresh token.
+- Cache the new ``IdpInfo`` and refresh token in the *Client Cache* and the new
+  access token in the *Client Cache* and *Connection Cache*.
+- Attempt to authenticate using a ``JwtStepRequest`` with the new access token.
+  Raise any errors to the user.
+
+Speculative Authentication
+``````````````````````````
+Drivers MUST implement speculative authentication for MONGODB-OIDC during the
+``hello`` handshake. Use the following algorithm to build the speculative
+authentication document:
+
+- Check if the *Client Cache* has an access token.
+
+  - If it does, send a ``JwtStepRequest`` with the cached access token in the
+    speculative authentication document.
+
+- Call the configured built-in provider integration or the OIDC callback to
+  retrieve a new access token.
+- Cache the new access token in the *Client Cache* and *Connection Cache*.
+- Send a ``JwtStepRequest`` with the new access token in the speculative
+  authentication document.
+
+For drivers that support the `Human Authentication Flow`_, use the following
+algorithm to build the speculative authentication document when a `Human
+Callback`_ is configured:
+
+- Check if the *Client Cache* has an access token.
+
+  - If it does, send a ``JwtStepRequest`` with the cached access token in the
+    speculative authentication document.
+
+- Send a ``PrincipalStepRequest`` (with the ``username`` from the connection
+  string, if provided) in the speculative authentication document.
+
+Drivers MUST NOT call a `Human Callback`_ callback during speculative
+authentication.
 
 Reauthentication
-________________
-If any operation fails with ``ReauthenticationRequired`` (error code 391), the
-driver MUST consider the access token from the *Connection Cache* expired. Use
-the following algorithm to manage the caches during `reauthentication`_:
+````````````````
+If any operation fails with ``ReauthenticationRequired`` (error code 391) and
+MONGODB-OIDC is in use, the driver MUST reauthenticate the connection. To
+reauthenticate a connection, invalidate the access token stored on the
+connection (i.e. the *Connection Cache*) from the *Client Cache*, fetch a new
+access token, and re-run the SASL conversation. Drivers MUST NOT send a
+``hello`` when reauthenticating a connection.
 
-- Check if the access token in the *Client Cache* is different than the access
-  token in the *Connection Cache*.
-
-    - If they are different, cache the returned access token in *Connection
-      Cache* and optimisitically try to authenticate using the access token. If
-      the server returns ``AuthenticationFailed`` (error code 18), sleep 100ms
-      then continue.
-
-- Call the access token function for the configured provider or the custom
-  provider callback.
-- Cache the returned access token in the *Client Cache* and *Connection Cache*.
-- Attempt to authenticate. Raise any errors to the user.
-
-Example code for reauthentication using the ``client_cache`` function described
-above:
+Example code for reauthentication using the ``auth`` function described above:
 
 .. code:: python
 
   def reauth(conn):
-    invalid_token = conn.oidc_cache.token
-    token, is_cache = client_cache(invalid_token)
-
-    # If there is a cached access token, try to authenticate with it. If
-    # authentication fails, it's possible the cached token is expired. In that
-    # case, invalidate the token, fetch a new token, and try to authenticate
-    # again.
-    if is_cache:
-      try:
-        conn.oidc_cache.token = token
-        sasl_conversation(conn, {"jwt": token})
-        return
-      except AuthenticationFailed:
-        sleep(0.1)
-        invalid_token = token
-        token = client_cache(invalid_token)
-
-    conn.oidc_cache.token = token
-    sasl_conversation(conn, {"jwt": token})
-
-
-Human Authentication Flow
-`````````````````````````
-Drivers MAY support the human-in-the-loop authentication flow, which is
-described in this section. The human-in-the-loop authentication flow is intended
-to be used for applications that require direct human interaction, such as
-database tools or CLIs. Some OIDC documentation refers to authentication for
-humans as "workforce" authentication.
-
-Interfaces
-``````````
-Authenticating using the MONGODB-OIDC mechanism will require 1 or 2 round trips between the MongoDB driver and server.
-The requests from the driver and the replies from the server are described by the following interfaces which are encoded
-in the payload as octet sequences defining BSON objects:
-
-.. code:: typescript
-
-  // Driver's opening request in saslStart.
-  interface PrincipalStepRequest {
-    // Name of the OIDC user Principal.
-    n: Optional<string>;
-  }
-
-Note that the principal name is optional as it may be provided by the IdP in environments where only one IdP is used.
-If given, then ``username`` provided by the user MUST be used as the Principal ``(n)``.
-
-.. code:: typescript
-
-  // The information used by a REQUEST_TOKEN_CALLBACK to authenticate with the Identity Provider.
-  interface IdpInfo {
-    // URL which describes the Authentication Server. This identifier should be
-    // the iss of provided access tokens, and be viable for RFC8414
-    // metadata discovery and RFC9207 identification.
-    issuer: string;
-
-    // Unique client ID for this OIDC client.
-    clientId: string;
-
-    // Additional scopes to request from IdP.
-    requestScopes: Optional<Array<string>>;
-  }
-
-The server will use Principal ``(n)`` if provided in the driver's ``PrincipalStepRequest`` to select an appropriate IdP.
-This IdP's configuration will be returned in the server's response that will be used by the end-user to acquire an Access Token.
-
-This Access Token will be used as the JWT in the driver's ``JwtStepRequest`` to complete authentication.
-
-.. code:: typescript
-
-  // Client's request with signed token.
-  interface JwtStepRequest:
-      // Compact serialized JWT with signature.
-      jwt: string;
-  }
-
-The IdP response that is expected to be returned by the ``REQUEST_TOKEN_CALLBACK`` is as follows:
-
-  .. code:: typescript
-
-    // The result of a token request.
-    interface IdPResponse {
-        // The oidc access token.
-        accessToken: string;
-
-        // The OIDC refresh token.
-        refreshToken: Optional<string>;
-
-        // The expiration time in seconds from the current time (ignored).
-        expiresInSeconds: Optional<string>;
-    }
-
-Conversation
-````````````
-If using the ``PrincipalStepRequest`` first, the conversation will look like:
-
-| C: :javascript:`{saslStart: 1, mechanism: "MONGODB-OIDC", payload: BinData(0, "...")}`
-| S: :javascript:`{conversationId : 1, payload: BinData(0,"..."), done: false, ok: 1}`
-| C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "...")}`
-| S: :javascript:`{conversationId: 1, payload: BinData(0,".."), done: true, ok: 1}`
-
-If using the ``JwtStepRequest`` directly, the conversation will look like:
-
-| C: :javascript:`{saslStart: 1, mechanism: "MONGODB-OIDC", payload: BinData(0, "...")}`
-| S: :javascript:`{conversationId : 1, payload: BinData(0,"..."), done: true, ok: 1}`
-
-Drivers MUST NOT send a ``PrincipalStepRequest`` when performing machine authentication
-or when there is a cached Access Token.  Drivers MUST instead  use ``saslStart`` with a ``JwtStepRequest``.
-
-Caching
-```````
-Drivers MUST cache the ``IdPInfo``, Access Token, and Refresh Token associated with each
-``MongoClient``.  If any operation fails the driver MUST clear the Access Token. The Refresh Token is handled differently,
-see the ``Reauthentication`` section below.
-
-Drivers MUST also use a token generation id that is incremented whenever a new Access Token is retrieved.
-When a connection succeeds, the token generation id MUST be associated with or stored on the connection object.
-This value is used in the ``Reauthentication`` section below.
-
-Speculative Authentication
-``````````````````````````
-Drivers MUST implement speculative authentication for MONGODB-OIDC during the ``hello`` handshake.
-If there is a cached Access Token the ``JwtStepRequest`` SASL command will be used as the speculation command.
-If there is no cached Access Token, the ``PrincipalStepRequest`` will be used as the speculation command.
-The driver MUST NOT call the callback during speculative authentication.
-
-REQUEST_TOKEN_CALLBACK
-``````````````````````
-Drivers that implement ``REQUEST_TOKEN_CALLBACK`` (i.e. the human authentication
-flow) MUST provide a way for the ``REQUEST_TOKEN_CALLBACK`` to be either
-automatically canceled, or to cancel itself.  This can be as a timeout argument
-to the callback, a cancellation context passed to the callback, or some other
-language-appropriate mechanism.  The timeout duration MUST be 5 minutes, to
-account for the fact that there may be human interaction involved. This callback
-is not subject to CSOT.
-
-Callbacks can be synchronous and/or asynchronous, depending on the driver
-and/or language.  Asynchronous callbacks should be preferred when other
-operations in the driver use asynchronous functions.
-
-The driver MUST pass the following information to the callback:
-``IdpInfo``, and either a ``timeoutSeconds`` or ``timeoutContext`` object for the callback.
-The signature of the callback is up to the driver's discretion, but the driver MUST ensure that,
-in the future, callbacks may have additional optional parameters passed to them.
-An example might look like:
-
-.. code: typescript
-
-  interface RequestParameters {
-      // Timeout in seconds for the callback.  Optionally, timeoutContext instead if applicable to language.
-      timeoutSeconds: int;
-
-      // The version of the callback parameter interface.
-      version: int;
-
-      // The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
-      refreshToken: Optional<string>;
-  }
-
-.. code: typescript
-
-  function onRequest(info: IdpInfo, params: RequestParameters): IdpResponse
-
-Before calling the callback, the driver MUST acquire a lock unique to the ``MongoClient``.
-The driver MUST ensure that credentials have not changed between when the lock was requested and when it was acquired.  The lock MUST be released
-when the callback call as finished or errored.
-This is because the ``REQUEST_TOKEN_CALLBACK`` may involve human interaction, and refresh tokens might only be able to be used used once.
-
-If the callback does not return an object in the correct form of ``IdpResponse``, the driver MUST raise an error either using the type
-system or by raising an error when non-optional properties are missing .
-The driver MUST NOT attempt to validate the token(s) directly.
-It is expected that if the server changes the expected fields, the SASL exchange will be updated with a version parameter.
-Drivers do not need to attempt to provide old-driver-new-server compatibility.
-
-If no callback is given, the driver MUST must raise a validation error.
-
-Reauthentication
-````````````````
-When reauthentication is requested by the server (as a 391 error code) and MONGODB-OIDC is in use, the driver MUST perform a reauthentication.
-The driver MUST account for the case of multiple connections hitting a reauthentication error at different times.
-The driver MUST also account for a reauthenication that results from an IdP configuration change on the server.
-To accomplish these goal, the following algorithm is used to handle a reauthenication error:
-
-- First, see if the Access Token on the MongoClient is different than the Access Token on the connection.
-   - If they are different, optimisitically try to authenticate.  On error, continue.
-- Next, perform a ``PrincipalNameRequest`` to determine if the ``IdpInfo`` has changed.
-   - If it has changed, clear the current Access Token and Refresh Token, and continue.
-- If we have a Refresh Token, attempt to authenticate.  On error, clear the Refresh Token and continue.
-- Attempt to authenticate.  Raise any errors to the user.
+    invalidate(conn.oidc_cache.access_token)
+    conn.oidc_cache.access_token = None
+    auth(conn)
 
 -------------------------
 Connection String Options

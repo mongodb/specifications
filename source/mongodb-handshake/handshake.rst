@@ -414,7 +414,7 @@ structure as seen in the MONGODB-OIDC conversation section in the `Driver
 Authentication spec
 <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_.
 However, the driver MUST not call a callback as part of
-``speculativeAuthenticate`` during the `OIDC Human Authentication Flow <../auth/auth.rst#human-authentication-flow>`_.
+``speculativeAuthenticate`` during the `Human Authentication Flow <../auth/auth.rst#human-authentication-flow>`_.
 
 If the initial handshake command with a ``speculativeAuthenticate`` argument succeeds,
 the client should proceed with the next step of the exchange. If the initial handshake
