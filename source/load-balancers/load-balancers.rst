@@ -436,6 +436,7 @@ be supported.
 Changelog
 =========
 
+:2024-01-17: Clarify that ``TopologyDescriptionChangedEvent`` must be emitted on topology close
 :2022-10-05: Remove spec front matter and reformat changelog.
 :2022-01-18: Clarify that ``OP_MSG`` must be used in load balanced mode.
 :2021-12-22: Clarify that pinned connections in transactions are exclusive.
