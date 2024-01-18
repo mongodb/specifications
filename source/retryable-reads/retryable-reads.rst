@@ -331,6 +331,10 @@ other error originating from the server, that error should be raised instead as
 the caller can infer that an attempt was made and the second error is likely
 more relevant (with respect to the current topology state).
 
+If a driver associates server information (e.g. the server address or
+description) with an error, the driver MUST ensure that the reported server
+information corresponds to the server that originated the error.
+
 4. Implementation constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -705,6 +709,9 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2023-12-05: Add that any server information associated with retryable
+             exceptions MUST reflect the originating server, even in the
+             presence of retries.
 :2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes
              that should be retried.
 :2023-11-28: Add ExceededTimeLimit to the list of error codes that should

@@ -417,7 +417,7 @@ The **OP_REPLY** message has the following general structure.
         int32     requestID;      // identifier for this message
 
         int32     responseTo;     // requestID from the original
-                                  // request(used in reponses from db)
+                                  // request(used in responses from db)
 
         int32     opCode;         // request type - see table below
 

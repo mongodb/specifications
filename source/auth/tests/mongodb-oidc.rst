@@ -327,8 +327,70 @@ operation.
       mode: {
         times: 1
       },
+<<<<<<< HEAD
       data: {
         failCommands: [
+=======
+      "data": {
+        "failCommands": [
+          "find", "saslStart"
+        ],
+        "errorCode": 391
+      }
+    }
+
+- Perform a ``find`` operation that succeeds.
+- Close the client.
+
+Retries and Fails with no Cache
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Clear the cache.
+- Create request and refresh callbacks that return valid credentials
+  that will not expire soon.
+- Perform a ``find`` operation that succeeds (to force a speculative auth).
+- Clear the cache.
+- Force a reauthenication using a ``failCommand`` of the form:
+
+.. code:: javascript
+
+    {
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 2
+      },
+      "data": {
+        "failCommands": [
+          "find", "saslStart"
+        ],
+        "errorCode": 391
+      }
+    }
+
+- Perform a ``find`` operation that fails.
+- Close the client.
+
+Separate Connections Avoid Extra Callback Calls
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Clear the cache.
+- Create request and refresh callbacks that return tokens that will not expire
+  soon.  Ensure that we can record the number of times each callback is called.
+- Create two clients using the callbacks
+- Perform a find operation on each client that succeeds.
+- Ensure that the request callback has been called once and the refresh
+  callback has not been called.
+- Force a reauthenication on the first client using a ``failCommand`` of the
+  form:
+
+.. code:: javascript
+
+    {
+      "configureFailPoint": "failCommand",
+      "mode": {
+        "times": 1
+      },
+      "data": {
+        "failCommands": [
+>>>>>>> master
           "find"
         ],
         errorCode: 391

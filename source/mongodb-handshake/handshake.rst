@@ -88,7 +88,7 @@ connections and newly discovered members of a cluster. It MUST be the first
 command sent over the respective socket. If the command fails the client MUST
 disconnect. Timeouts MUST be applied to this command per the `Client Side
 Operations Timeout
-<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+<../client-side-operations-timeout/client-side-operations-timeout.md>`__
 specification.
 
 ``hello`` and legacy hello commands issued after the initial connection handshake
@@ -461,7 +461,7 @@ options which MUST be supported:
     }
 
 
-Note that how these options are provided to a driver is left up to the implementor.
+Note that how these options are provided to a driver is left up to the implementer.
 
 If provided, these options MUST NOT replace the values used for metadata generation.
 The provided options MUST be appended to their respective fields, and be delimited by
@@ -492,7 +492,7 @@ Some drivers have already implemented such functionality, and should not be requ
 breaking changes to comply with the requirements set forth here. A non-exhaustive list of
 acceptable deviations are as follows:
 
-* The name of `DriverInfoOptions` is non-normative, implementors may feel free to name this whatever they like.
+* The name of `DriverInfoOptions` is non-normative, implementers may feel free to name this whatever they like.
 * The choice of delimiter is not fixed, ``|`` is the recommended value, but some drivers currently use ``/``.
 * For cases where we own a particular stack of drivers (more than two), it may be preferable to accept a *list* of strings for each field.
 
@@ -503,7 +503,7 @@ The entire ``client`` metadata BSON document MUST NOT exceed 512 bytes. This inc
 all BSON overhead.  The ``client.application.name`` cannot exceed 128 bytes.  MongoDB
 will return an error if these limits are not adhered to, which will result in
 handshake failure. Drivers MUST validate these values and truncate or omit driver
-provided values if necessary.  Implementors SHOULD cumulatively update fields in
+provided values if necessary.  Implementers SHOULD cumulatively update fields in
 the following order until the document is under the size limit:
 
 1. Omit fields from ``env`` except ``env.name``.
@@ -511,7 +511,7 @@ the following order until the document is under the size limit:
 3. Omit the ``env`` document entirely.
 4. Truncate ``platform``.
 
-Additionally, implementors are encouraged to place high priority information about the
+Additionally, implementers are encouraged to place high priority information about the
 platform earlier in the string, in order to avoid possible truncating of those details.
 
 Test Plan

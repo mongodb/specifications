@@ -64,7 +64,7 @@ All Unit Tests have some of the following fields:
   - ``address``: The address of the pool emitting the event
   - ``connectionId``: The id of a connection associated with the event
   - ``options``: Options used to create the pool
-  - ``reason``: A reason giving mroe information on why the event was emitted
+  - ``reason``: A reason giving more information on why the event was emitted
 
 - ``ignore``: An array of event names to ignore
 
