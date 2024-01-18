@@ -4080,7 +4080,8 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2024-01-11: **Schema version 1.18** Allow additional properties on ``kmsProviders`` to test named KMS providers.
+:2024-01-11: **Schema version 1.18.**
+	           Allow named KMS providers in ``kmsProviders``.
              Note location of Client-Side Encryption test credentials.
 :2024-01-03: Document server version requirements for ``errorLabels`` and
              ``blockConnection`` options for ``failCommand`` fail point.
