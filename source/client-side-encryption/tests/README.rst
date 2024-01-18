@@ -1591,6 +1591,8 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
             }
       }
 
+   Support for named KMS providers requires libmongocrypt 1.9.0.
+
    Add TLS options for the ``aws:no_client_cert``, ``azure:no_client_cert``, ``gcp:no_client_cert``, and ``kmip:no_client_cert`` providers to use the following options:
 
    - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
