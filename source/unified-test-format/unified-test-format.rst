@@ -4081,8 +4081,8 @@ Changelog
   Please note schema version bumps in changelog entries where applicable.
 
 :2024-01-11: **Schema version 1.18.**
-	           Allow named KMS providers in ``kmsProviders``.
-             Note location of Client-Side Encryption test credentials.
+	           Allow named KMS providers in ``kmsProviders``. Note location of
+	           Client-Side Encryption test credentials.
 :2024-01-03: Document server version requirements for ``errorLabels`` and
              ``blockConnection`` options for ``failCommand`` fail point.
 :2023-10-04: **Schema version 1.17.**
