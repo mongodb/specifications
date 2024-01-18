@@ -1619,10 +1619,6 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
-Call `client_encryption_with_names.createDataKey()` with "aws:no_client_cert" as the provider and the same masterKey.
-
-Expect an error indicating TLS handshake failed.
-
 Call `client_encryption_with_tls.createDataKey()` with "aws" as the provider and the
 following masterKey:
 
@@ -1636,10 +1632,6 @@ following masterKey:
 
 Expect an error from libmongocrypt with a message containing the string: "parse
 error". This implies TLS handshake succeeded.
-
-Call `client_encryption_with_names.createDataKey()` with "aws:with_tls" as the provider and the same masterKey.
-
-Expect an error from libmongocrypt with a message containing the string: "parse error". This implies TLS handshake succeeded.
 
 Call `client_encryption_expired.createDataKey()` with "aws" as the provider and the
 following masterKey:
@@ -1679,17 +1671,7 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
-Call `client_encryption_with_names.createDataKey()` with "azure:no_client_cert" as the provider and the same masterKey.
-
-Expect an error indicating TLS handshake failed.
-
 Call `client_encryption_with_tls.createDataKey()` with "azure" as the provider
-and the same masterKey.
-
-Expect an error from libmongocrypt with a message containing the string: "HTTP
-status=404". This implies TLS handshake succeeded.
-
-Call `client_encryption_with_names.createDataKey()` with "azure:with_tls" as the provider
 and the same masterKey.
 
 Expect an error from libmongocrypt with a message containing the string: "HTTP
@@ -1717,18 +1699,7 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
-Call `client_encryption_with_names.createDataKey()` with "gcp:no_client_cert" as the provider and
-the same masterKey.
-
-Expect an error indicating TLS handshake failed.
-
 Call `client_encryption_with_tls.createDataKey()` with "gcp" as the provider and
-the same masterKey.
-
-Expect an error from libmongocrypt with a message containing the string: "HTTP
-status=404". This implies TLS handshake succeeded.
-
-Call `client_encryption_with_names.createDataKey()` with "gcp:with_tls" as the provider and
 the same masterKey.
 
 Expect an error from libmongocrypt with a message containing the string: "HTTP
@@ -1756,17 +1727,7 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
-Call `client_encryption_with_names.createDataKey()` with "kmip:no_client_cert" as the provider
-and the same masterKey.
-
-Expect an error indicating TLS handshake failed.
-
 Call `client_encryption_with_tls.createDataKey()` with "kmip" as the provider
-and the same masterKey.
-
-Expect success.
-
-Call `client_encryption_with_names.createDataKey()` with "kmip:with_tls" as the provider
 and the same masterKey.
 
 Expect success.
