@@ -1,5 +1,4 @@
----
-description: "OIDC authentication without retry"
+description: "MONGODB-OIDC authentication with retry enabled"
 schemaVersion: "1.18"
 runOnRequirements:
 - minServerVersion: "7.0"
@@ -36,24 +35,7 @@ initialData:
   databaseName: test
   documents: []
 tests:
-- description: A simple find operation should succeed
-  operations:
-  - name: find
-    arguments:
-      filter: {}
-    object: collection0
-    expectResult: []
-  expectEvents:
-  - client: client0
-    events:
-    - commandStartedEvent:
-        command:
-          find: collName
-          filter: {}
-    - commandSucceededEvent:
-        commandName: find
-- description: Write command should reauthenticate when receive ReauthenticationRequired
-    error code and retryWrites=true
+- description: Read commands should fail if reauthentication fails
   operations:
   - name: failPoint
     object: testRunner
@@ -62,17 +44,54 @@ tests:
       failPoint:
         configureFailPoint: failCommand
         mode:
-          times: 1
+          times: 2
+        data:
+          failCommands:
+          - find
+          - saslStart
+          errorCode: 391 # ReauthenticationRequired
+  - name: find
+    object: collection0
+    arguments:
+      filter: {}
+    expectError: { errorCode: 391 }
+  expectEvents:
+  - client: client0
+    events:
+    - commandStartedEvent:
+        command:
+          find: collName
+          filter: {}
+    - commandFailedEvent:
+        commandName: find
+    - commandStartedEvent:
+        command:
+          find: collName
+          filter: {}
+    - commandFailedEvent:
+        commandName: find
+- description: Write commands should fail if reauthentication fails
+  operations:
+  - name: failPoint
+    object: testRunner
+    arguments:
+      client: client0
+      failPoint:
+        configureFailPoint: failCommand
+        mode:
+          times: 2
         data:
           failCommands:
           - insert
-          errorCode: 391
+          - saslStart
+          errorCode: 391 # ReauthenticationRequired
   - name: insertOne
     object: collection0
     arguments:
       document:
         _id: 1
         x: 1
+    expectError: { errorCode: 391 }
   expectEvents:
   - client: client0
     events:
@@ -90,5 +109,5 @@ tests:
           documents:
           - _id: 1
             x: 1
-    - commandSucceededEvent:
+    - commandFailedEvent:
         commandName: insert

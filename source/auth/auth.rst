@@ -265,15 +265,17 @@ expired. Drivers MUST immediately attempt a reauthentication on the connection
 using suitable credentials, as specified by the particular authentication
 mechanism when this error is raised, and then re-attempt the operation. This
 attempt MUST be irrespective of whether the operation is considered retryable.
-Drivers MUST NOT resend a hello message during reauthentication, instead using
-SASL messages directly. Any errors that could not be recovered from during
+Drivers MUST NOT resend a ``hello`` message during reauthentication, instead
+using SASL messages directly. Any errors that could not be recovered from during
 reauthentication, or that were encountered during the subsequent re-attempt of
-the operation MUST be raised to the user. Currently the only authentication
-mechanism on the server that supports reauthentication is OIDC. See the OIDC
-documentation on reauthentication for more details. Note that in order to
-implement the unified spec tests for reauthentication, it may be necessary to
-add reauthentication support for whichever auth mechanism is used when running
-the authentication spec tests.
+the operation MUST be raised to the user.
+
+Currently the only authentication mechanism on the server that supports
+reauthentication is ``MONGODB-OIDC``. See the `MONGODB-OIDC`_ section on
+reauthentication for more details. Note that in order to implement the unified
+spec tests for reauthentication, it may be necessary to add reauthentication
+support for whichever auth mechanism is used when running the authentication
+spec tests.
 
 --------------------------------
 Supported Authentication Methods
@@ -1230,7 +1232,8 @@ Flow`_.
 `````````````````````````````
 
 username
-    MAY be specified. Its meaning varies depending on the OIDC provider used.
+    MAY be specified. Its meaning varies depending on the OIDC provider
+    integration used.
 
 source
     MUST be "$external". Defaults to ``$external``.
@@ -1734,20 +1737,23 @@ authentication.
 Reauthentication
 ````````````````
 If any operation fails with ``ReauthenticationRequired`` (error code 391) and
-MONGODB-OIDC is in use, the driver MUST reauthenticate the connection. To
-reauthenticate a connection, invalidate the access token stored on the
+MONGODB-OIDC is in use, the driver MUST reauthenticate the connection. Drivers
+MUST NOT resend a ``hello`` message during reauthentication, instead using SASL
+messages directly. See the main `reauthentication`_ section for more
+information.
+
+To reauthenticate a connection, invalidate the access token stored on the
 connection (i.e. the *Connection Cache*) from the *Client Cache*, fetch a new
-access token, and re-run the SASL conversation. Drivers MUST NOT send a
-``hello`` when reauthenticating a connection.
+access token, and re-run the SASL conversation.
 
 Example code for reauthentication using the ``auth`` function described above:
 
 .. code:: python
 
-  def reauth(conn):
-    invalidate(conn.oidc_cache.access_token)
-    conn.oidc_cache.access_token = None
-    auth(conn)
+  def reauth(connection):
+    invalidate(connection.oidc_cache.access_token)
+    connection.oidc_cache.access_token = None
+    auth(connection)
 
 -------------------------
 Connection String Options
@@ -1985,7 +1991,8 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
-:2023-11-01: Separated MONGODB-OIDC machine and human authentication flow specs.
+:2024-01-17: Added MONGODB-OIDC machine auth flow spec and combine with human
+             auth flow specs.
 :2023-04-28: Added MONGODB-OIDC auth mechanism
 :2022-11-02: Require environment variables to be read dynamically.
 :2022-10-28: Recommend the use of AWS SDKs where available.
