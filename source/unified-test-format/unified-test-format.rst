@@ -716,7 +716,7 @@ The structure of this object is as follows:
       provided.
 
       See the `Client-Side Encryption test README
-      <../client-side-encryption/tests/README.rst/credentials>`__ for
+      <../client-side-encryption/tests/README.rst#credentials>`__ for
       instructions to obtain test credentials.
 
 .. _entity_database:
@@ -1788,7 +1788,7 @@ corresponding ``kmsProviders`` field as described under `entity.clientEncryption
 <_entity_clientEncryption>`_.
 
 See the `Client-Side Encryption test README
-<../client-side-encryption/tests/README.rst/credentials>`__ for instructions to
+<../client-side-encryption/tests/README.rst#credentials>`__ for instructions to
 obtain test credentials.
 
 Drivers MUST be running the mock `KMS KMIP server
