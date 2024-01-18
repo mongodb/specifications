@@ -432,36 +432,19 @@
             "type": "object",
             "additionalProperties": false,
             "patternProperties": {
-                "^aws:[a-zA-Z0-9_]+$": {
+                "^aws(:[a-zA-Z0-9_]+)?$": {
                     "$ref": "#/definitions/kmsProviders/$defs/AWSKMSOptions"
                 },
-                "^azure:[a-zA-Z0-9_]+$": {
+                "^azure(:[a-zA-Z0-9_]+)?$": {
                     "$ref": "#/definitions/kmsProviders/$defs/AzureKMSOptions"
                 },
-                "^gcp:[a-zA-Z0-9_]+$": {
+                "^gcp(:[a-zA-Z0-9_]+)?$": {
                     "$ref": "#/definitions/kmsProviders/$defs/GCPKMSOptions"
                 },
-                "^kmip:[a-zA-Z0-9_]+$": {
+                "^kmip(:[a-zA-Z0-9_]+)?$": {
                     "$ref": "#/definitions/kmsProviders/$defs/KMIPKMSOptions"
                 },
-                "^local:[a-zA-Z0-9_]+$": {
-                    "$ref": "#/definitions/kmsProviders/$defs/LocalKMSOptions"
-                }
-            },
-            "properties": {
-                "aws": {
-                    "$ref": "#/definitions/kmsProviders/$defs/AWSKMSOptions"
-                },
-                "azure": {
-                    "$ref": "#/definitions/kmsProviders/$defs/AzureKMSOptions"
-                },
-                "gcp": {
-                    "$ref": "#/definitions/kmsProviders/$defs/GCPKMSOptions"
-                },
-                "kmip": {
-                    "$ref": "#/definitions/kmsProviders/$defs/KMIPKMSOptions"
-                },
-                "local": {
+                "^local(:[a-zA-Z0-9_]+)?$": {
                     "$ref": "#/definitions/kmsProviders/$defs/LocalKMSOptions"
                 }
             }
