@@ -16,11 +16,11 @@ createEntities:
         keyVaultClient: *client0
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws:name1: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
-          azure:name1: { tenantId: { $$placeholder: 1 }, clientId: { $$placeholder: 1 }, clientSecret: { $$placeholder: 1 } }
-          gcp:name1: { email: { $$placeholder: 1 }, privateKey: { $$placeholder: 1 } }
-          kmip:name1: { endpoint: { $$placeholder: 1 } }
-          local:name1: { key: { $$placeholder: 1 } }
+          "aws:name1": { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
+          "azure:name1": { tenantId: { $$placeholder: 1 }, clientId: { $$placeholder: 1 }, clientSecret: { $$placeholder: 1 } }
+          "gcp:name1": { email: { $$placeholder: 1 }, privateKey: { $$placeholder: 1 } }
+          "kmip:name1": { endpoint: { $$placeholder: 1 } }
+          "local:name1": { key: { $$placeholder: 1 } }
   - database:
       id: &database0 database0
       client: *client0
@@ -41,7 +41,7 @@ tests:
       - name: createDataKey
         object: *clientEncryption0
         arguments:
-          kmsProvider: aws:name1
+          kmsProvider: "aws:name1"
           opts:
             masterKey: &new_aws_masterkey
               key: arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0
@@ -61,7 +61,7 @@ tests:
                     updateDate: { $$type: date }
                     status: { $$exists: true }
                     masterKey:
-                      provider: aws:name1
+                      provider: "aws:name1"
                       <<: *new_aws_masterkey
                 writeConcern: { w: majority }
 
@@ -70,7 +70,7 @@ tests:
       - name: createDataKey
         object: *clientEncryption0
         arguments:
-          kmsProvider: azure:name1
+          kmsProvider: "azure:name1"
           opts:
             masterKey: &new_azure_masterkey
               keyVaultEndpoint: key-vault-csfle.vault.azure.net
@@ -90,7 +90,7 @@ tests:
                     updateDate: { $$type: date }
                     status: { $$exists: true }
                     masterKey:
-                      provider: azure:name1
+                      provider: "azure:name1"
                       <<: *new_azure_masterkey
                 writeConcern: { w: majority }
 
@@ -99,7 +99,7 @@ tests:
       - name: createDataKey
         object: *clientEncryption0
         arguments:
-          kmsProvider: gcp:name1
+          kmsProvider: "gcp:name1"
           opts:
             masterKey: &new_gcp_masterkey
               projectId: devprod-drivers
@@ -121,7 +121,7 @@ tests:
                     updateDate: { $$type: date }
                     status: { $$exists: true }
                     masterKey:
-                      provider: gcp:name1
+                      provider: "gcp:name1"
                       <<: *new_gcp_masterkey
                 writeConcern: { w: majority }
 
@@ -130,7 +130,7 @@ tests:
       - name: createDataKey
         object: *clientEncryption0
         arguments:
-          kmsProvider: kmip:name1
+          kmsProvider: "kmip:name1"
         expectResult: { $$type: binData }
     expectEvents:
       - client: *client0
@@ -146,7 +146,7 @@ tests:
                     updateDate: { $$type: date }
                     status: { $$exists: true }
                     masterKey:
-                      provider: kmip:name1
+                      provider: "kmip:name1"
                       keyId: { $$type: string }
                 writeConcern: { w: majority }
 
@@ -155,7 +155,7 @@ tests:
       - name: createDataKey
         object: *clientEncryption0
         arguments:
-          kmsProvider: local:name1
+          kmsProvider: "local:name1"
         expectResult: { $$type: binData }
     expectEvents:
       - client: *client0
@@ -171,5 +171,5 @@ tests:
                     updateDate: { $$type: date }
                     status: { $$exists: true }
                     masterKey:
-                      provider: local:name1
+                      provider: "local:name1"
                 writeConcern: { w: majority }

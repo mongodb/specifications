@@ -12,7 +12,7 @@ tests:
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
-          local:name2: {{local_provider(name="name2")}}
+          "local:name2": {{local_provider(name="name2")}}
     operations:
       - name: insertOne
         arguments:

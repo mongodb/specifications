@@ -16,15 +16,15 @@ createEntities:
         keyVaultClient: *client0
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws:name1: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
-          azure:name1: { tenantId: { $$placeholder: 1 }, clientId: { $$placeholder: 1 }, clientSecret: { $$placeholder: 1 } }
-          gcp:name1: { email: { $$placeholder: 1 }, privateKey: { $$placeholder: 1 } }
-          kmip:name1: { endpoint: { $$placeholder: 1 } }
-          local:name1: { key: { $$placeholder: 1 } }
+          "aws:name1": { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
+          "azure:name1": { tenantId: { $$placeholder: 1 }, clientId: { $$placeholder: 1 }, clientSecret: { $$placeholder: 1 } }
+          "gcp:name1": { email: { $$placeholder: 1 }, privateKey: { $$placeholder: 1 } }
+          "kmip:name1": { endpoint: { $$placeholder: 1 } }
+          "local:name1": { key: { $$placeholder: 1 } }
           # Use a different local master key for `local:name2`.
-          local:name2: { key: "local+name2+YUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk" }
+          "local:name2": { key: "local+name2+YUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk" }
           # Use a different AWS account to test wrapping between different AWS accounts.
-          aws:name2: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
+          "aws:name2": { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
   - database:
       id: &database0 database0
       client: *client0
@@ -55,7 +55,7 @@ initialData:
         updateDate: { $date: { $numberLong: "1641024000000" } }
         status: 1
         masterKey: &azure:name1_masterkey
-          provider: azure:name1
+          provider: "azure:name1"
           keyVaultEndpoint: key-vault-csfle.vault.azure.net
           keyName: key-name-csfle
       - _id: &gcp:name1_key_id { $binary: { base64: Z2NwZ2NwZ2NwZ2NwZ2NwZw==, subType: "04" } }
@@ -65,7 +65,7 @@ initialData:
         updateDate: { $date: { $numberLong: "1641024000000" } }
         status: 1
         masterKey: &gcp:name1_masterkey
-          provider: gcp:name1
+          provider: "gcp:name1"
           projectId: devprod-drivers
           location: global
           keyRing: key-ring-csfle
@@ -77,7 +77,7 @@ initialData:
         updateDate: { $date: { $numberLong: "1641024000000" } }
         status: 1
         masterKey: &kmip:name1_masterkey
-          provider: kmip:name1
+          provider: "kmip:name1"
           keyId: "1"
       - _id: &local:name1_key_id { $binary: { base64: bG9jYWxrZXlsb2NhbGtleQ==, subType: "04" } }
         keyAltNames: ["local:name1_key"]
@@ -86,7 +86,7 @@ initialData:
         updateDate: { $date: { $numberLong: "1641024000000" } }
         status: 1
         masterKey: &local:name1_masterkey
-          provider: local:name1
+          provider: "local:name1"
 
 tests:
   - description: "rewrap to aws:name1"
@@ -94,9 +94,9 @@ tests:
       - name: rewrapManyDataKey
         object: *clientEncryption0
         arguments:
-          filter: { keyAltNames: { $ne: aws:name1_key } }
+          filter: { keyAltNames: { $ne: "aws:name1_key" } }
           opts:
-            provider: aws:name1
+            provider: "aws:name1"
             # Different key: 89fcc2c4-08b0-4bd9-9f25-e30687b580d0 -> 061334ae-07a8-4ceb-a813-8135540e837d.
             masterKey: &new_aws_masterkey
               key: arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d
@@ -117,7 +117,7 @@ tests:
               databaseName: *database0Name
               command:
                 find: *collection0Name
-                filter: { keyAltNames: { $ne: aws:name1_key } }
+                filter: { keyAltNames: { $ne: "aws:name1_key" } }
                 readConcern: { level: majority }
           - commandStartedEvent:
               databaseName: *database0Name
@@ -126,19 +126,19 @@ tests:
                 ordered: true
                 updates:
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: aws:name1, <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "aws:name1", <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: aws:name1, <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "aws:name1", <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: aws:name1, <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "aws:name1", <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: aws:name1, <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "aws:name1", <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
@@ -150,7 +150,7 @@ tests:
         arguments:
           filter: { keyAltNames: { $ne: azure:name1_key } }
           opts:
-            provider: azure:name1
+            provider: "azure:name1"
             masterKey: &new_azure_masterkey
               keyVaultEndpoint: key-vault-csfle.vault.azure.net
               keyName: key-name-csfle
@@ -179,19 +179,19 @@ tests:
                 ordered: true
                 updates:
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: azure:name1, <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "azure:name1", <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: azure:name1, <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "azure:name1", <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: azure:name1, <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "azure:name1", <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: azure:name1, <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "azure:name1", <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
@@ -203,7 +203,7 @@ tests:
         arguments:
           filter: { keyAltNames: { $ne: gcp:name1_key } }
           opts:
-            provider: gcp:name1
+            provider: "gcp:name1"
             masterKey: &new_gcp_masterkey
               projectId: devprod-drivers
               location: global
@@ -225,7 +225,7 @@ tests:
               databaseName: *database0Name
               command:
                 find: *collection0Name
-                filter: { keyAltNames: { $ne: gcp:name1_key } }
+                filter: { keyAltNames: { $ne: "gcp:name1_key" } }
                 readConcern: { level: majority }
           - commandStartedEvent:
               databaseName: *database0Name
@@ -234,19 +234,19 @@ tests:
                 ordered: true
                 updates:
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: gcp:name1, <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "gcp:name1", <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: gcp:name1, <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "gcp:name1", <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: gcp:name1, <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "gcp:name1", <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: gcp:name1, <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "gcp:name1", <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
@@ -256,9 +256,9 @@ tests:
       - name: rewrapManyDataKey
         object: *clientEncryption0
         arguments:
-          filter: { keyAltNames: { $ne: kmip:name1_key } }
+          filter: { keyAltNames: { $ne: "kmip:name1_key" } }
           opts:
-            provider: kmip:name1
+            provider: "kmip:name1"
         expectResult:
           bulkWriteResult:
             insertedCount: 0
@@ -275,7 +275,7 @@ tests:
               databaseName: *database0Name
               command:
                 find: *collection0Name
-                filter: { keyAltNames: { $ne: kmip:name1_key } }
+                filter: { keyAltNames: { $ne: "kmip:name1_key" } }
                 readConcern: { level: majority }
           - commandStartedEvent:
               databaseName: *database0Name
@@ -284,19 +284,19 @@ tests:
                 ordered: true
                 updates:
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: kmip:name1, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "kmip:name1", keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: kmip:name1, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "kmip:name1", keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: kmip:name1, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "kmip:name1", keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: kmip:name1, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "kmip:name1", keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
@@ -306,9 +306,9 @@ tests:
       - name: rewrapManyDataKey
         object: *clientEncryption0
         arguments:
-          filter: { keyAltNames: { $ne: local:name1_key } }
+          filter: { keyAltNames: { $ne: "local:name1_key" } }
           opts:
-            provider: local:name1
+            provider: "local:name1"
         expectResult:
           bulkWriteResult:
             insertedCount: 0
@@ -325,7 +325,7 @@ tests:
               databaseName: *database0Name
               command:
                 find: *collection0Name
-                filter: { keyAltNames: { $ne: local:name1_key } }
+                filter: { keyAltNames: { $ne: "local:name1_key" } }
                 readConcern: { level: majority }
           - commandStartedEvent:
               databaseName: *database0Name
@@ -334,19 +334,19 @@ tests:
                 ordered: true
                 updates:
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: local:name1 }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "local:name1" }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: local:name1 }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "local:name1" }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: local:name1 }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "local:name1" }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: local:name1 }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "local:name1" }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
@@ -356,9 +356,9 @@ tests:
       - name: rewrapManyDataKey
         object: *clientEncryption0
         arguments:
-          filter: { keyAltNames: { $eq: local:name1_key } }
+          filter: { keyAltNames: { $eq: "local:name1_key" } }
           opts:
-            provider: local:name2
+            provider: "local:name2"
         expectResult:
           bulkWriteResult:
             insertedCount: 0
@@ -375,7 +375,7 @@ tests:
               databaseName: *database0Name
               command:
                 find: *collection0Name
-                filter: { keyAltNames: { $eq: local:name1_key } }
+                filter: { keyAltNames: { $eq: "local:name1_key" } }
                 readConcern: { level: majority }
           - commandStartedEvent:
               databaseName: *database0Name
@@ -384,7 +384,7 @@ tests:
                 ordered: true
                 updates:
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: local:name2 }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "local:name2" }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
@@ -394,9 +394,9 @@ tests:
       - name: rewrapManyDataKey
         object: *clientEncryption0
         arguments:
-          filter: { keyAltNames: { $eq: aws:name1_key } }
+          filter: { keyAltNames: { $eq: "aws:name1_key" } }
           opts:
-            provider: aws:name2
+            provider: "aws:name2"
             masterKey: &new_awsname2_masterkey
               # aws:name1 account does not have permissions to access this key.
               key: arn:aws:kms:us-east-1:857654397073:key/0f8468f0-f135-4226-aa0b-bd05c4c30df5
@@ -417,7 +417,7 @@ tests:
               databaseName: *database0Name
               command:
                 find: *collection0Name
-                filter: { keyAltNames: { $eq: aws:name1_key } }
+                filter: { keyAltNames: { $eq: "aws:name1_key" } }
                 readConcern: { level: majority }
           - commandStartedEvent:
               databaseName: *database0Name
@@ -426,7 +426,7 @@ tests:
                 ordered: true
                 updates:
                   - q: { _id: { $$type: binData } }
-                    u: { $set: { masterKey: { provider: aws:name2, <<: *new_awsname2_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    u: { $set: { masterKey: { provider: "aws:name2", <<: *new_awsname2_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
