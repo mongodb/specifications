@@ -506,8 +506,20 @@ accept arbitrary strings at runtime for forward-compatibility.
 .. code:: typescript
 
    interface KMSProviders {
-      // Map of KMS providers to credentials
-      [provider: KMSProvider]: AWSKMSOptions | AzureKMSOptions | GCPKMSOptions | LocalKMSOptions | KMIPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+      aws?: AWSKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+      azure?: AzureKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+      gcp?: GCPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+      local?: LocalKMSOptions;
+      kmip?: KMIPKMSOptions;
+
+      // KMS providers may be specified with an optional name suffix separated by a colon.
+      // Named KMS providers to not support "Automatic Credentials".
+      // Note: the named KMS providers interface is not valid typescript regex and is for exposition only.
+      "^aws:[a-zA-Z0-9_]+?$"?: AWSKMSOptions;
+      "^azure:[a-zA-Z0-9_]+?$"?: AzureKMSOptions;
+      "^gcp:[a-zA-Z0-9_]+?$"?: GCPKMSOptions;
+      "^local:[a-zA-Z0-9_]+?$"?: LocalKMSOptions;
+      "^kmip:[a-zA-Z0-9_]+?$"?: KMIPKMSOptions;
    };
 
    // KMSProvider is a string identifying a KMS provider. Note: For forward
@@ -552,6 +564,26 @@ accept arbitrary strings at runtime for forward-compatibility.
    interface KMIPKMSOptions {
       endpoint: string;
    };
+
+The following shows an example object of :ts:`KMSProviders`:
+
+.. code:: yaml
+
+   {
+      # Pass credentials for AWS:
+      "aws": { "accessKeyId": "foo", "secretAccessKey": "bar" },
+      # Use an empty document to enable "Automatic Credentials" for Azure:
+      "azure": {},
+      # Pass an access token for GCP:
+      "gcp": { "accessToken": "foo" },
+      # Pass a 96 byte base64 encoded string for the local KMS provider.
+      "local": { "key": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk" }
+      # Pass the endpoint for KMIP:
+      "kmip": { "endpoint": "localhost:5698" }
+      # Pass credentials for a different AWS account by appending a name.
+      # Note: credentials with a name do not support "Automatic Credentials".
+      "aws:name2": { "accessKeyId": "foo2", "secretAccessKey": "bar2" }
+   }
 
 
 Automatic Credentials
