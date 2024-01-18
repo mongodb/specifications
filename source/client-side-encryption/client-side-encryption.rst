@@ -515,11 +515,11 @@ accept arbitrary strings at runtime for forward-compatibility.
       // KMS providers may be specified with an optional name suffix separated by a colon.
       // Named KMS providers to not support "Automatic Credentials".
       // Note: the named KMS providers interface is not valid typescript regex and is for exposition only.
-      "^aws:[a-zA-Z0-9_]+?$"?: AWSKMSOptions;
-      "^azure:[a-zA-Z0-9_]+?$"?: AzureKMSOptions;
-      "^gcp:[a-zA-Z0-9_]+?$"?: GCPKMSOptions;
-      "^local:[a-zA-Z0-9_]+?$"?: LocalKMSOptions;
-      "^kmip:[a-zA-Z0-9_]+?$"?: KMIPKMSOptions;
+      "^aws:[a-zA-Z0-9_]+$"?: AWSKMSOptions;
+      "^azure:[a-zA-Z0-9_]+$"?: AzureKMSOptions;
+      "^gcp:[a-zA-Z0-9_]+$"?: GCPKMSOptions;
+      "^local:[a-zA-Z0-9_]+$"?: LocalKMSOptions;
+      "^kmip:[a-zA-Z0-9_]+$"?: KMIPKMSOptions;
    };
 
    // KMSProvider is a string identifying a KMS provider. Note: For forward
