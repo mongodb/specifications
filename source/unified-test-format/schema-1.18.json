@@ -361,8 +361,12 @@
                             }
                         }
                     ]
-                },
-                "AWSKMSOptions": {
+                }
+            },
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+                "^aws(:[a-zA-Z0-9_]+)?$": {
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
@@ -377,7 +381,7 @@
                         }
                     }
                 },
-                "AzureKMSOptions": {
+                "^azure(:[a-zA-Z0-9_]+)?$": {
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
@@ -395,7 +399,7 @@
                         }
                     }
                 },
-                "GCPKMSOptions": {
+                "^gcp(:[a-zA-Z0-9_]+)?$": {
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
@@ -410,7 +414,7 @@
                         }
                     }
                 },
-                "KMIPKMSOptions": {
+                "^kmip(:[a-zA-Z0-9_]+)?$": {
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
@@ -419,7 +423,7 @@
                         }
                     }
                 },
-                "LocalKMSOptions": {
+                "^local(:[a-zA-Z0-9_]+)?$": {
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
@@ -427,25 +431,6 @@
                             "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
                         }
                     }
-                }
-            },
-            "type": "object",
-            "additionalProperties": false,
-            "patternProperties": {
-                "^aws(:[a-zA-Z0-9_]+)?$": {
-                    "$ref": "#/definitions/kmsProviders/$defs/AWSKMSOptions"
-                },
-                "^azure(:[a-zA-Z0-9_]+)?$": {
-                    "$ref": "#/definitions/kmsProviders/$defs/AzureKMSOptions"
-                },
-                "^gcp(:[a-zA-Z0-9_]+)?$": {
-                    "$ref": "#/definitions/kmsProviders/$defs/GCPKMSOptions"
-                },
-                "^kmip(:[a-zA-Z0-9_]+)?$": {
-                    "$ref": "#/definitions/kmsProviders/$defs/KMIPKMSOptions"
-                },
-                "^local(:[a-zA-Z0-9_]+)?$": {
-                    "$ref": "#/definitions/kmsProviders/$defs/LocalKMSOptions"
                 }
             }
         },
