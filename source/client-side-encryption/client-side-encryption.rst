@@ -514,7 +514,7 @@ accept arbitrary strings at runtime for forward-compatibility.
 
       // KMS providers may be specified with an optional name suffix separated by a colon.
       // Named KMS providers do not support "Automatic Credentials".
-      // Note: the named KMS providers interface is not valid typescript regex and is for exposition only.
+      // Note: the named KMS providers strings below are not valid Typescript regexes. They are intended for exposition only.
       "^aws:[a-zA-Z0-9_]+$"?: AWSKMSOptions;
       "^azure:[a-zA-Z0-9_]+$"?: AzureKMSOptions;
       "^gcp:[a-zA-Z0-9_]+$"?: GCPKMSOptions;
