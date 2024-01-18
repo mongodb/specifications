@@ -1803,6 +1803,73 @@ Create a ``ClientEncryption`` object with the following KMS providers:
 
 Expect no error on construction.
 
+Case 6: named KMS providers apply TLS options
+`````````````````````````````````````````````
+
+Named AWS
+^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "aws:no_client_cert" as the provider and the following masterKey.
+
+.. code:: javascript
+
+   {
+      region: "us-east-1",
+      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+      endpoint: "127.0.0.1:9002"
+   }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "aws:with_tls" as the provider and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "parse error". This implies TLS handshake succeeded.
+
+Named Azure
+^^^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "azure:no_client_cert" as the provider and the following masterKey:
+
+.. code:: javascript
+
+   { 'keyVaultEndpoint': 'doesnotexist.local', 'keyName': 'foo' }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "azure:with_tls" as the provider and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP status=404". This implies TLS handshake succeeded.
+
+Named GCP
+^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "gcp:no_client_cert" as the provider and the following masterKey:
+
+.. code:: javascript
+
+   { 'projectId': 'foo', 'location': 'bar', 'keyRing': 'baz', 'keyName': 'foo' }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "gcp:with_tls" as the provider and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP status=404". This implies TLS handshake succeeded.
+
+Named KMIP
+^^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "kmip:no_client_cert" as the provider and the following masterKey:
+
+.. code:: javascript
+
+   { }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "kmip:with_tls" as the provider and the same masterKey.
+
+Expect success.
+
 
 12. Explicit Encryption
 ~~~~~~~~~~~~~~~~~~~~~~~
