@@ -6,7 +6,7 @@ Local Testing
 =============
 
 To test locally, use the `oidc_get_tokens.sh`_ script from
-drivers-evergreen-tools_ to download a set of OIDC tokens, including
+`drivers-evergreen-tools`_ to download a set of OIDC tokens, including
 `test_user1` and `test_user1_expires`. You first have to install the AWS CLI and
 login using the SSO flow.
 
@@ -28,6 +28,12 @@ Prose Tests
 
 Drivers MUST implement all prose tests in this section.
 
+.. note::
+
+  For test cases that create fail points, drivers MUST either use a unique
+  ``appName`` or explicitly remove the fail point after the test to prevent
+  interaction between test cases.
+
 (1) OIDC Callback Authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -36,10 +42,80 @@ Drivers MUST implement all prose tests in this section.
 - Create a ``MongoClient`` configured with an OIDC callback that implements the
   AWS provider logic.
 - Perform a ``find`` operation that succeeds.
-- Verify that the callback was called 1 time.
+- Assert that the callback was called 1 time.
 - Close the client.
 
-**1.2 Callback is called during reauthentication**
+**1.2 Callback is called once for multiple connections**
+
+- Create a ``MongoClient`` configured with an OIDC callback that implements the
+  AWS provider logic.
+- Start 10 threads and run 100 ``find`` operations in each thread that all
+  succeed.
+- Assert that the callback was called 1 time.
+- Close the client.
+
+(2) OIDC Callback Validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**2.1 Valid Callback Inputs**
+
+- Create a ``MongoClient`` configured with an OIDC callback that validates its
+  inputs and returns a valid access token.
+- Perform a ``find`` operation that succeeds.
+- Assert that the OIDC callback was called with the appropriate inputs,
+  including the timeout parameter if possible. Ensure that there are no
+  unexpected fields.
+- Close the client.
+
+**2.2 OIDC Callback Returns Null**
+
+- Create a ``MongoClient`` configured with an OIDC callback that returns
+  ``null``.
+- Perform a ``find`` operation that fails.
+- Close the client.
+
+**2.3 OIDC Callback Returns Missing Data**
+
+- Create a ``MongoClient`` configured with an OIDC callback that returns data
+  not conforming to the ``OIDCCredential`` with missing fields.
+- Perform a ``find`` operation that fails.
+- Close the client.
+
+**2.4 OIDC Callback Returns Invalid Data**
+
+- Create a ``MongoClient`` configured with an OIDC callback that returns data
+  not conforming to the ``OIDCCredential`` with extra fields.
+- Perform a ``find`` operation that fails.
+- Close the client.
+
+**2.5 Invalid Client Configuration with Callback**
+
+- Create a ``MongoClient`` configured with an OIDC callback and auth mechanism
+  property ``PROVIDER_NAME:aws``.
+- Assert it returns a client configuration error.
+
+(3) Authentication Failure
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**3.1 Authentication failure with cached tokens fetch a new token and retry**
+
+- Create a ``MongoClient`` configured with ``retryReads=false`` and an OIDC
+  callback that implements the AWS provider logic.
+- Poison the cache with an invalid access token.
+- Perform a ``find`` operation that succeeds.
+- Assert that the callback was called 1 time.
+- Close the client.
+
+**3.2 Authentication failures without cached tokens return an error**
+
+- Create a ``MongoClient`` configured with ``retryReads=false`` and an OIDC
+  callback that always returns invalid access tokens.
+- Perform a ``find`` operation that fails.
+- Assert that the callback was called 1 time.
+- Close the client.
+
+(4) Reauthentication
+~~~~~~~~~~~~~~~~~~~~
 
 - Create a ``MongoClient`` configured with an OIDC callback that implements the
   AWS provider logic.
@@ -61,70 +137,9 @@ Drivers MUST implement all prose tests in this section.
     }
 
 - Perform a ``find`` operation that succeeds.
-- Verify that the callback was called 2 times (once during the connection
+- Assert that the callback was called 2 times (once during the connection
   handshake, and again during reauthentication).
 - Close the client.
-
-(2) OIDC Callback Validation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**2.1 Valid Callback Inputs**
-
-- Create a ``MongoClient`` with an OIDC callback that validates its inputs and
-  returns a valid access token.
-- Perform a ``find`` operation that succeeds.
-- Verify that the OIDC callback was called with the appropriate inputs,
-  including the timeout parameter if possible. Ensure that there are no
-  unexpected fields.
-- Close the client.
-
-**2.2 OIDC Callback Returns Null**
-
-- Create a ``MongoClient`` with an OIDC callback that returns ``null``.
-- Perform a ``find`` operation that fails.
-- Close the client.
-
-**2.3 OIDC Callback Returns Missing Data**
-
-- Create a ``MongoClient`` with an OIDC callback that returns data not
-  conforming to the ``OIDCCredential`` with missing fields.
-- Perform a ``find`` operation that fails.
-- Close the client.
-
-**2.4 OIDC Callback Returns Invalid Data**
-
-- Create a ``MongoClient`` with an OIDC callback that returns data not
-  conforming to the ``OIDCCredential`` with extra fields.
-- Perform a ``find`` operation that fails.
-- Close the client.
-
-(3) Authentication Failure
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**3.1 Authentication failure with cached tokens fetch a new token and retry**
-
-- Create a ``MongoClient`` configured with ``retryReads=false`` and an OIDC
-  callback that implements the AWS provider logic.
-- Poison the cache with an invalid access token.
-- Perform a ``find`` operation that succeeds.
-- Verify that the callback was called 1 time.
-- Close the client.
-
-**3.2 Authentication failures without cached tokens return an error**
-
-- Create a ``MongoClient`` configured with ``retryReads=false`` and an OIDC
-  callback that always returns invalid access tokens.
-- Perform a ``find`` operation that fails.
-- Verify that the callback was called 1 time.
-- Close the client.
-
-(3) Reauthentication
-~~~~~~~~~~~~~~~~~~~~
-
-TODO:
-- Custom callback and provider_name returns error
-- Reauthentication succeeds on multiple connections
-
 
 ----------
 
@@ -135,11 +150,17 @@ Drivers that support the `Human Authentication Flow
 <../auth/auth.rst#human-authentication-flow>`_ MUST implement all prose tests in
 this section.
 
+.. note::
+
+  For test cases that create fail points, drivers MUST either use a unique
+  ``appName`` or explicitly remove the fail point after the test to prevent
+  interaction between test cases.
+
 Drivers MUST be able to authenticate against a server configured with either one
 or two configured identity providers.
 
 Note that typically the preconfigured Atlas Dev clusters are used for testing,
-in Evergreen and localy. The URIs can be fetched from the ``drivers/oidc``
+in Evergreen and locally. The URIs can be fetched from the ``drivers/oidc``
 Secrets vault, see `vault instructions`_. Use ``OIDC_ATLAS_URI_SINGLE`` for
 ``MONGODB_URI_SINGLE`` and ``OIDC_ATLAS_URI_MULTI`` for
 ``OIDC_ATLAS_URI_MULTI``.
@@ -167,21 +188,21 @@ is one principal configured.
 
 **1.1 Single Principal Implicit Username**
 
-- Create default OIDC client with `authMechanism=MONGODB-OIDC`.
+- Create default OIDC client with ``authMechanism=MONGODB-OIDC``.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 **1.2 Single Principal Explicit Username**
 
 - Create a client with ``MONGODB_URI_SINGLE``, a username of ``test_user1``,
-  `authMechanism=MONGODB-OIDC`, and the OIDC human callback.
+  ``authMechanism=MONGODB-OIDC``, and the OIDC human callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 **1.3 Multiple Principal User 1**
 
 - Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user1``,
-  `authMechanism=MONGODB-OIDC`, and the OIDC human callback.
+  ``authMechanism=MONGODB-OIDC``, and the OIDC human callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
@@ -189,14 +210,14 @@ is one principal configured.
 
 - Create a human callback that reads in the generated ``test_user2`` token file.
 - Create a client with ``MONGODB_URI_MULTI``, a username of ``test_user2``,
-  `authMechanism=MONGODB-OIDC`, and the OIDC human callback.
+  ``authMechanism=MONGODB-OIDC``, and the OIDC human callback.
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 **1.5 Multiple Principal No User**
 
 - Create a client with ``MONGODB_URI_MULTI``, no username,
-  `authMechanism=MONGODB-OIDC`, and the OIDC human callback.
+  ``authMechanism=MONGODB-OIDC``, and the OIDC human callback.
 - Assert that a ``find`` operation fails.
 - Close the client.
 
@@ -225,12 +246,12 @@ is one principal configured.
 
 **2.3 Human Callback Returns Missing Data**
 
-- Create a ``MongoClient`` with a human callback that returns data not conforming to
-  the ``OIDCCredential`` with missing fields.
+- Create a ``MongoClient`` with a human callback that returns data not
+  conforming to the ``OIDCCredential`` with missing fields.
 - Perform a ``find`` operation that fails.
 - Close the client.
 
-**2.4 OIDC Callback Returns Invalid Data**
+**2.4 Human Callback Returns Invalid Data**
 
 - Create a ``MongoClient`` with a human callback that returns data not
   conforming to the ``OIDCCredential`` with extra fields.
@@ -258,30 +279,22 @@ is not called.
       }
     }
 
-.. note::
-
-  The driver MUST either use a unique ``appName`` or explicitly
-  remove the ``failCommand`` after the test to prevent leakage.
-
 - Perform a ``find`` operation that succeeds.
 - Close the client.
 
 (4) Reauthentication
 ~~~~~~~~~~~~~~~~~~~~
 
-The driver MUST test reauthentication with MONGODB-OIDC for a read
-operation.
-
 **4.1 Succeeds**
 
-- Create a default OIDC client and add an event listener.  The following
+- Create a default OIDC client and add an event listener. The following
   assumes that the driver does not emit ``saslStart`` or ``saslContinue``
-  events.  If the driver does emit those events, ignore/filter them for the
+  events. If the driver does emit those events, ignore/filter them for the
   purposes of this test.
 - Perform a ``find`` operation that succeeds.
 - Assert that the human callback has been called once.
 - Clear the listener state if possible.
-- Force a reauthenication using a ``failCommand`` of the form:
+- Force a reauthenication using a fail point of the form:
 
 .. code:: javascript
 
@@ -298,15 +311,10 @@ operation.
       }
     }
 
-.. note::
-
-  the driver MUST either use a unique ``appName`` or explicitly
-  remove the ``failCommand`` after the test to prevent leakage.
-
 - Perform another find operation that succeeds.
 - Assert that the human callback has been called twice.
 - Assert that the ordering of list started events is [``find``],
-  , ``find``.  Note that if the listener stat could not be cleared then there
+  , ``find``. Note that if the listener stat could not be cleared then there
   will and be extra ``find`` command.
 - Assert that the list of command succeeded events is [``find``].
 - Assert that a ``find`` operation failed once during the command execution.
@@ -318,7 +326,7 @@ operation.
   a refresh token.
 - Perform a ``find`` operation that succeeds.
 - Assert that the human callback has been called once.
-- Force a reauthenication using a ``failCommand`` of the form:
+- Force a reauthenication using a fail point of the form:
 
 .. code:: javascript
 
@@ -344,7 +352,7 @@ operation.
 - Create a default OIDC client.
 - Perform a ``find`` operation that succeeds.
 - Assert that the human callback has been called once.
-- Force a reauthenication using a ``failCommand`` of the form:
+- Force a reauthenication using a fail point of the form:
 
 .. code:: javascript
 
@@ -362,7 +370,7 @@ operation.
     }
 
 - Perform a ``find`` operation that succeeds.
-- Assert that the human callback has been called three times.
+- Assert that the human callback has been called 3 times.
 - Close the client.
 
 **4.4 Fails**
@@ -390,42 +398,3 @@ operation.
 - Perform a find operation that fails.
 - Assert that the human callback has been called twice.
 - Close the client.
-
-**4.5 Separate Connections Avoid Extra Callback Calls**
-
-The following test assumes that the driver will be able to share a cache between
-two MongoClient objects, or ensure that the same MongoClient is used with two
-different connections.  Otherwise, the test would have a race condition.
-If neither is possible, the test may be skipped.
-
-- Create a human callback that returns valid, and ensure that we can record the
-  number of times the callback is called.
-- Create two clients using the callbacks, or a single client and two connection
-  objects.
-- Perform a find operation on each client/connection that succeeds.
-- If using a single client, share the underlying cache between clients.
-- Ensure that the human callback has been called twice.
-- Force a reauthenication on the first client/connection using a ``failCommand``
-  of the form:
-
-.. code:: javascript
-
-    {
-      configureFailPoint: "failCommand",
-      mode: {
-        times: 1
-      },
-      data: {
-        failCommands: [
-          "find"
-        ],
-        errorCode: 391
-      }
-    }
-
-- Perform a ``find`` operation that succeeds.
-- Ensure that the human callback has been called three times.
-- Repeat the ``failCommand`` and ``find`` operation on the second
-  client/connection.
-- Ensure that the human callback has been called three times.
-- Close all clients/connections.
