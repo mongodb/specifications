@@ -1,0 +1,17 @@
+{
+  "description": "runOnRequirement-authMechanism-type",
+  "schemaVersion": "1.18",
+  "runOnRequirements": [
+    {
+      "authMechanism": 0
+    }
+  ],
+  "tests": [
+    {
+      "description": "foo",
+      "operations": [
+
+      ]
+    }
+  ]
+}
