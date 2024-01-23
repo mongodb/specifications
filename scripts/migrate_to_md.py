@@ -92,7 +92,12 @@ with open(md_file, 'w') as fid:
 # (https://github.com/mongodb/specifications/blob/master/source/...)
 # and rewrite them to use appropriate md links.
 # If the link is malformed we ignore and print an error.
-pattern = re.compile(f'(<.*{path.parent.name}/{path.name}[>#])')
+curr = path
+target = path.name
+while curr.name != "source":
+    target = f"{curr.parent}/{target}"
+    curr = curr.parent
+pattern = re.compile(f'(<.*{target}[>#])')
 for p in Path("source").rglob("*"):
     if not '.rst' in p.name:
         continue
