@@ -1259,7 +1259,7 @@ mechanism_properties
 
     CALLBACK
         An `OIDC Callback`_ that returns credentials for OIDC providers that do
-        not have a built-in integraiton. Drivers MAY allow the user to specify
+        not have a built-in integration. Drivers MAY allow the user to specify
         an `OIDC Callback`_ using a ``MongoClient`` configuration instead of a
         mechanism property, depending on what is conventional for the driver.
         Drivers MUST NOT support both the ``CALLBACK`` mechanism property and
