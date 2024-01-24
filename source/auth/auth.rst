@@ -1250,45 +1250,44 @@ mechanism
     MUST be "MONGODB-OIDC"
 
 mechanism_properties
-    PROVIDER_NAME
-        The name of a built-in OIDC provider integration to use to obtain
-        credentials. The value MUST be one of ["aws"]. If both ``PROVIDER_NAME``
-        and an `OIDC Callback`_ are provided for the same ``MongoClient``
-        (either via the ``CALLBACK`` mechanism property or a ``MongoClient``
-        configuration), the driver MUST raise an error.
+  PROVIDER_NAME
+    Drivers MUST allow the user to specify the name of a built-in OIDC provider
+    integration to use to obtain credentials. If provided, the value MUST be one
+    of ["aws"]. If both ``PROVIDER_NAME`` and an `OIDC Callback`_ or `Human
+    Callback`_ are provided for the same ``MongoClient``, the driver MUST raise
+    an error.
 
-    CALLBACK
-        An `OIDC Callback`_ that returns credentials for OIDC providers that do
-        not have a built-in integration. Drivers MAY allow the user to specify
-        an `OIDC Callback`_ using a ``MongoClient`` configuration instead of a
-        mechanism property, depending on what is conventional for the driver.
-        Drivers MUST NOT support both the ``CALLBACK`` mechanism property and
-        the ``MongoClient`` configuration.
+  CALLBACK
+    An `OIDC Callback`_ that returns OIDC credentials. Drivers MAY allow the
+    user to specify an `OIDC Callback`_ using a ``MongoClient`` configuration
+    instead of a mechanism property, depending on what is idiomatic for the
+    driver. Drivers MUST NOT support both the ``CALLBACK`` mechanism property
+    and the ``MongoClient`` configuration.
 
-    CALLBACK_TYPE
-        The type of `OIDC Callback`_. The value MUST be one of ["machine",
-        "human"]. Drivers MUST NOT allow the user to specify ``CALLBACK_TYPE``
-        in the connection string. Drivers MAY allow the user to specify the
-        callback type using a ``MongoClient`` configuration instead of a
-        mechanism property to be consistent with how the `OIDC Callback`_ is
-        configured. If an `OIDC Callback`_ is configured and ``CALLBACK_TYPE``
-        is not specified, the driver MUST raise an error. This property is only
-        required for drivers that support the `Human Authentication Flow`_.
+  HUMAN_CALLBACK
+    A `Human Callback`_ that returns OIDC credentials. Drivers MAY allow the
+    user to specify a `Human Callback`_ using a ``MongoClient`` configuration
+    instead of a mechanism property, depending on what is idiomatic for the
+    driver. Drivers MUST NOT support both the ``HUMAN_CALLBACK`` mechanism
+    property and the ``MongoClient`` configuration. Drivers MUST return an error
+    if both an `OIDC Callback`_ and `Human Callback` are provided for the same
+    ``MongoClient``. This property is only required for drivers that support the
+    `Human Authentication Flow`_.
 
-    ALLOWED_HOSTS
-        The list of allowed hostnames or ip-addresses (ignoring ports) for
-        MongoDB connections. The hostnames may include a leading "\*." wildcard,
-        which allows for matching (potentially  nested) subdomains.
-        ``ALLOWED_HOSTS`` is a security feature and MUST default to
-        ``["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net",
-        "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``. When
-        MONGODB-OIDC authentication using a `Human Callback`_ is attempted
-        against a hostname that does not match any of list of allowed hosts, the
-        driver MUST raise a client-side error without invoking any user-provided
-        callbacks. This value MUST NOT be allowed in the URI connection string.
-        The hostname check MUST be performed after SRV record resolution, if
-        applicable. This property is only required for drivers that support the
-        `Human Authentication Flow`_.
+  ALLOWED_HOSTS
+    The list of allowed hostnames or ip-addresses (ignoring ports) for
+    MongoDB connections. The hostnames may include a leading "\*." wildcard,
+    which allows for matching (potentially  nested) subdomains.
+    ``ALLOWED_HOSTS`` is a security feature and MUST default to
+    ``["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net",
+    "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]``. When
+    MONGODB-OIDC authentication using a `Human Callback`_ is attempted
+    against a hostname that does not match any of list of allowed hosts, the
+    driver MUST raise a client-side error without invoking any user-provided
+    callbacks. This value MUST NOT be allowed in the URI connection string.
+    The hostname check MUST be performed after SRV record resolution, if
+    applicable. This property is only required for drivers that support the
+    `Human Authentication Flow`_.
 
 Built-in Provider Integrations
 ``````````````````````````````
@@ -1350,10 +1349,11 @@ The callback MUST be able to return the following information:
   value that indicates the expiry duration is unknown or infinite, like 0 or
   ``null``.
 
-The signature of the callback is up to the driver's discretion, but the driver
-MUST ensure that additional optional input parameters and return values can be
-added to the callback signature in the future. An example callback API might
-look like:
+The signature of the callback is up to the driver's discretion. Drivers MUST
+ensure that additional optional input parameters and return values can be added
+to the callback signature in the future without breaking backward compatibility.
+
+An example callback API might look like:
 
 .. code:: typescript
 
@@ -1371,8 +1371,9 @@ look like:
 
 Human Callback
 ______________
-Drivers that support the `Human Authentication Flow`_ MUST implement the human
-callback version of the `OIDC Callback`_.
+The human callback is an OIDC callback that includes additional information that
+is required when using the `Human Authentication Flow`_. Drivers that support
+the `Human Authentication Flow`_ MUST implement the human callback.
 
 In addition to the information described in the `OIDC Callback`_ section,
 drivers MUST be able to pass the following information to the callback:
@@ -1394,7 +1395,13 @@ callback MUST be able to return the following information:
 - ``refreshToken``: An optional refresh token that can be used to fetch new
   access tokens.
 
-An example callback API that supports the human callback might look like:
+The signature of the callback is up to the driver's discretion. Drivers MAY use
+a single callback API for both callback types or separate callback APIs for each
+callback type. Drivers MUST ensure that additional optional input parameters and
+return values can be added to the callback signature in the future without
+breaking backward compatibility.
+
+An example human callback API might look like:
 
 .. code:: typescript
 
@@ -1419,9 +1426,8 @@ An example callback API that supports the human callback might look like:
 
   function oidcCallback(params: OIDCCallbackParams): OIDCCredential
 
-Users enable the human callback behavior by setting mechanism property
-``CALLBACK_TYPE:human``. When the human callback behavior is enabled, drivers
-MUST use the following behaviors when calling the callback:
+When a human callback is provided, drivers MUST use the following behaviors when
+calling the callback:
 
 - The driver MUST pass the ``IdpInfo`` and the refresh token (if available)
   to the callback.
@@ -1433,9 +1439,6 @@ MUST use the following behaviors when calling the callback:
 - The timeout duration MUST be 5 minutes. This is to account for the human
   interaction required to complete the callback. In this case, the callback is
   not subject to CSOT.
-
-If ``CALLBACK_TYPE:machine`` drivers MUST use the callback behavior described in
-the `OIDC Callback`_ section.
 
 Conversation
 ````````````

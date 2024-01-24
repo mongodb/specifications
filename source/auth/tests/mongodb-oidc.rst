@@ -163,7 +163,7 @@ Note that typically the preconfigured Atlas Dev clusters are used for testing,
 in Evergreen and locally. The URIs can be fetched from the ``drivers/oidc``
 Secrets vault, see `vault instructions`_. Use ``OIDC_ATLAS_URI_SINGLE`` for
 ``MONGODB_URI_SINGLE`` and ``OIDC_ATLAS_URI_MULTI`` for
-``OIDC_ATLAS_URI_MULTI``.
+``MONGODB_URI_MULTI``.
 
 If using local servers is preferred, using the `Local Testing`_ method, use
 ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` for ``MONGODB_URI_SINGLE``
@@ -363,7 +363,7 @@ is not called.
       },
       data: {
         failCommands: [
-          "find", "saslContinue"
+          "find", "saslStart"
         ],
         errorCode: 391
       }
@@ -383,15 +383,15 @@ is not called.
 .. code:: javascript
 
   {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 2
+    configureFailPoint: "failCommand",
+    mode: {
+      times: 2
     },
-    "data": {
-      "failCommands": [
+    data: {
+      failCommands: [
         "find", "saslStart"
       ],
-      "errorCode": 391
+      errorCode: 391
     }
   }
 
