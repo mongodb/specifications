@@ -1257,18 +1257,18 @@ mechanism_properties
     Callback`_ are provided for the same ``MongoClient``, the driver MUST raise
     an error.
 
-  CALLBACK
+  OIDC_CALLBACK
     An `OIDC Callback`_ that returns OIDC credentials. Drivers MAY allow the
     user to specify an `OIDC Callback`_ using a ``MongoClient`` configuration
     instead of a mechanism property, depending on what is idiomatic for the
-    driver. Drivers MUST NOT support both the ``CALLBACK`` mechanism property
-    and the ``MongoClient`` configuration.
+    driver. Drivers MUST NOT support both the ``OIDC_CALLBACK`` mechanism
+    property and the ``MongoClient`` configuration.
 
-  HUMAN_CALLBACK
+  OIDC_HUMAN_CALLBACK
     A `Human Callback`_ that returns OIDC credentials. Drivers MAY allow the
     user to specify a `Human Callback`_ using a ``MongoClient`` configuration
     instead of a mechanism property, depending on what is idiomatic for the
-    driver. Drivers MUST NOT support both the ``HUMAN_CALLBACK`` mechanism
+    driver. Drivers MUST NOT support both the ``OIDC_HUMAN_CALLBACK`` mechanism
     property and the ``MongoClient`` configuration. Drivers MUST return an error
     if both an `OIDC Callback`_ and `Human Callback` are provided for the same
     ``MongoClient``. This property is only required for drivers that support the
