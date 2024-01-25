@@ -603,6 +603,7 @@ Automatic credentials are only supported for the KMS provider types ``aws``,
 ``gcp``, and ``azure``. KMS providers containing a name (e.g. ``aws:myname``) do
 not support automatic credentials. Attempting to configure a KMS provider with a
 name for automatic credentials results in a runtime error from libmongocrypt_.
+See :ref:`no-on-demand-kms-credentials-for-named-kms-providers`.
 
 .. note:: Drivers MUST NOT eagerly fill an empty KMS options property.
 
@@ -2718,6 +2719,25 @@ Returning an Aggregate Expression or Match Expression as a BSON document motivat
 
 To limit scope, only $and is supported. Support for other operators ($eq, $in) can be added in the future if desired.
 
+.. _no-on-demand-kms-credentials-for-named-kms-providers:
+
+Why do on-demand KMS credentials not support named KMS providers?
+-----------------------------------------------------------------
+
+libmongocrypt supports supplying KMS providers credentials on-demand. This
+enables obtaining credentials from the host machine. Supporting on-demand
+credentials was added as part of these projects:
+`DRIVERS-2280 <https://jira.mongodb.org/browse/DRIVERS-2280>`_ ("aws"),
+`DRIVERS-2377 <https://jira.mongodb.org/browse/DRIVERS-2377>`_ ("gcp"),
+`DRIVERS-2411 <https://jira.mongodb.org/browse/DRIVERS-2411>`_ ("azure").
+
+On-demand credentials are primarily intended to support passing credentials
+assigned in an environment. Supporting on-demand credentials for more than
+one KMS provider of the same type is not expected to be useful. Supporting
+on-demand KMS credentials would require added work in drivers inspecting the
+KMS providers when obtaining credentials, as well as additional test coverage.
+Supporting on-demand KMS credentials for named KMS providers can be
+considered as future work if needed.
 
 Future work
 ===========
