@@ -81,14 +81,7 @@ Drivers MUST implement all prose tests in this section.
 - Perform a ``find`` operation that fails.
 - Close the client.
 
-**2.4 OIDC Callback Returns Invalid Data**
-
-- Create a ``MongoClient`` configured with an OIDC callback that returns data
-  not conforming to the ``OIDCCredential`` with extra fields.
-- Perform a ``find`` operation that fails.
-- Close the client.
-
-**2.5 Invalid Client Configuration with Callback**
+**2.4 Invalid Client Configuration with Callback**
 
 - Create a ``MongoClient`` configured with an OIDC callback and auth mechanism
   property ``PROVIDER_NAME:aws``.
@@ -180,8 +173,8 @@ dummy "refresh_token".
 .. _Local Testing: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md#local-testing
 .. _vault instructions: https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets
 
-(1) Human Callback Authentication
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(1) OIDC Human Callback Authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MUST be able to authenticate using OIDC callback(s) when there
 is one principal configured.
@@ -232,8 +225,8 @@ is one principal configured.
 - Assert that a ``find`` operation fails with a client-side error.
 - Close the client.
 
-(2) Human Callback Validation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(2) OIDC Human Callback Validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **2.1 Valid Callback Inputs**
 
@@ -248,13 +241,6 @@ is one principal configured.
 
 - Create a ``MongoClient`` with a human callback that returns data not
   conforming to the ``OIDCCredential`` with missing fields.
-- Perform a ``find`` operation that fails.
-- Close the client.
-
-**2.4 Human Callback Returns Invalid Data**
-
-- Create a ``MongoClient`` with a human callback that returns data not
-  conforming to the ``OIDCCredential`` with extra fields.
 - Perform a ``find`` operation that fails.
 - Close the client.
 
