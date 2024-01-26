@@ -121,7 +121,7 @@ Each YAML file has the following keys:
 
         - ``gcp`` The GCP KMS provider credentials. An empty object. Drivers MUST fill in GCP credentials (`email`, `privateKey`) from the environment.
 
-        - ``local`` The local KMS provider.
+        - ``local`` or ``local:name2`` The local KMS provider.
 
           - ``key`` A 96 byte local key.
 

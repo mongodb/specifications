@@ -715,6 +715,12 @@ The structure of this object is as follows:
       This is to permit testing conditions where invalid KMS credentials are
       provided.
 
+      Tests may also reference named KMS providers. KMS providers with the name
+      ``name1`` are expected to be configured exactly as the unnamed KMS
+      providers. The ``aws:name2`` KMS provider and ``aws:name1`` KMS providers
+      deliberately use separate AWS accounts that do not have permission to the
+      other's keys.
+
       See the `Client-Side Encryption test README
       <../client-side-encryption/tests/README.rst#credentials>`__ for
       instructions to obtain test credentials.
