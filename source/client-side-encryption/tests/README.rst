@@ -1568,7 +1568,7 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
                "privateKey": <set from environment>,
                "endpoint": "127.0.0.1:9002"
             },
-            "kmip:no_client_cert" {
+            "kmip:no_client_cert": {
                "endpoint": "127.0.0.1:5698"
             },
             "aws:with_tls": {
@@ -1586,7 +1586,7 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
                "privateKey": <set from environment>,
                "endpoint": "127.0.0.1:9002"
             },
-            "kmip:with_tls" {
+            "kmip:with_tls": {
                "endpoint": "127.0.0.1:5698"
             }
       }
