@@ -163,7 +163,7 @@ Credentials
 
 Test credentials are available in AWS Secrets Manager. See https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets for more background on how the secrets are managed.
 
-Test credentials to KMS are located in "drivers/client-side-encryption".
+Test credentials to KMS are located in "drivers/csfle".
 
 Test credentials to create environments are available in "drivers/gcpkms" and "drivers/azurekms".
 
