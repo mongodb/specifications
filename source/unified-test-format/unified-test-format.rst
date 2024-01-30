@@ -4,7 +4,7 @@ Unified Test Format
 
 :Status: Accepted
 :Minimum Server Version: N/A
-:Current Schema Version: 1.17.0
+:Current Schema Version: 1.18.0
 
 .. contents::
 
@@ -714,6 +714,16 @@ The structure of this object is as follows:
       ``kmsProviders: { aws: { accessKeyId: abc, secretAccessKey: def } }``).
       This is to permit testing conditions where invalid KMS credentials are
       provided.
+
+      Tests may also reference named KMS providers. KMS providers with the name
+      ``name1`` are expected to be configured exactly as the unnamed KMS
+      providers. The ``aws:name2`` KMS provider and ``aws:name1`` KMS providers
+      deliberately use separate AWS accounts that do not have permission to the
+      other's keys.
+
+      See the `Client-Side Encryption test README
+      <../client-side-encryption/tests/README.rst#credentials>`__ for
+      instructions to obtain test credentials.
 
 .. _entity_database:
 
@@ -1782,6 +1792,10 @@ Drivers MUST load appropriate KMS credentials (i.e. from the environment or a
 configuration file) when prompted by a test providing a placeholder value in a
 corresponding ``kmsProviders`` field as described under `entity.clientEncryption
 <_entity_clientEncryption>`_.
+
+See the `Client-Side Encryption test README
+<../client-side-encryption/tests/README.rst#credentials>`__ for instructions to
+obtain test credentials.
 
 Drivers MUST be running the mock `KMS KMIP server
 <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_
@@ -4072,6 +4086,9 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
+:2024-01-11: **Schema version 1.18.**
+             Allow named KMS providers in ``kmsProviders``. Note location of
+             Client-Side Encryption test credentials.
 :2024-01-03: Document server version requirements for ``errorLabels`` and
              ``blockConnection`` options for ``failCommand`` fail point.
 :2023-10-04: **Schema version 1.17.**
