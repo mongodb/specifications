@@ -7,7 +7,8 @@ runOnRequirements:
   authMechanism: "MONGODB-OIDC"
 createEntities:
 - client:
-    id: authClient
+    id: &failPointClient failPointClient
+    useMultipleMongoses: false
 - client:
     id: client0
     uriOptions:
@@ -39,9 +40,9 @@ tests:
 - description: A read operation should succeed
   operations:
   - name: find
+    object: collection0
     arguments:
       filter: {}
-    object: collection0
     expectResult: []
   expectEvents:
   - client: client0
@@ -76,7 +77,7 @@ tests:
   - name: failPoint
     object: testRunner
     arguments:
-      client: client0
+      client: failPointClient
       failPoint:
         configureFailPoint: failCommand
         mode:
@@ -86,9 +87,9 @@ tests:
           - find
           errorCode: 391 # ReauthenticationRequired
   - name: find
+    object: collection0
     arguments:
       filter: {}
-    object: collection0
     expectResult: []
   expectEvents:
   - client: client0
@@ -110,7 +111,7 @@ tests:
   - name: failPoint
     object: testRunner
     arguments:
-      client: client0
+      client: failPointClient
       failPoint:
         configureFailPoint: failCommand
         mode:
@@ -144,12 +145,32 @@ tests:
             x: 1
     - commandSucceededEvent:
         commandName: insert
-- description: Handshake should use speculative authentication
+- description: Handshake with cached token should use speculative authentication
   operations:
   - name: failPoint
     object: testRunner
     arguments:
-      client: client0
+      client: failPointClient
+      failPoint:
+        configureFailPoint: failCommand
+        mode:
+          times: 1
+        data:
+          failCommands:
+          - insert
+          closeConnection: true
+  - name: insertOne
+    object: collection0
+    arguments:
+      document:
+        _id: 1
+        x: 1
+    expectError:
+      isClientError: true
+  - name: failPoint
+    object: testRunner
+    arguments:
+      client: failPointClient
       failPoint:
         configureFailPoint: failCommand
         mode: "alwaysOn"
@@ -181,4 +202,112 @@ tests:
           - _id: 1
             x: 1
     - commandSucceededEvent:
+        commandName: insert
+- description: Handshake without cached token should not use speculative authentication
+  operations:
+  - name: failPoint
+    object: testRunner
+    arguments:
+      client: failPointClient
+      failPoint:
+        configureFailPoint: failCommand
+        mode: "alwaysOn"
+        data:
+          failCommands:
+          - saslStart
+          errorCode: 20 # IllegalOperation
+  - name: insertOne
+    object: collection0
+    arguments:
+      document:
+        _id: 1
+        x: 1
+    expectError:
+      errorCode: 20 # IllegalOperation
+- description: Read commands should fail if reauthentication fails
+  operations:
+  - name: find
+    object: collection0
+    arguments:
+      filter: {}
+    expectResult: []
+  - name: failPoint
+    object: testRunner
+    arguments:
+      client: failPointClient
+      failPoint:
+        configureFailPoint: failCommand
+        mode:
+          times: 2
+        data:
+          failCommands:
+          - find
+          - saslStart
+          errorCode: 391 # ReauthenticationRequired
+  - name: find
+    object: collection0
+    arguments:
+      filter: {}
+    expectError: { errorCode: 391 }
+  expectEvents:
+  - client: client0
+    events:
+    - commandStartedEvent:
+        command:
+          find: collName
+          filter: {}
+    - commandSucceededEvent:
+        commandName: find
+    - commandStartedEvent:
+        command:
+          find: collName
+          filter: {}
+    - commandFailedEvent:
+        commandName: find
+- description: Write commands should fail if reauthentication fails
+  operations:
+  - name: insertOne
+    object: collection0
+    arguments:
+      document:
+        _id: 1
+        x: 1
+  - name: failPoint
+    object: testRunner
+    arguments:
+      client: failPointClient
+      failPoint:
+        configureFailPoint: failCommand
+        mode:
+          times: 2
+        data:
+          failCommands:
+          - insert
+          - saslStart
+          errorCode: 391 # ReauthenticationRequired
+  - name: insertOne
+    object: collection0
+    arguments:
+      document:
+        _id: 2
+        x: 2
+    expectError: { errorCode: 391 }
+  expectEvents:
+  - client: client0
+    events:
+    - commandStartedEvent:
+        command:
+          insert: collName
+          documents:
+          - _id: 1
+            x: 1
+    - commandSucceededEvent:
+        commandName: insert
+    - commandStartedEvent:
+        command:
+          insert: collName
+          documents:
+          - _id: 2
+            x: 2
+    - commandFailedEvent:
         commandName: insert

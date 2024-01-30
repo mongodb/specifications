@@ -34,6 +34,13 @@ Drivers MUST implement all prose tests in this section.
   ``appName`` or explicitly remove the fail point after the test to prevent
   interaction between test cases.
 
+Note that typically the preconfigured Atlas Dev clusters are used for testing,
+in Evergreen and locally. The URIs can be fetched from the ``drivers/oidc``
+Secrets vault, see `vault instructions`_. Use ``OIDC_ATLAS_URI_SINGLE`` for the
+``MONGODB_URI``. If using local servers is preferred, using the `Local Testing`_
+method, use ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` for
+``MONGODB_URI``.
+
 (1) OIDC Callback Authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -94,7 +101,7 @@ Drivers MUST implement all prose tests in this section.
 
 - Create a ``MongoClient`` configured with ``retryReads=false`` and an OIDC
   callback that implements the AWS provider logic.
-- Poison the cache with an invalid access token.
+- Poison the *Client Cache* with an invalid access token.
 - Perform a ``find`` operation that succeeds.
 - Assert that the callback was called 1 time.
 - Close the client.
@@ -125,7 +132,7 @@ Drivers MUST implement all prose tests in this section.
         failCommands: [
           "find"
         ],
-        errorCode: 391
+        errorCode: 391 // ReauthenticationRequired
       }
     }
 
@@ -155,8 +162,10 @@ or two configured identity providers.
 Note that typically the preconfigured Atlas Dev clusters are used for testing,
 in Evergreen and locally. The URIs can be fetched from the ``drivers/oidc``
 Secrets vault, see `vault instructions`_. Use ``OIDC_ATLAS_URI_SINGLE`` for
-``MONGODB_URI_SINGLE`` and ``OIDC_ATLAS_URI_MULTI`` for
-``MONGODB_URI_MULTI``.
+``MONGODB_URI_SINGLE`` and ``OIDC_ATLAS_URI_MULTI`` for ``MONGODB_URI_MULTI``.
+Currently the ``OIDC_ATLAS_URI_MULTI`` cluster does not work correctly with fail
+points, so all prose tests that use fail points SHOULD use
+``OIDC_ATLAS_URI_SINGLE``.
 
 If using local servers is preferred, using the `Local Testing`_ method, use
 ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` for ``MONGODB_URI_SINGLE``
@@ -246,10 +255,28 @@ is one principal configured.
 
 (3) Speculative Authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-We can only test the successful case, by verifying that ``saslStart``
-is not called.
+
+**3.1 Uses speculative authentication if there is a cached token**
 
 - Create a ``MongoClient`` with a human callback that returns a valid token.
+- Set a fail point for ``find`` commands of the form:
+
+.. code:: javascript
+
+    {
+      configureFailPoint: "failCommand",
+      mode: {
+        times: 1
+      },
+      data: {
+        failCommands: [
+          "find"
+        ],
+        closeConnection: true
+      }
+    }
+
+- Perform a ``find`` operation that fails.
 - Set a fail point for ``saslStart`` commands of the form:
 
 .. code:: javascript
@@ -266,6 +293,27 @@ is not called.
     }
 
 - Perform a ``find`` operation that succeeds.
+- Close the client.
+
+**3.2 Does not use speculative authentication if there is no cached token**
+
+- Create a ``MongoClient`` with a human callback that returns a valid token.
+- Set a fail point for ``saslStart`` commands of the form:
+
+.. code:: javascript
+
+    {
+      configureFailPoint: "failCommand",
+      mode: "alwaysOn",
+      data: {
+        failCommands: [
+          "saslStart"
+        ],
+        errorCode: 20 // IllegalOperation
+      }
+    }
+
+- Perform a ``find`` operation that fails.
 - Close the client.
 
 (4) Reauthentication
@@ -293,7 +341,7 @@ is not called.
         failCommands: [
           "find"
         ],
-        errorCode: 391
+        errorCode: 391 // ReauthenticationRequired
       }
     }
 
@@ -325,7 +373,7 @@ is not called.
         failCommands: [
           "find"
         ],
-        errorCode: 391
+        errorCode: 391 // ReauthenticationRequired
       }
     }
 
@@ -351,7 +399,7 @@ is not called.
         failCommands: [
           "find", "saslStart"
         ],
-        errorCode: 391
+        errorCode: 391 // ReauthenticationRequired
       }
     }
 
@@ -371,13 +419,13 @@ is not called.
   {
     configureFailPoint: "failCommand",
     mode: {
-      times: 2
+      times: 3
     },
     data: {
       failCommands: [
         "find", "saslStart"
       ],
-      errorCode: 391
+      errorCode: 391 // ReauthenticationRequired
     }
   }
 
