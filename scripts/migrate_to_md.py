@@ -84,8 +84,8 @@ for (i, line) in enumerate(lines):
 
 # Write the new content to the markdown file.
 md_file = str(path).replace('.rst', '.md')
-# with open(md_file, 'w') as fid:
-#     fid.write('\n'.join(new_lines))
+with open(md_file, 'w') as fid:
+    fid.write('\n'.join(new_lines))
 
 # Handle links in other files.
 # We accept relative path links or links to master 
