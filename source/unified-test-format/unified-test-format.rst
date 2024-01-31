@@ -460,7 +460,7 @@ The structure of this object is as follows:
   field is omitted, there is no authentication requirement.
 
 - ``authMechanism``: Optional string. Specifies an authentication mechanism that
-  the database needs to support for the test. If set, tests MUST only run if the
+  the server needs to support for the test. If set, tests MUST only run if the
   given string matches (case-insensitive) one of the strings in the
   `authenticationMechanisms
   <https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.authenticationMechanisms>`__
