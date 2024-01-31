@@ -2557,7 +2557,7 @@ Changelog
 .. _scanning order: server-monitoring.rst#scanning-order
 .. _clients update the topology from each handshake: server-monitoring.rst#clients-update-the-topology-from-each-handshake
 .. _single-threaded monitoring: server-monitoring.rst#single-threaded-monitoring
-.. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
-.. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _Connection Monitoring and Pooling spec: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
+.. _CMAP spec: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
 .. _Authentication spec: /source/auth/auth.rst
 .. _Server Monitoring (Measuring RTT): server-monitoring.rst#measuring-rtt

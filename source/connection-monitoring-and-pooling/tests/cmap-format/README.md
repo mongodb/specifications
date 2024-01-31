@@ -22,12 +22,12 @@ Each YAML file has the following keys:
 All Unit Tests have some of the following fields:
 
 - `poolOptions`: If present, connection pool options to use when creating a pool; both
-  [standard ConnectionPoolOptions](https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1)
-  and the following test-specific options are allowed:
+  [standard ConnectionPoolOptions](../../connection-monitoring-and-pooling.md#connection-pool-options-1) and the
+  following test-specific options are allowed:
   - `backgroundThreadIntervalMS`: A time interval between the end of a
-    [Background Thread Run](https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread)
-    and the beginning of the next Run. If a Connection Pool does not implement a Background Thread, the Test Runner MUST
-    ignore the option. If the option is not specified, an implementation is free to use any value it finds reasonable.
+    [Background Thread Run](../../connection-monitoring-and-pooling.md#background-thread) and the beginning of the next
+    Run. If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option. If the
+    option is not specified, an implementation is free to use any value it finds reasonable.
 
     Possible values (0 is not allowed):
 

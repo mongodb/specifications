@@ -71,7 +71,7 @@ SocketException                    9001
 
 - a `PoolClearedError`_
 
-  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
+  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors
 
 - Any of the above retryable errors that occur during a connection handshake (including the
   authentication step). For example, a network error or ShutdownInProgress error

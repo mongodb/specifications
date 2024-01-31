@@ -1125,7 +1125,7 @@ Repeat the steps from the "Via bypassAutoEncryption" test, replacing "bypassAuto
 9. Deadlock Tests
 ~~~~~~~~~~~~~~~~~
 
-.. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _Connection Monitoring and Pooling: ../../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
 
 The following tests only apply to drivers that have implemented a connection pool (see the `Connection Monitoring and Pooling`_ specification).
 
