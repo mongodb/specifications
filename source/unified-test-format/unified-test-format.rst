@@ -4,7 +4,7 @@ Unified Test Format
 
 :Status: Accepted
 :Minimum Server Version: N/A
-:Current Schema Version: 1.18.0
+:Current Schema Version: 1.19.0
 
 .. contents::
 
