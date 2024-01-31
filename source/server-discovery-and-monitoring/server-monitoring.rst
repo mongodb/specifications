@@ -1251,10 +1251,10 @@ Changelog
 .. _SDAM Monitoring spec: server-discovery-and-monitoring-logging-and-monitoring.rst#heartbeats
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
-.. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Connection-Pool
+.. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#Connection-Pool
 .. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring.rst#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?
 .. _Client Side Operations Timeout Spec: /source/client-side-operations-timeout/client-side-operations-timeout.rst
 .. _timeoutMS: /source/client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS
-.. _Why does the pool need to support closing in use connections as part of its clear logic?: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Why-does-the-pool-need-to-support-closing-in-use-connections-as-part-of-its-clear-logic?
+.. _Why does the pool need to support closing in use connections as part of its clear logic?: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#Why-does-the-pool-need-to-support-closing-in-use-connections-as-part-of-its-clear-logic?
 .. _DRIVERS-2246: https://jira.mongodb.org/browse/DRIVERS-2246
 .. _MongoDB Handshake spec: /source/mongodb-handshake/handshake.rst#client-env

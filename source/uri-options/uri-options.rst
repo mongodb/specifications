@@ -551,5 +551,5 @@ Changelog
 
 ----
 
-.. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
+.. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-options-1
 .. _SOCKS5 support spec: https://github.com/mongodb/specifications/blob/master/source/socks5-support/socks5.rst#mongoclient-configuration

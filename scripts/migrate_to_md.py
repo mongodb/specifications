@@ -98,9 +98,8 @@ while curr.parent.name != "source":
     target = f"{curr.parent.name}/{target}"
     curr = curr.parent
 pattern = re.compile(f'(<.*{target}[>#])')
-for p in Path("source").rglob("*"):
-    if not '.rst' in p.name:
-        continue
+pattern2 = re.compile(f'(/source/{target}[>#])')
+for p in Path("source").rglob("*.rst"):
     found = False
     with p.open() as fid:
         lines = fid.readlines()
@@ -108,10 +107,16 @@ for p in Path("source").rglob("*"):
     for line in lines:
         match = re.search(pattern, line)
         if not match:
+            match = re.search(pattern2, line)
+            if match:
+                found = True
+                new_name = path.name.replace('.rst', '.md')
+                line = line.replace(path.name, new_name)
             new_lines.append(line)
             continue
         matchstr = match.groups()[0]
         if matchstr[0].startswith('https'):
+            substr = match.string
             if not substr.startswith('<https://github.com/mongodb/specifications/blob/master/source/'):
                 print('*** Error in link: ', substr, p)
                 new_lines.append(line)

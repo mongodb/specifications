@@ -2023,7 +2023,7 @@ References
 .. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
 .. _idleWritePeriodMS: https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#idlewriteperiodms
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
-.. _maxConnecting: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool
+.. _maxConnecting: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool
 .. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _Global Command Argument: /source/message/OP_MSG.rst#global-command-arguments
 
