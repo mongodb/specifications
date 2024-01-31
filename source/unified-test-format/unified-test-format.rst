@@ -513,7 +513,7 @@ The structure of this object is as follows:
   connection pooling MUST track the number of connections checked out at any
   given time for the constructed MongoClient. This can be done using a single
   counter and `CMAP events
-  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__.
+  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events>`__.
   Each ``ConnectionCheckedOutEvent`` should increment the counter and each
   ``ConnectionCheckedInEvent`` should decrement it.
 
@@ -853,7 +853,7 @@ The structure of this object is as follows:
 
 - ``events``: Required array of one or more strings, which denote the events to
   be collected. Currently, only the following
-  `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+  `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`__
   and `command monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
   events MUST be supported:
 
@@ -1212,7 +1212,7 @@ The structure of each object is as follows:
   captured the events. Valid values are ``command`` for `Command Monitoring
   <../command-logging-and-monitoring/command-logging-and-monitoring.rst#events-api>`__ events, ``cmap`` for
   `CMAP
-  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events>`__
   events, and ``sdam`` for `SDAM
   <../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events>`__
   events. Defaults to ``command`` if omitted.
@@ -1341,7 +1341,7 @@ expectedCmapEvent
 .. _expectedEvent_poolClearedEvent:
 
 - ``poolClearedEvent``: Optional object. Assertions for one or more
-  `PoolClearedEvent <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  `PoolClearedEvent <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events>`__
   fields.
 
   The structure of this object is as follows:
@@ -1367,7 +1367,7 @@ expectedCmapEvent
 .. _expectedEvent_connectionClosedEvent:
 
 - ``connectionClosedEvent``: Optional object. Assertions for one or more
-  `ConnectionClosedEvent <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  `ConnectionClosedEvent <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events>`__
   fields.
 
   The structure of this object is as follows:
@@ -1385,7 +1385,7 @@ expectedCmapEvent
 
 - ``connectionCheckOutFailedEvent``: Optional object. Assertions for one or more
   `ConnectionCheckOutFailedEvent
-  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events>`__
   fields.
 
   The structure of this object is as follows:

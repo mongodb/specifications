@@ -456,7 +456,7 @@ The following key-value pairs are common to all or several log messages and MUST
      - Heartbeat-related log messages 
      - Int
      - The driver-generated ID for the monitoring connection as defined in the 
-       `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_. Unlike
+       `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`_. Unlike
        ``connectionId`` in the above events, this field MUST NOT contain the host/port; that information MUST be in the above fields,
        ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
        a connection ID.

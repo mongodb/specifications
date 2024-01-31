@@ -1,0 +1,7 @@
+{
+    "ignorePatterns": [
+      {
+        "pattern": "^/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#"
+      }
+    ]
+}

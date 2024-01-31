@@ -176,7 +176,7 @@ driver-specific messages they produce.
 
    * - connection
      - `Connection Monitoring and Pooling
-       <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+       <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`__
      - ``MONGODB_LOG_CONNECTION``
 
 

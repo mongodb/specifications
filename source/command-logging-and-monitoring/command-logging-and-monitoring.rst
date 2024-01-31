@@ -408,7 +408,7 @@ The following key-value pairs MUST be included in all command messages:
    * - driverConnectionId
      - Int64
      - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandStartedEvent.connectionId`` defined above,
-       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
+       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`_.
        Unlike ``CommandStartedEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
        ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
        a connection ID.

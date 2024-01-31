@@ -92,36 +92,47 @@ with open(md_file, 'w') as fid:
 # (https://github.com/mongodb/specifications/blob/master/source/...)
 # and rewrite them to use appropriate md links.
 # If the link is malformed we ignore and print an error.
-pattern = re.compile(f'(<.*{path.parent.name}/{path.name}[>#])')
+rel_pattern = re.compile(f'(\.\.\S*/{path.name})')
+md_pattern = re.compile(f'(\(http\S*/{path.name})')
+rst_pattern = re.compile(f'(<http\S*/{path.name})')
+abs_pattern = re.compile(f'(/source/\S*/{path.name})')
 for p in Path("source").rglob("*"):
-    if not '.rst' in p.name:
+    if p.suffix not in ['.rst', '.md']:
         continue
     found = False
     with p.open() as fid:
         lines = fid.readlines()
     new_lines = []
+    relpath = os.path.relpath(md_file, start=p.parent)
     for line in lines:
-        match = re.search(pattern, line)
-        if not match:
-            new_lines.append(line)
-            continue
-        matchstr = match.groups()[0]
-        if matchstr[0].startswith('https'):
-            if not substr.startswith('<https://github.com/mongodb/specifications/blob/master/source/'):
-                print('*** Error in link: ', substr, p)
-                new_lines.append(line)
-                continue
-        found = True
-        relpath = os.path.relpath(path.parent.parent, start=p.parent)
-        new_name = path.name.replace('.rst', '.md')
-        new_substr = f'<{relpath}/{path.parent.name}/{new_name}{matchstr[-1]}'
-        new_lines.append(line.replace(matchstr, new_substr))
+        new_line = line
+        if re.search(rel_pattern, line):
+            matchstr = re.search(rel_pattern, line).groups()[0]
+            new_line = line.replace(matchstr, relpath)
+        elif re.search(md_pattern, line):
+            matchstr = re.search(md_pattern, line).groups()[0]
+            if not matchstr.startswith('(https://github.com/mongodb/specifications/blob/master/source'):
+                print('*** Error in link: ', matchstr, p)
+            else:
+                new_line = line.replace(matchstr, f'({relpath}')
+        elif re.search(rst_pattern, line):
+            matchstr = re.search(rst_pattern, line).groups()[0]
+            if not matchstr.startswith('<https://github.com/mongodb/specifications/blob/master/source'):
+                print('*** Error in link: ', matchstr, p)
+            else:
+                new_line = line.replace(matchstr, f'<{relpath}')
+        elif re.search(abs_pattern, line):
+            matchstr = re.search(abs_pattern, line).groups()[0]
+            new_line = line.replace(matchstr, relpath)
+
+        if new_line != line:
+            found = True
+        new_lines.append(new_line)
 
     if found:
         with p.open('w') as fid:
             fid.writelines(new_lines)
-        print(f'Update link(s) in {p.name}')
-
+        print(f'Update link(s) in {p}')
 
 
 print('Created markdown file:')
