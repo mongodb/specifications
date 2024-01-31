@@ -15,8 +15,9 @@ For example, if the selected AWS profile ID is "drivers-test", run:
 .. code:: shell
 
   aws configure sso
-  AWS_PROFILE="drivers-test" ./oidc_get_tokens.sh
-  AWS_WEB_IDENTITY_TOKEN_FILE="/tmp/tokens/test_user1" /my/test/command
+  export OIDC_TOKEN_DIR=/tmp/tokens
+  AWS_PROFILE="drivers-test" oidc_get_tokens.sh
+  AWS_WEB_IDENTITY_TOKEN_FILE="$OIDC_TOKEN_DIR/test_user1" /my/test/command
 
 .. _oidc_get_tokens.sh: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/oidc_get_tokens.sh
 .. _drivers-evergreen-tools: https://github.com/mongodb-labs/drivers-evergreen-tools/
@@ -26,7 +27,8 @@ For example, if the selected AWS profile ID is "drivers-test", run:
 Prose Tests
 ===========
 
-Drivers MUST implement all prose tests in this section.
+Drivers MUST implement all prose tests in this section. Unless otherwise noted,
+all ``MongoClient`` instances MUST be configured with ``retryReads=false``.
 
 .. note::
 
@@ -70,8 +72,7 @@ method, use ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` for
   inputs and returns a valid access token.
 - Perform a ``find`` operation that succeeds.
 - Assert that the OIDC callback was called with the appropriate inputs,
-  including the timeout parameter if possible. Ensure that there are no
-  unexpected fields.
+  including the timeout parameter if possible.
 - Close the client.
 
 **2.2 OIDC Callback Returns Null**
@@ -97,10 +98,10 @@ method, use ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` for
 (3) Authentication Failure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**3.1 Authentication failure with cached tokens fetch a new token and retry**
+**3.1 Authentication failure with cached tokens fetch a new token and retry auth**
 
-- Create a ``MongoClient`` configured with ``retryReads=false`` and an OIDC
-  callback that implements the AWS provider logic.
+- Create a ``MongoClient`` configured with an OIDC callback that implements the
+  AWS provider logic.
 - Poison the *Client Cache* with an invalid access token.
 - Perform a ``find`` operation that succeeds.
 - Assert that the callback was called 1 time.
@@ -108,8 +109,8 @@ method, use ``mongodb://localhost/?authMechanism=MONGODB-OIDC`` for
 
 **3.2 Authentication failures without cached tokens return an error**
 
-- Create a ``MongoClient`` configured with ``retryReads=false`` and an OIDC
-  callback that always returns invalid access tokens.
+- Create a ``MongoClient`` configured with an OIDC callback that always returns
+  invalid access tokens.
 - Perform a ``find`` operation that fails.
 - Assert that the callback was called 1 time.
 - Close the client.
@@ -148,7 +149,8 @@ Human Authentication Flow Prose Tests
 
 Drivers that support the `Human Authentication Flow
 <../auth/auth.rst#human-authentication-flow>`_ MUST implement all prose tests in
-this section.
+this section. Unless otherwise noted, all ``MongoClient`` instances MUST be
+configured with ``retryReads=false``.
 
 .. note::
 
@@ -174,7 +176,7 @@ and
 for ``MONGODB_URI_MULTI`` because the other server is a secondary on a replica
 set, on port ``27018``.
 
-The default OIDC client used in the tests will be configured with
+The default OIDC client used in the tests is configured with
 ``MONGODB_URI_SINGLE`` and a valid human callback handler that returns the
 ``test_user1`` local token in ``OIDC_TOKEN_DIR`` as the "access_token", and a
 dummy "refresh_token".
@@ -243,7 +245,7 @@ is one principal configured.
   returns a valid access token.
 - Perform a ``find`` operation that succeeds. Verify that the human
   callback was called with the appropriate inputs, including the timeout
-  parameter if possible. Ensure that there are no unexpected fields.
+  parameter if possible.
 - Close the client.
 
 **2.3 Human Callback Returns Missing Data**
