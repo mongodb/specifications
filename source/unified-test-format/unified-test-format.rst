@@ -4089,7 +4089,7 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2024-01-17: **Schema version 1.18.**
+:2024-01-31: **Schema version 1.19.**
              Add ``authMechanism`` to ``runOnRequirement`` and require that
              ``uriOptions`` supports placeholder documents.
 :2024-01-03: Document server version requirements for ``errorLabels`` and

@@ -1,6 +1,6 @@
 {
   "description": "runOnRequirement-authMechanism-type",
-  "schemaVersion": "1.18",
+  "schemaVersion": "1.19",
   "runOnRequirements": [
     {
       "authMechanism": 0
