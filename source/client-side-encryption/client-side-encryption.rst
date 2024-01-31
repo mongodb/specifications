@@ -2451,7 +2451,7 @@ These operations MUST NOT reuse the same connection pool as the parent
 situations.
 
 Drivers supporting a connection pool (see `CMAP specification
-</source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_)
+<../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`_)
 support an option for limiting the connection pool size: ``maxPoolSize``.
 
 Drivers need to check out a connection before serializing the command. If the

@@ -94,8 +94,8 @@ with open(md_file, 'w') as fid:
 # If the link is malformed we ignore and print an error.
 curr = path
 target = path.name
-while curr.name != "source":
-    target = f"{curr.parent}/{target}"
+while curr.parent.name != "source":
+    target = f"{curr.parent.name}/{target}"
     curr = curr.parent
 pattern = re.compile(f'(<.*{target}[>#])')
 for p in Path("source").rglob("*"):
