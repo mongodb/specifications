@@ -1119,56 +1119,12 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-<table>
-<colgroup>
-  <col style="width: 33%" />
-  <col style="width: 33%" />
-  <col style="width: 33%" />
-</colgroup>
-<thead>
-  <tr class="header">
-  <th>Key</th>
-  <th>Suggested Type</th>
-  <th>Value</th>
-  </tr>
-</thead>
-<tbody>
-  <tr class="odd">
-    <td>message</td>
-    <td>String</td>
-    <td>"Connection closed"</td>
-  </tr>
-  <tr class="even">
-    <td>driverConnectionId</td>
-    <td>Int64</td>
-    <td>The driver-generated ID for the connection as defined in <a
-    href="#connection">Connection</a>.</td>
-  </tr>
-  <tr class="odd">
-    <td>reason</td>
-    <td>String</td>
-    <td>A string describing the reason the connection was closed. The
-    following strings MUST be used for each possible reason as defined in <a
-    href="#events">Events</a> above:
-    <ul>
-    <li>Stale: "Connection became stale because the pool was cleared"</li>
-    <li>Idle: "Connection has been available but unused for longer than the
-    configured max idle time"</li>
-    <li>Error: "An error occurred while using the connection"</li>
-    <li>Pool closed: "Connection pool was closed"</li>
-    </ul></td>
-  </tr>
-  <tr class="even">
-    <td>error</td>
-    <td>Flexible</td>
-    <td>If <code>reason</code> is <code>Error</code>, the associated error.
-    The type and format of this value is flexible; see the <a
-    href="../logging/logging.rst#representing-errors-in-log-messages">logging
-    specification</a> for details on representing errors in log
-    messages.</td>
-  </tr>
-</tbody>
-</table>
+| Key                | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| message            | String         | "Connection closed"                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| driverConnectionId | Int64          | The driver-generated ID for the connection as defined in a [Connection](#connection).                                                                                                                                                                                                                                                                                                                                                       |
+| reason             | String         | A string describing the reason the connection was closed. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Stale: "Connection became stale because the pool was cleared<br>- Idle: "Connection has been available but unused for longer than the configured max idle time"<br>- Error: "An error occurred while using the connection"<br>- Pool closed: "Connection pool was closed" |
+| error              | Flexible       | If `reason` is `Error`, the associated error.<br>The type and format of this value is flexible; see the [logging specification](../logging/logging.rst#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                                                                                                             |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1193,57 +1149,12 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-<table>
-<colgroup>
-  <col style="width: 33%" />
-  <col style="width: 33%" />
-  <col style="width: 33%" />
-</colgroup>
-<thead>
-  <tr class="header">
-  <th>Key</th>
-  <th>Suggested Type</th>
-  <th>Value</th>
-  </tr>
-</thead>
-<tbody>
-  <tr class="odd">
-    <td>message</td>
-    <td>String</td>
-    <td>"Connection checkout failed"</td>
-  </tr>
-  <tr class="even">
-    <td>reason</td>
-    <td>String</td>
-    <td>A string describing the reason checkout. The following strings MUST
-    be used for each possible reason as defined in <a
-    href="#events">Events</a> above:
-    <ul>
-    <li>Timeout: "Wait queue timeout elapsed without a connection becoming
-    available"</li>
-    <li>ConnectionError: "An error occurred while trying to establish a new
-    connection"</li>
-    <li>Pool closed: "Connection pool was closed"</li>
-    </ul></td>
-  </tr>
-  <tr class="odd">
-    <td>error</td>
-    <td>Flexible</td>
-    <td>If <code>reason</code> is <code>ConnectionError</code>, the
-    associated error. The type and format of this value is flexible; see the
-    <a
-    href="../logging/logging.rst#representing-errors-in-log-messages">logging
-    specification</a> for details on representing errors in log
-    messages.</td>
-    </tr>
-    <tr class="even">
-    <td>durationMS</td>
-    <td>Int64</td>
-    <td><code>ConnectionCheckOutFailedEvent.duration</code> converted to
-    milliseconds.</td>
-  </tr>
-</tbody>
-</table>
+| Key        | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                              |
+| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| message    | String         | "Connection checkout failed"                                                                                                                                                                                                                                                                                                                                       |
+| reason     | String         | A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed" |
+| error      | Flexible       | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.rst#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                             |
+| durationMS | Int64          | `ConnectionCheckOutFailedEvent.duration` converted to milliseconds.                                                                                                                                                                                                                                                                                                |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
