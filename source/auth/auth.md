@@ -143,9 +143,8 @@ Drivers MUST follow the following steps for an authentication handshake:
 1. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
 1. Inspect the value of `maxWireVersion`. If the value is greater than or equal to `6`, then the driver MUST use
    `OP_MSG` for authentication. Otherwise, it MUST use `OP_QUERY`.
-1. If credentials exist:
-   1. A driver MUST authenticate with all credentials provided to the MongoClient.
-   1. A single invalid credential is the same as all credentials being invalid.
+1. If credentials exist: 3.1. A driver MUST authenticate with all credentials provided to the MongoClient. 3.2. A single
+   invalid credential is the same as all credentials being invalid.
 
 If the authentication handshake fails for a socket, drivers MUST mark the server Unknown and clear the server's
 connection pool. (See [Q & A](#q-a) below and SDAM's
@@ -268,25 +267,32 @@ the password using the returned nonce, and then sends an `authenticate` command.
 
 1. Send `getnonce` command
 
-   - `{ getnonce: 1 }`
-   - Response: `{ nonce: <nonce> }`
+```javascript
+CMD = { getnonce: 1 }
+RESP = { nonce: <nonce> }
+```
 
-1. Compute key
+2. Compute key
 
-   - `passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))`
-   - `key = HEX( MD5( UTF8( nonce + username + passwordDigest )))`
+```javascript
+passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))
+key = HEX( MD5( UTF8( nonce + username + passwordDigest )))
+```
 
-1. Send `authenticate` command
+3. Send `authenticate` command
 
-   - `{ authenticate: 1, nonce: nonce, user: username, key: key }`
+```javascript
+CMD = { authenticate: 1, nonce: nonce, user: username, key: key }
+```
 
 As an example, given a username of "user" and a password of "pencil", the conversation would appear as follows:
 
-C: `{getnonce : 1}`\
-S: `{nonce: "2375531c32080ae8", ok: 1}`\
-C:
-`{authenticate: 1, user: "user", nonce: "2375531c32080ae8", key: "21742f26431831d5cfca035a08c5bdf6"}`\
-S: `{ok: 1}`
+```javascript
+CMD = {getnonce : 1}
+RESP = {nonce: "2375531c32080ae8", ok: 1}
+CMD = {authenticate: 1, user: "user", nonce: "2375531c32080ae8", key: "21742f26431831d5cfca035a08c5bdf6"}
+RESP = {ok: 1}
+```
 
 #### [MongoCredential](#mongocredential) Properties
 
@@ -331,15 +337,21 @@ When connected to MongoDB 3.2 or earlier:
 
 1. Send `authenticate` command (MongoDB 3.4+)
 
-   - C: `{"authenticate": 1, "mechanism": "MONGODB-X509"}`
-   - S: `{"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}`
+```javascript
+CMD = {"authenticate": 1, "mechanism": "MONGODB-X509"}
+RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}
+```
 
-1. Send `authenticate` command with username:
+2. Send `authenticate` command with username:
 
-   - `username = openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem`
-   - C:
-     `{authenticate: 1, mechanism: "MONGODB-X509", user: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}`
-   - S: `{"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}`
+```bash
+username = $(openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem)
+```
+
+```javascript
+CMD = {authenticate: 1, mechanism: "MONGODB-X509", user: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}
+RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}
+```
 
 #### [MongoCredential](#mongocredential) Properties
 
@@ -524,15 +536,17 @@ of MongoDB, the `$external` database must be used for authentication.
 
 As an example, given a username of "user" and a password of "pencil", the conversation would appear as follows:
 
-C: `{saslStart: 1, mechanism: "PLAIN", payload: BinData(0, "AHVzZXIAcGVuY2ls")}`\
-S:
-`{conversationId: 1, payload: BinData(0,""), done: true, ok: 1}`
+```javascript
+CMD = {saslStart: 1, mechanism: "PLAIN", payload: BinData(0, "AHVzZXIAcGVuY2ls")}
+RESP = {conversationId: 1, payload: BinData(0,""), done: true, ok: 1}
+```
 
 If your sasl client is also sending the authzid, it would be "user" and the conversation would appear as follows:
 
-C: `{saslStart: 1, mechanism: "PLAIN", payload: BinData(0, "dXNlcgB1c2VyAHBlbmNpbA==")}`\
-S:
-`{conversationId: 1, payload: BinData(0,""), done: true, ok: 1}`
+```javascript
+CMD = {saslStart: 1, mechanism: "PLAIN", payload: BinData(0, "dXNlcgB1c2VyAHBlbmNpbA==")}
+RESP = {conversationId: 1, payload: BinData(0,""), done: true, ok: 1}
+```
 
 MongoDB supports either of these forms.
 
@@ -601,24 +615,21 @@ shorten the conversation by one round trip.
 As an example, given a username of "user" and a password of "pencil" and an r value of "fyko+d2lbbFgONRv9qkxdawL", a
 SCRAM-SHA-1 conversation would appear as follows:
 
-C: `n,,n=user,r=fyko+d2lbbFgONRv9qkxdawL`\
-S:
-`r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,s=rQ9ZY3MntBeuP3E1TDVC4w==,i=10000`\
-C:
-`c=biws,r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,p=MC2T8BvbmWRckDw8oWl5IVghwCY=`\
-S:
-`v=UMWeI25JD1yNYZRMpZ4VHvhZ9e0=`
+```javascript
+CMD = "n,,n=user,r=fyko+d2lbbFgONRv9qkxdawL"
+RESP = "r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,s=rQ9ZY3MntBeuP3E1TDVC4w==,i=10000"
+CMD = "c=biws,r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,p=MC2T8BvbmWRckDw8oWl5IVghwCY="
+RESP = "v=UMWeI25JD1yNYZRMpZ4VHvhZ9e0="
+```
 
 This same conversation over MongoDB's SASL implementation would appear as follows:
 
-C:
-`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: { skipEmptyExchange: true }}`\
-S:
-`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`\
-C:
-`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`\
-S:
-`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: true, ok: 1}`
+```javascript
+CMD = {saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: { skipEmptyExchange: true }}
+RESP = {conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}
+CMD = {saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}
+RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: true, ok: 1}
+```
 
 #### [MongoCredential](#mongocredential) Properties
 
@@ -665,24 +676,21 @@ shorten the conversation by one round trip.
 As an example, given a username of "user" and a password of "pencil" and an r value of "rOprNGfwEbeRWgbNEkqO", a
 SCRAM-SHA-256 conversation would appear as follows:
 
-C: `n,,n=user,r=rOprNGfwEbeRWgbNEkqO`\
-S:
-`r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096`\
-C:
-`c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ=`\
-S:
-`v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4=`
+```javascript
+CMD = "n,,n=user,r=rOprNGfwEbeRWgbNEkqO"
+RESP = "r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096"
+CMD = "c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ="
+RESP = "v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4="
+```
 
 This same conversation over MongoDB's SASL implementation would appear as follows:
 
-C:
-`{saslStart: 1, mechanism:"SCRAM-SHA-256", options: {skipEmptyExchange: true}, payload: BinData(0, "biwsbj11c2VyLHI9ck9wck5HZndFYmVSV2diTkVrcU8=")}`\
-S:
-`{conversationId: 1, payload: BinData(0, "cj1yT3ByTkdmd0ViZVJXZ2JORWtxTyVodllEcFdVYTJSYVRDQWZ1eEZJbGopaE5sRiRrMCxzPVcyMlphSjBTTlk3c29Fc1VFamI2Z1E9PSxpPTQwOTY="), done: false, ok: 1}`\
-C:
-`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ck9wck5HZndFYmVSV2diTkVrcU8laHZZRHBXVWEyUmFUQ0FmdXhGSWxqKWhObEYkazAscD1kSHpiWmFwV0lrNGpVaE4rVXRlOXl0YWc5empmTUhnc3FtbWl6N0FuZFZRPQ==")}`\
-S:
-`{conversationId: 1, payload: BinData(0, "dj02cnJpVFJCaTIzV3BSUi93dHVwK21NaFVaVW4vZEI1bkxUSlJzamw5NUc0PQ=="), done: true, ok: 1}`
+```javascript
+CMD = {saslStart: 1, mechanism:"SCRAM-SHA-256", options: {skipEmptyExchange: true}, payload: BinData(0, "biwsbj11c2VyLHI9ck9wck5HZndFYmVSV2diTkVrcU8=")}
+RESP = {conversationId: 1, payload: BinData(0, "cj1yT3ByTkdmd0ViZVJXZ2JORWtxTyVodllEcFdVYTJSYVRDQWZ1eEZJbGopaE5sRiRrMCxzPVcyMlphSjBTTlk3c29Fc1VFamI2Z1E9PSxpPTQwOTY="), done: false, ok: 1}
+CMD={saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ck9wck5HZndFYmVSV2diTkVrcU8laHZZRHBXVWEyUmFUQ0FmdXhGSWxqKWhObEYkazAscD1kSHpiWmFwV0lrNGpVaE4rVXRlOXl0YWc5empmTUhnc3FtbWl6N0FuZFZRPQ==")}
+RESP={conversationId: 1, payload: BinData(0, "dj02cnJpVFJCaTIzV3BSUi93dHVwK21NaFVaVW4vZEI1bkxUSlJzamw5NUc0PQ=="), done: true, ok: 1}
+```
 
 #### [MongoCredential](#mongocredential) Properties
 
