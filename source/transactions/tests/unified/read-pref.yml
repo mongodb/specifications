@@ -1,0 +1,476 @@
+# This file was created automatically using mongodb-spec-converter.
+# Please review the generated file, then remove this notice.
+
+description: read-pref
+schemaVersion: '1.3'
+createEntities:
+  -
+    client:
+      id: &client0 client0
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+  -
+    database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database_name transaction-tests
+  -
+    collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection_name test
+  -
+    session:
+      id: &session0 session0
+      client: *client0
+  -
+    session:
+      id: &session1 session1
+      client: *client0
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+  -
+    minServerVersion: 4.1.8
+    topologies:
+      - sharded
+      - load-balanced
+initialData:
+  -
+    collectionName: *collection_name
+    databaseName: *database_name
+    documents: []
+tests:
+  -
+    description: 'default readPreference'
+    operations:
+      -
+        object: *session0
+        name: startTransaction
+      -
+        object: *collection0
+        name: insertMany
+        arguments:
+          documents: &insertedDocs
+            -
+              _id: 1
+            -
+              _id: 2
+            -
+              _id: 3
+            -
+              _id: 4
+          session: *session0
+        expectResult:
+          $$unsetOrMatches:
+            insertedIds:
+              $$unsetOrMatches:
+                '0': 1
+                '1': 2
+                '2': 3
+                '3': 4
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Secondary
+        name: aggregate
+        arguments:
+          session: *session0
+          pipeline:
+            -
+              $match:
+                _id: 1
+            -
+              $count: count
+        expectResult:
+          -
+            count: 1
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Secondary
+        name: find
+        arguments:
+          session: *session0
+          batchSize: 3
+        expectResult: *insertedDocs
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Secondary
+        name: aggregate
+        arguments:
+          pipeline:
+            -
+              $project:
+                _id: 1
+          batchSize: 3
+          session: *session0
+        expectResult: *insertedDocs
+      -
+        object: *session0
+        name: commitTransaction
+    outcome:
+      -
+        collectionName: *collection_name
+        databaseName: *database_name
+        documents: *insertedDocs
+  -
+    description: 'primary readPreference'
+    operations:
+      -
+        object: *session0
+        name: startTransaction
+        arguments:
+          readPreference:
+            mode: Primary
+      -
+        object: *collection0
+        name: insertMany
+        arguments:
+          documents: &insertedDocs
+            -
+              _id: 1
+            -
+              _id: 2
+            -
+              _id: 3
+            -
+              _id: 4
+          session: *session0
+        expectResult:
+          $$unsetOrMatches:
+            insertedIds:
+              $$unsetOrMatches:
+                '0': 1
+                '1': 2
+                '2': 3
+                '3': 4
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Secondary
+        name: aggregate
+        arguments:
+          session: *session0
+          pipeline:
+            -
+              $match:
+                _id: 1
+            -
+              $count: count
+        expectResult:
+          -
+            count: 1
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Secondary
+        name: find
+        arguments:
+          session: *session0
+          batchSize: 3
+        expectResult: *insertedDocs
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Secondary
+        name: aggregate
+        arguments:
+          pipeline:
+            -
+              $project:
+                _id: 1
+          batchSize: 3
+          session: *session0
+        expectResult: *insertedDocs
+      -
+        object: *session0
+        name: commitTransaction
+    outcome:
+      -
+        collectionName: *collection_name
+        databaseName: *database_name
+        documents: *insertedDocs
+  -
+    description: 'secondary readPreference'
+    operations:
+      -
+        object: *session0
+        name: startTransaction
+        arguments:
+          readPreference:
+            mode: Secondary
+      -
+        object: *collection0
+        name: insertMany
+        arguments:
+          documents: &insertedDocs
+            -
+              _id: 1
+            -
+              _id: 2
+            -
+              _id: 3
+            -
+              _id: 4
+          session: *session0
+        expectResult:
+          $$unsetOrMatches:
+            insertedIds:
+              $$unsetOrMatches:
+                '0': 1
+                '1': 2
+                '2': 3
+                '3': 4
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: aggregate
+        arguments:
+          session: *session0
+          pipeline:
+            -
+              $match:
+                _id: 1
+            -
+              $count: count
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: find
+        arguments:
+          session: *session0
+          batchSize: 3
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: aggregate
+        arguments:
+          pipeline:
+            -
+              $project:
+                _id: 1
+          batchSize: 3
+          session: *session0
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *session0
+        name: abortTransaction
+    outcome:
+      -
+        collectionName: *collection_name
+        databaseName: *database_name
+        documents: []
+  -
+    description: 'primaryPreferred readPreference'
+    operations:
+      -
+        object: *session0
+        name: startTransaction
+        arguments:
+          readPreference:
+            mode: PrimaryPreferred
+      -
+        object: *collection0
+        name: insertMany
+        arguments:
+          documents: &insertedDocs
+            -
+              _id: 1
+            -
+              _id: 2
+            -
+              _id: 3
+            -
+              _id: 4
+          session: *session0
+        expectResult:
+          $$unsetOrMatches:
+            insertedIds:
+              $$unsetOrMatches:
+                '0': 1
+                '1': 2
+                '2': 3
+                '3': 4
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: aggregate
+        arguments:
+          session: *session0
+          pipeline:
+            -
+              $match:
+                _id: 1
+            -
+              $count: count
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: find
+        arguments:
+          session: *session0
+          batchSize: 3
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: aggregate
+        arguments:
+          pipeline:
+            -
+              $project:
+                _id: 1
+          batchSize: 3
+          session: *session0
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *session0
+        name: abortTransaction
+    outcome:
+      -
+        collectionName: *collection_name
+        databaseName: *database_name
+        documents: []
+  -
+    description: 'nearest readPreference'
+    operations:
+      -
+        object: *session0
+        name: startTransaction
+        arguments:
+          readPreference:
+            mode: Nearest
+      -
+        object: *collection0
+        name: insertMany
+        arguments:
+          documents: &insertedDocs
+            -
+              _id: 1
+            -
+              _id: 2
+            -
+              _id: 3
+            -
+              _id: 4
+          session: *session0
+        expectResult:
+          $$unsetOrMatches:
+            insertedIds:
+              $$unsetOrMatches:
+                '0': 1
+                '1': 2
+                '2': 3
+                '3': 4
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: aggregate
+        arguments:
+          session: *session0
+          pipeline:
+            -
+              $match:
+                _id: 1
+            -
+              $count: count
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: find
+        arguments:
+          session: *session0
+          batchSize: 3
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *collection0
+        collectionOptions:
+          readPreference:
+            mode: Primary
+        name: aggregate
+        arguments:
+          pipeline:
+            -
+              $project:
+                _id: 1
+          batchSize: 3
+          session: *session0
+        expectError:
+          errorContains: 'read preference in a transaction must be primary'
+      -
+        object: *session0
+        name: abortTransaction
+    outcome:
+      -
+        collectionName: *collection_name
+        databaseName: *database_name
+        documents: []
+  -
+    description: 'secondary write only'
+    operations:
+      -
+        object: *session0
+        name: startTransaction
+        arguments:
+          readPreference:
+            mode: Secondary
+      -
+        object: *collection0
+        name: insertOne
+        arguments:
+          session: *session0
+          document:
+            _id: 1
+        expectResult:
+          $$unsetOrMatches:
+            insertedId:
+              $$unsetOrMatches: 1
+      -
+        object: *session0
+        name: commitTransaction
+    outcome:
+      -
+        collectionName: *collection_name
+        databaseName: *database_name
+        documents:
+          -
+            _id: 1

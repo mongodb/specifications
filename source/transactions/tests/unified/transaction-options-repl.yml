@@ -1,0 +1,176 @@
+# This file was created automatically using mongodb-spec-converter.
+# Please review the generated file, then remove this notice.
+
+description: transaction-options-repl
+schemaVersion: '1.3'
+createEntities:
+  -
+    client:
+      id: &client0 client0
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+  -
+    database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database_name transaction-tests
+  -
+    collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection_name test
+  -
+    session:
+      id: &session0 session0
+      client: *client0
+  -
+    session:
+      id: &session1 session1
+      client: *client0
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+initialData:
+  -
+    collectionName: *collection_name
+    databaseName: *database_name
+    documents: []
+tests:
+  -
+    description: 'readConcern snapshot in startTransaction options'
+    sessionOptions:
+      session0:
+        defaultTransactionOptions:
+          readConcern:
+            level: majority
+    operations:
+      -
+        object: *session0
+        name: startTransaction
+        arguments:
+          readConcern:
+            level: snapshot
+      -
+        object: *collection0
+        name: insertOne
+        arguments:
+          session: *session0
+          document:
+            _id: 1
+        expectResult:
+          $$unsetOrMatches:
+            insertedId:
+              $$unsetOrMatches: 1
+      -
+        object: *session0
+        name: commitTransaction
+      -
+        object: *session0
+        name: startTransaction
+        arguments:
+          readConcern:
+            level: snapshot
+      -
+        object: *collection0
+        name: insertOne
+        arguments:
+          session: *session0
+          document:
+            _id: 2
+        expectResult:
+          $$unsetOrMatches:
+            insertedId:
+              $$unsetOrMatches: 2
+      -
+        object: *session0
+        name: abortTransaction
+    expectEvents:
+      -
+        client: *client0
+        events:
+          -
+            commandStartedEvent:
+              command:
+                insert: *collection_name
+                documents:
+                  -
+                    _id: 1
+                ordered: true
+                lsid:
+                  $$sessionLsid: *session0
+                txnNumber:
+                  $numberLong: '1'
+                startTransaction: true
+                autocommit: false
+                readConcern:
+                  level: snapshot
+                writeConcern:
+                  $$exists: false
+              commandName: insert
+              databaseName: *database_name
+          -
+            commandStartedEvent:
+              command:
+                commitTransaction: 1
+                lsid:
+                  $$sessionLsid: *session0
+                txnNumber:
+                  $numberLong: '1'
+                startTransaction:
+                  $$exists: false
+                autocommit: false
+                readConcern:
+                  $$exists: false
+                writeConcern:
+                  $$exists: false
+              commandName: commitTransaction
+              databaseName: admin
+          -
+            commandStartedEvent:
+              command:
+                insert: *collection_name
+                documents:
+                  -
+                    _id: 2
+                ordered: true
+                lsid:
+                  $$sessionLsid: *session0
+                txnNumber:
+                  $numberLong: '2'
+                startTransaction: true
+                autocommit: false
+                readConcern:
+                  level: snapshot
+                  afterClusterTime:
+                    $$exists: true
+                writeConcern:
+                  $$exists: false
+              commandName: insert
+              databaseName: *database_name
+          -
+            commandStartedEvent:
+              command:
+                abortTransaction: 1
+                lsid:
+                  $$sessionLsid: *session0
+                txnNumber:
+                  $numberLong: '2'
+                startTransaction:
+                  $$exists: false
+                autocommit: false
+                readConcern:
+                  $$exists: false
+                writeConcern:
+                  $$exists: false
+              commandName: abortTransaction
+              databaseName: admin
+    outcome:
+      -
+        collectionName: *collection_name
+        databaseName: *database_name
+        documents:
+          -
+            _id: 1
