@@ -1,8 +1,10 @@
 # This file was created automatically using mongodb-spec-converter.
 # Please review the generated file, then remove this notice.
 
+# Assumes the default for transactions is the same as for all ops, tests
+# setting the writeConcern to "majority".
 description: write-concern
-schemaVersion: '1.3'
+schemaVersion: '1.9'
 createEntities:
   -
     client:
@@ -21,12 +23,15 @@ createEntities:
       database: *database0
       collectionName: &collection_name test
   -
-    session:
-      id: &session0 session0
-      client: *client0
+    collection:
+      id: &collection_w0 collection_w0
+      database: *database0
+      collectionName: &collection_name test
+      collectionOptions:
+        writeConcern: { w: 0 }
   -
     session:
-      id: &session1 session1
+      id: &session0 session0
       client: *client0
 runOnRequirements:
   -
@@ -81,16 +86,17 @@ tests:
                   -
                     _id: 1
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: &transactionCommandArgs
+                  lsid:
+                    $$sessionLsid: *session0
+                  txnNumber:
+                    $numberLong: '1'
+                  startTransaction: true
+                  autocommit: false
+                  readConcern:
+                    $$exists: false
+                  writeConcern:
+                    $$exists: false
               commandName: insert
               databaseName: *database_name
           -
@@ -147,16 +153,7 @@ tests:
                   -
                     _id: 1
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: insert
               databaseName: *database_name
           - &commitWithDefaultWCEvent
@@ -218,16 +215,7 @@ tests:
                   -
                     _id: 1
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: insert
               databaseName: *database_name
           -
@@ -282,16 +270,7 @@ tests:
                   -
                     _id: 1
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: insert
               databaseName: *database_name
           -
@@ -324,26 +303,35 @@ tests:
           writeConcern:
             w: 0
         expectError:
+          isClientError: true
           errorContains: 'transactions do not support unacknowledged write concern'
   -
     description: 'start with implicit unacknowledged write concern'
-    clientOptions:
-      w: 0
     operations:
       -
-        object: *session0
+        object: testRunner
+        name: createEntities
+        arguments:
+          entities:
+            - client:
+                id: &client1 client1
+                useMultipleMongoses: false
+                uriOptions: { w: 0 }
+            - session:
+                id: &session1 session1
+                client: *client1
+      -
+        object: *session1
         name: startTransaction
         expectError:
+          isClientError: true
           errorContains: 'transactions do not support unacknowledged write concern'
   -
     description: 'unacknowledged write concern coll insertOne'
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: insertOne
         arguments:
           session: *session0
@@ -374,10 +362,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: insertMany
         arguments:
           session: *session0
@@ -407,16 +392,7 @@ tests:
                   -
                     _id: 2
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: insert
               databaseName: *database_name
           - *commitWithDefaultWCEvent
@@ -436,10 +412,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: bulkWrite
         arguments:
           session: *session0
@@ -479,10 +452,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: deleteOne
         arguments:
           session: *session0
@@ -505,16 +475,7 @@ tests:
                       _id: 0
                     limit: 1
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: delete
               databaseName: *database_name
           - *commitWithDefaultWCEvent
@@ -528,10 +489,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: deleteMany
         arguments:
           session: *session0
@@ -554,16 +512,7 @@ tests:
                       _id: 0
                     limit: 0
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: delete
               databaseName: *database_name
           - *commitWithDefaultWCEvent
@@ -577,10 +526,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: updateOne
         arguments:
           session: *session0
@@ -613,16 +559,7 @@ tests:
                     multi:
                       $$unsetOrMatches: false
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: update
               databaseName: *database_name
           - *commitWithDefaultWCEvent
@@ -639,10 +576,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: updateMany
         arguments:
           session: *session0
@@ -674,16 +608,7 @@ tests:
                     multi: true
                     upsert: true
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: update
               databaseName: *database_name
           - *commitWithDefaultWCEvent
@@ -700,10 +625,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: findOneAndDelete
         arguments:
           session: *session0
@@ -723,16 +645,7 @@ tests:
                 query:
                   _id: 0
                 remove: true
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: findAndModify
               databaseName: *database_name
           - *commitWithDefaultWCEvent
@@ -746,10 +659,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: findOneAndReplace
         arguments:
           session: *session0
@@ -774,16 +684,7 @@ tests:
                 update:
                   x: 1
                 new: false
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: findAndModify
               databaseName: *database_name
           - *commitWithDefaultWCEvent
@@ -800,10 +701,7 @@ tests:
     operations:
       - *startTransaction
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: 0
+        object: *collection_w0
         name: findOneAndUpdate
         arguments:
           session: *session0
@@ -830,16 +728,7 @@ tests:
                   $inc:
                     x: 1
                 new: false
-                lsid:
-                  $$sessionLsid: *session0
-                txnNumber:
-                  $numberLong: '1'
-                startTransaction: true
-                autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                <<: *transactionCommandArgs
               commandName: findAndModify
               databaseName: *database_name
           - *commitWithDefaultWCEvent
