@@ -2,7 +2,7 @@
 # Please review the generated file, then remove this notice.
 
 description: reads
-schemaVersion: '1.3'
+schemaVersion: '1.9'
 createEntities:
   -
     client:
@@ -23,10 +23,6 @@ createEntities:
   -
     session:
       id: &session0 session0
-      client: *client0
-  -
-    session:
-      id: &session1 session1
       client: *client0
 runOnRequirements:
   -
@@ -56,12 +52,21 @@ tests:
     description: 'collection readConcern without transaction'
     operations:
       -
-        object: *collection0
-        collectionOptions:
-          readConcern:
-            level: majority
+        object: testRunner
+        name: createEntities
+        arguments:
+          entities:
+            - collection:
+                id: &collection1 collection1
+                database: *database0
+                collectionName: *collection_name
+                collectionOptions:
+                  readConcern: { level: majority }
+      -
+        object: *collection1
         name: find
         arguments:
+          filter: {}
           session: *session0
         expectResult: *data
     expectEvents:
@@ -99,8 +104,9 @@ tests:
         object: *collection0
         name: find
         arguments:
-          session: *session0
           batchSize: 3
+          filter: {}
+          session: *session0
         expectResult: *data
       - *find
       - &commitTransaction
@@ -129,7 +135,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -159,7 +165,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -303,8 +309,9 @@ tests:
         object: *collection0
         name: distinct
         arguments:
-          session: *session0
           fieldName: _id
+          filter: {}
+          session: *session0
         expectResult:
           - 1
           - 2
