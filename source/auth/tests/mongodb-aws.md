@@ -1,6 +1,6 @@
 # MongoDB AWS
 
-There are 6 scenarios drivers MUST test:
+Drivers MUST test the following scenarios:
 
 1. `Regular Credentials`: Auth via an `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` pair
 2. `EC2 Credentials`: Auth from an EC2 instance via temporary credentials assigned to the machine
