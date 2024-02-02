@@ -24,10 +24,6 @@ createEntities:
     session:
       id: &session0 session0
       client: *client0
-  -
-    session:
-      id: &session1 session1
-      client: *client0
 runOnRequirements:
   -
     minServerVersion: '4.0'
@@ -46,8 +42,6 @@ initialData:
 tests:
   -
     description: 'increment txnNumber'
-    clientOptions:
-      retryWrites: true
     operations:
       -
         object: *session0
@@ -246,8 +240,6 @@ tests:
             _id: 5
   -
     description: 'writes are not retried'
-    clientOptions:
-      retryWrites: true
     operations:
       -
         object: testRunner
