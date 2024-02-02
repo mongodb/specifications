@@ -16,17 +16,22 @@ createEntities:
       client: *client0
       databaseName: &database_name transaction-tests
   -
+    database:
+      id: &database_rc_majority database_rc_majority
+      client: *client0
+      databaseName: &database_name transaction-tests
+      databaseOptions:
+        readConcern: { level: majority }
+  -
     collection:
-      id: &collection0 collection0
+      id: &collection_rc_majority collection_rc_majority
       database: *database0
       collectionName: &collection_name test
+      collectionOptions:
+        readConcern: { level: majority }
   -
     session:
       id: &session0 session0
-      client: *client0
-  -
-    session:
-      id: &session1 session1
       client: *client0
 runOnRequirements:
   -
@@ -62,16 +67,13 @@ tests:
           readConcern:
             level: majority
       - &countDocuments
-        object: *collection0
-        collectionOptions:
-          readConcern:
-            level: majority
+        object: *collection_rc_majority
         name: countDocuments
         arguments:
-          session: *session0
           filter:
             _id:
               $gte: 2
+          session: *session0
         expectResult: 3
       - *countDocuments
       - &commitTransaction
@@ -155,14 +157,12 @@ tests:
     operations:
       - *startTransaction
       - &find
-        object: *collection0
-        collectionOptions:
-          readConcern:
-            level: majority
+        object: *collection_rc_majority
         name: find
         arguments:
-          session: *session0
           batchSize: 3
+          filter: {}
+          session: *session0
         expectResult: *data
       - *find
       - *commitTransaction
@@ -189,7 +189,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -223,7 +223,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -248,10 +248,7 @@ tests:
     operations:
       - *startTransaction
       - &aggregate
-        object: *collection0
-        collectionOptions:
-          readConcern:
-            level: majority
+        object: *collection_rc_majority
         name: aggregate
         arguments:
           pipeline:
@@ -291,7 +288,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -330,7 +327,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -351,14 +348,12 @@ tests:
     operations:
       - *startTransaction
       - &distinct
-        object: *collection0
-        collectionOptions:
-          readConcern:
-            level: majority
+        object: *collection_rc_majority
         name: distinct
         arguments:
-          session: *session0
           fieldName: _id
+          filter: {}
+          session: *session0
         expectResult:
           - 1
           - 2
@@ -552,7 +547,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -586,7 +581,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -637,7 +632,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -676,7 +671,7 @@ tests:
             commandStartedEvent:
               command:
                 getMore:
-                  $$type: long
+                  $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
                 lsid:
@@ -745,10 +740,7 @@ tests:
     operations:
       - *startTransactionNoReadConcern
       -
-        object: *database0
-        databaseOptions:
-          readConcern:
-            level: majority
+        object: *database_rc_majority
         name: runCommand
         arguments:
           session: *session0
