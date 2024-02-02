@@ -136,38 +136,38 @@ Drivers MUST ensure that they are testing the ability to cache credentials. Driv
 override the cached credentials to verify usage. To determine whether to run the cache tests, the driver can check for
 the absence of the AWS_ACCESS_KEY_ID environment variable and of credentials in the URI.
 
-1. Clear the cache.
-1. Create a new client.
-1. Ensure that a `find` operation adds credentials to the cache.
-1. Override the cached credentials with an "Expiration" that is within one minute of the current UTC time.
-1. Create a new client.
-1. Ensure that a `find` operation updates the credentials in the cache.
-1. Poison the cache with an invalid access key id.
-1. Create a new client.
-1. Ensure that a `find` operation results in an error.
-1. Ensure that the cache has been cleared.
-1. Ensure that a subsequent `find` operation succeeds.
-1. Ensure that the cache has been set.
+01. Clear the cache.
+02. Create a new client.
+03. Ensure that a `find` operation adds credentials to the cache.
+04. Override the cached credentials with an "Expiration" that is within one minute of the current UTC time.
+05. Create a new client.
+06. Ensure that a `find` operation updates the credentials in the cache.
+07. Poison the cache with an invalid access key id.
+08. Create a new client.
+09. Ensure that a `find` operation results in an error.
+10. Ensure that the cache has been cleared.
+11. Ensure that a subsequent `find` operation succeeds.
+12. Ensure that the cache has been set.
 
 If the drivers's language supports dynamically setting environment variables, add the following tests. Note that if
 integration tests are run in parallel for the driver, then these tests must be run as unit tests interacting with the
 auth provider directly instead of using a client.
 
-1. Clear the cache.
-1. Create a new client.
-1. Ensure that a `find` operation adds credentials to the cache.
-1. Set the AWS environment variables based on the cached credentials.
-1. Clear the cache.
-1. Create a new client.
-1. Ensure that a `find` operation succeeds and does not add credentials to the cache.
-1. Set the AWS environment variables to invalid values.
-1. Create a new client.
-1. Ensure that a `find` operation results in an error.
-1. Clear the AWS environment variables.
-1. Clear the cache.
-1. Create a new client.
-1. Ensure that a `find` operation adds credentials to the cache.
-1. Set the AWS environment variables to invalid values.
-1. Create a new client.
-1. Ensure that a `find` operation succeeds.
-1. Clear the AWS environment variables.
+01. Clear the cache.
+02. Create a new client.
+03. Ensure that a `find` operation adds credentials to the cache.
+04. Set the AWS environment variables based on the cached credentials.
+05. Clear the cache.
+06. Create a new client.
+07. Ensure that a `find` operation succeeds and does not add credentials to the cache.
+08. Set the AWS environment variables to invalid values.
+09. Create a new client.
+10. Ensure that a `find` operation results in an error.
+11. Clear the AWS environment variables.
+12. Clear the cache.
+13. Create a new client.
+14. Ensure that a `find` operation adds credentials to the cache.
+15. Set the AWS environment variables to invalid values.
+16. Create a new client.
+17. Ensure that a `find` operation succeeds.
+18. Clear the AWS environment variables.

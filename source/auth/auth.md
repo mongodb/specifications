@@ -24,25 +24,25 @@ The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL N
 
 ### Definitions
 
-Credential\
-The pieces of information used to establish the authenticity of a user. This is composed of an identity and
-some form of evidence such as a password or a certificate.
+- Credential\
+  The pieces of information used to establish the authenticity of a user. This is composed of an identity
+  and some form of evidence such as a password or a certificate.
 
-FQDN\
-Fully Qualified Domain Name
+- FQDN\
+  Fully Qualified Domain Name
 
-Mechanism\
-A SASL implementation of a particular type of credential negotiation.
+- Mechanism\
+  A SASL implementation of a particular type of credential negotiation.
 
-Source\
-The authority used to establish credentials and/or privileges in reference to a mongodb server. In practice, it
-is the database to which sasl authentication commands are sent.
+- Source\
+  The authority used to establish credentials and/or privileges in reference to a mongodb server. In practice,
+  it is the database to which sasl authentication commands are sent.
 
-Realm\
-The authority used to establish credentials and/or privileges in reference to GSSAPI.
+- Realm\
+  The authority used to establish credentials and/or privileges in reference to GSSAPI.
 
-SASL\
-Simple Authentication and Security Layer - [RFC 4422](http://www.ietf.org/rfc/rfc4422.txt)
+- SASL\
+  Simple Authentication and Security Layer - [RFC 4422](http://www.ietf.org/rfc/rfc4422.txt)
 
 ### Client Implementation
 
@@ -50,29 +50,29 @@ Simple Authentication and Security Layer - [RFC 4422](http://www.ietf.org/rfc/rf
 
 Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some or all of the following information.
 
-username (string)
+- username (string)
 
-- Applies to all mechanisms.
-- Optional for MONGODB-X509 and MONGODB-AWS.
+  - Applies to all mechanisms.
+  - Optional for MONGODB-X509 and MONGODB-AWS.
 
-source (string)
+- source (string)
 
-- Applies to all mechanisms.
-- Always '$external' for GSSAPI and MONGODB-X509.
-- This is the database to which the authenticate command will be sent.
-- This is the database to which sasl authentication commands will be sent.
+  - Applies to all mechanisms.
+  - Always '$external' for GSSAPI and MONGODB-X509.
+  - This is the database to which the authenticate command will be sent.
+  - This is the database to which sasl authentication commands will be sent.
 
-password (string)
+- password (string)
 
-- Does not apply to all mechanisms.
+  - Does not apply to all mechanisms.
 
-mechanism (string)
+- mechanism (string)
 
-- Indicates which mechanism to use with the credential.
+  - Indicates which mechanism to use with the credential.
 
-mechanism_properties
+- mechanism_properties
 
-- Includes additional properties for the given mechanism.
+  - Includes additional properties for the given mechanism.
 
 Each mechanism requires certain properties to be present in a MongoCredential for authentication to occur. See the
 individual mechanism definitions in the "MongoCredential Properties" section. All requirements listed for a mechanism
@@ -140,10 +140,10 @@ Drivers MUST follow the following steps for an authentication handshake:
    [MongoDB Handshake](../mongodb-handshake/handshake.rst) immediately. This allows a driver to determine the server
    type. If the `hello` or legacy hello of the MongoDB Handshake fails with an error, drivers MUST treat this as an
    authentication error.
-1. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
-1. Inspect the value of `maxWireVersion`. If the value is greater than or equal to `6`, then the driver MUST use
+2. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
+3. Inspect the value of `maxWireVersion`. If the value is greater than or equal to `6`, then the driver MUST use
    `OP_MSG` for authentication. Otherwise, it MUST use `OP_QUERY`.
-1. If credentials exist: 3.1. A driver MUST authenticate with all credentials provided to the MongoClient. 3.2. A single
+4. If credentials exist: 3.1. A driver MUST authenticate with all credentials provided to the MongoClient. 3.2. A single
    invalid credential is the same as all credentials being invalid.
 
 If the authentication handshake fails for a socket, drivers MUST mark the server Unknown and clear the server's
@@ -161,7 +161,7 @@ All blocking operations executed as part of the authentication handshake MUST ap
 If an application provides a username but does not provide an authentication mechanism, drivers MUST negotiate a
 mechanism via a `hello` or legacy hello command requesting a user's supported SASL mechanisms:
 
-```
+```javascript
 {hello: 1, saslSupportedMechs: "<dbname>.<username>"}
 ```
 
@@ -232,7 +232,7 @@ select a default.
 If a `saslSupportedMechs` field was present in the handshake response for mechanism negotiation, then it MUST be
 inspected to select a default mechanism:
 
-```
+```javascript
 {
     "hello" : true,
     "saslSupportedMechs": ["SCRAM-SHA-1", "SCRAM-SHA-256"],
@@ -296,20 +296,20 @@ RESP = {ok: 1}
 
 #### [MongoCredential](#mongocredential) Properties
 
-username\
-MUST be specified and non-zero length.
+- username\
+  MUST be specified and non-zero length.
 
-source\
-MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+- source\
+  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
-password\
-MUST be specified.
+- password\
+  MUST be specified.
 
-mechanism\
-MUST be "MONGODB-CR"
+- mechanism\
+  MUST be "MONGODB-CR"
 
-mechanism_properties\
-MUST NOT be specified.
+- mechanism_properties\
+  MUST NOT be specified.
 
 ### MONGODB-X509
 
@@ -355,20 +355,20 @@ RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoD
 
 #### [MongoCredential](#mongocredential) Properties
 
-username\
-SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
+- username\
+  SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
 
-source\
-MUST be "$external". Defaults to `$external`.
+- source\
+  MUST be "$external". Defaults to `$external`.
 
-password\
-MUST NOT be specified.
+- password\
+  MUST NOT be specified.
 
-mechanism\
-MUST be "MONGODB-X509"
+- mechanism\
+  MUST be "MONGODB-X509"
 
-mechanism_properties\
-MUST NOT be specified.
+- mechanism_properties\
+  MUST NOT be specified.
 
 TODO: Errors
 
@@ -381,21 +381,24 @@ SASL mechanisms are all implemented using the same sasl commands and interpreted
 
 1. Send the `saslStart` command.
 
-   - `{ saslStart: 1, mechanism: <mechanism_name>, payload: BinData(...), autoAuthorize: 1 }`
+```javascript
+CMD = { saslStart: 1, mechanism: <mechanism_name>, payload: BinData(...), autoAuthorize: 1 }
+RESP = { conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }
+```
 
-   - Response: `{ conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }`
+- conversationId: the conversation identifier. This will need to be remembered and used for the duration of the
+  conversation.
+- code: A response code that will indicate failure. This field is not included when the command was successful.
+- done: a boolean value indicating whether or not the conversation has completed.
+- payload: a sequence of bytes or a base64 encoded string (depending on input) to pass into the SASL library to
+  transition the state machine.
 
-     - conversationId: the conversation identifier. This will need to be remembered and used for the duration of the
-       conversation.
-     - code: A response code that will indicate failure. This field is not included when the command was successful.
-     - done: a boolean value indicating whether or not the conversation has completed.
-     - payload: a sequence of bytes or a base64 encoded string (depending on input) to pass into the SASL library to
-       transition the state machine.
+2. Continue with the `saslContinue` command while `done` is `false`.
 
-1. Continue with the `saslContinue` command while `done` is `false`.
-
-   - `{ saslContinue: 1, conversationId: conversationId, payload: BinData(...) }`
-   - Response is the same as that of `saslStart`
+```javascript
+CMD = { saslContinue: 1, conversationId: conversationId, payload: BinData(...) }
+RESP = { conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }
+```
 
 Many languages will have the ability to utilize 3rd party libraries. The server uses
 [cyrus-sasl](https://www.cyrusimap.org/sasl/) and it would make sense for drivers with a choice to also choose cyrus.
@@ -416,41 +419,41 @@ proprietary implementation called SSPI which is compatible with both Windows and
 
 [MongoCredential](#mongocredential) properties:
 
-username\
-MUST be specified and non-zero length.
+- username\
+  MUST be specified and non-zero length.
 
-source\
-MUST be "$external". Defaults to `$external`.
+- source\
+  MUST be "$external". Defaults to `$external`.
 
-password\
-MAY be specified. If omitted, drivers MUST NOT pass the username without password to SSPI on Windows and
-instead use the default credentials.
+- password\
+  MAY be specified. If omitted, drivers MUST NOT pass the username without password to SSPI on Windows and
+  instead use the default credentials.
 
-mechanism\
-MUST be "GSSAPI"
+- mechanism\
+  MUST be "GSSAPI"
 
-mechanism_properties\
-SERVICE_NAME\
-Drivers MUST allow the user to specify a different service name. The default is
-"mongodb".
+- mechanism_properties
 
-CANONICALIZE_HOST_NAME\
-Drivers MAY allow the user to request canonicalization of the hostname. This might be required
-when the hosts report different hostnames than what is used in the kerberos database. The value is a string of either
-"none", "forward", or "forwardAndReverse". "none" is the default and performs no canonicalization. "forward" performs a
-forward DNS lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS lookup and then a reverse
-lookup on that value to canonicalize the hostname. The driver MUST fallback to the provided host if any lookup errors or
-returns no results. Drivers MAY decide to also keep the legacy boolean values where `true` equals the
-"forwardAndReverse" behaviour and `false` equals "none".
+  - SERVICE_NAME\
+    Drivers MUST allow the user to specify a different service name. The default is "mongodb".
 
-SERVICE_REALM\
-Drivers MAY allow the user to specify a different realm for the service. This might be necessary to
-support cross-realm authentication where the user exists in one realm and the service in another.
+  - CANONICALIZE_HOST_NAME\
+    Drivers MAY allow the user to request canonicalization of the hostname. This might be
+    required when the hosts report different hostnames than what is used in the kerberos database. The value is a string
+    of either "none", "forward", or "forwardAndReverse". "none" is the default and performs no canonicalization.
+    "forward" performs a forward DNS lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS
+    lookup and then a reverse lookup on that value to canonicalize the hostname. The driver MUST fallback to the
+    provided host if any lookup errors or returns no results. Drivers MAY decide to also keep the legacy boolean values
+    where `true` equals the "forwardAndReverse" behaviour and `false` equals "none".
 
-SERVICE_HOST\
-Drivers MAY allow the user to specify a different host for the service. This is stored in the service
-principal name instead of the standard host name. This is generally used for cases where the initial role is being
-created from localhost but the actual service host would differ.
+  - SERVICE_REALM\
+    Drivers MAY allow the user to specify a different realm for the service. This might be necessary to
+    support cross-realm authentication where the user exists in one realm and the service in another.
+
+  - SERVICE_HOST\
+    Drivers MAY allow the user to specify a different host for the service. This is stored in the service
+    principal name instead of the standard host name. This is generally used for cases where the initial role is being
+    created from localhost but the actual service host would differ.
 
 #### Hostname Canonicalization
 
@@ -552,20 +555,20 @@ MongoDB supports either of these forms.
 
 #### [MongoCredential](#mongocredential) Properties
 
-username\
-MUST be specified and non-zero length.
+- username\
+  MUST be specified and non-zero length.
 
-source\
-MUST be specified. Defaults to the database name if supplied on the connection string or `$external`.
+- source\
+  MUST be specified. Defaults to the database name if supplied on the connection string or `$external`.
 
-password\
-MUST be specified.
+- password\
+  MUST be specified.
 
-mechanism\
-MUST be "PLAIN"
+- mechanism\
+  MUST be "PLAIN"
 
-mechanism_properties\
-MUST NOT be specified.
+- mechanism_properties\
+  MUST NOT be specified.
 
 ### SCRAM-SHA-1
 
@@ -633,20 +636,20 @@ RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2a
 
 #### [MongoCredential](#mongocredential) Properties
 
-username\
-MUST be specified and non-zero length.
+- username\
+  MUST be specified and non-zero length.
 
-source\
-MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+- source\
+  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
-password\
-MUST be specified.
+- password\
+  MUST be specified.
 
-mechanism\
-MUST be "SCRAM-SHA-1"
+- mechanism\
+  MUST be "SCRAM-SHA-1"
 
-mechanism_properties\
-MUST NOT be specified.
+- mechanism_properties\
+  MUST NOT be specified.
 
 ### SCRAM-SHA-256
 
@@ -688,26 +691,26 @@ This same conversation over MongoDB's SASL implementation would appear as follow
 ```javascript
 CMD = {saslStart: 1, mechanism:"SCRAM-SHA-256", options: {skipEmptyExchange: true}, payload: BinData(0, "biwsbj11c2VyLHI9ck9wck5HZndFYmVSV2diTkVrcU8=")}
 RESP = {conversationId: 1, payload: BinData(0, "cj1yT3ByTkdmd0ViZVJXZ2JORWtxTyVodllEcFdVYTJSYVRDQWZ1eEZJbGopaE5sRiRrMCxzPVcyMlphSjBTTlk3c29Fc1VFamI2Z1E9PSxpPTQwOTY="), done: false, ok: 1}
-CMD={saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ck9wck5HZndFYmVSV2diTkVrcU8laHZZRHBXVWEyUmFUQ0FmdXhGSWxqKWhObEYkazAscD1kSHpiWmFwV0lrNGpVaE4rVXRlOXl0YWc5empmTUhnc3FtbWl6N0FuZFZRPQ==")}
-RESP={conversationId: 1, payload: BinData(0, "dj02cnJpVFJCaTIzV3BSUi93dHVwK21NaFVaVW4vZEI1bkxUSlJzamw5NUc0PQ=="), done: true, ok: 1}
+CMD = {saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ck9wck5HZndFYmVSV2diTkVrcU8laHZZRHBXVWEyUmFUQ0FmdXhGSWxqKWhObEYkazAscD1kSHpiWmFwV0lrNGpVaE4rVXRlOXl0YWc5empmTUhnc3FtbWl6N0FuZFZRPQ==")}
+RESP = {conversationId: 1, payload: BinData(0, "dj02cnJpVFJCaTIzV3BSUi93dHVwK21NaFVaVW4vZEI1bkxUSlJzamw5NUc0PQ=="), done: true, ok: 1}
 ```
 
 #### [MongoCredential](#mongocredential) Properties
 
-username\
-MUST be specified and non-zero length.
+- username\
+  MUST be specified and non-zero length.
 
-source\
-MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+- source\
+  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
-password\
-MUST be specified.
+- password\
+  MUST be specified.
 
-mechanism\
-MUST be "SCRAM-SHA-256"
+- mechanism\
+  MUST be "SCRAM-SHA-256"
 
-mechanism_properties\
-MUST NOT be specified.
+- mechanism_properties\
+  MUST NOT be specified.
 
 ### MONGODB-AWS
 
@@ -892,22 +895,23 @@ Examples are provided below.
 
 #### [MongoCredential](#mongocredential) Properties
 
-username\
-MAY be specified. The non-sensitive AWS access key.
+- username\
+  MAY be specified. The non-sensitive AWS access key.
 
-source\
-MUST be "$external". Defaults to `$external`.
+- source\
+  MUST be "$external". Defaults to `$external`.
 
-password\
-MAY be specified. The sensitive AWS secret key.
+- password\
+  MAY be specified. The sensitive AWS secret key.
 
-mechanism\
-MUST be "MONGODB-AWS"
+- mechanism\
+  MUST be "MONGODB-AWS"
 
-mechanism_properties\
-AWS_SESSION_TOKEN\
-Drivers MUST allow the user to specify an AWS session token for authentication
-with temporary credentials.
+- mechanism_properties\\
+
+  - AWS_SESSION_TOKEN\
+    Drivers MUST allow the user to specify an AWS session token for authentication with temporary
+    credentials.
 
 #### Obtaining Credentials
 
@@ -940,9 +944,9 @@ application. Alternatively, you can create an AWS profile specifically for your 
 The order in which Drivers MUST search for credentials is:
 
 1. The URI
-1. Environment variables
-1. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
-1. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
+2. Environment variables
+3. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
+4. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
 > \[!NOTE\]
 >
@@ -1090,7 +1094,7 @@ to access the secret token. In other words, Drivers MUST
 The curl recipe below demonstrates the above. It retrieves a secret token that's valid for 30 seconds. It then uses that
 token to access the EC2 instance's credentials:
 
-```shell-session
+```bash
 $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
 $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
 $ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
@@ -1100,7 +1104,7 @@ Drivers can test this process using the mock EC2 server in
 [mongo-enterprise-modules](https://github.com/10gen/mongo-enterprise-modules/blob/master/jstests/external_auth/lib/ec2_metadata_http_server.py).
 The script must be run with `python3`:
 
-```shell-session
+```bash
 python3 ec2_metadata_http_server.py
 ```
 
@@ -1108,7 +1112,7 @@ To re-direct queries from the EC2 endpoint to the mock server, replace the link-
 with the IP and port of the mock server (by default, `http://localhost:8000`). For example, the curl script above
 becomes:
 
-```shell-session
+```bash
 $ TOKEN=`curl -X PUT "http://localhost:8000/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
 $ ROLE_NAME=`curl http://localhost:8000/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
 $ curl http://localhost:8000/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
@@ -1197,49 +1201,50 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 #### [MongoCredential](#mongocredential) Properties
 
-username\
-MAY be specified. Its meaning varies depending on the OIDC provider integration used.
+- username\
+  MAY be specified. Its meaning varies depending on the OIDC provider integration used.
 
-source\
-MUST be "$external". Defaults to `$external`.
+- source\
+  MUST be "$external". Defaults to `$external`.
 
-password\
-MUST NOT be specified.
+- password\
+  MUST NOT be specified.
 
-mechanism\
-MUST be "MONGODB-OIDC"
+- mechanism\
+  MUST be "MONGODB-OIDC"
 
-mechanism_properties\
-PROVIDER_NAME\
-Drivers MUST allow the user to specify the name of a built-in OIDC provider
-integration to use to obtain credentials. If provided, the value MUST be one of \["aws"\]. If both `PROVIDER_NAME` and
-an [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
-`MongoClient`, the driver MUST raise an error.
+- mechanism_properties\\
 
-OIDC_CALLBACK\
-An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to specify
-an [OIDC Callback](#oidc-callback) using a `MongoClient` configuration instead of a mechanism property, depending on
-what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_CALLBACK` mechanism property and a
-`MongoClient` configuration.
+  - PROVIDER_NAME\
+    Drivers MUST allow the user to specify the name of a built-in OIDC provider integration to use to
+    obtain credentials. If provided, the value MUST be one of \["aws"\]. If both `PROVIDER_NAME` and an
+    [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
+    `MongoClient`, the driver MUST raise an error.
 
-OIDC_HUMAN_CALLBACK\
-An [OIDC Human Callback](#oidc-human-callback) that returns OIDC credentials. Drivers MAY allow the
-user to specify a [OIDC Human Callback](#oidc-human-callback) using a `MongoClient` configuration instead of a mechanism
-property, depending on what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_HUMAN_CALLBACK`
-mechanism property and a `MongoClient` configuration. Drivers MUST return an error if both an
-[OIDC Callback](#oidc-callback) and `OIDC Human Callback` are provided for the same `MongoClient`. This property is only
-required for drivers that support the [Human Authentication Flow](#human-authentication-flow).
+  - OIDC_CALLBACK\
+    An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
+    specify an [OIDC Callback](#oidc-callback) using a `MongoClient` configuration instead of a mechanism property,
+    depending on what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_CALLBACK` mechanism property
+    and a `MongoClient` configuration.
 
-ALLOWED_HOSTS\
-The list of allowed hostnames or ip-addresses (ignoring ports) for MongoDB connections. The hostnames may
-include a leading "\*." wildcard, which allows for matching (potentially nested) subdomains. `ALLOWED_HOSTS` is a
-security feature and MUST default to
-`["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]`. When
-MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a hostname that
-does not match any of list of allowed hosts, the driver MUST raise a client-side error without invoking any
-user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname check MUST be
-performed after SRV record resolution, if applicable. This property is only required for drivers that support the
-[Human Authentication Flow](#human-authentication-flow).
+  - OIDC_HUMAN_CALLBACK\
+    An [OIDC Human Callback](#oidc-human-callback) that returns OIDC credentials. Drivers MAY allow
+    the user to specify a [OIDC Human Callback](#oidc-human-callback) using a `MongoClient` configuration instead of a
+    mechanism property, depending on what is idiomatic for the driver. Drivers MUST NOT support both the
+    `OIDC_HUMAN_CALLBACK` mechanism property and a `MongoClient` configuration. Drivers MUST return an error if both an
+    [OIDC Callback](#oidc-callback) and `OIDC Human Callback` are provided for the same `MongoClient`. This property is
+    only required for drivers that support the [Human Authentication Flow](#human-authentication-flow).
+
+  - ALLOWED_HOSTS\
+    The list of allowed hostnames or ip-addresses (ignoring ports) for MongoDB connections. The hostnames
+    may include a leading "\*." wildcard, which allows for matching (potentially nested) subdomains. `ALLOWED_HOSTS` is
+    a security feature and MUST default to
+    `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]`.
+    When MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a hostname
+    that does not match any of list of allowed hosts, the driver MUST raise a client-side error without invoking any
+    user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname check MUST be
+    performed after SRV record resolution, if applicable. This property is only required for drivers that support the
+    [Human Authentication Flow](#human-authentication-flow).
 
 #### Built-in Provider Integrations
 
@@ -1679,29 +1684,29 @@ def reauth(connection):
 
 #### Auth Related Options
 
-authMechanism\
-MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
+- authMechanism\
+  MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
 
 Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256, SCRAM-SHA-1
 or MONGODB-CR, following the auth spec default mechanism rules.
 
-authSource\
-Sets the Source property on the MongoCredential.
+- authSource\
+  Sets the Source property on the MongoCredential.
 
 For GSSAPI, MONGODB-X509 and MONGODB-AWS authMechanisms the authSource defaults to `$external`. For PLAIN the authSource
 defaults to the database name if supplied on the connection string or `$external`. For MONGODB-CR, SCRAM-SHA-1 and
 SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or
 `admin`.
 
-authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2\
-A generic method to set mechanism
-properties in the connection string.
+- authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2\
+  A generic method to set mechanism
+  properties in the connection string.
 
 For example, to set REALM and CANONICALIZE_HOST_NAME, the option would be
 `authMechanismProperties=CANONICALIZE_HOST_NAME:forward,SERVICE_REALM:AWESOME`.
 
-gssapiServiceName (deprecated)\
-An alias for `authMechanismProperties=SERVICE_NAME:mongodb`.
+- gssapiServiceName (deprecated)\
+  An alias for `authMechanismProperties=SERVICE_NAME:mongodb`.
 
 #### Errors
 
@@ -1712,16 +1717,16 @@ Drivers MUST raise an error if the `authSource` option is specified in the conne
 
 1. Credentials MAY be specified in the connection string immediately after the scheme separator "//".
 
-1. A realm MAY be passed as a part of the username in the url. It would be something like <dev@MONGODB.COM>, where dev
+2. A realm MAY be passed as a part of the username in the url. It would be something like <dev@MONGODB.COM>, where dev
    is the username and MONGODB.COM is the realm. Per the RFC, the @ symbol should be url encoded using %40.
 
    - When GSSAPI is specified, this should be interpreted as the realm.
    - When non-GSSAPI is specified, this should be interpreted as part of the username.
 
-1. It is permissible for only the username to appear in the connection string. This would be identified by having no
+3. It is permissible for only the username to appear in the connection string. This would be identified by having no
    colon follow the username before the '@' hostname separator.
 
-1. The source is determined by the following:
+4. The source is determined by the following:
 
    - if authSource is specified, it is used.
    - otherwise, if database is specified, it is used.
@@ -1744,7 +1749,7 @@ cases described below.
 
 Create three test users, one with only SHA-1, one with only SHA-256 and one with both. For example:
 
-```
+```javascript
 db.runCommand({createUser: 'sha1', pwd: 'sha1', roles: ['root'], mechanisms: ['SCRAM-SHA-1']})
 db.runCommand({createUser: 'sha256', pwd: 'sha256', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
 db.runCommand({createUser: 'both', pwd: 'both', roles: ['root'], mechanisms: ['SCRAM-SHA-1', 'SCRAM-SHA-256']})
@@ -1777,12 +1782,12 @@ themselves.)
 To test SASLprep behavior, create two users:
 
 1. username: "IX", password "IX"
-1. username: "\\u2168" (ROMAN NUMERAL NINE), password "\\u2163" (ROMAN NUMERAL FOUR)
+2. username: "\\u2168" (ROMAN NUMERAL NINE), password "\\u2163" (ROMAN NUMERAL FOUR)
 
 To create the users, use the exact bytes for username and password without SASLprep or other normalization and specify
 SCRAM-SHA-256 credentials:
 
-```
+```javascript
 db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
 db.runCommand({createUser: '\\u2168', pwd: '\\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
 ```
@@ -1822,18 +1827,15 @@ implementation. Earlier versions of the server required an extra round trip due 
 accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip
 emphasized):
 
-C:
-`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: {skipEmptyExchange: true}}`\
-S:
-`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`\
-C:
-`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`\
-S:
-`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: false, ok: 1}`\
-**C**:
-`{saslContinue: 1, conversationId: 1, payload: BinData(0, "")}`\
-**S**:
-`{conversationId: 1, payload: BinData(0,""), done: true, ok: 1}`
+```javascript
+CMD = {saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: {skipEmptyExchange: true}}
+RESP = {conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}
+CMD = {saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}
+RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: false, ok: 1}
+# Extra round trip
+CMD = {saslContinue: 1, conversationId: 1, payload: BinData(0, "")}  
+RESP = {conversationId: 1, payload: BinData(0,""), done: true, ok: 1}
+```
 
 The extra round trip will be removed in server version 4.4 when `options: { skipEmptyExchange: true }` is specified
 during `saslStart`.

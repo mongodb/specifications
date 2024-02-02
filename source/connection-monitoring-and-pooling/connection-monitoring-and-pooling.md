@@ -1304,7 +1304,7 @@ endpoint it is associated with is available or not. This enables the following b
    Without the "paused" state, the pool would have no way of determining when to begin establishing background
    connections again, so it would just continually attempt, and often fail, to create connections until minPoolSize was
    satisfied, even after repeated failures. This could unnecessarily waste resources both server and driver side.
-1. The pool can evict requests that enter the WaitQueue after the pool was cleared but before the server was in a known
+2. The pool can evict requests that enter the WaitQueue after the pool was cleared but before the server was in a known
    state again. Such requests can occur when a server is selected at the same time as it becomes marked as Unknown in
    highly concurrent workloads. Without the "paused" state, the pool would attempt to service these requests, since it
    would assume they were routed to the pool because its endpoint was available, not because of a race between SDAM and
