@@ -1,0 +1,213 @@
+description: "client bulkWrite errors"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent ]
+      uriOptions:
+        retryWrites: false
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name crud-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - &document1 { _id: 1, x: 1 }
+      - &document2 { _id: 2, x: 2 }
+      - &document3 { _id: 3, x: 3 }
+
+tests:
+  - description: "an individual operation fails during an ordered bulkWrite"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - deleteOne:
+                namespace: &namespace
+                  db: *database0Name
+                  coll: *collection0Name
+                filter: { _id: 1 }
+            - deleteOne:
+                namespace: *namespace
+                filter:
+                  $expr:
+                    $eq: [ "$_id", "$$id2" ] # Attempt to access a nonexistent let var
+            - deleteOne:
+                namespace: *namespace
+                filter: { _id: 3 }
+          verboseResults: true
+        expectError:
+          expectResult:
+            insertedCount: 0
+            upsertedCount: 0
+            matchedCount: 0
+            modifiedCount: 0
+            deletedCount: 1
+            insertResults: {}
+            updateResults: {}
+            deleteResults:
+              0:
+                deletedCount: 1
+          writeErrors:
+            1:
+              code: 17276 # Use of undefined variable
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - *document2
+          - *document3
+  - description: "an individual operation fails during an unordered bulkWrite"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - deleteOne:
+                namespace: *namespace
+                filter: { _id: 1 }
+            - deleteOne:
+                namespace: *namespace
+                filter:
+                  $expr:
+                    $eq: [ "$_id", "$$id2" ] # Attempt to access a nonexistent let var
+            - deleteOne:
+                namespace: *namespace
+                filter: { _id: 3 }
+          verboseResults: true
+          ordered: false
+        expectError:
+          expectResult:
+            insertedCount: 0
+            upsertedCount: 0
+            matchedCount: 0
+            modifiedCount: 0
+            deletedCount: 2
+            insertResults: {}
+            updateResults: {}
+            deleteResults:
+              0:
+                deletedCount: 1
+              2:
+                deletedCount: 1
+          writeErrors:
+            1:
+              code: 17276 # Use of undefined variable
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - *document2
+  - description: "detailed results are omitted from error when verboseResults is false"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - deleteOne:
+                namespace: *namespace
+                filter: { _id: 1 }
+            - deleteOne:
+                namespace: *namespace
+                filter:
+                  $expr:
+                    $eq: [ "$_id", "$$id2" ] # Attempt to access a nonexistent let var
+            - deleteOne:
+                namespace: *namespace
+                filter: { _id: 3 }
+          verboseResults: false
+        expectError:
+          expectResult:
+            insertedCount: 0
+            upsertedCount: 0
+            matchedCount: 0
+            modifiedCount: 0
+            deletedCount: 1
+            insertResults:
+              $$unsetOrMatches: {}
+            updateResults:
+              $$unsetOrMatches: {}
+            deleteResults:
+              $$unsetOrMatches: {}
+          writeErrors:
+            1:
+              code: 17276 # Use of undefined variable
+  - description: "a top-level failure occurs during a bulkWrite"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - bulkWrite
+              errorCode: &errorCode 8 # UnknownError
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - insertOne:
+                namespace: *namespace
+                document: { x: 1 }
+          verboseResults: true
+        expectError:
+          errorCode: *errorCode
+          errorLabelsContain: [ RetryableWriteError ]
+  - description: "a write concern error occurs during a bulkWrite"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - bulkWrite
+              writeConcernError: &writeConcernError
+                code: 91
+                errmsg: "Replication is being shut down"
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - insertOne:
+                namespace: *namespace
+                document: { _id: 10 }
+          verboseResults: true
+        expectError:
+          expectResult:
+            insertedCount: 1
+            upsertedCount: 0
+            matchedCount: 0
+            modifiedCount: 0
+            deletedCount: 0
+            insertResults:
+              0:
+                insertedId: 10
+            updateResults: {}
+            deleteResults: {}
+          writeConcernErrors: [ *writeConcernError ]
+        

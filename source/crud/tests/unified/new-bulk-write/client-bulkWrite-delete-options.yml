@@ -1,0 +1,130 @@
+description: "client bulkWrite delete options"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent ]
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name crud-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
+      - { _id: 3, x: 33 }
+
+tests:
+  - description: "client bulk write delete with collation"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - deleteOne:
+                namespace: &namespace
+                  db: *database0Name
+                  coll: *collection0Name
+                filter: &deleteOneFilter
+                  _id: 1
+                collation: &collation
+                  locale: "simple"
+            - deleteMany:
+                namespace: *namespace
+                filter: &deleteManyFilter
+                  _id: { $gt: 1 }
+                collation: *collation
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 0
+          matchedCount: 0
+          modifiedCount: 0
+          deletedCount: 3
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                ops:
+                  - delete: 0
+                    filter: *deleteOneFilter
+                    collation: *collation
+                    multi: false
+                  - delete: 0
+                    filter: *deleteManyFilter
+                    collation: *collation
+                    multi: true
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents: []
+  - description: "client bulk write delete with hint"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - deleteOne:
+                namespace: &namespace
+                  db: *database0Name
+                  coll: *collection0Name
+                filter: &deleteOneFilter
+                  _id: 1
+                hint: &hint _id_
+            - deleteMany:
+                namespace: *namespace
+                filter: &deleteManyFilter
+                  _id: { $gt: 1 }
+                hint: *hint
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 0
+          matchedCount: 0
+          modifiedCount: 0
+          deletedCount: 3
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                ops:
+                  - delete: 0
+                    filter: *deleteOneFilter
+                    hint: *hint
+                    multi: false
+                  - delete: 0
+                    filter: *deleteManyFilter
+                    hint: *hint
+                    multi: true
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents: []
+              

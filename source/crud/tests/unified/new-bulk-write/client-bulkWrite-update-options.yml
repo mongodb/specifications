@@ -1,0 +1,288 @@
+description: "client bulkWrite update options"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent ]
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name crud-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - { _id: 1, array: [ 1, 2, 3 ] }
+      - { _id: 2, array: [ 1, 2, 3 ] }
+      - { _id: 3, array: [ 1, 2, 3 ] }
+      - { _id: 4, array: [ 1, 2, 3 ] }
+
+tests:
+  - description: "client bulkWrite update with arrayFilters"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - updateOne:
+                namespace: &namespace
+                  db: *database0Name
+                  coll: *collection0Name
+                filter: &updateOneFilter
+                  _id: 1
+                update: &arrayFiltersUpdateOneMods
+                  $set:
+                    array.$[i]: 4
+                arrayFilters: &updateOneArrayFilters
+                    - i: { $gte: 2 }
+            - updateMany:
+                namespace: *namespace
+                filter: &updateManyFilter
+                  $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                update: &arrayFiltersUpdateManyMods
+                  $set:
+                    array.$[i]: 5
+                arrayFilters: &updateManyArrayFilters
+                  - i: { $gte: 2 }
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 0
+          matchedCount: 3
+          modifiedCount: 3
+          deletedCount: 0
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                ops:
+                  - update: 0
+                    filter: *updateOneFilter
+                    updateMods: *arrayFiltersUpdateOneMods
+                    arrayFilters: *updateOneArrayFilters
+                    multi: false
+                  - update: 0
+                    filter: *updateManyFilter
+                    updateMods: *arrayFiltersUpdateManyMods
+                    arrayFilters: *updateManyArrayFilters
+                    multi: true
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents:
+          - { _id: 1, array: [ 1, 4, 4 ] }
+          - { _id: 2, array: [ 1, 5, 5 ] }
+          - { _id: 3, array: [ 1, 5, 5 ] }
+          - { _id: 4, array: [ 1, 2, 3 ] }
+  - description: "client bulkWrite update with collation"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - updateOne:
+                namespace: *namespace
+                filter: *updateOneFilter
+                update: &updateOneMods
+                  $set:
+                    array: [ 1, 2, 4 ]
+                collation: &collation
+                  locale: "simple"
+            - updateMany:
+                namespace: *namespace
+                filter: *updateManyFilter
+                update: &updateManyMods
+                  $set:
+                    array: [ 1, 2, 5 ]
+                collation: *collation
+            - replaceOne:
+                namespace: *namespace
+                filter: &replaceOneFilter
+                  _id: 4
+                replacement: &replacement
+                  array: [ 1, 2, 6 ]
+                collation: *collation
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 0
+          matchedCount: 4
+          modifiedCount: 4
+          deletedCount: 0
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                ops:
+                  - update: 0
+                    filter: *updateOneFilter
+                    updateMods: *updateOneMods
+                    collation: *collation
+                    multi: false
+                  - update: 0
+                    filter: *updateManyFilter
+                    updateMods: *updateManyMods
+                    collation: *collation
+                    multi: true
+                  - update: 0
+                    filter: *replaceOneFilter
+                    updateMods: *replacement
+                    collation: *collation
+                    multi: false
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents:
+          - { _id: 1, array: [ 1, 2, 4 ] }
+          - { _id: 2, array: [ 1, 2, 5 ] }
+          - { _id: 3, array: [ 1, 2, 5 ] }
+          - { _id: 4, array: [ 1, 2, 6 ] }
+  - description: "client bulkWrite update with hint"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - updateOne:
+                namespace: *namespace
+                filter: *updateOneFilter
+                update: *updateOneMods
+                hint: &hint _id_
+            - updateMany:
+                namespace: *namespace
+                filter: *updateManyFilter
+                update: *updateManyMods
+                hint: *hint
+            - replaceOne:
+                namespace: *namespace
+                filter: *replaceOneFilter
+                replacement: *replacement
+                hint: *hint
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 0
+          matchedCount: 4
+          modifiedCount: 4
+          deletedCount: 0
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                ops:
+                  - update: 0
+                    filter: *updateOneFilter
+                    updateMods: *updateOneMods
+                    hint: *hint
+                    multi: false
+                  - update: 0
+                    filter: *updateManyFilter
+                    updateMods: *updateManyMods
+                    hint: *hint
+                    multi: true
+                  - update: 0
+                    filter: *replaceOneFilter
+                    updateMods: *replacement
+                    hint: *hint
+                    multi: false
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents:
+          - { _id: 1, array: [ 1, 2, 4 ] }
+          - { _id: 2, array: [ 1, 2, 5 ] }
+          - { _id: 3, array: [ 1, 2, 5 ] }
+          - { _id: 4, array: [ 1, 2, 6 ] }
+  - description: "client bulkWrite update with upsert"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - updateOne:
+                namespace: *namespace
+                filter: &updateOneFilter
+                  _id: 5
+                update: *updateOneMods
+                upsert: true
+            - replaceOne:
+                namespace: *namespace
+                filter: &replaceOneFilter
+                  _id: 6
+                replacement: *replacement
+                upsert: true
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 2
+          matchedCount: 0
+          modifiedCount: 0
+          deletedCount: 0
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                ops:
+                  - update: 0
+                    filter: *updateOneFilter
+                    updateMods: *updateOneMods
+                    upsert: true
+                    multi: false
+                  - update: 0
+                    filter: *replaceOneFilter
+                    updateMods: *replacement
+                    upsert: true
+                    multi: false
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents:
+          - { _id: 1, array: [ 1, 2, 3 ] }
+          - { _id: 2, array: [ 1, 2, 3 ] }
+          - { _id: 3, array: [ 1, 2, 3 ] }
+          - { _id: 4, array: [ 1, 2, 3 ] }
+          - { _id: 5, array: [ 1, 2, 4 ] }
+          - { _id: 6, array: [ 1, 2, 6 ] }

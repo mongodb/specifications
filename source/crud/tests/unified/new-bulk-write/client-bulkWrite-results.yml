@@ -1,0 +1,201 @@
+description: "client bulkWrite results"
+
+schemaVersion: "1.18"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent ]
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name crud-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
+      - { _id: 3, x: 33 }
+      - { _id: 5, x: 55 }
+      - { _id: 6, x: 66 }
+      - { _id: 7, x: 77 }
+
+tests:
+  - description: "client bulkWrite with verboseResults: true returns detailed results"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests: &requests
+            - insertOne:
+                namespace: &namespace
+                  db: *database0Name
+                  coll: *collection0Name
+                document: &insertDoc
+                  { _id: 8, x: 88 }
+            - updateOne:
+                namespace: *namespace
+                filter: &updateOneFilter
+                  _id: 1
+                update: &updateOneUpdate
+                  $inc: { x: 1 }
+            - updateMany:
+                namespace: *namespace
+                filter: &updateManyFilter
+                  $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                update: &updateManyUpdate
+                  $inc: { x: 2 }
+            - replaceOne:
+                namespace: *namespace
+                filter: &replaceOneFilter
+                  _id: 4
+                replacement: &replacementDoc
+                  { x: 44 }
+                upsert: true
+            - deleteOne:
+                namespace: *namespace
+                filter: &deleteOneFilter
+                  _id: 5
+            - deleteMany:
+                namespace: *namespace
+                filter: &deleteManyFilter
+                  $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
+          verboseResults: true
+        expectResult:
+          insertedCount: 1
+          upsertedCount: 1
+          matchedCount: 3
+          modifiedCount: 3
+          deletedCount: 3
+          insertResults:
+            0:
+              insertedId: 8
+          updateResults:
+            1:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
+            2:
+              matchedCount: 2
+              modifiedCount: 2
+              upsertedId: null
+            3:
+              matchedCount: 1
+              modifiedCount: 0
+              upsertedId: 4
+          deleteResults:
+            4:
+              deletedCount: 1
+            5:
+              deletedCount: 2
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                errorsOnly: false
+                ops: &ops
+                  -
+                    insert: 0
+                    document: *insertDoc
+                  -
+                    update: 0
+                    filter: *updateOneFilter
+                    updateMods: *updateOneUpdate
+                    multi: false
+                  -
+                    update: 0
+                    filter: *updateManyFilter
+                    updateMods: *updateManyUpdate
+                    multi: true
+                  -
+                    update: 0
+                    filter: *replaceOneFilter
+                    updateMods: *replacementDoc
+                    upsert: true
+                    multi: false
+                  -
+                    delete: 0
+                    filter: *deleteOneFilter
+                    multi: false
+                  -
+                    delete: 0
+                    filter: *deleteManyFilter
+                    multi: true
+                nsInfo: &nsInfo
+                  -
+                    ns: "crud-tests.coll0"
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents: &outcomeDocuments
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 24 }
+          - { _id: 3, x: 35 }
+          - { _id: 4, x: 44 }
+          - { _id: 8, x: 88 }
+  - description: "client bulkWrite with verboseResults: false omits detailed results"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests: *requests
+          verboseResults: false
+        expectResult: &summaryResult
+          insertedCount: 1
+          upsertedCount: 1
+          matchedCount: 3
+          modifiedCount: 3
+          deletedCount: 3
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                errorsOnly: true
+                ops: *ops
+                nsInfo: *nsInfo
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents: *outcomeDocuments
+  - description: "client bulkWrite defaults to verboseResults: false"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests: *requests
+        expectResult: *summaryResult
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                errorsOnly: true
+                ops: *ops
+                nsInfo: *nsInfo
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents: *outcomeDocuments

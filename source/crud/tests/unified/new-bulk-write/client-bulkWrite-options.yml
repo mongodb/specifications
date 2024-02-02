@@ -1,0 +1,152 @@
+description: "client bulkWrite top-level options"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent ]
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name crud-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - &doc1 { _id: 1, x: 11 }
+      - &doc2 { _id: 2, x: 22  }
+
+tests:
+  - description: "client bulkWrite comment"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - insertOne:
+                namespace: &namespace
+                    db: *database0Name
+                    coll: *collection0Name
+                document: &doc3 { _id: 3, x: 33 }
+          comment: &comment { "bulk": "write" }
+          verboseResults: true
+        expectResult:
+          insertedCount: 1
+          upsertedCount: 0
+          matchedCount: 0
+          modifiedCount: 0
+          deletedCount: 0
+          insertResults:
+            0:
+              insertedId: 3
+          updateResults: {}
+          deleteResults: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                comment: *comment
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - *doc1
+          - *doc2
+          - *doc3
+  - description: "client bulkWrite bypassDocumentValidation"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - insertOne:
+                namespace: *namespace
+                document: &doc4 { _id: 4, x: 44 }
+          bypassDocumentValidation: true
+          verboseResults: true
+        expectResult:
+          insertedCount: 1
+          upsertedCount: 0
+          matchedCount: 0
+          modifiedCount: 0
+          deletedCount: 0
+          insertResults:
+            0:
+              insertedId: 4
+          updateResults: {}
+          deleteResults: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                bypassDocumentValidation: true
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - *doc1
+          - *doc2
+          - *doc4
+  - description: "client bulkWrite let"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - updateOne:
+                namespace: *namespace
+                filter:
+                  $expr:
+                    $eq: [ "$_id", "$$id1" ]
+                update:
+                  $inc: { x: 1 }
+            - deleteOne:
+                namespace: *namespace
+                filter:
+                  $expr:
+                    $eq: [ "$_id", "$$id2" ]
+          let: &let { id1: 1, id2: 2 }
+          verboseResults: true
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 0
+          matchedCount: 1
+          modifiedCount: 1
+          deletedCount: 1
+          insertResults: {}
+          updateResults:
+            0:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
+          deleteResults:
+            1:
+              deletedCount: 1
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                let: *let
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents:
+          - { _id: 1, x: 12 }

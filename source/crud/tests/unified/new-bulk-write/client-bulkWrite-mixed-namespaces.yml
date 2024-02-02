@@ -1,0 +1,162 @@
+description: "client bulkWrite with mixed namespaces"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent ]
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name bulkWrite-db0
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+  - collection:
+      id: &collection1 collection1
+      database: *database0
+      collectionName: &collection1Name coll1
+  - database:
+      id: &database1 database1
+      client: *client0
+      databaseName: &database1Name bulkWrite-db1
+  - collection:
+      id: &collection2 collection2
+      database: *database1
+      collectionName: &collection2Name coll2
+
+initialData:
+  - databaseName: *database0Name
+    collectionName: *collection0Name
+    documents: []
+  - databaseName: *database0Name
+    collectionName: *collection1Name
+    documents:
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
+  - databaseName: *database1Name
+    collectionName: *collection2Name
+    documents:
+      - { _id: 3, x: 33 }
+      - { _id: 4, x: 44 }
+
+tests:
+  - description: "client bulkWrite with mixed namespaces"
+    runOnRequirements:
+      - minServerVersion: "8.0"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          requests:
+            - insertOne:
+                namespace:
+                  db: *database0Name
+                  coll: *collection0Name
+                document: &document1 
+                  _id: 1
+            - insertOne:
+                namespace:
+                  db: *database0Name
+                  coll: *collection0Name
+                document: &document2
+                  _id: 2
+            - updateOne:
+                namespace:
+                  db: *database0Name
+                  coll: *collection1Name
+                filter: &filter1
+                  _id: 1
+                update: &update
+                  $inc: { x: 1 }
+            - deleteOne:
+                namespace:
+                  db: *database1Name
+                  coll: *collection2Name
+                filter: &filter2
+                  _id: 3
+            - deleteOne:
+                namespace:
+                  db: *database0Name
+                  coll: *collection1Name
+                filter: &filter3
+                  _id: 2
+            - replaceOne:
+                namespace:
+                  db: *database1Name
+                  coll: *collection2Name
+                filter: &filter4
+                  _id: 4
+                replacement: &replacement
+                  x: 44
+          verboseResults: true
+        expectResult:
+          insertedCount: 2
+          upsertedCount: 0
+          matchedCount: 2
+          modifiedCount: 2
+          deletedCount: 2
+          insertResults:
+            0:
+              insertedId: 1
+            1:
+              insertedId: 2
+          updateResults:
+            2:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
+            5:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
+          deleteResults:
+            3:
+              deletedCount: 1
+            4:
+              deletedCount: 1
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                bulkWrite: 1
+                ops:
+                  - insert: 0
+                    document: *document1
+                  - insert: 0
+                    document: *document2
+                  - update: 1
+                    filter: *filter1
+                    updateMods: *update
+                    multi: false
+                  - delete: 2
+                    filter: *filter2
+                    multi: false
+                  - delete: 1
+                    filter: *filter3
+                    multi: false
+                  - update: 2
+                    filter: *filter4
+                    updateMods: *replacement
+                    multi: false
+                nsInfo:
+                  - ns: bulkWrite-db0.coll0
+                  - ns: bulkWrite-db0.coll1
+                  - ns: bulkWrite-db1.coll2
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents:
+          - *document1
+          - *document2
+      - databaseName: *database0Name
+        collectionName: *collection1Name
+        documents:
+          - { _id: 1, x: 12 }
+      - databaseName: *database1Name
+        collectionName: *collection2Name
+        documents:
+          - { _id: 4, x: 44 }
