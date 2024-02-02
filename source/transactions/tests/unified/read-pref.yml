@@ -1,6 +1,7 @@
 # This file was created automatically using mongodb-spec-converter.
 # Please review the generated file, then remove this notice.
 
+# This test doesn't check contents of command-started events.
 description: read-pref
 schemaVersion: '1.3'
 createEntities:
@@ -21,12 +22,18 @@ createEntities:
       database: *database0
       collectionName: &collection_name test
   -
-    session:
-      id: &session0 session0
-      client: *client0
+    collection:
+      id: &collection_rp_primary collection_rp_primary
+      database: *database0
+      collectionName: *collection_name
+  -
+    collection:
+      id: &collection_rp_secondary collection_rp_secondary
+      database: *database0
+      collectionName: *collection_name
   -
     session:
-      id: &session1 session1
+      id: &session0 session0
       client: *client0
 runOnRequirements:
   -
@@ -73,10 +80,7 @@ tests:
                 '2': 3
                 '3': 4
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Secondary
+        object: *collection_rp_secondary
         name: aggregate
         arguments:
           session: *session0
@@ -90,20 +94,15 @@ tests:
           -
             count: 1
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Secondary
+        object: *collection_rp_secondary
         name: find
         arguments:
-          session: *session0
           batchSize: 3
+          filter: {}
+          session: *session0
         expectResult: *insertedDocs
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Secondary
+        object: *collection_rp_secondary
         name: aggregate
         arguments:
           pipeline:
@@ -153,10 +152,7 @@ tests:
                 '2': 3
                 '3': 4
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Secondary
+        object: *collection_rp_secondary
         name: aggregate
         arguments:
           session: *session0
@@ -170,20 +166,15 @@ tests:
           -
             count: 1
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Secondary
+        object: *collection_rp_secondary
         name: find
         arguments:
-          session: *session0
           batchSize: 3
+          filter: {}
+          session: *session0
         expectResult: *insertedDocs
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Secondary
+        object: *collection_rp_secondary
         name: aggregate
         arguments:
           pipeline:
@@ -233,10 +224,7 @@ tests:
                 '2': 3
                 '3': 4
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: aggregate
         arguments:
           session: *session0
@@ -249,21 +237,16 @@ tests:
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: find
         arguments:
-          session: *session0
           batchSize: 3
+          filter: {}
+          session: *session0
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: aggregate
         arguments:
           pipeline:
@@ -314,10 +297,7 @@ tests:
                 '2': 3
                 '3': 4
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: aggregate
         arguments:
           session: *session0
@@ -330,21 +310,16 @@ tests:
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: find
         arguments:
-          session: *session0
           batchSize: 3
+          filter: {}
+          session: *session0
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: aggregate
         arguments:
           pipeline:
@@ -395,10 +370,7 @@ tests:
                 '2': 3
                 '3': 4
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: aggregate
         arguments:
           session: *session0
@@ -411,21 +383,16 @@ tests:
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: find
         arguments:
-          session: *session0
           batchSize: 3
+          filter: {}
+          session: *session0
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
-        object: *collection0
-        collectionOptions:
-          readPreference:
-            mode: Primary
+        object: *collection_rp_primary
         name: aggregate
         arguments:
           pipeline:
