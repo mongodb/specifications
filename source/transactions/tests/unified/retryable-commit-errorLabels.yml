@@ -49,7 +49,7 @@ createEntities:
       client: *client1
 runOnRequirements:
   -
-    minServerVersion: 4.3.1
+    minServerVersion: 4.3.1 # failCommand errorLabels option
     topologies:
       - replicaset
       - sharded
@@ -75,8 +75,8 @@ tests:
             data:
               failCommands:
                 - commitTransaction
-              errorCode: 11600
-              errorLabels: []
+              errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+              errorLabels: [] # Override server behavior: do not send RetryableWriteError label with retryable code
       -
         object: *session1
         name: startTransaction
@@ -137,6 +137,7 @@ tests:
                   $$exists: false
               commandName: commitTransaction
               databaseName: admin
+    # Driver does not retry commit because there was no RetryableWriteError label on response
     outcome:
       -
         collectionName: *collection_name
@@ -157,7 +158,8 @@ tests:
             data:
               failCommands:
                 - commitTransaction
-              errorCode: 112
+              errorCode: 112 # WriteConflict, not a retryable error code
+              # Override server behavior: send RetryableWriteError label with non-retryable error code
               errorLabels:
                 - RetryableWriteError
       -
@@ -232,6 +234,7 @@ tests:
                   wtimeout: 10000
               commandName: commitTransaction
               databaseName: admin
+    # Driver retries commit and it succeeds
     outcome:
       -
         collectionName: *collection_name
@@ -325,6 +328,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -423,6 +427,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -521,6 +526,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -619,6 +625,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -717,6 +724,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -815,6 +823,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -913,6 +922,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -1011,6 +1021,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -1109,6 +1120,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -1211,6 +1223,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -1313,6 +1326,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -1415,6 +1429,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -1517,6 +1532,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000

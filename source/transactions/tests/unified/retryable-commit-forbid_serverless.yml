@@ -54,6 +54,13 @@ runOnRequirements:
       - replicaset
   -
     minServerVersion: 4.1.8
+    # This file contains tests originally found in retryable-commit.yml that
+    # are incompatible with serverless:
+    #
+    #  * Failing commitTransaction with closeConnection:true may abort the
+    #    transaction (CLOUDP-202309).
+    #  * Fail points using state change errors (e.g. InterruptedAtShutdown,
+    #    ShutdownInProgress) may remain enabled indefinitely (CLOUDP-84573).
     serverless: forbid
     topologies:
       - sharded
@@ -94,6 +101,7 @@ tests:
           $$unsetOrMatches:
             insertedId:
               $$unsetOrMatches: 1
+      # First call to commit fails after a single retry attempt.
       -
         object: *session1
         name: commitTransaction
@@ -103,6 +111,7 @@ tests:
             - UnknownTransactionCommitResult
           errorLabelsOmit:
             - TransientTransactionError
+      # Second call to commit succeeds because the failpoint was disabled.
       -
         object: *session1
         name: commitTransaction
@@ -156,6 +165,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -219,6 +229,7 @@ tests:
           $$unsetOrMatches:
             insertedId:
               $$unsetOrMatches: 1
+      # First call to commit fails after a single retry attempt.
       -
         object: *session1
         name: commitTransaction
@@ -228,6 +239,7 @@ tests:
             - UnknownTransactionCommitResult
           errorLabelsOmit:
             - TransientTransactionError
+      # Second call to commit succeeds because the failpoint was disabled.
       -
         object: *session1
         name: commitTransaction
@@ -283,6 +295,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   j: true
@@ -396,6 +409,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
