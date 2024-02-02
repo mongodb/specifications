@@ -466,7 +466,7 @@ hostname canonicalization, the client MAY rely on it. For example, MIT Kerberos 
 
 Second, the client MAY implement its own canonicalization. If so, the canonicalization algorithm MUST be:
 
-```
+```python
 addresses = fetch addresses for host
 if no addresses:
   throw error
