@@ -3,13 +3,13 @@
 There are 6 scenarios drivers MUST test:
 
 1. `Regular Credentials`: Auth via an `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` pair
-1. `EC2 Credentials`: Auth from an EC2 instance via temporary credentials assigned to the machine
-1. `ECS Credentials`: Auth from an ECS instance via temporary credentials assigned to the task
-1. `Assume Role`: Auth via temporary credentials obtained from an STS AssumeRole request
-1. `Assume Role with Web Identity`: Auth via temporary credentials obtained from an STS AssumeRoleWithWebIdentity
+2. `EC2 Credentials`: Auth from an EC2 instance via temporary credentials assigned to the machine
+3. `ECS Credentials`: Auth from an ECS instance via temporary credentials assigned to the task
+4. `Assume Role`: Auth via temporary credentials obtained from an STS AssumeRole request
+5. `Assume Role with Web Identity`: Auth via temporary credentials obtained from an STS AssumeRoleWithWebIdentity
    request
-1. `AWS Lambda`: Auth via environment variables `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`.
-1. Caching of AWS credentials fetched by the driver.
+6. `AWS Lambda`: Auth via environment variables `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`.
+7. Caching of AWS credentials fetched by the driver.
 
 For brevity, this section gives the values `<AccessKeyId>`, `<SecretAccessKey>` and `<Token>` in place of a valid access
 key ID, secret access key and session token (also known as a security token). Note that if these values are passed into
