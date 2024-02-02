@@ -2,7 +2,7 @@
 # Please review the generated file, then remove this notice.
 
 description: retryable-commit-errorLabels-forbid_serverless
-schemaVersion: '1.3'
+schemaVersion: '1.4'
 createEntities:
   -
     client:
@@ -30,7 +30,14 @@ createEntities:
       client: *client0
 runOnRequirements:
   -
-    minServerVersion: 4.3.1
+    minServerVersion: 4.3.1 # failCommand errorLabels option
+    # This file contains tests originally found in retryable-commit.yml that
+    # are incompatible with serverless:
+    #
+    #  * Failing commitTransaction with closeConnection:true may abort the
+    #    transaction (CLOUDP-202309).
+    #  * Fail points using state change errors (e.g. InterruptedAtShutdown,
+    #    ShutdownInProgress) may remain enabled indefinitely (CLOUDP-84573).
     serverless: forbid
     topologies:
       - replicaset
@@ -128,6 +135,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
@@ -226,6 +234,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
