@@ -65,7 +65,9 @@ tests:
         object: *session0
         name: startTransaction
         expectError:
+          isClientError: true
           errorContains: 'transaction already in progress'
+      # Just to clean up
       -
         object: *session0
         name: commitTransaction
@@ -79,6 +81,7 @@ tests:
         object: *session0
         name: startTransaction
         expectError:
+          isClientError: true
           errorContains: 'transaction already in progress'
   -
     description: 'commit and start twice'
@@ -107,6 +110,7 @@ tests:
         object: *session0
         name: startTransaction
         expectError:
+          isClientError: true
           errorContains: 'transaction already in progress'
   -
     description: 'write conflict commit'
@@ -189,6 +193,7 @@ tests:
       -
         object: *session0
         name: commitTransaction
+      # Driver ignores "NoSuchTransaction" error
       -
         object: *session1
         name: abortTransaction
