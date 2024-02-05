@@ -1217,7 +1217,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - PROVIDER_NAME\
     Drivers MUST allow the user to specify the name of a built-in OIDC provider integration to use to
-    obtain credentials. If provided, the value MUST be one of \["aws"\]. If both `PROVIDER_NAME` and an
+    obtain credentials. If provided, the value MUST be one of `["aws"]`. If both `PROVIDER_NAME` and an
     [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
     `MongoClient`, the driver MUST raise an error.
 
