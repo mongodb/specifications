@@ -64,9 +64,9 @@ tests:
         object: testRunner
         name: assertIndexNotExists
         arguments:
-          database: *database_name
-          collection: *collection_name
-          index: *index_name
+          databaseName: *database_name
+          collectionName: *collection_name
+          indexName: *index_name
       -
         object: *session0
         name: commitTransaction
@@ -74,9 +74,9 @@ tests:
         object: testRunner
         name: assertIndexExists
         arguments:
-          database: *database_name
-          collection: *collection_name
-          index: *index_name
+          databaseName: *database_name
+          collectionName: *collection_name
+          indexName: *index_name
     expectEvents:
       -
         client: *client0
@@ -152,9 +152,9 @@ tests:
         object: testRunner
         name: assertIndexNotExists
         arguments:
-          database: *database_name
-          collection: *collection_name
-          index: *index_name
+          databaseName: *database_name
+          collectionName: *collection_name
+          indexName: *index_name
       -
         object: *session0
         name: commitTransaction
@@ -162,9 +162,9 @@ tests:
         object: testRunner
         name: assertIndexExists
         arguments:
-          database: *database_name
-          collection: *collection_name
-          index: *index_name
+          databaseName: *database_name
+          collectionName: *collection_name
+          indexName: *index_name
     expectEvents:
       -
         client: *client0
