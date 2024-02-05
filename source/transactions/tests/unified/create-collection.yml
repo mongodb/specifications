@@ -62,8 +62,8 @@ tests:
         object: testRunner
         name: assertCollectionNotExists
         arguments:
-          database: *database_name
-          collection: *collection_name
+          databaseName: *database_name
+          collectionName: *collection_name
       -
         object: *session0
         name: commitTransaction
@@ -71,8 +71,8 @@ tests:
         object: testRunner
         name: assertCollectionExists
         arguments:
-          database: *database_name
-          collection: *collection_name
+          databaseName: *database_name
+          collectionName: *collection_name
     expectEvents:
       -
         client: *client0
@@ -140,8 +140,8 @@ tests:
         object: testRunner
         name: assertCollectionNotExists
         arguments:
-          database: *database_name
-          collection: *collection_name
+          databaseName: *database_name
+          collectionName: *collection_name
       -
         object: *session0
         name: commitTransaction
@@ -149,8 +149,8 @@ tests:
         object: testRunner
         name: assertCollectionExists
         arguments:
-          database: *database_name
-          collection: *collection_name
+          databaseName: *database_name
+          collectionName: *collection_name
     expectEvents:
       -
         client: *client0
