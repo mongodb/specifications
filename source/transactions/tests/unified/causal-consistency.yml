@@ -8,6 +8,8 @@ createEntities:
     client:
       id: &client0 client0
       useMultipleMongoses: false
+      uriOptions:
+        retryWrites: false
       observeEvents:
         - commandStartedEvent
   -
@@ -26,8 +28,10 @@ createEntities:
       client: *client0
   -
     session:
-      id: &session1 session1
+      id: &session_no_cc session_no_cc
       client: *client0
+      sessionOptions:
+        causalConsistency: false
 runOnRequirements:
   -
     minServerVersion: '4.0'
@@ -49,9 +53,8 @@ initialData:
 tests:
   -
     description: 'causal consistency'
-    clientOptions:
-      retryWrites: false
     operations:
+      # Update a document without a transaction
       - &updateOne
         object: *collection0
         name: updateOne
@@ -66,6 +69,8 @@ tests:
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
+      # Updating the same document inside a transaction.
+      # Casual consistency ensures that the transaction snapshot is causally after the first updateOne.
       -
         object: *session0
         name: startTransaction
@@ -159,17 +164,13 @@ tests:
             count: 2
   -
     description: 'causal consistency disabled'
-    clientOptions:
-      retryWrites: false
-    sessionOptions:
-      session0:
-        causalConsistency: false
     operations:
+      # Insert a document without a transaction
       -
         object: *collection0
         name: insertOne
         arguments:
-          session: *session0
+          session: *session_no_cc
           document:
             _id: 2
         expectResult:
@@ -177,13 +178,13 @@ tests:
             insertedId:
               $$unsetOrMatches: 2
       -
-        object: *session0
+        object: *session_no_cc
         name: startTransaction
       -
         object: *collection0
         name: updateOne
         arguments:
-          session: *session0
+          session: *session_no_cc
           filter:
             _id: 1
           update:
@@ -194,7 +195,7 @@ tests:
           modifiedCount: 1
           upsertedCount: 0
       -
-        object: *session0
+        object: *session_no_cc
         name: commitTransaction
     expectEvents:
       -
@@ -211,7 +212,7 @@ tests:
                 readConcern:
                   $$exists: false
                 lsid:
-                  $$sessionLsid: *session0
+                  $$sessionLsid: *session_no_cc
                 txnNumber:
                   $$exists: false
                 autocommit:
@@ -235,10 +236,11 @@ tests:
                     upsert:
                       $$unsetOrMatches: false
                 ordered: true
+                # No afterClusterTime
                 readConcern:
                   $$exists: false
                 lsid:
-                  $$sessionLsid: *session0
+                  $$sessionLsid: *session_no_cc
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -252,7 +254,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid:
-                  $$sessionLsid: *session0
+                  $$sessionLsid: *session_no_cc
                 txnNumber:
                   $numberLong: '1'
                 startTransaction:
