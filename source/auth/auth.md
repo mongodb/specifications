@@ -907,7 +907,7 @@ Examples are provided below.
 - mechanism\
   MUST be "MONGODB-AWS"
 
-- mechanism_properties\\
+- mechanism_properties
 
   - AWS_SESSION_TOKEN\
     Drivers MUST allow the user to specify an AWS session token for authentication with temporary
