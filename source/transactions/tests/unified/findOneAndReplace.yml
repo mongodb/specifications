@@ -2,7 +2,7 @@
 # Please review the generated file, then remove this notice.
 
 description: findOneAndReplace
-schemaVersion: '1.3'
+schemaVersion: '1.9'
 createEntities:
   -
     client:
@@ -169,16 +169,24 @@ tests:
     description: 'collection writeConcern ignored for findOneAndReplace'
     operations:
       -
+        object: testRunner
+        name: createEntities
+        arguments:
+          entities:
+            - collection:
+                id: &collection_wc_majority collection_wc_majority
+                database: *database0
+                collectionName: *collection_name
+                collectionOptions:
+                  writeConcern: { w: majority }
+      -
         object: *session0
         name: startTransaction
         arguments:
           writeConcern:
             w: majority
       -
-        object: *collection0
-        collectionOptions:
-          writeConcern:
-            w: majority
+        object: *collection_wc_majority
         name: findOneAndReplace
         arguments:
           session: *session0
