@@ -1213,7 +1213,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 - mechanism\
   MUST be "MONGODB-OIDC"
 
-- mechanism_properties\\
+- mechanism_properties
 
   - PROVIDER_NAME\
     Drivers MUST allow the user to specify the name of a built-in OIDC provider integration to use to
