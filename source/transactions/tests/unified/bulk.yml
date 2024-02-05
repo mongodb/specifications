@@ -94,6 +94,7 @@ tests:
                 update:
                   $set:
                     x: 2
+                # Produces upsertedIds: {2: 2} in the result
                 upsert: true
             -
               insertOne:
@@ -115,6 +116,8 @@ tests:
               insertOne:
                 document:
                   _id: 7
+            # Keep replaces segregated from updates, so that drivers that aren't able to coalesce
+            # adjacent updates and replaces into a single update command will still pass this test
             -
               replaceOne:
                 filter:
@@ -143,6 +146,8 @@ tests:
                 update:
                   $set:
                     z: 1
+            # Keep deleteMany segregated from deleteOne, so that drivers that aren't able to coalesce
+            # adjacent mixed deletes into a single delete command will still pass this test
             -
               deleteMany:
                 filter:
@@ -212,6 +217,7 @@ tests:
                   $$exists: false
               commandName: delete
               databaseName: *database_name
+          # Commands in the bulkWrite
           -
             commandStartedEvent:
               command:
