@@ -1,6 +1,12 @@
 # This file was created automatically using mongodb-spec-converter.
 # Please review the generated file, then remove this notice.
 
+# This file contains a single test that should be in error-labels.yml. The test
+# was moved from error-labels.yml during the spec work for client-side
+# operations timeout because it uses the blockConnection parameter in
+# failCommand, which is only available in server versions 4.2+. It should be
+# merged back into error-labels.yml when that test file is ported to the
+# unified test format as the format allows for per-test runOn requirements.
 description: error-labels-blockConnection
 schemaVersion: '1.3'
 createEntities:
@@ -8,6 +14,8 @@ createEntities:
     client:
       id: &client0 client0
       useMultipleMongoses: false
+      uriOptions:
+        socketTimeoutMS: 100
       observeEvents:
         - commandStartedEvent
   -
@@ -41,10 +49,14 @@ initialData:
     databaseName: *database_name
     documents: []
 tests:
+  # This test previously used failCommand with closeConnection=true to force a
+  # network error, but this does not work after CSOT is implemented because
+  # network errors are retried indefinitely. It has been changed to use
+  # socketTimeoutMS with blockConnection to force a network error because
+  # drivers only retry socketTimeoutMS-related errors once rather than
+  # indefinitely.
   -
     description: 'add RetryableWriteError and UnknownTransactionCommitResult labels to connection errors'
-    clientOptions:
-      socketTimeoutMS: 100
     operations:
       -
         object: testRunner
@@ -52,6 +64,7 @@ tests:
         arguments:
           client: *client0
           failPoint:
+            # Drivers stop retrying after two socket timeouts that occur due to the use of socketTimeoutMS
             configureFailPoint: failCommand
             mode:
               times: 2
@@ -136,6 +149,7 @@ tests:
                 startTransaction:
                   $$exists: false
                 autocommit: false
+                # commitTransaction applies w:majority on retries
                 writeConcern:
                   w: majority
                   wtimeout: 10000
