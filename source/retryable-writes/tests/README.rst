@@ -457,53 +457,24 @@ and sharded clusters.
             mode: "off"
         }
 
-#. Test that in a sharded cluster writes are retried on a different mongos if
-   one available
+#. Test that in a sharded cluster writes are retried on a different mongos when
+   one is available.
 
    This test MUST be executed against a sharded cluster that has at least two
-   mongos instances.
+   mongos instances, supports ``retryWrites=true``, has enabled the
+   ``configureFailPoint`` command, and supports the ``errorLabels`` field
+   (MongoDB 4.3.1+).
 
-   This test requires MongoDB 4.3.1+ for the ``errorLabels`` fail point option.
+   Note: this test cannot reliably distinguish "retry on a different mongos due
+   to server deprioritization" (the behavior intended to be tested) from "retry
+   on a different mongos due to normal SDAM randomized suitable server
+   selection". Verify relevant code paths are correctly executed by the tests
+   using external means such as a logging, debugger, code coverage tool, etc.
 
-   1. Ensure that a test is run against a sharded cluster that has at least two
-      mongoses. If there are more than two mongoses in the cluster, pick two to
-      test against.
+   1. Create two clients ``s0`` and ``s1`` that each connect to a single mongos
+      from the sharded cluster. They must not connect to the same mongos.
 
-   2. Create a client per mongos using the direct connection, and configure the
-      following fail point on each mongos::
-
-        {
-            configureFailPoint: "failCommand",
-            mode: { times: 1 },
-            data: {
-                failCommands: ["insert"],
-                errorCode: 6,
-                errorLabels: ["RetryableWriteError"],
-                closeConnection: true
-            }
-        }
-
-   3. Create a client with ``retryWrites=true`` that connects to the cluster,
-      providing the two selected mongoses as seeds.
-
-   4. Enable command monitoring, and execute a write command that is
-      supposed to fail on both mongoses.
-
-   5. Asserts that there were failed command events from each mongos.
-
-   6. Disable the fail points.
-
-#. Test that in a sharded cluster writes are retried on the same mongos if no
-   other is available
-
-   This test MUST be executed against a sharded cluster and requires MongoDB
-   4.3.1+ for the ``errorLabels`` fail point option.
-
-   1. Ensure that a test is run against a sharded cluster. If there are multiple
-      mongoses in the cluster, pick one to test against.
-
-   2. Create a client that connects to the mongos using the direct connection,
-      and configure the following fail point on the mongos::
+   3. Configure the following fail point for both ``s0`` and ``s1``::
 
         {
             configureFailPoint: "failCommand",
@@ -511,23 +482,71 @@ and sharded clusters.
             data: {
                 failCommands: ["insert"],
                 errorCode: 6,
-                errorLabels: ["RetryableWriteError"],
-                closeConnection: true
+                errorLabels: ["RetryableWriteError"]
             }
         }
 
-   3. Create a client with ``retryWrites=true`` that connects to the cluster,
-      providing the selected mongos as the seed.
+   4. Create a client ``client`` with ``retryWrites=true`` that connects to the
+      cluster with both mongoses used by ``s0`` and ``s1`` in the initial seed
+      list.
 
-   4. Enable command monitoring, and execute a write command that is
-      supposed to fail.
+   5. Enable failed command event monitoring for ``client``.
 
-   5. Asserts that there was a failed command and a successful command event.
+   6. Execute an ``insert`` command with ``client``. Assert that the command
+      failed.
 
-   6. Disable the fail point.
+   7. Assert that two failed command events occurred. Assert that the failed
+      command events occurred on different mongoses.
+
+   8. Disable the fail points on both ``s0`` and ``s1``.
+
+#. Test that in a sharded cluster writes are retried on the same mongos when no
+   others are available.
+
+   This test MUST be executed against a sharded cluster that supports
+   ``retryWrites=true``, has enabled the ``configureFailPoint`` command, and
+   supports the ``errorLabels`` field (MongoDB 4.3.1+).
+
+   Note: this test cannot reliably distinguish "retry on a different mongos due
+   to server deprioritization" (the behavior intended to be tested) from "retry
+   on a different mongos due to normal SDAM behavior of randomized suitable
+   server selection". Verify relevant code paths are correctly executed by the
+   tests using external means such as a logging, debugger, code coverage tool,
+   etc.
+
+   1. Create a client ``s0`` that connects to a single mongos from the cluster.
+
+   2. Configure the following fail point for ``s0``::
+
+        {
+            configureFailPoint: "failCommand",
+            mode: { times: 1 },
+            data: {
+                failCommands: ["insert"],
+                errorCode: 6,
+                errorLabels: ["RetryableWriteError"]
+            }
+        }
+
+   3. Create a client ``client`` with ``directConnection=false`` (when not set by
+      default) and ``retryWrites=true`` that connects to the cluster using the
+      same single mongos as ``s0``.
+
+   4. Enable succeeded and failed command event monitoring for ``client``.
+
+   5. Execute an ``insert`` command with ``client``. Assert that the command
+      succeeded.
+
+   6. Assert that exactly one failed command event and one succeeded command
+      event occurred. Assert that both events occurred on the same mongos.
+
+   7. Disable the fail point on ``s0``.
 
 Changelog
 =========
+
+:2024-02-06: Update prose test 4 and 5 to workaround SDAM behavior preventing
+             execution of deprioritization code paths.
 
 :2024-01-05: Fix typo in prose test title.
 
