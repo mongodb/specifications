@@ -648,12 +648,6 @@ TBD: spec system to hold scores over time
 
 TBD: generated datasets should be park in S3 or somewhere for retrieval by URL
 
-## FAQ
-
-Question?
-
-Answer.
-
 ## Changelog
 
 - 2024-01-22: Migrated from reStructuredText to Markdown.
