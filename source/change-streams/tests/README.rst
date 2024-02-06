@@ -24,7 +24,7 @@ Subdirectories for Test Formats
 This document describes the legacy format for change streams tests.
 Tests in this legacy format are located under ``./legacy/``.
 
-New change streams tests should be written in the `unified test format <../../unified-test-format/unified-test-format.rst>`__
+New change streams tests should be written in the `unified test format <../../unified-test-format/unified-test-format.md>`__
 and placed under ``./unified/``.
 
 Spec Test Format

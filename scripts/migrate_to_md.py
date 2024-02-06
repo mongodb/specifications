@@ -92,10 +92,16 @@ with open(md_file, 'w') as fid:
 # (https://github.com/mongodb/specifications/blob/master/source/...)
 # and rewrite them to use appropriate md links.
 # If the link is malformed we ignore and print an error.
-rel_pattern = re.compile(f'(\.\.\S*/{path.name})')
-md_pattern = re.compile(f'(\(http\S*/{path.name})')
-rst_pattern = re.compile(f'(<http\S*/{path.name})')
-abs_pattern = re.compile(f'(/source/\S*/{path.name})')
+target = path.name
+curr = path
+while curr.parent.name != 'source':
+    target = f'{curr.parent.name}/{target}'
+    curr = curr.parent
+suffix = f'\S*/{target}'
+rel_pattern = re.compile(f'(\.\.{suffix})')
+md_pattern = re.compile(f'(\(http{suffix})')
+rst_pattern = re.compile(f'(<http{suffix})')
+abs_pattern = re.compile(f'(/source{suffix})')
 for p in Path("source").rglob("*"):
     if p.suffix not in ['.rst', '.md']:
         continue
@@ -127,12 +133,13 @@ for p in Path("source").rglob("*"):
 
         if new_line != line:
             found = True
+            print(new_line)
         new_lines.append(new_line)
 
     if found:
         with p.open('w') as fid:
             fid.writelines(new_lines)
-        print(f'Update link(s) in {p}')
+        print(f'Updated link(s) in {p}')
 
 
 print('Created markdown file:')
