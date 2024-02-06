@@ -305,13 +305,13 @@ This test MUST be executed against a sharded cluster that supports
 
 4. Enable succeeded and failed command event monitoring for ``client``.
 
-4. Execute a ``find`` command with ``client``. Assert that the command
+5. Execute a ``find`` command with ``client``. Assert that the command
    succeeded.
 
-5. Assert that exactly one failed command event and one succeeded command event
+6. Assert that exactly one failed command event and one succeeded command event
    occurred. Assert that both events occurred on the same mongos.
 
-6. Disable the fail point on ``s0``.
+7. Disable the fail point on ``s0``.
 
 
 Changelog

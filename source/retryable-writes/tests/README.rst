@@ -474,7 +474,7 @@ and sharded clusters.
    1. Create two clients ``s0`` and ``s1`` that each connect to a single mongos
       from the sharded cluster. They must not connect to the same mongos.
 
-   3. Configure the following fail point for both ``s0`` and ``s1``::
+   2. Configure the following fail point for both ``s0`` and ``s1``::
 
         {
             configureFailPoint: "failCommand",
@@ -486,19 +486,19 @@ and sharded clusters.
             }
         }
 
-   4. Create a client ``client`` with ``retryWrites=true`` that connects to the
+   3. Create a client ``client`` with ``retryWrites=true`` that connects to the
       cluster with both mongoses used by ``s0`` and ``s1`` in the initial seed
       list.
 
-   5. Enable failed command event monitoring for ``client``.
+   4. Enable failed command event monitoring for ``client``.
 
-   6. Execute an ``insert`` command with ``client``. Assert that the command
+   5. Execute an ``insert`` command with ``client``. Assert that the command
       failed.
 
-   7. Assert that two failed command events occurred. Assert that the failed
+   6. Assert that two failed command events occurred. Assert that the failed
       command events occurred on different mongoses.
 
-   8. Disable the fail points on both ``s0`` and ``s1``.
+   7. Disable the fail points on both ``s0`` and ``s1``.
 
 #. Test that in a sharded cluster writes are retried on the same mongos when no
    others are available.
