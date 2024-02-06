@@ -266,8 +266,7 @@ mongos instances, supports ``retryReads=true``, and has enabled the
      }
 
 3. Create a client ``client`` with ``retryReads=true`` that connects to the
-   cluster with both mongoses used by ``s0`` and ``s1`` in the initial seed
-   list.
+   cluster using the same two mongoses as ``s0`` and ``s1``.
 
 4. Enable failed command event monitoring for ``client``.
 
