@@ -163,9 +163,7 @@ strings of length 8. String data will be random ASCII strings of length 80.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (7531
 bytes) times 10,000 operations, which equals 75,310,000 bytes or 75.31 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                              |
+| Phase       | Description                                                                                                                                                                                  |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the FLAT_BSON dataset into memory as a language-appropriate document types. For languages like C without a document type, the raw JSON string for each document should be used instead. |
 | Before task | n/a                                                                                                                                                                                          |
@@ -186,9 +184,7 @@ data will be random ASCII strings of length 80.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (7531
 bytes) times 10,000 operations, which equals 75,310,000 bytes or 75.31 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                               |
+| Phase       | Description                                                                                                                                                                                                                   |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the FLAT_BSON dataset into memory as a language-appropriate document types. For languages like C without a document type, the raw JSON string for each document should be used instead. Encode it to a BSON byte-string. |
 | Before task | n/a                                                                                                                                                                                                                           |
@@ -209,9 +205,7 @@ key/value pairs).
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (1964
 bytes) times 10,000 operations, which equals 19,640,000 bytes or 19.64 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                             |
+| Phase       | Description                                                                                                                                                                                 |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the DEEP_BSON dataset into memory as a language-appropriate document type. For languages like C without a document type, the raw JSON string for each document should be used instead. |
 | Before task | n/a                                                                                                                                                                                         |
@@ -231,9 +225,7 @@ until the final level, which will contain a random ASCII string of length 8 (126
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (1964
 bytes) times 10,000 operations, which equals 19,640,000 bytes or 19.64 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                               |
+| Phase       | Description                                                                                                                                                                                                                   |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the DEEP_BSON dataset into memory as a language-appropriate document types. For languages like C without a document type, the raw JSON string for each document should be used instead. Encode it to a BSON byte-string. |
 | Before task | n/a                                                                                                                                                                                                                           |
@@ -255,9 +247,7 @@ length 8. Strings values will be random ASCII strings with length 80.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (5734
 bytes) times 10,000 operations, which equals 57,340,000 bytes or 57.34 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                             |
+| Phase       | Description                                                                                                                                                                                 |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the FULL_BSON dataset into memory as a language-appropriate document type. For languages like C without a document type, the raw JSON string for each document should be used instead. |
 | Before task | n/a                                                                                                                                                                                         |
@@ -279,9 +269,7 @@ values will be random ASCII strings with length 80.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (5734
 bytes) times 10,000 operations, which equals 57,340,000 bytes or 57.34 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                               |
+| Phase       | Description                                                                                                                                                                                                                   |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the FULL_BSON dataset into memory as a language-appropriate document types. For languages like C without a document type, the raw JSON string for each document should be used instead. Encode it to a BSON byte-string. |
 | Before task | n/a                                                                                                                                                                                                                           |
@@ -316,9 +304,7 @@ a BSON {hello:true} command).
 
 *N.B. We use {hello:true} rather than {hello:1} to ensure a consistent command size.*
 
-Phases:
-
-|             |                                                                                                                                       |
+| Phase       | Description                                                                                                                           |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Construct whatever language-appropriate objects (Database, etc.) would be required to send a command. |
 | Before task | n/a                                                                                                                                   |
@@ -336,9 +322,7 @@ Dataset: The dataset, designated TWEET (disk file 'tweet.json'), consists of a s
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (1622
 bytes) times 10,000 operations, which equals 16,220,000 bytes or 16.22 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                                                                                                                                                                                      |
+| Phase       | Description                                                                                                                                                                                                                                                                                                                                                                          |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Load the TWEET document into memory as a language-appropriate document type (or JSON string for C). Construct a Collection object for the 'corpus' collection to use for querying. Insert the document 10,000 times to the 'perftest' database in the 'corpus' collection using sequential `_id` values. (1 to 10,000) |
 | Before task | n/a                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -356,9 +340,7 @@ length of approximately 250 bytes.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (275 bytes)
 times 10,000 operations, which equals 2,750,000 bytes or 2.75 MB.
 
-Phases:
-
-|             |                                                                                                                                                                              |
+| Phase       | Description                                                                                                                                                                  |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C).         |
 | Before task | Drop the 'corpus' collection. Create an empty 'corpus' collection with the 'create' command. Construct a Collection object for the 'corpus' collection to use for insertion. |
@@ -376,9 +358,7 @@ length of approximately 2,500,000 bytes.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (2,731,089
 bytes) times 10 operations, which equals 27,310,890 bytes or 27.31 MB.
 
-Phases:
-
-|             |                                                                                                                                                                              |
+| Phase       | Description                                                                                                                                                                  |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Load the LARGE_DOC dataset into memory as a language-appropriate document type (or JSON string for C).         |
 | Before task | Drop the 'corpus' collection. Create an empty 'corpus' collection with the 'create' command. Construct a Collection object for the 'corpus' collection to use for insertion. |
@@ -410,9 +390,7 @@ Dataset: The dataset, designated TWEET consists of a sample tweet stored as stri
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (1622
 bytes) times 10,000 operations, which equals 16,220,000 bytes or 16.22 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                                                                                                                                                                           |
+| Phase       | Description                                                                                                                                                                                                                                                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Load the TWEET dataset into memory as a language-appropriate document type (or JSON string for C). Construct a Collection object for the 'corpus' collection to use for querying. Insert the document 10,000 times to the 'perftest' database in the 'corpus' collection. (Let the driver generate `_id`s). |
 | Before task | n/a                                                                                                                                                                                                                                                                                                                                                                       |
@@ -430,9 +408,7 @@ bytes.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (275 bytes)
 times 10,000 operations, which equals 2,750,000 bytes or 2.75 MB.
 
-Phases:
-
-|             |                                                                                                                                                                              |
+| Phase       | Description                                                                                                                                                                  |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C).         |
 | Before task | Drop the 'corpus' collection. Create an empty 'corpus' collection with the 'create' command. Construct a Collection object for the 'corpus' collection to use for insertion. |
@@ -450,9 +426,7 @@ bytes.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (2,731,089
 bytes) times 10 operations, which equals 27,310,890 bytes or 27.31 MB.
 
-Phases:
-
-|             |                                                                                                                                                                              |
+| Phase       | Description                                                                                                                                                                  |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Load the LARGE_DOC dataset into memory as a language-appropriate document type (or JSON string for C).         |
 | Before task | Drop the 'corpus' collection. Create an empty 'corpus' collection with the 'create' command. Construct a Collection object for the 'corpus' collection to use for insertion. |
@@ -471,9 +445,7 @@ batches.
 Dataset size: For score purposes, the dataset size for a task is the size of the source file (52,428,800 bytes) times 1
 operation or 52.43 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                |
+| Phase       | Description                                                                                                                                                                                    |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. rop the 'perftest' database. Load the GRIDFS_LARGE file as a string or other language-appropriate type for binary octet data.                                  |
 | Before task | Drop the default GridFS bucket. Insert a 1-byte file into the bucket. (This ensures the bucket collections and indices have been created.) Construct a GridFSBucket object to use for uploads. |
@@ -491,9 +463,7 @@ large file to ensure multiple database round-trips even if chunks are are sent i
 Dataset size: For score purposes, the dataset size for a task is the size of the source file (52,428,800 bytes) times 1
 operation or 52.43 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                            |
+| Phase       | Description                                                                                                                                                                                                |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Upload the GRIDFS_LARGE file to the default gridFS bucket with the name "gridfstest". Record the `_id` of the uploaded file.                 |
 | Before task | Construct a GridFSBucket object to use for downloads.                                                                                                                                                      |
@@ -533,9 +503,7 @@ containing 5,000 JSON documents. Each document should be about 1000 bytes.
 Dataset size: For score purposes, the dataset size for a task is the total size of all source files: 565,000,000 bytes
 or 565 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                |
+| Phase       | Description                                                                                                                                                                                    |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database.                                                                                                                                  |
 | Before task | Drop the 'corpus' collection. Create an empty 'corpus' collection with the 'create' command.                                                                                                   |
@@ -553,9 +521,7 @@ document should be about 1000 bytes.
 Dataset size: For score purposes, the dataset size for a task is the total size of all source files: 565,000,000 bytes
 or 565 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                                                                                                                         |
+| Phase       | Description                                                                                                                                                                                                                                                                                                             |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Drop the 'corpus' collection. Do an unordered insert of all 500,000 documents in the dataset into the 'corpus' collection.                                                                                                                                |
 | Before task | Construct whatever objects, threads, etc. are required for exporting the dataset.                                                                                                                                                                                                                                       |
@@ -574,9 +540,7 @@ file size corresponds roughly to the output of a (slightly dated) digital camera
 Dataset size: For score purposes, the dataset size for a task is the total size of all source files: 262,144,000 bytes
 or 262.144 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                       |
+| Phase       | Description                                                                                                                                                                                                           |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database.                                                                                                                                                         |
 | Before task | Drop the default GridFS bucket in the 'perftest' database.  Construct a GridFSBucket object for the default bucket in 'perftest' to use for uploads.    Insert a 1-byte file into the bucket (to initialize indexes). |
@@ -594,9 +558,7 @@ the output of a (slightly dated) digital camera. Thus the task approximates down
 Dataset size: For score purposes, the dataset size for a task is the total size of all source files: 262,144,000 bytes
 or 262.144 MB.
 
-Phases:
-
-|             |                                                                                                                                                                                                                                                        |
+| Phase       | Description                                                                                                                                                                                                                                            |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Setup       | Construct a MongoClient object. Drop the 'perftest' database. Construct a temporary directory for holding downloads. Drop the default GridFS bucket in the 'perftest' database. Upload the 50 file dataset to the default GridFS bucket in 'perftest'. |
 | Before task | Delete all files in the temporary folder for downloads. Construct a GridFSBucket object to use for downloads from the default bucket in 'perftest'.                                                                                                    |
@@ -612,9 +574,8 @@ Every micro-benchmark has a score equal to the 50th percentile (median) of sampl
 
 From these micro-benchmarks, the following composite scores must be calculated:
 
-|                |                                                                                                                                                                                                         |
+| Composite Name | Compositing formula                                                                                                                                                                                     |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Composite name | Compositing formula                                                                                                                                                                                     |
 | BSONBench      | Average of all BSON micro-benchmarks                                                                                                                                                                    |
 | SingleBench    | Average of all Single-doc micro-benchmarks, except "Run Command"                                                                                                                                        |
 | MultiBench     | Average of all Multi-doc micro-benchmarks                                                                                                                                                               |
