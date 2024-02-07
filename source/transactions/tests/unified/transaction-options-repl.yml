@@ -97,8 +97,7 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -112,8 +111,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -129,8 +127,7 @@ tests:
                 documents:
                   - { _id: 2 }
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '2'
                 startTransaction: true
@@ -145,8 +142,7 @@ tests:
             commandStartedEvent:
               command:
                 abortTransaction: 1
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '2'
                 startTransaction: { $$exists: false }

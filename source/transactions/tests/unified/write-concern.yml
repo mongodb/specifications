@@ -84,8 +84,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 <<: &transactionCommandArgs
-                  lsid:
-                    $$sessionLsid: *session0
+                  lsid: { $$sessionLsid: *session0 }
                   txnNumber:
                     $numberLong: '1'
                   startTransaction: true
@@ -98,8 +97,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -148,8 +146,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -202,8 +199,7 @@ tests:
             commandStartedEvent:
               command:
                 abortTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -252,8 +248,7 @@ tests:
             commandStartedEvent:
               command:
                 abortTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }

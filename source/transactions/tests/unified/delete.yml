@@ -98,8 +98,7 @@ tests:
                     limit: 1
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -116,8 +115,7 @@ tests:
                     q: { _id: { $lte: 3 } }
                     limit: 0
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -134,8 +132,7 @@ tests:
                     q: { _id: 4 }
                     limit: 1
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -147,8 +144,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -215,8 +211,7 @@ tests:
                     limit: 1
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -233,8 +228,7 @@ tests:
                     q: { _id: { $lte: 3 } }
                     limit: 0
                 ordered: true
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -246,8 +240,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }

@@ -87,8 +87,7 @@ tests:
                   - { $match: { _id: { $gte: 2 } } }
                   - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
                 txnNumber:
@@ -105,8 +104,7 @@ tests:
                   - { $match: { _id: { $gte: 2 } } }
                   - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -118,8 +116,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -156,8 +153,7 @@ tests:
               command:
                 find: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
                 txnNumber:
@@ -173,8 +169,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -187,8 +182,7 @@ tests:
               command:
                 find: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -203,8 +197,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -245,8 +238,7 @@ tests:
                   - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
                 txnNumber:
@@ -262,8 +254,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -279,8 +270,7 @@ tests:
                   - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -295,8 +285,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -329,8 +318,7 @@ tests:
               command:
                 distinct: *collection_name
                 key: _id
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
                 txnNumber:
@@ -345,8 +333,7 @@ tests:
               command:
                 distinct: *collection_name
                 key: _id
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -379,8 +366,7 @@ tests:
             commandStartedEvent:
               command:
                 find: *collection_name
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
                 txnNumber:
@@ -394,8 +380,7 @@ tests:
             commandStartedEvent:
               command:
                 find: *collection_name
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -427,8 +412,7 @@ tests:
                   - { $match: { _id: { $gte: 2 } } }
                   - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -444,8 +428,7 @@ tests:
                   - { $match: { _id: { $gte: 2 } } }
                   - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -471,8 +454,7 @@ tests:
               command:
                 find: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -487,8 +469,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -501,8 +482,7 @@ tests:
               command:
                 find: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -517,8 +497,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -547,8 +526,7 @@ tests:
                   - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -563,8 +541,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -580,8 +557,7 @@ tests:
                   - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -596,8 +572,7 @@ tests:
                   $$type: [ int, long ]
                 collection: *collection_name
                 batchSize: 3
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -623,8 +598,7 @@ tests:
               command:
                 distinct: *collection_name
                 key: _id
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -638,8 +612,7 @@ tests:
               command:
                 distinct: *collection_name
                 key: _id
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -672,8 +645,7 @@ tests:
             commandStartedEvent:
               command:
                 find: *collection_name
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
@@ -686,8 +658,7 @@ tests:
             commandStartedEvent:
               command:
                 find: *collection_name
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'

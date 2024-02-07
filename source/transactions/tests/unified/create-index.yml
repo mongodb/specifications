@@ -98,8 +98,7 @@ tests:
                     name: *index_name
                     key:
                       x: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -111,8 +110,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -177,8 +175,7 @@ tests:
             commandStartedEvent:
               command:
                 create: *collection_name
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -195,8 +192,7 @@ tests:
                     name: *index_name
                     key:
                       x: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 writeConcern: { $$exists: false }
               commandName: createIndexes
               databaseName: *database_name
@@ -204,8 +200,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }

@@ -109,8 +109,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -122,8 +121,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -140,8 +138,7 @@ tests:
                 ordered: true
                 readConcern:
                   afterClusterTime: { $$exists: true }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '2'
                 startTransaction: true
@@ -153,8 +150,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '2'
                 startTransaction: { $$exists: false }
@@ -208,8 +204,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '2'
                 startTransaction: true
@@ -221,8 +216,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '2'
                 startTransaction: { $$exists: false }
@@ -271,8 +265,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -284,8 +277,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -297,8 +289,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -313,8 +304,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -442,8 +432,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -455,8 +444,7 @@ tests:
             commandStartedEvent:
               command:
                 abortTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -519,8 +507,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -532,8 +519,7 @@ tests:
             commandStartedEvent:
               command:
                 abortTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -550,8 +536,7 @@ tests:
                 ordered: true
                 readConcern:
                   afterClusterTime: { $$exists: true }
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 # txnNumber 2 was skipped
                 txnNumber:
                   $numberLong: '3'
@@ -564,8 +549,7 @@ tests:
             commandStartedEvent:
               command:
                 abortTransaction: 1
-                lsid:
-                  $$sessionLsid: *session0
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber:
                   $numberLong: '3'
                 startTransaction: { $$exists: false }
@@ -622,8 +606,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -635,8 +618,7 @@ tests:
             commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -652,8 +634,7 @@ tests:
                   - { _id: 2 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber: { $$exists: false }
                 startTransaction: { $$exists: false }
                 autocommit: { $$exists: false }
@@ -710,8 +691,7 @@ tests:
                   - { _id: 1 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -723,8 +703,7 @@ tests:
             commandStartedEvent:
               command:
                 abortTransaction: 1
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: { $$exists: false }
@@ -740,8 +719,7 @@ tests:
                   - { _id: 2 }
                 ordered: true
                 readConcern: { $$exists: false }
-                lsid:
-                  $$sessionLsid: *session1
+                lsid: { $$sessionLsid: *session1 }
                 txnNumber: { $$exists: false }
                 startTransaction: { $$exists: false }
                 autocommit: { $$exists: false }
