@@ -75,8 +75,7 @@ tests:
           client: *client1
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
               failCommands:
                 - abortTransaction
@@ -151,8 +150,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failCommands:
                 - abortTransaction
@@ -217,8 +215,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failCommands:
                 - abortTransaction
@@ -288,8 +285,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failCommands:
                 - abortTransaction

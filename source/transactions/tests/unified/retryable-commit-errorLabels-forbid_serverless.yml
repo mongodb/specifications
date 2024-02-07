@@ -61,8 +61,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failCommands:
                 - commitTransaction
@@ -144,8 +143,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failCommands:
                 - commitTransaction

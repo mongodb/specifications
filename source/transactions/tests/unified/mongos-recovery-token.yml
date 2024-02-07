@@ -188,8 +188,7 @@ tests:
           session: *session1
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 7
+            mode: { times: 7 }
             data:
               failCommands:
                 - commitTransaction
@@ -285,8 +284,7 @@ tests:
           session: *session0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failCommands:
                 - abortTransaction

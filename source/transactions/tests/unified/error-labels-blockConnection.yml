@@ -68,8 +68,7 @@ tests:
           failPoint:
             # Drivers stop retrying after two socket timeouts that occur due to the use of socketTimeoutMS
             configureFailPoint: failCommand
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
               failCommands:
                 - commitTransaction
