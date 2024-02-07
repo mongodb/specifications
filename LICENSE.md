@@ -40,11 +40,11 @@ CONSIDERATION OF YOUR ACCEPTANCE OF SUCH TERMS AND CONDITIONS.
    "License Elements" means the following high-level license attributes as selected by Licensor and indicated in the
    title of this License: Attribution, Noncommercial, ShareAlike.
 
-1. Fair Use Rights. Nothing in this license is intended to reduce, limit, or restrict any rights arising from fair use,
+2. Fair Use Rights. Nothing in this license is intended to reduce, limit, or restrict any rights arising from fair use,
    first sale or other limitations on the exclusive rights of the copyright owner under copyright law or other
    applicable laws.
 
-1. License Grant. Subject to the terms and conditions of this License, Licensor hereby grants You a worldwide,
+3. License Grant. Subject to the terms and conditions of this License, Licensor hereby grants You a worldwide,
    royalty-free, non-exclusive, perpetual (for the duration of the applicable copyright) license to exercise the rights
    in the Work as stated below:
 
@@ -144,7 +144,7 @@ forth in Sections 4(e) and 4(f).
    public digital performance is primarily intended for or directed toward commercial advantage or private monetary
    compensation.
 
-1. Representations, Warranties and Disclaimer
+5. Representations, Warranties and Disclaimer
 
 UNLESS OTHERWISE MUTUALLY AGREED TO BY THE PARTIES IN WRITING, LICENSOR OFFERS THE WORK AS-IS AND ONLY TO THE EXTENT OF
 ANY RIGHTS HELD IN THE LICENSED WORK BY THE LICENSOR. THE LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND
@@ -157,7 +157,7 @@ THE EXCLUSION OF IMPLIED WARRANTIES, SO SUCH EXCLUSION MAY NOT APPLY TO YOU.
    ON ANY LEGAL THEORY FOR ANY SPECIAL, INCIDENTAL, CONSEQUENTIAL, PUNITIVE OR EXEMPLARY DAMAGES ARISING OUT OF THIS
    LICENSE OR THE USE OF THE WORK, EVEN IF LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
-1. Termination
+7. Termination
 
    a. This License and the rights granted hereunder will terminate automatically upon any breach by You of the terms of
    this License. Individuals or entities who have received Derivative Works (as defined in Section 1 above) or
@@ -170,7 +170,7 @@ THE EXCLUSION OF IMPLIED WARRANTIES, SO SUCH EXCLUSION MAY NOT APPLY TO YOU.
    been, or is required to be, granted under the terms of this License), and this License will continue in full force
    and effect unless terminated as stated above.
 
-1. Miscellaneous
+8. Miscellaneous
 
    a. Each time You distribute or publicly digitally perform the Work (as defined in Section 1 above) or a Collective
    Work (as defined in Section 1 above), the Licensor offers to the recipient a license to the Work on the same terms

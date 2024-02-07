@@ -152,29 +152,29 @@ The following pieces of operation execution are considered blocking:
 
 1. Implicit session acquisition if an explicit session was not provided for the operation. This is only considered
    blocking for drivers that perform server selection to determine session support when acquiring implicit sessions.
-1. Server selection
-1. Connection checkout - If `maxPoolSize` has already been reached for the selected server, this is the amount of time
+2. Server selection
+3. Connection checkout - If `maxPoolSize` has already been reached for the selected server, this is the amount of time
    spent waiting for a connection to be available.
-1. Connection establishment - If the pool for the selected server is empty and a new connection is needed, the following
+4. Connection establishment - If the pool for the selected server is empty and a new connection is needed, the following
    pieces of connection establishment are considered blocking:
    1. TCP socket establishment
-   1. TLS handshake
+   2. TLS handshake
       1. All messages sent over the socket as part of the TLS handshake
-      1. OCSP verification - HTTP requests sent to OCSP responders.
-   1. MongoDB handshake (i.e. initial connection `hello`)
-   1. Authentication
+      2. OCSP verification - HTTP requests sent to OCSP responders.
+   3. MongoDB handshake (i.e. initial connection `hello`)
+   4. Authentication
       1. SCRAM-SHA-1, SCRAM-SHA-256, PLAIN: Execution of the command required for the SASL conversation.
-      1. GSSAPI: Execution of the commands required for the SASL conversation and requests to the KDC and TGS.
-      1. MONGODB-AWS: Execution of the commands required for the SASL conversation and all HTTP requests to ECS and EC2
+      2. GSSAPI: Execution of the commands required for the SASL conversation and requests to the KDC and TGS.
+      3. MONGODB-AWS: Execution of the commands required for the SASL conversation and all HTTP requests to ECS and EC2
          endpoints.
-      1. MONGODB-X509: Execution of the commands required for the authentication conversation.
-1. Client-side encryption
+      4. MONGODB-X509: Execution of the commands required for the authentication conversation.
+5. Client-side encryption
    1. Execution of `listCollections` commands to get collection schemas.
-   1. Execution of `find` commands against the key vault collection to get encrypted data keys.
-   1. Requests to non-local key management servers (e.g. AWS KMS) to decrypt data keys.
-   1. Requests to mongocryptd servers.
-1. Socket write to send a command to the server
-1. Socket read to receive the server’s response
+   2. Execution of `find` commands against the key vault collection to get encrypted data keys.
+   3. Requests to non-local key management servers (e.g. AWS KMS) to decrypt data keys.
+   4. Requests to mongocryptd servers.
+6. Socket write to send a command to the server
+7. Socket read to receive the server’s response
 
 The `timeoutMS` option MUST apply to all blocking sections. Drivers MUST document any exceptions. For example, drivers
 that do not have full control over OCSP verification might not be able to set timeouts for HTTP requests to responders
@@ -368,9 +368,9 @@ The [SessionOptions](../sessions/driver-sessions.rst#mongoclient-changes) used t
 which specifies the `timeoutMS` value for the following operations executed on the session:
 
 1. commitTransaction
-1. abortTransaction
-1. withTransaction
-1. endSession
+2. abortTransaction
+3. withTransaction
+4. endSession
 
 If this option is not specified for a `ClientSession`, it MUST inherit the `timeoutMS` of its parent MongoClient.
 

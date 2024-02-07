@@ -129,9 +129,9 @@ pertaining to URI options apply here.
 
    * - authMechanism
      - any string; valid values are defined in the `auth spec
-       <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
+       <../auth/auth.md#supported-authentication-methods>`_
      - None; default values for authentication exist for constructing authentication credentials per the
-       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       `auth spec <../auth/auth.md#supported-authentication-methods>`_,
        but there is no default for the URI option itself.
      - no
      - The authentication mechanism method to use for connection to the
@@ -146,7 +146,7 @@ pertaining to URI options apply here.
    * - authSource
      - any string
      - None; default values for authentication exist for constructing authentication credentials per the
-       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       `auth spec <../auth/auth.md#supported-authentication-methods>`_,
        but there is no default for the URI option itself.
      - no
      - The database that connections should authenticate against

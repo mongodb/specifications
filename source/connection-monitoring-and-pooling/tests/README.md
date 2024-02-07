@@ -15,10 +15,10 @@ Drivers MUST implement all of the following types of CMAP tests:
 The following tests have not yet been automated, but MUST still be tested:
 
 1. All ConnectionPoolOptions MUST be specified at the MongoClient level
-1. All ConnectionPoolOptions MUST be the same for all pools created by a MongoClient
-1. A user MUST be able to specify all ConnectionPoolOptions via a URI string
-1. A user MUST be able to subscribe to Connection Monitoring Events in a manner idiomatic to their language and driver
-1. When a check out attempt fails because connection set up throws an error, assert that a ConnectionCheckOutFailedEvent
+2. All ConnectionPoolOptions MUST be the same for all pools created by a MongoClient
+3. A user MUST be able to specify all ConnectionPoolOptions via a URI string
+4. A user MUST be able to subscribe to Connection Monitoring Events in a manner idiomatic to their language and driver
+5. When a check out attempt fails because connection set up throws an error, assert that a ConnectionCheckOutFailedEvent
    with reason="connectionError" is emitted.
 
 ## Logging Tests
