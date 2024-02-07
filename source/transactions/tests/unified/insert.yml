@@ -60,9 +60,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *collection0
         name: insertMany
@@ -87,9 +85,7 @@ tests:
           document:
             _id: 4
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 4
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
       -
         object: *session0
         name: commitTransaction
@@ -104,9 +100,7 @@ tests:
           document:
             _id: 5
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 5
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 5 } }
       -
         object: *session0
         name: commitTransaction
@@ -254,9 +248,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *collection0
         name: insertMany
@@ -287,9 +279,7 @@ tests:
           document:
             _id: 4
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 4
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
       -
         object: *session1
         name: abortTransaction
@@ -437,9 +427,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     expectEvents:
       -
         client: *client1
@@ -501,9 +489,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *collection_wc_majority
         name: insertMany

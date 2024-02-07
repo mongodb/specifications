@@ -100,9 +100,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       # First call to commit fails after a single retry attempt.
       -
         object: *session1
@@ -228,9 +226,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       # First call to commit fails after a single retry attempt.
       -
         object: *session1
@@ -355,9 +351,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: commitTransaction

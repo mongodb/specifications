@@ -70,9 +70,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       - &commitTransaction
         object: *session0
         name: commitTransaction
@@ -139,9 +137,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       - *commitTransaction
     expectEvents:
       -
@@ -199,9 +195,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction
@@ -254,9 +248,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction
@@ -340,9 +332,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       - *commitTransaction
     expectEvents:
       -
@@ -558,8 +548,7 @@ tests:
                     u:
                       $inc: { x: 1 }
                     upsert: true
-                    multi:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
                 ordered: true
                 <<: *transactionCommandArgs
               commandName: update

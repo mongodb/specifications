@@ -116,8 +116,7 @@ tests:
                     u:
                       $inc: { x: 1 }
                     upsert: true
-                    multi:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -141,10 +140,8 @@ tests:
                       x: 1
                     u:
                       'y': 1
-                    multi:
-                      $$unsetOrMatches: false
-                    upsert:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -168,8 +165,7 @@ tests:
                     u:
                       $set: { z: 1 }
                     multi: true
-                    upsert:
-                      $$unsetOrMatches: false
+                    upsert: { $$unsetOrMatches: false }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -295,8 +291,7 @@ tests:
                     u:
                       $inc: { x: 1 }
                     upsert: true
-                    multi:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -320,10 +315,8 @@ tests:
                       x: 1
                     u:
                       'y': 1
-                    multi:
-                      $$unsetOrMatches: false
-                    upsert:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -347,8 +340,7 @@ tests:
                     u:
                       $set: { z: 1 }
                     multi: true
-                    upsert:
-                      $$unsetOrMatches: false
+                    upsert: { $$unsetOrMatches: false }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0

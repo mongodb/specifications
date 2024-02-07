@@ -60,9 +60,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: startTransaction
@@ -99,9 +97,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: commitTransaction
@@ -128,9 +124,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session1
         name: startTransaction
@@ -173,9 +167,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session1
         name: startTransaction

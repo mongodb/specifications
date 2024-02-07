@@ -92,9 +92,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session1
         name: abortTransaction
@@ -185,9 +183,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction
@@ -267,9 +263,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction
@@ -344,9 +338,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction

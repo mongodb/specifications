@@ -61,9 +61,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       # Enable the fail point only on the mongos that session0 is pinned to
       -
         object: testRunner

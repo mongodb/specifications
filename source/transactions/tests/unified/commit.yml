@@ -79,9 +79,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: commitTransaction
@@ -97,9 +95,7 @@ tests:
           document:
             _id: 2
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 2
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       -
         object: *session0
         name: commitTransaction
@@ -211,9 +207,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: commitTransaction
@@ -277,9 +271,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: commitTransaction
@@ -385,9 +377,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: commitTransaction
@@ -464,9 +454,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction
@@ -528,9 +516,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction
@@ -557,9 +543,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: abortTransaction
@@ -658,9 +642,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session1
         name: commitTransaction
@@ -673,9 +655,7 @@ tests:
           document:
             _id: 2
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 2
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       # Calling commit again should error instead of re-running the commit
       -
         object: *session1
@@ -764,9 +744,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session1
         name: abortTransaction
@@ -779,9 +757,7 @@ tests:
           document:
             _id: 2
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 2
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       # Calling abort should error with "no transaction started" instead of "cannot call abortTransaction twice"
       -
         object: *session1

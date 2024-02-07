@@ -156,9 +156,7 @@ tests:
             _id: 3
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
       -
         object: *collection0
         name: insertOne
@@ -167,9 +165,7 @@ tests:
             _id: 4
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 4
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
       -
         object: *collection0
         name: insertOne
@@ -178,9 +174,7 @@ tests:
             _id: 5
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 5
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 5 } }
       -
         object: *collection0
         name: insertOne
@@ -189,9 +183,7 @@ tests:
             _id: 6
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 6
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 6 } }
       -
         object: *collection0
         name: insertOne
@@ -200,9 +192,7 @@ tests:
             _id: 7
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 7
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 7 } }
       -
         object: *collection0
         name: insertOne
@@ -211,9 +201,7 @@ tests:
             _id: 8
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 8
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 8 } }
       -
         object: *collection0
         name: insertOne
@@ -222,9 +210,7 @@ tests:
             _id: 9
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 9
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 9 } }
       -
         object: *collection0
         name: insertOne
@@ -233,9 +219,7 @@ tests:
             _id: 10
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 10
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 10 } }
       - *commitTransaction
     outcome:
       -
@@ -276,9 +260,7 @@ tests:
             _id: 3
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
       - &countDocuments
         object: *collection0
         name: countDocuments
@@ -299,9 +281,7 @@ tests:
             _id: 4
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 4
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
       -
         object: *collection0
         name: insertOne
@@ -310,9 +290,7 @@ tests:
             _id: 5
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 5
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 5 } }
       -
         object: *collection0
         name: insertOne
@@ -321,9 +299,7 @@ tests:
             _id: 6
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 6
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 6 } }
       -
         object: *collection0
         name: insertOne
@@ -332,9 +308,7 @@ tests:
             _id: 7
           session: *session0
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 7
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 7 } }
       - *commitTransaction
     outcome:
       -
@@ -485,9 +459,7 @@ tests:
           document:
             _id: 3
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
       # Enable the fail point only on the mongos that session0 is pinned to
       -
         object: testRunner
@@ -637,9 +609,7 @@ tests:
           document:
             _id: 3
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
       # Enable the fail point only on the Mongos that session0 is pinned to.
       # Fail hello/legacy hello to prevent the heartbeat requested directly after the
       # insert error from racing with server selection for the commit.

@@ -94,10 +94,8 @@ tests:
                       _id: 1
                     u:
                       $inc: { count: 1 }
-                    multi:
-                      $$unsetOrMatches: false
-                    upsert:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -123,10 +121,8 @@ tests:
                       _id: 1
                     u:
                       $inc: { count: 1 }
-                    multi:
-                      $$unsetOrMatches: false
-                    upsert:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 ordered: true
                 readConcern:
                   afterClusterTime:
@@ -176,9 +172,7 @@ tests:
           document:
             _id: 2
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 2
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       -
         object: *session_no_cc
         name: startTransaction
@@ -233,10 +227,8 @@ tests:
                       _id: 1
                     u:
                       $inc: { count: 1 }
-                    multi:
-                      $$unsetOrMatches: false
-                    upsert:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 ordered: true
                 # No afterClusterTime
                 readConcern:

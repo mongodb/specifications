@@ -58,9 +58,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
         object: *session0
         name: commitTransaction
@@ -196,9 +194,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       # Enable the fail point only on the Mongos that session0 is pinned to.
       # Fail hello/legacy hello to prevent the heartbeat requested directly after the
       # retryable commit error from racing with server selection for the retry.
@@ -316,9 +312,7 @@ tests:
           document:
             _id: 1
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       # Enable the fail point only on the mongos that session0 is pinned to
       -
         object: testRunner
