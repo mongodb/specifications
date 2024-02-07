@@ -90,10 +90,8 @@ tests:
                     $numberLong: '1'
                   startTransaction: true
                   autocommit: false
-                  readConcern:
-                    $$exists: false
-                  writeConcern:
-                    $$exists: false
+                  readConcern: { $$exists: false }
+                  writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -104,8 +102,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority
@@ -155,11 +152,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
     outcome:
@@ -211,8 +206,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority
@@ -262,11 +256,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: abortTransaction
               databaseName: admin
     outcome:

@@ -105,8 +105,7 @@ tests:
                 autocommit: false
                 readConcern:
                   level: snapshot
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -117,13 +116,10 @@ tests:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -141,10 +137,8 @@ tests:
                 autocommit: false
                 readConcern:
                   level: snapshot
-                  afterClusterTime:
-                    $$exists: true
-                writeConcern:
-                  $$exists: false
+                  afterClusterTime: { $$exists: true }
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -155,13 +149,10 @@ tests:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '2'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
+                writeConcern: { $$exists: false }
               commandName: abortTransaction
               databaseName: admin
     outcome:

@@ -107,12 +107,10 @@ tests:
                 cursor: {  }
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
               databaseName: *database_name
@@ -122,15 +120,12 @@ tests:
                 commitTransaction: 1
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
     outcome: &outcome
@@ -180,12 +175,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -196,12 +189,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: find
               databaseName: *database_name
@@ -214,12 +205,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -275,12 +264,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -294,12 +281,10 @@ tests:
                   batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
               databaseName: *database_name
@@ -312,12 +297,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -354,8 +337,7 @@ tests:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: distinct
               databaseName: *database_name
           -
@@ -365,15 +347,12 @@ tests:
                 key: _id
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: distinct
               databaseName: *database_name
           - *commitTransactionEvent
@@ -408,8 +387,7 @@ tests:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: find
               databaseName: *database_name
           -
@@ -418,15 +396,12 @@ tests:
                 find: *collection_name
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: find
               databaseName: *database_name
           - *commitTransactionEvent
@@ -454,8 +429,7 @@ tests:
                 cursor: {  }
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -472,12 +446,10 @@ tests:
                 cursor: {  }
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
               databaseName: *database_name
@@ -501,8 +473,7 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -518,12 +489,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -534,12 +503,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: find
               databaseName: *database_name
@@ -552,12 +519,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -584,8 +549,7 @@ tests:
                   batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
@@ -601,12 +565,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -620,12 +582,10 @@ tests:
                   batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
               databaseName: *database_name
@@ -638,12 +598,10 @@ tests:
                 batchSize: 3
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
               databaseName: *database_name
@@ -667,14 +625,12 @@ tests:
                 key: _id
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: distinct
               databaseName: *database_name
           -
@@ -684,15 +640,12 @@ tests:
                 key: _id
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: distinct
               databaseName: *database_name
           - *commitTransactionEvent
@@ -721,14 +674,12 @@ tests:
                 find: *collection_name
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: find
               databaseName: *database_name
           -
@@ -737,15 +688,12 @@ tests:
                 find: *collection_name
                 lsid:
                   $$sessionLsid: *session0
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: find
               databaseName: *database_name
           - *commitTransactionEvent

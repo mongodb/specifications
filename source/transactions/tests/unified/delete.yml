@@ -97,16 +97,14 @@ tests:
                     q: { _id: 1 }
                     limit: 1
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: delete
               databaseName: *database_name
           -
@@ -122,11 +120,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: delete
               databaseName: *database_name
           -
@@ -142,11 +138,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: delete
               databaseName: *database_name
           -
@@ -157,11 +151,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
     outcome:
@@ -222,16 +214,14 @@ tests:
                     q: { _id: 1 }
                     limit: 1
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: delete
               databaseName: *database_name
           -
@@ -247,11 +237,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: delete
               databaseName: *database_name
           -
@@ -262,8 +250,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority

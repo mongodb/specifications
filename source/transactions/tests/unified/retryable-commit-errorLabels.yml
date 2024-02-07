@@ -108,16 +108,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -128,11 +126,9 @@ tests:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
     # Driver does not retry commit because there was no RetryableWriteError label on response
@@ -185,16 +181,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -205,11 +199,9 @@ tests:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -220,8 +212,7 @@ tests:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority
@@ -279,16 +270,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -299,11 +288,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -314,8 +301,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -373,16 +359,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -393,11 +377,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -408,8 +390,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -467,16 +448,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -487,11 +466,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -502,8 +479,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -561,16 +537,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -581,11 +555,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -596,8 +568,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -655,16 +626,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -675,11 +644,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -690,8 +657,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -749,16 +715,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -769,11 +733,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -784,8 +746,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -843,16 +804,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -863,11 +822,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -878,8 +835,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -937,16 +893,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -957,11 +911,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -972,8 +924,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -1031,16 +982,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -1051,11 +1000,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
           -
@@ -1066,8 +1013,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -1129,16 +1075,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -1149,8 +1093,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority
@@ -1164,8 +1107,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -1227,16 +1169,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -1247,8 +1187,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority
@@ -1262,8 +1201,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -1325,16 +1263,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -1345,8 +1281,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority
@@ -1360,8 +1295,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:
@@ -1423,16 +1357,14 @@ tests:
                 documents:
                   - { _id: 1 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -1443,8 +1375,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern:
                   w: majority
@@ -1458,8 +1389,7 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
                 writeConcern:

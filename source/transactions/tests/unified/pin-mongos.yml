@@ -452,16 +452,14 @@ tests:
                 documents:
                   - { _id: 3 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -471,17 +469,14 @@ tests:
                 documents:
                   - { _id: 4 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -492,13 +487,10 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
-                recoveryToken:
-                  $$exists: true
+                writeConcern: { $$exists: false }
+                recoveryToken: { $$exists: true }
               commandName: abortTransaction
               databaseName: admin
     outcome:
@@ -619,16 +611,14 @@ tests:
                 documents:
                   - { _id: 3 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -638,17 +628,14 @@ tests:
                 documents:
                   - { _id: 4 }
                 ordered: true
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 lsid:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *database_name
           -
@@ -659,13 +646,10 @@ tests:
                   $$sessionLsid: *session1
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
-                recoveryToken:
-                  $$exists: true
+                writeConcern: { $$exists: false }
+                recoveryToken: { $$exists: true }
               commandName: commitTransaction
               databaseName: admin
     outcome:

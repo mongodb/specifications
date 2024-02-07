@@ -86,8 +86,7 @@ tests:
             commandStartedEvent:
               command:
                 drop: *collection_name
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: drop
               databaseName: *database_name
           -
@@ -105,8 +104,7 @@ tests:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: createIndexes
               databaseName: *database_name
           -
@@ -117,11 +115,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
   -
@@ -174,8 +170,7 @@ tests:
             commandStartedEvent:
               command:
                 drop: *collection_name
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: drop
               databaseName: *database_name
           -
@@ -188,8 +183,7 @@ tests:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: create
               databaseName: *database_name
           -
@@ -203,8 +197,7 @@ tests:
                       x: 1
                 lsid:
                   $$sessionLsid: *session0
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: createIndexes
               databaseName: *database_name
           -
@@ -215,10 +208,8 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                writeConcern:
-                  $$exists: false
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin

@@ -99,10 +99,8 @@ tests:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
+                writeConcern: { $$exists: false }
               commandName: findAndModify
               databaseName: *database_name
           -
@@ -117,13 +115,10 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
+                writeConcern: { $$exists: false }
               commandName: findAndModify
               databaseName: *database_name
           -
@@ -134,13 +129,10 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
+                writeConcern: { $$exists: false }
               commandName: commitTransaction
               databaseName: admin
     outcome:
@@ -203,10 +195,8 @@ tests:
                   $numberLong: '1'
                 startTransaction: true
                 autocommit: false
-                readConcern:
-                  $$exists: false
-                writeConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
+                writeConcern: { $$exists: false }
               commandName: findAndModify
               databaseName: *database_name
           -
@@ -217,11 +207,9 @@ tests:
                   $$sessionLsid: *session0
                 txnNumber:
                   $numberLong: '1'
-                startTransaction:
-                  $$exists: false
+                startTransaction: { $$exists: false }
                 autocommit: false
-                readConcern:
-                  $$exists: false
+                readConcern: { $$exists: false }
                 writeConcern:
                   w: majority
               commandName: commitTransaction
