@@ -112,8 +112,7 @@ tests:
                 readConcern:
                   afterClusterTime: { $$exists: true }
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -124,8 +123,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -198,8 +196,7 @@ tests:
                 # No afterClusterTime
                 readConcern: { $$exists: false }
                 lsid: { $$sessionLsid: *session_no_cc }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -210,8 +207,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session_no_cc }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }

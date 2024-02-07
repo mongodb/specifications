@@ -97,8 +97,7 @@ tests:
                 ordered: true
                 readConcern: { $$exists: false }
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -109,8 +108,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -121,8 +119,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries
@@ -183,8 +180,7 @@ tests:
                 ordered: true
                 readConcern: { $$exists: false }
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -195,8 +191,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -207,8 +202,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 # commitTransaction applies w:majority on retries

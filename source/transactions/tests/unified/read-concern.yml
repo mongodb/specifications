@@ -90,8 +90,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
               commandName: aggregate
@@ -106,8 +105,7 @@ tests:
                 cursor: {  }
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
@@ -118,8 +116,7 @@ tests:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -156,8 +153,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
               commandName: find
@@ -171,8 +167,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -184,8 +179,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: find
@@ -199,8 +193,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -241,8 +234,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
               commandName: aggregate
@@ -256,8 +248,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -272,8 +263,7 @@ tests:
                   batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
@@ -287,8 +277,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -321,8 +310,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -335,8 +323,7 @@ tests:
                 key: _id
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -369,8 +356,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   level: majority
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -382,8 +368,7 @@ tests:
                 find: *collection_name
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -414,8 +399,7 @@ tests:
                 cursor: {  }
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
               commandName: aggregate
@@ -430,8 +414,7 @@ tests:
                 cursor: {  }
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
@@ -456,8 +439,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
               commandName: find
@@ -471,8 +453,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -484,8 +465,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: find
@@ -499,8 +479,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -528,8 +507,7 @@ tests:
                   batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
               commandName: aggregate
@@ -543,8 +521,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -559,8 +536,7 @@ tests:
                   batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: aggregate
@@ -574,8 +550,7 @@ tests:
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
               commandName: getMore
@@ -600,8 +575,7 @@ tests:
                 key: _id
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -614,8 +588,7 @@ tests:
                 key: _id
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -647,8 +620,7 @@ tests:
                 find: *collection_name
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 writeConcern: { $$exists: false }
@@ -660,8 +632,7 @@ tests:
                 find: *collection_name
                 lsid: { $$sessionLsid: *session0 }
                 readConcern: { $$exists: false }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 writeConcern: { $$exists: false }

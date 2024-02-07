@@ -136,8 +136,7 @@ tests:
                 update: { $inc: { x: 1 } }
                 new: false
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 readConcern: { $$exists: false }
@@ -153,8 +152,7 @@ tests:
                 new: true
                 upsert: true
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 readConcern: { $$exists: false }
@@ -166,8 +164,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 readConcern: { $$exists: false }
@@ -182,8 +179,7 @@ tests:
                 update: { $inc: { x: 1 } }
                 new: false
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '2'
+                txnNumber: { $numberLong: '2' }
                 startTransaction: true
                 autocommit: false
                 readConcern:
@@ -196,8 +192,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '2'
+                txnNumber: { $numberLong: '2' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 readConcern: { $$exists: false }
@@ -212,8 +207,7 @@ tests:
                 update: { $inc: { x: 1 } }
                 new: false
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '3'
+                txnNumber: { $numberLong: '3' }
                 startTransaction: true
                 autocommit: false
                 readConcern:
@@ -226,8 +220,7 @@ tests:
               command:
                 abortTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '3'
+                txnNumber: { $numberLong: '3' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 readConcern: { $$exists: false }
@@ -290,8 +283,7 @@ tests:
                 update: { $inc: { x: 1 } }
                 new: false
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: true
                 autocommit: false
                 readConcern: { $$exists: false }
@@ -303,8 +295,7 @@ tests:
               command:
                 commitTransaction: 1
                 lsid: { $$sessionLsid: *session0 }
-                txnNumber:
-                  $numberLong: '1'
+                txnNumber: { $numberLong: '1' }
                 startTransaction: { $$exists: false }
                 autocommit: false
                 readConcern: { $$exists: false }
