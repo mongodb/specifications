@@ -1,6 +1,3 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 # Test that all the operations go to the same mongos.
 #
 # In tests that don't include command-started events the assertion is implicit:
@@ -16,7 +13,19 @@
 #   'errorLabels': ['TransientTransactionError']
 # }
 description: pin-mongos
+
 schemaVersion: '1.9'
+
+runOnRequirements:
+  -
+    minServerVersion: 4.1.8
+    # serverless proxy doesn't append error labels to errors in transactions
+    # caused by failpoints (CLOUDP-88216)
+    serverless: forbid
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -38,15 +47,7 @@ createEntities:
     session:
       id: &session0 session0
       client: *client0
-runOnRequirements:
-  -
-    minServerVersion: 4.1.8
-    # serverless proxy doesn't append error labels to errors in transactions
-    # caused by failpoints (CLOUDP-88216)
-    serverless: forbid
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
@@ -56,6 +57,7 @@ initialData:
         _id: 1
       -
         _id: 2
+
 tests:
   -
     description: countDocuments

@@ -1,8 +1,16 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: mongos-recovery-token-errorLabels
+
 schemaVersion: '1.4'
+
+runOnRequirements:
+  -
+    minServerVersion: 4.3.1 # failCommand errorLabels option
+    # serverless proxy doesn't use recovery tokens
+    serverless: forbid
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -28,19 +36,13 @@ createEntities:
     session:
       id: &session1 session1
       client: *client0
-runOnRequirements:
-  -
-    minServerVersion: 4.3.1 # failCommand errorLabels option
-    # serverless proxy doesn't use recovery tokens
-    serverless: forbid
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
     databaseName: *database_name
     documents: []
+
 tests:
   -
     description: 'commitTransaction retry succeeds on new mongos'

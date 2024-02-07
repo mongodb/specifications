@@ -1,8 +1,15 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: create-index
+
 schemaVersion: '1.3'
+
+runOnRequirements:
+  -
+    minServerVersion: 4.3.4
+    topologies:
+      - replicaset
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -28,13 +35,7 @@ createEntities:
     session:
       id: &session1 session1
       client: *client0
-runOnRequirements:
-  -
-    minServerVersion: 4.3.4
-    topologies:
-      - replicaset
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name

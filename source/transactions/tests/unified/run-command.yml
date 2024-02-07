@@ -1,8 +1,18 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: run-command
+
 schemaVersion: '1.9'
+
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+  -
+    minServerVersion: 4.1.8
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -24,21 +34,13 @@ createEntities:
     session:
       id: &session0 session0
       client: *client0
-runOnRequirements:
-  -
-    minServerVersion: '4.0'
-    topologies:
-      - replicaset
-  -
-    minServerVersion: 4.1.8
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
     databaseName: *database_name
     documents: []
+
 tests:
   -
     description: 'run command with default read preference'

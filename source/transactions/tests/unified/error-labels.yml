@@ -1,8 +1,21 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: error-labels
+
 schemaVersion: '1.4'
+
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+  -
+    minServerVersion: 4.1.8
+    # serverless proxy doesn't append error labels to errors in transactions
+    # caused by failpoints (CLOUDP-88216)
+    serverless: forbid
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -28,24 +41,13 @@ createEntities:
     session:
       id: &session1 session1
       client: *client0
-runOnRequirements:
-  -
-    minServerVersion: '4.0'
-    topologies:
-      - replicaset
-  -
-    minServerVersion: 4.1.8
-    # serverless proxy doesn't append error labels to errors in transactions
-    # caused by failpoints (CLOUDP-88216)
-    serverless: forbid
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
     databaseName: *database_name
     documents: []
+
 tests:
   -
     description: 'DuplicateKey errors do not contain transient label'

@@ -1,8 +1,26 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: retryable-commit-forbid_serverless
+
 schemaVersion: '1.4'
+
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+  -
+    minServerVersion: 4.1.8
+    # This file contains tests originally found in retryable-commit.yml that
+    # are incompatible with serverless:
+    #
+    #  * Failing commitTransaction with closeConnection:true may abort the
+    #    transaction (CLOUDP-202309).
+    #  * Fail points using state change errors (e.g. InterruptedAtShutdown,
+    #    ShutdownInProgress) may remain enabled indefinitely (CLOUDP-84573).
+    serverless: forbid
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -47,29 +65,13 @@ createEntities:
     session:
       id: &session1 session1
       client: *client1
-runOnRequirements:
-  -
-    minServerVersion: '4.0'
-    topologies:
-      - replicaset
-  -
-    minServerVersion: 4.1.8
-    # This file contains tests originally found in retryable-commit.yml that
-    # are incompatible with serverless:
-    #
-    #  * Failing commitTransaction with closeConnection:true may abort the
-    #    transaction (CLOUDP-202309).
-    #  * Fail points using state change errors (e.g. InterruptedAtShutdown,
-    #    ShutdownInProgress) may remain enabled indefinitely (CLOUDP-84573).
-    serverless: forbid
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
     databaseName: *database_name
     documents: []
+
 tests:
   -
     description: 'commitTransaction fails after two errors'

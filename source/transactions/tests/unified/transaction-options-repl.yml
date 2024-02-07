@@ -1,8 +1,13 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: transaction-options-repl
+
 schemaVersion: '1.9'
+
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+
 createEntities:
   -
     client:
@@ -24,16 +29,13 @@ createEntities:
     session:
       id: &session0 session0
       client: *client0
-runOnRequirements:
-  -
-    minServerVersion: '4.0'
-    topologies:
-      - replicaset
+
 initialData:
   -
     collectionName: *collection_name
     databaseName: *database_name
     documents: []
+
 tests:
   -
     description: 'readConcern snapshot in startTransaction options'

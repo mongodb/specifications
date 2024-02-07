@@ -1,8 +1,19 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: count
+
 schemaVersion: '1.3'
+
+runOnRequirements:
+  # SERVER-35388 introduced OperationNotSupportedInTransaction in 4.0.2
+  -
+    minServerVersion: 4.0.2
+    topologies:
+      - replicaset
+  -
+    minServerVersion: 4.1.8
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -28,17 +39,7 @@ createEntities:
     session:
       id: &session1 session1
       client: *client0
-runOnRequirements:
-  # SERVER-35388 introduced OperationNotSupportedInTransaction in 4.0.2
-  -
-    minServerVersion: 4.0.2
-    topologies:
-      - replicaset
-  -
-    minServerVersion: 4.1.8
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
@@ -52,6 +53,7 @@ initialData:
         _id: 3
       -
         _id: 4
+
 tests:
   -
     description: count

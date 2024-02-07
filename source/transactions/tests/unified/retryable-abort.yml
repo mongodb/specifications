@@ -1,8 +1,18 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: retryable-abort
+
 schemaVersion: '1.3'
+
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+  -
+    minServerVersion: 4.1.8
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -47,21 +57,13 @@ createEntities:
     session:
       id: &session1 session1
       client: *client1
-runOnRequirements:
-  -
-    minServerVersion: '4.0'
-    topologies:
-      - replicaset
-  -
-    minServerVersion: 4.1.8
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
     databaseName: *database_name
     documents: []
+
 tests:
   -
     description: 'abortTransaction only performs a single retry'

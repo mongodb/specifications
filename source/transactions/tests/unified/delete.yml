@@ -1,8 +1,18 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 description: delete
+
 schemaVersion: '1.9'
+
+runOnRequirements:
+  -
+    minServerVersion: '4.0'
+    topologies:
+      - replicaset
+  -
+    minServerVersion: 4.1.8
+    topologies:
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -28,16 +38,7 @@ createEntities:
     session:
       id: &session1 session1
       client: *client0
-runOnRequirements:
-  -
-    minServerVersion: '4.0'
-    topologies:
-      - replicaset
-  -
-    minServerVersion: 4.1.8
-    topologies:
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
@@ -53,6 +54,7 @@ initialData:
         _id: 4
       -
         _id: 5
+
 tests:
   -
     description: delete
