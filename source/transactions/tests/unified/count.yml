@@ -35,10 +35,6 @@ createEntities:
     session:
       id: &session0 session0
       client: *client0
-  -
-    session:
-      id: &session1 session1
-      client: *client0
 
 initialData:
   -
