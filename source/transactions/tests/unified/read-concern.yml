@@ -161,8 +161,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
@@ -187,8 +186,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
@@ -242,8 +240,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
@@ -271,8 +268,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
@@ -447,8 +443,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
@@ -473,8 +468,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
@@ -515,8 +509,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
@@ -544,8 +537,7 @@ tests:
           -
             commandStartedEvent:
               command:
-                getMore:
-                  $$type: [ int, long ]
+                getMore: { $$type: [ int, long ] }
                 collection: *collection_name
                 batchSize: 3
                 lsid: { $$sessionLsid: *session0 }
