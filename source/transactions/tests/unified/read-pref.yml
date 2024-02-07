@@ -64,14 +64,10 @@ tests:
         name: insertMany
         arguments:
           documents: &insertedDocs
-            -
-              _id: 1
-            -
-              _id: 2
-            -
-              _id: 3
-            -
-              _id: 4
+            - { _id: 1 }
+            - { _id: 2 }
+            - { _id: 3 }
+            - { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -87,14 +83,10 @@ tests:
         arguments:
           session: *session0
           pipeline:
-            -
-              $match:
-                _id: 1
-            -
-              $count: count
+            - { $match: { _id: 1 } }
+            - { $count: count }
         expectResult:
-          -
-            count: 1
+          - { count: 1 }
       -
         object: *collection_rp_secondary
         name: find
@@ -108,9 +100,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           batchSize: 3
           session: *session0
         expectResult: *insertedDocs
@@ -136,14 +126,10 @@ tests:
         name: insertMany
         arguments:
           documents: &insertedDocs
-            -
-              _id: 1
-            -
-              _id: 2
-            -
-              _id: 3
-            -
-              _id: 4
+            - { _id: 1 }
+            - { _id: 2 }
+            - { _id: 3 }
+            - { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -159,14 +145,10 @@ tests:
         arguments:
           session: *session0
           pipeline:
-            -
-              $match:
-                _id: 1
-            -
-              $count: count
+            - { $match: { _id: 1 } }
+            - { $count: count }
         expectResult:
-          -
-            count: 1
+          - { count: 1 }
       -
         object: *collection_rp_secondary
         name: find
@@ -180,9 +162,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           batchSize: 3
           session: *session0
         expectResult: *insertedDocs
@@ -208,14 +188,10 @@ tests:
         name: insertMany
         arguments:
           documents: &insertedDocs
-            -
-              _id: 1
-            -
-              _id: 2
-            -
-              _id: 3
-            -
-              _id: 4
+            - { _id: 1 }
+            - { _id: 2 }
+            - { _id: 3 }
+            - { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -231,11 +207,8 @@ tests:
         arguments:
           session: *session0
           pipeline:
-            -
-              $match:
-                _id: 1
-            -
-              $count: count
+            - { $match: { _id: 1 } }
+            - { $count: count }
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
@@ -252,9 +225,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           batchSize: 3
           session: *session0
         expectError:
@@ -281,14 +252,10 @@ tests:
         name: insertMany
         arguments:
           documents: &insertedDocs
-            -
-              _id: 1
-            -
-              _id: 2
-            -
-              _id: 3
-            -
-              _id: 4
+            - { _id: 1 }
+            - { _id: 2 }
+            - { _id: 3 }
+            - { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -304,11 +271,8 @@ tests:
         arguments:
           session: *session0
           pipeline:
-            -
-              $match:
-                _id: 1
-            -
-              $count: count
+            - { $match: { _id: 1 } }
+            - { $count: count }
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
@@ -325,9 +289,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           batchSize: 3
           session: *session0
         expectError:
@@ -354,14 +316,10 @@ tests:
         name: insertMany
         arguments:
           documents: &insertedDocs
-            -
-              _id: 1
-            -
-              _id: 2
-            -
-              _id: 3
-            -
-              _id: 4
+            - { _id: 1 }
+            - { _id: 2 }
+            - { _id: 3 }
+            - { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -377,11 +335,8 @@ tests:
         arguments:
           session: *session0
           pipeline:
-            -
-              $match:
-                _id: 1
-            -
-              $count: count
+            - { $match: { _id: 1 } }
+            - { $count: count }
         expectError:
           errorContains: 'read preference in a transaction must be primary'
       -
@@ -398,9 +353,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           batchSize: 3
           session: *session0
         expectError:
@@ -427,8 +380,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -439,5 +391,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }

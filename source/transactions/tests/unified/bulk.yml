@@ -57,8 +57,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -66,8 +65,7 @@ tests:
         name: deleteOne
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
           deletedCount: 1
       -
@@ -78,81 +76,57 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 1
+                document: { _id: 1 }
             -
               updateOne:
-                filter:
-                  _id: 1
-                update:
-                  $set:
-                    x: 1
+                filter: { _id: 1 }
+                update: { $set: { x: 1 } }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $set:
-                    x: 2
+                filter: { _id: 2 }
+                update: { $set: { x: 2 } }
                 # Produces upsertedIds: {2: 2} in the result
                 upsert: true
             -
               insertOne:
-                document:
-                  _id: 3
+                document: { _id: 3 }
             -
               insertOne:
-                document:
-                  _id: 4
+                document: { _id: 4 }
             -
               insertOne:
-                document:
-                  _id: 5
+                document: { _id: 5 }
             -
               insertOne:
-                document:
-                  _id: 6
+                document: { _id: 6 }
             -
               insertOne:
-                document:
-                  _id: 7
+                document: { _id: 7 }
             # Keep replaces segregated from updates, so that drivers that aren't able to coalesce
             # adjacent updates and replaces into a single update command will still pass this test
             -
               replaceOne:
-                filter:
-                  _id: 1
-                replacement:
-                  'y': 1
+                filter: { _id: 1 }
+                replacement: { y: 1 }
             -
               replaceOne:
-                filter:
-                  _id: 2
-                replacement:
-                  'y': 2
+                filter: { _id: 2 }
+                replacement: { y: 2 }
             -
               deleteOne:
-                filter:
-                  _id: 3
+                filter: { _id: 3 }
             -
               deleteOne:
-                filter:
-                  _id: 4
+                filter: { _id: 4 }
             -
               updateMany:
-                filter:
-                  _id:
-                    $gte: 2
-                update:
-                  $set:
-                    z: 1
+                filter: { _id: { $gte: 2 } }
+                update: { $set: { z: 1 } }
             # Keep deleteMany segregated from deleteOne, so that drivers that aren't able to coalesce
             # adjacent mixed deletes into a single delete command will still pass this test
             -
               deleteMany:
-                filter:
-                  _id:
-                    $gte: 6
+                filter: { _id: { $gte: 6 } }
         expectResult:
           deletedCount: 4
           insertedCount: 6
@@ -167,8 +141,7 @@ tests:
           matchedCount: 7
           modifiedCount: 7
           upsertedCount: 1
-          upsertedIds:
-            '2': 2
+          upsertedIds: { '2': 2 }
       -
         object: *session0
         name: commitTransaction
@@ -181,8 +154,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -202,8 +174,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: 1
+                    q: { _id: 1 }
                     limit: 1
                 ordered: true
                 lsid:
@@ -223,8 +194,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -243,17 +213,13 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 1
-                    u:
-                      $set: { x: 1 }
+                    q: { _id: 1 }
+                    u: { $set: { x: 1 } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   -
-                    q:
-                      _id: 2
-                    u:
-                      $set: { x: 2 }
+                    q: { _id: 2 }
+                    u: { $set: { x: 2 } }
                     upsert: true
                     multi: { $$unsetOrMatches: false }
                 ordered: true
@@ -273,16 +239,11 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 3
-                  -
-                    _id: 4
-                  -
-                    _id: 5
-                  -
-                    _id: 6
-                  -
-                    _id: 7
+                  - { _id: 3 }
+                  - { _id: 4 }
+                  - { _id: 5 }
+                  - { _id: 6 }
+                  - { _id: 7 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -301,17 +262,13 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 1
-                    u:
-                      'y': 1
+                    q: { _id: 1 }
+                    u: { y: 1 }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                   -
-                    q:
-                      _id: 2
-                    u:
-                      'y': 2
+                    q: { _id: 2 }
+                    u: { y: 2 }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -332,12 +289,10 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: 3
+                    q: { _id: 3 }
                     limit: 1
                   -
-                    q:
-                      _id: 4
+                    q: { _id: 4 }
                     limit: 1
                 ordered: true
                 lsid:
@@ -357,10 +312,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: { $gte: 2 }
-                    u:
-                      $set: { z: 1 }
+                    q: { _id: { $gte: 2 } }
+                    u: { $set: { z: 1 } }
                     multi: true
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -381,8 +334,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: { $gte: 6 }
+                    q: { _id: { $gte: 6 } }
                     limit: 0
                 ordered: true
                 lsid:
@@ -416,13 +368,6 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            'y': 1
-          -
-            _id: 2
-            'y': 2
-            z: 1
-          -
-            _id: 5
-            z: 1
+          - { _id: 1, y: 1 }
+          - { _id: 2, y: 2, z: 1 }
+          - { _id: 5, z: 1 }

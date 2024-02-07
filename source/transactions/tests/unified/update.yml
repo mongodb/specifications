@@ -40,12 +40,9 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-      -
-        _id: 2
-      -
-        _id: 3
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
 
 tests:
   -
@@ -59,11 +56,8 @@ tests:
         name: updateOne
         arguments:
           session: *session0
-          filter:
-            _id: 4
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 4 }
+          update: { $inc: { x: 1 } }
           upsert: true
         expectResult:
           matchedCount: 0
@@ -75,10 +69,8 @@ tests:
         name: replaceOne
         arguments:
           session: *session0
-          filter:
-            x: 1
-          replacement:
-            'y': 1
+          filter: { x: 1 }
+          replacement: { y: 1 }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -88,12 +80,8 @@ tests:
         name: updateMany
         arguments:
           session: *session0
-          filter:
-            _id:
-              $gte: 3
-          update:
-            $set:
-              z: 1
+          filter: { _id: { $gte: 3 } }
+          update: { $set: { z: 1 } }
         expectResult:
           matchedCount: 2
           modifiedCount: 2
@@ -111,10 +99,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 4
-                    u:
-                      $inc: { x: 1 }
+                    q: { _id: 4 }
+                    u: { $inc: { x: 1 } }
                     upsert: true
                     multi: { $$unsetOrMatches: false }
                 ordered: true
@@ -136,10 +122,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      x: 1
-                    u:
-                      'y': 1
+                    q: { x: 1 }
+                    u: { y: 1 }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -160,10 +144,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: { $gte: 3 }
-                    u:
-                      $set: { z: 1 }
+                    q: { _id: { $gte: 3 } }
+                    u: { $set: { z: 1 } }
                     multi: true
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -198,17 +180,10 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
-            z: 1
-          -
-            _id: 4
-            'y': 1
-            z: 1
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3, z: 1 }
+          - { _id: 4, y: 1, z: 1 }
   -
     description: 'collections writeConcern ignored for update'
     operations:
@@ -234,11 +209,8 @@ tests:
         name: updateOne
         arguments:
           session: *session0
-          filter:
-            _id: 4
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 4 }
+          update: { $inc: { x: 1 } }
           upsert: true
         expectResult:
           matchedCount: 0
@@ -250,10 +222,8 @@ tests:
         name: replaceOne
         arguments:
           session: *session0
-          filter:
-            x: 1
-          replacement:
-            'y': 1
+          filter: { x: 1 }
+          replacement: { y: 1 }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -263,12 +233,8 @@ tests:
         name: updateMany
         arguments:
           session: *session0
-          filter:
-            _id:
-              $gte: 3
-          update:
-            $set:
-              z: 1
+          filter: { _id: { $gte: 3 } }
+          update: { $set: { z: 1 } }
         expectResult:
           matchedCount: 2
           modifiedCount: 2
@@ -286,10 +252,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 4
-                    u:
-                      $inc: { x: 1 }
+                    q: { _id: 4 }
+                    u: { $inc: { x: 1 } }
                     upsert: true
                     multi: { $$unsetOrMatches: false }
                 ordered: true
@@ -311,10 +275,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      x: 1
-                    u:
-                      'y': 1
+                    q: { x: 1 }
+                    u: { y: 1 }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -335,10 +297,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: { $gte: 3 }
-                    u:
-                      $set: { z: 1 }
+                    q: { _id: { $gte: 3 } }
+                    u: { $set: { z: 1 } }
                     multi: true
                     upsert: { $$unsetOrMatches: false }
                 ordered: true

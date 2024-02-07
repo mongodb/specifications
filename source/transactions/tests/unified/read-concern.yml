@@ -49,14 +49,10 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents: &data
-      -
-        _id: 1
-      -
-        _id: 2
-      -
-        _id: 3
-      -
-        _id: 4
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
+      - { _id: 4 }
 
 tests:
   -
@@ -72,9 +68,7 @@ tests:
         object: *collection_rc_majority
         name: countDocuments
         arguments:
-          filter:
-            _id:
-              $gte: 2
+          filter: { _id: { $gte: 2 } }
           session: *session0
         expectResult: 3
       - *countDocuments
@@ -90,13 +84,8 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $match:
-                      _id: { $gte: 2 }
-                  -
-                    $group:
-                      _id: 1
-                      'n': { $sum: 1 }
+                  - { $match: { _id: { $gte: 2 } } }
+                  - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
                 lsid:
                   $$sessionLsid: *session0
@@ -113,13 +102,8 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $match:
-                      _id: { $gte: 2 }
-                  -
-                    $group:
-                      _id: 1
-                      'n': { $sum: 1 }
+                  - { $match: { _id: { $gte: 2 } } }
+                  - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
                 lsid:
                   $$sessionLsid: *session0
@@ -254,9 +238,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           batchSize: 3
           session: *session0
         expectResult: *data
@@ -271,9 +253,7 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $project:
-                      _id: 1
+                  - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
                 lsid:
@@ -309,9 +289,7 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $project:
-                      _id: 1
+                  - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
                 lsid:
@@ -356,11 +334,7 @@ tests:
           fieldName: _id
           filter: {}
           session: *session0
-        expectResult:
-          - 1
-          - 2
-          - 3
-          - 4
+        expectResult: [ 1, 2, 3, 4 ]
       - *distinct
       - *commitTransaction
     expectEvents:
@@ -475,13 +449,8 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $match:
-                      _id: { $gte: 2 }
-                  -
-                    $group:
-                      _id: 1
-                      'n': { $sum: 1 }
+                  - { $match: { _id: { $gte: 2 } } }
+                  - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
                 lsid:
                   $$sessionLsid: *session0
@@ -498,13 +467,8 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $match:
-                      _id: { $gte: 2 }
-                  -
-                    $group:
-                      _id: 1
-                      'n': { $sum: 1 }
+                  - { $match: { _id: { $gte: 2 } } }
+                  - { $group: { _id: 1, n: { $sum: 1 } } }
                 cursor: {  }
                 lsid:
                   $$sessionLsid: *session0
@@ -615,9 +579,7 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $project:
-                      _id: 1
+                  - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
                 lsid:
@@ -653,9 +615,7 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $project:
-                      _id: 1
+                  - { $project: { _id: 1 } }
                 cursor:
                   batchSize: 3
                 lsid:

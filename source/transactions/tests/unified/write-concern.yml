@@ -49,8 +49,7 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents: &data
-      -
-        _id: 0
+      - { _id: 0 }
 
 tests:
   -
@@ -67,8 +66,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       - &commitTransaction
@@ -83,8 +81,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 <<: &transactionCommandArgs
                   lsid:
@@ -119,10 +116,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-          -
-            _id: 1
+          - { _id: 0 }
+          - { _id: 1 }
   -
     description: 'commit with default'
     operations:
@@ -134,8 +129,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       - *commitTransaction
@@ -148,8 +142,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 <<: *transactionCommandArgs
               commandName: insert
@@ -174,10 +167,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-          -
-            _id: 1
+          - { _id: 0 }
+          - { _id: 1 }
   -
     description: 'abort with majority'
     operations:
@@ -192,8 +183,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -208,8 +198,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 <<: *transactionCommandArgs
               commandName: insert
@@ -245,8 +234,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -261,8 +249,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 <<: *transactionCommandArgs
               commandName: insert
@@ -329,8 +316,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       - *commitTransaction
@@ -345,10 +331,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-          -
-            _id: 1
+          - { _id: 0 }
+          - { _id: 1 }
   -
     description: 'unacknowledged write concern coll insertMany'
     operations:
@@ -359,10 +343,8 @@ tests:
         arguments:
           session: *session0
           documents:
-            -
-              _id: 1
-            -
-              _id: 2
+            - { _id: 1 }
+            - { _id: 2 }
         expectResult:
           $$unsetOrMatches:
             insertedIds:
@@ -379,10 +361,8 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
-                  -
-                    _id: 2
+                  - { _id: 1 }
+                  - { _id: 2 }
                 ordered: true
                 <<: *transactionCommandArgs
               commandName: insert
@@ -393,12 +373,9 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-          -
-            _id: 1
-          -
-            _id: 2
+          - { _id: 0 }
+          - { _id: 1 }
+          - { _id: 2 }
   -
     description: 'unacknowledged write concern coll bulkWrite'
     operations:
@@ -411,8 +388,7 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 1
+                document: { _id: 1 }
         expectResult:
           deletedCount: 0
           insertedCount: 1
@@ -435,10 +411,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-          -
-            _id: 1
+          - { _id: 0 }
+          - { _id: 1 }
   -
     description: 'unacknowledged write concern coll deleteOne'
     operations:
@@ -448,8 +422,7 @@ tests:
         name: deleteOne
         arguments:
           session: *session0
-          filter:
-            _id: 0
+          filter: { _id: 0 }
         expectResult:
           deletedCount: 1
       - *commitTransaction
@@ -463,8 +436,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: 0
+                    q: { _id: 0 }
                     limit: 1
                 ordered: true
                 <<: *transactionCommandArgs
@@ -485,8 +457,7 @@ tests:
         name: deleteMany
         arguments:
           session: *session0
-          filter:
-            _id: 0
+          filter: { _id: 0 }
         expectResult:
           deletedCount: 1
       - *commitTransaction
@@ -500,8 +471,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: 0
+                    q: { _id: 0 }
                     limit: 0
                 ordered: true
                 <<: *transactionCommandArgs
@@ -522,11 +492,8 @@ tests:
         name: updateOne
         arguments:
           session: *session0
-          filter:
-            _id: 0
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 0 }
+          update: { $inc: { x: 1 } }
           upsert: true
         expectResult:
           matchedCount: 1
@@ -543,10 +510,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 0
-                    u:
-                      $inc: { x: 1 }
+                    q: { _id: 0 }
+                    u: { $inc: { x: 1 } }
                     upsert: true
                     multi: { $$unsetOrMatches: false }
                 ordered: true
@@ -559,9 +524,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-            x: 1
+          - { _id: 0, x: 1 }
   -
     description: 'unacknowledged write concern coll updateMany'
     operations:
@@ -571,11 +534,8 @@ tests:
         name: updateMany
         arguments:
           session: *session0
-          filter:
-            _id: 0
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 0 }
+          update: { $inc: { x: 1 } }
           upsert: true
         expectResult:
           matchedCount: 1
@@ -592,10 +552,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 0
-                    u:
-                      $inc: { x: 1 }
+                    q: { _id: 0 }
+                    u: { $inc: { x: 1 } }
                     multi: true
                     upsert: true
                 ordered: true
@@ -608,9 +566,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-            x: 1
+          - { _id: 0, x: 1 }
   -
     description: 'unacknowledged write concern coll findOneAndDelete'
     operations:
@@ -620,8 +576,7 @@ tests:
         name: findOneAndDelete
         arguments:
           session: *session0
-          filter:
-            _id: 0
+          filter: { _id: 0 }
         expectResult:
           _id: 0
       - *commitTransaction
@@ -633,8 +588,7 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 0
+                query: { _id: 0 }
                 remove: true
                 <<: *transactionCommandArgs
               commandName: findAndModify
@@ -654,10 +608,8 @@ tests:
         name: findOneAndReplace
         arguments:
           session: *session0
-          filter:
-            _id: 0
-          replacement:
-            x: 1
+          filter: { _id: 0 }
+          replacement: { x: 1 }
           returnDocument: Before
         expectResult:
           _id: 0
@@ -670,10 +622,8 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 0
-                update:
-                  x: 1
+                query: { _id: 0 }
+                update: { x: 1 }
                 new: false
                 <<: *transactionCommandArgs
               commandName: findAndModify
@@ -684,9 +634,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-            x: 1
+          - { _id: 0, x: 1 }
   -
     description: 'unacknowledged write concern coll findOneAndUpdate'
     operations:
@@ -696,11 +644,8 @@ tests:
         name: findOneAndUpdate
         arguments:
           session: *session0
-          filter:
-            _id: 0
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 0 }
+          update: { $inc: { x: 1 } }
           returnDocument: Before
         expectResult:
           _id: 0
@@ -713,11 +658,8 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 0
-                update:
-                  $inc:
-                    x: 1
+                query: { _id: 0 }
+                update: { $inc: { x: 1 } }
                 new: false
                 <<: *transactionCommandArgs
               commandName: findAndModify
@@ -728,6 +670,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 0
-            x: 1
+          - { _id: 0, x: 1 }

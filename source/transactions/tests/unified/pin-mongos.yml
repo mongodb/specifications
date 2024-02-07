@@ -53,10 +53,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents: &data
-      -
-        _id: 1
-      -
-        _id: 2
+      - { _id: 1 }
+      - { _id: 2 }
 
 tests:
   -
@@ -69,8 +67,7 @@ tests:
         object: *collection0
         name: countDocuments
         arguments:
-          filter:
-            _id: 2
+          filter: { _id: 2 }
           session: *session0
         expectResult: 1
       - *countDocuments
@@ -123,12 +120,10 @@ tests:
         object: *collection0
         name: find
         arguments:
-          filter:
-            _id: 2
+          filter: { _id: 2 }
           session: *session0
         expectResult:
-          -
-            _id: 2
+          - { _id: 2 }
       - *find
       - *find
       - *find
@@ -152,8 +147,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
+          document: { _id: 3 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
@@ -161,8 +155,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 4
+          document: { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
@@ -170,8 +163,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 5
+          document: { _id: 5 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 5 } }
@@ -179,8 +171,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 6
+          document: { _id: 6 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 6 } }
@@ -188,8 +179,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 7
+          document: { _id: 7 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 7 } }
@@ -197,8 +187,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 8
+          document: { _id: 8 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 8 } }
@@ -206,8 +195,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 9
+          document: { _id: 9 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 9 } }
@@ -215,8 +203,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 10
+          document: { _id: 10 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 10 } }
@@ -226,26 +213,16 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
-          -
-            _id: 4
-          -
-            _id: 5
-          -
-            _id: 6
-          -
-            _id: 7
-          -
-            _id: 8
-          -
-            _id: 9
-          -
-            _id: 10
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
+          - { _id: 4 }
+          - { _id: 5 }
+          - { _id: 6 }
+          - { _id: 7 }
+          - { _id: 8 }
+          - { _id: 9 }
+          - { _id: 10 }
   -
     description: 'mixed read write operations'
     operations:
@@ -256,8 +233,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
+          document: { _id: 3 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
@@ -265,8 +241,7 @@ tests:
         object: *collection0
         name: countDocuments
         arguments:
-          filter:
-            _id: 3
+          filter: { _id: 3 }
           session: *session0
         expectResult: 1
       - *countDocuments
@@ -277,8 +252,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 4
+          document: { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
@@ -286,8 +260,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 5
+          document: { _id: 5 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 5 } }
@@ -295,8 +268,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 6
+          document: { _id: 6 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 6 } }
@@ -304,8 +276,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 7
+          document: { _id: 7 }
           session: *session0
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 7 } }
@@ -315,20 +286,13 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
-          -
-            _id: 4
-          -
-            _id: 5
-          -
-            _id: 6
-          -
-            _id: 7
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
+          - { _id: 4 }
+          - { _id: 5 }
+          - { _id: 6 }
+          - { _id: 7 }
   -
     description: 'multiple commits'
     operations:
@@ -340,10 +304,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 3
-            -
-              _id: 4
+            - { _id: 3 }
+            - { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -374,14 +336,10 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
-          -
-            _id: 4
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
+          - { _id: 4 }
   -
     description: 'remain pinned after non-transient error on commit'
     operations:
@@ -393,10 +351,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 3
-            -
-              _id: 4
+            - { _id: 3 }
+            - { _id: 4 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -437,14 +393,10 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
-          -
-            _id: 4
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
+          - { _id: 4 }
   -
     description: 'unpin after transient error within a transaction'
     operations:
@@ -456,8 +408,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 3
+          document: { _id: 3 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
       # Enable the fail point only on the mongos that session0 is pinned to
@@ -479,8 +430,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 4
+          document: { _id: 4 }
         expectError:
           errorLabelsContain:
             - TransientTransactionError
@@ -500,8 +450,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 3
+                  - { _id: 3 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -520,8 +469,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 4
+                  - { _id: 4 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -558,10 +506,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
+          - { _id: 1 }
+          - { _id: 2 }
   # Applications should not run commitTransaction after transient errors but
   # the transactions API allows it and this test confirms unpinning behavior.
   # In a sharded cluster, a transient error within a transaction unpins the
@@ -606,8 +552,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 3
+          document: { _id: 3 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
       # Enable the fail point only on the Mongos that session0 is pinned to.
@@ -637,8 +582,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 4
+          document: { _id: 4 }
         expectError:
           errorLabelsContain:
             - TransientTransactionError
@@ -673,8 +617,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 3
+                  - { _id: 3 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -693,8 +636,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 4
+                  - { _id: 4 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -731,7 +673,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
+          - { _id: 1 }
+          - { _id: 2 }

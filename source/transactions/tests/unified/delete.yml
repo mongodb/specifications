@@ -44,16 +44,11 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-      -
-        _id: 2
-      -
-        _id: 3
-      -
-        _id: 4
-      -
-        _id: 5
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
+      - { _id: 4 }
+      - { _id: 5 }
 
 tests:
   -
@@ -67,8 +62,7 @@ tests:
         name: deleteOne
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
           deletedCount: 1
       -
@@ -76,9 +70,7 @@ tests:
         name: deleteMany
         arguments:
           session: *session0
-          filter:
-            _id:
-              $lte: 3
+          filter: { _id: { $lte: 3 } }
         expectResult:
           deletedCount: 2
       -
@@ -86,8 +78,7 @@ tests:
         name: deleteOne
         arguments:
           session: *session0
-          filter:
-            _id: 4
+          filter: { _id: 4 }
         expectResult:
           deletedCount: 1
       -
@@ -103,8 +94,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: 1
+                    q: { _id: 1 }
                     limit: 1
                 ordered: true
                 readConcern:
@@ -125,8 +115,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: { $lte: 3 }
+                    q: { _id: { $lte: 3 } }
                     limit: 0
                 ordered: true
                 lsid:
@@ -146,8 +135,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: 4
+                    q: { _id: 4 }
                     limit: 1
                 ordered: true
                 lsid:
@@ -181,8 +169,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 5
+          - { _id: 5 }
   -
     description: 'collection writeConcern ignored for delete'
     operations:
@@ -208,8 +195,7 @@ tests:
         name: deleteOne
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
           deletedCount: 1
       -
@@ -217,9 +203,7 @@ tests:
         name: deleteMany
         arguments:
           session: *session0
-          filter:
-            _id:
-              $lte: 3
+          filter: { _id: { $lte: 3 } }
         expectResult:
           deletedCount: 2
       -
@@ -235,8 +219,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: 1
+                    q: { _id: 1 }
                     limit: 1
                 ordered: true
                 readConcern:
@@ -257,8 +240,7 @@ tests:
                 delete: *collection_name
                 deletes:
                   -
-                    q:
-                      _id: { $lte: 3 }
+                    q: { _id: { $lte: 3 } }
                     limit: 0
                 ordered: true
                 lsid:

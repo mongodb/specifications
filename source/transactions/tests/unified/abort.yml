@@ -57,8 +57,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -72,8 +71,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -88,8 +86,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -123,8 +120,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   afterClusterTime:
@@ -171,8 +167,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       # The original legacy test relied on the test runner to call endSession after all operations. Since the unified
@@ -189,8 +184,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -235,8 +229,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -256,8 +249,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -343,8 +335,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -364,8 +355,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -399,8 +389,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'abort ignores TransactionAborted'
     operations:
@@ -412,8 +401,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       # Abort the server transaction with a duplicate key error
@@ -422,8 +410,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError:
           errorLabelsOmit:
             - TransientTransactionError
@@ -436,8 +423,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError:
           errorCodeName: NoSuchTransaction
           errorLabelsContain:
@@ -457,8 +443,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -477,8 +462,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -498,8 +482,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -548,8 +531,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -

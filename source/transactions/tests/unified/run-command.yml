@@ -56,8 +56,7 @@ tests:
           command:
             insert: *collection_name
             documents:
-              -
-                _id: 1
+              - { _id: 1 }
           commandName: insert
         expectResult:
           'n': 1
@@ -73,8 +72,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 readConcern:
                   $$exists: false
                 lsid:
@@ -137,8 +135,7 @@ tests:
           command:
             insert: *collection_name
             documents:
-              -
-                _id: 1
+              - { _id: 1 }
           commandName: insert
         expectResult:
           'n': 1
@@ -154,8 +151,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 readConcern:
                   $$exists: false
                 lsid:
@@ -197,8 +193,7 @@ tests:
           command:
             insert: *collection_name
             documents:
-              -
-                _id: 1
+              - { _id: 1 }
           readPreference:
             mode: Primary
           commandName: insert
@@ -216,8 +211,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 readConcern:
                   $$exists: false
                 lsid:

@@ -45,14 +45,10 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents: &data
-      -
-        _id: 1
-      -
-        _id: 2
-      -
-        _id: 3
-      -
-        _id: 4
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
+      - { _id: 4 }
 
 tests:
   -
@@ -66,8 +62,7 @@ tests:
         name: count
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectError:
           errorCodeName: OperationNotSupportedInTransaction
           errorLabelsOmit:
@@ -84,8 +79,7 @@ tests:
             commandStartedEvent:
               command:
                 count: *collection_name
-                query:
-                  _id: 1
+                query: { _id: 1 }
                 readConcern:
                   $$exists: false
                 lsid:

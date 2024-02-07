@@ -76,8 +76,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -92,8 +91,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 2
+          document: { _id: 2 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       -
@@ -108,8 +106,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -143,8 +140,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
+                  - { _id: 2 }
                 ordered: true
                 readConcern:
                   afterClusterTime:
@@ -179,10 +175,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
+          - { _id: 1 }
+          - { _id: 2 }
   -
     description: 'rerun commit after empty transaction'
     operations:
@@ -204,8 +198,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -220,8 +213,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -255,8 +247,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'multiple commits in a row'
     operations:
@@ -268,8 +259,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -290,8 +280,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -358,8 +347,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'write concern error on commit'
     operations:
@@ -374,8 +362,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -398,8 +385,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'commit without start'
     operations:
@@ -451,8 +437,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -472,8 +457,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -513,8 +497,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -540,8 +523,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -556,8 +538,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -591,8 +572,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   afterClusterTime:
@@ -639,8 +619,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -652,8 +631,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 2
+          document: { _id: 2 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       # Calling commit again should error instead of re-running the commit
@@ -671,8 +649,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -706,8 +683,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
+                  - { _id: 2 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -726,10 +702,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
+          - { _id: 1 }
+          - { _id: 2 }
   -
     description: 'reset session state abort'
     operations:
@@ -741,8 +715,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -754,8 +727,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 2
+          document: { _id: 2 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       # Calling abort should error with "no transaction started" instead of "cannot call abortTransaction twice"
@@ -773,8 +745,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -808,8 +779,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
+                  - { _id: 2 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -828,5 +798,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
+          - { _id: 2 }

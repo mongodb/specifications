@@ -44,12 +44,9 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-      -
-        _id: 2
-      -
-        _id: 3
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
 
 tests:
   -
@@ -63,8 +60,7 @@ tests:
         name: findOneAndDelete
         arguments:
           session: *session0
-          filter:
-            _id: 3
+          filter: { _id: 3 }
         expectResult:
           _id: 3
       -
@@ -72,8 +68,7 @@ tests:
         name: findOneAndDelete
         arguments:
           session: *session0
-          filter:
-            _id: 4
+          filter: { _id: 4 }
       -
         object: *session0
         name: commitTransaction
@@ -85,8 +80,7 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 3
+                query: { _id: 3 }
                 remove: true
                 lsid:
                   $$sessionLsid: *session0
@@ -104,8 +98,7 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 4
+                query: { _id: 4 }
                 remove: true
                 lsid:
                   $$sessionLsid: *session0
@@ -142,10 +135,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
+          - { _id: 1 }
+          - { _id: 2 }
   -
     description: 'collection writeConcern ignored for findOneAndDelete'
     operations:
@@ -171,8 +162,7 @@ tests:
         name: findOneAndDelete
         arguments:
           session: *session0
-          filter:
-            _id: 3
+          filter: { _id: 3 }
         expectResult:
           _id: 3
       -
@@ -186,8 +176,7 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 3
+                query: { _id: 3 }
                 remove: true
                 lsid:
                   $$sessionLsid: *session0

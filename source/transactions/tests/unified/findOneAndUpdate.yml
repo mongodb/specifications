@@ -44,12 +44,9 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-      -
-        _id: 2
-      -
-        _id: 3
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
 
 tests:
   -
@@ -63,8 +60,7 @@ tests:
         name: findOneAndUpdate
         arguments:
           session: *session0
-          filter:
-            _id: 3
+          filter: { _id: 3 }
           update:
             $inc:
               x: 1
@@ -76,8 +72,7 @@ tests:
         name: findOneAndUpdate
         arguments:
           session: *session0
-          filter:
-            _id: 4
+          filter: { _id: 4 }
           update:
             $inc:
               x: 1
@@ -98,8 +93,7 @@ tests:
         name: findOneAndUpdate
         arguments:
           session: *session0
-          filter:
-            _id: 3
+          filter: { _id: 3 }
           update:
             $inc:
               x: 1
@@ -119,8 +113,7 @@ tests:
         name: findOneAndUpdate
         arguments:
           session: *session0
-          filter:
-            _id: 3
+          filter: { _id: 3 }
           update:
             $inc:
               x: 1
@@ -139,11 +132,8 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 3
-                update:
-                  $inc:
-                    x: 1
+                query: { _id: 3 }
+                update: { $inc: { x: 1 } }
                 new: false
                 lsid:
                   $$sessionLsid: *session0
@@ -161,11 +151,8 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 4
-                update:
-                  $inc:
-                    x: 1
+                query: { _id: 4 }
+                update: { $inc: { x: 1 } }
                 new: true
                 upsert: true
                 lsid:
@@ -202,11 +189,8 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 3
-                update:
-                  $inc:
-                    x: 1
+                query: { _id: 3 }
+                update: { $inc: { x: 1 } }
                 new: false
                 lsid:
                   $$sessionLsid: *session0
@@ -242,11 +226,8 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 3
-                update:
-                  $inc:
-                    x: 1
+                query: { _id: 3 }
+                update: { $inc: { x: 1 } }
                 new: false
                 lsid:
                   $$sessionLsid: *session0
@@ -283,16 +264,10 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
-            x: 2
-          -
-            _id: 4
-            x: 1
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3, x: 2 }
+          - { _id: 4, x: 1 }
   -
     description: 'collection writeConcern ignored for findOneAndUpdate'
     operations:
@@ -318,8 +293,7 @@ tests:
         name: findOneAndUpdate
         arguments:
           session: *session0
-          filter:
-            _id: 3
+          filter: { _id: 3 }
           update:
             $inc:
               x: 1
@@ -337,11 +311,8 @@ tests:
             commandStartedEvent:
               command:
                 findAndModify: *collection_name
-                query:
-                  _id: 3
-                update:
-                  $inc:
-                    x: 1
+                query: { _id: 3 }
+                update: { $inc: { x: 1 } }
                 new: false
                 lsid:
                   $$sessionLsid: *session0

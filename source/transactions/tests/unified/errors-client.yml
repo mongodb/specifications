@@ -57,8 +57,7 @@ tests:
         name: updateOne
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
           update:
             x: 1
         expectError:
@@ -80,8 +79,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -89,8 +87,7 @@ tests:
         name: updateOne
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
           update:
             x: 1
         expectError:

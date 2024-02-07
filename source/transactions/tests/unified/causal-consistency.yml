@@ -48,9 +48,7 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        count: 0
+      - { _id: 1, count: 0 }
 
 tests:
   -
@@ -62,11 +60,8 @@ tests:
         name: updateOne
         arguments:
           session: *session0
-          filter:
-            _id: 1
-          update:
-            $inc:
-              count: 1
+          filter: { _id: 1 }
+          update: { $inc: { count: 1 } }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -90,10 +85,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 1
-                    u:
-                      $inc: { count: 1 }
+                    q: { _id: 1 }
+                    u: { $inc: { count: 1 } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -117,10 +110,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 1
-                    u:
-                      $inc: { count: 1 }
+                    q: { _id: 1 }
+                    u: { $inc: { count: 1 } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -157,9 +148,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            count: 2
+          - { _id: 1, count: 2 }
   -
     description: 'causal consistency disabled'
     operations:
@@ -169,8 +158,7 @@ tests:
         name: insertOne
         arguments:
           session: *session_no_cc
-          document:
-            _id: 2
+          document: { _id: 2 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       -
@@ -181,11 +169,8 @@ tests:
         name: updateOne
         arguments:
           session: *session_no_cc
-          filter:
-            _id: 1
-          update:
-            $inc:
-              count: 1
+          filter: { _id: 1 }
+          update: { $inc: { count: 1 } }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -202,8 +187,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
+                  - { _id: 2 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -223,10 +207,8 @@ tests:
                 update: *collection_name
                 updates:
                   -
-                    q:
-                      _id: 1
-                    u:
-                      $inc: { count: 1 }
+                    q: { _id: 1 }
+                    u: { $inc: { count: 1 } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 ordered: true
@@ -263,8 +245,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            count: 1
-          -
-            _id: 2
+          - { _id: 1, count: 1 }
+          - { _id: 2 }

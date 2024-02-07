@@ -57,8 +57,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -66,10 +65,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-            -
-              _id: 3
+            - { _id: 2 }
+            - { _id: 3 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -82,8 +79,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 4
+          document: { _id: 4 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
       -
@@ -97,8 +93,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 5
+          document: { _id: 5 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 5 } }
       -
@@ -113,8 +108,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -133,10 +127,8 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
-                  -
-                    _id: 3
+                  - { _id: 2 }
+                  - { _id: 3 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -154,8 +146,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 4
+                  - { _id: 4 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -186,8 +177,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 5
+                  - { _id: 5 }
                 ordered: true
                 readConcern:
                   afterClusterTime:
@@ -222,16 +212,11 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
-          -
-            _id: 4
-          -
-            _id: 5
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
+          - { _id: 4 }
+          - { _id: 5 }
   # This test proves that the driver uses "session1" correctly in operations
   # and APM expectations
   -
@@ -245,8 +230,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -254,10 +238,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-            -
-              _id: 3
+            - { _id: 2 }
+            - { _id: 3 }
           session: *session1
         expectResult:
           $$unsetOrMatches:
@@ -276,8 +258,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 4
+          document: { _id: 4 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 4 } }
       -
@@ -292,8 +273,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -312,10 +292,8 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
-                  -
-                    _id: 3
+                  - { _id: 2 }
+                  - { _id: 3 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session1
@@ -348,8 +326,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 4
+                  - { _id: 4 }
                 ordered: true
                 readConcern:
                   afterClusterTime:
@@ -384,12 +361,9 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }
   # This test proves that the driver parses the collectionOptions writeConcern
   -
     description: 'collection writeConcern without transaction'
@@ -424,8 +398,7 @@ tests:
         name: insertOne
         arguments:
           session: *session2
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     expectEvents:
@@ -437,8 +410,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -459,8 +431,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'collection writeConcern ignored for insert'
     operations:
@@ -486,8 +457,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -495,10 +465,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-            -
-              _id: 3
+            - { _id: 2 }
+            - { _id: 3 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -518,8 +486,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -538,10 +505,8 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
-                  -
-                    _id: 3
+                  - { _id: 2 }
+                  - { _id: 3 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session0
@@ -574,9 +539,6 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 3
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 3 }

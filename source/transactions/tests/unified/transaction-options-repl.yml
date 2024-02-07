@@ -62,8 +62,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -81,8 +80,7 @@ tests:
         name: insertOne
         arguments:
           session: *session1
-          document:
-            _id: 2
+          document: { _id: 2 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       -
@@ -97,8 +95,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session1
@@ -134,8 +131,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
+                  - { _id: 2 }
                 ordered: true
                 lsid:
                   $$sessionLsid: *session1
@@ -173,5 +169,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }

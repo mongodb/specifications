@@ -61,10 +61,8 @@ tests:
         arguments:
           session: *session0
           documents:
-            -
-              _id: 1
-            -
-              _id: 1
+            - { _id: 1 }
+            - { _id: 1 }
         expectError:
           errorLabelsOmit:
             - TransientTransactionError
@@ -84,10 +82,8 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
-                  -
-                    _id: 1
+                  - { _id: 1 }
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -145,8 +141,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError:
           # Note, the server will return the errorLabel in this case
           errorLabelsContain:
@@ -166,8 +161,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -225,8 +219,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError:
           # Note, the server will return the errorLabel in this case
           errorLabelsContain:
@@ -246,8 +239,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -305,8 +297,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError:
           # Note, the server will return the errorLabel in this case
           errorLabelsContain:
@@ -326,8 +317,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -385,8 +375,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -408,8 +397,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -470,8 +458,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError: &transient_label_only
           errorLabelsContain:
             - TransientTransactionError
@@ -492,9 +479,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           session: *session0
         expectError: *transient_label_only
       -
@@ -517,8 +502,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -552,9 +536,7 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $project:
-                      _id: 1
+                  - { $project: { _id: 1 } }
                 cursor: {  }
                 readConcern:
                   $$exists: false
@@ -627,8 +609,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -652,8 +633,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -720,8 +700,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'do not add RetryableWriteError label to writeConcernError ShutdownInProgress that occurs within transaction'
     operations:
@@ -751,8 +730,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError:
           errorLabelsOmit:
             - RetryableWriteError
@@ -770,8 +748,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -830,8 +807,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -855,8 +831,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -907,8 +882,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'add UnknownTransactionCommitResult label to writeConcernError WriteConcernFailed with wtimeout'
     operations:
@@ -941,8 +915,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -966,8 +939,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -1018,8 +990,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'omit UnknownTransactionCommitResult label from writeConcernError UnsatisfiableWriteConcern'
     operations:
@@ -1049,8 +1020,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -1070,8 +1040,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -1105,8 +1074,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'omit UnknownTransactionCommitResult label from writeConcernError UnknownReplWriteConcern'
     operations:
@@ -1136,8 +1104,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -1157,8 +1124,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -1192,8 +1158,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'do not add UnknownTransactionCommitResult label to MaxTimeMSExpired inside transactions'
     operations:
@@ -1218,8 +1183,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -1227,9 +1191,7 @@ tests:
         name: aggregate
         arguments:
           pipeline:
-            -
-              $project:
-                _id: 1
+            - { $project: { _id: 1 } }
           maxTimeMS: 60000
           session: *session0
         expectError:
@@ -1249,8 +1211,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -1269,9 +1230,7 @@ tests:
               command:
                 aggregate: *collection_name
                 pipeline:
-                  -
-                    $project:
-                      _id: 1
+                  - { $project: { _id: 1 } }
                 cursor: {  }
                 readConcern:
                   $$exists: false
@@ -1331,8 +1290,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -1356,8 +1314,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -1410,8 +1367,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'add UnknownTransactionCommitResult label to writeConcernError MaxTimeMSExpired'
     operations:
@@ -1442,8 +1398,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -1467,8 +1422,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -1521,5 +1475,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }

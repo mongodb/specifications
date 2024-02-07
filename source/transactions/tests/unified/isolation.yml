@@ -59,8 +59,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -68,25 +67,21 @@ tests:
         name: find
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
-          -
-            _id: 1
+          - { _id: 1 }
       -
         object: *collection0
         name: find
         arguments:
           session: *session1
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult: []
       -
         object: *collection0
         name: find
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult: []
       -
         object: *session0
@@ -96,27 +91,22 @@ tests:
         name: find
         arguments:
           session: *session1
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
-          -
-            _id: 1
+          - { _id: 1 }
       -
         object: *collection0
         name: find
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
-          -
-            _id: 1
+          - { _id: 1 }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }
   -
     description: 'two transactions'
     operations:
@@ -131,8 +121,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -140,25 +129,21 @@ tests:
         name: find
         arguments:
           session: *session0
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
-          -
-            _id: 1
+          - { _id: 1 }
       -
         object: *collection0
         name: find
         arguments:
           session: *session1
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult: []
       -
         object: *collection0
         name: find
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult: []
       -
         object: *session0
@@ -169,18 +154,15 @@ tests:
         name: find
         arguments:
           session: *session1
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult: []
       -
         object: *collection0
         name: find
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
-          -
-            _id: 1
+          - { _id: 1 }
       -
         object: *session1
         name: commitTransaction
@@ -189,5 +171,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
+          - { _id: 1 }

@@ -53,8 +53,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
       -
@@ -65,8 +64,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 2
+          document: { _id: 2 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 2 } }
       -
@@ -77,8 +75,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 3
+          document: { _id: 3 }
         expectResult:
           $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
       -
@@ -89,10 +86,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 4
-            -
-              _id: 5
+            - { _id: 4 }
+            - { _id: 5 }
           session: *session0
         expectResult:
           $$unsetOrMatches:
@@ -109,8 +104,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -144,8 +138,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 2
+                  - { _id: 2 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -166,8 +159,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 3
+                  - { _id: 3 }
                 ordered: true
                 readConcern:
                   afterClusterTime:
@@ -202,10 +194,8 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 4
-                  -
-                    _id: 5
+                  - { _id: 4 }
+                  - { _id: 5 }
                 ordered: true
                 readConcern:
                   $$exists: false
@@ -226,14 +216,10 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-          -
-            _id: 2
-          -
-            _id: 4
-          -
-            _id: 5
+          - { _id: 1 }
+          - { _id: 2 }
+          - { _id: 4 }
+          - { _id: 5 }
   -
     description: 'writes are not retried'
     operations:
@@ -258,8 +244,7 @@ tests:
         name: insertOne
         arguments:
           session: *session0
-          document:
-            _id: 1
+          document: { _id: 1 }
         expectError:
           errorLabelsContain:
             - TransientTransactionError
@@ -275,8 +260,7 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  -
-                    _id: 1
+                  - { _id: 1 }
                 ordered: true
                 readConcern:
                   $$exists: false
