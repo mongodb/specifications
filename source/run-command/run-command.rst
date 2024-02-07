@@ -68,7 +68,7 @@ The following represents how a runCommand API SHOULD be exposed.
        *
        * @defaultValue ReadPreference(mode: primary)
        *
-       * @see https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#read-preference
+       * @see https://github.com/mongodb/specifications/blob/master../server-selection/server-selection.md#read-preference
        */
       readPreference?: ReadPreference;
 
@@ -113,7 +113,7 @@ ReadPreference
 For the purposes of server selection RunCommand MUST assume all commands are read operations.
 To facilitate server selection the RunCommand operation MUST accept an optional ``readPreference`` option.
 
-* See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
+* See Server Selection's section on `Use of read preferences with commands <../server-selection/server-selection.md#use-of-read-preferences-with-commands>`_
 
 If the provided ReadPreference is NOT ``{mode: primary}`` and the selected server is NOT a standalone, the command sent MUST include the ``$readPreference`` global command argument.
 

@@ -1589,7 +1589,7 @@ various contexts in the test format. Comprehensive documentation for some of
 these types and their parameters may be found in the following specifications:
 
 - `Read and Write Concern <../read-write-concern/read-write-concern.rst>`__.
-- `Server Selection: Read Preference <../server-selection/server-selection.rst#read-preference>`__.
+- `Server Selection: Read Preference <../server-selection/server-selection.md#read-preference>`__.
 - `Server Discovery and Monitoring: TopologyDescription <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`__.
 
 The structure of these common options is as follows:
@@ -1883,7 +1883,7 @@ runCommand
 Generic command runner.
 
 This method does not inherit a read preference (per the
-`Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
+`Server Selection <../server-selection/server-selection.md#use-of-read-preferences-with-commands>`__
 spec); however, ``readPreference`` may be specified as an argument.
 
 The following arguments are supported:
@@ -1904,7 +1904,7 @@ runCursorCommand
 `Generic cursor returning command runner <../run-command/run-command.rst>`__.
 
 This method does not inherit a read preference (per the
-`Server Selection <../server-selection/server-selection.rst#use-of-read-preferences-with-commands>`__
+`Server Selection <../server-selection/server-selection.md#use-of-read-preferences-with-commands>`__
 spec); however, ``readPreference`` may be specified as an argument.
 
 This operation proxies the database's ``runCursorCommand`` method and supports the same arguments and options (note: handling for `getMore` options may vary by driver implementation).

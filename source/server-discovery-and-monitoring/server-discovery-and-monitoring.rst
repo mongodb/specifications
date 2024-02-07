@@ -182,7 +182,7 @@ A server is judged "suitable" for an operation if the client can use it
 for a particular operation.
 For example, a write requires a standalone, primary, or mongos.
 Suitability is fully specified in the `Server Selection Spec
-<https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst>`_.
+<../server-selection/server-selection.md>`_.
 
 address
 ```````
