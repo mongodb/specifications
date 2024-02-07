@@ -39,7 +39,7 @@ are true:
 Spec Test Format
 ================
 
-The spec tests format is an extension of `transactions spec tests <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/README.rst>`_ with some additions:
+The spec tests format is an extension of the `transactions spec legacy test format <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/legacy-test-format.rst>`__ with some additions:
 
 - A ``json_schema`` to set on the collection used for operations.
 
