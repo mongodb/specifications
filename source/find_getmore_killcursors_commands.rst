@@ -160,7 +160,7 @@ The **secondaryOk** flag SHOULD not be set for all follow-up **getMore** and **k
 
 More detailed information about the interaction of the **secondaryOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
-.. _Passing a Read Preference: https://github.com/mongodb/specifications/blob/masterserver-selection/server-selection.md#passing-read-preference-to-mongos
+.. _Passing a Read Preference: ./server-selection/server-selection.md#passing-read-preference-to-mongos
 
 Behavior of Limit, skip and batchSize
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -511,7 +511,7 @@ This format is general for all commands when executing against a Mongos proxy.
 
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification `Server Selection Specification`_.
 
-.. _Server Selection Specification: https://github.com/mongodb/specifications/blob/masterserver-selection/server-selection.md#passing-read-preference-to-mongos
+.. _Server Selection Specification: ./server-selection/server-selection.md#passing-read-preference-to-mongos
 
 Changelog
 =========
