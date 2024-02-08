@@ -158,7 +158,7 @@ For read and write operations, the single server in the topology MUST always be 
 
 During command construction, the LoadBalancer server MUST be treated like a mongos and
 drivers MUST add a $readPreference field to the command when required by
-`Passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_.
+`Passing read preference to mongos and load balancers <../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers>`_.
 
 
 Connection Pooling

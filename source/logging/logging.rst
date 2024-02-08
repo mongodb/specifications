@@ -1,6 +1,6 @@
-=======
+==============================
 Logging
-=======
+==============================
 
 :Title: Logging
 :Status: Accepted
@@ -171,7 +171,7 @@ driver-specific messages they produce.
      - ``MONGODB_LOG_TOPOLOGY``
 
    * - serverSelection
-     - `Server Selection <../server-selection/server-selection.rst>`__
+     - `Server Selection <../server-selection/server-selection.md>`__
      - ``MONGODB_LOG_SERVER_SELECTION``
 
    * - connection

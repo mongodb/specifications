@@ -26,9 +26,9 @@ repos:
   rev: 0.7.17
   hooks:
     - id: mdformat
-      args: ["--wrap=120"]
+      args: ["--wrap=120", "--number"]
       additional_dependencies:
-        [mdformat-gfm]
+        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote]
 
 - repo: https://github.com/tcort/markdown-link-check
   rev: v3.11.2

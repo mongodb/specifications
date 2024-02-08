@@ -1263,7 +1263,7 @@ This section defines the structure of common options that are referenced from va
 Comprehensive documentation for some of these types and their parameters may be found in the following specifications:
 
 - [Read and Write Concern](../read-write-concern/read-write-concern.rst).
-- [Server Selection: Read Preference](../server-selection/server-selection.rst#read-preference).
+- [Server Selection: Read Preference](../server-selection/server-selection.md#read-preference).
 - [Server Discovery and Monitoring: TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription).
 
 The structure of these common options is as follows:
@@ -1479,7 +1479,7 @@ When executing a `listCollections` operation, the test runner MUST fully iterate
 Generic command runner.
 
 This method does not inherit a read preference (per the
-[Server Selection](../server-selection/server-selection.rst#use-of-read-preferences-with-commands) spec); however,
+[Server Selection](../server-selection/server-selection.md#use-of-read-preferences-with-commands) spec); however,
 `readPreference` may be specified as an argument.
 
 The following arguments are supported:
@@ -1495,7 +1495,7 @@ The following arguments are supported:
 [Generic cursor returning command runner](../run-command/run-command.rst).
 
 This method does not inherit a read preference (per the
-[Server Selection](../server-selection/server-selection.rst#use-of-read-preferences-with-commands) spec); however,
+[Server Selection](../server-selection/server-selection.md#use-of-read-preferences-with-commands) spec); however,
 `readPreference` may be specified as an argument.
 
 This operation proxies the database's `runCursorCommand` method and supports the same arguments and options (note:

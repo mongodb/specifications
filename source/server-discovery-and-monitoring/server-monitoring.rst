@@ -1236,7 +1236,7 @@ Changelog
 
 .. Section for links.
 
-.. _Server Selection Spec: /source/server-selection/server-selection.rst
+.. _Server Selection Spec: ../server-selection/server-selection.md
 .. _main SDAM spec: server-discovery-and-monitoring.rst
 .. _Server Discovery And Monitoring: server-discovery-and-monitoring.rst
 .. _server API version: /source/versioned-api/versioned-api.rst
@@ -1247,7 +1247,7 @@ Changelog
 .. _updateRSFromPrimary: server-discovery-and-monitoring.rst#updateRSFromPrimary
 .. _Network error when reading or writing: server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
 .. _connection handshake: mongodb-handshake/handshake.rst
-.. _localThresholdMS: /source/server-selection/server-selection.rst#localThresholdMS
+.. _localThresholdMS: ../server-selection/server-selection.md#localThresholdMS
 .. _SDAM Monitoring spec: server-discovery-and-monitoring-logging-and-monitoring.rst#heartbeats
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
