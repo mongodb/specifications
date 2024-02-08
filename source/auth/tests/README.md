@@ -4,7 +4,7 @@
 
 This document describes the format of the driver spec tests included in the JSON and YAML files included in the `legacy`
 sub-directory. Tests in the `unified` directory are written using the
-[Unified Test Format](../../unified-test-format/unified-test-format.rst).
+[Unified Test Format](../../unified-test-format/unified-test-format.md).
 
 The YAML and JSON files in the `legacy` directory tree are platform-independent tests that drivers can use to prove
 their conformance to the Auth Spec at least with respect to connection string URI input.

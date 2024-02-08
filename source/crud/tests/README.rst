@@ -21,12 +21,12 @@ Subdirectories for Test Formats
 
 This document describes a legacy format for CRUD tests: legacy-v1, which dates back
 to the first version of the CRUD specification. New CRUD tests should be written
-in the `unified test format <../../unified-test-format/unified-test-format.rst>`_
+in the `unified test format <../../unified-test-format/unified-test-format.md>`_
 and placed under ``unified/``. Until such time that all original tests have been ported
 to the unified test format, tests in each format will be grouped in their own subdirectory:
 
 - ``v1/``: Legacy-v1 format tests
-- ``unified/``: Tests using the `unified test format <../../unified-test-format/unified-test-format.rst>`_
+- ``unified/``: Tests using the `unified test format <../../unified-test-format/unified-test-format.md>`_
 
 Since some drivers may not have a unified test runner capable of executing tests
 in all two formats, segregating tests in this manner will make it easier for
@@ -58,7 +58,7 @@ single operation. Notable differences from the legacy-v2 format are as follows:
   for running the test. If a field is not present, it should be assumed that
   there is no corresponding bound on the required server version. The
   ``serverless`` requirement behaves the same as the ``serverless`` field of the
-  `unified test format's runOnRequirement <../../unified-test-format/unified-test-format.rst#runonrequirement>`_.
+  `unified test format's runOnRequirement <../../unified-test-format/unified-test-format.md#runonrequirement>`_.
 
 The legacy-v1 format should not conflict with the newer, multi-operation format
 used by other specs (e.g. Transactions). It is possible to create a unified test
@@ -77,7 +77,7 @@ Test Runner Implementation
 ==========================
 
 This section provides guidance for implementing a test runner for legacy-v1
-tests. See the `unified test format spec <../../../../unified-test-format/unified-test-format.rst>`_ for how to run tests under
+tests. See the `unified test format spec <../../unified-test-format/unified-test-format.md>`_ for how to run tests under
 ``unified/``.
 
 Before running the tests:

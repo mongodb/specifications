@@ -16,7 +16,7 @@ the intention of sharing some test-runner code with the CRUD Spec tests and the
 Command Monitoring Spec tests. The format for these tests and instructions for
 executing them are provided in the following sections. Tests in the
 ``unified`` directory are written using the `Unified Test Format
-<../../unified-test-format/unified-test-format.rst>`_.
+<../../unified-test-format/unified-test-format.md>`_.
 
 Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.

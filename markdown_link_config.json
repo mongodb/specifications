@@ -4,10 +4,16 @@
         "pattern": "^/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#"
       },
       {
-        "pattern": "^https://github.com/10gen/mongo-enterprise-modules"
+        "pattern": "^#"
       },
       {
-        "pattern": "^#"
+        "pattern": "^../command-logging-and-monitoring/command-monitoring.rst#security"
+      },
+      {
+        "pattern": "^logging/logging.rst#log-severity-levels"
+      },
+      {
+        "pattern": "^https://github.com/10gen/mongo-enterprise-modules"
       }
     ]
 }

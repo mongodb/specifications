@@ -12,7 +12,7 @@ Introduction
 This document describes the format of the driver spec tests included in the
 JSON and YAML files included in the ``legacy`` sub-directory. Tests in the
 ``unified`` directory are written using the `Unified Test Format
-<../../unified-test-format/unified-test-format.rst>`_.
+<../../unified-test-format/unified-test-format.md>`_.
 
 The ``timeoutMS.yml``/``timeoutMS.json`` files in this directory contain tests
 for the ``timeoutMS`` option and its application to the client-side encryption
