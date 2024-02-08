@@ -687,7 +687,7 @@ Drivers MUST raise an error on the first document received without a resume toke
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error per `Resumable Error`_.  A change stream MUST NOT attempt to resume on any other type of error.
 
-In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference using the `rules for server selection <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#rules-for-server-selection>`_ before attempting to resume.
+In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference using the `rules for server selection <../server-selection/server-selection.md#rules-for-server-selection>`_ before attempting to resume.
 
 Single Server Topologies
 ^^^^^^^^^^^^^^^^^^^^^^^^

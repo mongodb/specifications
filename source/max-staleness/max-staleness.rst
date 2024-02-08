@@ -481,7 +481,7 @@ Clients with minWireVersion < 5 MUST throw an error if maxStalenessSeconds is se
 and any available server in the topology has maxWireVersion less than 5.
 
 An available server is defined in the `Server Selection
-<../server-selection/server-selection.rst#terms>`_
+<../server-selection/server-selection.md#terms>`_
 specification.
 
 Servers began reporting lastWriteDate in wire protocol version 5,

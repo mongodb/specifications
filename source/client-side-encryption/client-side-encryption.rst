@@ -1810,7 +1810,7 @@ Connecting to mongocryptd_
 If the crypt_shared_ library is loaded, the driver MUST NOT attempt to connect
 to mongocryptd_. (Refer: `Detecting crypt_shared Availability`_).
 
-Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
+Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.md#serverselectiontryonce>`_
 , connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
 If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
@@ -2481,7 +2481,7 @@ means server selection fails if a topology scan fails the first time (i.e. it
 will not make repeat attempts until serverSelectionTimeoutMS expires). This
 behavior is overridden since there may be a small delay between spawning
 mongocryptd (which the driver may be responsible for) and for mongocryptd to
-listen on sockets. See the Server Selection spec description of `serverSelectionTryOnce <../server-selection/server-selection.rst#serverselectiontryonce>`_.
+listen on sockets. See the Server Selection spec description of `serverSelectionTryOnce <../server-selection/server-selection.md#serverselectiontryonce>`_.
 
 Similarly, single threaded clients will by default wait for 5 second cooldown
 period after failing to connect to a server before making another attempt.
