@@ -3158,7 +3158,7 @@ The `failCommand` fail point allows the client to force the server to return an 
 [The failCommand Fail Point](https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point).
 
 The `failCommand` fail point was introduced in mongod 4.0.0
-([SERVER-34551)](https://jira.mongodb.org/browse/SERVER-34551)) and mongos 4.1.5
+([SERVER-34551](https://jira.mongodb.org/browse/SERVER-34551)) and mongos 4.1.5
 ([SERVER-35518](https://jira.mongodb.org/browse/SERVER-35518)); however, the fail point was not usable for testing on
 mongos until version 4.1.7 ([SERVER-34943](https://jira.mongodb.org/browse/SERVER-34943)).
 
