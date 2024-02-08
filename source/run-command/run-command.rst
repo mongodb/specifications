@@ -68,7 +68,7 @@ The following represents how a runCommand API SHOULD be exposed.
        *
        * @defaultValue ReadPreference(mode: primary)
        *
-       * @see https://github.com/mongodb/specifications/blob/master../server-selection/server-selection.md#read-preference
+       * @see ../server-selection/server-selection.md#read-preference
        */
       readPreference?: ReadPreference;
 
