@@ -570,6 +570,7 @@ accept arbitrary strings at runtime for forward-compatibility.
 
    interface KMIPKMSOptions {
       endpoint: string;
+      delegated: boolean; // If true (recommended), the KMS provider will perform DEK encryption and decryption. Defaults to false.
    };
 
 The following shows an example object of :ts:`KMSProviders`:
@@ -1272,6 +1273,7 @@ If the kmsProvider has KMS provider type "kmip", the masterKey is required and h
    {
       keyId: Optional<String>, // keyId is the KMIP Unique Identifier to a 96 byte KMIP Secret Data managed object.
                                // If keyId is omitted, the driver creates a random 96 byte KMIP Secret Data managed object.
+      delegated: Optional<Boolean>, // If true, this key should be decrypted by the KMIP server.
       endpoint: Optional<String> // Host with optional port.
    }
 
@@ -1997,6 +1999,7 @@ provider "local"
 **Name**          **Type** **Description**
 provider          "kmip"
 endpoint          String   Optional. Defaults to kmip.endpoint from KMS providers.
+delegated         Boolean  Optional. Defaults to false.
 keyId             String   Required. keyId is the Unique Identifier to a 96 byte KMIP
                            Secret Data managed object.
 ================= ======== ===============================================================
@@ -2687,6 +2690,13 @@ A rejected alternative API is to encrypt the lower and upper bound payloads sepa
 The lower and upper bound payloads must have a unique matching UUID. The lower and upper bound payloads are unique.
 This API requires handling the UUID and distinguishing the upper and lower bounds. Here are examples showing possible errors:
 
+What is the KMIP `delegated` option?
+------------------------------------
+
+By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key.
+If the `delegated` option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
+ensuring that the key encryption key never leaves the server. 
+
 .. code::
 
    uuid = UUID()
@@ -2813,6 +2823,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2024-01-30: Add ``delegated`` option to "kmip" KMS provider 
 :2024-01-10: Add named KMS providers
 :2023-03-30: Remove ECC collection
 :2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
