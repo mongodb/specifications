@@ -3099,7 +3099,8 @@ errors. Tests can configure fail points using the special [failPoint](#failpoint
 This internal command is not documented in the MongoDB manual (pending
 [DOCS-10784](https://jira.mongodb.org/browse/DOCS-10784)); however, there is scattered documentation available on the
 server wiki ([The "failCommand" Fail Point](https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point)) and
-employee blogs (e.g. [Intro to Fail Points](https://kchodorow.com/2013/01/15/intro-to-fail-points/)). Documentation can
+employee blogs (e.g. [Intro to Fail Points](https://kchodorow.com/2013/01/15/intro-to-fail-points/),
+[Testing Network Errors With MongoDB](https://emptysqua.re/blog/mongodb-testing-network-errors/)). Documentation can
 also be gleaned from JIRA tickets (e.g. [SERVER-35004](https://jira.mongodb.org/browse/SERVER-35004),
 [SERVER-35083](https://jira.mongodb.org/browse/SERVER-35083)). This specification does not aim to provide comprehensive
 documentation for all fail points available for driver testing, but some fail points are documented in
