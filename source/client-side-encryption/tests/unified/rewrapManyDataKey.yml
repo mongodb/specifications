@@ -87,6 +87,15 @@ initialData:
         status: 1
         masterKey: &local_masterkey
           provider: local
+      - _id: &kmip_delegated_key_id {$uuid: "7411e9af-c688-4df7-8143-5e60ae96cba5"}
+        keyAltNames: ["kmip_delegated_key"]
+        keyMaterial: { $binary: { base64: 5TLMFWlguBWe5GUESTvOVtkdBsCrynhnV72XRyZ66/nk+EP9/1oEp1t1sg0+vwCTqULHjBiUE6DRx2mYD/Eup1+u2Jgz9/+1sV1drXeOPALNPkSgiZiDbIb67zRi+wTABEcKcegJH+FhmSGxwUoQAiHCsCbcvia5P8tN1lt98YQ=, subType: "00" } }
+        creationDate: { $date: { $numberLong: "1641024000000" } }
+        updateDate: { $date: { $numberLong: "1641024000000" } }
+        status: 1
+        masterKey: &kmip_delegated_masterkey
+          provider: kmip
+          delegated: true
 
 tests:
   - description: "no keys to rewrap due to no filter matches"
@@ -125,8 +134,8 @@ tests:
         expectResult:
           bulkWriteResult:
             insertedCount: 0
-            matchedCount: 4
-            modifiedCount: 4
+            matchedCount: 5
+            modifiedCount: 5
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
@@ -162,6 +171,10 @@ tests:
                     u: { $set: { masterKey: { provider: aws, <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: aws, <<: *new_aws_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
 
   - description: "rewrap with new Azure KMS provider"
@@ -178,8 +191,8 @@ tests:
         expectResult:
           bulkWriteResult:
             insertedCount: 0
-            matchedCount: 4
-            modifiedCount: 4
+            matchedCount: 5
+            modifiedCount: 5
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
@@ -215,6 +228,10 @@ tests:
                     u: { $set: { masterKey: { provider: azure, <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: azure, <<: *new_azure_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
 
   - description: "rewrap with new GCP KMS provider"
@@ -233,8 +250,8 @@ tests:
         expectResult:
           bulkWriteResult:
             insertedCount: 0
-            matchedCount: 4
-            modifiedCount: 4
+            matchedCount: 5
+            modifiedCount: 5
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
@@ -270,6 +287,10 @@ tests:
                     u: { $set: { masterKey: { provider: gcp, <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: gcp, <<: *new_gcp_masterkey }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
 
   - description: "rewrap with new KMIP KMS provider"
@@ -283,8 +304,8 @@ tests:
         expectResult:
           bulkWriteResult:
             insertedCount: 0
-            matchedCount: 4
-            modifiedCount: 4
+            matchedCount: 5
+            modifiedCount: 5
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
@@ -320,6 +341,66 @@ tests:
                     u: { $set: { masterKey: { provider: kmip, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: kmip, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                writeConcern: { w: majority }
+
+  - description: "rewrap with new KMIP delegated KMS provider"
+    operations:
+      - name: rewrapManyDataKey
+        object: *clientEncryption0
+        arguments:
+          filter: { keyAltNames: { $ne: kmip_delegated_key } }
+          opts:
+            provider: kmip
+            masterKey:
+              delegated: true
+        expectResult:
+          bulkWriteResult:
+            insertedCount: 0
+            matchedCount: 5
+            modifiedCount: 5
+            deletedCount: 0
+            upsertedCount: 0
+            upsertedIds: {}
+            insertedIds: { $$unsetOrMatches: {} }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                find: *collection0Name
+                filter: { keyAltNames: { $ne: kmip_delegated_key } }
+                readConcern: { level: majority }
+          - commandStartedEvent:
+              databaseName: *database0Name
+              command:
+                update: *collection0Name
+                ordered: true
+                updates:
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: kmip, delegated: true, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: kmip, delegated: true, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: kmip, delegated: true, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: kmip, delegated: true, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: kmip, delegated: true, keyId: { $$type: string } }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 writeConcern: { w: majority }
 
   - description: "rewrap with new local KMS provider"
@@ -333,8 +414,8 @@ tests:
         expectResult:
           bulkWriteResult:
             insertedCount: 0
-            matchedCount: 4
-            modifiedCount: 4
+            matchedCount: 5
+            modifiedCount: 5
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
@@ -354,6 +435,10 @@ tests:
                 update: *collection0Name
                 ordered: true
                 updates:
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { provider: local }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
                     u: { $set: { masterKey: { provider: local }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
@@ -414,6 +499,10 @@ tests:
                 update: *collection0Name
                 ordered: true
                 updates:
+                  - q: { _id: { $$type: binData } }
+                    u: { $set: { masterKey: { $$type: object }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                   - q: { _id: { $$type: binData } }
                     u: { $set: { masterKey: { $$type: object }, keyMaterial: { $$type: binData } }, $currentDate: { updateDate: true } }
                     multi: { $$unsetOrMatches: false }
