@@ -89,7 +89,7 @@ The `timeoutMS` option applies to all operations defined in the following specif
 
 - [CRUD](./../crud/crud.rst)
 - [Change Streams](../change-streams/change-streams.rst)
-- [Client Side Encryption](../client-side-encryption/client-side-encryption.rst)
+- [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
 - [Enumerating Collections](../enumerate-collections.rst)
 - [Enumerating Databases](../enumerate-databases.rst)
 - [GridFS](../gridfs/gridfs-spec.rst)
@@ -260,7 +260,7 @@ mongocryptd and encrypted by libmongocrypt. To determine whether or not the serv
 that the `iscryptd` field in the server's description is `true`.
 
 For explicit encryption and decryption, the `ClientEncryptionOpts` options type used to construct
-[ClientEncryption](../client-side-encryption/client-side-encryption.rst#clientencryption) instances MUST support a new
+[ClientEncryption](../client-side-encryption/client-side-encryption.md#clientencryption) instances MUST support a new
 `timeoutMS` option, which specifies the timeout for all operations executed on the `ClientEncryption` object.
 
 See [maxTimeMS is not added for mongocryptd](#maxtimems-is-not-added-for-mongocryptd).

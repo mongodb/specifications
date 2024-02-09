@@ -14,6 +14,9 @@
       },
       {
         "pattern": "^https://github.com/10gen/mongo-enterprise-modules"
+      },
+      {
+        "pattern": "https://cloudkms.googleapis.com"
       }
     ]
 }
