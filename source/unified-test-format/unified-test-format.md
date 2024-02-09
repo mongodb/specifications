@@ -622,7 +622,7 @@ The structure of this object is as follows:
     [MongoClient.startSession](../sessions/driver-sessions.rst#startsession) when creating the session. Supported
     options are defined in the following specifications:
 
-    - [Causal Consistency](../causal-consistency/causal-consistency.rst#sessionoptions-changes)
+    - [Causal Consistency](../causal-consistency/causal-consistency.md#sessionoptions-changes)
     - [Snapshot Reads](../sessions/snapshot-sessions.rst#sessionoptions-changes)
     - [Transactions](../transactions/transactions.rst#sessionoptions-changes)
     - [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md#sessions)
