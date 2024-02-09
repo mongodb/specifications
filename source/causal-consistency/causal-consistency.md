@@ -15,8 +15,8 @@ consistency.
 
 ### META
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and
-“OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ### Terms
 
@@ -385,7 +385,7 @@ programs that don't use causal consistency continue to compile and run correctly
 ## Reference Implementation
 
 A reference implementation must be completed before any spec is given status "Final", but it need not be completed
-before the spec is “Accepted”. While there is merit to the approach of reaching consensus on the specification and
+before the spec is "Accepted". While there is merit to the approach of reaching consensus on the specification and
 rationale before writing code, the principle of "rough consensus and running code" is still useful when it comes to
 resolving many discussions of spec details. A final reference implementation must include test code and documentation.
 
