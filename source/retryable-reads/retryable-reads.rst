@@ -165,7 +165,7 @@ Drivers SHOULD support retryability for the following operations:
 Most of the above methods are defined in the following specifications:
 
 - `Change Streams
-  <https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst>`__
+  <../change-streams/change-streams.md>`__
 
 - `CRUD
   <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst>`__
