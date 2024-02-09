@@ -156,6 +156,9 @@ tests:
         object: *clientEncryption0
         arguments:
           kmsProvider: kmip
+          opts:
+            masterKey: &new_kmip_masterkey
+              delegated: true
         expectResult: { $$type: binData }
     expectEvents:
       - client: *client0

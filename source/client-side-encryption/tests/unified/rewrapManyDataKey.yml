@@ -95,6 +95,7 @@ initialData:
         status: 1
         masterKey: &kmip_delegated_masterkey
           provider: kmip
+          keyId: "11"
           delegated: true
 
 tests:
@@ -466,8 +467,8 @@ tests:
         expectResult:
           bulkWriteResult:
             insertedCount: 0
-            matchedCount: 5
-            modifiedCount: 5
+            matchedCount: 6
+            modifiedCount: 6
             deletedCount: 0
             upsertedCount: 0
             upsertedIds: {}
@@ -482,6 +483,7 @@ tests:
           - { _id: *aws_key_id, masterKey: *aws_masterkey }
           - { _id: *azure_key_id, masterKey: *azure_masterkey }
           - { _id: *gcp_key_id, masterKey: *gcp_masterkey }
+          - { _id: *kmip_delegated_key_id, masterKey: *kmip_delegated_masterkey }
           - { _id: *kmip_key_id, masterKey: *kmip_masterkey }
           - { _id: *local_key_id, masterKey: *local_masterkey }
     expectEvents:
