@@ -429,9 +429,7 @@ See [runCommand behavior](#runcommand-behavior).
 
 ## Test Plan
 
-See the
-[README.rst](https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/tests/README.rst)
-in the tests directory.
+See the [README.rst](tests/README.md) in the tests directory.
 
 ## Motivation for Change
 
