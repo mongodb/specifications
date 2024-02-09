@@ -2823,7 +2823,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
-:2024-01-30: Add ``delegated`` option to "kmip" KMS provider 
+:2024-02-08: Add ``delegated`` option to "kmip" KMS provider 
 :2024-01-10: Add named KMS providers
 :2023-03-30: Remove ECC collection
 :2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
