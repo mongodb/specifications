@@ -342,6 +342,10 @@ tests:
           - { _id: 4 }
   -
     description: 'remain pinned after non-transient error on commit'
+    # Note: test utilizes targetedFailPoint, which is incompatible with
+    # load-balanced and useMultipleMongoses:true
+    runOnRequirements:
+      - topologies: [ sharded ]
     operations:
       -
         object: *session0
@@ -398,6 +402,10 @@ tests:
           - { _id: 4 }
   -
     description: 'unpin after transient error within a transaction'
+    # Note: test utilizes targetedFailPoint, which is incompatible with
+    # load-balanced and useMultipleMongoses:true
+    runOnRequirements:
+      - topologies: [ sharded ]
     operations:
       -
         object: *session0
@@ -501,6 +509,10 @@ tests:
   # commitTransaction to prove the session was unpinned.
   -
     description: 'unpin after transient error within a transaction and commit'
+    # Note: test utilizes targetedFailPoint, which is incompatible with
+    # load-balanced and useMultipleMongoses:true
+    runOnRequirements:
+      - topologies: [ sharded ]
     operations:
       -
         object: testRunner

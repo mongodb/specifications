@@ -20,7 +20,9 @@ schemaVersion: '1.4'
 
 runOnRequirements:
   - minServerVersion: "4.1.8"
-    topologies: [ sharded, load-balanced ]
+    # Note: tests utilize targetedFailPoint, which is incompatible with
+    # load-balanced and useMultipleMongoses:true
+    topologies: [ sharded ]
     # serverless proxy doesn't append error labels to errors in transactions
     # caused by failpoints (CLOUDP-88216)
     serverless: "forbid"
