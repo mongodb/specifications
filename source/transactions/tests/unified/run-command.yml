@@ -118,7 +118,7 @@ tests:
         name: startTransaction
         arguments:
           readPreference:
-            mode: Primary
+            mode: primary
       -
         object: *database1
         name: runCommand
@@ -179,7 +179,7 @@ tests:
             documents:
               - { _id: 1 }
           readPreference:
-            mode: Primary
+            mode: primary
           commandName: insert
         expectResult:
           'n': 1
@@ -229,7 +229,7 @@ tests:
           command:
             find: *collection_name
           readPreference:
-            mode: Secondary
+            mode: secondary
           commandName: find
         expectError:
           errorContains: 'read preference in a transaction must be primary'
@@ -241,7 +241,7 @@ tests:
         name: startTransaction
         arguments:
           readPreference:
-            mode: Secondary
+            mode: secondary
       -
         object: *database0
         name: runCommand

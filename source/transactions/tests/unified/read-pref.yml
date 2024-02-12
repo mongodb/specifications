@@ -120,7 +120,7 @@ tests:
         name: startTransaction
         arguments:
           readPreference:
-            mode: Primary
+            mode: primary
       -
         object: *collection0
         name: insertMany
@@ -182,7 +182,7 @@ tests:
         name: startTransaction
         arguments:
           readPreference:
-            mode: Secondary
+            mode: secondary
       -
         object: *collection0
         name: insertMany
@@ -246,7 +246,7 @@ tests:
         name: startTransaction
         arguments:
           readPreference:
-            mode: PrimaryPreferred
+            mode: primaryPreferred
       -
         object: *collection0
         name: insertMany
@@ -310,7 +310,7 @@ tests:
         name: startTransaction
         arguments:
           readPreference:
-            mode: Nearest
+            mode: nearest
       -
         object: *collection0
         name: insertMany
@@ -374,7 +374,7 @@ tests:
         name: startTransaction
         arguments:
           readPreference:
-            mode: Secondary
+            mode: secondary
       -
         object: *collection0
         name: insertOne
