@@ -49,8 +49,7 @@ tests:
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
-          kmip: 
-            delegated: true
+          kmip: {}
     operations:
       - name: insertOne
         arguments:

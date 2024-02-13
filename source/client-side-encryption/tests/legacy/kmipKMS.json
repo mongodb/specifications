@@ -267,9 +267,7 @@
       "clientOptions": {
         "autoEncryptOpts": {
           "kmsProviders": {
-            "kmip": {
-              "delegated": true
-            }
+            "kmip": {}
           }
         }
       },
