@@ -2690,13 +2690,6 @@ A rejected alternative API is to encrypt the lower and upper bound payloads sepa
 The lower and upper bound payloads must have a unique matching UUID. The lower and upper bound payloads are unique.
 This API requires handling the UUID and distinguishing the upper and lower bounds. Here are examples showing possible errors:
 
-What is the KMIP `delegated` option?
-------------------------------------
-
-By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key.
-If the `delegated` option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
-ensuring that the key encryption key never leaves the server. 
-
 .. code::
 
    uuid = UUID()
@@ -2749,6 +2742,13 @@ on-demand KMS credentials would require added work in drivers inspecting the
 KMS providers when obtaining credentials, as well as additional test coverage.
 Supporting on-demand KMS credentials for named KMS providers can be
 considered as future work if needed.
+
+What is the KMIP `delegated` option?
+------------------------------------
+
+By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key.
+If the `delegated` option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
+ensuring that the key encryption key never leaves the server. 
 
 Future work
 ===========
