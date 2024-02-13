@@ -1217,9 +1217,14 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - PROVIDER_NAME\
     Drivers MUST allow the user to specify the name of a built-in OIDC provider integration to use to
-    obtain credentials. If provided, the value MUST be one of `["aws"]`. If both `PROVIDER_NAME` and an
+    obtain credentials. If provided, the value MUST be one of `["aws", "azure"]`. If both `PROVIDER_NAME` and an
     [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
     `MongoClient`, the driver MUST raise an error.
+
+  - TOKEN_AUDIENCE\
+    The URI of the target resource. This property is currently only used and required by the Azure
+    built-in OIDC provider integration. If `TOKEN_AUDIENCE` is provided and `PROVIDER_NAME` is not `azure` or
+    `TOKEN_AUDIENCE` is not provided and `PROVIDER_NAME` is `azure`, the driver MUST raise an error.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
@@ -1250,9 +1255,9 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 Drivers MUST support all of the following built-in OIDC providers.
 
-####### AWS
+**AWS**
 
-The AWS provider is enabled by setting auth mechanism property `PROVIDER_NAME:aws`.
+The AWS provider integration is enabled by setting auth mechanism property `PROVIDER_NAME:aws`.
 
 If enabled, drivers MUST read the file path from environment variable `AWS_WEB_IDENTITY_TOKEN_FILE` and then read the
 OIDC access token from that file. The driver MUST use the contents of that file as value in the `jwt` field of the
@@ -1260,6 +1265,59 @@ OIDC access token from that file. The driver MUST use the contents of that file 
 
 Drivers MAY implement the AWS provider so that it conforms to the function signature of the
 [OIDC Callback](#oidc-callback) to prevent having to re-implement the AWS provider logic in the OIDC prose tests.
+
+**Azure**
+
+The Azure provider integration is enabled by setting auth mechanism property `PROVIDER_NAME:azure`.
+
+If enabled, drivers MUST call the
+[Azure Instance Metadata Service](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service)
+and parse the JSON response body.
+
+Make an HTTP GET request to
+
+```
+http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=<resource>&object_id=<object_id>
+```
+
+with headers
+
+```
+Accept: application/json
+Metadata: true
+```
+
+where `<resource>` is the value of the `TOKEN_AUDIENCE` mechanism property and `<object_id>` is the `username` from the
+connection string. If a `username` is not provided, the `object_id` query parameter should be omitted.
+
+The curl recipe below demonstrates the above, where `$TOKEN_AUDIENCE` is the value of the `TOKEN_AUDIENCE` mechanism
+property.
+
+```bash
+curl -X GET \
+  -H "Accept: application/json" \
+  -H "Metadata: true" \
+  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$TOKEN_AUDIENCE"
+```
+
+The JSON response will be in this format:
+
+```json
+{
+  "access_token": "eyJ0eXAi...",
+  "refresh_token": "",
+  "expires_in": "3599",
+  "expires_on": "1506484173",
+  "not_before": "1506480273",
+  "resource": "https://management.azure.com/",
+  "token_type": "Bearer"
+}
+```
+
+The driver MUST use the returned `"access_token"` value as the access token in a `JwtStepRequest`.
+
+For more details, see
+[How to use managed identities for Azure resources on an Azure VM to acquire an access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token).
 
 #### OIDC Callback
 
@@ -1572,7 +1630,7 @@ def invalidate(access_token):
 Drivers that support the [Human Authentication Flow](#human-authentication-flow) MUST also cache the `IdPInfo` and
 refresh token in the *Client Cache* when a [OIDC Human Callback](#oidc-human-callback) is configured.
 
-####### Authentication
+**Authentication**
 
 Use the following algorithm to authenticate a new connection:
 
@@ -1918,6 +1976,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-02-21: Added Azure built-in OIDC provider integration.
 
 - 2024-01-31: Migrated from reStructuredText to Markdown.
 
