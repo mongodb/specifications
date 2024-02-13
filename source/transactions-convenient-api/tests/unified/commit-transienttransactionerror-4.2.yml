@@ -1,12 +1,15 @@
 description: commit-transienttransactionerror-4.2
 
-schemaVersion: '1.3'
+schemaVersion: '1.4'
 
 runOnRequirements:
   - minServerVersion: '4.1.6'
     topologies: [ replicaset ]
   - minServerVersion: 4.1.8
     topologies: [ sharded, load-balanced ]
+    # serverless proxy doesn't append error labels to errors in transactions
+    # caused by failpoints (CLOUDP-88216)
+    serverless: forbid
 
 createEntities:
   - client:
