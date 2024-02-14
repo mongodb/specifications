@@ -1706,6 +1706,11 @@ testing, this parameter is expressed as an array of [operation](#operation) obje
 [test.operations](#test_operations)). Test runners MUST evaluate error and result assertions when executing these
 operations in the callback.
 
+Test runners MUST allow any errors from the callback operation(s) to propagate to `withTransaction`, irrespective of
+[ignoreResultAndError](#operation_ignoreResultAndError) or [expectError](#operation_expectError). For example, if a
+callback operation raises an error, it should be possible to assert that error at both the callback operation and
+`withTransaction` level.
+
 ### Bucket Operations
 
 These operations and their arguments may be documented in the following specifications:
@@ -3310,6 +3315,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-02-14: Clarify that errors raised from callback operations should always propagate to `withTransaction`.
 
 - 2024-02-12: Clarify that `targetedFailPoint` should only be used when `useMultipleMongoses` is true and not on
   load-balanced topologies.
