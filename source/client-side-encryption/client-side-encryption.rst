@@ -570,7 +570,6 @@ accept arbitrary strings at runtime for forward-compatibility.
 
    interface KMIPKMSOptions {
       endpoint: string;
-      delegated: boolean; // If true (recommended), the KMS provider will perform DEK encryption and decryption. Defaults to false.
    };
 
 The following shows an example object of :ts:`KMSProviders`:
