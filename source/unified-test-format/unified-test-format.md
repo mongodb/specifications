@@ -3311,8 +3311,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- 2024-02-12: Clarify that `targetedFailPoint` should only be used when
-  `useMultipleMongoses` is true and not on load-balanced topologies.
+- 2024-02-12: Clarify that `targetedFailPoint` should only be used when `useMultipleMongoses` is true and not on
+  load-balanced topologies.
 
 - 2024-02-06: Migrated from reStructuredText to Markdown.
 
