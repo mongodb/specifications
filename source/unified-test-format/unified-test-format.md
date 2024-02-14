@@ -1849,7 +1849,12 @@ The `targetedFailPoint` operation instructs the test runner to configure a fail 
 The following arguments are supported:
 
 - `failPoint`: Required document. The `configureFailPoint` command to be executed.
+
 - `session`: Required string. See [commonOptions_session](#commonOptions_session).
+
+  The client entity associated with this session SHOULD specify true for
+  [useMultipleMongoses](#entity_client_useMultipleMongoses). This is advised because targeted fail points are intended
+  to test mongos pinning, which warrants multiple mongoses.
 
 The mongos on which to set the fail point is determined by the `session` argument (after resolution to a session
 entity). Test runners MUST error if the session is not pinned to a mongos server at the time this operation is executed.
@@ -1861,6 +1866,11 @@ such an API is not available, but the test runner creates an internal MongoClien
 SHOULD use the internal MongoClient corresponding to the session's pinned server for this operation. Otherwise, test
 runners MUST create a new MongoClient that is directly connected to the session's pinned server for this operation. The
 new MongoClient instance MUST be closed once the command has finished executing.
+
+A test utilizing `targetedFailPoint` SHOULD NOT be permitted execute on a load balancer (according to
+[runOnRequirements](#runOnRequirements) or [test.runOnRequirements](#test_runOnRequirements)). This is advised because
+the `configureFailPoint` command does not use the session directly, which means there is no guarantee that the load
+balancer will direct the command to the intended mongos.
 
 When executing this operation, the test runner MUST keep a record of both the fail point and pinned mongos server so
 that the fail point can be disabled on the same mongos server after the test.
@@ -1880,6 +1890,9 @@ An example of this operation follows:
         failCommands: ["commitTransaction"]
         closeConnection: true
 ```
+
+Since mongos pinning only applies when multiple mongoses are used, tests SHOULD NOT use `targetedFailPoint` unless the
+session's MongoClient is configured with `useMultipleMongoses: true`.
 
 #### assertSessionTransactionState
 
@@ -3297,6 +3310,9 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-02-12: Clarify that `targetedFailPoint` should only be used when `useMultipleMongoses` is true and not on
+  load-balanced topologies.
 
 - 2024-02-06: Migrated from reStructuredText to Markdown.
 

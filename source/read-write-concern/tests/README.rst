@@ -57,7 +57,7 @@ Operation
 
 These tests check that the default write concern is omitted in operations.
 
-The spec test format is an extension of `transactions spec tests <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/README.rst>`_ with the following additions:
+The spec test format is an extension of the `transactions spec legacy test format <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/legacy-test-format.rst>`__ with the following additions:
 
 - ``writeConcern`` in the ``databaseOptions`` or ``collectionOptions`` may be an empty document to indicate a `server default write concern <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#servers-default-writeconcern>`_. For example, in libmongoc:
 
