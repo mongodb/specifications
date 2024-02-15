@@ -30,7 +30,7 @@ document are to be interpreted as described in
 Conflicting TLS options
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Per the `Connection String spec <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst#repeated-keys>`__,
+Per the `Connection String spec <../connection-string/connection-string-spec.md#repeated-keys>`__,
 the behavior of duplicates of most URI options is undefined. However, due
 to the security implications of certain options, drivers MUST raise an
 error to the user during parsing if any of the following circumstances
@@ -104,7 +104,7 @@ implement the old and new names as aliases. All keys and values MUST be
 encoded in UTF-8. All integer options are 32-bit unless specified otherwise.
 Note that all requirements and recommendations described in the `Connection
 String spec
-<https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst>`_
+<../connection-string/connection-string-spec.md>`_
 pertaining to URI options apply here.
 
 .. _uri.options:
