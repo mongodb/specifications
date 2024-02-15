@@ -25,7 +25,7 @@ guidance on writing test files. This is discussed in more detail in [Design Rati
 
 This test format can be used to define tests for the following specifications:
 
-- [Change Streams](../change-streams/change-streams.rst)
+- [Change Streams](../change-streams/change-streams.md)
 - [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst)
 - [CRUD](../crud/crud.rst)
 - [GridFS](../gridfs/gridfs-spec.rst)
@@ -1387,7 +1387,7 @@ evaluated consistently.
 
 These operations and their arguments may be documented in the following specifications:
 
-- [Change Streams](../change-streams/change-streams.rst)
+- [Change Streams](../change-streams/change-streams.md)
 - [Enumerating Databases](../enumerate-databases.rst)
 
 Client operations that require special handling or are not documented by an existing specification are described below.
@@ -1446,7 +1446,7 @@ test currently attempts to create a data key with an existing keyAltName or add 
 
 These operations and their arguments may be documented in the following specifications:
 
-- [Change Streams](../change-streams/change-streams.rst)
+- [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.rst)
 - [Enumerating Collections](../enumerate-collections.rst)
 
@@ -1542,7 +1542,7 @@ This operation SHOULD NOT be used in test files. See [database_createChangeStrea
 
 These operations and their arguments may be documented in the following specifications:
 
-- [Change Streams](../change-streams/change-streams.rst)
+- [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.rst)
 - [Index Management](../index-management/index-management.rst)
 
