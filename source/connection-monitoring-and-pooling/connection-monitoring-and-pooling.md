@@ -182,8 +182,7 @@ properties:
 - **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a
   MongoDB Handshake and Authentication as specified in the
   [Handshake](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst),
-  [OP_COMPRESSED](https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst), and
-  [Authentication](../auth/auth.md) specifications.
+  [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
 - **Perishable**: it is possible for a [Connection](#connection-1) to become **Perished**. A [Connection](#connection-1)
   is considered perished if any of the following are true:
   - **Stale:** The [Connection](#connection-1) 's generation does not match the generation of the parent pool

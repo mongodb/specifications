@@ -153,7 +153,7 @@ pertaining to URI options apply here.
 
    * - compressors
      - comma separated list of strings, e.g. "snappy,zlib"
-     - defined in `compression spec <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst#compressors>`_
+     - defined in `compression spec <../compression/OP_COMPRESSED.md#compressors>`_
      - no
      - The list of allowed compression types for wire protocol messages
        sent or received from the server
