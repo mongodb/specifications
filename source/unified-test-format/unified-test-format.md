@@ -32,7 +32,7 @@ This test format can be used to define tests for the following specifications:
 - [Retryable Reads](../retryable-reads/retryable-reads.rst)
 - [Retryable Writes](../retryable-writes/retryable-writes.rst)
 - [Sessions](../sessions/driver-sessions.rst)
-- [Transactions](../transactions/transactions.rst)
+- [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
 - [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst)
 
@@ -624,7 +624,7 @@ The structure of this object is as follows:
 
     - [Causal Consistency](../causal-consistency/causal-consistency.md#sessionoptions-changes)
     - [Snapshot Reads](../sessions/snapshot-sessions.rst#sessionoptions-changes)
-    - [Transactions](../transactions/transactions.rst#sessionoptions-changes)
+    - [Transactions](../transactions/transactions.md#sessionoptions-changes)
     - [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md#sessions)
 
     When specifying TransactionOptions for `defaultTransactionOptions`, the transaction options MUST remain nested under
@@ -3234,7 +3234,7 @@ Note: MongoDB 3.6+ requires that all shard servers be replica sets (see:
 ## Design Rationale
 
 This specification was primarily derived from the test formats used by the
-[Transactions](../transactions/transactions.rst) and [CRUD](../crud/crud.rst) specs, which have served models or other
+[Transactions](../transactions/transactions.md) and [CRUD](../crud/crud.rst) specs, which have served models or other
 specs.
 
 This specification commonly uses "SHOULD" when providing guidance on writing test files. While this may appear

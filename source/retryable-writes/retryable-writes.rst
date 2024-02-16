@@ -312,7 +312,7 @@ retrying.
 For more information about error labels, see the `Transactions specification`_.
 
 .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-.. _Transactions specification: ../transactions/transactions.rst#error-labels
+.. _Transactions specification: ../transactions/transactions.md#error-labels
 
 Generating Transaction IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

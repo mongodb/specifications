@@ -57,7 +57,7 @@ TransactionOptions
    `Transactions`_ specification. The structure of these options MAY vary across
    drivers (e.g. dictionary, typed class).
 
-.. _Transactions: ../transactions/transactions.rst
+.. _Transactions: ../transactions/transactions.md
 
 Naming Deviations
 -----------------
@@ -216,10 +216,10 @@ This method should perform the following sequence of actions:
 
 10. The transaction was committed successfully. Return immediately.
 
-.. _startTransaction: ../transactions/transactions.rst#starttransaction
-.. _state: ../transactions/transactions.rst#clientsession-changes
-.. _abortTransaction: ../transactions/transactions.rst#aborttransaction
-.. _commitTransaction: ../transactions/transactions.rst#committransaction
+.. _startTransaction: ../transactions/transactions.md#starttransaction
+.. _state: ../transactions/transactions.md#clientsession-changes
+.. _abortTransaction: ../transactions/transactions.md#aborttransaction
+.. _commitTransaction: ../transactions/transactions.md#committransaction
 
 ~~~~~~~~~~~
 Pseudo-code
@@ -349,7 +349,7 @@ by the transaction spec itself in order to benefit applications irrespective of
 whether they use ``withTransaction`` (see the corresponding section in the
 `Transactions spec Design Rationale`_).
 
-.. _Transactions spec Design Rationale: ../transactions/transactions.rst#majority-write-concern-is-used-when-retrying-committransaction
+.. _Transactions spec Design Rationale: ../transactions/transactions.md#majority-write-concern-is-used-when-retrying-committransaction
 
 The callback function has a flexible signature
 ----------------------------------------------
@@ -416,7 +416,7 @@ the following errors:
 
 .. _Retryable Writes: ../retryable-writes/retryable-writes.rst#terms
 
-.. _UnknownTransactionCommitResult: ../transactions/transactions.rst#unknowntransactioncommitresult
+.. _UnknownTransactionCommitResult: ../transactions/transactions.md#unknowntransactioncommitresult
 
 - Server selection failure
 - Retryable error (as defined in the `Retryable Writes`_ specification)

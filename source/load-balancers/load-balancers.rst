@@ -236,13 +236,13 @@ Behaviour With Transactions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When executing a transaction in load balancing mode, drivers MUST follow the rules outlined
-in `Sharded Transactions <../transactions/transactions.rst#sharded-transactions>`__ with one
+in `Sharded Transactions <../transactions/transactions.md#sharded-transactions>`__ with one
 exception: drivers MUST use the same connection for all commands in the transaction
 (excluding retries of commitTranscation and abortTransaction in some cases). Pinning
 to a single connection ensures that all commands in the transaction target the same
 service behind the load balancer. The rules for pinning to a connection and releasing
 a pinned connection are the same as those for server pinning in non-load balanced sharded
-transactions as described in `When to unpin <../transactions/transactions.rst#when-to-unpin>`__.
+transactions as described in `When to unpin <../transactions/transactions.md#when-to-unpin>`__.
 Drivers MUST NOT use the same connection for two concurrent transactions run under different
 sessions from the same client.
 
