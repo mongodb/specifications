@@ -61,7 +61,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "deleteOne": {
                   "namespace": {
@@ -155,7 +155,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "deleteOne": {
                   "namespace": {
@@ -249,7 +249,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "deleteOne": {
                   "namespace": {
@@ -343,7 +343,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "insertOne": {
                   "namespace": {
@@ -359,10 +359,7 @@
             "verboseResults": true
           },
           "expectError": {
-            "errorCode": 8,
-            "errorLabelsContain": [
-              "RetryableWriteError"
-            ]
+            "errorCode": 8
           }
         }
       ]
@@ -396,7 +393,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "insertOne": {
                   "namespace": {

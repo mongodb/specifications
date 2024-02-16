@@ -58,7 +58,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "deleteOne": {
                   "namespace": {
@@ -167,7 +167,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "deleteOne": {
                   "namespace": {

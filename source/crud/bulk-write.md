@@ -93,7 +93,7 @@ The `nsInfo` field contains the namespaces on which the write operations should 
 
 ##### `errorsOnly`
 
-This field corresponds to the `verboseResults` option defined on `BulkWriteOptions`. Its value should be specified as the opposite of `verboseResults`, or `true` if `verboseResults` is unspecified. Drivers MUST always define this field.
+This field corresponds to the `verboseResults` option defined on `BulkWriteOptions`. Its value should be `false` if `verboseResults` was set to `true`; otherwise, it should be `true`. This field MUST always be defined in the `bulkWrite` command regardless of whether a value for `verboseResults` was specified.
 
 #### Response
 
@@ -222,7 +222,11 @@ enum WriteModel {
 
 ##### Namespaces
 
-Each write model supplied to `Client.bulkWrite` in the `models` parameter MUST have a corresponding namespace that defines the collection on which the operation should be performed. Drivers SHOULD design this pairing in whichever way is most ergonomic for its language. For example, drivers may include a required `namespace` field in each `WriteModel` variant, accept a list of `(Namespace, WriteModel)` tuples for `models`, or define the following pair class:
+Each write model supplied to `Client.bulkWrite` in the `models` parameter MUST have a corresponding namespace that defines the collection on which the operation should be performed. Drivers SHOULD design this pairing in whichever way is most ergonomic for its language. For example, drivers may:
+
+- include a required `namespace` field in each `WriteModel` variant
+- accept a list of `(Namespace, WriteModel)` tuples for `models`
+- define the following pair class:
 
 ```
 
@@ -359,9 +363,9 @@ class BulkWriteException {
 
 ##### Top-level errors
 
-A top-level error is defined as any error that occurs during a bulk write that is not the result of an individual write operation failing or a write concern error. Possible top-level errors include, but are not limited to, network errors that occur when communicating with the server, command errors returned from the server, and client-side errors (e.g. an oversized insert document was provided). When a top-level error occurs, drivers MUST embed that error within a `BulkWriteException` as the `error` field and MUST include any results and/or non-top-level errors that have been observed so far in the `writeConcernErrors`, `writeErrors`, and `partialResults` fields.
+A top-level error is defined as any error that occurs during a bulk write that is not the result of an individual write operation failing or a write concern error. Possible top-level errors include, but are not limited to, network errors that occur when communicating with the server, command errors returned from the server, and client-side errors (e.g. an oversized insert document was provided). If individual operation results or write concern errors have already been observed prior to a top-level error occurring, drivers MUST embed the top-level error within a `BulkWriteException` as the `error` field to retain this information. Otherwise, drivers MAY throw an exception containing only the top-level error.
 
-If a retryable top-level error is encountered and the `bulkWrite` is retryable, drivers MUST perform a retry according to the retryable writes specification. Note that any bulk write that contains a `multi: true` operation (i.e. `UpdateMany` or `DeleteMany`) is not retryable. If the retry fails or if the bulk write or error was not retryable, drivers MUST halt execution for both ordered and unordered bulk writes and immediately throw a `BulkWriteException`.
+A top-level MUST halt execution of a bulk write for both ordered and unordered bulk writes. When a top-level error is encountered, drivers MUST NOT attempt to retrieve responses from the cursor or execute any further `bulkWrite` batches.
 
 ##### Write concern errors
 
@@ -369,11 +373,11 @@ At most one write concern error may be returned per `bulkWrite` command response
 
 ##### Individual write errors
 
-Failures of individual write operations are reported in the cursor of results returned from the server. Drivers MUST iterate the this cursor fully and record all errors in the `writeErrors` map. If an individual write error is encountered during an ordered bulk write, drivers MUST record the error in `writeErrors` and immediately throw a `BulkWriteException`. Otherwise, drivers MUST continue iterating the cursor and execute any further `bulkWrite` batches.
+Failures of individual write operations are reported in the cursor of results returned from the server. Drivers MUST iterate the this cursor fully and record all errors in the `writeErrors` map in `BulkWriteException`. If an individual write error is encountered during an ordered bulk write, drivers MUST record the error in `writeErrors` and immediately throw a `BulkWriteException`. Otherwise, drivers MUST continue iterating the cursor and execute any further `bulkWrite` batches.
 
 ### Command Batching
 
-Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method. Because the server imposes restrictions on the size of write operations, this means that a single call to `Client.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server. Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds one of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize`, or `maxMessageSizeBytes`. Each of these values can be retrieved from the selected server's `hello` command response.
+Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method. Because the server imposes restrictions on the size of write operations, this means that a single call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server. Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds one of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize`, or `maxMessageSizeBytes`. Each of these values can be retrieved from the selected server's `hello` command response.
 
 #### Number of Writes
 
@@ -391,7 +395,7 @@ When auto-encryption is enabled, drivers MUST NOT provide the `ops` and `nsInfo`
 
 ##### Unencrypted bulk writes with document sequences
 
-When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the combined size of these sequences does not exceed `maxMessageSizeBytes - 16,000`. `maxMessageSizeBytes` defines the maximum size for an entire `OP_MSG`, so 16KB is subtracted from `maxMessageSizeBytes` here to account for the bytes in the rest of the message.
+When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the combined size of these sequences does not exceed `maxMessageSizeBytes - 16,000`. `maxMessageSizeBytes` defines the maximum size for an entire `OP_MSG`, so 16KB is subtracted from `maxMessageSizeBytes` in this size limit to account for the bytes in the rest of the message.
 
 ##### Unencrypted bulk writes without document sequences
 
@@ -455,7 +459,3 @@ Returning results via a cursor rather than an array in the `bulkWrite` response 
 #### Why was the `verboseResults` option introduced, and why is its default `false`?
 
 The `bulkWrite` command returns top-level summary result counts and, optionally, individual results for each operation. Compiling the individual results server-side and consuming these results driver-side is less performant than only recording the summary counts. We expect that most users are not interested in the individual results of their operations and that most users will rely on defaults, so `verboseResults` defaults to `false` to improve performance in the common case.
-
-#### Why must all errors be embedded within a `BulkWriteException`?
-
-An error may occur at any point during the execution of the `MongoClient.bulkWrite` method, including after some individual writes have already been executed. Embedding errors in a `BulkWriteException` gives users more information about what had happened during their bulk write prior to the error occurring.

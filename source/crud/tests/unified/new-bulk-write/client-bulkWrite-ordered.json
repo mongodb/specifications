@@ -45,7 +45,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "insertOne": {
                   "namespace": {
@@ -116,7 +116,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "insertOne": {
                   "namespace": {
@@ -187,7 +187,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "insertOne": {
                   "namespace": {

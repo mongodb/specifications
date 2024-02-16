@@ -31,7 +31,7 @@ tests:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          requests:
+          models:
             - deleteOne:
                 namespace: &namespace
                   db: *database0Name
@@ -83,7 +83,7 @@ tests:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          requests:
+          models:
             - deleteOne:
                 namespace: &namespace
                   db: *database0Name

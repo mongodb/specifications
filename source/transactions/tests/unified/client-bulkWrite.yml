@@ -1,6 +1,11 @@
-description: "client bulkWrite results"
-
+description: "client bulkWrite transactions"
 schemaVersion: "1.18"
+runOnRequirements:
+  - minServerVersion: "8.0"
+    topologies:
+      - replicaset
+      - sharded
+      - load-balanced
 
 createEntities:
   - client:
@@ -9,15 +14,18 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: &database0Name crud-tests
+      databaseName: &database0Name transaction-tests
   - collection:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name coll0
+  - session:
+      id: &session0 session0
+      client: *client0
 
 initialData:
-  - collectionName: *collection0Name
-    databaseName: *database0Name
+  - databaseName: *database0Name
+    collectionName: *collection0Name
     documents:
       - { _id: 1, x: 11 }
       - { _id: 2, x: 22 }
@@ -27,45 +35,56 @@ initialData:
       - { _id: 7, x: 77 }
 
 tests:
-  - description: "client bulkWrite with verboseResults: true returns detailed results"
-    runOnRequirements:
-      - minServerVersion: "8.0"
+  - description: "transactional client bulkWrite"
     operations:
+      - object: *session0
+        name: startTransaction
       - object: *client0
         name: clientBulkWrite
         arguments:
-          models: &models
+          session: *session0
+          models:
             - insertOne:
-                namespace: &namespace
+                namespace:
                   db: *database0Name
                   coll: *collection0Name
                 document: &insertDoc
                   { _id: 8, x: 88 }
             - updateOne:
-                namespace: *namespace
+                namespace:
+                  db: *database0Name
+                  coll: *collection0Name
                 filter: &updateOneFilter
                   _id: 1
                 update: &updateOneUpdate
                   $inc: { x: 1 }
             - updateMany:
-                namespace: *namespace
+                namespace:
+                  db: *database0Name
+                  coll: *collection0Name
                 filter: &updateManyFilter
                   $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
                 update: &updateManyUpdate
                   $inc: { x: 2 }
             - replaceOne:
-                namespace: *namespace
+                namespace:
+                  db: *database0Name
+                  coll: *collection0Name
                 filter: &replaceOneFilter
                   _id: 4
                 replacement: &replacementDoc
                   { x: 44 }
                 upsert: true
             - deleteOne:
-                namespace: *namespace
+                namespace:
+                  db: *database0Name
+                  coll: *collection0Name
                 filter: &deleteOneFilter
                   _id: 5
             - deleteMany:
-                namespace: *namespace
+                namespace:
+                  db: *database0Name
+                  coll: *collection0Name
                 filter: &deleteManyFilter
                   $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
           verboseResults: true
@@ -96,44 +115,57 @@ tests:
               deletedCount: 1
             5:
               deletedCount: 2
+      - object: *session0
+        name: commitTransaction
     expectEvents:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
-                errorsOnly: false
-                ops: &ops
-                  -
-                    insert: 0
+                lsid: { $$sessionLsid: *session0 }
+                txnNumber: 1
+                startTransaction: true
+                autocommit: false
+                writeConcern: { $$exists: false }
+                ops:
+                  - insert: 0
                     document: *insertDoc
-                  -
-                    update: 0
+                  - update: 0
                     filter: *updateOneFilter
                     updateMods: *updateOneUpdate
                     multi: false
-                  -
-                    update: 0
+                  - update: 0
                     filter: *updateManyFilter
                     updateMods: *updateManyUpdate
                     multi: true
-                  -
-                    update: 0
+                  - update: 0
                     filter: *replaceOneFilter
                     updateMods: *replacementDoc
                     upsert: true
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter: *deleteOneFilter
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter: *deleteManyFilter
                     multi: true
-                nsInfo: &nsInfo
-                  -
-                    ns: "crud-tests.coll0"
+                nsInfo:
+                  - ns: "transaction-tests.coll0"
+                errorsOnly: false
+                ordered: true
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                lsid: { $$sessionLsid: *session0 }
+                txnNumber: 1
+                startTransaction: { $$exists: false }
+                autocommit: false
+                writeConcern: { $$exists: false }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -143,59 +175,3 @@ tests:
           - { _id: 3, x: 35 }
           - { _id: 4, x: 44 }
           - { _id: 8, x: 88 }
-  - description: "client bulkWrite with verboseResults: false omits detailed results"
-    runOnRequirements:
-      - minServerVersion: "8.0"
-    operations:
-      - object: *client0
-        name: clientBulkWrite
-        arguments:
-          models: *models
-          verboseResults: false
-        expectResult: &summaryResult
-          insertedCount: 1
-          upsertedCount: 1
-          matchedCount: 3
-          modifiedCount: 3
-          deletedCount: 3
-          insertResults:
-            $$unsetOrMatches: {}
-          updateResults:
-            $$unsetOrMatches: {}
-          deleteResults:
-            $$unsetOrMatches: {}
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              command:
-                bulkWrite: 1
-                errorsOnly: true
-                ops: *ops
-                nsInfo: *nsInfo
-    outcome:
-      - collectionName: *collection0Name
-        databaseName: *database0Name
-        documents: *outcomeDocuments
-  - description: "client bulkWrite defaults to verboseResults: false"
-    runOnRequirements:
-      - minServerVersion: "8.0"
-    operations:
-      - object: *client0
-        name: clientBulkWrite
-        arguments:
-          models: *models
-        expectResult: *summaryResult
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              command:
-                bulkWrite: 1
-                errorsOnly: true
-                ops: *ops
-                nsInfo: *nsInfo
-    outcome:
-      - collectionName: *collection0Name
-        databaseName: *database0Name
-        documents: *outcomeDocuments

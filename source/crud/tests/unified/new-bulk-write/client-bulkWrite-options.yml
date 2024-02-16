@@ -30,7 +30,7 @@ tests:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          requests:
+          models:
             - insertOne:
                 namespace: &namespace
                     db: *database0Name
@@ -70,7 +70,7 @@ tests:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          requests:
+          models:
             - insertOne:
                 namespace: *namespace
                 document: &doc4 { _id: 4, x: 44 }
@@ -108,7 +108,7 @@ tests:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          requests:
+          models:
             - updateOne:
                 namespace: *namespace
                 filter:

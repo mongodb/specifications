@@ -1009,6 +1009,7 @@ The following commands are allowed inside transactions:
 10. geoSearch
 11. create
 12. createIndexes on an empty collection created in the same transaction or on a non-existing collection
+13. bulkWrite
 
 ### Why don’t drivers automatically retry commit after a write concern timeout error?
 

@@ -78,7 +78,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "updateOne": {
                   "namespace": {
@@ -274,7 +274,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "updateOne": {
                   "namespace": {
@@ -508,7 +508,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "updateOne": {
                   "namespace": {
@@ -730,7 +730,7 @@
           "object": "client0",
           "name": "clientBulkWrite",
           "arguments": {
-            "requests": [
+            "models": [
               {
                 "updateOne": {
                   "namespace": {
