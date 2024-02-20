@@ -155,6 +155,32 @@ tests:
                     multi: { $$unsetOrMatches: false }
                     upsert: true
                 <<: *expectedApiVersion
+  
+  - description: "client bulkWrite appends declared API version"
+    operations:
+      - name: clientBulkWrite
+        object: *client
+        arguments:
+          models:
+            - insertOne:
+                namespace:
+                  db: *databaseName
+                  coll: *collectionName
+                document: { x: 1 }
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: *adminDatabaseName
+              command:
+                bulkWrite: 1
+                ops:
+                  - insert: 0
+                    document: { x: 1 }
+                nsInfo:
+                  - { ns: "versioned-api-tests.test" }
+                <<: *expectedApiVersion
 
   - description: "countDocuments appends declared API version"
     operations:
