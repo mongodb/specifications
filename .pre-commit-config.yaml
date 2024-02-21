@@ -61,3 +61,10 @@ repos:
   hooks:
   - id: codespell
     args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te"]
+
+# - repo: local
+#   hooks:
+#   - id: generate-index
+#     name: generate-index
+#     entry: python3 scripts/generate_index.py
+#     language: system
