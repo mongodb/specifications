@@ -42,7 +42,7 @@ This does not preclude a driver from offering more.
 Deviations
 ----------
 
-Please refer to `The CRUD specification's Guidance <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#guidance>`_ on how APIs may deviate between languages.
+Please refer to `The CRUD specification's Guidance <../crud/crud.md#guidance>`_ on how APIs may deviate between languages.
 
 Cursor iterating APIs MAY be offered via language syntax or predefined iterable methods.
 
@@ -223,7 +223,7 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
 
       /**
        * See the `cursorType` enum defined in the crud specification.
-       * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
+       * @see https://github.com/mongodb/specifications/blob/master../crud/crud.md#read
        *
        * Identifies the type of cursor this is for client side operations timeout to properly apply timeoutMode settings.
        *

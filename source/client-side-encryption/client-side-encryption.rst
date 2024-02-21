@@ -1333,11 +1333,11 @@ RewrapManyDataKeyResult
    }
 
 ``bulkWriteResult`` is the `result of the bulk write operation
-<../crud/crud.rst##write-results>`_ used to update the key vault collection with
+<../crud/crud.md##write-results>`_ used to update the key vault collection with
 one or more rewrapped data keys. If ``rewrapManyDataKey()`` does not find any
 matching keys to rewrap, no bulk write operation will be executed and this field
 will be unset. This field may also be unset if the bulk write operation is
-unacknowledged as permitted by the `CRUD API Spec <../crud/crud.rst#write-results>`_.
+unacknowledged as permitted by the `CRUD API Spec <../crud/crud.md#write-results>`_.
 
 See `Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?`_.
 

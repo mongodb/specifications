@@ -343,7 +343,7 @@ executed via a specific `CRUD`_ method (e.g. ``updateOne()``) or write command
 method (e.g. ``executeWriteCommand()``) within a MongoClient where retryable
 writes have been enabled and when the selected server supports retryable writes.
 
-.. _CRUD: ../crud/crud.rst
+.. _CRUD: ../crud/crud.md
 
 If your driver offers a generic command method on your database object (e.g.
 ``runCommand()``), it MUST NOT check the user's command document to determine if

@@ -198,7 +198,7 @@ closed on 5.0:
     {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0+
     {...}          // Kills server-side cursor. Necessary on 5.0+
 
-.. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
+.. _CRUD: https://github.com/mongodb/specifications/blob/mastercrud/crud.md#id16
 
 If there are not enough documents in the cursor to fulfill the **limit** defined, the cursor runs to exhaustion and is closed, returning a cursorId of 0 to the client.
 
