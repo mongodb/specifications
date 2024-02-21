@@ -30,7 +30,7 @@ document are to be interpreted as described in
 Conflicting TLS options
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Per the `Connection String spec <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst#repeated-keys>`__,
+Per the `Connection String spec <../connection-string/connection-string-spec.md#repeated-keys>`__,
 the behavior of duplicates of most URI options is undefined. However, due
 to the security implications of certain options, drivers MUST raise an
 error to the user during parsing if any of the following circumstances
@@ -104,7 +104,7 @@ implement the old and new names as aliases. All keys and values MUST be
 encoded in UTF-8. All integer options are 32-bit unless specified otherwise.
 Note that all requirements and recommendations described in the `Connection
 String spec
-<https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst>`_
+<../connection-string/connection-string-spec.md>`_
 pertaining to URI options apply here.
 
 .. _uri.options:
@@ -129,9 +129,9 @@ pertaining to URI options apply here.
 
    * - authMechanism
      - any string; valid values are defined in the `auth spec
-       <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
+       <../auth/auth.md#supported-authentication-methods>`_
      - None; default values for authentication exist for constructing authentication credentials per the
-       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       `auth spec <../auth/auth.md#supported-authentication-methods>`_,
        but there is no default for the URI option itself.
      - no
      - The authentication mechanism method to use for connection to the
@@ -146,14 +146,14 @@ pertaining to URI options apply here.
    * - authSource
      - any string
      - None; default values for authentication exist for constructing authentication credentials per the
-       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       `auth spec <../auth/auth.md#supported-authentication-methods>`_,
        but there is no default for the URI option itself.
      - no
      - The database that connections should authenticate against
 
    * - compressors
      - comma separated list of strings, e.g. "snappy,zlib"
-     - defined in `compression spec <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst#compressors>`_
+     - defined in `compression spec <../compression/OP_COMPRESSED.md#compressors>`_
      - no
      - The list of allowed compression types for wire protocol messages
        sent or received from the server
@@ -193,7 +193,7 @@ pertaining to URI options apply here.
    * - localThresholdMS
      - non-negative integer; 0 means 0 ms (i.e. the fastest eligible server
        must be selected)
-     - defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#localthresholdms>`__
+     - defined in the `server selection spec <../server-selection/server-selection.md#localthresholdms>`__
      - no
      - The amount of time beyond the fastest round trip time that a given
        server’s round trip time can take and still be eligible for server selection
@@ -259,8 +259,8 @@ pertaining to URI options apply here.
      - Default read concern for the client
 
    * - readPreference
-     - any string; currently supported values are defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`__, but must be lowercase camelCase, e.g. "primaryPreferred"
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`__
+     - any string; currently supported values are defined in the `server selection spec <../server-selection/server-selection.md#mode>`__, but must be lowercase camelCase, e.g. "primaryPreferred"
+     - defined in `server selection spec <../server-selection/server-selection.md#mode>`__
      - no
      - Default read preference for the client (excluding tags)
 
@@ -301,13 +301,13 @@ pertaining to URI options apply here.
 
    * - serverSelectionTimeoutMS
      - positive integer; a driver may also accept 0 to be used for a special case, provided that it documents the meaning
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontimeoutms>`__
+     - defined in `server selection spec <../server-selection/server-selection.md#serverselectiontimeoutms>`__
      - no
      - A timeout in milliseconds to block for server selection before raising an error
 
    * - serverSelectionTryOnce
      - "true" or "false"
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontryonce>`__
+     - defined in `server selection spec <../server-selection/server-selection.md#serverselectiontryonce>`__
      - required for single-threaded drivers
      - Scan the topology only once after a server selection failure instead of repeatedly until the server selection times out
 

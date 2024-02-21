@@ -12,7 +12,7 @@ Introduction
 This document describes the format of the driver spec tests included in the
 JSON and YAML files included in the ``legacy`` sub-directory. Tests in the
 ``unified`` directory are written using the `Unified Test Format
-<../../unified-test-format/unified-test-format.rst>`_.
+<../../unified-test-format/unified-test-format.md>`_.
 
 The ``timeoutMS.yml``/``timeoutMS.json`` files in this directory contain tests
 for the ``timeoutMS`` option and its application to the client-side encryption
@@ -39,7 +39,7 @@ are true:
 Spec Test Format
 ================
 
-The spec tests format is an extension of `transactions spec tests <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/README.rst>`_ with some additions:
+The spec tests format is an extension of the `transactions spec legacy test format <../../transactions/tests/legacy-test-format.md>`__ with some additions:
 
 - A ``json_schema`` to set on the collection used for operations.
 

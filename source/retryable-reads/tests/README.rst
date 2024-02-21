@@ -11,7 +11,7 @@ Introduction
 
 The YAML and JSON files in the ``legacy`` and ``unified`` sub-directories are platform-independent tests
 that drivers can use to prove their conformance to the Retryable Reads spec. Tests in the
-``unified`` directory are written using the `Unified Test Format <../../unified-test-format/unified-test-format.rst>`_.
+``unified`` directory are written using the `Unified Test Format <../../unified-test-format/unified-test-format.md>`_.
 Tests in the ``legacy`` directory are written using the format described below.
 
 Prose tests, which are not easily expressed in YAML, are also presented

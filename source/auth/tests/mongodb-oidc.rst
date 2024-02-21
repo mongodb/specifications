@@ -148,7 +148,7 @@ Human Authentication Flow Prose Tests
 =====================================
 
 Drivers that support the `Human Authentication Flow
-<../auth/auth.rst#human-authentication-flow>`_ MUST implement all prose tests in
+<../auth.md#human-authentication-flow>`_ MUST implement all prose tests in
 this section. Unless otherwise noted, all ``MongoClient`` instances MUST be
 configured with ``retryReads=false``.
 

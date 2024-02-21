@@ -207,7 +207,7 @@ Conversion table
 
 .. [#] See https://www.mongodb.com/docs/manual/reference/database-references/#dbrefs
 
-.. _Decimal128 specification: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst#writing-to-extended-json
+.. _Decimal128 specification: ./bson-decimal128/decimal128.md#writing-to-extended-json
 
 Representation of Non-finite Numeric Values
 ...........................................
@@ -225,7 +225,7 @@ values are encoded as follows:
 |NaN (all variants)                      |``NaN``                                 |
 +----------------------------------------+----------------------------------------+
 
-.. _Extended JSON format for the Decimal128 type: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst#to-string-representation
+.. _Extended JSON format for the Decimal128 type: ./bson-decimal128/decimal128.md#to-string-representation
 
 For example, a BSON floating-point number with a value of negative infinity
 would be encoded as Extended JSON as follows::

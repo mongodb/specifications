@@ -182,7 +182,7 @@ A server is judged "suitable" for an operation if the client can use it
 for a particular operation.
 For example, a write requires a standalone, primary, or mongos.
 Suitability is fully specified in the `Server Selection Spec
-<https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst>`_.
+<../server-selection/server-selection.md>`_.
 
 address
 ```````
@@ -1665,7 +1665,7 @@ are prone to several classes of race, for example:
 * Authentication fails, the server requires SCRAM-SHA-1.
 
 Better to call hello or legacy hello for each new socket, as required by the `Auth Spec
-<https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`_,
+<../auth/auth.md>`_,
 and use the hello or legacy hello response associated with that socket
 for maxWireVersion, maxBsonObjectSize, etc.:
 all the fields required to correctly communicate with the server.
@@ -2559,5 +2559,5 @@ Changelog
 .. _single-threaded monitoring: server-monitoring.rst#single-threaded-monitoring
 .. _Connection Monitoring and Pooling spec: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
 .. _CMAP spec: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
-.. _Authentication spec: /source/auth/auth.rst
+.. _Authentication spec: ../auth/auth.md
 .. _Server Monitoring (Measuring RTT): server-monitoring.rst#measuring-rtt

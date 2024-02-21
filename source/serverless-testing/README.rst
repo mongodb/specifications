@@ -65,7 +65,7 @@ specify a username and password (see: `Required Variables`_) when connecting to
 Drivers MUST use ``SERVERLESS_URI`` to configure both internal clients and
 clients under test (as described in the `Unified Test Format spec`_).
 
-.. _Unified Test Format spec: ../unified-test-format/unified-test-format.rst
+.. _Unified Test Format spec: ../unified-test-format/unified-test-format.md
 
 Required Variables
 ~~~~~~~~~~~~~~~~~~

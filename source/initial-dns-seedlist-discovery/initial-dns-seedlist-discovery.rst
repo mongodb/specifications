@@ -26,8 +26,8 @@ maintain seed lists at an application level.
 This specification builds on the `Connection String`_ specification. It adds a
 new protocol scheme and modifies how the `Host Information`_ is interpreted.
 
-.. _`Connection String`: ../connection-string/connection-string-spec.rst
-.. _`Host Information`: ../connection-string/connection-string-spec.rst#host-information
+.. _`Connection String`: ../connection-string/connection-string-spec.md
+.. _`Host Information`: ../connection-string/connection-string-spec.md#host-information
 
 META
 ====
@@ -196,7 +196,7 @@ A Client MUST use options specified in the Connection String, and options
 passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), to override options provided through TXT records.
 
-.. _`Connection String spec`: ../connection-string/connection-string-spec.rst#defining-connection-options
+.. _`Connection String spec`: ../connection-string/connection-string-spec.md#defining-connection-options
 
 If any connection string option in a TXT record is incorrectly formatted, a
 Client MUST throw a parse exception.

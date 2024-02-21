@@ -182,8 +182,7 @@ properties:
 - **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a
   MongoDB Handshake and Authentication as specified in the
   [Handshake](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst),
-  [OP_COMPRESSED](https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst), and
-  [Authentication](https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst) specifications.
+  [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
 - **Perishable**: it is possible for a [Connection](#connection-1) to become **Perished**. A [Connection](#connection-1)
   is considered perished if any of the following are true:
   - **Stale:** The [Connection](#connection-1) 's generation does not match the generation of the parent pool
@@ -1304,7 +1303,7 @@ endpoint it is associated with is available or not. This enables the following b
    Without the "paused" state, the pool would have no way of determining when to begin establishing background
    connections again, so it would just continually attempt, and often fail, to create connections until minPoolSize was
    satisfied, even after repeated failures. This could unnecessarily waste resources both server and driver side.
-1. The pool can evict requests that enter the WaitQueue after the pool was cleared but before the server was in a known
+2. The pool can evict requests that enter the WaitQueue after the pool was cleared but before the server was in a known
    state again. Such requests can occur when a server is selected at the same time as it becomes marked as Unknown in
    highly concurrent workloads. Without the "paused" state, the pool would attempt to service these requests, since it
    would assume they were routed to the pool because its endpoint was available, not because of a race between SDAM and
