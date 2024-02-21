@@ -2941,7 +2941,7 @@ possible runtime errors.
 
 After dropping, creating and populating initial data for all collections, the test runner MUST get the latest cluster time 
 from the internal MongoClient and store it for later use when creating session entities. A simple way to get the latest 
-cluster time is to execute a `ping` commmand and get the value of the `$clusterTime` field in the reply.
+cluster time is to execute a `ping` command and get the value of the `$clusterTime` field in the reply.
 
 Create a new [Entity Map](#entity-map) that will be used for this test. If [createEntities](#createentities) is
 specified, the test runner MUST create each [entity](#entity) accordingly and add it to the map. If the topology is a
