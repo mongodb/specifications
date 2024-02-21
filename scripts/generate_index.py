@@ -3,9 +3,7 @@ from pathlib import Path
 source = Path(__file__).resolve().parent.parent / "source"
 source = source.resolve()
 info = {}
-for p in Path(source).rglob("*"):
-    if p.suffix not in ['.md']:
-        continue
+for p in Path(source).rglob("*.md"):
     relpath = os.path.relpath(p.parent, start=source)
     if "tests" in relpath:
         continue
