@@ -316,7 +316,7 @@ This test MUST be executed against a sharded cluster that supports
 Changelog
 =========
 
-:TBD: Update mongos redirection prose tests to workaround SDAM behavior
+:2024-02-21: Update mongos redirection prose tests to workaround SDAM behavior
              preventing execution of deprioritization code paths.
 
 :2023-08-26 Add prose tests for retrying in a sharded cluster.

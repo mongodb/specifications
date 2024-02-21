@@ -544,7 +544,7 @@ and sharded clusters.
 Changelog
 =========
 
-:TBD: Update prose test 4 and 5 to workaround SDAM behavior preventing
+:2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing
              execution of deprioritization code paths.
 
 :2024-01-05: Fix typo in prose test title.
