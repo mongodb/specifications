@@ -223,7 +223,7 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
 
       /**
        * See the `cursorType` enum defined in the crud specification.
-       * @see https://github.com/mongodb/specifications/blob/master../crud/crud.md#read
+       * @see ../crud/crud.md#read
        *
        * Identifies the type of cursor this is for client side operations timeout to properly apply timeoutMode settings.
        *
