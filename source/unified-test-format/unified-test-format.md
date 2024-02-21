@@ -2937,11 +2937,11 @@ runner MUST first drop the collection. If a `createOptions` document is present,
 command to create the collection with the specified options. The test runner MUST then insert the specified documents
 (if any). If no documents are present and `createOptions` is not set, the test runner MUST create the collection. If the
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
-possible runtime errors. 
+possible runtime errors.
 
-After dropping, creating and populating initial data for all collections, the test runner MUST get the latest cluster time 
-from the internal MongoClient and store it for later use when creating session entities. A simple way to get the latest 
-cluster time is to execute a `ping` command and get the value of the `$clusterTime` field in the reply.
+After dropping, creating and populating initial data for all collections, the test runner MUST get the latest cluster
+time from the internal MongoClient and store it for later use when creating session entities. A simple way to get the
+latest cluster time is to execute a `ping` command and get the value of the `$clusterTime` field in the reply.
 
 Create a new [Entity Map](#entity-map) that will be used for this test. If [createEntities](#createentities) is
 specified, the test runner MUST create each [entity](#entity) accordingly and add it to the map. If the topology is a
@@ -2949,8 +2949,8 @@ sharded cluster, the test runner MUST handle [useMultipleMongoses](<>) according
 entities. If the topology type is `LoadBalanced`, client entities MUST be initialized with the appropriate load balancer
 connection string as discussed in [useMultipleMongoses](<>).
 
-For each session entity, advance the cluster time of the `ClientSession` to the latest cluster time (recorded earlier after 
-populating initial data)
+For each session entity, advance the cluster time of the `ClientSession` to the latest cluster time (recorded earlier
+after populating initial data)
 
 If the test might execute a `distinct` command within a sharded transaction, for each target collection the test runner
 SHOULD execute a non-transactional `distinct` command on each mongos server using an internal MongoClient. See
