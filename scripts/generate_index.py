@@ -26,4 +26,4 @@ index_file = source / "index.md"
 with index_file.open("w") as fid:
     fid.write('# MongoDB Specifications\n\n')
     for name in sorted(info):
-        fid.write(f'[{name}]({info[name]})\n')
+        fid.write(f'- [{name}]({info[name]})\n')
