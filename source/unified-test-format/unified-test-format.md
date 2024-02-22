@@ -2134,6 +2134,8 @@ An example of this operation follows:
 Use a `listIndexes` command to check whether the index exists. Note that it is currently not possible to run
 `listIndexes` from within a transaction.
 
+<div id="operation_createEntities">
+
 #### createEntities
 
 The `createEntities` operation instructs the test runner to create the provided entities and store them in the current
@@ -2939,9 +2941,9 @@ command to create the collection with the specified options. The test runner MUS
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
 possible runtime errors.
 
-After dropping, creating and populating initial data for all collections, the test runner MUST get the latest cluster
-time from the internal MongoClient and store it for later use when creating session entities. A simple way to get the
-latest cluster time is to execute a `ping` command and get the value of the `$clusterTime` field in the reply.
+If the test might execute a sharded transaction, the test runner MUST collect the latest cluster time from processing
+[initialData](#initialData). See
+[MigrationConflict Errors on Sharded Clusters](#migrationconflict-errors-on-sharded-clusters) for more information.
 
 Create a new [Entity Map](#entity-map) that will be used for this test. If [createEntities](#createentities) is
 specified, the test runner MUST create each [entity](#entity) accordingly and add it to the map. If the topology is a
@@ -2949,8 +2951,9 @@ sharded cluster, the test runner MUST handle [useMultipleMongoses](<>) according
 entities. If the topology type is `LoadBalanced`, client entities MUST be initialized with the appropriate load balancer
 connection string as discussed in [useMultipleMongoses](<>).
 
-For each session entity, advance the cluster time of the `ClientSession` to the latest cluster time (recorded earlier
-after populating initial data)
+If the test might execute a sharded transaction, the test runner MUST advance the cluster time of any session entities
+created during the test using the cluster time collected from processing [initialData](#initialData). See
+[MigrationConflict Errors on Sharded Clusters](#migrationconflict-errors-on-sharded-clusters) for more information.
 
 If the test might execute a `distinct` command within a sharded transaction, for each target collection the test runner
 SHOULD execute a non-transactional `distinct` command on each mongos server using an internal MongoClient. See
@@ -3097,6 +3100,32 @@ impossible to guarantee that an existing transaction will not block test executi
 SHOULD either ignore Unauthorized(13) command failures or avoid calling `killAllSessions` altogether when connected to
 Atlas (e.g. by detecting `mongodb.net` in the hostname or allowing the test runner to be configured externally).
 
+##### MigrationConflict Errors on Sharded Clusters
+
+Following [SERVER-82353](https://jira.mongodb.org/browse/SERVER-82353), drivers may encounter MigrationConflict errors
+when executing transactions on sharded clusters due to an outdated cluster time. For example:
+
+```
+Transaction fe0b9a7d-4b64-4e38-aad2-4c7dd5ab0c2b - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= -  - :1 was aborted on statement 0 due to: a non-retryable snapshot error :: caused by :: Encountered error from localhost:27217 during a transaction :: caused by :: Database transaction-tests has undergone a catalog change operation at time Timestamp(1708062645, 94) and no longer satisfies the requirements for the current transaction which requires Timestamp(1708062645, 93). Transaction will be aborted.
+```
+
+To work around this issue, a test runner MUST collect the latest cluster time from processing
+[initialData](#initialData), which is executed using the internal MongoClient, and use it to advance the cluster of time
+of every session entity created during the test, by either [createEntities](#createentities) or the
+[special test operation](#operation_createEntities)). This will ensure that the cluster time is gossipped to any other
+mongo hosts that may be used to execute a transaction during the test.
+
+Depending on the test runner implementation, the cluster time may be collected in various ways. For example:
+
+- Executing a `ping` command against the same mongos host used for [initialData](#initialData) and read the
+  `$clusterTime` response field
+- Execute all operations for [initialData](#initialData) using an explicit session and read its cluster time after the
+  last operation.
+
+This logic is only necessary for tests that might execute a sharded transaction (i.e.
+[test.operations](#test_operations) includes `startTransaction` or `withTransaction` and the topology is sharded or
+load-balanced). To ease the implementation, test runners MAY apply this logic to *every* test.
+
 ##### StaleDbVersion Errors on Sharded Clusters
 
 When a shard receives its first command that contains a `databaseVersion`, the shard returns a StaleDbVersion error and
@@ -3107,7 +3136,7 @@ error to the client. For example:
 Command distinct failed: Transaction aa09e296-472a-494f-8334-48d57ab530b6:1 was aborted on statement 0 due to: an error from cluster data placement change :: caused by :: got stale databaseVersion response from shard sh01 at host localhost:27217 :: caused by :: don't know dbVersion.
 ```
 
-To workaround this limitation, a test runners MUST execute a non-transactional `distinct` command on each mongos server
+To work around this limitation, a test runners MUST execute a non-transactional `distinct` command on each mongos server
 before running any test that might execute `distinct` within a transaction. To ease the implementation, test runners MAY
 execute `distinct` before *every* test.
 
