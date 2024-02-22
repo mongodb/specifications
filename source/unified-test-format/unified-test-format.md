@@ -3111,15 +3111,15 @@ Transaction fe0b9a7d-4b64-4e38-aad2-4c7dd5ab0c2b - 47DEQpj8HBSa+/TImW+5JCeuQeRkm
 ```
 
 To work around this issue, a test runner MUST collect the latest cluster time from processing
-[initialData](#initialData), which is executed using the internal MongoClient, and use it to advance the cluster time
-of every session entity created during the test, by either [createEntities](#createentities) or the
+[initialData](#initialData), which is executed using the internal MongoClient, and use it to advance the cluster time of
+every session entity created during the test, by either [createEntities](#createentities) or the
 [special test operation](#operation_createEntities)). This will ensure that the cluster time is gossipped to any other
 mongo hosts that may be used to execute a transaction during the test.
 
 Depending on the test runner implementation, the cluster time may be collected in various ways. For example:
 
-- Execute a `ping` command against the same mongos host used for [initialData](#initialData) and read the
-  `$clusterTime` response field
+- Execute a `ping` command against the same mongos host used for [initialData](#initialData) and read the `$clusterTime`
+  response field
 - Execute all operations for [initialData](#initialData) using an explicit session and read its cluster time after the
   last operation.
 
