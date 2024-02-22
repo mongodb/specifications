@@ -2941,8 +2941,8 @@ command to create the collection with the specified options. The test runner MUS
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
 possible runtime errors.
 
-If the test might execute a sharded transaction, the test runner MUST collect the latest cluster time from processing
-[initialData](#initialData). See
+If the test might execute a transaction against a sharded deployment, the test runner MUST collect the latest cluster
+time from processing [initialData](#initialData). See
 [MigrationConflict Errors on Sharded Clusters](#migrationconflict-errors-on-sharded-clusters) for more information.
 
 Create a new [Entity Map](#entity-map) that will be used for this test. If [createEntities](#createentities) is
@@ -2951,8 +2951,9 @@ sharded cluster, the test runner MUST handle [useMultipleMongoses](<>) according
 entities. If the topology type is `LoadBalanced`, client entities MUST be initialized with the appropriate load balancer
 connection string as discussed in [useMultipleMongoses](<>).
 
-If the test might execute a sharded transaction, the test runner MUST advance the cluster time of any session entities
-created during the test using the cluster time collected from processing [initialData](#initialData). See
+If the test might execute a transaction against a sharded deployment, the test runner MUST advance the cluster time of
+any session entities created during the test using the cluster time collected from processing
+[initialData](#initialData). See
 [MigrationConflict Errors on Sharded Clusters](#migrationconflict-errors-on-sharded-clusters) for more information.
 
 If the test might execute a `distinct` command within a sharded transaction, for each target collection the test runner
@@ -3122,7 +3123,7 @@ Depending on the test runner implementation, the cluster time may be collected i
 - Execute all operations for [initialData](#initialData) using an explicit session and read its cluster time after the
   last operation.
 
-This logic is only necessary for tests that might execute a sharded transaction (i.e.
+This logic is only necessary for tests that might execute a transaction against a sharded deployment transaction (i.e.
 [test.operations](#test_operations) includes `startTransaction` or `withTransaction` and the topology is sharded or
 load-balanced). To ease the implementation, test runners MAY apply this logic to *every* test.
 
