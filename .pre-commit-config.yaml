@@ -61,3 +61,6 @@ repos:
   hooks:
   - id: codespell
     args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te"]
+    exclude: |
+            (?x)^(.*\.rst
+            )$
