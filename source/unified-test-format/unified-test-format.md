@@ -213,9 +213,9 @@ Test runners MUST support the following types of entities:
 
   See [Cursor Operations](#cursor-operations) for a list of operations.
 
-- Event list. See [storeEventsAsEntities](<>). The event list MUST store BSON documents. The type of the list itself is
-  not prescribed by this specification. Test runner MAY use a BSON array or a thread-safe list data structure to
-  implement the event list.
+- Event list. See [storeEventsAsEntities](#entity_client_storeEventsAsEntities). The event list MUST store BSON
+  documents. The type of the list itself is not prescribed by this specification. Test runner MAY use a BSON array or a
+  thread-safe list data structure to implement the event list.
 
 - All known BSON types and/or equivalent language types for the target driver. For the present version of the spec, the
   following BSON types are known: 0x01-0x13, 0x7F, 0xFF.
@@ -489,7 +489,7 @@ The structure of this object is as follows:
     `observeSensitiveCommands` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring events are specified in
-    [observeEvents](<>).
+    [observeEvents](#entity_client_observeEvents).
 
   <div id="entity_client_observeSensitiveCommands">
 
@@ -658,7 +658,7 @@ The structure of this object is as follows:
 #### storeEventsAsEntity
 
 A list of one or more events that will be observed on a client and collectively stored within an entity. This object is
-used within [storeEventsAsEntities](<>).
+used within [storeEventsAsEntities](#entity_client_storeEventsAsEntities).
 
 The structure of this object is as follows:
 
@@ -957,8 +957,8 @@ The structure of each object is as follows:
   for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
   events. Defaults to `command` if omitted.
 - `events`: Required array of [expectedEvent](#expectedevent) objects. List of events, which are expected to be observed
-  (in this order) on the corresponding client while executing [operations](<>). If the array is empty, the test runner
-  MUST assert that no events were observed on the client (excluding ignored events).
+  (in this order) on the corresponding client while executing [operations](#test_operations). If the array is empty, the
+  test runner MUST assert that no events were observed on the client (excluding ignored events).
 - `ignoreExtraEvents`: Optional boolean. Specifies how the `events` array is matched against the observed events. If
   `false`, observed events after all specified events have matched MUST cause a test failure; if `true`, observed events
   after all specified events have been matched MUST NOT cause a test failure. Defaults to `false`.
@@ -1190,16 +1190,16 @@ The structure of each object is as follows:
 - `client`: Required string. Client entity for which the messages are expected to be observed. See
   [commonOptions_client](#commonOptions_client).
 - `messages`: Required array of [expectedLogMessage](#expectedlogmessage) objects. List of messages, which are expected
-  to be observed (in this order) on the corresponding client while executing [operations](<>). If the array is empty,
-  the test runner MUST assert that no messages were observed on the client. The driver MUST assert that the messages
-  produced are an exact match, i.e. that the expected and actual message counts are the same and that there are no extra
-  messages emitted by the client during the test run. Note: `ignoreMessages` and `ignoreExtraMessages` may exclude log
-  messages from this evaluation.
+  to be observed (in this order) on the corresponding client while executing [operations](#test_operations). If the
+  array is empty, the test runner MUST assert that no messages were observed on the client. The driver MUST assert that
+  the messages produced are an exact match, i.e. that the expected and actual message counts are the same and that there
+  are no extra messages emitted by the client during the test run. Note: `ignoreMessages` and `ignoreExtraMessages` may
+  exclude log messages from this evaluation.
 - `ignoreMessages`: Optional array of [expectedLogMessage](#expectedlogmessage) objects. Unordered set of messages,
-  which MUST be ignored on the corresponding client while executing [operations](<>). The test runner MUST exclude all
-  log messages from observed messages that match any of the messages in `ignoreMessages` array before `messages`
-  evaluation. Matching rules used to match messages in `ignoreMessages` are identical to match rules used for `messages`
-  matching.
+  which MUST be ignored on the corresponding client while executing [operations](#test_operations). The test runner MUST
+  exclude all log messages from observed messages that match any of the messages in `ignoreMessages` array before
+  `messages` evaluation. Matching rules used to match messages in `ignoreMessages` are identical to match rules used for
+  `messages` matching.
 - `ignoreExtraMessages`: Optional boolean. Specifies how the `messages` array is matched against the observed logs. If
   `false`, observed logs after all specified logs have matched MUST cause a test failure; if `true`, observed logs after
   all specified logs have been matched MUST NOT cause a test failure. Defaults to `false`.
@@ -1360,13 +1360,13 @@ directly within [operation.arguments](#operation_arguments) (e.g. `upsert` for `
 
 #### Special Handling for Arguments
 
-If `session` is specified in [operation.arguments](<>), it is defined according to
+If `session` is specified in [operation.arguments](#operation_arguments), it is defined according to
 [commonOptions_session](#commonOptions_session). Test runners MUST resolve the `session` argument to
 [session](#entity_session) entity *before* passing it as a parameter to any API method.
 
-If `readConcern`, `readPreference`, or `writeConcern` are specified in [operation.arguments](<>), test runners MUST
-interpret them according to the corresponding definition in [Common Options](#common-options) and MUST convert the value
-into the appropriate object *before* passing it as a parameter to any API method.
+If `readConcern`, `readPreference`, or `writeConcern` are specified in [operation.arguments](#operation_arguments), test
+runners MUST interpret them according to the corresponding definition in [Common Options](#common-options) and MUST
+convert the value into the appropriate object *before* passing it as a parameter to any API method.
 
 #### Converting Returned Model Objects to Documents
 
@@ -1374,7 +1374,7 @@ For operations that return a model object (e.g. `BulkWriteResult` for `bulkWrite
 model object to a document when evaluating [expectResult](#operation_expectResult) or
 [saveResultAsEntity](#operation_saveResultAsEntity). Similarly, for operations that may return iterables of model
 objects (e.g. `DatabaseInfo` for `listDatabases`), the test runner MUST convert the iterable to an array of documents
-when evaluating [expectResult](<>) or [saveResultAsEntity](<>).
+when evaluating [expectResult](#operation_expectResult) or [saveResultAsEntity](#operation_saveResultAsEntity).
 
 #### Iterating Returned Iterables
 
@@ -1822,10 +1822,11 @@ The following arguments are supported:
 
 - `client`: Required string. See [commonOptions_client](#commonOptions_client).
 
-  The client entity SHOULD specify false for [useMultipleMongoses](<>) if this operation could be executed on a sharded
-  topology (according to [runOnRequirements](#runOnRequirements) or [test.runOnRequirements](#test_runOnRequirements)).
-  This is advised because server selection rules for mongos could lead to unpredictable behavior if different servers
-  were selected for configuring the fail point and executing subsequent operations.
+  The client entity SHOULD specify false for [useMultipleMongoses](#entity_client_useMultipleMongoses) if this operation
+  could be executed on a sharded topology (according to [runOnRequirements](#runOnRequirements) or
+  [test.runOnRequirements](#test_runOnRequirements)). This is advised because server selection rules for mongos could
+  lead to unpredictable behavior if different servers were selected for configuring the fail point and executing
+  subsequent operations.
 
 When executing this operation, the test runner MUST keep a record of the fail point so that it can be disabled after the
 test. The test runner MUST also ensure that the `configureFailPoint` command is excluded from the list of observed
@@ -1966,7 +1967,7 @@ The following arguments are supported:
 
 - `client`: Required string. See [commonOptions_client](#commonOptions_client).
 
-  The client entity SHOULD include "commandStartedEvent" in [observeEvents](<>).
+  The client entity SHOULD include "commandStartedEvent" in [observeEvents](#entity_client_observeEvents).
 
 The test runner MUST fail this assertion if fewer than two CommandStartedEvents have been observed on the client or if
 either command does not include an `lsid` field.
@@ -1990,7 +1991,7 @@ The following arguments are supported:
 
 - `client`: Required string. See [commonOptions_client](#commonOptions_client).
 
-  The client entity SHOULD include "commandStartedEvent" in [observeEvents](<>).
+  The client entity SHOULD include "commandStartedEvent" in [observeEvents](#entity_client_observeEvents).
 
 The test runner MUST fail this assertion if fewer than two CommandStartedEvents have been observed on the client or if
 either command does not include an `lsid` field.
@@ -2565,7 +2566,7 @@ The rules for comparing documents and arrays are discussed in more detail in sub
 *other* than documents and arrays, test runners MAY adopt any of the following approaches to compare expected and actual
 values, as long as they are consistent:
 
-- Convert both values to relaxed or canonical [Extended JSON](<>) and compare strings
+- Convert both values to relaxed or canonical [Extended JSON](../extended-json.rst) and compare strings
 - Convert both values to BSON, and compare bytes
 - Convert both values to native representations, and compare accordingly
 
@@ -2586,11 +2587,11 @@ present in the expected document. Examples of root-level documents include, but 
 
 - `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)
 - `reply` for [CommandSucceededEvent](#expectedEvent_commandSucceededEvent)
-- [expectResult](<>) for `findOneAndUpdate` [Collection Operations](#collection-operations)
-- [expectResult](<>) for [iterateUntilDocumentOrError](#iterateuntildocumentorerror)
+- [expectResult](#operation_expectResult) for `findOneAndUpdate` [Collection Operations](#collection-operations)
+- [expectResult](#operation_expectResult) for [iterateUntilDocumentOrError](#iterateuntildocumentorerror)
 - [expectedError_errorResponse](#expectedError_errorResponse)
-- each array element in [expectResult](<>) for [find](#find) or [collection_aggregate](#collection_aggregate)
-  [Collection Operations](#collection-operations)
+- each array element in [expectResult](#operation_expectResult) for [find](#find) or
+  [collection_aggregate](#collection_aggregate) [Collection Operations](#collection-operations)
 
 For example, the following documents match:
 
@@ -2615,7 +2616,7 @@ actual: { x: { y: 1, z: 1 } }
 
 It may be helpful to think of expected documents as a form of query criteria. The intention behind this rule is that it
 is not always feasible or relevant for a test to exhaustively specify all fields in an expected document (e.g. cluster
-time in `command` for [CommandStartedEvent](<>)).
+time in `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)).
 
 When the expected value is an array, test runners MUST differentiate between an array of values, which may be documents,
 (e.g. `distinct`) and an array of root-level documents (e.g. `find`, `aggregate`). For example, the following array of
@@ -2900,9 +2901,9 @@ tests.
 
 The instructions in this section apply for each test file loaded by the test runner.
 
-Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](<>) parser. The parser MUST
-accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.rst#parsers)), as test files
-may use either.
+Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](../extended-json.rst) parser.
+The parser MUST accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.rst#parsers)),
+as test files may use either.
 
 Upon loading a file, the test runner MUST read the [schemaVersion](#schemaVersion) field and determine if the test file
 can be processed further. Test runners MAY support multiple versions and MUST NOT process incompatible files (as
@@ -2941,9 +2942,10 @@ possible runtime errors.
 
 Create a new [Entity Map](#entity-map) that will be used for this test. If [createEntities](#createentities) is
 specified, the test runner MUST create each [entity](#entity) accordingly and add it to the map. If the topology is a
-sharded cluster, the test runner MUST handle [useMultipleMongoses](<>) accordingly if it is specified for any client
-entities. If the topology type is `LoadBalanced`, client entities MUST be initialized with the appropriate load balancer
-connection string as discussed in [useMultipleMongoses](<>).
+sharded cluster, the test runner MUST handle [useMultipleMongoses](#entity_client_useMultipleMongoses) accordingly if it
+is specified for any client entities. If the topology type is `LoadBalanced`, client entities MUST be initialized with
+the appropriate load balancer connection string as discussed in
+[useMultipleMongoses](#entity_client_useMultipleMongoses).
 
 If the test might execute a `distinct` command within a sharded transaction, for each target collection the test runner
 SHOULD execute a non-transactional `distinct` command on each mongos server using an internal MongoClient. See
@@ -2954,22 +2956,22 @@ value for `heartbeatFrequencyMS` (and `minHeartbeatFrequencyMS` if possible) to 
 selection after a failure; however, test runners MUST NOT do so for any client that specifies `heartbeatFrequencyMS` in
 its `uriOptions`.
 
-For each client entity where [observeEvents](<>) has been specified, the test runner MUST enable all event listeners
-necessary to collect the specified event types. Test runners MAY leave event listeners disabled for tests that do not
-assert events (i.e. tests that omit both [test.expectEvents](#test_expectEvents) and special operations such as
-[assertSameLsidOnLastTwoCommands](#assertsamelsidonlasttwocommands)).
+For each client entity where [observeEvents](#entity_client_observeEvents) has been specified, the test runner MUST
+enable all event listeners necessary to collect the specified event types. Test runners MAY leave event listeners
+disabled for tests that do not assert events (i.e. tests that omit both [test.expectEvents](#test_expectEvents) and
+special operations such as [assertSameLsidOnLastTwoCommands](#assertsamelsidonlasttwocommands)).
 
 For each client with command monitoring enabled, the test runner MUST ignore events for the following:
 
-- Any command(s) specified in [ignoreCommandMonitoringEvents](<>).
+- Any command(s) specified in [ignoreCommandMonitoringEvents](#entity_client_ignoreCommandMonitoringEvents).
 - Any `configureFailPoint` commands executed for [failPoint](#failpoint) and [targetedFailPoint](#targetedfailpoint)
   operations.
 - Any commands containing sensitive information (per the
   [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security) spec)
-  unless [observeSensitiveCommands](<>) is true. Note that drivers will redact commands and replies for sensitive
-  commands. For `hello` and legacy hello, which are conditionally sensitive based on the presence of a
-  `speculativeAuthenticate` field, the test runner may need to infer that the events are sensitive based on whether or
-  not the command and reply documents are redacted (i.e. empty documents).
+  unless [observeSensitiveCommands](#entity_client_observeSensitiveCommands) is true. Note that drivers will redact
+  commands and replies for sensitive commands. For `hello` and legacy hello, which are conditionally sensitive based on
+  the presence of a `speculativeAuthenticate` field, the test runner may need to infer that the events are sensitive
+  based on whether or not the command and reply documents are redacted (i.e. empty documents).
 
 For each element in [test.operations](#test_operations), follow the process in
 [Executing an Operation](#executing-an-operation). If an unexpected error is encountered or an assertion fails, the test
@@ -3024,17 +3026,18 @@ MUST execute the operation accordingly and, if successful, proceed to the next o
 test runner MUST raise an error for an undefined operation. The test runner MUST keep a record of any fail points
 configured by special operations so that they may be disabled after the current test.
 
-If [operation.object](<>) is not "testRunner", this is an entity operation. If [operation.object](<>) is defined in the
-current test's [Entity Map](#entity-map), the test runner MUST fetch that entity and note its type; otherwise, the test
-runner MUST raise an error for an undefined entity. If [operation.name](<>) does not correspond to a known operation for
-the entity type (per [Entity Test Operations](#entity-test-operations)), the test runner MUST raise an error for an
-unsupported operation. Test runners MAY skip tests that include operations that are intentionally unimplemented (e.g.
-`listCollectionNames`).
+If [operation.object](#operation_object) is not "testRunner", this is an entity operation. If
+[operation.object](#operation_object) is defined in the current test's [Entity Map](#entity-map), the test runner MUST
+fetch that entity and note its type; otherwise, the test runner MUST raise an error for an undefined entity. If
+[operation.name](#operation_name) does not correspond to a known operation for the entity type (per
+[Entity Test Operations](#entity-test-operations)), the test runner MUST raise an error for an unsupported operation.
+Test runners MAY skip tests that include operations that are intentionally unimplemented (e.g. `listCollectionNames`).
 
 Proceed with preparing the operation's arguments. If `session` is specified in
 [operation.arguments](#operation_arguments), the test runner MUST resolve it to a session entity and MUST raise an error
-if the name is undefined or maps to an unexpected type. If a key in [operation.arguments](<>) does not correspond to a
-known parameter/option for the operation, the test runner MUST raise an error for an unsupported argument.
+if the name is undefined or maps to an unexpected type. If a key in [operation.arguments](#operation_arguments) does not
+correspond to a known parameter/option for the operation, the test runner MUST raise an error for an unsupported
+argument.
 
 Before executing the operation, the test runner MUST be prepared to catch a potential error from the operation (e.g.
 enter a `try` block). Proceed with executing the operation and capture its result or error.
