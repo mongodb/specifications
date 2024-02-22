@@ -751,7 +751,7 @@ driver versions that include the reversion from `$collStats` back to `count` MUS
 The countDocuments function is implemented using the `$group` aggregate pipeline stage with `$sum`. Applications must be
 required to pass a value for filter, but an empty document is supported:
 
-```
+```typescript
 pipeline = [{'$match': filter}]
 if (skip) {
   pipeline.push({'$skip': skip})

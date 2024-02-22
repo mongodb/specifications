@@ -451,7 +451,7 @@ class ChangeStreamOptions {
    *
    * This is the same field described in FindOptions in the CRUD spec.
    *
-   * @see https://github.com/mongodb/specifications/blob/master../crud/crud.md#read
+   * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.md#read
    * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
    * @note this option is not set on the `aggregate` command nor `$changeStream` pipeline stage
    */
