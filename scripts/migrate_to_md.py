@@ -15,6 +15,23 @@ path = Path(sys.argv[1])
 with path.open() as fid:
     lines = fid.readlines()
 
+TEMPLATE = """
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `{0} <{0}>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
+"""
+
+# Update the RST file with a pointer to the MD file.
+md_file = str(path).replace('.rst', '.md')
+if not path.name == 'README.rst':
+    new_lines = lines.copy()
+    new_lines.insert(0, TEMPLATE.format(os.path.basename(md_file)) )
+    with path.open('w') as fid:
+        fid.write(''.join(new_lines))
 
 # Pre-process the file.
 for (i, line) in enumerate(lines):
@@ -83,7 +100,6 @@ for (i, line) in enumerate(lines):
 
 
 # Write the new content to the markdown file.
-md_file = str(path).replace('.rst', '.md')
 with open(md_file, 'w') as fid:
     fid.write('\n'.join(new_lines))
 
@@ -140,7 +156,6 @@ for p in Path("source").rglob("*"):
         with p.open('w') as fid:
             fid.writelines(new_lines)
         print(f'Updated link(s) in {p}')
-
 
 print('Created markdown file:')
 print(md_file)
