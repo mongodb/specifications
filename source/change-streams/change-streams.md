@@ -64,8 +64,7 @@ errors.
 
 ### Guidance
 
-For naming and deviation guidance, see the
-[CRUD specification](https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming).
+For naming and deviation guidance, see the [CRUD specification](../crud/crud.md#naming).
 
 ### Server Specification
 
@@ -452,7 +451,7 @@ class ChangeStreamOptions {
    *
    * This is the same field described in FindOptions in the CRUD spec.
    *
-   * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
+   * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.md#read
    * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
    * @note this option is not set on the `aggregate` command nor `$changeStream` pipeline stage
    */
@@ -570,8 +569,7 @@ The stage has the following shape:
 The first parameter of the helpers specifies an array of aggregation pipeline stages which MUST be appended to the
 initial stage. Drivers MUST support an empty pipeline. Languages which support default parameters MAY specify an empty
 array as the default value for this parameter. Drivers SHOULD otherwise make specification of a pipeline as similar as
-possible to the [aggregate](https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read) CRUD
-method.
+possible to the [aggregate](../crud/crud.md#read) CRUD method.
 
 Additionally, implementers MAY provide a form of these methods which require no parameters, assuming no options and no
 additional stages beyond the initial `$changeStream` stage:
@@ -599,8 +597,8 @@ a `ChangeStreamDocument`. It is the responsibility of the user to ensure that th
 the specified `$project` stage.
 
 The aggregate helper methods MUST have no new logic related to the `$changeStream` stage. Drivers MUST be capable of
-handling [TAILABLE_AWAIT](https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read) cursors from
-the aggregate command in the same way they handle such cursors from find.
+handling [TAILABLE_AWAIT](../crud/crud.md#read) cursors from the aggregate command in the same way they handle such
+cursors from find.
 
 ##### `Collection.watch` helper
 
@@ -658,13 +656,12 @@ commands.
 
 #### ChangeStream
 
-A `ChangeStream` is an abstraction of a
-[TAILABLE_AWAIT](https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read) cursor, with support
-for resumability. Implementers MAY choose to implement a `ChangeStream` as an extension of an existing tailable cursor
-implementation. If the `ChangeStream` is implemented as a type which owns a tailable cursor, then the implementer MUST
-provide a manner of closing the change stream, as well as satisfy the requirements of extending `Iterable<Document>`. If
-your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead
-of, an explicit close method.
+A `ChangeStream` is an abstraction of a [TAILABLE_AWAIT](../crud/crud.md#read) cursor, with support for resumability.
+Implementers MAY choose to implement a `ChangeStream` as an extension of an existing tailable cursor implementation. If
+the `ChangeStream` is implemented as a type which owns a tailable cursor, then the implementer MUST provide a manner of
+closing the change stream, as well as satisfy the requirements of extending `Iterable<Document>`. If your language has
+an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit
+close method.
 
 A change stream MUST track the last resume token, per
 [Updating the Cached Resume Token](#updating-the-cached-resume-token).

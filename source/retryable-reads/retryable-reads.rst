@@ -168,7 +168,7 @@ Most of the above methods are defined in the following specifications:
   <../change-streams/change-streams.md>`__
 
 - `CRUD
-  <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst>`__
+  <../crud/crud.md>`__
 
 - `Enumerating Collections
   <https://github.com/mongodb/specifications/blob/master/source/enumerate-collections.rst>`__

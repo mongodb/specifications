@@ -27,7 +27,7 @@ in this file. Those tests will need to be manually implemented by each driver.
 Test Format
 ===========
 
-The same as the `CRUD Spec Test format <../../crud/tests/README.rst#Test-Format>`_.
+The same as the `CRUD Spec Test format <../../crud/tests/README.md#Test-Format>`_.
 
 Test Runner Implementation
 ==========================

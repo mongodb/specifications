@@ -87,7 +87,7 @@ progresses.
 
 The `timeoutMS` option applies to all operations defined in the following specifications:
 
-- [CRUD](./../crud/crud.rst)
+- [CRUD](../crud/crud.md)
 - [Change Streams](../change-streams/change-streams.md)
 - [Client Side Encryption](../client-side-encryption/client-side-encryption.rst)
 - [Enumerating Collections](../enumerate-collections.rst)

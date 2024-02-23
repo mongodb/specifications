@@ -27,7 +27,7 @@ This test format can be used to define tests for the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
 - [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst)
-- [CRUD](../crud/crud.rst)
+- [CRUD](../crud/crud.md)
 - [GridFS](../gridfs/gridfs-spec.rst)
 - [Retryable Reads](../retryable-reads/retryable-reads.rst)
 - [Retryable Writes](../retryable-writes/retryable-writes.rst)
@@ -1447,7 +1447,7 @@ test currently attempts to create a data key with an existing keyAltName or add 
 These operations and their arguments may be documented in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [CRUD](../crud/crud.rst)
+- [CRUD](../crud/crud.md)
 - [Enumerating Collections](../enumerate-collections.rst)
 
 Database operations that require special handling or are not documented by an existing specification are described
@@ -1543,7 +1543,7 @@ This operation SHOULD NOT be used in test files. See [database_createChangeStrea
 These operations and their arguments may be documented in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [CRUD](../crud/crud.rst)
+- [CRUD](../crud/crud.md)
 - [Index Management](../index-management/index-management.rst)
 
 Collection operations that require special handling or are not documented by an existing specification are described
@@ -3274,7 +3274,7 @@ Note: MongoDB 3.6+ requires that all shard servers be replica sets (see:
 ## Design Rationale
 
 This specification was primarily derived from the test formats used by the
-[Transactions](../transactions/transactions.md) and [CRUD](../crud/crud.rst) specs, which have served models or other
+[Transactions](../transactions/transactions.md) and [CRUD](../crud/crud.md) specs, which have served models or other
 specs.
 
 This specification commonly uses "SHOULD" when providing guidance on writing test files. While this may appear

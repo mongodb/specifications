@@ -612,7 +612,7 @@ preference by a driver depends on the command and how it is invoked:
      For pre-5.0 servers, an aggregate command is "must-use-primary" if its pipeline contains a write stage (e.g.
      `$out`, `$merge`); otherwise, it is "may-use-secondary". For 5.0+ servers, secondaries can execute an aggregate
      command with a write stage and all aggregate commands are "may-use-secondary". This is discussed in more detail in
-     [Read preferences and server selection](../crud/crud.rst#read-preferences-and-server-selection) in the CRUD spec.
+     [Read preferences and server selection](../crud/crud.md#read-preferences-and-server-selection) in the CRUD spec.
 
      If a client provides a specific helper for inline mapReduce, then it is "may-use-secondary" and the *regular*
      mapReduce helper is "must-use-primary". Otherwise, the mapReduce helper is "may-use-secondary" and it is the user's
