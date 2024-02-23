@@ -3353,7 +3353,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- 2024-02-21: Require test runners to gossip cluster time from internal MongoClient to each session entity.
+- 2024-02-23: Require test runners to gossip cluster time from internal MongoClient to each session entity.
 
 - 2024-02-14: Clarify that errors raised from callback operations should always propagate to `withTransaction`.
 
