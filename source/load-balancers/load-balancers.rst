@@ -68,7 +68,7 @@ MUST throw an exception in the following cases:
 
 If a URI is provided with the ``mongodb+srv`` scheme, the driver MUST first do
 the SRV and TXT lookup and then perform the validation. For drivers that do SRV
-lookup asynchrounously this may result in a ``MongoClient`` being instantiated
+lookup asynchronously this may result in a ``MongoClient`` being instantiated
 but erroring later during operation execution.
 
 
@@ -158,7 +158,7 @@ For read and write operations, the single server in the topology MUST always be 
 
 During command construction, the LoadBalancer server MUST be treated like a mongos and
 drivers MUST add a $readPreference field to the command when required by
-`Passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_.
+`Passing read preference to mongos and load balancers <../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers>`_.
 
 
 Connection Pooling
@@ -236,13 +236,13 @@ Behaviour With Transactions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When executing a transaction in load balancing mode, drivers MUST follow the rules outlined
-in `Sharded Transactions <../transactions/transactions.rst#sharded-transactions>`__ with one
+in `Sharded Transactions <../transactions/transactions.md#sharded-transactions>`__ with one
 exception: drivers MUST use the same connection for all commands in the transaction
 (excluding retries of commitTranscation and abortTransaction in some cases). Pinning
 to a single connection ensures that all commands in the transaction target the same
 service behind the load balancer. The rules for pinning to a connection and releasing
 a pinned connection are the same as those for server pinning in non-load balanced sharded
-transactions as described in `When to unpin <../transactions/transactions.rst#when-to-unpin>`__.
+transactions as described in `When to unpin <../transactions/transactions.md#when-to-unpin>`__.
 Drivers MUST NOT use the same connection for two concurrent transactions run under different
 sessions from the same client.
 

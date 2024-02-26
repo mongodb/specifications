@@ -138,7 +138,7 @@ Events that MUST be published (with their conditions) are as follows.
    * - ``TopologyClosedEvent``
      - When a topology is shut down - this MUST be the last SDAM event fired.
    * - ``ServerHeartbeatStartedEvent``
-     - Published when the server monitor sends its ``hello`` or legacy hello call to the server.
+     - Published when the server monitor sends its ``hello`` or legacy hello call to the server. When the monitor is creating a new connection, this event MUST be published just before the socket is created.
    * - ``ServerHeartbeatSucceededEvent``
      - Published on successful completion of the server monitor's ``hello`` or legacy hello call.
    * - ``ServerHeartbeatFailedEvent``
@@ -251,6 +251,8 @@ Events that MUST be published (with their conditions) are as follows.
   /**
    * Fired when the server monitor's ``hello`` or legacy hello command is started - immediately before
    * the ``hello`` or legacy hello command is serialized into raw BSON and written to the socket.
+   * When the monitor is creating a new monitoring connection, this event is fired just before the
+   * socket is opened.
    */
   interface ServerHeartbeatStartedEvent {
 
@@ -454,7 +456,7 @@ The following key-value pairs are common to all or several log messages and MUST
      - Heartbeat-related log messages 
      - Int
      - The driver-generated ID for the monitoring connection as defined in the 
-       `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_. Unlike
+       `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`_. Unlike
        ``connectionId`` in the above events, this field MUST NOT contain the host/port; that information MUST be in the above fields,
        ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
        a connection ID.
@@ -696,6 +698,7 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
+:2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
 :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 
 :2022-10-05: Remove spec front matter and reformat changelog.

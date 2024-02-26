@@ -11,7 +11,7 @@ Introduction
 
 The YAML and JSON files in the ``legacy`` and ``unified`` sub-directories are platform-independent tests
 that drivers can use to prove their conformance to the Retryable Reads spec. Tests in the
-``unified`` directory are written using the `Unified Test Format <../../unified-test-format/unified-test-format.rst>`_.
+``unified`` directory are written using the `Unified Test Format <../../unified-test-format/unified-test-format.md>`_.
 Tests in the ``legacy`` directory are written using the format described below.
 
 Prose tests, which are not easily expressed in YAML, are also presented
@@ -238,71 +238,86 @@ Retrying Reads in a Sharded Cluster
 These tests will be used to ensure drivers properly retry reads on a different
 mongos.
 
-Retryable Reads Are Retried on a Different mongos if One is Available
----------------------------------------------------------------------
+Note: this test cannot reliably distinguish "retry on a different mongos due to
+server deprioritization" (the behavior intended to be tested) from "retry on a
+different mongos due to normal SDAM behavior of randomized suitable server
+selection". Verify relevant code paths are correctly executed by the tests using
+external means such as a logging, debugger, code coverage tool, etc.
+
+Retryable Reads Are Retried on a Different mongos When One is Available
+-----------------------------------------------------------------------
 
 This test MUST be executed against a sharded cluster that has at least two
-mongos instances.
+mongos instances, supports ``retryReads=true``, and has enabled the
+``configureFailPoint`` command (MongoDB 4.2+).
 
-1. Ensure that a test is run against a sharded cluster that has at least two
-   mongoses. If there are more than two mongoses in the cluster, pick two to
-   test against.
+1. Create two clients ``s0`` and ``s1`` that each connect to a single mongos
+   from the sharded cluster. They must not connect to the same mongos.
 
-2. Create a client per mongos using the direct connection, and configure the
-   following fail points on each mongos::
-
-     {
-         configureFailPoint: "failCommand",
-         mode: { times: 1 },
-         data: {
-             failCommands: ["find"],
-             errorCode: 6,
-             closeConnection: true
-         }
-     }
-
-3. Create a client with ``retryReads=true`` that connects to the cluster,
-   providing the two selected mongoses as seeds.
-
-4. Enable command monitoring, and execute a ``find`` command that is
-   supposed to fail on both mongoses.
-
-5. Asserts that there were failed command events from each mongos.
-
-6. Disable the fail points.
-
-
-Retryable Reads Are Retried on the Same mongos if No Others are Available
--------------------------------------------------------------------------
-
-1. Ensure that a test is run against a sharded cluster. If there are multiple
-   mongoses in the cluster, pick one to test against.
-
-2. Create a client that connects to the mongos using the direct connection,
-   and configure the following fail point on the mongos::
+2. Configure the following fail point for both ``s0`` and ``s1``::
 
      {
          configureFailPoint: "failCommand",
          mode: { times: 1 },
          data: {
              failCommands: ["find"],
-             errorCode: 6,
-             closeConnection: true
+             errorCode: 6
          }
      }
 
-3. Create a client with ``retryReads=true`` that connects to the cluster,
-   providing the selected mongos as the seed.
+3. Create a client ``client`` with ``retryReads=true`` that connects to the
+   cluster using the same two mongoses as ``s0`` and ``s1``.
 
-4. Enable command monitoring, and execute a ``find`` command.
+4. Enable failed command event monitoring for ``client``.
 
-5. Asserts that there was a failed command and a successful command event.
+5. Execute a ``find`` command with ``client``. Assert that the command failed.
 
-6. Disable the fail point.
+6. Assert that two failed command events occurred. Assert that both events
+   occurred on different mongoses.
+
+7. Disable the fail point on both ``s0`` and ``s1``.
+
+
+Retryable Reads Are Retried on the Same mongos When No Others are Available
+---------------------------------------------------------------------------
+
+This test MUST be executed against a sharded cluster that supports
+``retryReads=true`` and has enabled the ``configureFailPoint`` command 
+(MongoDB 4.2+).
+
+1. Create a client ``s0`` that connects to a single mongos from the cluster.
+
+2. Configure the following fail point for ``s0``::
+
+     {
+         configureFailPoint: "failCommand",
+         mode: { times: 1 },
+         data: {
+             failCommands: ["find"],
+             errorCode: 6
+         }
+     }
+
+3. Create a client ``client`` with ``directConnection=false`` (when not set by
+   default) and ``retryReads=true`` that connects to the cluster using the same
+   single mongos as ``s0``.
+
+4. Enable succeeded and failed command event monitoring for ``client``.
+
+5. Execute a ``find`` command with ``client``. Assert that the command
+   succeeded.
+
+6. Assert that exactly one failed command event and one succeeded command event
+   occurred. Assert that both events occurred on the same mongos.
+
+7. Disable the fail point on ``s0``.
 
 
 Changelog
 =========
+
+:2024-02-21: Update mongos redirection prose tests to workaround SDAM behavior
+             preventing execution of deprioritization code paths.
 
 :2023-08-26 Add prose tests for retrying in a sharded cluster.
 

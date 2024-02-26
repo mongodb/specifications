@@ -160,7 +160,7 @@ The **secondaryOk** flag SHOULD not be set for all follow-up **getMore** and **k
 
 More detailed information about the interaction of the **secondaryOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
-.. _Passing a Read Preference: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
+.. _Passing a Read Preference: ./server-selection/server-selection.md#passing-read-preference-to-mongos
 
 Behavior of Limit, skip and batchSize
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -198,7 +198,7 @@ closed on 5.0:
     {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0+
     {...}          // Kills server-side cursor. Necessary on 5.0+
 
-.. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
+.. _CRUD: ./crud/crud.md#find
 
 If there are not enough documents in the cursor to fulfill the **limit** defined, the cursor runs to exhaustion and is closed, returning a cursorId of 0 to the client.
 
@@ -417,7 +417,7 @@ The **OP_REPLY** message has the following general structure.
         int32     requestID;      // identifier for this message
 
         int32     responseTo;     // requestID from the original
-                                  // request(used in reponses from db)
+                                  // request(used in responses from db)
 
         int32     opCode;         // request type - see table below
 
@@ -511,7 +511,7 @@ This format is general for all commands when executing against a Mongos proxy.
 
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification `Server Selection Specification`_.
 
-.. _Server Selection Specification: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
+.. _Server Selection Specification: ./server-selection/server-selection.md#passing-read-preference-to-mongos
 
 Changelog
 =========

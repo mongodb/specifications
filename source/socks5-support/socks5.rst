@@ -165,7 +165,7 @@ In the case that future changes will enable drivers using other proxy protocols,
 keeping the option names generic allows their re-use.
 In that case, another option would specify the protocol and SOCKS5 would be the
 implied default. However, since there is no reason to believe that such additions
-will be made in the forseeable future, no option for specifying the proxy protocol
+will be made in the foreseeable future, no option for specifying the proxy protocol
 is introduced here.
 
 Why is support for authentication methods limited to no authentication and username/password authentication?
