@@ -377,7 +377,7 @@ Failures of individual write operations are reported in the cursor of results re
 
 ### Command Batching
 
-Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method. Because the server imposes restrictions on the size of write operations, this means that a single call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server. Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds one of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize`, or `maxMessageSizeBytes`. Each of these values can be retrieved from the selected server's `hello` command response.
+Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method. Because the server imposes restrictions on the size of write operations, this means that a single call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server. Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds one or more of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize`, and `maxMessageSizeBytes`. Each of these values can be retrieved from the selected server's `hello` command response.
 
 #### Number of Writes
 
