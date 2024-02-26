@@ -1,159 +1,124 @@
-.. role:: javascript(code)
-  :language: javascript
+# Collation
 
-=========
-Collation
-=========
+- Status: Accepted
+- Minimum Server Version: 1.8
 
-:Status: Accepted
-:Minimum Server Version: 1.8
+______________________________________________________________________
 
-.. contents::
+## Abstract
 
---------
+As of MongoDB server version 3.4 (maxWireVersion 5), a collation option is supported by the query system for matching
+and sorting on language strings in a locale-aware fashion.
 
-Abstract
-========
+A driver MUST support a Collation option for each of the relevant operations in server versions >= 3.4 (maxWireVersion
+5\) and MUST throw an error if a user supplies a Collation option for the operation and the selected server has
+maxWireVersion \< 5 or if the user is using opcode-based unacknowledged writes.
 
-As of MongoDB server version 3.4 (maxWireVersion 5), a collation option is
-supported by the query system for matching and sorting on language strings
-in a locale-aware fashion.
+The CRUD and Index Management specs include the collation option in descriptions of API elements where it is supported.
+This document provides more details on the specific driver behavior required to handle the collation option.
 
-A driver MUST support a Collation option for each of the relevant operations
-in server versions >= 3.4 (maxWireVersion 5) and MUST throw an error if a
-user supplies a Collation option for the operation and the selected server has
-maxWireVersion < 5 or if the user is using opcode-based unacknowledged writes.
+## META
 
-The CRUD and Index Management specs include the collation option in
-descriptions of API elements where it is supported. This document provides
-more details on the specific driver behavior required to handle the collation
-option. 
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
-META
-====
+## Design Rationale
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,
-“SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
-interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
+### Collation is not a setting on a driver Client, Collection, or Database object
 
-Design Rationale
-================
+MongoDB supports a server-side collation default on a collection. It is problematic to add a default Collation option on
+a driver’s Collection or Database object, because automatic collection and index creation would bypass any driver
+object's Collation setting. Additionally, this would have a number of performance implications in the context of bulk
+writes: any bulk write on a Collection object having a default Collation would require iterating through each operation
+and adding a Collation document.
 
------------------------------------------------------------------------------
-Collation is not a setting on a driver Client, Collection, or Database object
------------------------------------------------------------------------------
+After the initial release of server version 3.4, many users will want to apply Collations to all operations on an
+existing collection. Such users will have to supply the Collation option to each operation explicitly; however,
+eventually the majority of users wishing to use Collations on all operations on a collection will create a collection
+with a server-side default. We chose to favor user verbosity right now over abstracting the feature for short-term
+gains.
 
-MongoDB supports a server-side collation default on a collection. It is
-problematic to add a default Collation option on a driver’s Collection or
-Database object, because automatic collection and index creation would bypass
-any driver object's Collation setting. Additionally, this would have a number
-of performance implications in the context of bulk writes: any bulk write on a
-Collection object having a default Collation would require iterating through
-each operation and adding a Collation document.
+### Drivers throw an error if a user supplies Collation and the selected server does not support the feature
 
-After the initial release of server version 3.4, many users will want to apply
-Collations to all operations on an existing collection. Such users will have to
-supply the Collation option to each operation explicitly; however, eventually
-the majority of users wishing to use Collations on all operations on a
-collection will create a collection with a server-side default. We chose to
-favor user verbosity right now over abstracting the feature for short-term gains.
+Server versions earlier than 3.4 don't always throw an error if an unknown option is supplied to certain operations.
+Because a Collation defines how documents are matched and sorted for both read and write operations, behavior
+differences between server versions are significant. Drivers therefore MUST throw an error if a user specifies a
+Collation and the selected server has a maxWireVersion \< 5 or if using opcode-based unacknowledged writes.
 
---------------------------------------------------------------------------------------------------------
-Drivers throw an error if a user supplies Collation and the selected server does not support the feature
---------------------------------------------------------------------------------------------------------
+## Specification
 
-Server versions earlier than 3.4 don't always throw an error if an unknown
-option is supplied to certain operations. Because a Collation defines how
-documents are matched and sorted for both read and write operations, behavior
-differences between server versions are significant. Drivers therefore MUST
-throw an error if a user specifies a Collation and the selected server has a
-maxWireVersion < 5 or if using opcode-based unacknowledged writes.
+### Collation Document Model
 
-Specification
-=============
+For naming and deviation guidance, see the [CRUD specification](../crud/crud.md#naming). Defined below are the
+constructs for drivers. Note that the only required field is `locale`, but the driver should let the server validate the
+presence of this field.
 
-------------------------
-Collation Document Model
-------------------------
+```typescript
+class Collation {
+  /**
+   * The locale.
+   */
+  locale: String
 
-For naming and deviation guidance, see the `CRUD specification
-<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_.
-Defined below are the constructs for drivers. Note that the only required
-field is ``locale``, but the driver should let the server validate the presence
-of this field.
+  /**
+   * The case level.
+   */
+  caseLevel: Optional<Boolean>
 
-.. code:: typescript
+  /**
+   * The case ordering.
+   */
+  caseFirst: Optional<String>
 
-  class Collation {
-    /**
-     * The locale.
-     */
-    locale: String
+  /**
+   * The number of comparison levels to use.
+   */
+  strength: Optional<Integer>
 
-    /**
-     * The case level.
-     */
-    caseLevel: Optional<Boolean>
+  /**
+   * Whether to order numbers based on numerical order and not collation order.
+   */
+  numericOrdering: Optional<Boolean>
 
-    /**
-     * The case ordering.
-     */
-    caseFirst: Optional<String>
+  /**
+   * Whether spaces and punctuation are considered base characters.
+   */
+  alternate: Optional<String>
 
-    /**
-     * The number of comparison levels to use.
-     */
-    strength: Optional<Integer>
+  /**
+   * Which characters are affected by alternate: "shifted".
+   */
+  maxVariable: Optional<String>
 
-    /**
-     * Whether to order numbers based on numerical order and not collation order.
-     */
-    numericOrdering: Optional<Boolean>
+  /**
+   * If true, normalizes text into Unicode NFD.
+   */
+  normalization: Optional<Boolean>
 
-    /**
-     * Whether spaces and punctuation are considered base characters.
-     */
-    alternate: Optional<String>
+  /**
+   * Causes secondary differences to be considered in reverse order, as it is done in the French language.
+   */
+  backwards: Optional<Boolean>
+}
+```
 
-    /**
-     * Which characters are affected by alternate: “shifted”.
-     */
-    maxVariable: Optional<String>
+#### Unknown Options
 
-    /**
-     * If true, normalizes text into Unicode NFD.
-     */
-    normalization: Optional<Boolean>
+For forward compatibility, a driver MUST NOT raise an error when a user provides unknown options or values. The driver
+MUST NOT validate collation document types; the driver relies on the server to validate values and other contents of the
+collation document.
 
-    /**
-     * Causes secondary differences to be considered in reverse order, as it is done in the French language.
-     */
-    backwards: Optional<Boolean>
-  }
+#### Generic Command Method
 
-Unknown Options
--------------------------------------------------------------------
-
-For forward compatibility, a driver MUST NOT raise an error when a user
-provides unknown options or values. The driver MUST NOT validate collation
-document types; the driver relies on the server to validate values and other
-contents of the collation document.
-
-Generic Command Method
-----------------------
-
-If a driver offers a generic ``RunCommand`` method on the ``database`` object,
-the driver MUST NOT validate whether the provided command document contains a
-"collation" subdocument, and MUST NOT check the server's wire version before
+If a driver offers a generic `RunCommand` method on the `database` object, the driver MUST NOT validate whether the
+provided command document contains a "collation" subdocument, and MUST NOT check the server's wire version before
 sending the command including the "collation" subdocument.
 
----
-API
----
-The driver helpers that must support a collation option include the create
-collection helper, any CRUD API components relying on the MongoDB query system
-(including updates and deletes) and some index management helpers. The
-CRUD-related commands that take a collation option are:
+### API
+
+The driver helpers that must support a collation option include the create collection helper, any CRUD API components
+relying on the MongoDB query system (including updates and deletes) and some index management helpers. The CRUD-related
+commands that take a collation option are:
 
 - aggregate
 - count
@@ -163,134 +128,101 @@ CRUD-related commands that take a collation option are:
 - geoNear
 - group
 - mapReduce
-- delete  (command only)
+- delete (command only)
 - update (command only)
 
-The collation option is sent to the server in the form of a BSON Document.
-See the `CRUD specification
-<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_
-for details on supporting the option in the CRUD API.
+The collation option is sent to the server in the form of a BSON Document. See the
+[CRUD specification](../crud/crud.md#naming) for details on supporting the option in the CRUD API.
 
-Driver helpers manipulating or using indexes MUST support a collation option.
-These include creating, deleting, and hinting an index. See the
-`Index Management specification
-<https://github.com/mongodb/specifications/blob/master/source/index-management.rst>`_
-for details.
+Driver helpers manipulating or using indexes MUST support a collation option. These include creating, deleting, and
+hinting an index. See the [Index Management specification](../index-management/index-management.rst) for details.
 
-------------------------
-Require maxWireVersion 5
-------------------------
+### Require maxWireVersion 5
 
-Drivers MUST require the server's maxWireVersion >= 5 to support Collations.
-When a collation is explicitly specified for a server with maxWireVersion < 5,
-the driver MUST raise an error.
+Drivers MUST require the server's maxWireVersion >= 5 to support Collations. When a collation is explicitly specified
+for a server with maxWireVersion \< 5, the driver MUST raise an error.
 
-----------------------------------
-Opcode-based Unacknowledged Writes
-----------------------------------
+### Opcode-based Unacknowledged Writes
 
-The driver MUST NOT allow collation with opcodes, because the server doesn't
-support it. If a driver uses opcode-based writes when the write concern is
-unacknowledged, the driver MUST raise an error if a collation is explicitly set.
+The driver MUST NOT allow collation with opcodes, because the server doesn't support it. If a driver uses opcode-based
+writes when the write concern is unacknowledged, the driver MUST raise an error if a collation is explicitly set.
 
--------------------------------------------
-Setting a default collation on a collection
--------------------------------------------
+### Setting a default collation on a collection
 
-Drivers MUST allow the create command to accept a parameter called “collation”.
-For example,
+Drivers MUST allow the create command to accept a parameter called "collation". For example,
 
-.. code:: typescript
+```typescript
+db.command({
+    create: "myCollection",
+    collation: {locale: "en_US"}
+});
+```
 
-	db.command({
-		create: "myCollection",
-		collation: {locale: "en_US"}
-	});
+### BulkWrite API
 
--------------
-BulkWrite API
--------------
-
-If maxWireVersion < 5, the driver MUST inspect each BulkWrite operation model
-for a collation and MUST raise an error and MUST NOT send any operations to the
-server if a collation is explicitly specified on an operation. For example, the
+If maxWireVersion \< 5, the driver MUST inspect each BulkWrite operation model for a collation and MUST raise an error
+and MUST NOT send any operations to the server if a collation is explicitly specified on an operation. For example, the
 user will provide BulkWrite operation models as in the following example:
 
-.. code:: typescript
+```typescript
+db.collection.bulkWrite([
+  {insertOne: { ... }},
 
-  db.collection.bulkWrite([
-    {insertOne: { ... }},
+  {updateOne: { filter: { name: "PING" },
+                        update: { $set: { name: "pong" }},
+                        collation: { locale: "en_US", strength: 2 }}},
+  {updateMany: {..., collation: {...}}},
+  {replaceOne: {..., collation: {...}}},
+  {deleteOne: {..., collation: {...}}},
+  {deleteMany: {..., collation: {...}}}
+]);
+```
 
-    {updateOne: { filter: { name: "PING" },
-                          update: { $set: { name: "pong" }},
-                          collation: { locale: "en_US", strength: 2 }}},
-    {updateMany: {..., collation: {...}}},
-    {replaceOne: {..., collation: {...}}},
-    {deleteOne: {..., collation: {...}}},
-    {deleteMany: {..., collation: {...}}}
-  ]);
+The driver must inspect each operation for a Collation if maxWireVersion is \< 5 and fail the entire bulkWrite if a
+collation was explicitly specified. In the example above, that means even the insertOne (without Collation) MUST NOT be
+sent.
 
-The driver must inspect each operation for a Collation if maxWireVersion is < 5
-and fail the entire bulkWrite if a collation was explicitly specified. In the
-example above, that means even the insertOne (without Collation) MUST NOT be sent.
+## Test Plan
 
+There is no specific test plan for driver Collation support; however drivers should test each affected CRUD, Index
+Management API, and collection creation/modification component to ensure that Collation is a supported option.
 
-Test Plan
-=========
-
-There is no specific test plan for driver Collation support; however drivers
-should test each affected CRUD, Index Management API, and collection
-creation/modification component to ensure that Collation is a supported option.
-
-https://github.com/mongodb/specifications/blob/master/source/index-management.rst
-https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst
-
-In addition, drivers should test that two indexes can be created with identical
-key patterns and different collations. A custom name must be provided for one
-of them. Then, the test should ensure that the correct index is dropped when
+In addition, drivers should test that two indexes can be created with identical key patterns and different collations. A
+custom name must be provided for one of them. Then, the test should ensure that the correct index is dropped when
 delete_one is called with an index name.
 
-Drivers should also test that errors are raised in each place Collation can be
-provided to a API method and the selected server has maxWireVersion < 5.
+Drivers should also test that errors are raised in each place Collation can be provided to a API method and the selected
+server has maxWireVersion \< 5.
 
-
-Backwards Compatibility
-=======================
+## Backwards Compatibility
 
 There should be no backwards compatibility concerns.
 
+## Reference Implementation
 
-Reference Implementation
-========================
+Reference Implementation:
 
-Reference Implementation: 
-  `RUBY-1126 <https://jira.mongodb.org/browse/RUBY-1126>`_
-  `JAVA-2241 <https://jira.mongodb.org/browse/JAVA-2241>`_
+- [RUBY-1126](https://jira.mongodb.org/browse/RUBY-1126)
+- [JAVA-2241](https://jira.mongodb.org/browse/JAVA-2241)
 
-Q & A
-=====
+## Q & A
 
 Q: Insert doesn’t take a collation?
 
-A: No, only queries take collation. A collation is a per operation value, it
-does not affect how the data is stored.
-  
+A: No, only queries take collation. A collation is a per operation value, it does not affect how the data is stored.
+
 Q: Delete and Update take a collation?
 
-A: Yes, delete and update operations use the query system to match against a
-provided delete/update filter. Providing a collation when deleting a document
-matching ObjectID() doesn’t change anything, but matching a string value would.
+A: Yes, delete and update operations use the query system to match against a provided delete/update filter. Providing a
+collation when deleting a document matching `ObjectID()` doesn’t change anything, but matching a string value would.
 
-Q: How do I create a collection with default collation? Does it affect my
-existing collection creation helper?
+Q: How do I create a collection with default collation? Does it affect my existing collection creation helper?
 
-A: A collection with a default collation can be created using the create helper
-and by providing a collation option.
+A: A collection with a default collation can be created using the create helper and by providing a collation option.
 
+## Changelog
 
-Changelog
-=========
-
-:2022-10-05: Remove spec front matter and reformat changelog.
-:2017-05-15: Minor markup fixes in API section.
-:2016-08-31: Initial version.
+- 2024-02-15: Migrated from reStructuredText to Markdown.
+- 2022-10-05: Remove spec front matter and reformat changelog.
+- 2017-05-15: Minor markup fixes in API section.
+- 2016-08-31: Initial version.
