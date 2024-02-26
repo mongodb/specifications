@@ -36,3 +36,7 @@ python3 scripts/migrate_to_md.py "source/<path_to_rst_file>"
 - Remove the rst file using `git rm`.
 
 - Create a PR. When you commit the changes, the `mdformat` `pre-commit` hook will update the formatting as appropriate.
+
+## generate_index
+
+Use this file to generate the top level Markdown index file. It is independent to be used as a pre-commit hook.
