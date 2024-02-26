@@ -1272,7 +1272,7 @@ The Azure provider integration is enabled by setting auth mechanism property `PR
 
 If enabled, drivers MUST call the
 [Azure Instance Metadata Service](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service)
-and parse the JSON response body.
+and parse the JSON response body, as follows:
 
 Make an HTTP GET request to
 
@@ -1290,7 +1290,7 @@ Metadata: true
 where `<resource>` is the value of the `TOKEN_AUDIENCE` mechanism property and `<object_id>` is the `username` from the
 connection string. If a `username` is not provided, the `object_id` query parameter should be omitted.
 
-The curl recipe below demonstrates the above, where `$TOKEN_AUDIENCE` is the value of the `TOKEN_AUDIENCE` mechanism
+Example code for the above using curl, where `$TOKEN_AUDIENCE` is the value of the `TOKEN_AUDIENCE` mechanism
 property.
 
 ```bash
