@@ -4,12 +4,21 @@ import re
 import sys
 from pathlib import Path
 import datetime
+import subprocess
 
 if len(sys.argv) < 2:
     print('Must provide a path to an RST file')
     sys.exit(1)
 
 path = Path(sys.argv[1])
+
+# Ensure git history for the md file.
+md_file = str(path).replace('.rst', '.md')
+subprocess.check_call(['git', 'mv', path, md_file])
+subprocess.check_call(['git', 'add', md_file])
+subprocess.check_call(['git', 'commit', '--no-verify', '-m', f'Rename {path} to {md_file}'])
+subprocess.check_call(['git', 'checkout', 'HEAD~1', path])
+subprocess.check_call(['git', 'add', path])
 
 # Get the contents of the file.
 with path.open() as fid:
@@ -26,7 +35,6 @@ TEMPLATE = """
 """
 
 # Update the RST file with a pointer to the MD file.
-md_file = str(path).replace('.rst', '.md')
 if not path.name == 'README.rst':
     new_lines = lines.copy()
     new_lines.insert(0, TEMPLATE.format(os.path.basename(md_file)) )
