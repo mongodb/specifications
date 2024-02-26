@@ -1,3 +1,11 @@
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `connection-monitoring-and-pooling.md <connection-monitoring-and-poolin.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
+
 =================================
 Connection Monitoring and Pooling
 =================================

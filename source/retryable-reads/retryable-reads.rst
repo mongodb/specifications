@@ -71,7 +71,7 @@ SocketException                    9001
 
 - a `PoolClearedError`_
 
-  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
+  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors
 
 - Any of the above retryable errors that occur during a connection handshake (including the
   authentication step). For example, a network error or ShutdownInProgress error
@@ -165,10 +165,10 @@ Drivers SHOULD support retryability for the following operations:
 Most of the above methods are defined in the following specifications:
 
 - `Change Streams
-  <https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst>`__
+  <../change-streams/change-streams.md>`__
 
 - `CRUD
-  <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst>`__
+  <../crud/crud.md>`__
 
 - `Enumerating Collections
   <https://github.com/mongodb/specifications/blob/master/source/enumerate-collections.rst>`__
@@ -330,6 +330,10 @@ should be raised. If a retry failed due to another retryable error or some
 other error originating from the server, that error should be raised instead as
 the caller can infer that an attempt was made and the second error is likely
 more relevant (with respect to the current topology state).
+
+If a driver associates server information (e.g. the server address or
+description) with an error, the driver MUST ensure that the reported server
+information corresponds to the server that originated the error.
 
 4. Implementation constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -705,6 +709,9 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 =========
 
+:2023-12-05: Add that any server information associated with retryable
+             exceptions MUST reflect the originating server, even in the
+             presence of retries.
 :2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes
              that should be retried.
 :2023-11-28: Add ExceededTimeLimit to the list of error codes that should

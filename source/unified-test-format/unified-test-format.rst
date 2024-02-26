@@ -1,3 +1,10 @@
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `unified-test-format.md <unified-test-format.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 ===================
 Unified Test Format
 ===================
@@ -41,7 +48,7 @@ This test format can be used to define tests for the following specifications:
 - `Command Logging and Monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
 - `CRUD <../crud/crud.rst>`__
 - `GridFS <../gridfs/gridfs-spec.rst>`__
-- `Retryable Reads <../retryable-reads/retryable-reads.rst>`__
+- `Retryable Reads <../retryable-reads/retryable-reads.md>`__
 - `Retryable Writes <../retryable-writes/retryable-writes.rst>`__
 - `Sessions <../sessions/driver-sessions.rst>`__
 - `Transactions <../transactions/transactions.rst>`__

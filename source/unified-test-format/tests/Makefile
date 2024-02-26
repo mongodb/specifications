@@ -1,8 +1,8 @@
-SCHEMA=../schema-1.15.json
+SCHEMA=../schema-1.19.json
 
-.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions crud collection-management sessions command-logging-and-monitoring client-side-operations-timeout HAS_AJV
+.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions transactions-convenient-api crud collection-management sessions command-logging-and-monitoring client-side-operations-timeout HAS_AJV
 
-all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions change-streams crud collection-management sessions command-logging-and-monitoring client-side-operations-timeout
+all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions transactions-convenient-api change-streams crud collection-management sessions command-logging-and-monitoring client-side-operations-timeout client-side-encryption
 
 invalid: HAS_AJV
 	@# Redirect stdout to hide expected validation errors
@@ -26,6 +26,9 @@ gridfs: HAS_AJV
 transactions: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../transactions/tests/unified/*.yml" --valid
 
+transactions-convenient-api: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../transactions-convenient-api/tests/unified/*.yml" --valid
+
 change-streams: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../change-streams/tests/unified/*.yml" --valid
 
@@ -44,6 +47,9 @@ sessions: HAS_AJV
 command-logging-and-monitoring: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../command-logging-and-monitoring/tests/logging/*.yml" --valid
 	@ajv test -s $(SCHEMA) -d "../../command-logging-and-monitoring/tests/monitoring/*.yml" --valid
+
+client-side-encryption: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../client-side-encryption/tests/unified/*.yml" --valid
 
 HAS_AJV:
 	@if ! command -v ajv > /dev/null; then                \

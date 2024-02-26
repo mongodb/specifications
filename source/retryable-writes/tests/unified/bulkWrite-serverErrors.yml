@@ -31,6 +31,8 @@ initialData:
 
 tests:
   - description: "BulkWrite succeeds after retryable writeConcernError in first batch"
+    runOnRequirements:
+      - minServerVersion: "4.3.1" # failCommand errorLabels option
     operations:
       - name: failPoint
         object: testRunner

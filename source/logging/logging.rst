@@ -1,6 +1,6 @@
-=======
+==============================
 Logging
-=======
+==============================
 
 :Title: Logging
 :Status: Accepted
@@ -171,12 +171,12 @@ driver-specific messages they produce.
      - ``MONGODB_LOG_TOPOLOGY``
 
    * - serverSelection
-     - `Server Selection <../server-selection/server-selection.rst>`__
+     - `Server Selection <../server-selection/server-selection.md>`__
      - ``MONGODB_LOG_SERVER_SELECTION``
 
    * - connection
      - `Connection Monitoring and Pooling
-       <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+       <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`__
      - ``MONGODB_LOG_CONNECTION``
 
 
@@ -277,7 +277,7 @@ SHOULD utilize it to support both types of logging.
 Note that drivers implementing unstructured logging MUST still support some internal way to intercept
 the data contained in messages in a structured form, as this is required to implement the unified tests
 for logging conformance. See the `unified test format specification
-<../unified-test-format/unified-test-format.rst#expectedLogMessage>`_ for details.
+<../unified-test-format/unified-test-format.md#expectedLogMessage>`_ for details.
 
 Representing Documents in Log Messages
 --------------------------------------
@@ -364,7 +364,7 @@ a programmatic default, so that users who prefer the opposite behavior have a wa
 Test Plan
 =========
 Tests for logging behavior are defined in each corresponding specification. The  `unified test
-runner specification <../unified-test-format/unified-test-format.rst>`_
+runner specification <../unified-test-format/unified-test-format.md>`_
 has support for specifying logging expectations in tests.
 
 Motivation for Change

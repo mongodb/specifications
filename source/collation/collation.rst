@@ -1,6 +1,13 @@
 .. role:: javascript(code)
   :language: javascript
 
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `collation.md <collation.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 =========
 Collation
 =========

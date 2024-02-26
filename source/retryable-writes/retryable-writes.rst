@@ -238,7 +238,7 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   the MongoClient performing the operation has the retryWrites configuration
   option set to true.
 
-  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
+  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors
 
 - For server versions 4.4 and newer, the server will add a RetryableWriteError
   label to errors or server responses that it considers retryable before
@@ -252,7 +252,8 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   errors that meet the following criteria if the retryWrites option is set to
   true on the client performing the relevant operation:
 
-  - a server error response with any the following codes:
+  - a mongod or mongos response with any the following error codes in the
+    top-level ``code`` field:
 
     .. list-table::
       :header-rows: 1
@@ -284,8 +285,14 @@ The RetryableWriteError label might be added to an error in a variety of ways:
       * - ExceededTimeLimit
         - 262
 
-  - a server response with a write concern error response containing any of the
-    previously listed codes
+  - a mongod response with any of the previously listed codes in the
+    ``writeConcernError.code`` field.
+
+  Drivers MUST NOT add a RetryableWriteError label based on the following:
+
+  - any ``writeErrors[].code`` fields in a mongod or mongos response
+
+  - the ``writeConcernError.code`` field in a mongos response
 
   The criteria for retryable errors is similar to the discussion in the SDAM
   spec's section on `Error Handling`_, but includes additional error codes. See
@@ -305,7 +312,7 @@ retrying.
 For more information about error labels, see the `Transactions specification`_.
 
 .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-.. _Transactions specification: ../transactions/transactions.rst#error-labels
+.. _Transactions specification: ../transactions/transactions.md#error-labels
 
 Generating Transaction IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -336,7 +343,7 @@ executed via a specific `CRUD`_ method (e.g. ``updateOne()``) or write command
 method (e.g. ``executeWriteCommand()``) within a MongoClient where retryable
 writes have been enabled and when the selected server supports retryable writes.
 
-.. _CRUD: ../crud/crud.rst
+.. _CRUD: ../crud/crud.md
 
 If your driver offers a generic command method on your database object (e.g.
 ``runCommand()``), it MUST NOT check the user's command document to determine if
@@ -404,7 +411,7 @@ of the following conditions is reached:
 - the operation fails with a non-retryable error.
 - CSOT is enabled and the operation times out per `Client Side
   Operations Timeout: Retryability
-  <../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
+  <../client-side-operations-timeout/client-side-operations-timeout.md#retryability>`__.
 - CSOT is not enabled and one retry was attempted.
 
 For each retry attempt, drivers MUST select a writable server. In a sharded
@@ -422,6 +429,10 @@ to infer that an attempt was made (e.g. connection pool exception originating
 from the driver) or the error is labeled "NoWritesPerformed", the error from
 the previous attempt should be raised. If all server errors are labeled
 "NoWritesPerformed", then the first error should be raised.
+
+If a driver associates server information (e.g. the server address or
+description) with an error, the driver MUST ensure that the reported server
+information corresponds to the server that originated the error.
 
 The above rules are implemented in the following pseudo-code:
 
@@ -786,7 +797,7 @@ operations (e.g. ``renameCollection``) are rare.
 
 That said, drivers will need to clearly document exactly which operations
 support retryable behavior. In the case ``bulkWrite()``, which may or may not
-support retryability, drivers should discuss how elegibility is determined.
+support retryability, drivers should discuss how eligibility is determined.
 
 Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------
@@ -850,7 +861,13 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
+:2024-01-16: Do not use ``writeConcernError.code`` in pre-4.4 mongos response to
+             determine retryability. Do not use ``writeErrors[].code`` in
+             pre-4.4 server responses to determine retryability.
 :2023-12-06: Clarify that writes are not retried within transactions.
+:2023-12-05: Add that any server information associated with retryable
+             exceptions MUST reflect the originating server, even in the
+             presence of retries.
 :2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 :2023-08-26: Require that in a sharded cluster the server on which the
              operation failed MUST be provided to the server selection

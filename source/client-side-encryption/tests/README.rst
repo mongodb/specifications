@@ -12,13 +12,13 @@ Introduction
 This document describes the format of the driver spec tests included in the
 JSON and YAML files included in the ``legacy`` sub-directory. Tests in the
 ``unified`` directory are written using the `Unified Test Format
-<../../unified-test-format/unified-test-format.rst>`_.
+<../../unified-test-format/unified-test-format.md>`_.
 
 The ``timeoutMS.yml``/``timeoutMS.json`` files in this directory contain tests
 for the ``timeoutMS`` option and its application to the client-side encryption
 feature. Drivers MUST only run these tests after implementing the
 `Client Side Operations Timeout
-<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+<../../client-side-operations-timeout/client-side-operations-timeout.md>`__
 specification.
 
 Additional prose tests, that are not represented in the spec tests, are described
@@ -39,7 +39,7 @@ are true:
 Spec Test Format
 ================
 
-The spec tests format is an extension of `transactions spec tests <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/README.rst>`_ with some additions:
+The spec tests format is an extension of the `transactions spec legacy test format <../../transactions/tests/legacy-test-format.md>`__ with some additions:
 
 - A ``json_schema`` to set on the collection used for operations.
 
@@ -121,7 +121,7 @@ Each YAML file has the following keys:
 
         - ``gcp`` The GCP KMS provider credentials. An empty object. Drivers MUST fill in GCP credentials (`email`, `privateKey`) from the environment.
 
-        - ``local`` The local KMS provider.
+        - ``local`` or ``local:name2`` The local KMS provider.
 
           - ``key`` A 96 byte local key.
 
@@ -158,6 +158,14 @@ Each YAML file has the following keys:
   - ``outcome``: |txn|
 
 
+Credentials
+===========
+
+Test credentials are available in AWS Secrets Manager. See https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets for more background on how the secrets are managed.
+
+Test credentials to KMS are located in "drivers/csfle".
+
+Test credentials to create environments are available in "drivers/gcpkms" and "drivers/azurekms".
 
 Use as integration tests
 ========================
@@ -168,7 +176,7 @@ Do the following before running spec tests:
   in a location accessible to the tests. Refer to: `Using crypt_shared`_
 - Start the mongocryptd process.
 - Start a mongod process with **server version 4.2.0 or later**.
-- Place credentials to an AWS IAM user (access key ID + secret access key) somewhere in the environment outside of tracked code. (If testing on evergreen, project variables are a good place).
+- Place credentials somewhere in the environment outside of tracked code. (If testing on evergreen, project variables are a good place).
 - Start a KMIP test server on port 5698 by running `drivers-evergreen-tools/.evergreen/csfle/kms_kmip_server.py <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
@@ -1125,7 +1133,7 @@ Repeat the steps from the "Via bypassAutoEncryption" test, replacing "bypassAuto
 9. Deadlock Tests
 ~~~~~~~~~~~~~~~~~
 
-.. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _Connection Monitoring and Pooling: ../../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
 
 The following tests only apply to drivers that have implemented a connection pool (see the `Connection Monitoring and Pooling`_ specification).
 
@@ -1308,7 +1316,7 @@ Drivers that do not support an unlimited maximum pool size MUST skip this test.
 The following tests that connections to KMS servers with TLS verify peer certificates.
 
 The two tests below make use of mock KMS servers which can be run on Evergreen using `the mock KMS server script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
-Drivers can set up their local Python enviroment for the mock KMS server by running `the virtualenv activation script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/activate_venv.sh>`_.
+Drivers can set up their local Python environment for the mock KMS server by running `the virtualenv activation script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/activate_venv.sh>`_.
 
 To start two mock KMS servers, one on port 9000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file, and one on port 9001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file,
 run the following commands from the ``.evergreen/csfle`` directory:
@@ -1415,7 +1423,7 @@ Four mock KMS server processes must be running:
 
 4. The mock `KMS KMIP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
-Create the following four ``ClientEncryption`` objects.
+Create the following ``ClientEncryption`` objects.
 
 Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
 
@@ -1539,6 +1547,61 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
    ``kmip`` providers to use the following options:
 
    - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
+
+5. Create a ``ClientEncryption`` object named ``client_encryption_with_names`` with the following KMS providers:
+
+   .. code:: javascript
+
+      {
+            "aws:no_client_cert": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure:no_client_cert": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:9002"
+            },
+            "gcp:no_client_cert": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:9002"
+            },
+            "kmip:no_client_cert": {
+               "endpoint": "127.0.0.1:5698"
+            },
+            "aws:with_tls": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure:with_tls": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:9002"
+            },
+            "gcp:with_tls": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:9002"
+            },
+            "kmip:with_tls": {
+               "endpoint": "127.0.0.1:5698"
+            }
+      }
+
+   Support for named KMS providers requires libmongocrypt 1.9.0.
+
+   Add TLS options for the ``aws:no_client_cert``, ``azure:no_client_cert``, ``gcp:no_client_cert``, and ``kmip:no_client_cert`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
+
+   Add TLS options for the ``aws:with_tls``, ``azure:with_tls``, ``gcp:with_tls``, and ``kmip:with_tls`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
+   - ``tlsCertificateKeyFile`` (or equivalent) set to `client.pem`_
+
 
 Case 1: AWS
 ```````````
@@ -1700,6 +1763,73 @@ Create a ``ClientEncryption`` object with the following KMS providers:
    - ``tlsDisableOCSPEndpointCheck`` (or equivalent) set to ``true``.
 
 Expect no error on construction.
+
+Case 6: named KMS providers apply TLS options
+`````````````````````````````````````````````
+
+Named AWS
+^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "aws:no_client_cert" as the provider and the following masterKey.
+
+.. code:: javascript
+
+   {
+      region: "us-east-1",
+      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+      endpoint: "127.0.0.1:9002"
+   }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "aws:with_tls" as the provider and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "parse error". This implies TLS handshake succeeded.
+
+Named Azure
+^^^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "azure:no_client_cert" as the provider and the following masterKey:
+
+.. code:: javascript
+
+   { 'keyVaultEndpoint': 'doesnotexist.local', 'keyName': 'foo' }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "azure:with_tls" as the provider and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP status=404". This implies TLS handshake succeeded.
+
+Named GCP
+^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "gcp:no_client_cert" as the provider and the following masterKey:
+
+.. code:: javascript
+
+   { 'projectId': 'foo', 'location': 'bar', 'keyRing': 'baz', 'keyName': 'foo' }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "gcp:with_tls" as the provider and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP status=404". This implies TLS handshake succeeded.
+
+Named KMIP
+^^^^^^^^^^
+
+Call `client_encryption_with_names.createDataKey()` with "kmip:no_client_cert" as the provider and the following masterKey:
+
+.. code:: javascript
+
+   { }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_names.createDataKey()` with "kmip:with_tls" as the provider and the same masterKey.
+
+Expect success.
 
 
 12. Explicit Encryption

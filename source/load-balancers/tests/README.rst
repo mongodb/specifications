@@ -44,7 +44,7 @@ add the relevant TLS options to both ``SINGLE_MONGOS_LB_URI`` and
 cluster. Drivers MUST use the final URI stored in ``SINGLE_MONGOS_LB_URI``
 (with additional TLS options if required) to configure internal clients for
 test runners (e.g. the internal MongoClient described by the `Unified Test
-Format spec <../../unified-test-format/unified-test-format.rst>`__).
+Format spec <../../unified-test-format/unified-test-format.md>`__).
 
 In addition to modifying load balancer URIs, drivers MUST also mock server
 support for returning a ``serviceId`` field in ``hello`` or legacy ``hello``
@@ -58,7 +58,7 @@ Tests
 
 The YAML and JSON files in this directory contain platform-independent tests
 written in the `Unified Test Format
-<../../unified-test-format/unified-test-format.rst>`_. Drivers MUST run the
+<../../unified-test-format/unified-test-format.md>`_. Drivers MUST run the
 following test suites against a load balanced cluster:
 
 #. All test suites written in the Unified Test Format

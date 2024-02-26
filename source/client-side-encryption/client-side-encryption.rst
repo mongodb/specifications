@@ -4,8 +4,8 @@ Client Side Encryption
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2023-02-01
-:Version: 1.12.0
+:Last Modified: 2024-01-10
+:Version: 1.13.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
 
@@ -64,7 +64,33 @@ MongoDB key vault collection
    A MongoDB collection designated to contain data keys. This can either be co-located with the data-bearing cluster, or in a separate external MongoDB cluster.
 
 Key Management Service (KMS)
-   An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS. Only AWS KMS (and a local service) is supported.
+   An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS.
+
+KMS providers
+
+   A map of KMS providers to credentials. Configured client-side. Example:
+
+   .. code:: python
+
+      kms_providers = {
+         "aws": {
+            "accessKeyId": AWS_KEYID,
+            "secretAccessKey": AWS_SECRET,
+         },
+         "local": {
+            "key": LOCAL_KEK
+         },
+      }
+
+KMS provider
+   A configured KMS. Identified by a key in the KMS providers map. The key has the form "<KMS provider type>" or "<KMS provider type>:<KMS provider name>". Examples: "aws" or "aws:myname".
+   In libmongocrypt_, the key is referred to as the KMS ID.
+
+KMS provider type
+   The type of backing KMS. Identified by the string: "aws", "azure", "gcp", "kmip", or "local".
+
+KMS provider name
+   An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the same KMS provider type (e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
 
 Customer Master Key (CMK)
    The underlying key AWS KMS uses to encrypt and decrypt. See `AWS Key Management Service Concepts <https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys>`_.
@@ -458,7 +484,7 @@ the following as a template:
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
 .. _KMSProviders:
-.. _KMSProviderName:
+.. _KMSProvider:
 .. _AWSKMSOptions:
 .. _GCPKMSOptions:
 .. _AzureAccessToken:
@@ -468,14 +494,13 @@ kmsProviders
 
 The ``kmsProviders`` property may be specified on ClientEncryptionOpts_ or
 AutoEncryptionOpts_. Multiple KMS providers may be specified, each using a
-specific property on the KMSProviders_ object. The options for each type of
-provider differ by the provider name (:ts:`"aws"`, :ts:`"azure"`, :ts:`"gcp"`,
-:ts:`"local"`, and :ts:`"kmip"`). The "local" provider is configured with master
-key material. The external providers are configured with credentials to
+specific property on the KMSProviders_ object. The options differ for each KMS
+provider type. The "local" KMS provider type is configured with master key
+material. The external providers are configured with credentials to
 authenticate.
 
-Throughout this document, the provider name is annotated as
-:ts:`KMSProviderName`, but this name is for *exposition only*: drivers MUST
+Throughout this document, the KMS provider is annotated as
+:ts:`KMSProvider`, but this name is for *exposition only*: drivers MUST
 accept arbitrary strings at runtime for forward-compatibility.
 
 .. code:: typescript
@@ -486,11 +511,20 @@ accept arbitrary strings at runtime for forward-compatibility.
       gcp?: GCPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
       local?: LocalKMSOptions;
       kmip?: KMIPKMSOptions;
+
+      // KMS providers may be specified with an optional name suffix separated by a colon.
+      // Named KMS providers do not support "Automatic Credentials".
+      // Note: the named KMS providers strings below are not valid Typescript regexes. They are intended for exposition only.
+      "^aws:[a-zA-Z0-9_]+$"?: AWSKMSOptions;
+      "^azure:[a-zA-Z0-9_]+$"?: AzureKMSOptions;
+      "^gcp:[a-zA-Z0-9_]+$"?: GCPKMSOptions;
+      "^local:[a-zA-Z0-9_]+$"?: LocalKMSOptions;
+      "^kmip:[a-zA-Z0-9_]+$"?: KMIPKMSOptions;
    };
 
-   // KMSProviderName is a string name of any of the providers. Note: For forward
+   // KMSProvider is a string identifying a KMS provider. Note: For forward
    // compatibility, any string should be accepted.
-   type KMSProviderName = keyof KMSProviders | string;
+   type KMSProvider = string;
 
    interface AWSKMSOptions {
       accessKeyId: string;
@@ -531,6 +565,26 @@ accept arbitrary strings at runtime for forward-compatibility.
       endpoint: string;
    };
 
+The following shows an example object of :ts:`KMSProviders`:
+
+.. code:: yaml
+
+   {
+      # Pass credentials for AWS:
+      "aws": { "accessKeyId": "foo", "secretAccessKey": "bar" },
+      # Use an empty document to enable "Automatic Credentials" for Azure:
+      "azure": {},
+      # Pass an access token for GCP:
+      "gcp": { "accessToken": "foo" },
+      # Pass a 96 byte base64 encoded string for the local KMS provider.
+      "local": { "key": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk" }
+      # Pass the endpoint for KMIP:
+      "kmip": { "endpoint": "localhost:5698" }
+      # Pass credentials for a different AWS account by appending a name.
+      # Note: credentials with a name do not support "Automatic Credentials".
+      "aws:name2": { "accessKeyId": "foo2", "secretAccessKey": "bar2" }
+   }
+
 
 Automatic Credentials
 `````````````````````
@@ -544,6 +598,12 @@ indicated by libmongocrypt_ only once they are needed.
 When such a state is detected, libmongocrypt_ will call back to the driver by
 entering the ``MONGOCRYPT_CTX_NEED_KMS_CREDENTIALS`` state, upon which the
 driver should fill in the KMS options automatically.
+
+Automatic credentials are only supported for the KMS provider types ``aws``,
+``gcp``, and ``azure``. KMS providers containing a name (e.g. ``aws:myname``) do
+not support automatic credentials. Attempting to configure a KMS provider with a
+name for automatic credentials results in a runtime error from libmongocrypt_.
+See :ref:`no-on-demand-kms-credentials-for-named-kms-providers`.
 
 .. note:: Drivers MUST NOT eagerly fill an empty KMS options property.
 
@@ -590,7 +650,7 @@ following process:
 
 6. Return `P` as the additional KMS providers to libmongocrypt_.
 
-__ ../auth/auth.rst#obtaining-credentials
+__ ../auth/auth.md#obtaining-credentials
 
 .. default-role:: literal
 
@@ -693,14 +753,14 @@ The following is an example:
 .. code:: typescript
 
    class AutoEncryptionOpts {
-      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // setTLSOptions accepts a map of KMS providers to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
       setTLSOptions (opts: KMSProvidersTLSOptions)
    }
 
    class ClientEncryptionOpts {
-      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // setTLSOptions accepts a map of KMS providers to TLSOptions.
       // The TLSOptions apply to any TLS socket required to communicate
       // with the KMS provider.
       setTLSOptions (opts: KMSProvidersTLSOptions)
@@ -962,7 +1022,7 @@ Create Encrypted Collection Helper
 To support automatic generation of encryption data keys, a helper
 `CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, masterKey)`
 is defined, where `CE` is a ClientEncryption_ object, `kmsProvider` is a
-KMSProviderName_ and `masterKey` is equivalent to the `masterKey` defined in DataKeyOpts_.
+KMSProvider_ and `masterKey` is equivalent to the `masterKey` defined in DataKeyOpts_.
 It has the following behavior:
 
 - If `collOpts` contains an ``"encryptedFields"`` property, then `EF` is the value
@@ -1054,11 +1114,11 @@ ClientEncryption
       // create a collection with encrypted fields, automatically allocating and assigning new data encryption
       // keys. It returns a handle to the new collection, as well as a document consisting of the generated
       // "encryptedFields" options. Refer to "Create Encrypted Collection Helper"
-      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProviderName, masterKey: Optional<Document>): [Collection, Document];
+      createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProvider, masterKey: Optional<Document>): [Collection, Document];
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
-      createDataKey(kmsProvider: KMSProviderName, opts: DataKeyOpts | null): Binary;
+      createDataKey(kmsProvider: KMSProvider, opts: DataKeyOpts | null): Binary;
 
       // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
       // The updated fields of each rewrapped data key is updated in the key vault collection as part of a single bulk write operation.
@@ -1126,8 +1186,8 @@ ClientEncryption
    };
 
    interface KMSProvidersTLSOptions {
-      // Map the KMS providers (by name) to a set of TLS options
-      [provider: KMSProviderName]: TLSOptionsMap;
+      // Map the KMS providers to a set of TLS options
+      [provider: KMSProvider]: TLSOptionsMap;
    };
 
 The ClientEncryption encapsulates explicit operations on a key vault
@@ -1163,7 +1223,7 @@ DataKeyOpts
 masterKey
 ^^^^^^^^^
 The masterKey document identifies a KMS-specific key used to encrypt the new data
-key. If the kmsProvider is "aws" it is required and has the following fields:
+key. If kmsProvider has KMS provider type "aws", the masterKey is required and has the following fields:
 
 .. code:: typescript
 
@@ -1173,7 +1233,7 @@ key. If the kmsProvider is "aws" it is required and has the following fields:
       endpoint: Optional<String> // An alternate host identifier to send KMS requests to. May include port number. Defaults to "kms.<region>.amazonaws.com"
    }
 
-If the kmsProvider is "azure" the masterKey is required and has the following fields:
+If the kmsProvider has KMS provider type "azure", the masterKey is required and has the following fields:
 
 .. code:: typescript
 
@@ -1183,7 +1243,7 @@ If the kmsProvider is "azure" the masterKey is required and has the following fi
       keyVersion: Optional<String> // A specific version of the named key, defaults to using the key's primary version.
    }
 
-If the kmsProvider is "gcp" the masterKey is required and has the following fields:
+If the kmsProvider has KMS provider type "gcp", the masterKey is required and has the following fields:
 
 .. code:: typescript
 
@@ -1196,9 +1256,9 @@ If the kmsProvider is "gcp" the masterKey is required and has the following fiel
       endpoint: Optional<String> // Host with optional port. Defaults to "cloudkms.googleapis.com".
    }
 
-If the kmsProvider is "local" the masterKey is not applicable.
+If the kmsProvider has KMS provider type "local", the masterKey is not applicable.
 
-If the kmsProvider is "kmip" the masterKey is required and has the following fields:
+If the kmsProvider has KMS provider type "kmip", the masterKey is required and has the following fields:
 
 .. code-block:: javascript
 
@@ -1209,8 +1269,8 @@ If the kmsProvider is "kmip" the masterKey is required and has the following fie
    }
 
 Drivers MUST document the expected fields in the masterKey document for the
-"aws", "azure", "gcp", and "kmip" KMS providers. Additionally, they MUST
-document that masterKey is **required** for these providers and is not optional.
+"aws", "azure", "gcp", and "kmip" KMS provider types. Additionally, they MUST
+document that masterKey is **required** for these KMS provider types and is not optional.
 
 The value of `endpoint` or `keyVaultEndpoint` is a host name with optional port
 number separated by a colon. E.g. "kms.us-east-1.amazonaws.com" or
@@ -1273,11 +1333,11 @@ RewrapManyDataKeyResult
    }
 
 ``bulkWriteResult`` is the `result of the bulk write operation
-<../crud/crud.rst##write-results>`_ used to update the key vault collection with
+<../crud/crud.md#write-results>`_ used to update the key vault collection with
 one or more rewrapped data keys. If ``rewrapManyDataKey()`` does not find any
 matching keys to rewrap, no bulk write operation will be executed and this field
 will be unset. This field may also be unset if the bulk write operation is
-unacknowledged as permitted by the `CRUD API Spec <../crud/crud.rst#write-results>`_.
+unacknowledged as permitted by the `CRUD API Spec <../crud/crud.md#write-results>`_.
 
 See `Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?`_.
 
@@ -1474,7 +1534,7 @@ management.
 
 Drivers MUST apply timeouts to operations executed as part of client-side encryption per `Client Side Operations
 Timeout: Client Side Encryption
-<../client-side-operations-timeout/client-side-operations-timeout.rst#client-side-encryption>`__.
+<../client-side-operations-timeout/client-side-operations-timeout.md#client-side-encryption>`__.
 
 Integrating with libmongocrypt
 ==============================
@@ -1539,7 +1599,7 @@ for explicit encryption only (i.e. on the ClientEncryption class).
 For purposes of testing, a driver may use a different set of search paths.
 
 
-.. rubric:: Explaination
+.. rubric:: Explanation
 
 The `search paths`_ array in libmongocrypt_ allows the driver to customize the
 way that libmongocrypt_ searches and loads the crypt_shared_ library. For testing
@@ -1750,7 +1810,7 @@ Connecting to mongocryptd_
 If the crypt_shared_ library is loaded, the driver MUST NOT attempt to connect
 to mongocryptd_. (Refer: `Detecting crypt_shared Availability`_).
 
-Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
+Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.md#serverselectiontryonce>`_
 , connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
 If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
@@ -2419,15 +2479,15 @@ Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drive
 By default, single threaded clients set serverSelectionTryOnce to true, which
 means server selection fails if a topology scan fails the first time (i.e. it
 will not make repeat attempts until serverSelectionTimeoutMS expires). This
-behavior is overriden since there may be a small delay between spawning
+behavior is overridden since there may be a small delay between spawning
 mongocryptd (which the driver may be responsible for) and for mongocryptd to
-listen on sockets. See the Server Selection spec description of `serverSelectionTryOnce <../server-selection/server-selection.rst#serverselectiontryonce>`_.
+listen on sockets. See the Server Selection spec description of `serverSelectionTryOnce <../server-selection/server-selection.md#serverselectiontryonce>`_.
 
 Similarly, single threaded clients will by default wait for 5 second cooldown
 period after failing to connect to a server before making another attempt.
 Meaning if the first attempt to mongocryptd fails to connect, then the user
 would observe a 5 second delay. This is not configurable in the URI, so this
-must be overriden internally. Since mongocryptd is a local process, there should
+must be overridden internally. Since mongocryptd is a local process, there should
 only be a very short delay after spawning mongocryptd for it to start listening
 on sockets. See the SDAM spec description of `cooldownMS <../source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__.
 
@@ -2451,7 +2511,7 @@ These operations MUST NOT reuse the same connection pool as the parent
 situations.
 
 Drivers supporting a connection pool (see `CMAP specification
-</source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_)
+<../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`_)
 support an option for limiting the connection pool size: ``maxPoolSize``.
 
 Drivers need to check out a connection before serializing the command. If the
@@ -2659,6 +2719,25 @@ Returning an Aggregate Expression or Match Expression as a BSON document motivat
 
 To limit scope, only $and is supported. Support for other operators ($eq, $in) can be added in the future if desired.
 
+.. _no-on-demand-kms-credentials-for-named-kms-providers:
+
+Why do on-demand KMS credentials not support named KMS providers?
+-----------------------------------------------------------------
+
+libmongocrypt supports supplying KMS providers credentials on-demand. This
+enables obtaining credentials from the host machine. Supporting on-demand
+credentials was added as part of these projects:
+`DRIVERS-2280 <https://jira.mongodb.org/browse/DRIVERS-2280>`_ ("aws"),
+`DRIVERS-2377 <https://jira.mongodb.org/browse/DRIVERS-2377>`_ ("gcp"),
+`DRIVERS-2411 <https://jira.mongodb.org/browse/DRIVERS-2411>`_ ("azure").
+
+On-demand credentials are primarily intended to support passing credentials
+assigned in an environment. Supporting on-demand credentials for more than
+one KMS provider of the same type is not expected to be useful. Supporting
+on-demand KMS credentials would require added work in drivers inspecting the
+KMS providers when obtaining credentials, as well as additional test coverage.
+Supporting on-demand KMS credentials for named KMS providers can be
+considered as future work if needed.
 
 Future work
 ===========
@@ -2733,6 +2812,7 @@ explicit session parameter as described in the
 Changelog
 =========
 
+:2024-01-10: Add named KMS providers
 :2023-03-30: Remove ECC collection
 :2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
 :2023-01-31: ``createEncryptedCollection`` does not check AutoEncryptionOptions for the encryptedFieldsMap.

@@ -121,8 +121,8 @@ The command listener API is responsible only for receiving and handling events s
 level of the driver, and is only about informing listeners about what commands are sent and what
 replies are received. As such, it would be innappropiate at this level for a driver to execute
 custom logic around particular commands to determine what failure or success means for a particular
-command. Implementators of the API are free to handle these events as they see fit, which may include
-code that futher interprets replies to specific commands based on the presence or absence of other
+command. Implementers of the API are free to handle these events as they see fit, which may include
+code that further interprets replies to specific commands based on the presence or absence of other
 fields in the reply beyond the ``ok`` field.
 
 *2. Why are document sequences included as BSON arrays?*
@@ -408,7 +408,7 @@ The following key-value pairs MUST be included in all command messages:
    * - driverConnectionId
      - Int64
      - The driver's ID for the connection used for the command. Note this is NOT the same as ``CommandStartedEvent.connectionId`` defined above,
-       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
+       but refers to the `connectionId` defined in the  `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`_.
        Unlike ``CommandStartedEvent.connectionId`` this field MUST NOT contain the host/port; that information MUST be in the following fields,
        ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
        a connection ID.

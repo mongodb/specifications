@@ -1,3 +1,11 @@
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `decimal128.md <decimal128.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
+
 ========================================
 BSON Decimal128 Type Handling in Drivers
 ========================================

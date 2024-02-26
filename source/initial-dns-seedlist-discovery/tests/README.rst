@@ -116,7 +116,7 @@ These YAML and JSON files contain the following fields:
 - ``comment``: a comment to indicate why a test would fail.
 - ``ping``: if false, the test runner should not run a "ping" operation.
 
-.. _`Connection String`: ../../connection-string/connection-string-spec.rst
+.. _`Connection String`: ../../connection-string/connection-string-spec.md
 .. _`URI options`: ../../uri-options/uri-options.rst
 
 For each YAML file:
