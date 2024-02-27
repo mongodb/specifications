@@ -1795,7 +1795,7 @@ Drivers MUST be running the mock `KMS KMIP server
 when evaluating tests that require KMS requests to a KMIP KMS provider.
 
 Drivers MAY enforce a unique index on ``keyAltNames`` as described in the
-`Client Side Field Level Encryption spec <../client-side-encryption/client-side-encryption.md#why-aren-t-we-creating-a-unique-index-in-the-key-vault-collection>`_
+`Client Side Field Level Encryption spec <../client-side-encryption/client-side-encryption.md#why-arent-we-creating-a-unique-index-in-the-key-vault-collection>`_
 when running key management operations on the key vault collection. Although
 unified tests are written assuming the existence of the unique index, no unified
 test currently requires its implementation for correctness (e.g. no unified test
