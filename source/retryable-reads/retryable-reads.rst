@@ -180,7 +180,7 @@ Most of the above methods are defined in the following specifications:
   <https://github.com/mongodb/specifications/blob/master/source/enumerate-databases.rst>`__
 
 - `GridFS Spec
-  <https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst>`__
+  <../gridfs/gridfs-spec.md>`__
 
 Unsupported Read Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

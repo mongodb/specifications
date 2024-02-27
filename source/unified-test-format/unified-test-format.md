@@ -28,7 +28,7 @@ This test format can be used to define tests for the following specifications:
 - [Change Streams](../change-streams/change-streams.md)
 - [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst)
 - [CRUD](../crud/crud.md)
-- [GridFS](../gridfs/gridfs-spec.rst)
+- [GridFS](../gridfs/gridfs-spec.md)
 - [Retryable Reads](../retryable-reads/retryable-reads.rst)
 - [Retryable Writes](../retryable-writes/retryable-writes.rst)
 - [Sessions](../sessions/driver-sessions.rst)
@@ -632,7 +632,7 @@ The structure of this object is as follows:
 
 <div id="entity_bucket">
 
-- `bucket`: Optional object. Defines a Bucket object, as defined in the [GridFS](../gridfs/gridfs-spec.rst) spec.
+- `bucket`: Optional object. Defines a Bucket object, as defined in the [GridFS](../gridfs/gridfs-spec.md) spec.
 
   The structure of this object is as follows:
 
@@ -642,7 +642,7 @@ The structure of this object is as follows:
     [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for a database entity's `id` field (e.g.
     `database: *database0`).
   - `bucketOptions`: Optional object. Additional options used to construct the bucket object. Supported options are
-    defined in the [GridFS](../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class) specification. The `readConcern`,
+    defined in the [GridFS](../gridfs/gridfs-spec.md#configurable-gridfsbucket-class) specification. The `readConcern`,
     `readPreference`, and `writeConcern` options use the same structure as defined in [Common Options](#common-options).
 
 <div id="entity_thread_object">
@@ -1725,7 +1725,7 @@ callback operation raises an error, it should be possible to assert that error a
 
 These operations and their arguments may be documented in the following specifications:
 
-- [GridFS](../gridfs/gridfs-spec.rst)
+- [GridFS](../gridfs/gridfs-spec.md)
 
 Bucket operations that require special handling or are not documented by an existing specification are described below.
 
