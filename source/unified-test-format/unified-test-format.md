@@ -371,7 +371,7 @@ The structure of this object is as follows:
 
   - Server version is 4.2.0 or higher
   - Driver has libmongocrypt enabled
-  - At least one of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt-shared) and/or
+  - At least one of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) and/or
     [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) is available
 
   If false, tests MUST NOT run if CSFLE is supported. If this field is omitted, there is no CSFLE requirement.
