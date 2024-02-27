@@ -149,7 +149,7 @@ automatically encrypts commands and decrypts results. Automatic encryption is en
 encrypt and decrypt with a new ClientEncryption object.
 
 Client side encryption requires MongoDB 4.2 compatible drivers, and is only supported against 4.2 or higher servers. See
-[Why is a 4.2 server required?](#why-is-a-4.2-server-required).
+[Why is a 4.2 server required?](#why-is-a-42-server-required).
 
 The following shows basic usage of the new API.
 
