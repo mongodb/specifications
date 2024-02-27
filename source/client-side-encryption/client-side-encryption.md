@@ -2419,7 +2419,7 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 - 2022-09-26: Add behavior for automatic Azure KeyVault credentials for `kmsProviders`.
 
-- 2022-09-09: Prohibit `rewrapManyDataKey` with libmongocrypt \<= 1.5.1.
+- 2022-09-09: Prohibit `rewrapManyDataKey` with libmongocrypt <= 1.5.1.
 
 - 2022-07-20: Add behavior for automatic GCP credential loading in `kmsProviders`.
 
