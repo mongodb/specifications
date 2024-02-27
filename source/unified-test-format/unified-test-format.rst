@@ -472,7 +472,7 @@ The structure of this object is as follows:
 
    - Server version is 4.2.0 or higher
    - Driver has libmongocrypt enabled
-   - At least one of `crypt_shared <../client-side-encryption/client-side-encryption.md#crypt-shared>`__
+   - At least one of `crypt_shared <../client-side-encryption/client-side-encryption.md#crypt_shared>`__
      and/or `mongocryptd <../client-side-encryption/client-side-encryption.md#mongocryptd>`__
      is available
 
