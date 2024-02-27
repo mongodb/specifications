@@ -11,6 +11,7 @@
 - [Driver Authentication](auth/auth.md)
 - [Driver CRUD API](crud/crud.md)
 - [Driver Transactions Specification](transactions/transactions.md)
+- [FaaS Automated Testing](faas-automated-testing/faas-automated-testing.md)
 - [Handling of DBRefs](./dbref.md)
 - [MongoDB Driver Performance Benchmarking](benchmarking/benchmarking.md)
 - [Server Selection](server-selection/server-selection.md)
