@@ -2203,7 +2203,7 @@ collections (e.g. aggregate with $lookup) are handled properly.
 
 Test Plan
 =========
-See the `README.rst <../client-side-encryption/tests/README.rst>`_ in the test directory.
+See the `README.rst <tests/README.md>`_ in the test directory.
 
 
 .. toctree::
