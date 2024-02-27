@@ -756,6 +756,8 @@ Drivers MUST implement extraOptions in a way that allows deprecating/removing op
 break, such as with a BSON document or map type instead of a struct type with fixed fields. See
 [Why are extraOptions and kmsProviders maps?](#why-are-extraoptions-and-kmsproviders-maps).
 
+<div id="extraoptions.cryptsharedlibpath">
+
 ##### `extraOptions.cryptSharedLibPath`
 
 - Type: `undefined | string`
@@ -766,6 +768,8 @@ Allow the user to specify an absolute path to a [crypt_shared](#crypt_shared) dy
 - [Overriding the crypt_shared Library Path](#overriding-the-crypt_shared-library-path)
 - [Path Resolution Behavior](#path-resolution-behavior)
 - \[Enabling crypt_shared\](#Enabling crypt_shared)
+
+<div id="extraoptions.cryptsharedlibrequired">
 
 ##### `extraOptions.cryptSharedLibRequired`
 
