@@ -4,6 +4,7 @@
 - [BSON Decimal128 Type Handling in Drivers](bson-decimal128/decimal128.md)
 - [Causal Consistency Specification](causal-consistency/causal-consistency.md)
 - [Change Streams](change-streams/change-streams.md)
+- [Client Side Encryption](client-side-encryption/client-side-encryption.md)
 - [Client Side Operations Timeout](client-side-operations-timeout/client-side-operations-timeout.md)
 - [Collation](collation/collation.md)
 - [Connection Monitoring and Pooling](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)

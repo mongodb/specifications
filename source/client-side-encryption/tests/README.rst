@@ -202,7 +202,7 @@ Then for each element in ``tests``:
 
       {"create": <collection>, "validator": {"$jsonSchema": <json_schema>}}
 
-   If ``encrypted_fields`` is defined in the test, the required collections and index described in `Create and Drop Collection Helpers <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#queryable-encryption-create-and-drop-collection-helpers>`_  must be created:
+   If ``encrypted_fields`` is defined in the test, the required collections and index described in `Create and Drop Collection Helpers <../client-side-encryption.md#queryable-encryption-create-and-drop-collection-helpers>`_  must be created:
 
    - Use the ``dropCollection`` helper with ``encrypted_fields`` as an option and writeConcern "majority".
    - Use the ``createCollection`` helper with ``encrypted_fields`` as an option.
@@ -1852,7 +1852,7 @@ Load the file `key1-document.json <https://github.com/mongodb/specifications/tre
 
 Read the ``"_id"`` field of ``key1Document`` as ``key1ID``.
 
-Drop and create the collection ``db.explicit_encryption`` using ``encryptedFields`` as an option. See `FLE 2 CreateCollection() and Collection.Drop() <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-createcollection-and-collection-drop>`_.
+Drop and create the collection ``db.explicit_encryption`` using ``encryptedFields`` as an option. See `FLE 2 CreateCollection() and Collection.Drop() <../client-side-encryption.md#fle-2-createcollection-and-collection-drop>`_.
 
 Drop and create the collection ``keyvault.datakeys``.
 
@@ -2853,7 +2853,7 @@ Load the file `key1-document.json <https://github.com/mongodb/specifications/tre
 
 Read the ``"_id"`` field of ``key1Document`` as ``key1ID``.
 
-Drop and create the collection ``db.explicit_encryption`` using ``encryptedFields`` as an option. See `FLE 2 CreateCollection() and Collection.Drop() <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#fle-2-createcollection-and-collection-drop>`_.
+Drop and create the collection ``db.explicit_encryption`` using ``encryptedFields`` as an option. See `FLE 2 CreateCollection() and Collection.Drop() <../client-side-encryption.md#fle-2-createcollection-and-collection-drop>`_.
 
 Drop and create the collection ``keyvault.datakeys``.
 

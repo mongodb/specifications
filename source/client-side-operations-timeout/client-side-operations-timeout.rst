@@ -134,7 +134,7 @@ specifications:
 
 - `CRUD <./../crud/crud.rst>`__
 - `Change Streams <../change-streams/change-streams.rst>`__
-- `Client Side Encryption <../client-side-encryption/client-side-encryption.rst>`__
+- `Client Side Encryption <../client-side-encryption/client-side-encryption.md>`__
 - `Enumerating Collections <../enumerate-collections.rst>`__
 - `Enumerating Databases <../enumerate-databases.rst>`__
 - `GridFS <../gridfs/gridfs-spec.rst>`__
@@ -380,7 +380,7 @@ whether or not the server is a mongocryptd, drivers MUST check that the
 
 For explicit encryption and decryption, the ``ClientEncryptionOpts`` options
 type used to construct `ClientEncryption
-<../client-side-encryption/client-side-encryption.rst#clientencryption>`_
+<../client-side-encryption/client-side-encryption.md#clientencryption>`_
 instances MUST support a new ``timeoutMS`` option, which specifies the timeout
 for all operations executed on the ``ClientEncryption`` object.
 
