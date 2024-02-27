@@ -92,7 +92,7 @@ The `timeoutMS` option applies to all operations defined in the following specif
 - [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
 - [Enumerating Collections](../enumerate-collections.rst)
 - [Enumerating Databases](../enumerate-databases.rst)
-- [GridFS](../gridfs/gridfs-spec.rst)
+- [GridFS](../gridfs/gridfs-spec.md)
 - [Index Management](../index-management/index-management.rst)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)

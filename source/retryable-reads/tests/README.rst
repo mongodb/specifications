@@ -173,7 +173,7 @@ data.
 ``GridFS.download_to_stream_by_name``.
 
 
-.. _GridFSBucket spec: https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class
+.. _GridFSBucket spec: https://github.com/mongodb/specifications/blob/master../../gridfs/gridfs-spec.md#configurable-gridfsbucket-class
 
 
 Speeding Up Tests
