@@ -1,461 +1,718 @@
 # Bulk Write
 
-isabeltodo table
+- Status: In Review
+- Minimum Server Version: 8.0
 
 ## Abstract
 
-This specification defines the driver API for the `bulkWrite` server command introduced in MongoDB 8.0. The API defined in this specification allows users to perform insert, update, and delete operations against mixed namespaces in a minimized number of round trips, and to receive detailed results for each operation performed. This API is distinct from the collection-level bulkWrite method defined in the CRUD specification and the deprecated bulk write specification (isabeltodo link).
+This specification defines the driver API for the `bulkWrite` server command introduced in MongoDB
+8.0. The API defined in this specification allows users to perform insert, update, and delete
+operations against mixed namespaces in a minimized number of round trips, and to receive detailed
+results for each operation performed. This API is distinct from the
+[collection-level bulkWrite method](../crud/crud.md#insert-update-replace-delete-and-bulk-writes)
+defined in the CRUD specification and the
+[deprecated bulk write specification](../driver-bulk-update.rst).
 
 ## Specification
 
-### Definitions
+### `MongoClient.bulkWrite` Interface
 
-Document sequence: An `OP_MSG` payload type 1 as defined in the `OP_MSG` specification here (isabeltodo link).
+**NOTE:** The types specified in this interface are similar to those used for the collection-level
+`bulkWrite` method. Statically typed drivers MUST NOT reuse any types they already define for the
+`MongoCollection.bulkWrite` interface and MUST introduce new types. If naming conflicts between
+types arise, drivers MAY prepend "Client" to the new type names (e.g. `ClientBulkWriteOptions`).
 
-Namespace: A database name and collection name pair. This may be represented as a string (e.g. `"db.coll"`) or a class with a field for each name, e.g.
-
-```
-class Namespace {
-    databaseName: String
-    collectionName: String
+```typescript
+interface MongoClient {
+    /**
+     * Executes a list of mixed write operations.
+     * 
+     * @throws BulkWriteException
+     */
+    bulkWrite(models: NamespaceWriteModelPair[], options: Optional<BulkWriteOptions>): BulkWriteResult;
 }
 ```
 
-`bulkWrite`: This specification discusses both the server `bulkWrite` command and the new `bulkWrite` driver API method. To avoid ambiguity, this specification refers to the server command as `bulkWrite` and the driver method as `MongoClient.bulkWrite`.
+### Write Models
 
-### `bulkWrite` Command and Response Format
+A `WriteModel` defines a single write operation to be performed as part of a bulk write.
 
-#### Command
+```typescript
+/** Unifying interface for the various write model types. Drivers may also use an enum with
+ * variants for each write model for this type.
+ */
+interface WriteModel {}
+
+class InsertOneModel implements WriteModel {
+    /**
+     * The document to insert.
+     */
+    document: Document;
+}
+
+class UpdateOneModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * The update document or pipeline to apply to the selected document.
+     */
+    update: (Document | Document[]);
+
+    /**
+     * A set of filters specifying to which array elements an update should apply.
+     * 
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    arrayFilters: Optional<Document[]>;
+
+    /**
+     * Specifies a collation.
+     * 
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional<Document>;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     * 
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
+     * When true, creates a new document if no document matches the query. Defaults to false.
+     * 
+     * This options is sent only if the caller explicitly provides a value.
+     */
+    upsert: Optional<Boolean>;
+}
+
+class UpdateManyModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * The update document or pipeline to apply to the selected documents.
+     */
+    update: (Document | Document[]);
+
+    /**
+     * A set of filters specifying to which array elements an update should apply.
+     * 
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    arrayFilters: Optional<Document[]>;
+
+    /**
+     * Specifies a collation.
+     * 
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional<Document>;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     * 
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
+     * When true, creates a new document if no document matches the query. Defaults to false.
+     * 
+     * This options is sent only if the caller explicitly provides a value.
+     */
+    upsert: Optional<Boolean>;
+}
+
+class ReplaceOneModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * The replacement document.
+     */
+    filter: Document;
+
+    /**
+     * Specifies a collation.
+     * 
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional<Document>;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     * 
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
+     * When true, creates a new document if no document matches the query. Defaults to false.
+     * 
+     * This options is sent only if the caller explicitly provides a value.
+     */
+    upsert: Optional<Boolean>;
+}
+
+class DeleteOneModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * Specifies a collation.
+     * 
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional<Document>;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     * 
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional<(String | Document)>;
+}
+
+class DeleteManyModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * Specifies a collation.
+     * 
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional<Document>;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     * 
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional<(String | Document)>;
+}
+```
+
+Each write model provided to `MongoClient.bulkWrite` in the `models` parameter MUST have a
+corresponding namespace that defines the collection on which the operation should be performed.
+Drivers SHOULD design this pairing in whichever way is most ergonomic for its language. For
+example, drivers may:
+
+- Include a required `namespace` field on each `WriteModel` variant
+- Accept a list of `(Namespace, WriteModel)` tuples for `models`
+- Define the following pair class:
+
+```typescript
+class NamespaceWriteModelPair {
+    /**
+     * The namespace on which to perform the write.
+     */
+    namespace: Namespace;
+
+    /**
+     * The write to perform.
+     */
+    model: WriteModel;
+}
+```
+
+Drivers MUST throw an exception if the list provided for `models` is empty.
+
+### Options
+
+```typescript
+class BulkWriteOptions {
+    /**
+     * Whether the operations in this bulk write should be executed in the order in which they were
+     * specified. If false, writes will continue to be executed if an individual write fails. If
+     * true, writes will stop executing if an individual write fails.
+     * 
+     * Defaults to false.
+     */
+    ordered: Optional<Boolean>;
+
+    /**
+     * If true, allows the writes to opt out of document-level validation.
+     * 
+     * Defaults to false.
+     * 
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * A map of parameter names and values to apply to all operations within the bulk write. Value
+     * must be constant or closed expressions that do not reference document fields. Parameters can
+     * then be accessed as variables in an aggregate expression context (e.g. "$$var").
+     * 
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    let: Optional<Document>;
+
+    /**
+     * The write concern to use for this bulk write.
+     * 
+     * NOT REQUIRED TO IMPLEMENT. Drivers MUST expose this option if retrieving a handle to a
+     * client with a different write concern configured than that of the user's standard URI
+     * options is nontrivial. Drivers MAY omit this option if they provide a way to retrieve a
+     * lightweight handle to a client with a custom write concern configured, e.g. a
+     * MongoClient.withWriteConcern() method.
+     */
+    writeConcern: Optional<WriteConcern>;
+
+    /**
+     * Whether detailed results for each successful operation should be included in the returned
+     * BulkWriteResult.
+     * 
+     * Defaults to false.
+     */
+    verboseResults: Optional<Boolean>;
+}
+```
+
+### Result
+
+```typescript
+class BulkWriteResult {
+    /**
+     * Indicates whether this write result was acknowledged. If not, then all other members of this
+     * result will be undefined.
+     * 
+     * NOT REQUIRED TO IMPLEMENT. See [here](../crud/crud.md#write-results) for more guidance on
+     * modeling unacknowledged results.
+     */
+    acknowledged: Boolean;
+
+    /**
+     * Indicates whether the results are verbose. If false, the insertResults, updateResults, and
+     * deleteResults fields in this result will be undefined.
+     * 
+     * NOT REQUIRED TO IMPLEMENT. See below for other ways to differentiate summary results from
+     * verbose results.
+     */
+    hasVerboseResults: Boolean;
+
+    /**
+     * The total number of documents inserted across all insert operations.
+     */
+    insertedCount: Int64;
+
+    /**
+     * The total number of documents upserted across all update operations.
+     */
+    upsertedCount: Int64;
+
+    /**
+     * The total number of documents matched across all update operations.
+     */
+    matchedCount: Int64;
+
+    /**
+     * The total number of documents modified across all update operations.
+     */
+    modifiedCount: Int64;
+
+    /**
+     * The total number of documents deleted across all delete operations.
+     */
+    deletedCount: Int64;
+
+    /**
+     * The results of each individual insert operation that was successfully performed. Results
+     * can be accessed by their index in the list of write models provided to bulkWrite.
+     */
+    insertResults: Map<Int64, InsertOneResult>;
+
+    /**
+     * The results of each individual update operation that was successfully performed. Results
+     * can be accessed by their index in the list of write models provided to bulkWrite.
+     */
+    updateResult: Map<Int64, UpdateResult>;
+
+    /**
+     * The results of each individual delete operation that was successfully performed. Results
+     * can be accessed by their index in the list of write models provided to bulkWrite.
+     */
+    deleteResults: Map<Int64, DeleteResult>;
+}
+
+class InsertOneResult {
+    /**
+     * The _id of the inserted document.
+     */
+    insertedId: Any;
+}
+
+class UpdateResult {
+    /**
+     * The number of documents that matched the filter.
+     */
+    matchedCount: Int64;
+
+    /**
+     * The number of documents that were modified.
+     */
+    modifiedCount: Int64;
+
+    /**
+     * The number of documents that were upserted.
+     * 
+     * NOT REQUIRED TO IMPLEMENT. Drivers may choose not to provide this property so long as it is
+     * always possible to discern whether an upsert took place.
+     */
+    upsertedCount: Int64;
+
+    /**
+     * The _id field of the upserted document if an upsert occurred.
+     */
+    upsertedId: Optional<Any>;
+}
+
+class DeleteResult {
+    /**
+     * The number of documents that were deleted.
+     */
+    deletedCount: Int64;
+}
+```
+
+#### Summary vs. Verbose Results
+
+Users MUST be able to discern whether a `BulkWriteResult` contains summary or verbose results
+without inspecting the value provided for `verboseResults` in `BulkWriteOptions`. Drivers MUST
+implement this in one of the following ways:
+
+- Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above.
+- Implement the `insertResults`, `upsertResults`, and `deleteResults` fields as optional types and
+  document that they will be unset when `verboseResults` is false.
+- Introduce separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types.
+  `VerboseBulkWriteResult` MUST have all of the required fields defined on `BulkWriteResult` above.
+  `SummaryBulkWriteResult` MUST have all of the required fields defined on `BulkWriteResult` above
+  except `insertResults`, `updateResults`, and `deleteResults`.
+
+#### Individual Results
+
+The `InsertOneResult`, `UpdateResult`, and `DeleteResult` classes are the same as or similar to
+types of the same name defined in the [CRUD specification](crud.md). Drivers MUST redefine these
+classes if their existing result classes deviate from the definitions in this specification (e.g.
+if they contain acknowledgement information, which is not applicable for individual bulk write
+operations). Drivers MAY reuse their existing types for these classes if they match the ones
+defined here exactly.
+
+### Exception
+
+```typescript
+class BulkWriteException {
+    /**
+     * A top-level error that occurred when attempting to communicate with the server or execute
+     * the bulk write. This value may not be populated if the exception was thrown due to errors
+     * occurring on individual writes.
+     */
+    error: Optional<Error>;
+
+    /**
+     * Write concern errors that occurred while executing the bulk write. This list may have
+     * multiple items if more than one server command was required to execute the bulk write.
+     */
+    writeConcernErrors: WriteConcernError[];
+
+    /**
+     * Errors that occurred during the execution of individual write operations. This map will
+     * contain at most one entry if the bulk write was ordered.
+     */
+    writeErrors: Map<Int64, WriteError>;
+
+    /**
+     * The results of any successful operations that were performed before the error was
+     * encountered.
+     */
+    partialResult: Optional<BulkWriteResult>;
+}
+```
+
+## Building a `bulkWrite` Command
 
 The `bulkWrite` server command has the following format:
 
 ```json
 {
-    bulkWrite: 1
-    ops: <Array>
-    nsInfo: <Array>
-    errorsOnly: <Boolean>
-    ordered: <Boolean>
-    bypassDocumentValidation: <Boolean>
-    comment: <Bson>
-    let: <Document>
+    "bulkWrite": 1,
+    "ops": <Array>,
+    "nsInfo": <Array>,
+    "errorsOnly": <Boolean>,
+    "ordered": <Boolean>,
+    "bypassDocumentValidation": <Boolean>,
+    "comment": <Bson>,
+    "let": <Document>,
+    ...additional operation-agnostic fields
 }
 ```
 
-##### `ops`
+Drivers SHOULD use document sequences ([`OP_MSG`](../message/OP_MSG.rst) payload type 1) for the
+`ops` and `nsInfo` fields. Drivers MUST NOT use document sequences when auto-encryption is enabled.
 
-The `ops` field is a list of write operation documents. The documents have the following format:
+### Operations
 
-###### Insert
+The `ops` field is a list of write operation documents. The first entry in each document has
+the name of the operation (i.e. "insert", "update", or "delete") as its key and the index in the
+`nsInfo` array of the namespace on which the operation should be performed as its value. The
+documents have the following format:
+
+#### Insert
 
 ```json
 {
-    insert: <Int32 (index of namespace in nsInfo)>
-    document: <Document>
+    "insert": <Int32>,
+    "document": <Document>
 }
 ```
 
-###### Update
+Drivers MUST add an `_id` field at the beginning of the insert document if one is not already
+present.
+
+#### Update
 
 ```json
 {
-    update: <Int32 (index of namespace in nsInfo)>
-    filter: <Document>
-    updateMods: <Document | Array>
-    multi: <Boolean>
-    upsert: <Boolean>
-    arrayFilters: <Array>
-    hint: <String>
+    "update": <Int32>,
+    "filter": <Document>,
+    "updateMods": <Document | Array>,
+    "multi": <Boolean>,
+    "upsert": <Boolean>,
+    "arrayFilters": <Array>,
+    "hint": <String>
 }
 ```
 
-###### Delete
+#### Delete
 
 ```json
 {
-    delete: <Int32 (index of namespace in nsInfo)>
-    filter: <Document>
-    multi: <boolean>
-    hint: <String>
-    collation: <Document>
+    "delete": <Int32>,
+    "filter": <Document>,
+    "multi": <boolean>,
+    "hint": <String>,
+    "collation": <Document>
 }
 ```
 
-##### `nsInfo`
+### Namespace Information
 
-The `nsInfo` field contains the namespaces on which the write operations should be performed. Drivers MUST NOT include duplicate namespaces in this list. The documents in the `nsInfo` field have the following format:
+The `nsInfo` field contains the namespaces on which the write operations should be performed.
+Drivers MUST NOT include duplicate namespaces in this list. The documents in the `nsInfo` field
+have the following format:
 
 ```json
 {
-    ns: <String>
+    "ns": <String>
 }
 ```
 
-##### `errorsOnly`
+### Toggling Results Verbosity
 
-This field corresponds to the `verboseResults` option defined on `BulkWriteOptions`. Its value should be `false` if `verboseResults` was set to `true`; otherwise, it should be `true`. This field MUST always be defined in the `bulkWrite` command regardless of whether a value for `verboseResults` was specified.
+The `errorsOnly` field indicates whether the results cursor returned in the `bulkWrite` response
+should contain only errors. If false, individual results for successful operations will be returned
+in addition to errors.
 
-#### Response
+This field corresponds to the `verboseResults` option defined on `BulkWriteOptions`. Its value
+should be provided as `false` if `verboseResults` was set to `true`; otherwise, it should be
+provided as `true`. This field MUST always be defined in the `bulkWrite` command regardless of
+whether the user specified a value for `verboseResults`.
+
+## Command batching
+
+Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method.
+Because the server imposes restrictions on the size of write operations, this means that a single
+call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server.
+Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds
+one or more of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize`, and `maxMessageSizeBytes`.
+Each of these values can be retrieved from the selected server's `hello` command response.
+
+### Number of Writes
+
+The `ops` array MUST NOT include more than `maxWriteBatchSize` operations.
+
+### Document Size
+
+All entries within the `ops` array MUST be within `maxBsonObjectSize` bytes. Drivers MUST throw an
+exception if an operation exceeds this size.
+
+### Total Message Size
+
+#### Encrypted bulk writes
+
+When auto-encryption is enabled, drivers MUST NOT provide the `ops` and `nsInfo` fields as document
+sequences and MUST limit the size of the command according to the auto-encryption size limits
+defined in the
+[Client Side Encryption Specification](../client-side-encryption/client-side-encryption.rst).
+
+#### Unencrypted bulk writes with document sequences
+
+When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the combined
+size of these sequences does not exceed `maxMessageSizeBytes - 16,000`. `maxMessageSizeBytes`
+defines the maximum size for an entire `OP_MSG`, so 16KB is subtracted from `maxMessageSizeBytes`
+in this size limit to account for the bytes in the rest of the message.
+
+#### Unencrypted bulk writes without document sequences
+
+When `ops` and `nsInfo` are provided within the `bulkWrite` command document and auto-encryption is
+not enabled, drivers MUST ensure that the total size of the `bulkWrite` command document does not
+exceed `maxBsonObjectSize`.
+
+## Handling the `bulkWrite` Server Response
 
 The server's response to `bulkWrite` has the following format:
 
 ```json
 {
-    ok: <0 | 1>
-    cursor: {
-        id: Int64
-        firstBatch: <Array>
-        ns: <String>
-    }
-    nErrors: <Int64>
-    nInserted: <Int64>
-    nUpserted: <Int64>
-    nMatched: <Int64>
-    nModified: <Int64>
-    nDeleted: <Int64>
+    "ok": <0 | 1>,
+    "cursor": {
+        "id": <Int64>,
+        "firstBatch": <Array>,
+        "ns": <String>
+    },
+    "nErrors": <Int32>,
+    "nInserted": <Int32>,
+    "nUpserted": <Int32>,
+    "nMatched": <Int32>,
+    "nModified": <Int32>,
+    "nDeleted": <Int32>,
+    ...additional command-agnostic fields
 }
 ```
 
-##### Results Cursor
+If any operations were successful (i.e. `nErrors` is less than the number of operations that were
+sent), drivers MUST record the summary count fields in a `BulkWriteResult` to be returned to the
+user or included in a `BulkWriteException`.
 
-The response to `bulkWrite` contains a cursor field with the first batch of individual results and a nonzero cursor ID if there are additional results that did not fit in the initial response. Drivers MUST perform `getMore`s until the cursor is exhausted to retrieve all results and errors before returning from `MongoClient.bulkWrite`. If a top-level error occurs before the cursor has been exhausted, drivers MUST send a `killCursors` command to close the cursor.
+Drivers MUST attempt to consume the contents of the cursor returned in the server's `bulkWrite`
+response before returning to the user. This is required regardless of whether the user requested
+verbose or summary results, as the results cursor always contains any write errors that occurred.
+If the cursor contains a nonzero cursor ID, drivers MUST perform `getMore`s until the cursor has
+been exhausted. Drivers MUST use the same session used for the `bulkWrite` command for each
+`getMore` call.
 
-### `MongoClient.bulkWrite` Signature
+The documents in the results cursor have the following format:
 
-```
-interface MongoClient {
-    bulkWrite(models: List<NamespaceWriteModelPair>,
-        options: Optional<BulkWriteOptions>
-    ) -> BulkWriteResult throws BulkWriteException;
+```json
+{
+    "ok": <0 | 1>,
+    "code": Optional<Int32>,
+    "errmsg": Optional<String>,
+    "n": <Int32>,
+    "nMatched": <Int32>,
+    "nModified": <Int32>,
+    "upsertedId": Optional<ObjectId>
 }
 ```
 
-The `WriteModel`, `BulkWriteOptions`, `BulkWriteResult`, and `BulkWriteException` types defined here are similar to the types of the same names in the `MongoCollection.bulkWrite` definition. Statically typed drivers MUST NOT reuse any existing versions of these types and MUST introduce new types for the `MongoClient.bulkWrite` method. If 
+Note that the responses do not contain information about the type of operation that was performed.
+Drivers MAY need to maintain the user's list of write models to infer which type of result should
+be recorded.
 
-#### `WriteModel`
+### Handling Insert Results
 
-The `WriteModel` type defines a single write operation to be performed as part of a bulk write. `WriteModel` may be designed as separate classes that implement a `WriteModel` interface, an enum with a variant for each operation (as shown below), or another similar type.
+Unlike the other result types, `InsertOneResult` contains an `insertedId` field that is generated
+driver-side, either by recording the `_id` field present in the user's insert document or creating
+and adding one. Drivers MUST only record these `insertedId`s in a `BulkWriteResult` when a
+successful response for the insert operation (i.e. `{ "ok": 1, "n": 1 }`) is received in the
+results cursor. This ensures that drivers only report `insertedId`s to users when it is confirmed
+that the insert succeeded.
 
-```
+## Handling errors
 
-enum WriteModel {
-    InsertOne {
-        // The document to insert.
-        document: Document
-    }
-    UpdateOne {
-        // The filter to apply.
-        filter: Document
+### Top-level errors
 
-        // The update document or pipeline to apply to the selected document.
-        update: Document | Array
+A top-level error is any error that occurs that is not the result of a single write operation
+failing or a write concern error. Examples include network errors that occur when communicating
+with the server, command errors returned from the server, client-side errors, and errors that occur
+when attempting to perform a `getMore` to retrieve results from the server.
 
-        // isabeltodo
-        arrayFilters: Option<Array>
+When a top-level error is encountered and individual results and/or errors have already been
+observed, drivers MUST embed the top-level error within a `BulkWriteException` as the `error` field
+to retain this information. Otherwise, drivers MAY throw an exception containing only the top-level
+error.
 
-        // isabeltodo
-        collation: Option<Document>
+Encountering a top-level error MUST halt execution of a bulk write for both ordered and unordered
+bulk writes. This means that drivers MUST NOT attempt to retrieve more responses from the cursor or
+execute any further `bulkWrite` batches and MUST immediately throw an exception.
 
-        // isabeltodo
-        hint: Optional<Bson>
+### Write concern errors
 
-        // isabeltodo
-        upsert: Optional<bool>
-    }
-    UpdateMany {
-        // The filter to apply.
-        filter: Document
+Write concern errors are recorded in the `writeConcernErrors` field on `BulkWriteException`. When
+a write concern error is encountered, it should not terminate execution of the bulk write for
+either ordered or unordered bulk writes. However, drivers MUST throw an exception at the end of
+execution if any write concern errors were observed.
 
-        // The update document or pipeline to apply to the selected documents.
-        update: Document | Document[]
+### Individual write errors
 
-        // isabeltodo
-        arrayFilters: Option<Array>
+Individual write errors retrieved from the cursor are recorded in the `writeErrors` field on
+`BulkWriteException`. If an individual write error is encountered during an ordered bulk write,
+drivers MUST record the error in `writeErrors` and immediately throw the exception. Otherwise,
+drivers MUST continue to iterate the results cursor and execute any further `bulkWrite` batches.
 
-        // isabeltodo
-        collation: Option<Document>
+## Test Plan
 
-        // isabeltodo
-        hint: Optional<Bson>
+The majority of tests for `MongoClient.bulkWrite` are written in the
+[Unified Test Format](../unified-test-format/unified-test-format.md) and reside in the
+[CRUD unified tests directory](../crud/tests/unified/).
 
-        // isabeltodo
-        upsert: Optional<bool>
-    }
-    ReplaceOne {
-        // The filter to apply.
-        filter: Document
+Additional prose tests are specified [here](../crud/tests/README.md). These tests require
+constructing very large documents to test drivers' implementation of batch splitting, which is not
+feasible in the unified test format at the time of writing this specification.
 
-        // The replacement document.
-        replacement: Document
+## Q&A
 
-        // isabeltodo
-        collation: Option<Document>
+### Why are we adding a new bulk write API rather than updating the `MongoCollection.bulkWrite` implementation?
 
-        // isabeltodo
-        hint: Optional<Bson>
+The new `bulkWrite` command is only available in MongoDB 8.0+, so it cannot function as a drop-in
+replacement for the existing bulk write implementation that uses the `insert`, `update`, and
+`delete` commands. Additionally, because the new `bulkWrite` command allows operations against
+multiple collections and databases, `MongoClient` is a more appropriate place to expose its
+functionality.
 
-        // isabeltodo
-        upsert: Optional<bool>
-    }
-    DeleteOne {
-        // The filter to apply.
-        filter: Document
+### Why can't drivers reuse existing bulk write types?
 
-        // isabeltodo
-        collation: Option<Document>
+This specification introduces several types that are similar to existing types used in the
+`MongoCollection.bulkWrite` API. Although these types are similar now, they may diverge in the
+future with the introduction of new options and features to the `bulkWrite` command. Introducing
+new types also provides more clarity to users on the existing differences between the
+collection-level and client-level bulk write APIs. For example, the `verboseResults` option is only
+valid for `MongoClient.bulkWrite`.
 
-        // isabeltodo
-        hint: Option<Bson>
-    }
-    DeleteMany {
-        // The filter to apply.
-        filter: Document,
+### Why are bulk write operation results returned in a cursor?
 
-        // isabeltodo
-        collation: Option<Document>,
+Returning results via a cursor rather than an array in the `bulkWrite` response allows full
+individual results and errors to be returned without the risk of the response exceeding the
+maximum BSON object size. Using a cursor also leaves open the opportunity to add `findAndModify` to
+the list of supported write operations in the future.
 
-        // isabeltodo
-        hint: Option<Bson>
-    }
-}
-```
+### Why was the `verboseResults` option introduced, and why is its default `false`?
 
-##### Namespaces
+The `bulkWrite` command returns top-level summary result counts and, optionally, individual results
+for each operation. Compiling the individual results server-side and consuming these results
+driver-side is less performant than only recording the summary counts. We expect that most users
+are not interested in the individual results of their operations and that most users will rely on
+defaults, so `verboseResults` defaults to `false` to improve performance in the common case.
 
-Each write model supplied to `Client.bulkWrite` in the `models` parameter MUST have a corresponding namespace that defines the collection on which the operation should be performed. Drivers SHOULD design this pairing in whichever way is most ergonomic for its language. For example, drivers may:
+## **Changelog**
 
-- include a required `namespace` field in each `WriteModel` variant
-- accept a list of `(Namespace, WriteModel)` tuples for `models`
-- define the following pair class:
-
-```
-
-class NamespaceWriteModelPair {
-    // The namespace on which to perform the operation.
-    namespace: Namespace
-
-    // The write to perform.
-    model: WriteModel
-}
-```
-
-#### `BulkWriteOptions`
-
-```
-
-class BulkWriteOptions {
-    // Whether the operations in this bulk write should be executed in the order in which they were specified. If false, writes will continue to be executed if an individual write fails. If true, writes will stop executing if an individual write fails. Defaults to true.
-    ordered: Optional<bool>
-
-    // If true, allows the writes to opt out of document-level validation. Defaults to false.
-    bypassDocumentValidation: Optional<bool>
-
-    // A map of parameter names and values to apply to all operations within the bulk write. Values must be constant or closed expressions that do not reference document fields. Parameters can then be accessed as variables in an aggregate expression context (e.g. "$$var").
-    let: Optional<Document>
-
-    // The write concern to use for this bulk write.
-    //
-    // NOT REQUIRED. Drivers MUST expose this option if retrieving a handle to a `MongoClient` with a different write concern configured than that of the user's standard URI options is nontrivial. Drivers MAY omit this option if they provide a way to retrieve a lightweight handle to a `MongoClient` with a custom write concern configured, e.g. a `MongoClient.withWriteConcern` method.
-    writeConcern: Optional<WriteConcern>
-
-    // Whether detailed results for each successful operation should be included in the returned `BulkWriteResult`. Defaults to false.
-    verboseResults: Optional<bool>
-}
-```
-
-#### `BulkWriteResult`
-
-```
-
-class BulkWriteResult {
-    // Indicates whether this write result was acknowledged. If not, then all other members of this result will be undefined.
-    //
-    // NOT REQUIRED. See here(isabeltodo link) for additional guidance on modeling unacknowledged results.
-    acknowledged: boolean
-
-    // Indicates whether the results are verbose. This value will be equal to the value of `verboseResults` in the provided `BulkWriteOptions`. If false, the `insertResults`, `updateResults`, and `deleteResults` fields in this result will be undefined.
-    //
-    // NOT REQUIRED. See below (link) for other ways to differentiate summary results from verbose results.
-    hasVerboseResults: boolean
-
-    // The total number of documents inserted across all insert operations.
-    insertedCount: i64
-
-    // The total number of documents upserted across all update operations.
-    upsertedCount: i64
-
-    // The total number of documents matched across all update operations.
-    matchedCount: i64
-
-    // The total number of documents modified across all update operations.
-    modifiedCount: i64
-
-    // The total number of documents deleted across all delete operations.
-    deletedCount: i64
-
-    // The results of each individual insert operation that was successfully performed. Results can be accessed by their index in the list of write models provided to the call to `MongoClient.bulkWrite`.
-    insertResults: Map<index, InsertOneResult>
-
-    // The results of each individual update operation that was successfully performed. Results can be accessed by their index in the list of write models provided to the call to `MongoClient.bulkWrite`.
-    updateResults: Map<index, UpdateResult>
-
-    // The results of each individual delete operation that was successfully performed. Results can be accessed by their index in the list of write models provided to the call to `MongoClient.bulkWrite`.
-    deleteResults: Map<index, DeleteResult>
-}
-
-class InsertOneResult {
-    // The _id of the inserted document.
-    insertedId: Bson
-}
-
-class UpdateResult {
-    // The number of documents that matched the filter.
-    matchedCount: Int64
-
-    // The number of documents that were modified.
-    modifiedCount: Int64
-
-    // The number of documents that were upserted.
-    //
-    // NOT REQUIRED. Drivers may choose to not provide this property so long as it is always possible to infer whether an upsert has taken place. Since the _id field of an upserted document could be null, a null upsertedId may be ambiguous in some drivers. If so, this field can be used to indicate whether an upsert has taken place.
-    upsertedCount: Int64
-
-    // The _id field of the upserted document if an upsert occurred.
-    upsertedId: Optional<Bson>
-}
-
-class DeleteResult {
-    // The number of documents that were deleted.
-    deletedCount: Int64
-}
-```
-
-##### Summary vs. Verbose Results
-
-Users MUST be able to discern whether the result returned from `MongoClient.bulkWrite` is a summary result or a verbose result without accessing the value provided for `verboseResults`. Drivers MUST implement this in one of the following ways:
-
-* Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above.
-* Implement the `insertResults`, `updateResults`, and `deleteResults` fields as optional types and document that they will be unset when `verboseResults` is false.
-* Introduce separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `VerboseBulkWriteResult` MUST have all of the required fields defined on `BulkWriteResult` above. `SummaryBulkWriteResult` MUST have all of the required fields defined on `BulkWriteResult` above except `insertResults`, `updateResults`, and `deleteResults`.
-
-##### Individual Results
-
-The `InsertOneResult`, `UpdateResult`, and `DeleteResult` classes are the same as or similar to those of the same names defined in the CRUD specification. Drivers MUST redefine these classes if their existing result classes deviate from the definitions in this specification (e.g. if they contain acknowledgement information). Drivers MAY reuse their existing types for these classes if they match the ones defined here exactly.
-
-#### `BulkWriteException`
-
-```
-
-class BulkWriteException {
-    // A top-level error that occurred when attempting to communicate with the server or execute the bulk write. This value may not be populated if the exception was thrown due to errors occurrring on individual writes.
-    error: Optional<Error>
-
-    // Write concern errors that occurred while executing the bulk write. This list may have multiple items if more than one round trip was required to execute the bulk write.
-    writeConcernErrors: List<WriteConcernError>
-
-    // Errors that occurred during the execution of individual write operations. This map will contain at most one entry if the bulk write was ordered.
-    writeErrors: Map<Index, BulkWriteOperationError>
-
-    // The results of any successful operations that were performed before the error was encountered.
-    partialResult: Optional<BulkWriteResult>
-}
-```
-
-##### Top-level errors
-
-A top-level error is defined as any error that occurs during a bulk write that is not the result of an individual write operation failing or a write concern error. Possible top-level errors include, but are not limited to, network errors that occur when communicating with the server, command errors returned from the server, and client-side errors (e.g. an oversized insert document was provided). If individual operation results or write concern errors have already been observed prior to a top-level error occurring, drivers MUST embed the top-level error within a `BulkWriteException` as the `error` field to retain this information. Otherwise, drivers MAY throw an exception containing only the top-level error.
-
-A top-level MUST halt execution of a bulk write for both ordered and unordered bulk writes. When a top-level error is encountered, drivers MUST NOT attempt to retrieve responses from the cursor or execute any further `bulkWrite` batches.
-
-##### Write concern errors
-
-At most one write concern error may be returned per `bulkWrite` command response. If the driver observes a write concern error, it MUST record the error in the `writeConcernErrors` field and MUST continue executing the bulk write for both ordered and unordered bulk writes. If the `writeConcernErrors` field is not empty at the end of execution, drivers MUST throw the `BulkWriteException` and include any results and/or additional errors that were observed.
-
-##### Individual write errors
-
-Failures of individual write operations are reported in the cursor of results returned from the server. Drivers MUST iterate the this cursor fully and record all errors in the `writeErrors` map in `BulkWriteException`. If an individual write error is encountered during an ordered bulk write, drivers MUST record the error in `writeErrors` and immediately throw a `BulkWriteException`. Otherwise, drivers MUST continue iterating the cursor and execute any further `bulkWrite` batches.
-
-### Command Batching
-
-Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method. Because the server imposes restrictions on the size of write operations, this means that a single call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server. Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds one or more of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize`, and `maxMessageSizeBytes`. Each of these values can be retrieved from the selected server's `hello` command response.
-
-#### Number of Writes
-
-The `ops` array MUST NOT include more than `maxWriteBatchSize` operations.
-
-#### Document Size
-
-All entries within the `ops` array MUST be within `maxBsonObjectSize` bytes. Drivers MUST throw a `BulkWriteException` with a top-level client error if an operation exceeds this size.
-
-#### Total Message Size
-
-##### Encrypted bulk writes
-
-When auto-encryption is enabled, drivers MUST NOT provide the `ops` and `nsInfo` fields as document sequences and MUST limit the size of the command according to the auto-encryption size limits defined here (isabeltodo link and update language in link).
-
-##### Unencrypted bulk writes with document sequences
-
-When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the combined size of these sequences does not exceed `maxMessageSizeBytes - 16,000`. `maxMessageSizeBytes` defines the maximum size for an entire `OP_MSG`, so 16KB is subtracted from `maxMessageSizeBytes` in this size limit to account for the bytes in the rest of the message.
-
-##### Unencrypted bulk writes without document sequences
-
-When `ops` and `nsInfo` are provided within the `bulkWrite` command document and auto-encryption is not enabled, drivers MUST ensure that the total size of the `bulkWrite` command document does not exceed `maxBsonObjectSize`.
-
-### Pseudocode Implementation
-
-The following pseudocode is a sample implementation of `MongoClient.bulkWrite`.
-
-```
-executeBulkWrite(client: MongoClient, models: List<NamespaceWriteModelPair>, options: BulkWriteOptions) {
-    let exception = empty BulkWriteException
-
-    while !models.isEmpty() {
-        try {
-            let bulkWrite = batchSplitAndBuildCommand(models, options)
-            let (summaryInfo, resultsCursor, writeConcernError) = client.executeOperation(bulkWrite)
-
-            if writeConcernError != null {
-                exception.writeConcernErrors.add(writeConcernError)
-            }
-
-            for result in resultsCursor {
-                if result.isSuccess() {
-                    exception.partialResult.add(result)
-                } else { // error
-                    exception.writeErrors.add(result)
-                    if options.ordered {
-                        throw exception
-                    }
-                }
-            }
-        } catch error {
-            exception.error = error
-            throw exception
-        }
-    }
-
-    if !exception.writeConcernErrors.isEmpty() || !exception.writeErrors.isEmpty() {
-        throw exception
-    } else {
-        return exception.partialResult
-    }
-}
-```
-
-### Q&A
-
-#### Why are we adding a new bulk write API rather than updating the `MongoCollection.bulkWrite` implementation?
-
-The new `bulkWrite` command is only available in MongoDB 8.0+, so it cannot function as a drop-in replacement for the existing bulk write implementation that uses the `insert`, `update`, and `delete` commands. Additionally, because the new `bulkWrite` command allows operations against multiple collections and databases, `MongoClient` is a more appropriate place to expose its functionality.
-
-#### Why can't drivers reuse existing bulk write types?
-
-This specification introduces several types that are similar to existing types used in the legacy bulk write API. Although these types are similar now, they may diverge in the future with the introduction of new options and features to the `bulkWrite` command. Introducing new types also provides more clarity to users on the existing differences between the legacy and new bulk write APIs. For example, the `verboseResults` option is only available for `MongoClient.bulkWrite`.
-
-#### Why are bulk write operation results returned in a cursor?
-
-Returning results via a cursor rather than an array in the `bulkWrite` response allows full individual results and errors to be returned without the risk of the response exceeding the maximum BSON object size. Using a cursor also leaves open the opportunity to add `findAndModify` to the list of supported write operations in the future.
-
-#### Why was the `verboseResults` option introduced, and why is its default `false`?
-
-The `bulkWrite` command returns top-level summary result counts and, optionally, individual results for each operation. Compiling the individual results server-side and consuming these results driver-side is less performant than only recording the summary counts. We expect that most users are not interested in the individual results of their operations and that most users will rely on defaults, so `verboseResults` defaults to `false` to improve performance in the common case.
+- TODO: Bulk write specification created.
