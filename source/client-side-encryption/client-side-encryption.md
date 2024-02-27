@@ -1,7 +1,7 @@
 # Client Side Encryption
 
 - Status: Accepted
-- Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption):Last Modified: 2024-01-10
+- Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
 - Version: 1.13.0
 
 ______________________________________________________________________
@@ -149,7 +149,7 @@ automatically encrypts commands and decrypts results. Automatic encryption is en
 encrypt and decrypt with a new ClientEncryption object.
 
 Client side encryption requires MongoDB 4.2 compatible drivers, and is only supported against 4.2 or higher servers. See
-[Why is a 4.2 server required?](#why-is-a-42-server-required).
+[Why is a 4.2 server required?](#why-is-a-4-2-server-required).
 
 The following shows basic usage of the new API.
 
@@ -423,7 +423,14 @@ Drivers MUST document that an additional `MongoClient` may be created, using the
 See
 [What's the deal with metadataClient, keyVaultClient, and the internal client?](#whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client)
 
-#### kmsProviders<span id="GCPKMSOptions">`<span id="AWSKMSOptions">`<span id="KMSProvider">`<span id="KMSProviders">`
+<div id="GCPKMSOptions">
+<div id="AWSKMSOptions">
+<div id="KMSProvider">
+<div id="KMSProviders">
+<div id="AzureAccessToken">
+<div id="kmsproviders">
+
+#### kmsProviders
 
 The `kmsProviders` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
 [AutoEncryptionOpts](#AutoEncryptionOpts). Multiple KMS providers may be specified, each using a specific property on
@@ -528,7 +535,7 @@ When such a state is detected, [libmongocrypt](#libmongocrypt) will call back to
 Automatic credentials are only supported for the KMS provider types `aws`, `gcp`, and `azure`. KMS providers containing
 a name (e.g. `aws:myname`) do not support automatic credentials. Attempting to configure a KMS provider with a name for
 automatic credentials results in a runtime error from [libmongocrypt](#libmongocrypt). See
-`no-on-demand-kms-credentials-for-named-kms-providers`.
+[Why do on-demand KMS credentials not support named KMS providers?](#why-do-on-demand-kms-credentials-not-support-named-kms-providers)
 
 > \[!NOTE\]
 >
@@ -563,6 +570,8 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
          [AzureAccessToken](#AzureAccessToken) in `cachedAzureAccessToken`. Record the `azureAccessTokenExpireTime` as
          $t_0 + d\_{exp}$.
 6. Return $P$ as the additional KMS providers to [libmongocrypt](#libmongocrypt).
+
+<div id="obtaining-gcp-credentials">
 
 ##### Obtaining GCP Credentials
 
@@ -619,7 +628,7 @@ The below steps should be taken:
     response is not completely received within ten seconds, consider the request to have timed out, and return an error
     instead of an access token.
 
-07. If $Resp\_{status} ≠ 200$, obtaining the access token has failed, and the HTTP response body of $Resp$ encodes
+07. If `$Resp_{status} ≠ 200$`, obtaining the access token has failed, and the HTTP response body of $Resp$ encodes
     information about the error that occurred. Return an error including the HTTP response body instead of an access
     token.
 
@@ -628,7 +637,7 @@ The below steps should be taken:
 09. The result access token $T$ is given as the `access_token` string property of $J$. Return $T$ as the resulting
     access token.
 
-10. The resulting "expires in" duration $d\_{exp}$ is a count of seconds given as an ASCII-encoded integer string
+10. The resulting "expires in" duration `$d_{exp}$` is a count of seconds given as an ASCII-encoded integer string
     `expires_in` property of $J$.
 
 > \[!NOTE\]
@@ -769,9 +778,9 @@ If, after initializing a `libmongocrypt_handle`, [crypt_shared](#crypt_shared) i
 [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) is `true`, the driver MUST consider the
 `libmongocrypt_handle` to be invalid and return an error to the user. Refer:
 
-- \[Enabling crypt_shared\](#Enabling crypt_shared)
-- [Managing mongocryptd](#managing-mongocryptd)
-- [Detecting crypt_shared Availability](#detecting-crypt_shared-availability)
+<div id="#enabling-crypt_shared">
+<div id="managing-mongocryptd">
+<div id="#detecting-crypt_shared-availability">
 
 #### encryptedFieldsMap
 
@@ -801,6 +810,8 @@ See [Why is bypassQueryAnalysis needed?](#why-is-bypassqueryanalysis-needed).
 ### Queryable Encryption Create and Drop Collection Helpers
 
 A collection supporting Queryable Encryption requires an index and three additional collections.
+
+<div id="GetEncryptedFields">
 
 #### Collection `encryptedFields` Lookup (GetEncryptedFields)
 
@@ -1101,7 +1112,7 @@ key, a driver will inspect it when connecting to KMS to determine a port number 
 #### keyAltNames
 
 An optional list of string alternate names used to reference a key. If a key is created with alternate names, then
-encryption may refer to the key by the unique alternate name instead of by \_id. The following example shows creating
+encryption may refer to the key by the unique alternate name instead of by `_id`. The following example shows creating
 and referring to a data key by alternate name:
 
 ```python
@@ -1135,7 +1146,7 @@ class RewrapManyDataKeyOpts {
 ```
 
 The `masterKey` document MUST have the fields corresponding to the given `provider` as specified in
-[masterKey](#masterkey). `masterKey` MUST NOT be given if it is not applicable for the given `provider`.
+[masterKey](#masterkey2). `masterKey` MUST NOT be given if it is not applicable for the given `provider`.
 
 ### RewrapManyDataKeyResult
 
@@ -1145,10 +1156,10 @@ class RewrapManyDataKeyResult {
 }
 ```
 
-`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.rst##write-results) used to update the key
+`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md##write-results) used to update the key
 vault collection with one or more rewrapped data keys. If `rewrapManyDataKey()` does not find any matching keys to
 rewrap, no bulk write operation will be executed and this field will be unset. This field may also be unset if the bulk
-write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.rst#write-results).
+write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.md#write-results).
 
 See
 [Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?](#why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult).
@@ -1180,12 +1191,12 @@ class RangeOpts {
 }
 ```
 
-Explicit encryption requires a key and algorithm. Keys are either identified by \_id or by alternate name. Exactly one
+Explicit encryption requires a key and algorithm. Keys are either identified by `_id` or by alternate name. Exactly one
 is required.
 
 #### keyId
 
-Identifies a data key by \_id. The value is a UUID (binary subtype 4).
+Identifies a data key by `_id`. The value is a UUID (binary subtype 4).
 
 #### keyAltName
 
@@ -1193,8 +1204,13 @@ Identifies a key vault collection document by 'keyAltName'.
 
 #### algorithm
 
-One of the strings: - "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic" - "AEAD_AES_256_CBC_HMAC_SHA_512-Random" - "Indexed"
-\- "Unindexed" - "RangePreview"
+One of the strings:
+
+- "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+- "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+- "Indexed"
+- "Unindexed"
+- "RangePreview"
 
 The result of explicit encryption with the "Indexed" or "RangePreview" algorithm must be processed by the server to
 insert or query. Drivers MUST document the following behavior:
@@ -1335,12 +1351,10 @@ Drivers MUST apply timeouts to operations executed as part of client-side encryp
 
 Each ClientEncryption instance MUST have one `libmongocrypt_handle`.
 
-[The libmongocrypt C API documentation](https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h)\
-For
+[The libmongocrypt C API documentation](https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h) For
 information on how to initialize, encrypt, decrypt with libmongocrypt.
 
-[The Guide to Integrating libmongocrypt](https://github.com/mongodb/libmongocrypt/blob/master/integrating.md)\
-For
+[The Guide to Integrating libmongocrypt](https://github.com/mongodb/libmongocrypt/blob/master/integrating.md) For
 information about integrating the libmongocrypt library in a driver.
 
 libmongocrypt exposes logging capabilities. If a driver provides a logging mechanism, it MUST enable this logging and
@@ -1372,7 +1386,9 @@ when a command fails due to client side encryption.
 > The driver MUST NOT manipulate or do any validation on the [crypt_shared](#crypt_shared) path options provided in
 > [extraOptions](#extraoptions). They should be passed through to [libmongocrypt](#libmongocrypt) unchanged.
 
-### Setting Search Paths<span id="search path">\`
+<div id="search path">
+
+### Setting Search Paths
 
 For the user-facing API the driver MUST append the literal string - Ts:`"$SYSTEM"` to the search paths for the
 `libmongocrypt_handle` if `bypassAutoEncryption` is not set to `true`, and MUST NOT append to the search path if it is
@@ -1542,7 +1558,7 @@ NOT attempt to spawn or connect to `mongocryptd`.
 If a MongoClient is configured for Client Side Encryption (eg. bypassAutoEncryption=false), then by default (unless
 mongocryptdBypassSpawn=true), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line argument
 --idleShutdownTimeoutSecs. If the user does not supply one through extraOptions.mongocryptdSpawnArgs (which may be
-either in the form "--idleShutdownTimeoutSecs=60" or as two consecutive arguments \["--idleShutdownTimeoutSecs", 60\],
+either in the form "--idleShutdownTimeoutSecs=60" or as two consecutive arguments `["--idleShutdownTimeoutSecs", 60]`,
 then the driver MUST append --idleShutdownTimeoutSecs=60 to the arguments. This tells mongocryptd to automatically
 terminate after 60 seconds of non-use. The stdout and stderr of the spawned process MUST not be exposed in the driver
 (e.g. redirect to /dev/null). Users can pass the argument --logpath to extraOptions.mongocryptdSpawnArgs if they need to
@@ -1631,7 +1647,7 @@ message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2"
 
 Note, all client side features (including all of `ClientEncryption`) are only supported against 4.2 or higher servers.
 However, errors are only raised for automatic encryption/decryption against older servers. See
-[Why is a 4.2 server required?](#why-is-a-4.2-server-required).
+[Why is a 4.2 server required?](#why-is-a-4-2-server-required).
 
 ## Interaction with Command Monitoring
 
@@ -1795,33 +1811,11 @@ encrypt : {
 
 Each field is briefly described as follows:
 
-<table>
-<tbody>
-<tr class="odd">
-<td><strong>Name</strong></td>
-<td><strong>Type</strong></td>
-<td><strong>Description</strong></td>
-</tr>
-<tr class="even">
-<td>bsonType</td>
-<td>string</td>
-<td>The bsonType of the underlying encrypted field.</td>
-</tr>
-<tr class="odd">
-<td>algorithm</td>
-<td>string</td>
-<td>"AEAD_AES_256_CBC_HMAC_SHA_512-Random" or
-"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"</td>
-</tr>
-<tr class="even">
-<td><p>keyId</p></td>
-<td><p>string or array of UUID</p></td>
-<td><p>If string, it is a JSON pointer to a field with a scalar value
-identifying a key by keyAltName.</p>
-<p>If array, an array of eligible keys.</p></td>
-</tr>
-</tbody>
-</table>
+| Name      | Type                    | Description                                                                                                                                 |
+| --------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| bsonType  | string                  | The bsonType of the underlying encrypted field.                                                                                             |
+| algorithm | string                  | "AEAD_AES_256_CBC_HMAC_SHA_512-Random" or <br>"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"                                                 |
+| keyId     | string or array of UUID | If string, it is a JSON pointer to a field with a scalar value <br>identifying a key by keyAltName.<br>If array, an array of eligible keys. |
 
 ### libmongocrypt: Prohibitions and warnings
 
@@ -2403,8 +2397,7 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 - 2022-11-27: Fix typo for references to `cryptSharedLibRequired` option.
 
-- 2022-11-10: Defined a `CreateEncryptedCollection` helper for creating new\
-  encryption keys automatically for the
+- 2022-11-10: Defined a `CreateEncryptedCollection` helper for creating new encryption keys automatically for the
   queryable encrypted fields in a new collection.
 
 - 2022-11-07: Reformat changelog.
@@ -2419,7 +2412,7 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 - 2022-09-26: Add behavior for automatic Azure KeyVault credentials for `kmsProviders`.
 
-- 2022-09-09: Prohibit `rewrapManyDataKey` with libmongocrypt <= 1.5.1.
+- 2022-09-09: Prohibit `rewrapManyDataKey` with libmongocrypt \<= 1.5.1.
 
 - 2022-07-20: Add behavior for automatic GCP credential loading in `kmsProviders`.
 
