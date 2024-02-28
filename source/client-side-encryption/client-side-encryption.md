@@ -1136,7 +1136,7 @@ generated from a cryptographically secure random device.
 ### rewrapManyDataKey
 
 If applicable, drivers MUST document that users must upgrade dependencies if necessary to avoid being impacted by
-MONGOCRYPT-464.
+[MONGOCRYPT-464](https://jira.mongodb.org/browse/MONGOCRYPT-464).
 
 If applicable, drivers MUST return an error if rewrapManyDataKey is called with libmongocrypt 1.5.1 or 1.5.0.
 
@@ -1150,7 +1150,7 @@ class RewrapManyDataKeyOpts {
 ```
 
 The `masterKey` document MUST have the fields corresponding to the given `provider` as specified in
-[masterKey](#masterkey2). `masterKey` MUST NOT be given if it is not applicable for the given `provider`.
+[masterKey](#masterkey). `masterKey` MUST NOT be given if it is not applicable for the given `provider`.
 
 ### RewrapManyDataKeyResult
 
@@ -1651,7 +1651,7 @@ message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2"
 
 Note, all client side features (including all of `ClientEncryption`) are only supported against 4.2 or higher servers.
 However, errors are only raised for automatic encryption/decryption against older servers. See
-[Why is a 4.2 server required?](#why-is-a-4-2-server-required).
+[Why is a 4.2 server required?](#why-is-a-42-server-required).
 
 ## Interaction with Command Monitoring
 
