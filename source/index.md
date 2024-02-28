@@ -18,4 +18,3 @@
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)
 - [Unified Test Format](unified-test-format/unified-test-format.md)
 - [Wire Compression in Drivers](compression/OP_COMPRESSED.md)
-- [pytest cache directory #](client-side-encryption/.pytest_cache/README.md)
