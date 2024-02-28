@@ -1136,7 +1136,7 @@ generated from a cryptographically secure random device.
 ### rewrapManyDataKey
 
 If applicable, drivers MUST document that users must upgrade dependencies if necessary to avoid being impacted by
-MONGOCRYPT-464.
+[MONGOCRYPT-464](https://jira.mongodb.org/browse/MONGOCRYPT-464).
 
 If applicable, drivers MUST return an error if rewrapManyDataKey is called with libmongocrypt 1.5.1 or 1.5.0.
 
