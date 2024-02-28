@@ -1402,6 +1402,8 @@ Because drivers do not consistently propagate errors encountered while closing a
 NOT specify any operations for a client entity or any entity descended from it following a `close` operation on it, as
 driver behavior when an operation is attempted on a closed client or one of its descendant objects is not consistent.
 
+<div id="client_createChangeStream">
+
 #### createChangeStream
 
 Creates a cluster-level change stream and ensures that the server-side cursor has been created.
@@ -1457,6 +1459,8 @@ below.
 
 When executing an `aggregate` operation, the test runner MUST fully iterate the result. This will ensure consistent
 behavior between drivers that eagerly create a server-side cursor and those that do so lazily when iteration begins.
+
+<div id="database_createChangeStream">
 
 #### createChangeStream
 
@@ -1549,6 +1553,8 @@ These operations and their arguments may be documented in the following specific
 Collection operations that require special handling or are not documented by an existing specification are described
 below.
 
+<div id="collection_aggregate">
+
 #### aggregate
 
 When executing an `aggregate` operation, the test runner MUST fully iterate the result. This will ensure consistent
@@ -1603,6 +1609,8 @@ BulkWriteException MAY translate the expected code name to a number (see:
 instead, but MUST raise an error if the comparison cannot be attempted (e.g. `code` is also not available, translation
 fails).
 
+<div id="collection_createChangeStream">
+
 #### createChangeStream
 
 Creates a collection-level change stream and ensures that the server-side cursor has been created.
@@ -1614,6 +1622,8 @@ before the resulting change stream might be saved with [operation.saveResultAsEn
 
 Test runners MUST NOT iterate the change stream when executing this operation and test files SHOULD NOT specify
 [operation.expectResult](#operation_expectResult) for this operation.
+
+<div id="collection_createFindCursor">
 
 #### createFindCursor
 
@@ -1719,7 +1729,10 @@ These operations and their arguments may be documented in the following specific
 
 Bucket operations that require special handling or are not documented by an existing specification are described below.
 
-#### download and downloadByName<span id="download">\`
+<div id="download">
+<div id="downloadByName">
+
+#### download and downloadByName
 
 These operations proxy the bucket's `openDownloadStream` and `openDownloadStreamByName` methods and support the same
 parameters and options, but return a string containing the stream's contents instead of the stream itself. Test runners
@@ -1740,6 +1753,8 @@ These operations SHOULD NOT be used in test files. See [download and downloadByN
 
 These operations SHOULD NOT be used in test files. See
 [IO operations for GridFS streams](#io-operations-for-gridfs-streams) in [Future Work](#future-work).
+
+<div id="upload-and-uploadWithId">
 
 #### upload and uploadWithId
 
@@ -3283,6 +3298,8 @@ adding comments, using YAML anchors) and cannot be enforced with a JSON schema. 
 ignored in order to test the test runner implementation (e.g. defining entities out of order to trigger runtime errors).
 The specification does prefer "MUST" in other contexts, such as discussing parts of the test file format that *are*
 enforceable by the JSON schema or the test runner implementation.
+
+<div id="rationale_observeSensitiveCommands">
 
 ### Why can't `observeSensitiveCommands` be true when authentication is enabled?
 

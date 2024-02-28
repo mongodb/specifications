@@ -46,7 +46,7 @@ follow the semantics for special values defined by those types. Such drivers MUS
 explicitly set `timeoutMS` to `infinite` in the API.
 
 See
-[timeoutMS cannot be changed to unset once it’s specified](#timeoutms-cannot-be-changed-to-unset-once-its-specified).
+[timeoutMS cannot be changed to unset once it's specified](#timeoutms-cannot-be-changed-to-unset-once-its-specified).
 
 #### Backwards Breaking Considerations
 
@@ -448,7 +448,7 @@ elapsed.
 
 ## Design Rationale
 
-### timeoutMS cannot be changed to unset once it’s specified
+### timeoutMS cannot be changed to unset once it's specified
 
 If `timeoutMS` is specified at any level, it cannot be later changed to unset at a lower level. For example, a user
 cannot do:
@@ -527,7 +527,7 @@ prescriptive, we could mandate that drivers raise a client-side error in this ca
 expensive lookup in the command document. To avoid this additional cost, drivers are only required to document the
 behavior and suggest that `timeoutMS` be used instead of including a manual `maxTimeMS` field.
 
-### Why don’t drivers use backoff/jitter between retry attempts?
+### Why don't drivers use backoff/jitter between retry attempts?
 
 Earlier versions of this specification proposed adding backoff and/or jitter between retry attempts to avoid connection
 storming or overloading the server, but we later deemed this unnecessary. If multiple concurrent operations select the
