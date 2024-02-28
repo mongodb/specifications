@@ -2,7 +2,17 @@
 # Please review the generated file, then remove this notice.
 
 description: updateOne-errorLabels
+
 schemaVersion: '1.3'
+
+runOnRequirements:
+  -
+    minServerVersion: 4.3.1
+    topologies:
+      - replicaset
+      - sharded
+      - load-balanced
+
 createEntities:
   -
     client:
@@ -18,13 +28,7 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection_name coll
-runOnRequirements:
-  -
-    minServerVersion: 4.3.1
-    topologies:
-      - replicaset
-      - sharded
-      - load-balanced
+
 initialData:
   -
     collectionName: *collection_name
@@ -32,6 +36,7 @@ initialData:
     documents:
       - { _id: 1, x: 11 }
       - { _id: 2, x: 22 }
+
 tests:
   -
     description: 'UpdateOne succeeds with RetryableWriteError from server'

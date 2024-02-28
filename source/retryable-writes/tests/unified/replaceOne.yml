@@ -2,7 +2,15 @@
 # Please review the generated file, then remove this notice.
 
 description: replaceOne
+
 schemaVersion: '1.3'
+
+runOnRequirements:
+  -
+    minServerVersion: '3.6'
+    topologies:
+      - replicaset
+
 createEntities:
   -
     client:
@@ -18,11 +26,7 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection_name coll
-runOnRequirements:
-  -
-    minServerVersion: '3.6'
-    topologies:
-      - replicaset
+
 initialData:
   -
     collectionName: *collection_name
@@ -30,6 +34,7 @@ initialData:
     documents:
       - { _id: 1, x: 11 }
       - { _id: 2, x: 22 }
+
 tests:
   -
     description: 'ReplaceOne is committed on first attempt'
