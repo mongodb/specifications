@@ -5,10 +5,7 @@ schemaVersion: '1.3'
 runOnRequirements:
   -
     minServerVersion: '3.6'
-    topologies:
-      - replicaset
-      - sharded
-      - load-balanced
+    topologies: [ replicaset, sharded, load-balanced ]
 
 createEntities:
   -
