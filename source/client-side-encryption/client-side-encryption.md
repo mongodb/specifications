@@ -1150,7 +1150,7 @@ class RewrapManyDataKeyOpts {
 ```
 
 The `masterKey` document MUST have the fields corresponding to the given `provider` as specified in
-[masterKey](#masterkey2). `masterKey` MUST NOT be given if it is not applicable for the given `provider`.
+[masterKey](#masterkey). `masterKey` MUST NOT be given if it is not applicable for the given `provider`.
 
 ### RewrapManyDataKeyResult
 
