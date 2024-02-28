@@ -149,7 +149,7 @@ automatically encrypts commands and decrypts results. Automatic encryption is en
 encrypt and decrypt with a new ClientEncryption object.
 
 Client side encryption requires MongoDB 4.2 compatible drivers, and is only supported against 4.2 or higher servers. See
-[Why is a 4.2 server required?](#why-is-a-4-2-server-required).
+[Why is a 4.2 server required?](#why-is-a-42-server-required).
 
 The following shows basic usage of the new API.
 
@@ -782,9 +782,9 @@ If, after initializing a `libmongocrypt_handle`, [crypt_shared](#crypt_shared) i
 [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) is `true`, the driver MUST consider the
 `libmongocrypt_handle` to be invalid and return an error to the user. Refer:
 
-<div id="#enabling-crypt_shared">
+<div id="enabling-crypt_shared">
 <div id="managing-mongocryptd">
-<div id="#detecting-crypt_shared-availability">
+<div id="detecting-crypt_shared-availability">
 
 #### encryptedFieldsMap
 
@@ -1409,7 +1409,7 @@ execution from the ambient state of the host system.
 Refer to: [Path Resolution Behavior](#path-resolution-behavior) and
 [Search Paths for Testing](#search-paths-for-testing)
 
-### Overriding the [crypt_shared](#crypt_shared) Library Path
+### Overriding the `crypt_shared` Library Path
 
 If [extraOptions.cryptSharedLibPath](#extraoptions.cryptsharedlibpath) was specified by the user, the driver MUST set
 the [crypt_shared](#crypt_shared) path override on the `libmongocrypt_handle`.
