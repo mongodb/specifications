@@ -31,7 +31,7 @@ repos:
   - id: check-anchors
     name: check-anchors
     types: [markdown]
-    entry: npm install scripts/check_anchors && node scripts/check_anchors/index.js
+    entry: bash scripts/check_anchors/check-anchors.sh
     language: node
     
 - repo: https://github.com/executablebooks/mdformat
