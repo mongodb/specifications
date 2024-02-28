@@ -117,7 +117,7 @@ encryptedFields\
 A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON
 Schema in FLE. The following is an example encryptedFields in extended canonical JSON:
 
-```
+```javascript
 {
     "escCollection": "enxcol_.CollectionName.esc",
     "ecocCollection": "enxcol_.CollectionName.ecoc",
@@ -541,35 +541,35 @@ automatic credentials results in a runtime error from [libmongocrypt](#libmongoc
 >
 > Drivers MUST NOT eagerly fill an empty KMS options property.
 
-Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ according to the following process:
+Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) `$P$` according to the following process:
 
-1. Let $K$ be the [kmsProviders](#kmsproviders) value provided by the user as part of the original
+1. Let `$K$` be the [kmsProviders](#kmsproviders) value provided by the user as part of the original
    [ClientEncryptionOpts](#ClientEncryptionOpts) or [AutoEncryptionOpts](#AutoEncryptionOpts).
-2. Initialize $P$ to an empty [KMSProviders](#kmsproviders) object.
-3. If $K$ contains an `aws` property, and that property is an empty map:
-   1. Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
+2. Initialize `$P$` to an empty [KMSProviders](#kmsproviders) object.
+3. If `$K$` contains an `aws` property, and that property is an empty map:
+   1. Attempt to obtain credentials `$C$` from the environment using similar logic as is detailed in
       [the obtaining-AWS-credentials section from the Driver Authentication specification](../auth/auth.md#obtaining-credentials),
       but ignoring the case of loading the credentials from a URI
-   2. If credentials $C$ were successfully loaded, create a new [AWSKMSOptions](#AWSKMSOptions) map from $C$ and insert
-      that map onto $P$ as the `aws` property.
-4. If $K$ contains an `gcp` property, and that property is an empty map:
-   1. Attempt to obtain credentials $C$ from the environment logic as is detailed in
+   2. If credentials `$C$` were successfully loaded, create a new [AWSKMSOptions](#AWSKMSOptions) map from `$C$` and
+      insert that map onto `$P$` as the `aws` property.
+4. If `$K$` contains an `gcp` property, and that property is an empty map:
+   1. Attempt to obtain credentials `$C$` from the environment logic as is detailed in
       [Obtaining GCP Credentials](#obtaining-gcp-credentials).
-   2. If credentials $C$ were successfully loaded, create a new [GCPKMSOptions](#GCPKMSOptions) map from $C$ and insert
-      that map onto $P$ as the `gcp` property.
-5. If $K$ contains an `azure` property, and that property is an empty map:
+   2. If credentials `$C$` were successfully loaded, create a new [GCPKMSOptions](#GCPKMSOptions) map from `$C$` and
+      insert that map onto `$P$` as the `gcp` property.
+5. If `$K$` contains an `azure` property, and that property is an empty map:
    1. If there is a `cachedAzureAccessToken` AND the duration until `azureAccessTokenExpireTime` is greater than one
-      minute, insert `cachedAzureAccessToken` as the `azure` property on $P$.
+      minute, insert `cachedAzureAccessToken` as the `azure` property on `$P$`.
    2. Otherwise:
-      1. Let $t_0$ be the current time.
-      2. Attempt to obtain an Azure VM Managed Identity Access Token $T$ as detailed in
+      1. Let `$t_0$` be the current time.
+      2. Attempt to obtain an Azure VM Managed Identity Access Token `$T$` as detailed in
          [Obtaining an Access Token for Azure Key Vault](#obtaining-an-access-token-for-azure-key-vault).
-      3. If a token $T$ with expire duration $d\_{exp}$ were obtained successfully, create a new
-         [AzureAccessToken](#AzureAccessToken) object with $T$ as the `accessToken` property. Insert that
-         [AzureAccessToken](#AzureAccessToken) object into $P$ as the `azure` property. Record the generated
+      3. If a token `$T$` with expire duration `$d\_{exp}$` were obtained successfully, create a new
+         [AzureAccessToken](#AzureAccessToken) object with `$T$` as the `accessToken` property. Insert that
+         [AzureAccessToken](#AzureAccessToken) object into `$P$` as the `azure` property. Record the generated
          [AzureAccessToken](#AzureAccessToken) in `cachedAzureAccessToken`. Record the `azureAccessTokenExpireTime` as
-         $t_0 + d\_{exp}$.
-6. Return $P$ as the additional KMS providers to [libmongocrypt](#libmongocrypt).
+         `$t_0 + d\_{exp}$`.
+6. Return `$P$` as the additional KMS providers to [libmongocrypt](#libmongocrypt).
 
 <div id="obtaining-gcp-credentials">
 
@@ -596,53 +596,42 @@ Virtual machines running on the Azure platform have one or more *Managed Identit
 the VM, an identity can be used by obtaining an access token via HTTP from the *Azure Instance Metadata Service* (IMDS).
 [See this documentation for more information](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http)
 
-..note:
-
-```
-To optimize for testability, it is recommended to implement an isolated
-abstraction for communication with IMDS. This will aide in the implementation
-of the prose tests of the communication with an IMDS server.
-```
+> \[!NOTE\] To optimize for testability, it is recommended to implement an isolated abstraction for communication with
+> IMDS. This will aide in the implementation of the prose tests of the communication with an IMDS server.
 
 The below steps should be taken:
 
-01. Let $U$ be a new URL, initialized from the URL string `"http://169.254.169.254/metadata/identity/oauth2/token"`
+1. Let `$U$` be a new URL, initialized from the URL string `"http://169.254.169.254/metadata/identity/oauth2/token"`
 
-02. Add a query parameter `api-version=2018-02-01` to $U$.
+2. Add a query parameter `api-version=2018-02-01` to `$U$`.
 
-03. Add a query parameter `resource=https://vault.azure.net/` to $U$.
+3. Add a query parameter `resource=https://vault.azure.net/` to `$U$`.
 
-04. Prepare an HTTP GET request $Req$ based on $U$.
+4. Prepare an HTTP GET request `$Req$` based on `$U$`.
 
-    <div class="note">
+> \[!NOTE\] All query parameters on `$U$` should be appropriately percent-encoded
 
-    <div class="title">
+05. Add HTTP headers `Metadata: true` and `Accept: application/json` to `$Req$`.
 
-    Note
+06. Issue `$Req$` to the Azure IMDS server `169.254.169.254:80`. Let `$Resp$` be the response from the server. If the
+    HTTP response is not completely received within ten seconds, consider the request to have timed out, and return an
+    error instead of an access token.
 
-    All query parameters on $U$ should be appropriately percent-encoded
-
-05. Add HTTP headers `Metadata: true` and `Accept: application/json` to $Req$.
-
-06. Issue $Req$ to the Azure IMDS server `169.254.169.254:80`. Let $Resp$ be the response from the server. If the HTTP
-    response is not completely received within ten seconds, consider the request to have timed out, and return an error
-    instead of an access token.
-
-07. If `$Resp_{status} ≠ 200$`, obtaining the access token has failed, and the HTTP response body of $Resp$ encodes
+07. If `$Resp_{status} ≠ 200$`, obtaining the access token has failed, and the HTTP response body of `$Resp$` encodes
     information about the error that occurred. Return an error including the HTTP response body instead of an access
     token.
 
-08. Otherwise, let $J$ be the JSON document encoded in the HTTP response body of $Resp$.
+08. Otherwise, let `$J$` be the JSON document encoded in the HTTP response body of `$Resp$`.
 
-09. The result access token $T$ is given as the `access_token` string property of $J$. Return $T$ as the resulting
+09. The result access token `$T$` is given as the `access_token` string property of `$J$`. Return `$T$` as the resulting
     access token.
 
 10. The resulting "expires in" duration `$d_{exp}$` is a count of seconds given as an ASCII-encoded integer string
-    `expires_in` property of $J$.
+    `expires_in` property of `$J$`.
 
 > \[!NOTE\]
 >
-> If JSON decoding of $Resp$ fails, or the `access_token` property is absent from $J$, this is a protocol error from
+> If JSON decoding of `$Resp$` fails, or the `access_token` property is absent from `$J$`, this is a protocol error from
 > IMDS. Indicate this error to the requester of the access token.
 
 > \[!NOTE\]
@@ -821,19 +810,19 @@ A collection supporting Queryable Encryption requires an index and three additio
 The convenience methods support the following lookup process for finding the `encryptedFields` associated with a
 collection.
 
-Assume an exposition-only function $GetEncryptedFields(opts, collName, dbName, askDb)$, where $opts$ is a set of
-options, $collName$ is the name of the collection, $dbName$ is the name of the database associated with that collection,
-and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by:
+Assume an exposition-only function `$GetEncryptedFields(opts, collName, dbName, askDb)$`, where `$opts$` is a set of
+options, `$collName$` is the name of the collection, `$dbName$` is the name of the database associated with that
+collection, and `$askDb$` is a boolean value. The resulting `encryptedFields` `$EF$` is found by:
 
-1. Let $QualName$ be the string formed by joining $dbName$ and $collName$ with an ASCII dot `"."`.
-2. If $opts$ contains an `"encryptedFields"` property, then $EF$ is the value of that property.
-3. Otherwise, if `AutoEncryptionOptions.encryptedFieldsMap` contains an element named by $QualName$, then $EF$ is the
-   value of that element.
-4. Otherwise, if $askDb$ is `true`:
+1. Let `$QualName$` be the string formed by joining`$dbName$` and `$collName$` with an ASCII dot `"."`.
+2. If `$opts$` contains an `"encryptedFields"` property, then `$EF$` is the value of that property.
+3. Otherwise, if `AutoEncryptionOptions.encryptedFieldsMap` contains an element named by `$QualName$`, then `$EF$` is
+   the value of that element.
+4. Otherwise, if `$askDb$` is `true`:
    1. Issue a `listCollections` command against the database named by $dbName$, filtered by `{name: <collName>}`. Let
-      the result be the document $L$.
-   2. If $L$ contains an `options` document element, and that element contains an `encryptedFields` document element,
-      $EF$ is $L$`["options"]["encryptedFields"]`.
+      the result be the document `$L$`.
+   2. If `$L$` contains an `options` document element, and that element contains an `encryptedFields` document element,
+      `$EF$` is `$L$` \["options"\]\["encryptedFields"\]\`.
    3. Otherwise, $EF$ is *not-found*
 5. Otherwise, $EF$ is considered *not-found*.
 
@@ -855,8 +844,8 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 > Drivers MUST NOT document the `escCollection` and `ecocCollection` options.
 
 For a helper function, `CreateCollection(collectionName, collectionOptions)` with the name of the database associated as
-$dbName$, look up the encrypted fields `encryptedFields` for the collection as $GetEncryptedFields(collectionOptions,
-collectionName, dbName, false)$ ([See here](#GetEncryptedFields)).
+`$dbName$`, look up the encrypted fields `encryptedFields` for the collection as
+`$GetEncryptedFields(collectionOptions, collectionName, dbName, false)$` ([See here](#GetEncryptedFields)).
 
 If a set of `encryptedFields` was found, then do the following operations. If any of the following operations error, the
 remaining operations are not attempted:
@@ -879,33 +868,33 @@ remaining operations are not attempted:
 
 #### Create Encrypted Collection Helper
 
-To support automatic generation of encryption data keys, a helper $CreateEncryptedCollection(CE, database, collName,
-collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption-1) object,
-$kmsProvider$ is a [KMSProvider](#KMSProvider) and $masterKey$ is equivalent to the $masterKey$ defined in
-[DataKeyOpts](#datakeyopts). It has the following behavior:
+To support automatic generation of encryption data keys, a helper
+`$CreateEncryptedCollection(CE, database, collName, collOpts, kmsProvider, masterKey)$` is defined, where `$CE$` is a
+[ClientEncryption](#clientencryption-1) object, `$kmsProvider$` is a [KMSProvider](#KMSProvider) and `$masterKey$` is
+equivalent to the `$masterKey$` defined in [DataKeyOpts](#datakeyopts). It has the following behavior:
 
-- If $collOpts$ contains an `"encryptedFields"` property, then $EF$ is the value of that property. Otherwise, report an
-  error that there are no `encryptedFields` defined for the collection.
-- Let $EF'$ be a copy of $EF$. Update $EF'$ in the following manner:
-  - Let $Fields$ be the `"fields"` element within $EF'$.
-  - If $Fields$ is present and is an array value, then for each element $F$ of `Fields`:
-    - If $F$ is not a document element, skip it.
-    - Otherwise, if $F$ has a `"keyId"` named element $K$ and $K$ is a `null` value:
-      - Create a [DataKeyOpts](#datakeyopts) named $dkOpts$ with the $masterKey$ argument.
-      - Let $D$ be the result of `CE.createDataKey(kmsProvider, dkOpts)`.
-      - If generating $D$ resulted in an error $E$, the entire $CreateEncryptedCollection$ must now fail with error $E$.
-        Return the partially-formed $EF'$ with the error so that the caller may know what datakeys have already been
-        created by the helper.
-      - Replace $K$ in $F$ with $D$.
-- Create a new set of options $collOpts'$ duplicating $collOpts$. Set the `"encryptedFields"` named element of
-  $collOpts'$ to $EF'$.
-- Invoke the `CreateCollection` helper as $CreateCollection(database, collName, collOpts')$. Return the resulting
-  collection and the generated $EF'$. If an error occurred, return the resulting $EF$ with the error so that the caller
-  may know what datakeys have already been created by the helper.
+- If `$collOpts$` contains an `"encryptedFields"` property, then `$EF$` is the value of that property. Otherwise, report
+  an error that there are no `encryptedFields` defined for the collection.
+- Let `$EF'$` be a copy of `$EF$`. Update `$EF'$` in the following manner:
+  - Let `$Fields$` be the `"fields"` element within `$EF'$`.
+  - If `$Fields$` is present and is an array value, then for each element `$F$` of `Fields`:
+    - If `$F$` is not a document element, skip it.
+    - Otherwise, if `$F$` has a `"keyId"` named element `$K$` and `$K$` is a `null` value:
+      - Create a [DataKeyOpts](#datakeyopts) named `$dkOpts$` with the `$masterKey$` argument.
+      - Let `$D$` be the result of `CE.createDataKey(kmsProvider, dkOpts)`.
+      - If generating `$D$` resulted in an error `$E$`, the entire `$CreateEncryptedCollection$` must now fail with
+        error `$E$`. Return the partially-formed `$EF'$` with the error so that the caller may know what datakeys have
+        already been created by the helper.
+      - Replace `$K$` in `$F$` with `$D$`.
+- Create a new set of options `$collOpts'$` duplicating `$collOpts$`. Set the `"encryptedFields"` named element of
+  `$collOpts'$` to `$EF'$`.
+- Invoke the `CreateCollection` helper as `$CreateCollection(database, collName, collOpts')$`. Return the resulting
+  collection and the generated `$EF'$`. If an error occurred, return the resulting `$EF$` with the error so that the
+  caller may know what datakeys have already been created by the helper.
 
-Drivers MUST document that $createEncryptedCollection$ does not affect any auto encryption settings on existing
+Drivers MUST document that `$createEncryptedCollection$` does not affect any auto encryption settings on existing
 MongoClients that are already configured with auto encryption. Users must configure auto encryption after creating the
-encrypted collection with the $createEncryptedCollection$ helper.
+encrypted collection with the `$createEncryptedCollection$` helper.
 
 #### Drop Collection Helper
 
@@ -924,9 +913,9 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 >
 > Drivers SHOULD NOT document the `escCollection` and `ecocCollection` options.
 
-For a helper function `DropCollection(dropOptions)` with associated collection named $collName$ and database named
-$dbName$, look up the encrypted fields `encryptedFields` as $GetEncryptedFields(dropOptions, collName, dbname, true)$
-([See here](#GetEncryptedFields)).
+For a helper function `DropCollection(dropOptions)` with associated collection named `$collName$` and database named
+`$dbName$`, look up the encrypted fields `encryptedFields` as
+`$GetEncryptedFields(dropOptions, collName, dbname, true)$` ([See here](#GetEncryptedFields)).
 
 If a set of `encryptedFields` was found, then perform the following operations. If any of the following operations
 error, the remaining operations are not attempted. A `namespace not found` error returned from the server (server error
@@ -1257,7 +1246,7 @@ documentation for MongoClient:
 > If automatic encryption fails on an operation, use a MongoClient configured with bypassAutoEncryption=true and use
 > ClientEncryption.encrypt() to manually encrypt values.
 
-For example, currently an aggregate with $lookup into a foreign collection is unsupported ([mongocryptd](#mongocryptd)
+For example, currently an aggregate with `$lookup` into a foreign collection is unsupported ([mongocryptd](#mongocryptd)
 and [crypt_shared](#crypt_shared) return errors):
 
 ```python
@@ -1854,7 +1843,7 @@ attempts to encrypt will result in libmongocrypt requesting a new collection inf
 A collection info result indicates if the collection is really a view. If it is, libmongocrypt returns an error since it
 does not know the schema of the underlying collection.
 
-A collection info with validators that aside from one top level $jsonSchema are considered an error.
+A collection info with validators that aside from one top level `$jsonSchema` are considered an error.
 
 ### libmongocrypt: Data key caching
 
@@ -1916,7 +1905,7 @@ below. Commands not listed in this table will result in an error returned by lib
 | updateSearchIndex        | BYPASS      |
 
 All AUTOENCRYPT commands are sent to mongocryptd, even if there is no JSONSchema. This is to ensure that commands that
-reference other collections (e.g. aggregate with $lookup) are handled properly.
+reference other collections (e.g. aggregate with `$lookup`) are handled properly.
 
 ## Test Plan
 
@@ -1962,7 +1951,7 @@ collections. But we decided against this. It is much simpler for users to enable
 collections with encryption in the common case of using remote JSONSchemas.
 
 Note, this takes the trade-off of a better user experience over less safety. If a user mistakenly assumes that auto
-encryption occurs on a database, or on a collection doing a $(graph)lookup on a collection with auto encryption, they
+encryption occurs on a database, or on a collection doing a `$(graph)lookup` on a collection with auto encryption, they
 may end up sending unencrypted data.
 
 #### Why are auto encrypted collections configured at level of MongoClient?
@@ -2010,10 +1999,10 @@ encryption at runtime.
 ### Why not require compatibility between mongocryptd and the server?
 
 It isn't necessary or unsafe if mongocryptd parses an old version of MQL. Consider what happens when we add a new
-operator, $newOperator. If it properly encrypts a value in the $newOperator expression and sends it to an old server
-that doesn't have $newOperator, that's a mistake but not a security hole. Also if the app passes a query with
-$newOperator to mongocryptd, and mongocryptd doesn't know about $newOperator, then it will error, "Unrecognized operator
-$newOperator" or something. Also a mistake, not a security hole.
+operator, `$newOperator`. If it properly encrypts a value in the `$newOperator` expression and sends it to an old server
+that doesn't have `$newOperator`, that's a mistake but not a security hole. Also if the app passes a query with
+`$newOperator` to mongocryptd, and mongocryptd doesn't know about `$newOperator`, then it will error,
+`"Unrecognized operator $newOperator"` or something. Also a mistake, not a security hole.
 
 So long as mongocryptd errors on unrecognized expressions, we don't need version compatibility between the mongocryptd
 and server for the sake of security.
@@ -2035,13 +2024,13 @@ revocation mechanism, based upon periodic checking from the client. Initially th
 Because that is the only use of local schemas. No other JSONSchema validators have any function. It's likely the user
 misconfigured encryption.
 
-### Why limit to one top-level $jsonSchema?
+### Why limit to one top-level `$jsonSchema`?
 
-- If we allow siblings, we can run into cases where the user specifies a top-level $and/$or or any arbitrary
-  match-expression that could have nested $jsonSchema's.
+- If we allow siblings, we can run into cases where the user specifies a top-level `$and/$or` or any arbitrary
+  match-expression that could have nested `$jsonSchema`'s.
 - Furthermore, the initial versions of [mongocryptd](#mongocryptd) and [crypt_shared](#crypt_shared) are only
-  implementing query analysis when the validator consists of a single $jsonSchema predicate. This helps to simplify the
-  [mongocryptd](#mongocryptd) and [crypt_shared](#crypt_shared) logic, and unifies it with the case where users
+  implementing query analysis when the validator consists of a single `$jsonSchema` predicate. This helps to simplify
+  the [mongocryptd](#mongocryptd) and [crypt_shared](#crypt_shared) logic, and unifies it with the case where users
   configure their schemas directly in the driver.
 
 ### Why not allow schemas to be configured at runtime?
@@ -2177,7 +2166,7 @@ process. Even if the collection does not have an associated schema, the command 
 collection may not have encrypted fields, but a command on the collection may could have sensitive data as part of the
 command arguments. For example:
 
-```
+```javascript
 db.publicData.aggregate([
    {$lookup: {from: "privateData", localField: "_id", foreignField: "_id", as: "privateData"}},
    {$match: {"privateData.ssn": "123-45-6789"}},
@@ -2285,7 +2274,7 @@ Querying a range index requires encrypting a lower bound (value for `$gt` or `$g
 upper bound payloads must have a unique matching UUID. The lower and upper bound payloads are unique. This API requires
 handling the UUID and distinguishing the upper and lower bounds. Here are examples showing possible errors:
 
-```
+```javascript
 uuid = UUID()
 lOpts = EncryptOpts(
    keyId=keyId, algorithm="range", queryType="range", uuid=uuid, bound="lower")
@@ -2317,7 +2306,8 @@ Requiring an Aggregate Expression or Match Expression hides the UUID and handles
 Returning an Aggregate Expression or Match Expression as a BSON document motivated adding a new
 `ClientEncryption.encryptExpression()` helper. `ClientEncryption.encrypt()` cannot be reused since it returns a Binary.
 
-To limit scope, only $and is supported. Support for other operators ($eq, $in) can be added in the future if desired.
+To limit scope, only `$and` is supported. Support for other operators `($eq, $in)` can be added in the future if
+desired.
 
 ### Why do on-demand KMS credentials not support named KMS providers?
 
