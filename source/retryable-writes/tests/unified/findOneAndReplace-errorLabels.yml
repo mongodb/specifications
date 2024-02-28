@@ -4,7 +4,7 @@ schemaVersion: '1.3'
 
 runOnRequirements:
   -
-    minServerVersion: 4.3.1
+    minServerVersion: 4.3.1 # failCommand errorLabels option
     topologies:
       - replicaset
       - sharded
@@ -48,7 +48,8 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [ findAndModify ]
-              errorCode: 112
+              errorCode: 112 # WriteConflict, not a retryable error code
+              # Override server behavior: send RetryableWriteError label with non-retryable error code
               errorLabels:
                 - RetryableWriteError
       -
@@ -58,6 +59,7 @@ tests:
           filter: { _id: 1 }
           replacement: { _id: 1, x: 111 }
           returnDocument: Before
+        # Driver retries operation and it succeeds
         expectResult: { _id: 1, x: 11 }
     outcome:
       -
@@ -79,8 +81,8 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [ findAndModify ]
-              errorCode: 11600
-              errorLabels: []
+              errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+              errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
       -
         object: *collection0
         name: findOneAndReplace
@@ -88,6 +90,7 @@ tests:
           filter: { _id: 1 }
           replacement: { _id: 1, x: 111 }
           returnDocument: Before
+        # Driver does not retry operation because there was no RetryableWriteError label on response
         expectError:
           isError: true
           errorLabelsOmit:

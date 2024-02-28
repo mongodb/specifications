@@ -263,6 +263,8 @@ tests:
           document: { _id: 3, x: 33 }
         expectError:
           isError: true
+          # If retryWrites is false, the driver should not add the
+          # RetryableWriteError label to the error.
           errorLabelsOmit:
             - RetryableWriteError
     outcome:
@@ -335,7 +337,7 @@ tests:
         documents:
           - { _id: 1, x: 11 }
           - { _id: 2, x: 22 }
-          - { _id: 3, x: 33 }
+          - { _id: 3, x: 33 } # The write was still applied.
   -
     description: 'InsertOne fails after WriteConcernError WriteConcernFailed'
     operations:
@@ -371,7 +373,7 @@ tests:
         documents:
           - { _id: 1, x: 11 }
           - { _id: 2, x: 22 }
-          - { _id: 3, x: 33 }
+          - { _id: 3, x: 33 } # The write was still applied.
   -
     description: 'InsertOne fails with a RetryableWriteError label after two connection failures'
     operations:

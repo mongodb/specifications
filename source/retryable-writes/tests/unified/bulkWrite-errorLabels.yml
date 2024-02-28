@@ -4,7 +4,7 @@ schemaVersion: '1.3'
 
 runOnRequirements:
   -
-    minServerVersion: 4.3.1
+    minServerVersion: 4.3.1 # failCommand errorLabels option
     topologies:
       - replicaset
       - sharded
@@ -48,7 +48,8 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [ update ]
-              errorCode: 112
+              errorCode: 112 # WriteConflict, not a retryable error code
+              # Override server behavior: send RetryableWriteError label with non-retryable error code
               errorLabels:
                 - RetryableWriteError
       -
@@ -67,6 +68,7 @@ tests:
                 filter: { _id: 2 }
                 update: { $inc: { x: 1 } }
           ordered: true
+        # Driver retries operation and it succeeds
         expectResult:
           deletedCount: 1
           insertedCount: 1
@@ -95,8 +97,8 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [ update ]
-              errorCode: 11600
-              errorLabels: []
+              errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+              errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
       -
         object: *collection0
         name: bulkWrite
@@ -113,6 +115,7 @@ tests:
                 filter: { _id: 2 }
                 update: { $inc: { x: 1 } }
           ordered: true
+        # Driver does not retry operation because there was no RetryableWriteError label on response
         expectError:
           isError: true
           errorLabelsOmit:

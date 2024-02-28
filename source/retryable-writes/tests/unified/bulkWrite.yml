@@ -74,6 +74,9 @@ tests:
         documents:
           - { _id: 2, x: 23 }
   -
+    # Write operations in this ordered batch are intentionally sequenced so that
+    # each write command consists of a single statement, which will fail on the
+    # first attempt and succeed on the second, retry attempt.
     description: 'All commands are retried'
     operations:
       -
@@ -404,6 +407,10 @@ tests:
           - { _id: 1, x: 12 }
           - { _id: 2, x: 22 }
   -
+    # The onPrimaryTransactionalWrite fail point only triggers for write
+    # operations that include a transaction ID. Therefore, it will not affect
+    # the initial deleteMany and will trigger once (and only once) for the first
+    # insertOne attempt.
     description: 'Single-document write following deleteMany is retried'
     operations:
       -
@@ -443,6 +450,10 @@ tests:
         documents:
           - { _id: 2, x: 22 }
   -
+    # The onPrimaryTransactionalWrite fail point only triggers for write
+    # operations that include a transaction ID. Therefore, it will not affect
+    # the initial updateMany and will trigger once (and only once) for the first
+    # insertOne attempt.
     description: 'Single-document write following updateMany is retried'
     operations:
       -
