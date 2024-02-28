@@ -33,12 +33,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
-      -
-        _id: 2
-        x: 22
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 tests:
   -
     description: 'DeleteOne fails with RetryableWriteError label after two connection failures'
@@ -50,18 +46,15 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
-              failCommands:
-                - delete
+              failCommands: [ delete ]
               closeConnection: true
       -
         object: *collection0
         name: deleteOne
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectError:
           isError: true
           errorLabelsContain:
@@ -71,9 +64,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }

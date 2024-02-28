@@ -30,12 +30,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
-      -
-        _id: 2
-        x: 22
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 tests:
   -
     description: 'FindOneAndDelete succeeds with RetryableWriteError from server'
@@ -47,11 +43,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - findAndModify
+              failCommands: [ findAndModify ]
               errorCode: 112
               errorLabels:
                 - RetryableWriteError
@@ -59,22 +53,15 @@ tests:
         object: *collection0
         name: findOneAndDelete
         arguments:
-          filter:
-            x:
-              $gte: 11
-          sort:
-            x: 1
-        expectResult:
-          _id: 1
-          x: 11
+          filter: { x: { $gte: 11 } }
+          sort: { x: 1 }
+        expectResult: { _id: 1, x: 11 }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }
   -
     description: 'FindOneAndDelete fails if server does not return RetryableWriteError'
     operations:
@@ -85,22 +72,17 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - findAndModify
+              failCommands: [ findAndModify ]
               errorCode: 11600
               errorLabels: []
       -
         object: *collection0
         name: findOneAndDelete
         arguments:
-          filter:
-            x:
-              $gte: 11
-          sort:
-            x: 1
+          filter: { x: { $gte: 11 } }
+          sort: { x: 1 }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -110,12 +92,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
   -
     description: 'FindOneAndDelete succeeds after PrimarySteppedDown'
     operations:
@@ -126,11 +104,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - findAndModify
+              failCommands: [ findAndModify ]
               errorCode: 189
               errorLabels:
                 - RetryableWriteError
@@ -138,22 +114,15 @@ tests:
         object: *collection0
         name: findOneAndDelete
         arguments:
-          filter:
-            x:
-              $gte: 11
-          sort:
-            x: 1
-        expectResult:
-          _id: 1
-          x: 11
+          filter: { x: { $gte: 11 } }
+          sort: { x: 1 }
+        expectResult: { _id: 1, x: 11 }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }
   -
     description: 'FindOneAndDelete succeeds after WriteConcernError ShutdownInProgress'
     operations:
@@ -164,11 +133,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - findAndModify
+              failCommands: [ findAndModify ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -178,19 +145,12 @@ tests:
         object: *collection0
         name: findOneAndDelete
         arguments:
-          filter:
-            x:
-              $gte: 11
-          sort:
-            x: 1
-        expectResult:
-          _id: 1
-          x: 11
+          filter: { x: { $gte: 11 } }
+          sort: { x: 1 }
+        expectResult: { _id: 1, x: 11 }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }

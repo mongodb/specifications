@@ -33,9 +33,7 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
+      - { _id: 1, x: 11 }
 tests:
   -
     description: 'InsertMany fails with a RetryableWriteError label after two connection failures'
@@ -47,23 +45,17 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               closeConnection: true
       -
         object: *collection0
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
           ordered: true
         expectError:
           isError: true
@@ -74,6 +66,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }

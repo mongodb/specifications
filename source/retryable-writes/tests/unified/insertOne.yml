@@ -28,12 +28,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
-      -
-        _id: 2
-        x: 22
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 tests:
   -
     description: 'InsertOne is committed on first attempt'
@@ -45,33 +41,22 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
       -
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertOne is not committed on first attempt'
     operations:
@@ -82,35 +67,24 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failBeforeCommitExceptionCode: 1
       -
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertOne is never committed'
     operations:
@@ -121,17 +95,14 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
               failBeforeCommitExceptionCode: 1
       -
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectError:
           isError: true
     outcome:
@@ -139,9 +110,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }

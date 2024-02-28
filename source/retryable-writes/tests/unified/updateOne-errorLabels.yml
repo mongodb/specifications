@@ -30,12 +30,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
-      -
-        _id: 2
-        x: 22
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 tests:
   -
     description: 'UpdateOne succeeds with RetryableWriteError from server'
@@ -47,11 +43,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               errorCode: 112
               errorLabels:
                 - RetryableWriteError
@@ -59,11 +53,8 @@ tests:
         object: *collection0
         name: updateOne
         arguments:
-          filter:
-            _id: 1
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 1 }
+          update: { $inc: { x: 1 } }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -73,12 +64,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 12
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 22 }
   -
     description: 'UpdateOne fails if server does not return RetryableWriteError'
     operations:
@@ -89,22 +76,17 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               errorCode: 11600
               errorLabels: []
       -
         object: *collection0
         name: updateOne
         arguments:
-          filter:
-            _id: 1
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 1 }
+          update: { $inc: { x: 1 } }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -114,12 +96,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
   -
     description: 'UpdateOne succeeds after PrimarySteppedDown'
     operations:
@@ -130,11 +108,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               errorCode: 189
               errorLabels:
                 - RetryableWriteError
@@ -142,11 +118,8 @@ tests:
         object: *collection0
         name: updateOne
         arguments:
-          filter:
-            _id: 1
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 1 }
+          update: { $inc: { x: 1 } }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -156,12 +129,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 12
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 22 }
   -
     description: 'UpdateOne succeeds after WriteConcernError ShutdownInProgress'
     operations:
@@ -172,11 +141,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -186,11 +153,8 @@ tests:
         object: *collection0
         name: updateOne
         arguments:
-          filter:
-            _id: 1
-          update:
-            $inc:
-              x: 1
+          filter: { _id: 1 }
+          update: { $inc: { x: 1 } }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -200,9 +164,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 12
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 22 }

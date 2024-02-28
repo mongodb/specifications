@@ -28,12 +28,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
-      -
-        _id: 2
-        x: 22
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 tests:
   -
     description: 'FindOneAndDelete is committed on first attempt'
@@ -45,28 +41,20 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
       -
         object: *collection0
         name: findOneAndDelete
         arguments:
-          filter:
-            x:
-              $gte: 11
-          sort:
-            x: 1
-        expectResult:
-          _id: 1
-          x: 11
+          filter: { x: { $gte: 11 } }
+          sort: { x: 1 }
+        expectResult: { _id: 1, x: 11 }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }
   -
     description: 'FindOneAndDelete is not committed on first attempt'
     operations:
@@ -77,30 +65,22 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failBeforeCommitExceptionCode: 1
       -
         object: *collection0
         name: findOneAndDelete
         arguments:
-          filter:
-            x:
-              $gte: 11
-          sort:
-            x: 1
-        expectResult:
-          _id: 1
-          x: 11
+          filter: { x: { $gte: 11 } }
+          sort: { x: 1 }
+        expectResult: { _id: 1, x: 11 }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }
   -
     description: 'FindOneAndDelete is never committed'
     operations:
@@ -111,19 +91,15 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
               failBeforeCommitExceptionCode: 1
       -
         object: *collection0
         name: findOneAndDelete
         arguments:
-          filter:
-            x:
-              $gte: 11
-          sort:
-            x: 1
+          filter: { x: { $gte: 11 } }
+          sort: { x: 1 }
         expectError:
           isError: true
     outcome:
@@ -131,9 +107,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }

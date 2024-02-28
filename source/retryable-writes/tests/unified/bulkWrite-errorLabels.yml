@@ -30,12 +30,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
-      -
-        _id: 2
-        x: 22
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 tests:
   -
     description: 'BulkWrite succeeds with RetryableWriteError from server'
@@ -47,11 +43,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               errorCode: 112
               errorLabels:
                 - RetryableWriteError
@@ -62,27 +56,19 @@ tests:
           requests:
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
             -
               insertOne:
-                document:
-                  _id: 3
-                  x: 33
+                document: { _id: 3, x: 33 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectResult:
           deletedCount: 1
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '1': 3
+          insertedIds: { $$unsetOrMatches: { '1': 3 } }
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
@@ -92,12 +78,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 23
-          -
-            _id: 3
-            x: 33
+          - { _id: 2, x: 23 }
+          - { _id: 3, x: 33 }
   -
     description: 'BulkWrite fails if server does not return RetryableWriteError'
     operations:
@@ -108,11 +90,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               errorCode: 11600
               errorLabels: []
       -
@@ -122,20 +102,14 @@ tests:
           requests:
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
             -
               insertOne:
-                document:
-                  _id: 3
-                  x: 33
+                document: { _id: 3, x: 33 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectError:
           isError: true
@@ -146,12 +120,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'BulkWrite succeeds after PrimarySteppedDown'
     operations:
@@ -162,11 +132,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               errorCode: 189
               errorLabels:
                 - RetryableWriteError
@@ -177,27 +145,19 @@ tests:
           requests:
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
             -
               insertOne:
-                document:
-                  _id: 3
-                  x: 33
+                document: { _id: 3, x: 33 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectResult:
           deletedCount: 1
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '1': 3
+          insertedIds: { $$unsetOrMatches: { '1': 3 } }
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
@@ -207,12 +167,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 23
-          -
-            _id: 3
-            x: 33
+          - { _id: 2, x: 23 }
+          - { _id: 3, x: 33 }
   -
     description: 'BulkWrite succeeds after WriteConcernError ShutdownInProgress'
     operations:
@@ -223,11 +179,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -240,27 +194,19 @@ tests:
           requests:
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
             -
               insertOne:
-                document:
-                  _id: 3
-                  x: 33
+                document: { _id: 3, x: 33 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectResult:
           deletedCount: 1
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '1': 3
+          insertedIds: { $$unsetOrMatches: { '1': 3 } }
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
@@ -270,9 +216,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 23
-          -
-            _id: 3
-            x: 33
+          - { _id: 2, x: 23 }
+          - { _id: 3, x: 33 }

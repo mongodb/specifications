@@ -41,11 +41,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 112
               errorLabels:
                 - RetryableWriteError
@@ -53,21 +51,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne fails if server does not return RetryableWriteError'
     operations:
@@ -78,20 +70,16 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 11600
               errorLabels: []
       -
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -111,11 +99,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 10107
               errorLabels:
                 - RetryableWriteError
@@ -124,21 +110,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after NotPrimaryOrSecondary'
     operations:
@@ -149,11 +129,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 13436
               errorLabels:
                 - RetryableWriteError
@@ -162,21 +140,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after NotPrimaryNoSecondaryOk'
     operations:
@@ -187,11 +159,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 13435
               errorLabels:
                 - RetryableWriteError
@@ -200,21 +170,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after InterruptedDueToReplStateChange'
     operations:
@@ -225,11 +189,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 11602
               errorLabels:
                 - RetryableWriteError
@@ -238,21 +200,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after InterruptedAtShutdown'
     operations:
@@ -263,11 +219,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 11600
               errorLabels:
                 - RetryableWriteError
@@ -276,21 +230,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after PrimarySteppedDown'
     operations:
@@ -301,11 +249,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 189
               errorLabels:
                 - RetryableWriteError
@@ -314,21 +260,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after ShutdownInProgress'
     operations:
@@ -339,11 +279,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 91
               errorLabels:
                 - RetryableWriteError
@@ -352,21 +290,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after HostNotFound'
     operations:
@@ -377,11 +309,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 7
               errorLabels:
                 - RetryableWriteError
@@ -390,21 +320,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after HostUnreachable'
     operations:
@@ -415,11 +339,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 6
               errorLabels:
                 - RetryableWriteError
@@ -428,21 +350,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after SocketException'
     operations:
@@ -453,11 +369,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 9001
               errorLabels:
                 - RetryableWriteError
@@ -466,21 +380,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after NetworkTimeout'
     operations:
@@ -491,11 +399,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 89
               errorLabels:
                 - RetryableWriteError
@@ -504,21 +410,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after ExceededTimeLimit'
     operations:
@@ -529,11 +429,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 262
               errorLabels:
                 - RetryableWriteError
@@ -542,21 +440,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after WriteConcernError InterruptedAtShutdown'
     operations:
@@ -567,11 +459,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -581,21 +471,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after WriteConcernError InterruptedDueToReplStateChange'
     operations:
@@ -606,11 +490,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -620,21 +502,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after WriteConcernError PrimarySteppedDown'
     operations:
@@ -645,11 +521,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -659,21 +533,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne succeeds after WriteConcernError ShutdownInProgress'
     operations:
@@ -684,11 +552,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -698,21 +564,15 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 1
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertOne fails after multiple retryable writeConcernErrors'
     operations:
@@ -723,11 +583,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -737,9 +595,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 1
-            x: 11
+          document: { _id: 1, x: 11 }
         expectError:
           isError: true
           errorLabelsContain:
@@ -749,6 +605,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }

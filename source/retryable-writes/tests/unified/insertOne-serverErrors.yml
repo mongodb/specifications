@@ -205,37 +205,25 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               closeConnection: true
       -
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectResult:
-          $$unsetOrMatches:
-            insertedId:
-              $$unsetOrMatches: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
     outcome:
       -
         collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertOne fails after connection failure when retryWrites option is false'
     operations:
@@ -264,19 +252,15 @@ tests:
           client: *client1
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               closeConnection: true
       -
         object: *collection1
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -286,12 +270,8 @@ tests:
         collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
   -
     description: 'InsertOne fails after Interrupted'
     operations:
@@ -302,20 +282,16 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 11601
               closeConnection: false
       -
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -325,12 +301,8 @@ tests:
         collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
   -
     description: 'InsertOne fails after WriteConcernError Interrupted'
     operations:
@@ -341,11 +313,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               writeConcernError:
                 code: 11601
                 errmsg: 'operation was interrupted'
@@ -353,9 +323,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -365,15 +333,9 @@ tests:
         collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertOne fails after WriteConcernError WriteConcernFailed'
     operations:
@@ -384,11 +346,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               writeConcernError:
                 code: 64
                 codeName: WriteConcernFailed
@@ -399,9 +359,7 @@ tests:
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -411,15 +369,9 @@ tests:
         collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertOne fails with a RetryableWriteError label after two connection failures'
     operations:
@@ -430,19 +382,15 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               closeConnection: true
       -
         object: *collection0
         name: insertOne
         arguments:
-          document:
-            _id: 3
-            x: 33
+          document: { _id: 3, x: 33 }
         expectError:
           isError: true
           errorLabelsContain:
@@ -452,9 +400,5 @@ tests:
         collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }

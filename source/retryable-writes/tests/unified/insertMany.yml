@@ -28,9 +28,7 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
+      - { _id: 1, x: 11 }
 tests:
   -
     description: 'InsertMany succeeds after one network error'
@@ -42,19 +40,14 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
       -
         object: *collection0
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
           ordered: true
         expectResult:
           $$unsetOrMatches:
@@ -67,15 +60,9 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertMany with unordered execution'
     operations:
@@ -86,19 +73,14 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
       -
         object: *collection0
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
           ordered: false
         expectResult:
           $$unsetOrMatches:
@@ -111,15 +93,9 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertMany fails after multiple network errors'
     operations:
@@ -138,15 +114,9 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
-            -
-              _id: 4
-              x: 44
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
+            - { _id: 4, x: 44 }
           ordered: true
         expectError:
           isError: true
@@ -155,6 +125,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }

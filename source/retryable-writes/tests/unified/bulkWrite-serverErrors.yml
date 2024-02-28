@@ -103,11 +103,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
-              failCommands:
-                - update
+              failCommands: [ update ]
               closeConnection: true
       -
         object: *collection0
@@ -116,20 +114,14 @@ tests:
           requests:
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
             -
               insertOne:
-                document:
-                  _id: 3
-                  x: 33
+                document: { _id: 3, x: 33 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectError:
           isError: true
@@ -140,9 +132,5 @@ tests:
         collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }

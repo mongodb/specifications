@@ -28,9 +28,7 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
+      - { _id: 1, x: 11 }
 tests:
   -
     description: 'First command is retried'
@@ -42,8 +40,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
       -
         object: *collection0
         name: bulkWrite
@@ -51,27 +48,19 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
           ordered: true
         expectResult:
           deletedCount: 1
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '0': 2
+          insertedIds: { $$unsetOrMatches: { '0': 2 } }
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
@@ -81,9 +70,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 23
+          - { _id: 2, x: 23 }
   -
     description: 'All commands are retried'
     operations:
@@ -94,8 +81,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 7
+            mode: { times: 7 }
       -
         object: *collection0
         name: bulkWrite
@@ -103,46 +89,29 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
             -
               insertOne:
-                document:
-                  _id: 3
-                  x: 33
+                document: { _id: 3, x: 33 }
             -
               updateOne:
-                filter:
-                  _id: 4
-                  x: 44
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 4, x: 44 }
+                update: { $inc: { x: 1 } }
                 upsert: true
             -
               insertOne:
-                document:
-                  _id: 5
-                  x: 55
+                document: { _id: 5, x: 55 }
             -
               replaceOne:
-                filter:
-                  _id: 3
-                replacement:
-                  _id: 3
-                  x: 333
+                filter: { _id: 3 }
+                replacement: { _id: 3, x: 333 }
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
           ordered: true
         expectResult:
           deletedCount: 1
@@ -155,25 +124,16 @@ tests:
           matchedCount: 2
           modifiedCount: 2
           upsertedCount: 1
-          upsertedIds:
-            '3': 4
+          upsertedIds: { '3': 4 }
     outcome:
       -
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 23
-          -
-            _id: 3
-            x: 333
-          -
-            _id: 4
-            x: 45
-          -
-            _id: 5
-            x: 55
+          - { _id: 2, x: 23 }
+          - { _id: 3, x: 333 }
+          - { _id: 4, x: 45 }
+          - { _id: 5, x: 55 }
   -
     description: 'Both commands are retried after their first statement fails'
     operations:
@@ -184,8 +144,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 2
+            mode: { times: 2 }
       -
         object: *collection0
         name: bulkWrite
@@ -193,30 +152,20 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               updateOne:
-                filter:
-                  _id: 1
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 1 }
+                update: { $inc: { x: 1 } }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectResult:
           deletedCount: 0
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '0': 2
+          insertedIds: { $$unsetOrMatches: { '0': 2 } }
           matchedCount: 2
           modifiedCount: 2
           upsertedCount: 0
@@ -226,12 +175,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 12
-          -
-            _id: 2
-            x: 23
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 23 }
   -
     description: 'Second command is retried after its second statement fails'
     operations:
@@ -242,8 +187,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              skip: 2
+            mode: { skip: 2 }
       -
         object: *collection0
         name: bulkWrite
@@ -251,30 +195,20 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               updateOne:
-                filter:
-                  _id: 1
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 1 }
+                update: { $inc: { x: 1 } }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectResult:
           deletedCount: 0
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '0': 2
+          insertedIds: { $$unsetOrMatches: { '0': 2 } }
           matchedCount: 2
           modifiedCount: 2
           upsertedCount: 0
@@ -284,12 +218,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 12
-          -
-            _id: 2
-            x: 23
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 23 }
   -
     description: 'BulkWrite with unordered execution'
     operations:
@@ -300,8 +230,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
       -
         object: *collection0
         name: bulkWrite
@@ -309,14 +238,10 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               insertOne:
-                document:
-                  _id: 3
-                  x: 33
+                document: { _id: 3, x: 33 }
           ordered: false
         expectResult:
           deletedCount: 0
@@ -334,15 +259,9 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'First insertOne is never committed'
     operations:
@@ -353,8 +272,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 2
+            mode: { times: 2 }
             data:
               failBeforeCommitExceptionCode: 1
       -
@@ -364,20 +282,14 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
           ordered: true
         expectError:
           isError: true
@@ -395,9 +307,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'Second updateOne is never committed'
     operations:
@@ -408,8 +318,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              skip: 1
+            mode: { skip: 1 }
             data:
               failBeforeCommitExceptionCode: 1
       -
@@ -419,29 +328,21 @@ tests:
           requests:
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
             -
               deleteOne:
-                filter:
-                  _id: 1
+                filter: { _id: 1 }
           ordered: true
         expectError:
           isError: true
           expectResult:
             deletedCount: 0
             insertedCount: 1
-            insertedIds:
-              $$unsetOrMatches:
-                '0': 2
+            insertedIds: { $$unsetOrMatches: { '0': 2 } }
             matchedCount: 0
             modifiedCount: 0
             upsertedCount: 0
@@ -451,12 +352,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
   -
     description: 'Third updateOne is never committed'
     operations:
@@ -467,8 +364,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              skip: 2
+            mode: { skip: 2 }
             data:
               failBeforeCommitExceptionCode: 1
       -
@@ -478,32 +374,22 @@ tests:
           requests:
             -
               updateOne:
-                filter:
-                  _id: 1
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 1 }
+                update: { $inc: { x: 1 } }
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
             -
               updateOne:
-                filter:
-                  _id: 2
-                update:
-                  $inc:
-                    x: 1
+                filter: { _id: 2 }
+                update: { $inc: { x: 1 } }
           ordered: true
         expectError:
           isError: true
           expectResult:
             deletedCount: 0
             insertedCount: 1
-            insertedIds:
-              $$unsetOrMatches:
-                '1': 2
+            insertedIds: { $$unsetOrMatches: { '1': 2 } }
             matchedCount: 1
             modifiedCount: 1
             upsertedCount: 0
@@ -513,12 +399,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 12
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 22 }
   -
     description: 'Single-document write following deleteMany is retried'
     operations:
@@ -529,8 +411,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failBeforeCommitExceptionCode: 1
       -
@@ -540,20 +421,15 @@ tests:
           requests:
             -
               deleteMany:
-                filter:
-                  x: 11
+                filter: { x: 11 }
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
           ordered: true
         expectResult:
           deletedCount: 1
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '1': 2
+          insertedIds: { $$unsetOrMatches: { '1': 2 } }
           matchedCount: 0
           modifiedCount: 0
           upsertedCount: 0
@@ -563,9 +439,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }
   -
     description: 'Single-document write following updateMany is retried'
     operations:
@@ -576,8 +450,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
               failBeforeCommitExceptionCode: 1
       -
@@ -587,23 +460,16 @@ tests:
           requests:
             -
               updateMany:
-                filter:
-                  x: 11
-                update:
-                  $inc:
-                    x: 1
+                filter: { x: 11 }
+                update: { $inc: { x: 1 } }
             -
               insertOne:
-                document:
-                  _id: 2
-                  x: 22
+                document: { _id: 2, x: 22 }
           ordered: true
         expectResult:
           deletedCount: 0
           insertedCount: 1
-          insertedIds:
-            $$unsetOrMatches:
-              '1': 2
+          insertedIds: { $$unsetOrMatches: { '1': 2 } }
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
@@ -613,9 +479,5 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 12
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 22 }

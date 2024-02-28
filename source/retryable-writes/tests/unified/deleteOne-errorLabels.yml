@@ -30,12 +30,8 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
-      -
-        _id: 2
-        x: 22
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 tests:
   -
     description: 'DeleteOne succeeds with RetryableWriteError from server'
@@ -47,11 +43,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - delete
+              failCommands: [ delete ]
               errorCode: 112
               errorLabels:
                 - RetryableWriteError
@@ -59,8 +53,7 @@ tests:
         object: *collection0
         name: deleteOne
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
           deletedCount: 1
     outcome:
@@ -68,9 +61,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }
   -
     description: 'DeleteOne fails if server does not return RetryableWriteError'
     operations:
@@ -81,19 +72,16 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - delete
+              failCommands: [ delete ]
               errorCode: 11600
               errorLabels: []
       -
         object: *collection0
         name: deleteOne
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectError:
           isError: true
           errorLabelsOmit:
@@ -103,12 +91,8 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
   -
     description: 'DeleteOne succeeds after PrimarySteppedDown'
     operations:
@@ -119,11 +103,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - delete
+              failCommands: [ delete ]
               errorCode: 189
               errorLabels:
                 - RetryableWriteError
@@ -131,8 +113,7 @@ tests:
         object: *collection0
         name: deleteOne
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
           deletedCount: 1
     outcome:
@@ -140,9 +121,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }
   -
     description: 'DeleteOne succeeds after WriteConcernError ShutdownInProgress'
     operations:
@@ -153,11 +132,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - delete
+              failCommands: [ delete ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -167,8 +144,7 @@ tests:
         object: *collection0
         name: deleteOne
         arguments:
-          filter:
-            _id: 1
+          filter: { _id: 1 }
         expectResult:
           deletedCount: 1
     outcome:
@@ -176,6 +152,4 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 2
-            x: 22
+          - { _id: 2, x: 22 }

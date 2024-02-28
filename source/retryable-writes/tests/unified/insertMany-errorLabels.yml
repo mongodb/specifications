@@ -30,9 +30,7 @@ initialData:
     collectionName: *collection_name
     databaseName: *database_name
     documents:
-      -
-        _id: 1
-        x: 11
+      - { _id: 1, x: 11 }
 tests:
   -
     description: 'InsertMany succeeds with RetryableWriteError from server'
@@ -44,11 +42,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 112
               errorLabels:
                 - RetryableWriteError
@@ -57,12 +53,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
           ordered: true
         expectResult:
           $$unsetOrMatches:
@@ -75,15 +67,9 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertMany fails if server does not return RetryableWriteError'
     operations:
@@ -94,11 +80,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 11600
               errorLabels: []
       -
@@ -106,12 +90,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
           ordered: true
         expectError:
           isError: true
@@ -122,9 +102,7 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
+          - { _id: 1, x: 11 }
   -
     description: 'InsertMany succeeds after PrimarySteppedDown'
     operations:
@@ -135,11 +113,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorCode: 189
               errorLabels:
                 - RetryableWriteError
@@ -148,12 +124,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
           ordered: true
         expectResult:
           $$unsetOrMatches:
@@ -166,15 +138,9 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: 'InsertMany succeeds after WriteConcernError ShutdownInProgress'
     operations:
@@ -185,11 +151,9 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 1
+            mode: { times: 1 }
             data:
-              failCommands:
-                - insert
+              failCommands: [ insert ]
               errorLabels:
                 - RetryableWriteError
               writeConcernError:
@@ -200,12 +164,8 @@ tests:
         name: insertMany
         arguments:
           documents:
-            -
-              _id: 2
-              x: 22
-            -
-              _id: 3
-              x: 33
+            - { _id: 2, x: 22 }
+            - { _id: 3, x: 33 }
           ordered: true
         expectResult:
           $$unsetOrMatches:
@@ -218,12 +178,6 @@ tests:
         collectionName: *collection_name
         databaseName: *database_name
         documents:
-          -
-            _id: 1
-            x: 11
-          -
-            _id: 2
-            x: 22
-          -
-            _id: 3
-            x: 33
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
