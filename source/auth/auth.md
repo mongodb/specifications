@@ -147,7 +147,7 @@ Drivers MUST follow the following steps for an authentication handshake:
    invalid credential is the same as all credentials being invalid.
 
 If the authentication handshake fails for a socket, drivers MUST mark the server Unknown and clear the server's
-connection pool. (See [Q & A](#q-a) below and SDAM's
+connection pool. (See [Q & A](#q--a) below and SDAM's
 [Why mark a server Unknown after an auth error](/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#why-mark-a-server-unknown-after-an-auth-error)
 for rationale.)
 
@@ -950,7 +950,7 @@ The order in which Drivers MUST search for credentials is:
 
 > \[!NOTE\]
 >
-> See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q-a)
+> See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q--a)
 >
 > Drivers are not expected to handle
 > [AssumeRole](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) requests directly. See

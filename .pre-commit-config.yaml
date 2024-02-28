@@ -28,6 +28,11 @@ repos:
     name: generate-index
     entry: python3 scripts/generate_index.py
     language: system
+  - id: check-anchors
+    name: check-anchors
+    types: [markdown]
+    entry: node scripts/check_anchors/index.js
+    language: node
     
 - repo: https://github.com/executablebooks/mdformat
   rev: 0.7.17
