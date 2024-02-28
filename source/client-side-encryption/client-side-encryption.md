@@ -1556,12 +1556,14 @@ If the following conditions are met:
 If the [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) option is `true` then the driver MUST
 NOT attempt to spawn or connect to `mongocryptd`.
 
-> \[!NOTE\]
->
-> Since spawning [mongocryptd](#mongocryptd) requires checking whether [crypt_shared](#crypt_shared) is loaded, and
-> checking whether [crypt_shared](#crypt_shared) is available can only be done *after* having initialized the
-> `libmongocrypt_handle`, drivers will need to defer spawning [mongocryptd](#mongocryptd) until *after* initializing
-> [libmongocrypt](#libmongocrypt) and checking for [crypt_shared](#crypt_shared).
+:::note
+
+Since spawning [mongocryptd](#mongocryptd) requires checking whether [crypt_shared](#crypt_shared) is loaded, and
+checking whether [crypt_shared](#crypt_shared) is available can only be done *after* having initialized the
+`libmongocrypt_handle`, drivers will need to defer spawning [mongocryptd](#mongocryptd) until *after* initializing
+[libmongocrypt](#libmongocrypt) and checking for [crypt_shared](#crypt_shared).
+
+:::
 
 ### Spawning [mongocryptd](#mongocryptd)
 
