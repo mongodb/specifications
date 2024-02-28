@@ -95,7 +95,7 @@ field-level-encryption dynamic library provided as part of a MongoDB Enterprise 
 See also:
 
 > - [Introduction on crypt_shared](#crypt_shared)
-> - \[Enabling crypt_shared\](#Enabling crypt_shared)
+> - [Enabling crypt_shared](#enabling-crypt_shared)
 
 ciphertext\
 One of the data formats of
@@ -251,7 +251,7 @@ Drivers are not required to load and interact with [crypt_shared](#crypt_shared)
 [libmongocrypt](#libmongocrypt) where to find [crypt_shared](#crypt_shared) and [libmongocrypt](#libmongocrypt) will
 handle [crypt_shared](#crypt_shared) communication automatically.
 
-See also: \[Enabling crypt_shared\](#Enabling crypt_shared) for information on using enabling the
+See also: [Enabling crypt_shared](#enabling-crypt_shared) for information on using enabling the
 [crypt_shared](#crypt_shared) library.
 
 ### libmongocrypt
@@ -767,7 +767,7 @@ Allow the user to specify an absolute path to a [crypt_shared](#crypt_shared) dy
 
 - [Overriding the crypt_shared Library Path](#overriding-the-crypt_shared-library-path)
 - [Path Resolution Behavior](#path-resolution-behavior)
-- \[Enabling crypt_shared\](#Enabling crypt_shared)
+- [Enabling crypt_shared](#enabling-crypt_shared)
 
 <div id="extraoptions.cryptsharedlibrequired">
 
@@ -782,7 +782,6 @@ If, after initializing a `libmongocrypt_handle`, [crypt_shared](#crypt_shared) i
 [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) is `true`, the driver MUST consider the
 `libmongocrypt_handle` to be invalid and return an error to the user. Refer:
 
-<div id="enabling-crypt_shared">
 <div id="managing-mongocryptd">
 <div id="detecting-crypt_shared-availability">
 
@@ -1369,9 +1368,11 @@ Drivers MUST propagate errors from libmongocrypt in whatever way is idiomatic to
 etc.). These errors MUST be distinguished in some way (e.g. exception type) to make it easier for users to distinguish
 when a command fails due to client side encryption.
 
+<div id="enabling-crypt_shared">
+
 > \[!INDEX\]
 >
-> ## Enabling Command Marking with the [crypt_shared](#crypt_shared) Library
+> ## Enabling Command Marking with the `crypt_shared` Library
 >
 > The MongoDB Enterprise distribution includes a dynamic library named `mongo_crypt_v1` (with the appropriate file
 > extension or filename suffix for the host platform). This library will be loaded by [libmongocrypt](#libmongocrypt)
@@ -1379,18 +1380,19 @@ when a command fails due to client side encryption.
 > [(from the libmongocrypt C API)](https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h) based on the
 > search criteria that are provided by the driver.
 >
-> [libmongocrypt](#libmongocrypt) allows the driver to specify an arbitrary list of directory \[search paths\](#search
-> paths) in which to search for the [crypt_shared](#crypt_shared) dynamic library. The user-facing API does not expose
-> this full search path functionality. This extended search path customization is intended to facilitate driver testing
-> with [crypt_shared](#crypt_shared) (Refer: [Search Paths for Testing](#search-paths-for-testing) and
-> `Path Resolution Behavior`).
+> [libmongocrypt](#libmongocrypt) allows the driver to specify an arbitrary list of directory
+> [search paths](#search-paths) in which to search for the [crypt_shared](#crypt_shared) dynamic library. The
+> user-facing API does not expose this full search path functionality. This extended search path customization is
+> intended to facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
+> [Search Paths for Testing](#search-paths-for-testing) and `Path Resolution Behavior`).
 >
 > \[!NOTE\]
 >
 > The driver MUST NOT manipulate or do any validation on the [crypt_shared](#crypt_shared) path options provided in
 > [extraOptions](#extraoptions). They should be passed through to [libmongocrypt](#libmongocrypt) unchanged.
 
-<div id="search path">
+<div id="search-path">
+<div id="search-paths">
 
 ### Setting Search Paths
 
@@ -1401,13 +1403,15 @@ ClientEncryption class). For purposes of testing, a driver may use a different s
 
 **Explanation**
 
-The \[search paths\](#search paths) array in [libmongocrypt](#libmongocrypt) allows the driver to customize the way that
+The [search paths](#search-paths) array in [libmongocrypt](#libmongocrypt) allows the driver to customize the way that
 [libmongocrypt](#libmongocrypt) searches and loads the [crypt_shared](#crypt_shared) library. For testing purposes, the
 driver may change the paths that it appends for [crypt_shared](#crypt_shared) searching to better isolate the test
 execution from the ambient state of the host system.
 
 Refer to: [Path Resolution Behavior](#path-resolution-behavior) and
 [Search Paths for Testing](#search-paths-for-testing)
+
+<div id="override-path">
 
 ### Overriding the `crypt_shared` Library Path
 
@@ -1425,10 +1429,10 @@ the [crypt_shared](#crypt_shared) path override on the `libmongocrypt_handle`.
 Drivers should include and note the following information regarding the behavior of [crypt_shared](#crypt_shared) path
 options in [extraOptions](#extraoptions):
 
-- If used, the \[override path\](#override path) must be given as a path to the [crypt_shared](#crypt_shared) dynamic
+- If used, the [override path](#override-path) must be given as a path to the [crypt_shared](#crypt_shared) dynamic
   library file *itself*, and not simply the directory that contains it.
 
-- If the given \[override path\](#override path) is a relative path and the first path component is the literal string
+- If the given [override path](#override-path) is a relative path and the first path component is the literal string
   `"$ORIGIN"`, the `"$ORIGIN"` component will be replaced by the absolute path to the directory containing the
   [libmongocrypt](#libmongocrypt) library that is performing the [crypt_shared](#crypt_shared) search. This behavior
   mimics the `$ORIGIN` behavior of the `RUNPATH`/`RPATH` properties of ELF executable files. This permits bundling the
@@ -1443,10 +1447,10 @@ options in [extraOptions](#extraoptions):
 
   No other `RPATH`/`RUNPATH`-style substitutions are available.
 
-- If the \[override path\](#override path) is given as a relative path, that path will be resolved relative to the
-  working directory of the operating system process.
+- If the [override path](#override-path) is given as a relative path, that path will be resolved relative to the working
+  directory of the operating system process.
 
-- If an \[override path\](#override path) was specified and [libmongocrypt](#libmongocrypt) fails to load
+- If an [override path](#override-path) was specified and [libmongocrypt](#libmongocrypt) fails to load
   [crypt_shared](#crypt_shared) from that filepath, [libmongocrypt](#libmongocrypt) will fail to initialize with a
   hard-error. [libmongocrypt](#libmongocrypt) will not attempt to search for [crypt_shared](#crypt_shared) in any other
   locations.
@@ -1457,24 +1461,24 @@ options in [extraOptions](#extraoptions):
 
 #### Search Paths for Testing
 
-Drivers can make use of different \[search paths\](#search paths) settings for testing purposes. These search paths use
+Drivers can make use of different [search paths](#search-paths) settings for testing purposes. These search paths use
 the following behavior:
 
-- For [crypt_shared](#crypt_shared) \[search paths\](#search paths), if a search path string is `"$SYSTEM"`, then —
+- For [crypt_shared](#crypt_shared) [search paths](#search-paths), if a search path string is `"$SYSTEM"`, then —
   instead of [libmongocrypt](#libmongocrypt) searching for [crypt_shared](#crypt_shared) in a directory named
   "`$SYSTEM`" — [libmongocrypt](#libmongocrypt) will defer to the operating system's own dynamic-library resolution
   mechanism when processing that search-path. For this reason, `"$SYSTEM"` is the only search path appended when the
   driver is used via the user-facing API.
 
-- The \[search paths\](#search paths) also support the `$ORIGIN` substitution string.
+- The [search paths](#search-paths) also support the `$ORIGIN` substitution string.
 
-- Like with the \[override path\](#override path), if a \[search path\](#search path) is given as a relative path, that
-  path will be resolved relative to the working directory of the operating system process.
+- Like with the [override path](#override-path), if a [search path](#search-path) is given as a relative path, that path
+  will be resolved relative to the working directory of the operating system process.
 
-- If no \[search paths\](#search paths) are appended to the `libmongocrypt_handle`, the resulting search paths will be
-  an empty array, effectively \[disabling crypt_shared\](#disabling crypt_shared) searching.
+- If no [search paths](#search-paths) are appended to the `libmongocrypt_handle`, the resulting search paths will be an
+  empty array, effectively [disabling crypt_shared](#disabling-crypt_shared) searching.
 
-  In this case, unless an \[override path\](#override path) is specified, [libmongocrypt](#libmongocrypt) is guaranteed
+  In this case, unless an [override path](#override-path) is specified, [libmongocrypt](#libmongocrypt) is guaranteed
   not to load [crypt_shared](#crypt_shared).
 
 ### Detecting [crypt_shared](#crypt_shared) Availability
@@ -1487,7 +1491,9 @@ successfully loaded by asking [libmongocrypt](#libmongocrypt) for the [crypt_sha
 the result is an empty string, [libmongocrypt](#libmongocrypt) did not load [crypt_shared](#crypt_shared) and the driver
 must rely on [mongocryptd](#mongocryptd) to mark command documents for encryption.
 
-### "Disabling" [crypt_shared](#crypt_shared)
+<div id="disabling-crypt_shared">
+
+### "Disabling" `crypt_shared`
 
 For purposes of testing, a driver can "disable" [crypt_shared](#crypt_shared) searching to ensure that
 [mongocryptd](#mongocryptd) is used instead, even if a [crypt_shared](#crypt_shared) library would be available.
@@ -1495,8 +1501,8 @@ For purposes of testing, a driver can "disable" [crypt_shared](#crypt_shared) se
 As noted in [Path Resolution Behavior](#path-resolution-behavior), [crypt_shared](#crypt_shared) can be "disabled" on a
 `libmongocrypt_handle` by omission:
 
-1. Do not specify any \[search paths\](#search paths),
-2. AND do not specify a [crypt_shared](#crypt_shared) library \[override path\](#override path)
+1. Do not specify any [search paths](#search-paths),
+2. AND do not specify a [crypt_shared](#crypt_shared) library [override path](#override-path)
    ([extraOptions.cryptSharedLibPath](#extraoptions.cryptsharedlibpath)).
 
 This will have the effect that [libmongocrypt](#libmongocrypt) will not attempt to search or load
@@ -1517,8 +1523,8 @@ If at least one `libmongocrypt_handle` exists in an operating system process tha
 [crypt_shared](#crypt_shared) library, subsequent attempts to initialize an additional `libmongocrypt_handle` will fail
 if:
 
-1. The new `libmongocrypt_handle` wants [crypt_shared](#crypt_shared) (i.e. at least one \[search path\](#search path)
-   was specified or an \[override path\](#override path) was specified).
+1. The new `libmongocrypt_handle` wants [crypt_shared](#crypt_shared) (i.e. at least one [search path](#search-path) was
+   specified or an [override path](#override-path) was specified).
 2. AND the initialization of that `libmongocrypt_handle` does not successfully find and load the same
    [crypt_shared](#crypt_shared) library that was loaded by the existing `libmongocrypt_handle` that is already using
    [crypt_shared](#crypt_shared).
