@@ -822,7 +822,7 @@ collection, and `$askDb$` is a boolean value. The resulting `encryptedFields` `$
    1. Issue a `listCollections` command against the database named by $dbName$, filtered by `{name: <collName>}`. Let
       the result be the document `$L$`.
    2. If `$L$` contains an `options` document element, and that element contains an `encryptedFields` document element,
-      `$EF$` is `$L$` \["options"\]\["encryptedFields"\]\`.
+      `$EF$` is `$L$` `\["options"]["encryptedFields"]`.
    3. Otherwise, $EF$ is *not-found*
 5. Otherwise, $EF$ is considered *not-found*.
 
