@@ -53,7 +53,8 @@
                 "insertOne": {
                   "namespace": "crud-tests.coll0",
                   "document": {
-                    "_id": 1
+                    "_id": 1,
+                    "x": 11
                   }
                 }
               }
@@ -98,7 +99,8 @@
           "databaseName": "crud-tests",
           "documents": [
             {
-              "_id": 1
+              "_id": 1,
+              "x": 11
             }
           ]
         }
@@ -116,7 +118,8 @@
                 "insertOne": {
                   "namespace": "crud-tests.coll0",
                   "document": {
-                    "_id": 4
+                    "_id": 1,
+                    "x": 11
                   }
                 }
               }
@@ -132,7 +135,7 @@
             "deletedCount": 0,
             "insertResults": {
               "0": {
-                "insertedId": 4
+                "insertedId": 1
               }
             },
             "updateResults": {},
@@ -161,7 +164,8 @@
           "databaseName": "crud-tests",
           "documents": [
             {
-              "_id": 4
+              "_id": 1,
+              "x": 11
             }
           ]
         }
@@ -179,7 +183,8 @@
                 "insertOne": {
                   "namespace": "crud-tests.coll0",
                   "document": {
-                    "_id": 4
+                    "_id": 1,
+                    "x": 11
                   }
                 }
               }
@@ -194,7 +199,7 @@
             "deletedCount": 0,
             "insertResults": {
               "0": {
-                "insertedId": 4
+                "insertedId": 1
               }
             },
             "updateResults": {},
@@ -223,7 +228,8 @@
           "databaseName": "crud-tests",
           "documents": [
             {
-              "_id": 4
+              "_id": 1,
+              "x": 11
             }
           ]
         }

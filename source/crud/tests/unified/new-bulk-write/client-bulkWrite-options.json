@@ -47,7 +47,14 @@
     }
   ],
   "_yamlAnchors": {
-    "namespace": "crud-tests.coll0"
+    "namespace": "crud-tests.coll0",
+    "comment": {
+      "bulk": "write"
+    },
+    "let": {
+      "id1": 1,
+      "id2": 2
+    }
   },
   "tests": [
     {
@@ -139,8 +146,8 @@
                 "insertOne": {
                   "namespace": "crud-tests.coll0",
                   "document": {
-                    "_id": 4,
-                    "x": 44
+                    "_id": 3,
+                    "x": 33
                   }
                 }
               }
@@ -156,7 +163,7 @@
             "deletedCount": 0,
             "insertResults": {
               "0": {
-                "insertedId": 4
+                "insertedId": 3
               }
             },
             "updateResults": {},
@@ -193,8 +200,8 @@
               "x": 22
             },
             {
-              "_id": 4,
-              "x": 44
+              "_id": 3,
+              "x": 33
             }
           ]
         }

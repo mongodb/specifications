@@ -51,7 +51,11 @@
     }
   ],
   "_yamlAnchors": {
-    "namespace": "crud-tests.coll0"
+    "namespace": "crud-tests.coll0",
+    "collation": {
+      "locale": "simple"
+    },
+    "hint": "_id_"
   },
   "tests": [
     {

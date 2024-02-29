@@ -26,6 +26,8 @@ initialData:
 
 _yamlAnchors:
   namespace: &namespace "crud-tests.coll0"
+  collation: &collation { "locale": "simple" }
+  hint: &hint _id_
 
 tests:
   - description: "client bulk write delete with collation"
@@ -36,14 +38,11 @@ tests:
           models:
             - deleteOne:
                 namespace: *namespace
-                filter: &deleteOneFilter
-                  _id: 1
-                collation: &collation
-                  locale: "simple"
+                filter: { _id: 1 }
+                collation: *collation
             - deleteMany:
                 namespace: *namespace
-                filter: &deleteManyFilter
-                  _id: { $gt: 1 }
+                filter: { _id: { $gt: 1 } }
                 collation: *collation
           verboseResults: true
         expectResult:
@@ -67,11 +66,11 @@ tests:
                 bulkWrite: 1
                 ops:
                   - delete: 0
-                    filter: *deleteOneFilter
+                    filter: { _id: 1 }
                     collation: *collation
                     multi: false
                   - delete: 0
-                    filter: *deleteManyFilter
+                    filter: { _id: { $gt: 1 } }
                     collation: *collation
                     multi: true
     outcome:
@@ -86,13 +85,11 @@ tests:
           models:
             - deleteOne:
                 namespace: *namespace
-                filter: &deleteOneFilter
-                  _id: 1
-                hint: &hint _id_
+                filter: { _id: 1 }
+                hint: *hint
             - deleteMany:
                 namespace: *namespace
-                filter: &deleteManyFilter
-                  _id: { $gt: 1 }
+                filter: { _id: { $gt: 1 } }
                 hint: *hint
           verboseResults: true
         expectResult:
@@ -116,11 +113,11 @@ tests:
                 bulkWrite: 1
                 ops:
                   - delete: 0
-                    filter: *deleteOneFilter
+                    filter: { _id: 1 }
                     hint: *hint
                     multi: false
                   - delete: 0
-                    filter: *deleteManyFilter
+                    filter: { _id: { $gt: 1 } }
                     hint: *hint
                     multi: true
     outcome:

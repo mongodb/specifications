@@ -40,21 +40,25 @@
       "documents": [
         {
           "_id": 1,
-          "x": 1
+          "x": 11
         },
         {
           "_id": 2,
-          "x": 2
+          "x": 22
         },
         {
           "_id": 3,
-          "x": 3
+          "x": 33
         }
       ]
     }
   ],
   "_yamlAnchors": {
-    "namespace": "crud-tests.coll0"
+    "namespace": "crud-tests.coll0",
+    "writeConcernError": {
+      "code": 91,
+      "errmsg": "Replication is being shut down"
+    }
   },
   "tests": [
     {
@@ -127,11 +131,11 @@
           "documents": [
             {
               "_id": 2,
-              "x": 2
+              "x": 22
             },
             {
               "_id": 3,
-              "x": 3
+              "x": 33
             }
           ]
         }
@@ -216,7 +220,7 @@
           "documents": [
             {
               "_id": 2,
-              "x": 2
+              "x": 22
             }
           ]
         }

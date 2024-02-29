@@ -27,6 +27,8 @@ initialData:
 
 _yamlAnchors:
   namespace: &namespace "crud-tests.coll0"
+  collation: &collation { "locale": "simple" }
+  hint: &hint _id_
 
 tests:
   - description: "client bulkWrite update with arrayFilters"
@@ -37,22 +39,19 @@ tests:
           models:
             - updateOne:
                 namespace: *namespace
-                filter: &updateOneFilter
-                  _id: 1
-                update: &arrayFiltersUpdateOneMods
+                filter: { _id: 1 }
+                update:
                   $set:
                     array.$[i]: 4
-                arrayFilters: &updateOneArrayFilters
-                    - i: { $gte: 2 }
+                arrayFilters: [ i: { $gte: 2 } ]
             - updateMany:
                 namespace: *namespace
-                filter: &updateManyFilter
+                filter:
                   $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
-                update: &arrayFiltersUpdateManyMods
+                update:
                   $set:
                     array.$[i]: 5
-                arrayFilters: &updateManyArrayFilters
-                  - i: { $gte: 2 }
+                arrayFilters: [ i: { $gte: 2 } ]
           verboseResults: true
         expectResult:
           insertedCount: 0
@@ -79,14 +78,19 @@ tests:
                 bulkWrite: 1
                 ops:
                   - update: 0
-                    filter: *updateOneFilter
-                    updateMods: *arrayFiltersUpdateOneMods
-                    arrayFilters: *updateOneArrayFilters
+                    filter: { _id: 1 }
+                    updateMods:
+                      $set:
+                        array.$[i]: 4
+                    arrayFilters: [ i: { $gte: 2 } ]
                     multi: false
                   - update: 0
-                    filter: *updateManyFilter
-                    updateMods: *arrayFiltersUpdateManyMods
-                    arrayFilters: *updateManyArrayFilters
+                    filter:
+                      $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                    updateMods:
+                      $set:
+                        array.$[i]: 5
+                    arrayFilters: [ i: { $gte: 2 } ]
                     multi: true
     outcome:
       - databaseName: *database0Name
@@ -104,25 +108,19 @@ tests:
           models:
             - updateOne:
                 namespace: *namespace
-                filter: *updateOneFilter
-                update: &updateOneMods
-                  $set:
-                    array: [ 1, 2, 4 ]
-                collation: &collation
-                  locale: "simple"
+                filter: { _id: 1 }
+                update: { $set: { array: [ 1, 2, 4 ] } }
+                collation: *collation
             - updateMany:
                 namespace: *namespace
-                filter: *updateManyFilter
-                update: &updateManyMods
-                  $set:
-                    array: [ 1, 2, 5 ]
+                filter:
+                  $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                update: { $set: { array: [ 1, 2, 5 ] } }
                 collation: *collation
             - replaceOne:
                 namespace: *namespace
-                filter: &replaceOneFilter
-                  _id: 4
-                replacement: &replacement
-                  array: [ 1, 2, 6 ]
+                filter: { _id: 4 }
+                replacement: { array: [ 1, 2, 6 ] }
                 collation: *collation
           verboseResults: true
         expectResult:
@@ -154,18 +152,19 @@ tests:
                 bulkWrite: 1
                 ops:
                   - update: 0
-                    filter: *updateOneFilter
-                    updateMods: *updateOneMods
+                    filter: { _id: 1 }
+                    updateMods: { $set: { array: [ 1, 2, 4 ] } }
                     collation: *collation
                     multi: false
                   - update: 0
-                    filter: *updateManyFilter
-                    updateMods: *updateManyMods
+                    filter:
+                      $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                    updateMods: { $set: { array: [ 1, 2, 5 ] } }
                     collation: *collation
                     multi: true
                   - update: 0
-                    filter: *replaceOneFilter
-                    updateMods: *replacement
+                    filter: { _id: 4 }
+                    updateMods: { array: [ 1, 2, 6 ] }
                     collation: *collation
                     multi: false
     outcome:
@@ -184,18 +183,19 @@ tests:
           models:
             - updateOne:
                 namespace: *namespace
-                filter: *updateOneFilter
-                update: *updateOneMods
-                hint: &hint _id_
+                filter: { _id: 1 }
+                update: { $set: { array: [ 1, 2, 4 ] } }
+                hint: *hint
             - updateMany:
                 namespace: *namespace
-                filter: *updateManyFilter
-                update: *updateManyMods
+                filter:
+                  $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                update: { $set: { array: [ 1, 2, 5 ] } }
                 hint: *hint
             - replaceOne:
                 namespace: *namespace
-                filter: *replaceOneFilter
-                replacement: *replacement
+                filter: { _id: 4 }
+                replacement: { array: [ 1, 2, 6 ] }
                 hint: *hint
           verboseResults: true
         expectResult:
@@ -227,18 +227,19 @@ tests:
                 bulkWrite: 1
                 ops:
                   - update: 0
-                    filter: *updateOneFilter
-                    updateMods: *updateOneMods
+                    filter: { _id: 1 }
+                    updateMods: { $set: { array: [ 1, 2, 4 ] } }
                     hint: *hint
                     multi: false
                   - update: 0
-                    filter: *updateManyFilter
-                    updateMods: *updateManyMods
+                    filter:
+                      $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                    updateMods: { $set: { array: [ 1, 2, 5 ] } }
                     hint: *hint
                     multi: true
                   - update: 0
-                    filter: *replaceOneFilter
-                    updateMods: *replacement
+                    filter: { _id: 4 }
+                    updateMods: { array: [ 1, 2, 6 ] }
                     hint: *hint
                     multi: false
     outcome:
@@ -257,15 +258,13 @@ tests:
           models:
             - updateOne:
                 namespace: *namespace
-                filter: &updateOneFilter
-                  _id: 5
-                update: *updateOneMods
+                filter: { _id: 5 }
+                update: { $set: { array: [ 1, 2, 4 ] } }
                 upsert: true
             - replaceOne:
                 namespace: *namespace
-                filter: &replaceOneFilter
-                  _id: 6
-                replacement: *replacement
+                filter: { _id: 6 }
+                replacement: { array: [ 1, 2, 6 ] }
                 upsert: true
           verboseResults: true
         expectResult:
@@ -293,13 +292,13 @@ tests:
                 bulkWrite: 1
                 ops:
                   - update: 0
-                    filter: *updateOneFilter
-                    updateMods: *updateOneMods
+                    filter: { _id: 5 }
+                    updateMods: { $set: { array: [ 1, 2, 4 ] } }
                     upsert: true
                     multi: false
                   - update: 0
-                    filter: *replaceOneFilter
-                    updateMods: *replacement
+                    filter: { _id: 6 }
+                    updateMods: { array: [ 1, 2, 6 ] }
                     upsert: true
                     multi: false
     outcome:

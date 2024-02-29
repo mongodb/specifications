@@ -33,7 +33,7 @@ tests:
           models:
             - insertOne:
                 namespace: *namespace
-                document: &document { _id: 1 }
+                document: { _id: 1, x: 11 }
           verboseResults: true
           ordered: false
         expectResult:
@@ -58,7 +58,7 @@ tests:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - *document
+          - { _id: 1, x: 11 }
   - description: "client bulkWrite with ordered: true"
     operations:
       - object: *client0
@@ -67,7 +67,7 @@ tests:
           models:
             - insertOne:
                 namespace: *namespace
-                document: &document { _id: 4 }
+                document: { _id: 1, x: 11 }
           verboseResults: true
           ordered: true
         expectResult:
@@ -78,7 +78,7 @@ tests:
           deletedCount: 0
           insertResults:
             0:
-              insertedId: 4
+              insertedId: 1
           updateResults: {}
           deleteResults: {}
     expectEvents:
@@ -92,7 +92,7 @@ tests:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - *document
+          - { _id: 1, x: 11 }
   - description: "client bulkWrite defaults to ordered: true"
     operations:
       - object: *client0
@@ -101,7 +101,7 @@ tests:
           models:
             - insertOne:
                 namespace: *namespace
-                document: &document { _id: 4 }
+                document: { _id: 1, x: 11 }
           verboseResults: true
         expectResult:
           insertedCount: 1
@@ -111,7 +111,7 @@ tests:
           deletedCount: 0
           insertResults:
             0:
-              insertedId: 4
+              insertedId: 1
           updateResults: {}
           deleteResults: {}
     expectEvents:
@@ -125,4 +125,4 @@ tests:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - *document
+          - { _id: 1, x: 11 }

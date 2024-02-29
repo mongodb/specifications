@@ -36,37 +36,30 @@ tests:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          models: &models
+          models:
             - insertOne:
                 namespace: *namespace
-                document: &insertDoc
-                  { _id: 8, x: 88 }
+                document: { _id: 8, x: 88 }
             - updateOne:
                 namespace: *namespace
-                filter: &updateOneFilter
-                  _id: 1
-                update: &updateOneUpdate
-                  $inc: { x: 1 }
+                filter: { _id: 1 }
+                update: { $inc: { x: 1 } }
             - updateMany:
                 namespace: *namespace
-                filter: &updateManyFilter
+                filter:
                   $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
-                update: &updateManyUpdate
-                  $inc: { x: 2 }
+                update: { $inc: { x: 2 } }
             - replaceOne:
                 namespace: *namespace
-                filter: &replaceOneFilter
-                  _id: 4
-                replacement: &replacementDoc
-                  { x: 44 }
+                filter: { _id: 4 }
+                replacement: { x: 44 }
                 upsert: true
             - deleteOne:
                 namespace: *namespace
-                filter: &deleteOneFilter
-                  _id: 5
+                filter: { _id: 5 }
             - deleteMany:
                 namespace: *namespace
-                filter: &deleteManyFilter
+                filter:
                   $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
           verboseResults: true
         expectResult:
@@ -103,41 +96,43 @@ tests:
               command:
                 bulkWrite: 1
                 errorsOnly: false
-                ops: &ops
+                ops:
                   -
                     insert: 0
-                    document: *insertDoc
+                    document: { _id: 8, x: 88 }
                   -
                     update: 0
-                    filter: *updateOneFilter
-                    updateMods: *updateOneUpdate
+                    filter: { _id: 1 }
+                    updateMods: { $inc: { x: 1 } }
                     multi: false
                   -
                     update: 0
-                    filter: *updateManyFilter
-                    updateMods: *updateManyUpdate
+                    filter:
+                      $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                    updateMods: { $inc: { x: 2 } }
                     multi: true
                   -
                     update: 0
-                    filter: *replaceOneFilter
-                    updateMods: *replacementDoc
+                    filter: { _id: 4 }
+                    updateMods: { x: 44 }
                     upsert: true
                     multi: false
                   -
                     delete: 0
-                    filter: *deleteOneFilter
+                    filter: { _id: 5 }
                     multi: false
                   -
                     delete: 0
-                    filter: *deleteManyFilter
+                    filter:
+                      $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
                     multi: true
-                nsInfo: &nsInfo
+                nsInfo:
                   -
                     ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
-        documents: &outcomeDocuments
+        documents:
           - { _id: 1, x: 12 }
           - { _id: 2, x: 24 }
           - { _id: 3, x: 35 }
@@ -148,9 +143,33 @@ tests:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          models: *models
+          models:
+            - insertOne:
+                namespace: *namespace
+                document: { _id: 8, x: 88 }
+            - updateOne:
+                namespace: *namespace
+                filter: { _id: 1 }
+                update: { $inc: { x: 1 } }
+            - updateMany:
+                namespace: *namespace
+                filter:
+                  $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                update: { $inc: { x: 2 } }
+            - replaceOne:
+                namespace: *namespace
+                filter: { _id: 4 }
+                replacement: { x: 44 }
+                upsert: true
+            - deleteOne:
+                namespace: *namespace
+                filter: { _id: 5 }
+            - deleteMany:
+                namespace: *namespace
+                filter:
+                  $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
           verboseResults: false
-        expectResult: &summaryResult
+        expectResult:
           insertedCount: 1
           upsertedCount: 1
           matchedCount: 3
@@ -169,19 +188,90 @@ tests:
               command:
                 bulkWrite: 1
                 errorsOnly: true
-                ops: *ops
-                nsInfo: *nsInfo
+                ops:
+                  -
+                    insert: 0
+                    document: { _id: 8, x: 88 }
+                  -
+                    update: 0
+                    filter: { _id: 1 }
+                    updateMods: { $inc: { x: 1 } }
+                    multi: false
+                  -
+                    update: 0
+                    filter:
+                      $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                    updateMods: { $inc: { x: 2 } }
+                    multi: true
+                  -
+                    update: 0
+                    filter: { _id: 4 }
+                    updateMods: { x: 44 }
+                    upsert: true
+                    multi: false
+                  -
+                    delete: 0
+                    filter: { _id: 5 }
+                    multi: false
+                  -
+                    delete: 0
+                    filter:
+                      $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
+                    multi: true
+                nsInfo:
+                  -
+                    ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
-        documents: *outcomeDocuments
+        documents:
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 24 }
+          - { _id: 3, x: 35 }
+          - { _id: 4, x: 44 }
+          - { _id: 8, x: 88 }
   - description: "client bulkWrite defaults to verboseResults: false"
     operations:
       - object: *client0
         name: clientBulkWrite
         arguments:
-          models: *models
-        expectResult: *summaryResult
+          models:
+            - insertOne:
+                namespace: *namespace
+                document: { _id: 8, x: 88 }
+            - updateOne:
+                namespace: *namespace
+                filter: { _id: 1 }
+                update: { $inc: { x: 1 } }
+            - updateMany:
+                namespace: *namespace
+                filter:
+                  $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                update: { $inc: { x: 2 } }
+            - replaceOne:
+                namespace: *namespace
+                filter: { _id: 4 }
+                replacement: { x: 44 }
+                upsert: true
+            - deleteOne:
+                namespace: *namespace
+                filter: { _id: 5 }
+            - deleteMany:
+                namespace: *namespace
+                filter:
+                  $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
+        expectResult:
+          insertedCount: 1
+          upsertedCount: 1
+          matchedCount: 3
+          modifiedCount: 3
+          deletedCount: 3
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
     expectEvents:
       - client: *client0
         events:
@@ -189,9 +279,45 @@ tests:
               command:
                 bulkWrite: 1
                 errorsOnly: true
-                ops: *ops
-                nsInfo: *nsInfo
+                ops: 
+                  -
+                    insert: 0
+                    document: { _id: 8, x: 88 }
+                  -
+                    update: 0
+                    filter: { _id: 1 }
+                    updateMods: { $inc: { x: 1 } }
+                    multi: false
+                  -
+                    update: 0
+                    filter:
+                      $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                    updateMods: { $inc: { x: 2 } }
+                    multi: true
+                  -
+                    update: 0
+                    filter: { _id: 4 }
+                    updateMods: { x: 44 }
+                    upsert: true
+                    multi: false
+                  -
+                    delete: 0
+                    filter: { _id: 5 }
+                    multi: false
+                  -
+                    delete: 0
+                    filter:
+                      $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
+                    multi: true
+                nsInfo:
+                  -
+                    ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
-        documents: *outcomeDocuments
+        documents:
+          - { _id: 1, x: 12 }
+          - { _id: 2, x: 24 }
+          - { _id: 3, x: 35 }
+          - { _id: 4, x: 44 }
+          - { _id: 8, x: 88 }

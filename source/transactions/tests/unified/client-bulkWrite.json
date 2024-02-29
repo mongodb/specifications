@@ -41,6 +41,9 @@
       }
     }
   ],
+  "_yamlAnchors": {
+    "namespace": "transactions-tests.coll0"
+  },
   "initialData": [
     {
       "databaseName": "transaction-tests",
@@ -75,7 +78,7 @@
   ],
   "tests": [
     {
-      "description": "transactional client bulkWrite",
+      "description": "client bulkWrite in a transaction",
       "operations": [
         {
           "object": "session0",

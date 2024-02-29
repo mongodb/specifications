@@ -20,11 +20,13 @@ initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
     documents:
-      - &doc1 { _id: 1, x: 11 }
-      - &doc2 { _id: 2, x: 22  }
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
 
 _yamlAnchors:
   namespace: &namespace "crud-tests.coll0"
+  comment: &comment { "bulk": "write" }
+  let: &let { id1: 1, id2: 2 }
 
 tests:
   - description: "client bulkWrite comment"
@@ -35,8 +37,8 @@ tests:
           models:
             - insertOne:
                 namespace: *namespace
-                document: &doc3 { _id: 3, x: 33 }
-          comment: &comment { "bulk": "write" }
+                document: { _id: 3, x: 33 }
+          comment: *comment
           verboseResults: true
         expectResult:
           insertedCount: 1
@@ -60,9 +62,9 @@ tests:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - *doc1
-          - *doc2
-          - *doc3
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   - description: "client bulkWrite bypassDocumentValidation"
     operations:
       - object: *client0
@@ -71,7 +73,7 @@ tests:
           models:
             - insertOne:
                 namespace: *namespace
-                document: &doc4 { _id: 4, x: 44 }
+                document: { _id: 3, x: 33 }
           bypassDocumentValidation: true
           verboseResults: true
         expectResult:
@@ -82,7 +84,7 @@ tests:
           deletedCount: 0
           insertResults:
             0:
-              insertedId: 4
+              insertedId: 3
           updateResults: {}
           deleteResults: {}
     expectEvents:
@@ -96,9 +98,9 @@ tests:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - *doc1
-          - *doc2
-          - *doc4
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   - description: "client bulkWrite let"
     operations:
       - object: *client0
@@ -117,7 +119,7 @@ tests:
                 filter:
                   $expr:
                     $eq: [ "$_id", "$$id2" ]
-          let: &let { id1: 1, id2: 2 }
+          let: *let
           verboseResults: true
         expectResult:
           insertedCount: 0

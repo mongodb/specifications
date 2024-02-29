@@ -22,12 +22,15 @@ initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
     documents:
-      - &document1 { _id: 1, x: 1 }
-      - &document2 { _id: 2, x: 2 }
-      - &document3 { _id: 3, x: 3 }
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
+      - { _id: 3, x: 33 }
 
 _yamlAnchors:
   namespace: &namespace "crud-tests.coll0"
+  writeConcernError: &writeConcernError
+    code: 91
+    errmsg: "Replication is being shut down"
 
 tests:
   - description: "an individual operation fails during an ordered bulkWrite"
@@ -67,8 +70,8 @@ tests:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - *document2
-          - *document3
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   - description: "an individual operation fails during an unordered bulkWrite"
     runOnRequirements:
       - minServerVersion: "8.0"
@@ -111,7 +114,7 @@ tests:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - *document2
+          - { _id: 2, x: 22 }
   - description: "detailed results are omitted from error when verboseResults is false"
     runOnRequirements:
       - minServerVersion: "8.0"
@@ -185,9 +188,7 @@ tests:
             data:
               failCommands:
                 - bulkWrite
-              writeConcernError: &writeConcernError
-                code: 91
-                errmsg: "Replication is being shut down"
+              writeConcernError: *writeConcernError
       - object: *client0
         name: clientBulkWrite
         arguments:
