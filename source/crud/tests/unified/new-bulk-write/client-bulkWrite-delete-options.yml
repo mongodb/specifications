@@ -45,18 +45,20 @@ tests:
                 filter: &deleteManyFilter
                   _id: { $gt: 1 }
                 collation: *collation
+          verboseResults: true
         expectResult:
           insertedCount: 0
           upsertedCount: 0
           matchedCount: 0
           modifiedCount: 0
           deletedCount: 3
-          insertResults:
-            $$unsetOrMatches: {}
-          updateResults:
-            $$unsetOrMatches: {}
+          insertResults: {}
+          updateResults: {}
           deleteResults:
-            $$unsetOrMatches: {}
+            0:
+              deletedCount: 1
+            1:
+              deletedCount: 2
     expectEvents:
       - client: *client0
         events:
@@ -92,18 +94,20 @@ tests:
                 filter: &deleteManyFilter
                   _id: { $gt: 1 }
                 hint: *hint
+          verboseResults: true
         expectResult:
           insertedCount: 0
           upsertedCount: 0
           matchedCount: 0
           modifiedCount: 0
           deletedCount: 3
-          insertResults:
-            $$unsetOrMatches: {}
-          updateResults:
-            $$unsetOrMatches: {}
+          insertResults: {}
+          updateResults: {}
           deleteResults:
-            $$unsetOrMatches: {}
+            0:
+              deletedCount: 1
+            1:
+              deletedCount: 2
     expectEvents:
       - client: *client0
         events:

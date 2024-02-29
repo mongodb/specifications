@@ -1,6 +1,11 @@
 {
   "description": "client bulkWrite errors",
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.20",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "8.0"
+    }
+  ],
   "createEntities": [
     {
       "client": {
@@ -48,14 +53,12 @@
       ]
     }
   ],
+  "_yamlAnchors": {
+    "namespace": "crud-tests.coll0"
+  },
   "tests": [
     {
       "description": "an individual operation fails during an ordered bulkWrite",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "8.0"
-        }
-      ],
       "operations": [
         {
           "object": "client0",
@@ -64,10 +67,7 @@
             "models": [
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 1
                   }
@@ -75,10 +75,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "$expr": {
                       "$eq": [
@@ -91,10 +88,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 3
                   }
@@ -158,10 +152,7 @@
             "models": [
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 1
                   }
@@ -169,10 +160,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "$expr": {
                       "$eq": [
@@ -185,10 +173,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 3
                   }
@@ -252,10 +237,7 @@
             "models": [
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 1
                   }
@@ -263,10 +245,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "$expr": {
                       "$eq": [
@@ -279,10 +258,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 3
                   }
@@ -346,10 +322,7 @@
             "models": [
               {
                 "insertOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "document": {
                     "x": 1
                   }
@@ -396,10 +369,7 @@
             "models": [
               {
                 "insertOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "document": {
                     "_id": 10
                   }

@@ -62,6 +62,7 @@ tests:
             - deleteOne:
                 namespace: *namespace
                 filter: { _id: 3 }
+          verboseResults: true
         expectResult:
           insertedCount: 1
           upsertedCount: 0
@@ -69,11 +70,20 @@ tests:
           modifiedCount: 2
           deletedCount: 1
           insertResults:
-            $$unsetOrMatches: {}
+            0:
+              insertedId: 4
           updateResults:
-            $$unsetOrMatches: {}
+            1:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
+            2:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
           deleteResults:
-            $$unsetOrMatches: {}
+            3:
+              deletedCount: 1
     expectEvents:
       - client: *client0
         events:
@@ -208,6 +218,7 @@ tests:
             - deleteOne:
                 namespace: *namespace
                 filter: { _id: 3 }
+          verboseResults: true
         expectResult:
           insertedCount: 1
           upsertedCount: 0
@@ -215,11 +226,20 @@ tests:
           modifiedCount: 2
           deletedCount: 1
           insertResults:
-            $$unsetOrMatches: {}
+            0:
+              insertedId: 4
           updateResults:
-            $$unsetOrMatches: {}
+            1:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
+            2:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: null
           deleteResults:
-            $$unsetOrMatches: {}
+            3:
+              deletedCount: 1
     expectEvents:
       - client: *client0
         events:

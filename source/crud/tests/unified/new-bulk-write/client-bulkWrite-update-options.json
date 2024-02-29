@@ -1,6 +1,11 @@
 {
   "description": "client bulkWrite update options",
   "schemaVersion": "1.0",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "8.0"
+    }
+  ],
   "createEntities": [
     {
       "client": {
@@ -65,14 +70,12 @@
       ]
     }
   ],
+  "_yamlAnchors": {
+    "namespace": "crud-tests.coll0"
+  },
   "tests": [
     {
       "description": "client bulkWrite update with arrayFilters",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "8.0"
-        }
-      ],
       "operations": [
         {
           "object": "client0",
@@ -81,10 +84,7 @@
             "models": [
               {
                 "updateOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 1
                   },
@@ -104,10 +104,7 @@
               },
               {
                 "updateMany": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "$and": [
                       {
@@ -136,7 +133,8 @@
                   ]
                 }
               }
-            ]
+            ],
+            "verboseResults": true
           },
           "expectResult": {
             "insertedCount": 0,
@@ -144,15 +142,20 @@
             "matchedCount": 3,
             "modifiedCount": 3,
             "deletedCount": 0,
-            "insertResults": {
-              "$$unsetOrMatches": {}
-            },
+            "insertResults": {},
             "updateResults": {
-              "$$unsetOrMatches": {}
+              "0": {
+                "matchedCount": 1,
+                "modifiedCount": 1,
+                "upsertedId": null
+              },
+              "1": {
+                "matchedCount": 2,
+                "modifiedCount": 2,
+                "upsertedId": null
+              }
             },
-            "deleteResults": {
-              "$$unsetOrMatches": {}
-            }
+            "deleteResults": {}
           }
         }
       ],
@@ -264,11 +267,6 @@
     },
     {
       "description": "client bulkWrite update with collation",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "8.0"
-        }
-      ],
       "operations": [
         {
           "object": "client0",
@@ -277,10 +275,7 @@
             "models": [
               {
                 "updateOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 1
                   },
@@ -300,10 +295,7 @@
               },
               {
                 "updateMany": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "$and": [
                       {
@@ -334,10 +326,7 @@
               },
               {
                 "replaceOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 4
                   },
@@ -353,7 +342,8 @@
                   }
                 }
               }
-            ]
+            ],
+            "verboseResults": true
           },
           "expectResult": {
             "insertedCount": 0,
@@ -361,15 +351,25 @@
             "matchedCount": 4,
             "modifiedCount": 4,
             "deletedCount": 0,
-            "insertResults": {
-              "$$unsetOrMatches": {}
-            },
+            "insertResults": {},
             "updateResults": {
-              "$$unsetOrMatches": {}
+              "0": {
+                "matchedCount": 1,
+                "modifiedCount": 1,
+                "upsertedId": null
+              },
+              "1": {
+                "matchedCount": 2,
+                "modifiedCount": 2,
+                "upsertedId": null
+              },
+              "2": {
+                "matchedCount": 1,
+                "modifiedCount": 1,
+                "upsertedId": null
+              }
             },
-            "deleteResults": {
-              "$$unsetOrMatches": {}
-            }
+            "deleteResults": {}
           }
         }
       ],
@@ -498,11 +498,6 @@
     },
     {
       "description": "client bulkWrite update with hint",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "8.0"
-        }
-      ],
       "operations": [
         {
           "object": "client0",
@@ -511,10 +506,7 @@
             "models": [
               {
                 "updateOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 1
                   },
@@ -532,10 +524,7 @@
               },
               {
                 "updateMany": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "$and": [
                       {
@@ -564,10 +553,7 @@
               },
               {
                 "replaceOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 4
                   },
@@ -581,7 +567,8 @@
                   "hint": "_id_"
                 }
               }
-            ]
+            ],
+            "verboseResults": true
           },
           "expectResult": {
             "insertedCount": 0,
@@ -589,15 +576,25 @@
             "matchedCount": 4,
             "modifiedCount": 4,
             "deletedCount": 0,
-            "insertResults": {
-              "$$unsetOrMatches": {}
-            },
+            "insertResults": {},
             "updateResults": {
-              "$$unsetOrMatches": {}
+              "0": {
+                "matchedCount": 1,
+                "modifiedCount": 1,
+                "upsertedId": null
+              },
+              "1": {
+                "matchedCount": 2,
+                "modifiedCount": 2,
+                "upsertedId": null
+              },
+              "2": {
+                "matchedCount": 1,
+                "modifiedCount": 1,
+                "upsertedId": null
+              }
             },
-            "deleteResults": {
-              "$$unsetOrMatches": {}
-            }
+            "deleteResults": {}
           }
         }
       ],
@@ -720,11 +717,6 @@
     },
     {
       "description": "client bulkWrite update with upsert",
-      "runOnRequirements": [
-        {
-          "minServerVersion": "8.0"
-        }
-      ],
       "operations": [
         {
           "object": "client0",
@@ -733,10 +725,7 @@
             "models": [
               {
                 "updateOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 5
                   },
@@ -754,10 +743,7 @@
               },
               {
                 "replaceOne": {
-                  "namespace": {
-                    "db": "crud-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "crud-tests.coll0",
                   "filter": {
                     "_id": 6
                   },
@@ -771,7 +757,8 @@
                   "upsert": true
                 }
               }
-            ]
+            ],
+            "verboseResults": true
           },
           "expectResult": {
             "insertedCount": 0,
@@ -779,15 +766,20 @@
             "matchedCount": 0,
             "modifiedCount": 0,
             "deletedCount": 0,
-            "insertResults": {
-              "$$unsetOrMatches": {}
-            },
+            "insertResults": {},
             "updateResults": {
-              "$$unsetOrMatches": {}
+              "0": {
+                "matchedCount": 1,
+                "modifiedCount": 0,
+                "upsertedId": 5
+              },
+              "1": {
+                "matchedCount": 1,
+                "modifiedCount": 0,
+                "upsertedId": 6
+              }
             },
-            "deleteResults": {
-              "$$unsetOrMatches": {}
-            }
+            "deleteResults": {}
           }
         }
       ],

@@ -165,7 +165,19 @@ tests:
           models:
             - insertOne:
                 namespace: *namespace
-                document: { x: 1 }
+                document: { _id: 6, x: 6 }
+          verboseResults: true
+        expectResult:
+          insertedCount: 1
+          upsertedCount: 0
+          matchedCount: 0
+          modifiedCount: 0
+          deletedCount: 0
+          insertResults:
+            0:
+              insertedId: 6
+          updateResults: {}
+          deleteResults: {}
     expectEvents:
       - client: *client
         events:
