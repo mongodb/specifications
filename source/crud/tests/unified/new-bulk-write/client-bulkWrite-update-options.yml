@@ -74,8 +74,12 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - update: 0
                     filter: { _id: 1 }
@@ -92,6 +96,8 @@ tests:
                         array.$[i]: 5
                     arrayFilters: [ i: { $gte: 2 } ]
                     multi: true
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - databaseName: *database0Name
         collectionName: *collection0Name
@@ -148,8 +154,12 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - update: 0
                     filter: { _id: 1 }
@@ -167,6 +177,8 @@ tests:
                     updateMods: { array: [ 1, 2, 6 ] }
                     collation: *collation
                     multi: false
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - databaseName: *database0Name
         collectionName: *collection0Name
@@ -223,8 +235,12 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - update: 0
                     filter: { _id: 1 }
@@ -242,6 +258,8 @@ tests:
                     updateMods: { array: [ 1, 2, 6 ] }
                     hint: *hint
                     multi: false
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - databaseName: *database0Name
         collectionName: *collection0Name
@@ -288,8 +306,12 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - update: 0
                     filter: { _id: 5 }
@@ -301,6 +323,8 @@ tests:
                     updateMods: { array: [ 1, 2, 6 ] }
                     upsert: true
                     multi: false
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - databaseName: *database0Name
         collectionName: *collection0Name

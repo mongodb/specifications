@@ -207,9 +207,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
                   "errorsOnly": false,
+                  "ordered": true,
                   "ops": [
                     {
                       "insert": 0,
@@ -450,9 +453,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
                   "errorsOnly": true,
+                  "ordered": true,
                   "ops": [
                     {
                       "insert": 0,
@@ -692,9 +698,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
                   "errorsOnly": true,
+                  "ordered": true,
                   "ops": [
                     {
                       "insert": 0,

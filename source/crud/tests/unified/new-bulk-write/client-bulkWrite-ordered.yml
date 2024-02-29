@@ -51,9 +51,17 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
                 ordered: false
+                ops:
+                  - insert: 0
+                    document: { _id: 1, x: 11 }
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -85,9 +93,17 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
                 ordered: true
+                ops:
+                  - insert: 0
+                    document: { _id: 1, x: 11 }
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -118,9 +134,17 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
                 ordered: true
+                ops:
+                  - insert: 0
+                    document: { _id: 1, x: 11 }
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name

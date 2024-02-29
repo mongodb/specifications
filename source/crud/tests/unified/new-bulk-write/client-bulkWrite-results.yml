@@ -93,42 +93,38 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
                 errorsOnly: false
+                ordered: true
                 ops:
-                  -
-                    insert: 0
+                  - insert: 0
                     document: { _id: 8, x: 88 }
-                  -
-                    update: 0
+                  - update: 0
                     filter: { _id: 1 }
                     updateMods: { $inc: { x: 1 } }
                     multi: false
-                  -
-                    update: 0
+                  - update: 0
                     filter:
                       $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
                     updateMods: { $inc: { x: 2 } }
                     multi: true
-                  -
-                    update: 0
+                  - update: 0
                     filter: { _id: 4 }
                     updateMods: { x: 44 }
                     upsert: true
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter: { _id: 5 }
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter:
                       $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
                     multi: true
                 nsInfo:
-                  -
-                    ns: *namespace
+                  - ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -185,42 +181,38 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
                 errorsOnly: true
+                ordered: true
                 ops:
-                  -
-                    insert: 0
+                  - insert: 0
                     document: { _id: 8, x: 88 }
-                  -
-                    update: 0
+                  - update: 0
                     filter: { _id: 1 }
                     updateMods: { $inc: { x: 1 } }
                     multi: false
-                  -
-                    update: 0
+                  - update: 0
                     filter:
                       $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
                     updateMods: { $inc: { x: 2 } }
                     multi: true
-                  -
-                    update: 0
+                  - update: 0
                     filter: { _id: 4 }
                     updateMods: { x: 44 }
                     upsert: true
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter: { _id: 5 }
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter:
                       $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
                     multi: true
                 nsInfo:
-                  -
-                    ns: *namespace
+                  - ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -276,42 +268,38 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
                 errorsOnly: true
+                ordered: true
                 ops: 
-                  -
-                    insert: 0
+                  - insert: 0
                     document: { _id: 8, x: 88 }
-                  -
-                    update: 0
+                  - update: 0
                     filter: { _id: 1 }
                     updateMods: { $inc: { x: 1 } }
                     multi: false
-                  -
-                    update: 0
+                  - update: 0
                     filter:
                       $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
                     updateMods: { $inc: { x: 2 } }
                     multi: true
-                  -
-                    update: 0
+                  - update: 0
                     filter: { _id: 4 }
                     updateMods: { x: 44 }
                     upsert: true
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter: { _id: 5 }
                     multi: false
-                  -
-                    delete: 0
+                  - delete: 0
                     filter:
                       $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
                     multi: true
                 nsInfo:
-                  -
-                    ns: *namespace
+                  - ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name

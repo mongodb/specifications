@@ -62,8 +62,12 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - delete: 0
                     filter: { _id: 1 }
@@ -73,6 +77,8 @@ tests:
                     filter: { _id: { $gt: 1 } }
                     collation: *collation
                     multi: true
+                nsInfo:
+                  - ns: *namespace
     outcome:
       - databaseName: *database0Name
         collectionName: *collection0Name
@@ -109,8 +115,12 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - delete: 0
                     filter: { _id: 1 }

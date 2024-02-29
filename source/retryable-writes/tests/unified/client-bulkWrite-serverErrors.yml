@@ -91,6 +91,9 @@ tests:
               commandName: bulkWrite
               databaseName: admin
               command:
+                bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - insert: 0
                     document: { _id: 4, x: 44 }
@@ -112,6 +115,9 @@ tests:
               commandName: bulkWrite
               databaseName: admin
               command:
+                bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - insert: 0
                     document: { _id: 4, x: 44 }
@@ -172,6 +178,9 @@ tests:
               commandName: bulkWrite
               databaseName: admin
               command:
+                bulkWrite: 1
+                errorsOnly: true
+                ordered: true
                 ops:
                   - update: 0
                     filter: { _id: 1 }
@@ -247,6 +256,9 @@ tests:
               commandName: bulkWrite
               databaseName: admin
               command:
+                bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - insert: 0
                     document: { _id: 4, x: 44 }
@@ -268,6 +280,9 @@ tests:
               commandName: bulkWrite
               databaseName: admin
               command:
+                bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - insert: 0
                     document: { _id: 4, x: 44 }
@@ -324,6 +339,9 @@ tests:
               commandName: bulkWrite
               databaseName: admin
               command:
+                bulkWrite: 1
+                errorsOnly: true
+                ordered: true
                 ops:
                   - update: 0
                     filter: { _id: 1 }

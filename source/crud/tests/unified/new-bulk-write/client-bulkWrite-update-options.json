@@ -169,8 +169,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
+                  "errorsOnly": false,
+                  "ordered": true,
                   "ops": [
                     {
                       "update": 0,
@@ -220,6 +224,11 @@
                         }
                       ],
                       "multi": true
+                    }
+                  ],
+                  "nsInfo": [
+                    {
+                      "ns": "crud-tests.coll0"
                     }
                   ]
                 }
@@ -383,8 +392,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
+                  "errorsOnly": false,
+                  "ordered": true,
                   "ops": [
                     {
                       "update": 0,
@@ -451,6 +464,11 @@
                         "locale": "simple"
                       },
                       "multi": false
+                    }
+                  ],
+                  "nsInfo": [
+                    {
+                      "ns": "crud-tests.coll0"
                     }
                   ]
                 }
@@ -608,8 +626,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
+                  "errorsOnly": false,
+                  "ordered": true,
                   "ops": [
                     {
                       "update": 0,
@@ -670,6 +692,11 @@
                       },
                       "hint": "_id_",
                       "multi": false
+                    }
+                  ],
+                  "nsInfo": [
+                    {
+                      "ns": "crud-tests.coll0"
                     }
                   ]
                 }
@@ -793,8 +820,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
+                  "errorsOnly": false,
+                  "ordered": true,
                   "ops": [
                     {
                       "update": 0,
@@ -827,6 +858,11 @@
                       },
                       "upsert": true,
                       "multi": false
+                    }
+                  ],
+                  "nsInfo": [
+                    {
+                      "ns": "crud-tests.coll0"
                     }
                   ]
                 }
