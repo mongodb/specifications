@@ -163,23 +163,20 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace:
-                  db: *databaseName
-                  coll: *collectionName
+                namespace: &namespace "versioned-api-tests.test"
                 document: { x: 1 }
     expectEvents:
       - client: *client
         events:
           - commandStartedEvent:
               commandName: bulkWrite
-              databaseName: *adminDatabaseName
               command:
                 bulkWrite: 1
                 ops:
                   - insert: 0
                     document: { x: 1 }
                 nsInfo:
-                  - { ns: "versioned-api-tests.test" }
+                  - { ns: *namespace }
                 <<: *expectedApiVersion
 
   - description: "countDocuments appends declared API version"

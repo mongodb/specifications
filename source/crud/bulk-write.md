@@ -26,7 +26,7 @@ types arise, drivers MAY prepend "Client" to the new type names (e.g. `ClientBul
 interface MongoClient {
     /**
      * Executes a list of mixed write operations.
-     * 
+     *
      * @throws BulkWriteException
      */
     bulkWrite(models: NamespaceWriteModelPair[], options: Optional<BulkWriteOptions>): BulkWriteResult;
@@ -38,7 +38,8 @@ interface MongoClient {
 A `WriteModel` defines a single write operation to be performed as part of a bulk write.
 
 ```typescript
-/** Unifying interface for the various write model types. Drivers may also use an enum with
+/**
+ * Unifying interface for the various write model types. Drivers may also use an enum with
  * variants for each write model for this type.
  */
 interface WriteModel {}
@@ -63,14 +64,14 @@ class UpdateOneModel implements WriteModel {
 
     /**
      * A set of filters specifying to which array elements an update should apply.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value.
      */
     arrayFilters: Optional<Document[]>;
 
     /**
      * Specifies a collation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value.
      */
     collation: Optional<Document>;
@@ -78,14 +79,14 @@ class UpdateOneModel implements WriteModel {
     /**
      * The index to use. Specify either the index name as a string or the index key pattern. If
      * specified, then the query system will only consider plans using the hinted index.
-     * 
+     *
      * This option is only sent if the caller explicitly provides a value.
      */
     hint: Optional<(String | Document)>;
 
     /**
      * When true, creates a new document if no document matches the query. Defaults to false.
-     * 
+     *
      * This options is sent only if the caller explicitly provides a value.
      */
     upsert: Optional<Boolean>;
@@ -104,14 +105,14 @@ class UpdateManyModel implements WriteModel {
 
     /**
      * A set of filters specifying to which array elements an update should apply.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value.
      */
     arrayFilters: Optional<Document[]>;
 
     /**
      * Specifies a collation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value.
      */
     collation: Optional<Document>;
@@ -119,14 +120,14 @@ class UpdateManyModel implements WriteModel {
     /**
      * The index to use. Specify either the index name as a string or the index key pattern. If
      * specified, then the query system will only consider plans using the hinted index.
-     * 
+     *
      * This option is only sent if the caller explicitly provides a value.
      */
     hint: Optional<(String | Document)>;
 
     /**
      * When true, creates a new document if no document matches the query. Defaults to false.
-     * 
+     *
      * This options is sent only if the caller explicitly provides a value.
      */
     upsert: Optional<Boolean>;
@@ -145,7 +146,7 @@ class ReplaceOneModel implements WriteModel {
 
     /**
      * Specifies a collation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value.
      */
     collation: Optional<Document>;
@@ -153,14 +154,14 @@ class ReplaceOneModel implements WriteModel {
     /**
      * The index to use. Specify either the index name as a string or the index key pattern. If
      * specified, then the query system will only consider plans using the hinted index.
-     * 
+     *
      * This option is only sent if the caller explicitly provides a value.
      */
     hint: Optional<(String | Document)>;
 
     /**
      * When true, creates a new document if no document matches the query. Defaults to false.
-     * 
+     *
      * This options is sent only if the caller explicitly provides a value.
      */
     upsert: Optional<Boolean>;
@@ -174,7 +175,7 @@ class DeleteOneModel implements WriteModel {
 
     /**
      * Specifies a collation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value.
      */
     collation: Optional<Document>;
@@ -182,7 +183,7 @@ class DeleteOneModel implements WriteModel {
     /**
      * The index to use. Specify either the index name as a string or the index key pattern. If
      * specified, then the query system will only consider plans using the hinted index.
-     * 
+     *
      * This option is only sent if the caller explicitly provides a value.
      */
     hint: Optional<(String | Document)>;
@@ -196,7 +197,7 @@ class DeleteManyModel implements WriteModel {
 
     /**
      * Specifies a collation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value.
      */
     collation: Optional<Document>;
@@ -204,7 +205,7 @@ class DeleteManyModel implements WriteModel {
     /**
      * The index to use. Specify either the index name as a string or the index key pattern. If
      * specified, then the query system will only consider plans using the hinted index.
-     * 
+     *
      * This option is only sent if the caller explicitly provides a value.
      */
     hint: Optional<(String | Document)>;
@@ -244,16 +245,16 @@ class BulkWriteOptions {
      * Whether the operations in this bulk write should be executed in the order in which they were
      * specified. If false, writes will continue to be executed if an individual write fails. If
      * true, writes will stop executing if an individual write fails.
-     * 
+     *
      * Defaults to false.
      */
     ordered: Optional<Boolean>;
 
     /**
      * If true, allows the writes to opt out of document-level validation.
-     * 
+     *
      * Defaults to false.
-     * 
+     *
      * This option is only sent if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
@@ -262,14 +263,14 @@ class BulkWriteOptions {
      * A map of parameter names and values to apply to all operations within the bulk write. Value
      * must be constant or closed expressions that do not reference document fields. Parameters can
      * then be accessed as variables in an aggregate expression context (e.g. "$$var").
-     * 
+     *
      * This option is only sent if the caller explicitly provides a value.
      */
     let: Optional<Document>;
 
     /**
      * The write concern to use for this bulk write.
-     * 
+     *
      * NOT REQUIRED TO IMPLEMENT. Drivers MUST expose this option if retrieving a handle to a
      * client with a different write concern configured than that of the user's standard URI
      * options is nontrivial. Drivers MAY omit this option if they provide a way to retrieve a
@@ -281,7 +282,7 @@ class BulkWriteOptions {
     /**
      * Whether detailed results for each successful operation should be included in the returned
      * BulkWriteResult.
-     * 
+     *
      * Defaults to false.
      */
     verboseResults: Optional<Boolean>;
@@ -295,7 +296,7 @@ class BulkWriteResult {
     /**
      * Indicates whether this write result was acknowledged. If not, then all other members of this
      * result will be undefined.
-     * 
+     *
      * NOT REQUIRED TO IMPLEMENT. See [here](../crud/crud.md#write-results) for more guidance on
      * modeling unacknowledged results.
      */
@@ -304,7 +305,7 @@ class BulkWriteResult {
     /**
      * Indicates whether the results are verbose. If false, the insertResults, updateResults, and
      * deleteResults fields in this result will be undefined.
-     * 
+     *
      * NOT REQUIRED TO IMPLEMENT. See below for other ways to differentiate summary results from
      * verbose results.
      */
@@ -374,7 +375,7 @@ class UpdateResult {
 
     /**
      * The number of documents that were upserted.
-     * 
+     *
      * NOT REQUIRED TO IMPLEMENT. Drivers may choose not to provide this property so long as it is
      * always possible to discern whether an upsert took place.
      */
@@ -469,6 +470,8 @@ The `bulkWrite` server command has the following format:
 Drivers SHOULD use document sequences ([`OP_MSG`](../message/OP_MSG.rst) payload type 1) for the
 `ops` and `nsInfo` fields. Drivers MUST NOT use document sequences when auto-encryption is enabled.
 
+The `bulkWrite` command is executed on the "admin" database.
+
 ### Operations
 
 The `ops` field is a list of write operation documents. The first entry in each document has
@@ -487,6 +490,12 @@ documents have the following format:
 
 Drivers MUST add an `_id` field at the beginning of the insert document if one is not already
 present.
+
+When a user executes a bulk write with an unacknowledged write concern, drivers SHOULD check the
+size of the insert document to verify that it does not exceed `maxBsonObjectSize`. For acknowledged
+bulk writes, drivers MAY rely on the server to return an error if the document exceeds
+`maxBsonObjectSize`. The value for `maxBsonObjectSize` can be retrieved from the selected server's
+`hello` response.
 
 #### Update
 
@@ -537,7 +546,7 @@ should be provided as `false` if `verboseResults` was set to `true`; otherwise, 
 provided as `true`. This field MUST always be defined in the `bulkWrite` command regardless of
 whether the user specified a value for `verboseResults`.
 
-## Command batching
+## Command Batching
 
 Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method.
 Because the server imposes restrictions on the size of write operations, this means that a single
@@ -549,11 +558,6 @@ Each of these values can be retrieved from the selected server's `hello` command
 ### Number of Writes
 
 The `ops` array MUST NOT include more than `maxWriteBatchSize` operations.
-
-### Document Size
-
-All entries within the `ops` array MUST be within `maxBsonObjectSize` bytes. Drivers MUST throw an
-exception if an operation exceeds this size.
 
 ### Total Message Size
 
@@ -625,7 +629,7 @@ The documents in the results cursor have the following format:
 ```
 
 Note that the responses do not contain information about the type of operation that was performed.
-Drivers MAY need to maintain the user's list of write models to infer which type of result should
+Drivers may need to maintain the user's list of write models to infer which type of result should
 be recorded.
 
 ### Handling Insert Results
@@ -634,8 +638,8 @@ Unlike the other result types, `InsertOneResult` contains an `insertedId` field 
 driver-side, either by recording the `_id` field present in the user's insert document or creating
 and adding one. Drivers MUST only record these `insertedId`s in a `BulkWriteResult` when a
 successful response for the insert operation (i.e. `{ "ok": 1, "n": 1 }`) is received in the
-results cursor. This ensures that drivers only report `insertedId`s to users when it is confirmed
-that the insert succeeded.
+results cursor. This ensures that drivers only report an `insertedId` when it is confirmed that the
+insert succeeded.
 
 ## Handling errors
 
@@ -676,8 +680,8 @@ The majority of tests for `MongoClient.bulkWrite` are written in the
 [CRUD unified tests directory](../crud/tests/unified/).
 
 Additional prose tests are specified [here](../crud/tests/README.md). These tests require
-constructing very large documents to test drivers' implementation of batch splitting, which is not
-feasible in the unified test format at the time of writing this specification.
+constructing very large documents to test batch splitting, which is not feasible in the unified
+test format at the time of writing this specification.
 
 ## Q&A
 
@@ -696,7 +700,7 @@ This specification introduces several types that are similar to existing types u
 future with the introduction of new options and features to the `bulkWrite` command. Introducing
 new types also provides more clarity to users on the existing differences between the
 collection-level and client-level bulk write APIs. For example, the `verboseResults` option is only
-valid for `MongoClient.bulkWrite`.
+available for `MongoClient.bulkWrite`.
 
 ### Why are bulk write operation results returned in a cursor?
 

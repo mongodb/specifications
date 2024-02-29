@@ -923,11 +923,11 @@ The structure of this object is as follows:
   to have. The test runner MUST assert that the error does not contain any of the specified labels (e.g. using the
   `hasErrorLabel` method).
 
-- `writeErrors`: Optional document. A map of `writeError`s expected to be present in the error. The `writeErrors` document
+- `writeErrors`: Optional document. The write errors expected to be present in the error. The `writeErrors` document
   contains numeric keys representing the index of the write that failed and `writeError` object values. The test runner MUST
   assert that the error contains a `writeError` for each index present in `writeErrors` and MUST assert that the `writeError`s
-  match as root-level documents according to the rules in [Evaluating Matches](#evaluating-matches). The test runner MUST assert
-  that the error does not contain any additional `writeError`s.
+  match as root-level documents according to the rules in [Evaluating Matches](#evaluating-matches). The test runner MUST
+  assert that the error does not contain any additional `writeError`s.
 
 - `writeConcernErrors`: Optional array of one or more objects. An ordered list of write concern errors expected to be
   present in the error. The test runner MUST assert that each `writeConcernError` in this list matches the
@@ -1461,11 +1461,19 @@ arguments:
   ordered: true
 ```
 
-Because the `insertResults`, `updateResults`, and `deleteResults` may be absent or empty  in the `BulkWriteResult` returned from a summary-only bulk write, the `clientBulkWrite` operation MUST use the [$$unsetOrMatches](#unsetormatches) operator for assertions on these fields when `verboseResults` is not set to true. This requirement also applies to result objects defined in the `expectedResult` field of [expectedError](#expectederror).
+Because the `insertResults`, `updateResults`, and `deleteResults` may be absent or empty in the `BulkWriteResult` returned
+from a summary-only bulk write, the `clientBulkWrite` operation MUST use the [$$unsetOrMatches](#unsetormatches) operator
+for assertions on these fields when `verboseResults` is not set to true. This requirement also applies to result objects
+defined in the `expectedResult` field of [expectedError](#expectederror).
 
-The `BulkWriteException` thrown by `MongoClient.bulkWrite` contains an optional `error` field that stores a top-level error that occurred during the bulk write. Test runners MUST inspect the contents of this field when making assertions based on the contents of the `errorCode` and `errorContains` fields in [expectedError](#expectederror).
+The `BulkWriteException` thrown by `MongoClient.bulkWrite` contains an optional `error` field that stores a top-level error
+that occurred during the bulk write. Test runners MUST inspect the contents of this field when making assertions based on
+the contents of the `errorCode` and `errorContains` fields in [expectedError](#expectederror).
 
-`BulkWriteException` also contains `writeErrors` and `writeConcernErrors` fields that define the individual write errors and write concern errors that occurred during the bulk write. Unified tests SHOULD use `writeErrors` and `writeConcernErrors` in `expectedError` to assert on the contents of these fields. Test runners MUST NOT inspect the contents of these fields when making assertions based on any other fields defined in `expectedError`.
+`BulkWriteException` also contains `writeErrors` and `writeConcernErrors` fields that define the individual write errors and
+write concern errors that occurred during the bulk write. Unified tests SHOULD use `writeErrors` and `writeConcernErrors` in
+`expectedError` to assert on the contents of these fields. Test runners MUST NOT inspect the contents of these fields when
+making assertions based on any other fields defined in `expectedError`.
 
 #### watch
 
@@ -3425,6 +3433,9 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- TODO: **Schema version 1.20.**\
+  Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the client-level bulk write API.
 
 - 2024-02-23: Require test runners to gossip cluster time from internal MongoClient to each session entity.
 

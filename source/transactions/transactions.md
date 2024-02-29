@@ -1073,6 +1073,8 @@ objective of avoiding duplicate commits.
 
 ## **Changelog**
 
+- TODO: Add bulkWrite to the list of commands allowed in transactions.
+
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 
 - 2023-11-22: Specify that non-transient transaction errors abort the transaction\

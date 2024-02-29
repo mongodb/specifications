@@ -1,6 +1,6 @@
 {
   "description": "client bulkWrite transactions",
-  "schemaVersion": "1.18",
+  "schemaVersion": "1.20",
   "runOnRequirements": [
     {
       "minServerVersion": "8.0",
@@ -89,10 +89,7 @@
             "models": [
               {
                 "insertOne": {
-                  "namespace": {
-                    "db": "transaction-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "transactions-tests.coll0",
                   "document": {
                     "_id": 8,
                     "x": 88
@@ -101,10 +98,7 @@
               },
               {
                 "updateOne": {
-                  "namespace": {
-                    "db": "transaction-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "transactions-tests.coll0",
                   "filter": {
                     "_id": 1
                   },
@@ -117,10 +111,7 @@
               },
               {
                 "updateMany": {
-                  "namespace": {
-                    "db": "transaction-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "transactions-tests.coll0",
                   "filter": {
                     "$and": [
                       {
@@ -144,10 +135,7 @@
               },
               {
                 "replaceOne": {
-                  "namespace": {
-                    "db": "transaction-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "transactions-tests.coll0",
                   "filter": {
                     "_id": 4
                   },
@@ -159,10 +147,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": {
-                    "db": "transaction-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "transactions-tests.coll0",
                   "filter": {
                     "_id": 5
                   }
@@ -170,10 +155,7 @@
               },
               {
                 "deleteMany": {
-                  "namespace": {
-                    "db": "transaction-tests",
-                    "coll": "coll0"
-                  },
+                  "namespace": "transactions-tests.coll0",
                   "filter": {
                     "$and": [
                       {
@@ -337,7 +319,7 @@
                   ],
                   "nsInfo": [
                     {
-                      "ns": "transaction-tests.coll0"
+                      "ns": "transactions-tests.coll0"
                     }
                   ],
                   "errorsOnly": false,

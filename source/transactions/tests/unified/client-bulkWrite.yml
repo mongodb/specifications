@@ -1,5 +1,5 @@
 description: "client bulkWrite transactions"
-schemaVersion: "1.18"
+schemaVersion: "1.20"
 runOnRequirements:
   - minServerVersion: "8.0"
     topologies:
@@ -45,46 +45,34 @@ tests:
           session: *session0
           models:
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: &namespace "transactions-tests.coll0"
                 document: &insertDoc
                   { _id: 8, x: 88 }
             - updateOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &updateOneFilter
                   _id: 1
                 update: &updateOneUpdate
                   $inc: { x: 1 }
             - updateMany:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &updateManyFilter
                   $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
                 update: &updateManyUpdate
                   $inc: { x: 2 }
             - replaceOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &replaceOneFilter
                   _id: 4
                 replacement: &replacementDoc
                   { x: 44 }
                 upsert: true
             - deleteOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &deleteOneFilter
                   _id: 5
             - deleteMany:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &deleteManyFilter
                   $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
           verboseResults: true
@@ -153,7 +141,7 @@ tests:
                     filter: *deleteManyFilter
                     multi: true
                 nsInfo:
-                  - ns: "transaction-tests.coll0"
+                  - ns: *namespace
                 errorsOnly: false
                 ordered: true
           - commandStartedEvent:

@@ -436,10 +436,7 @@
             "models": [
               {
                 "insertOne": {
-                  "namespace": {
-                    "db": "versioned-api-tests",
-                    "coll": "test"
-                  },
+                  "namespace": "versioned-api-tests.test",
                   "document": {
                     "x": 1
                   }
@@ -456,7 +453,6 @@
             {
               "commandStartedEvent": {
                 "commandName": "bulkWrite",
-                "databaseName": "admin",
                 "command": {
                   "bulkWrite": 1,
                   "ops": [
