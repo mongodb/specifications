@@ -15,7 +15,8 @@
         "id": "client0",
         "observeEvents": [
           "commandStartedEvent"
-        ]
+        ],
+        "useMultipleMongoses": false
       }
     },
     {

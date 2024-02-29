@@ -15,7 +15,8 @@
         ],
         "uriOptions": {
           "retryWrites": false
-        }
+        },
+        "useMultipleMongoses": false
       }
     },
     {

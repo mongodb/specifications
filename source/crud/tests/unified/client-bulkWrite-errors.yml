@@ -9,6 +9,7 @@ createEntities:
       observeEvents: [ commandStartedEvent ]
       uriOptions:
         retryWrites: false
+      useMultipleMongoses: false
   - database:
       id: &database0 database0
       client: *client0
