@@ -34,6 +34,7 @@ _yamlAnchors:
       apiVersion: "1"
       apiStrict: { $$unsetOrMatches: false }
       apiDeprecationErrors: true
+  namespace: &namespace "versioned-api-tests.test"
 
 initialData:
   - collectionName: *collectionName
@@ -163,7 +164,7 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace: &namespace "versioned-api-tests.test"
+                namespace: *namespace
                 document: { x: 1 }
     expectEvents:
       - client: *client

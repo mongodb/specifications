@@ -9,7 +9,7 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: &database0Name bulkWrite-db0
+      databaseName: &database0Name db0
   - collection:
       id: &collection0 collection0
       database: *database0
@@ -21,7 +21,7 @@ createEntities:
   - database:
       id: &database1 database1
       client: *client0
-      databaseName: &database1Name bulkWrite-db1
+      databaseName: &database1Name db1
   - collection:
       id: &collection2 collection2
       database: *database1
@@ -42,6 +42,11 @@ initialData:
       - { _id: 3, x: 33 }
       - { _id: 4, x: 44 }
 
+_yamlAnchors:
+  db0Coll0Namespace: &db0Coll0Namespace "db0.coll0"
+  db0Coll1Namespace: &db0Coll1Namespace "db0.coll1"
+  db1Coll2Namespace: &db1Coll2Namespace "db1.coll2"
+
 tests:
   - description: "client bulkWrite with mixed namespaces"
     runOnRequirements:
@@ -52,41 +57,29 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *db0Coll0Namespace
                 document: &document1 
                   _id: 1
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *db0Coll0Namespace
                 document: &document2
                   _id: 2
             - updateOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection1Name
+                namespace: *db0Coll1Namespace
                 filter: &filter1
                   _id: 1
                 update: &update
                   $inc: { x: 1 }
             - deleteOne:
-                namespace:
-                  db: *database1Name
-                  coll: *collection2Name
+                namespace: *db1Coll2Namespace
                 filter: &filter2
                   _id: 3
             - deleteOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection1Name
+                namespace: *db0Coll1Namespace
                 filter: &filter3
                   _id: 2
             - replaceOne:
-                namespace:
-                  db: *database1Name
-                  coll: *collection2Name
+                namespace: *db1Coll2Namespace
                 filter: &filter4
                   _id: 4
                 replacement: &replacement
@@ -143,9 +136,9 @@ tests:
                     updateMods: *replacement
                     multi: false
                 nsInfo:
-                  - ns: bulkWrite-db0.coll0
-                  - ns: bulkWrite-db0.coll1
-                  - ns: bulkWrite-db1.coll2
+                  - ns: *db0Coll0Namespace
+                  - ns: *db0Coll1Namespace
+                  - ns: *db1Coll2Namespace
     outcome:
       - databaseName: *database0Name
         collectionName: *collection0Name

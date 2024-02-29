@@ -20,6 +20,9 @@ initialData:
     databaseName: *database0Name
     documents: []
 
+_yamlAnchors:
+  namespace: &namespace "crud-tests.coll0"
+
 tests:
   - description: "client bulkWrite with ordered: false"
     runOnRequirements:
@@ -30,9 +33,7 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 document: &document { _id: 1 }
           verboseResults: true
           ordered: false
@@ -68,9 +69,7 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 document: &document { _id: 4 }
           verboseResults: true
           ordered: true
@@ -106,9 +105,7 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 document: &document { _id: 4 }
           verboseResults: true
         expectResult:

@@ -23,6 +23,9 @@ initialData:
       - { _id: 2, x: 22 }
       - { _id: 3, x: 33 }
 
+_yamlAnchors:
+  namespace: &namespace "crud-tests.coll0"
+
 tests:
   - description: "client bulk write delete with collation"
     runOnRequirements:
@@ -33,9 +36,7 @@ tests:
         arguments:
           models:
             - deleteOne:
-                namespace: &namespace
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &deleteOneFilter
                   _id: 1
                 collation: &collation
@@ -85,9 +86,7 @@ tests:
         arguments:
           models:
             - deleteOne:
-                namespace: &namespace
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &deleteOneFilter
                   _id: 1
                 hint: &hint _id_

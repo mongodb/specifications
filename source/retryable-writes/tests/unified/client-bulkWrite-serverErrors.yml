@@ -1,5 +1,5 @@
 description: "client bulkWrite retryable writes"
-schemaVersion: "1.18"
+schemaVersion: "1.20"
 runOnRequirements:
   - minServerVersion: "8.0"
     topologies: [ replicaset ]
@@ -25,6 +25,9 @@ initialData:
       - { _id: 2, x: 22 }
       - { _id: 3, x: 33 }
 
+_yamlAnchors:
+  namespace: &namespace "retryable-writes-tests.coll0"
+
 tests:
   - description: "client bulkWrite with no multi: true operations succeeds after retryable top-level error"
     operations:
@@ -45,27 +48,19 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 document: { _id: 4, x: 44 }
             - updateOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 1 }
                 update:
                   $inc: { x: 1 }
             - replaceOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 2 }
                 replacement: { x: 222 }
             - deleteOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 3 }
         expectResult:
           insertedCount: 1
@@ -102,7 +97,7 @@ tests:
                     filter: { _id: 3 }
                     multi: false
                 nsInfo:
-                  - ns: retryable-writes-tests.coll0
+                  - ns: *namespace
           - commandStartedEvent:
               commandName: bulkWrite
               databaseName: admin
@@ -123,7 +118,7 @@ tests:
                     filter: { _id: 3 }
                     multi: false
                 nsInfo:
-                  - ns: retryable-writes-tests.coll0
+                  - ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -150,16 +145,12 @@ tests:
         arguments:
           models:
             - updateMany:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 1 }
                 update:
                   $inc: { x: 1 }
             - deleteMany:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 3 }
         expectError:
           errorCode: 189
@@ -181,7 +172,7 @@ tests:
                     filter: { _id: 3 }
                     multi: true
                 nsInfo:
-                  - ns: retryable-writes-tests.coll0
+                  - ns: *namespace
   - description: "client bulkWrite with no multi: true operations succeeds after retryable writeConcernError"
     operations:
       - object: testRunner
@@ -203,27 +194,19 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 document: { _id: 4, x: 44 }
             - updateOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 1 }
                 update:
                   $inc: { x: 1 }
             - replaceOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 2 }
                 replacement: { x: 222 }
             - deleteOne:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 3 }
         expectResult:
           insertedCount: 1
@@ -260,7 +243,7 @@ tests:
                     filter: { _id: 3 }
                     multi: false
                 nsInfo:
-                  - ns: retryable-writes-tests.coll0
+                  - ns: *namespace
           - commandStartedEvent:
               commandName: bulkWrite
               databaseName: admin
@@ -281,7 +264,7 @@ tests:
                     filter: { _id: 3 }
                     multi: false
                 nsInfo:
-                  - ns: retryable-writes-tests.coll0
+                  - ns: *namespace
   - description: "client bulkWrite with multi: true operations fails after retryable writeConcernError"
     operations:
       - object: testRunner
@@ -303,16 +286,12 @@ tests:
         arguments:
           models:
             - updateMany:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 1 }
                 update:
                   $inc: { x: 1 }
             - deleteMany:
-                namespace:
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 3 }
         expectError:
           writeConcernErrors:
@@ -335,4 +314,4 @@ tests:
                     filter: { _id: 3 }
                     multi: true
                 nsInfo:
-                  - ns: retryable-writes-tests.coll0
+                  - ns: *namespace

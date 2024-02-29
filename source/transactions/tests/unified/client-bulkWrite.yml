@@ -23,6 +23,9 @@ createEntities:
       id: &session0 session0
       client: *client0
 
+_yamlAnchors:
+  namespace: &namespace "transactions-tests.coll0"
+
 initialData:
   - databaseName: *database0Name
     collectionName: *collection0Name
@@ -35,7 +38,7 @@ initialData:
       - { _id: 7, x: 77 }
 
 tests:
-  - description: "transactional client bulkWrite"
+  - description: "client bulkWrite in a transaction"
     operations:
       - object: *session0
         name: startTransaction
@@ -45,7 +48,7 @@ tests:
           session: *session0
           models:
             - insertOne:
-                namespace: &namespace "transactions-tests.coll0"
+                namespace: *namespace
                 document: &insertDoc
                   { _id: 8, x: 88 }
             - updateOne:

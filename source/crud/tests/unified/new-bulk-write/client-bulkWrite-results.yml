@@ -1,6 +1,6 @@
 description: "client bulkWrite results"
 
-schemaVersion: "1.18"
+schemaVersion: "1.0"
 
 createEntities:
   - client:
@@ -26,6 +26,9 @@ initialData:
       - { _id: 6, x: 66 }
       - { _id: 7, x: 77 }
 
+_yamlAnchors:
+  namespace: &namespace "crud-tests.coll0"
+
 tests:
   - description: "client bulkWrite with verboseResults: true returns detailed results"
     runOnRequirements:
@@ -36,9 +39,7 @@ tests:
         arguments:
           models: &models
             - insertOne:
-                namespace: &namespace
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 document: &insertDoc
                   { _id: 8, x: 88 }
             - updateOne:
@@ -133,7 +134,7 @@ tests:
                     multi: true
                 nsInfo: &nsInfo
                   -
-                    ns: "crud-tests.coll0"
+                    ns: *namespace
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name

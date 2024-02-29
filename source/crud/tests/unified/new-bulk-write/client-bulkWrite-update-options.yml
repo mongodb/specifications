@@ -24,6 +24,9 @@ initialData:
       - { _id: 3, array: [ 1, 2, 3 ] }
       - { _id: 4, array: [ 1, 2, 3 ] }
 
+_yamlAnchors:
+  namespace: &namespace "crud-tests.coll0"
+
 tests:
   - description: "client bulkWrite update with arrayFilters"
     runOnRequirements:
@@ -34,9 +37,7 @@ tests:
         arguments:
           models:
             - updateOne:
-                namespace: &namespace
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: &updateOneFilter
                   _id: 1
                 update: &arrayFiltersUpdateOneMods

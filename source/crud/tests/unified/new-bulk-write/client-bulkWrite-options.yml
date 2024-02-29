@@ -22,6 +22,9 @@ initialData:
       - &doc1 { _id: 1, x: 11 }
       - &doc2 { _id: 2, x: 22  }
 
+_yamlAnchors:
+  namespace: &namespace "crud-tests.coll0"
+
 tests:
   - description: "client bulkWrite comment"
     runOnRequirements:
@@ -32,9 +35,7 @@ tests:
         arguments:
           models:
             - insertOne:
-                namespace: &namespace
-                    db: *database0Name
-                    coll: *collection0Name
+                namespace: *namespace
                 document: &doc3 { _id: 3, x: 33 }
           comment: &comment { "bulk": "write" }
           verboseResults: true

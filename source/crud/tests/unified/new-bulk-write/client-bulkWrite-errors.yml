@@ -1,6 +1,6 @@
 description: "client bulkWrite errors"
 
-schemaVersion: "1.0"
+schemaVersion: "1.20"
 
 createEntities:
   - client:
@@ -25,6 +25,9 @@ initialData:
       - &document2 { _id: 2, x: 2 }
       - &document3 { _id: 3, x: 3 }
 
+_yamlAnchors:
+  namespace: &namespace "crud-tests.coll0"
+
 tests:
   - description: "an individual operation fails during an ordered bulkWrite"
     runOnRequirements:
@@ -35,9 +38,7 @@ tests:
         arguments:
           models:
             - deleteOne:
-                namespace: &namespace
-                  db: *database0Name
-                  coll: *collection0Name
+                namespace: *namespace
                 filter: { _id: 1 }
             - deleteOne:
                 namespace: *namespace
