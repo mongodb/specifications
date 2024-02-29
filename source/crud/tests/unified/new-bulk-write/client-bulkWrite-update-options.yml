@@ -1,6 +1,7 @@
 description: "client bulkWrite update options"
-
 schemaVersion: "1.0"
+runOnRequirements:
+  - minServerVersion: "8.0"
 
 createEntities:
   - client:
@@ -29,8 +30,6 @@ _yamlAnchors:
 
 tests:
   - description: "client bulkWrite update with arrayFilters"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -92,8 +91,6 @@ tests:
           - { _id: 3, array: [ 1, 5, 5 ] }
           - { _id: 4, array: [ 1, 2, 3 ] }
   - description: "client bulkWrite update with collation"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -164,8 +161,6 @@ tests:
           - { _id: 3, array: [ 1, 2, 5 ] }
           - { _id: 4, array: [ 1, 2, 6 ] }
   - description: "client bulkWrite update with hint"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -229,8 +224,6 @@ tests:
           - { _id: 3, array: [ 1, 2, 5 ] }
           - { _id: 4, array: [ 1, 2, 6 ] }
   - description: "client bulkWrite update with upsert"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite

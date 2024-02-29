@@ -1,6 +1,7 @@
 description: "client bulkWrite with mixed namespaces"
-
 schemaVersion: "1.0"
+runOnRequirements:
+  - minServerVersion: "8.0"
 
 createEntities:
   - client:
@@ -49,8 +50,6 @@ _yamlAnchors:
 
 tests:
   - description: "client bulkWrite with mixed namespaces"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite

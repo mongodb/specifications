@@ -1,6 +1,7 @@
 description: "client bulkWrite errors"
-
 schemaVersion: "1.20"
+runOnRequirements:
+  - minServerVersion: "8.0"
 
 createEntities:
   - client:
@@ -30,8 +31,6 @@ _yamlAnchors:
 
 tests:
   - description: "an individual operation fails during an ordered bulkWrite"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite

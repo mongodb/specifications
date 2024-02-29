@@ -1,6 +1,7 @@
 description: "client bulkWrite with ordered option"
-
 schemaVersion: "1.0"
+runOnRequirements:
+  - minServerVersion: "8.0"
 
 createEntities:
   - client:
@@ -25,8 +26,6 @@ _yamlAnchors:
 
 tests:
   - description: "client bulkWrite with ordered: false"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -61,8 +60,6 @@ tests:
         documents:
           - *document
   - description: "client bulkWrite with ordered: true"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -97,8 +94,6 @@ tests:
         documents:
           - *document
   - description: "client bulkWrite defaults to ordered: true"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite

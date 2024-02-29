@@ -1,6 +1,7 @@
 description: "client bulkWrite results"
-
 schemaVersion: "1.0"
+runOnRequirements:
+  - minServerVersion: "8.0"
 
 createEntities:
   - client:
@@ -31,8 +32,6 @@ _yamlAnchors:
 
 tests:
   - description: "client bulkWrite with verboseResults: true returns detailed results"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -145,8 +144,6 @@ tests:
           - { _id: 4, x: 44 }
           - { _id: 8, x: 88 }
   - description: "client bulkWrite with verboseResults: false omits detailed results"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -179,8 +176,6 @@ tests:
         databaseName: *database0Name
         documents: *outcomeDocuments
   - description: "client bulkWrite defaults to verboseResults: false"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
