@@ -535,11 +535,11 @@ have the following format:
 }
 ```
 
-### Toggling Results Verbosity
+### `errorsOnly` and `verboseResults`
 
 The `errorsOnly` field indicates whether the results cursor returned in the `bulkWrite` response
-should contain only errors. If false, individual results for successful operations will be returned
-in addition to errors.
+should contain only errors and omit individual results. If false, both individual results for
+successful operations and errors will be returned.
 
 This field corresponds to the `verboseResults` option defined on `BulkWriteOptions`. Its value
 should be provided as `false` if `verboseResults` was set to `true`; otherwise, it should be
@@ -570,10 +570,12 @@ defined in the
 
 #### Unencrypted bulk writes with document sequences
 
-When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the combined
-size of these sequences does not exceed `maxMessageSizeBytes - 16,000`. `maxMessageSizeBytes`
-defines the maximum size for an entire `OP_MSG`, so 16KB is subtracted from `maxMessageSizeBytes`
-in this size limit to account for the bytes in the rest of the message.
+When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the total size
+of the `OP_MSG` built for the `bulkWrite` command does not exceed `maxMessageSizeBytes`. Some
+drivers may perform batch-splitting prior to constructing the full `OP_MSG` to be sent to the
+server. In this case, drivers MAY use `maxMessageSizeBytes - 16,000` as the upper bound for the
+combined number of bytes in `ops` and `nsInfo`. 16KB is subtracted to accommodate for the bytes in
+the rest of the message.
 
 #### Unencrypted bulk writes without document sequences
 
@@ -605,7 +607,7 @@ The server's response to `bulkWrite` has the following format:
 
 If any operations were successful (i.e. `nErrors` is less than the number of operations that were
 sent), drivers MUST record the summary count fields in a `BulkWriteResult` to be returned to the
-user or included in a `BulkWriteException`.
+user or embedded in a `BulkWriteException`.
 
 Drivers MUST attempt to consume the contents of the cursor returned in the server's `bulkWrite`
 response before returning to the user. This is required regardless of whether the user requested
