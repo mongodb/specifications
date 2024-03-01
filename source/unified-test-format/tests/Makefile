@@ -1,8 +1,8 @@
 SCHEMA=../schema-1.19.json
 
-.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions transactions-convenient-api crud collection-management sessions command-logging-and-monitoring client-side-operations-timeout HAS_AJV
+.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions transactions-convenient-api crud collection-management retryable-writes sessions command-logging-and-monitoring client-side-operations-timeout HAS_AJV
 
-all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions transactions-convenient-api change-streams crud collection-management sessions command-logging-and-monitoring client-side-operations-timeout client-side-encryption
+all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions transactions-convenient-api change-streams crud collection-management retryable-writes sessions command-logging-and-monitoring client-side-operations-timeout client-side-encryption
 
 invalid: HAS_AJV
 	@# Redirect stdout to hide expected validation errors
@@ -40,6 +40,9 @@ crud: HAS_AJV
 
 collection-management: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../collection-management/tests/*.yml" --valid
+
+retryable-writes: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../retryable-writes/tests/unified/*.yml" --valid
 
 sessions: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../sessions/tests/*.yml" --valid

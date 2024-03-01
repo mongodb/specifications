@@ -3275,6 +3275,24 @@ db.adminCommand({
   which the affected commands should be blocked. New in server 4.3.4 and backported to 4.2.9
   ([SERVER-41070](https://jira.mongodb.org/browse/SERVER-41070)).
 
+##### onPrimaryTransactionalWrite
+
+The `onPrimaryTransactionalWrite` fail point allows the client to force a network error before the server would return a
+write result to the client. The fail point also allows control whether the server will successfully commit the write via
+its `failBeforeCommitExceptionCode` option. Keep in mind that the fail point only triggers for transaction writes (i.e.
+write commands including `txnNumber` and `lsid` fields).
+
+The `onPrimaryTransactionalWrite` fail point was introduced in mongod 3.6.0
+([SERVER-29606](https://jira.mongodb.org/browse/SERVER-29606)) to facilitate testing of retryable writes. It is only
+supported on mongod and cannot be used with sharded clusters.
+
+`onPrimaryTransactionalWrite` supports the following `data` options:
+
+- `closeConnection`: Optional boolean, which defaults to `true`. If `true`, the connection on which the write is
+  executed will be closed before a result can be returned.
+- `failBeforeCommitExceptionCode`: Optional integer, which is unset by default. If set, the specified exception code
+  will be thrown and the write will not be committed. If unset, the write will be allowed to commit.
+
 ### Determining if a Sharded Cluster Uses Replica Sets
 
 When connected to a mongos server, the test runner can query the
@@ -3372,6 +3390,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-02-27: Document `onPrimaryTransactionalWrite` fail point, which is used in retryable writes tests.
 
 - 2024-02-23: Require test runners to gossip cluster time from internal MongoClient to each session entity.
 
