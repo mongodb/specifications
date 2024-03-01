@@ -437,7 +437,7 @@ The `kmsProviders` property may be specified on [ClientEncryptionOpts](#ClientEn
 the [KMSProviders](#kmsproviders) object. The options differ for each KMS provider type. The "local" KMS provider type
 is configured with master key material. The external providers are configured with credentials to authenticate.
 
-Throughout this document, the KMS provider is annotated as - Ts:`KMSProvider`, but this name is for *exposition only*:
+Throughout this document, the KMS provider is annotated as - `KMSProvider`, but this name is for *exposition only*:
 drivers MUST accept arbitrary strings at runtime for forward-compatibility.
 
 ```typescript
@@ -1211,30 +1211,37 @@ insert or query. Drivers MUST document the following behavior:
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> changes.
 
 #### contentionFactor
 
 contentionFactor only applies when algorithm is "Indexed" or "RangePreview". It is an error to set contentionFactor when
 algorithm is not "Indexed" or "RangePreview".
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> changes.
 
 #### queryType
 
-One of the strings: - "equality" - "rangePreview"
+One of the strings:
+
+- "equality"
+- "rangePreview"
 
 queryType only applies when algorithm is "Indexed" or "RangePreview". It is an error to set queryType when algorithm is
 not "Indexed" or "RangePreview".
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> changes.
 
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "rangePreview". It is an error to set rangeOpts when algorithm is not
 "rangePreview".
 
-NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> changes.
 
 ## User facing API: When Auto Encryption Fails
 
@@ -1359,22 +1366,20 @@ when a command fails due to client side encryption.
 
 <div id="enabling-crypt_shared">
 
-> \[!INDEX\]
->
-> ## Enabling Command Marking with the `crypt_shared` Library
->
-> The MongoDB Enterprise distribution includes a dynamic library named `mongo_crypt_v1` (with the appropriate file
-> extension or filename suffix for the host platform). This library will be loaded by [libmongocrypt](#libmongocrypt)
-> when the `mongocrypt_init` function is invoked
-> [(from the libmongocrypt C API)](https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h) based on the
-> search criteria that are provided by the driver.
->
-> [libmongocrypt](#libmongocrypt) allows the driver to specify an arbitrary list of directory
-> [search paths](#search-paths) in which to search for the [crypt_shared](#crypt_shared) dynamic library. The
-> user-facing API does not expose this full search path functionality. This extended search path customization is
-> intended to facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
-> [Search Paths for Testing](#search-paths-for-testing) and `Path Resolution Behavior`).
->
+## Enabling Command Marking with the `crypt_shared` Library
+
+The MongoDB Enterprise distribution includes a dynamic library named `mongo_crypt_v1` (with the appropriate file
+extension or filename suffix for the host platform). This library will be loaded by [libmongocrypt](#libmongocrypt) when
+the `mongocrypt_init` function is invoked
+[(from the libmongocrypt C API)](https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h) based on the
+search criteria that are provided by the driver.
+
+[libmongocrypt](#libmongocrypt) allows the driver to specify an arbitrary list of directory
+[search paths](#search-paths) in which to search for the [crypt_shared](#crypt_shared) dynamic library. The user-facing
+API does not expose this full search path functionality. This extended search path customization is intended to
+facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
+[Search Paths for Testing](#search-paths-for-testing) and `Path Resolution Behavior`).
+
 > \[!NOTE\]
 >
 > The driver MUST NOT manipulate or do any validation on the [crypt_shared](#crypt_shared) path options provided in
@@ -1385,7 +1390,7 @@ when a command fails due to client side encryption.
 
 ### Setting Search Paths
 
-For the user-facing API the driver MUST append the literal string - Ts:`"$SYSTEM"` to the search paths for the
+For the user-facing API the driver MUST append the literal string - `"$SYSTEM"` to the search paths for the
 `libmongocrypt_handle` if `bypassAutoEncryption` is not set to `true`, and MUST NOT append to the search path if it is
 set to `true` or if the [libmongocrypt](#libmongocrypt) instance is used for explicit encryption only (i.e. on the
 ClientEncryption class). For purposes of testing, a driver may use a different set of search paths.
@@ -1699,39 +1704,44 @@ Data keys are stored in the MongoDB key vault collection with the following sche
 
 #### masterKey contents
 
-|                   |                |                                                                       |
-| ----------------- | -------------- | --------------------------------------------------------------------- |
-| **Name** provider | **Type** "aws" | **Description**                                                       |
-| key               | String         | AWS ARN. Only applicable for "aws" provider.                          |
-| region            | String         | AWS Region that contains AWS ARN. Only applicable for "aws" provider. |
-| endpoint          | String         | Alternate AWS endpoint (needed for FIPS endpoints)                    |
+|          |          |                                                                       |
+| -------- | -------- | --------------------------------------------------------------------- |
+| **Name** | **Type** | **Description**                                                       |
+| provider | "aws"    |                                                                       |
+| key      | String   | AWS ARN. Only applicable for "aws" provider.                          |
+| region   | String   | AWS Region that contains AWS ARN. Only applicable for "aws" provider. |
+| endpoint | String   | Alternate AWS endpoint (needed for FIPS endpoints)                    |
 
-|                   |                  |                                                               |
-| ----------------- | ---------------- | ------------------------------------------------------------- |
-| **Name** provider | **Type** "azure" | **Description**                                               |
-| keyVaultEndpoint  | String           | Required key vault endpoint. (e.g. "example.vault.azure.net") |
-| keyName           | String           | Required key name.                                            |
-| keyVersion        | String           | Optional key version.                                         |
+|                  |          |                                                               |
+| ---------------- | -------- | ------------------------------------------------------------- |
+| **Name**         | **Type** | **Description**                                               |
+| provider         | "azure"  |                                                               |
+| keyVaultEndpoint | String   | Required key vault endpoint. (e.g. "example.vault.azure.net") |
+| keyName          | String   | Required key name.                                            |
+| keyVersion       | String   | Optional key version.                                         |
 
-|                   |                |                                                                  |
-| ----------------- | -------------- | ---------------------------------------------------------------- |
-| **Name** provider | **Type** "gcp" | **Description**                                                  |
-| projectId         | String         | Required project ID.                                             |
-| location          | String         | Required location name (e.g. "global")                           |
-| keyRing           | String         | Required key ring name.                                          |
-| keyName           | String         | Required key name.                                               |
-| keyVersion        | String         | Optional key version.                                            |
-| endpoint          | String         | Optional, KMS URL, defaults to <https://cloudkms.googleapis.com> |
+|            |          |                                                                  |
+| ---------- | -------- | ---------------------------------------------------------------- |
+| **Name**   | **Type** | **Description**                                                  |
+| provider   | "gcp"    |                                                                  |
+| projectId  | String   | Required project ID.                                             |
+| location   | String   | Required location name (e.g. "global")                           |
+| keyRing    | String   | Required key ring name.                                          |
+| keyName    | String   | Required key name.                                               |
+| keyVersion | String   | Optional key version.                                            |
+| endpoint   | String   | Optional, KMS URL, defaults to <https://cloudkms.googleapis.com> |
 
-|                   |                  |                 |
-| ----------------- | ---------------- | --------------- |
-| **Name** provider | **Type** "local" | **Description** |
+|          |          |                 |
+| -------- | -------- | --------------- |
+| **Name** | **Type** | **Description** |
+| provider | "local"  |                 |
 
-|                   |                 |                                                                                        |
-| ----------------- | --------------- | -------------------------------------------------------------------------------------- |
-| **Name** provider | **Type** "kmip" | **Description**                                                                        |
-| endpoint          | String          | Optional. Defaults to kmip.endpoint from KMS providers.                                |
-| keyId             | String          | Required. keyId is the Unique Identifier to a 96 byte KMIP Secret Data managed object. |
+|          |          |                                                                                        |
+| -------- | -------- | -------------------------------------------------------------------------------------- |
+| **Name** | **Type** | **Description**                                                                        |
+| provider | "kmip"   |                                                                                        |
+| endpoint | String   | Optional. Defaults to kmip.endpoint from KMS providers.                                |
+| keyId    | String   | Required. keyId is the Unique Identifier to a 96 byte KMIP Secret Data managed object. |
 
 Data keys are needed for encryption and decryption. They are identified in the intent-to-encrypt marking and ciphertext.
 Data keys may be retrieved by querying the "\_id" with a UUID or by querying the "keyAltName" with a string.
@@ -1973,7 +1983,9 @@ As it is now, a ClientEncryption and a MongoClient cannot share state (libmongoc
 mongocryptd). Foreseeably, they could share state if auto encryption was enabled by passing a ClientEncryption object
 like:
 
-db.getCollection ("coll", { autoEncrypt: { clientEncryption: clientEncryption } })
+```javascript
+db.getCollection("coll", { autoEncrypt: { clientEncryption: clientEncryption } })
+```
 
 But this would require a MongoCollection to peek into the internals of a ClientEncryption object. This is messy and
 language dependent to implement and makes mocking out the ClientEncryption difficult for tests.
