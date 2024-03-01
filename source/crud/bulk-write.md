@@ -20,7 +20,7 @@ defined in the CRUD specification and the
 **NOTE:** The types specified in this interface are similar to those used for the collection-level
 `bulkWrite` method. Statically typed drivers MUST NOT reuse any types they already define for the
 `MongoCollection.bulkWrite` interface and MUST introduce new types. If naming conflicts between
-types arise, drivers MAY prepend "Client" to the new type names (e.g. `ClientBulkWriteOptions`).
+types arise, drivers SHOULD prepend "Client" to the new type names (e.g. `ClientBulkWriteOptions`).
 
 ```typescript
 interface MongoClient {
@@ -297,8 +297,8 @@ class BulkWriteResult {
      * Indicates whether this write result was acknowledged. If not, then all other members of this
      * result will be undefined.
      *
-     * NOT REQUIRED TO IMPLEMENT. See [here](../crud/crud.md#write-results) for more guidance on
-     * modeling unacknowledged results.
+     * NOT REQUIRED TO IMPLEMENT. See the CRUD specification for more guidance on modeling
+     * unacknowledged results.
      */
     acknowledged: Boolean;
 
@@ -337,20 +337,17 @@ class BulkWriteResult {
     deletedCount: Int64;
 
     /**
-     * The results of each individual insert operation that was successfully performed. Results
-     * can be accessed by their index in the list of write models provided to bulkWrite.
+     * The results of each individual insert operation that was successfully performed.
      */
     insertResults: Map<Int64, InsertOneResult>;
 
     /**
-     * The results of each individual update operation that was successfully performed. Results
-     * can be accessed by their index in the list of write models provided to bulkWrite.
+     * The results of each individual update operation that was successfully performed.
      */
     updateResult: Map<Int64, UpdateResult>;
 
     /**
-     * The results of each individual delete operation that was successfully performed. Results
-     * can be accessed by their index in the list of write models provided to bulkWrite.
+     * The results of each individual delete operation that was successfully performed.
      */
     deleteResults: Map<Int64, DeleteResult>;
 }
@@ -505,9 +502,9 @@ bulk writes, drivers MAY rely on the server to return an error if the document e
     "filter": <Document>,
     "updateMods": <Document | Array>,
     "multi": <Boolean>,
-    "upsert": <Boolean>,
-    "arrayFilters": <Array>,
-    "hint": <String>
+    "upsert": Optional<Boolean>,
+    "arrayFilters": Optional<Array>,
+    "hint": Optional<String>
 }
 ```
 
@@ -518,16 +515,16 @@ bulk writes, drivers MAY rely on the server to return an error if the document e
     "delete": <Int32>,
     "filter": <Document>,
     "multi": <boolean>,
-    "hint": <String>,
-    "collation": <Document>
+    "hint": Optional<String>,
+    "collation": Optional<Document>
 }
 ```
 
 ### Namespace Information
 
-The `nsInfo` field contains the namespaces on which the write operations should be performed.
-Drivers MUST NOT include duplicate namespaces in this list. The documents in the `nsInfo` field
-have the following format:
+The `nsInfo` field is an array containing the namespaces on which the write operations should be
+performed. Drivers MUST NOT include duplicate namespaces in this list. The documents in the
+`nsInfo` array have the following format:
 
 ```json
 {

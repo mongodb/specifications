@@ -183,11 +183,14 @@ tests:
         events:
           - commandStartedEvent:
               commandName: bulkWrite
+              databaseName: admin
               command:
                 bulkWrite: 1
+                errorsOnly: false
+                ordered: true
                 ops:
                   - insert: 0
-                    document: { x: 1 }
+                    document: { _id: 6, x: 6 }
                 nsInfo:
                   - { ns: *namespace }
                 <<: *expectedApiVersion

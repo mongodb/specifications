@@ -232,15 +232,15 @@ is 1. If the driver exposes `operationId`s in its CommandStartedEvents, assert t
 
 ### 4. `MongoClient.bulkWrite` handles a `writeModels` input larger than `maxBsonObjectSize`
 
-Test that `MongoClient.bulkWrite` properly handles a `writeModels` input for which the sum of the models' entries in the
-`ops` array exceeds `maxBsonObjectSize`.
+Test that `MongoClient.bulkWrite` properly handles a `writeModels` input which constructs an `ops` array larger than
+`maxBsonObjectSize`.
 
 This test must only be run on 8.0+ servers.
 
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the following values from the response:
-`maxBsonObjectSize` and `maxMessageSizeBytes`. Then, construct the following document (referred to as `document`):
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value contained in the
+response. Then, construct the following document (referred to as `document`):
 
 ```json
 {

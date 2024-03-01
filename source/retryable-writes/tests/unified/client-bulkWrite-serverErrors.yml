@@ -2,7 +2,10 @@ description: "client bulkWrite retryable writes"
 schemaVersion: "1.20"
 runOnRequirements:
   - minServerVersion: "8.0"
-    topologies: [ replicaset ]
+    topologies:
+      - replicaset
+      - sharded
+      - load-balanced
 
 createEntities:
   - client:

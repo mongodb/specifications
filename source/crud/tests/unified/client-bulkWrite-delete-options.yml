@@ -1,5 +1,5 @@
 description: "client bulkWrite delete options"
-schemaVersion: "1.0"
+schemaVersion: "1.1"
 runOnRequirements:
   - minServerVersion: "8.0"
 
@@ -134,4 +134,3 @@ tests:
       - databaseName: *database0Name
         collectionName: *collection0Name
         documents: []
-              
