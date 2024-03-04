@@ -55,11 +55,15 @@ for (i, line) in enumerate(lines):
     if line.strip().startswith(':Minimum Server Version:'):
         lines[i] = '- ' + line.strip()[1:] + ''
 
-
     # Remove the "".. contents::" block - handled by GitHub UI.
     if line.strip() == '.. contents::':
         lines[i] = ''
 
+    # Replace curly quotes with regular quotes.
+    line = line.replace('”', '"')
+    line = line.replace('“', '"')
+    line = line.replace('’', "'")
+    line = line.replace('‘', "'")
 
 # Run pandoc and capture output.
 proc = subprocess.Popen(['pandoc', '-f', 'rst', '-t', 'gfm'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
