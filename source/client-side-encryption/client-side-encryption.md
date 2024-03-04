@@ -278,7 +278,7 @@ libmongocrypt is a C library providing crypto and coordination with external com
   - decrypting encrypted data keys with KMS over TLS.
 - doing I/O asynchronously as needed.
 
-See [Why require including a C library?](#why-require-including-a-c-library).
+See [Why require including a C library?](#why-require-including-a-c-library)
 
 ## User facing API
 
@@ -348,7 +348,7 @@ Explicit encryption/decryption and automatic decryption is a community feature. 
 bypassAutoEncryption=true will still automatically decrypt.
 
 Drivers MUST document that auto encryption requires the authenticated user to have the listCollections privilege action
-by including the following in the driver documentation for MongoClient.
+by including the following in the driver documentation for MongoClient:
 
 > Automatic encryption requires the authenticated user to have the
 > [listCollections privilege action](https://www.mongodb.com/docs/manual/reference/command/listCollections/#dbcmd.listCollections).
@@ -835,7 +835,7 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 
 > \[!NOTE\]
 >
-> Users are not expected to set the `escCollection` and `ecocCollection` in `encryptedFields`. SERVER-74069 added
+> Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`. [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added
 > server-side validation for those fields and no longer allows names to deviate from the following:
 >
 > - `enxcol_.<collectionName>.esc`
@@ -905,7 +905,7 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 
 > \[!NOTE\]
 >
-> Users are not expected to set the `escCollection` and `ecocCollection` in `encryptedFields`. SERVER-74069 added
+> Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`. [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added
 > server-side validation for those fields and no longer allows names to deviate from the following:
 >
 > - `enxcol_.<collectionName>.esc`
@@ -1023,7 +1023,7 @@ an API for explicitly encrypting and decrypting values, and managing data keys i
 See
 [Why do we have a separate top level type for ClientEncryption?](#why-do-we-have-a-separate-top-level-type-for-clientencryption)
 and
-[Why do we need to pass a client to create a ClientEncryption?](#why-do-we-need-to-pass-a-client-to-create-a-clientencryption).
+[Why do we need to pass a client to create a ClientEncryption?](#why-do-we-need-to-pass-a-client-to-create-a-clientencryption)
 
 When implementing behavior and error handling for key vault functions, Drivers SHOULD assume the presence of a unique
 index in the key vault collection on the `keyAltNames` field with a partial index filter for only documents where
@@ -1032,7 +1032,7 @@ enforce the existence of the unique index, but MUST still be capable of handling
 yield.
 
 See
-[Why aren't we creating a unique index in the key vault collection?](#why-arent-we-creating-a-unique-index-in-the-key-vault-collection).
+[Why aren't we creating a unique index in the key vault collection?](#why-arent-we-creating-a-unique-index-in-the-key-vault-collection)
 
 ### DataKeyOpts
 
@@ -1154,7 +1154,7 @@ rewrap, no bulk write operation will be executed and this field will be unset. T
 write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.md#write-results).
 
 See
-[Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?](#why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult).
+[Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?](#why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult)
 
 ### EncryptOpts
 
@@ -1325,7 +1325,7 @@ implementation.
 Although auto encryption does not work on views, users may still use explicit encrypt and decrypt functions on views on
 a MongoClient without auto encryption enabled.
 
-See [Why do operations on views fail?](#why-do-operations-on-views-fail).
+See [Why do operations on views fail?](#why-do-operations-on-views-fail)
 
 ## Implementation
 
@@ -1378,7 +1378,7 @@ search criteria that are provided by the driver.
 [search paths](#search-paths) in which to search for the [crypt_shared](#crypt_shared) dynamic library. The user-facing
 API does not expose this full search path functionality. This extended search path customization is intended to
 facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
-[Search Paths for Testing](#search-paths-for-testing) and `Path Resolution Behavior`).
+[Search Paths for Testing](#search-paths-for-testing) and [Path Resolution Behavior](#path-resolution-behavior)).
 
 > \[!NOTE\]
 >
@@ -1559,17 +1559,17 @@ NOT attempt to spawn or connect to `mongocryptd`.
 
 ### Spawning [mongocryptd](#mongocryptd)
 
-If a MongoClient is configured for Client Side Encryption (eg. bypassAutoEncryption=false), then by default (unless
-mongocryptdBypassSpawn=true), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line argument
---idleShutdownTimeoutSecs. If the user does not supply one through extraOptions.mongocryptdSpawnArgs (which may be
-either in the form "--idleShutdownTimeoutSecs=60" or as two consecutive arguments `["--idleShutdownTimeoutSecs", 60]`,
-then the driver MUST append --idleShutdownTimeoutSecs=60 to the arguments. This tells mongocryptd to automatically
+If a MongoClient is configured for Client Side Encryption (eg. `bypassAutoEncryption=false`), then by default (unless
+`mongocryptdBypassSpawn=true`), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line argument
+`--idleShutdownTimeoutSecs`. If the user does not supply one through `extraOptions.mongocryptdSpawnArgs` (which may be
+either in the form `--idleShutdownTimeoutSecs=60` or as two consecutive arguments `["--idleShutdownTimeoutSecs", 60]`,
+then the driver MUST append `--idleShutdownTimeoutSecs=60` to the arguments. This tells mongocryptd to automatically
 terminate after 60 seconds of non-use. The stdout and stderr of the spawned process MUST not be exposed in the driver
-(e.g. redirect to /dev/null). Users can pass the argument --logpath to extraOptions.mongocryptdSpawnArgs if they need to
+(e.g. redirect to `/dev/null`). Users can pass the argument `--logpath` to `extraOptions.mongocryptdSpawnArgs` if they need to
 inspect mongocryptd logs.
 
 Upon construction, the MongoClient MUST create a MongoClient to mongocryptd configured with
-serverSelectionTimeoutMS=10000.
+`serverSelectionTimeoutMS=10000`.
 
 If spawning is necessary, the driver MUST spawn mongocryptd whenever server selection on the MongoClient to mongocryptd
 fails. If the MongoClient fails to connect after spawning, the server selection error is propagated to the user.
@@ -1580,12 +1580,12 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 [mongocryptd](#mongocryptd). (Refer: [Detecting crypt_shared Availability](#detecting-crypt_shared-availability)).
 
 Single-threaded drivers MUST connect with
-[serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce) , connectTimeoutMS=10000,
+[serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce), `connectTimeoutMS=10000`,
 and MUST bypass [cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms) when
 connecting to mongocryptd. See
-[Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd).
+[Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
-If the ClientEncryption is configured with mongocryptdBypassSpawn=true, then the driver is not responsible for spawning
+If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for spawning
 mongocryptd. If server selection ever fails when connecting to mongocryptd, the server selection error is propagated to
 the user.
 
@@ -1651,7 +1651,7 @@ message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2"
 
 Note, all client side features (including all of `ClientEncryption`) are only supported against 4.2 or higher servers.
 However, errors are only raised for automatic encryption/decryption against older servers. See
-[Why is a 4.2 server required?](#why-is-a-42-server-required).
+[Why is a 4.2 server required?](#why-is-a-42-server-required)
 
 ## Interaction with Command Monitoring
 
@@ -2129,9 +2129,10 @@ Because single threaded drivers may exceed `serverSelectionTimeoutMS` by the dur
 
 ### What's the deal with metadataClient, keyVaultClient, and the internal client?
 
-When automatically encrypting a command, the driver runs: - a `listCollections` command to determine if the target
-collection has a remote schema. This uses the `metadataClient`. - a `find` against the key vault collection to fetch
-keys. This uses the `keyVaultClient`.
+When automatically encrypting a command, the driver runs:
+
+- a `listCollections` command to determine if the target collection has a remote schema. This uses the `metadataClient`.
+- a `find` against the key vault collection to fetch keys. This uses the `keyVaultClient`.
 
 #### Why not reuse the parent MongoClient when maxPoolSize is limited?
 
