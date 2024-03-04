@@ -217,8 +217,8 @@ corresponding namespace that defines the collection on which the operation shoul
 Drivers SHOULD design this pairing in whichever way is most ergonomic for its language. For
 example, drivers may:
 
-- Include a required `namespace` field on each `WriteModel` variant
-- Accept a list of `(Namespace, WriteModel)` tuples for `models`
+- Include a required `namespace` field on each `WriteModel` variant.
+- Accept a list of `(Namespace, WriteModel)` tuples for `models`.
 - Define the following pair class:
 
 ```typescript
@@ -545,12 +545,14 @@ whether the user specified a value for `verboseResults`.
 
 ## Command Batching
 
-Drivers MUST accept an arbitrary number of operations as input to the `Client.bulkWrite` method.
+Drivers MUST accept an arbitrary number of operations as input to the `MongoClient.bulkWrite` method.
 Because the server imposes restrictions on the size of write operations, this means that a single
 call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server.
 Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds
 one or more of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize`, and `maxMessageSizeBytes`.
-Each of these values can be retrieved from the selected server's `hello` command response.
+Each of these values can be retrieved from the selected server's `hello` command response. Drivers
+MUST merge results from multiple batches into a single `BulkWriteResult` or `BulkWriteException`
+to return from `MongoClient.bulkWrite`.
 
 ### Number of Writes
 
@@ -570,8 +572,8 @@ defined in the
 When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the total size
 of the `OP_MSG` built for the `bulkWrite` command does not exceed `maxMessageSizeBytes`. Some
 drivers may perform batch-splitting prior to constructing the full `OP_MSG` to be sent to the
-server. In this case, drivers MAY use `maxMessageSizeBytes - 16,000` as the upper bound for the
-combined number of bytes in `ops` and `nsInfo`. 16KB is subtracted to accommodate for the bytes in
+server. In this case, drivers MAY use `maxMessageSizeBytes - 16,384` as the upper bound for the
+combined number of bytes in `ops` and `nsInfo`. 16KiB is subtracted to accommodate for the bytes in
 the rest of the message.
 
 #### Unencrypted bulk writes without document sequences
@@ -604,7 +606,8 @@ The server's response to `bulkWrite` has the following format:
 
 If any operations were successful (i.e. `nErrors` is less than the number of operations that were
 sent), drivers MUST record the summary count fields in a `BulkWriteResult` to be returned to the
-user or embedded in a `BulkWriteException`.
+user or embedded in a `BulkWriteException`. Drivers MUST NOT populate the `partialResult` field in
+`BulkWriteException` if no operations were successful.
 
 Drivers MUST attempt to consume the contents of the cursor returned in the server's `bulkWrite`
 response before returning to the user. This is required regardless of whether the user requested

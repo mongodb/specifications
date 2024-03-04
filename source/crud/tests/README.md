@@ -280,9 +280,9 @@ command. For both `firstEvent` and `secondEvent`, assert that the length of `com
 
 ### 5. `MongoClient.bulkWrite` with document sequences handles a `bulkWrite` message larger than `maxMessageSizeBytes`
 
-Test that `MongoClient.bulkWrite` properly handles a `writeModels` input for which the sum of the models' entries in the
-`ops` array exceeds `maxMessageSizeBytes`. Drivers that do not use document sequences (`OP_MSG` payload type 1) for bulk
-writes should not implement this test.
+Test that `MongoClient.bulkWrite` properly handles a `writeModels` input which constructs an `ops` array larger than
+`maxMessageSizeBytes`. Drivers that do not use document sequences (`OP_MSG` payload type 1) for bulk writes should
+not implement this test.
 
 This test must only be run on 8.0+ servers.
 
@@ -314,7 +314,6 @@ Construct as list of write models (referred to as `models`) with `model` repeate
 `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult` with
 an `insertedCount` value of `numModels`.
 
-Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed. Record the length of
-`firstEvent.command.ops` as `firstOpsLen`. Record the length of `secondEvent.command.ops` as `secondOpsLen`. Assert that
-`firstOpsLen + secondOpsLen` is equal to `numModels`. If the driver exposes `operationId`s in its CommandStartedEvents,
-assert that `firstEvent.operationId` is equal to `secondEvent.operationId`.
+Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed. Assert that the sum
+of the lengths of `firstEvent.command.ops` and `secondEvent.command.ops` is equal to `numModels`. If the driver exposes
+`operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to `secondEvent.operationId`.
