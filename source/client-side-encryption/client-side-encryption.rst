@@ -1,10 +1,17 @@
+
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `client-side-encryption.md <client-side-encryption.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 ======================
 Client Side Encryption
 ======================
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2024-01-10
 :Version: 1.13.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -2204,12 +2211,6 @@ collections (e.g. aggregate with $lookup) are handled properly.
 Test Plan
 =========
 See the `README.rst <../client-side-encryption/tests/README.rst>`_ in the test directory.
-
-
-.. toctree::
-   :maxdepth: 2
-
-   ./tests/README
 
 
 Rationale
