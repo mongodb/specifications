@@ -1325,7 +1325,7 @@ implementation.
 Although auto encryption does not work on views, users may still use explicit encrypt and decrypt functions on views on
 a MongoClient without auto encryption enabled.
 
-See [Why do operations on views fail?](#why-do-operations-on-views-fail).
+See [Why do operations on views fail?](#why-do-operations-on-views-fail)
 
 ## Implementation
 
