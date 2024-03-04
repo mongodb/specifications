@@ -1154,7 +1154,7 @@ rewrap, no bulk write operation will be executed and this field will be unset. T
 write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.md#write-results).
 
 See
-[Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?](#why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult).
+[Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?](#why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult)
 
 ### EncryptOpts
 
