@@ -23,24 +23,24 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Terms
 
-encrypted MongoClient\
+**encrypted MongoClient**\
 A MongoClient with client side encryption enabled.
 
-data key\
-A key used to encrypt and decrypt BSON values. Data keys are encrypted with a key management service (e.g. AWS
-KMS) and stored within a document in the MongoDB key vault collection (see
+**data key**\
+A key used to encrypt and decrypt BSON values. Data keys are encrypted with a key management service (e.g.
+AWS KMS) and stored within a document in the MongoDB key vault collection (see
 [Key vault collection schema for data keys](#key-vault-collection-schema-for-data-keys) for a description of the data
 key document). Therefore, a client needs access to both MongoDB and the external KMS service to utilize a data key.
 
-MongoDB key vault collection\
-A MongoDB collection designated to contain data keys. This can either be co-located with
-the data-bearing cluster, or in a separate external MongoDB cluster.
+**MongoDB key vault collection**\
+A MongoDB collection designated to contain data keys. This can either be co-located
+with the data-bearing cluster, or in a separate external MongoDB cluster.
 
-Key Management Service (KMS)\
+**Key Management Service (KMS)**\
 An external service providing fixed-size encryption/decryption. Only data keys are
 encrypted and decrypted with KMS.
 
-KMS providers
+**KMS providers**\\
 
 > A map of KMS providers to credentials. Configured client-side. Example:
 >
@@ -56,37 +56,37 @@ KMS providers
 > }
 > ```
 
-KMS provider\
-A configured KMS. Identified by a key in the KMS providers map. The key has the form "<KMS provider type>"
-or "<KMS provider type>:<KMS
-provider name>". Examples: "aws" or "aws:myname". In [libmongocrypt](#libmongocrypt), the
-key is referred to as the KMS ID.
+**KMS provider**\
+A configured KMS. Identified by a key in the KMS providers map. The key has the form
+"<KMS provider type>" or "<KMS provider type>:<KMS
+provider name>". Examples: "aws" or "aws:myname". In
+[libmongocrypt](#libmongocrypt), the key is referred to as the KMS ID.
 
-KMS provider type\
+**KMS provider type**\
 The type of backing KMS. Identified by the string: "aws", "azure", "gcp", "kmip", or "local".
 
-KMS provider name\
-An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the same
-KMS provider type (e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
+**KMS provider name**\
+An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the
+same KMS provider type (e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
 
-Customer Master Key (CMK)\
+**Customer Master Key (CMK)**\
 The underlying key AWS KMS uses to encrypt and decrypt. See
 [AWS Key Management Service Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys).
 
-schema\
-A MongoDB JSON Schema (either supplied by the server or client-side) which may include metadata about encrypted
-fields. This is a JSON Schema based on draft 4 of the JSON Schema specification,
+**schema**\
+A MongoDB JSON Schema (either supplied by the server or client-side) which may include metadata about
+encrypted fields. This is a JSON Schema based on draft 4 of the JSON Schema specification,
 [as documented in the MongoDB manual.](https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/).
 
-[libmongocrypt](#libmongocrypt)\
-A library, written in C, that coordinates communication, does encryption/decryption,
-caches key and schemas. [Located here](https://github.com/mongodb/libmongocrypt).
+**[libmongocrypt](#libmongocrypt)**\
+A library, written in C, that coordinates communication, does
+encryption/decryption, caches key and schemas. [Located here](https://github.com/mongodb/libmongocrypt).
 
-[mongocryptd](#mongocryptd)\
+**[mongocryptd](#mongocryptd)**\
 A local process the driver communicates with to determine how to encrypt values in a
 command.
 
-[crypt_shared](#crypt_shared)\
+**[crypt_shared](#crypt_shared)**\
 This term, spelled in all-lowercase with an underscore, refers to the client-side
 field-level-encryption dynamic library provided as part of a MongoDB Enterprise distribution. It replaces
 [mongocryptd](#mongocryptd) as the method of
@@ -97,23 +97,23 @@ See also:
 > - [Introduction on crypt_shared](#crypt_shared)
 > - [Enabling crypt_shared](#enabling-crypt_shared)
 
-ciphertext\
+**ciphertext**\
 One of the data formats of
 [BSON binary subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst),
 representing an encoded BSON document containing encrypted ciphertext and metadata.
 
-FLE\
+**FLE**\
 FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the
 exception of server-side JSON schema.
 
-Queryable Encryption\
-Queryable Encryption the second version of Client-Side Field Level Encryption. Data is encrypted
-client-side. Queryable Encryption supports indexed encrypted fields, which are further processed server-side.
+**Queryable Encryption**\
+Queryable Encryption the second version of Client-Side Field Level Encryption. Data is
+encrypted client-side. Queryable Encryption supports indexed encrypted fields, which are further processed server-side.
 
-In-Use Encryption\
+**In-Use Encryption**\
 Is an umbrella term describing the both FLE and Queryable Encryption.
 
-encryptedFields\
+**encryptedFields**\
 A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON
 Schema in FLE. The following is an example encryptedFields in extended canonical JSON:
 
@@ -245,7 +245,7 @@ connect to [mongocryptd](#mongocryptd) and instead rely on [crypt_shared](#crypt
 
 [crypt_shared](#crypt_shared) is a dynamically-loaded C++ library providing query analysis for auto-encryption. It
 replaces [mongocryptd](#mongocryptd) for performing query analysis to -
-Ref:`mark-up sensitive fields within a command <subtype6.intent-to-encrypt>`.
+[mark-up sensitive fields within a command](./subtype6#intent-to-encrypt).
 
 Drivers are not required to load and interact with [crypt_shared](#crypt_shared) directly. Instead, they inform
 [libmongocrypt](#libmongocrypt) where to find [crypt_shared](#crypt_shared) and [libmongocrypt](#libmongocrypt) will
@@ -601,15 +601,15 @@ the VM, an identity can be used by obtaining an access token via HTTP from the *
 
 The below steps should be taken:
 
-1. Let `$U$` be a new URL, initialized from the URL string `"http://169.254.169.254/metadata/identity/oauth2/token"`
+01. Let `$U$` be a new URL, initialized from the URL string `"http://169.254.169.254/metadata/identity/oauth2/token"`
 
-2. Add a query parameter `api-version=2018-02-01` to `$U$`.
+02. Add a query parameter `api-version=2018-02-01` to `$U$`.
 
-3. Add a query parameter `resource=https://vault.azure.net/` to `$U$`.
+03. Add a query parameter `resource=https://vault.azure.net/` to `$U$`.
 
-4. Prepare an HTTP GET request `$Req$` based on `$U$`.
+04. Prepare an HTTP GET request `$Req$` based on `$U$`.
 
-> \[!NOTE\] All query parameters on `$U$` should be appropriately percent-encoded
+    > \[!NOTE\] All query parameters on `$U$` should be appropriately percent-encoded
 
 05. Add HTTP headers `Metadata: true` and `Accept: application/json` to `$Req$`.
 

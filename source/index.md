@@ -1,5 +1,6 @@
 # MongoDB Specifications
 
+- [BSON Binary Subtype 6](client-side-encryption/subtype6.md)
 - [BSON Corpus](bson-corpus/bson-corpus.md)
 - [BSON Decimal128 Type Handling in Drivers](bson-decimal128/decimal128.md)
 - [Causal Consistency Specification](causal-consistency/causal-consistency.md)

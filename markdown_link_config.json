@@ -17,6 +17,9 @@
       },
       {
         "pattern": "cloudkms.googleapis.com"
+      },
+      {
+        "pattern": "subtype6#intent-to-encrypt"
       }
     ]
 }
