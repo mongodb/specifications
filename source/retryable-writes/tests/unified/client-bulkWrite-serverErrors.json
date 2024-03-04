@@ -5,7 +5,9 @@
     {
       "minServerVersion": "8.0",
       "topologies": [
-        "replicaset"
+        "replicaset",
+        "sharded",
+        "load-balanced"
       ]
     }
   ],

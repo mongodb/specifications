@@ -32,6 +32,7 @@ _yamlAnchors:
   writeConcernError: &writeConcernError
     code: 91
     errmsg: "Replication is being shut down"
+  undefinedVarCode: &undefinedVarCode 17276 # Use of an undefined variable
 
 tests:
   - description: "an individual operation fails during an ordered bulkWrite"
@@ -66,7 +67,7 @@ tests:
                 deletedCount: 1
           writeErrors:
             1:
-              code: 17276 # Use of undefined variable
+              code: *undefinedVarCode
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -74,8 +75,6 @@ tests:
           - { _id: 2, x: 22 }
           - { _id: 3, x: 33 }
   - description: "an individual operation fails during an unordered bulkWrite"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -110,15 +109,13 @@ tests:
                 deletedCount: 1
           writeErrors:
             1:
-              code: 17276 # Use of undefined variable
+              code: *undefinedVarCode
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 2, x: 22 }
   - description: "detailed results are omitted from error when verboseResults is false"
-    runOnRequirements:
-      - minServerVersion: "8.0"
     operations:
       - object: *client0
         name: clientBulkWrite
@@ -151,11 +148,11 @@ tests:
               $$unsetOrMatches: {}
           writeErrors:
             1:
-              code: 17276 # Use of undefined variable
+              code: *undefinedVarCode
   - description: "a top-level failure occurs during a bulkWrite"
     operations:
-      - name: failPoint
-        object: testRunner
+      - object: testRunner
+        name: failPoint
         arguments:
           client: *client0
           failPoint:
@@ -176,6 +173,24 @@ tests:
           verboseResults: true
         expectError:
           errorCode: 8
+  - description: "a bulk write with only errors does not report a partial result"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          models:
+            - deleteOne:
+                namespace: *namespace
+                filter:
+                  $expr:
+                    $eq: [ "$_id", "$$id2" ] # Attempt to access a nonexistent let var
+          verboseResults: true
+        expectError:
+          expectResult:
+            $$unsetOrMatches: {} # Empty or nonexistent result when no successful writes occurred
+          writeErrors:
+            0:
+              code: *undefinedVarCode
   - description: "a write concern error occurs during a bulkWrite"
     operations:
       - name: failPoint
