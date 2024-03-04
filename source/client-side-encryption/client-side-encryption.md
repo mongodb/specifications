@@ -1651,7 +1651,7 @@ message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2"
 
 Note, all client side features (including all of `ClientEncryption`) are only supported against 4.2 or higher servers.
 However, errors are only raised for automatic encryption/decryption against older servers. See
-[Why is a 4.2 server required?](#why-is-a-42-server-required).
+[Why is a 4.2 server required?](#why-is-a-42-server-required)
 
 ## Interaction with Command Monitoring
 
