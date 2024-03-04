@@ -1032,7 +1032,7 @@ enforce the existence of the unique index, but MUST still be capable of handling
 yield.
 
 See
-[Why aren't we creating a unique index in the key vault collection?](#why-arent-we-creating-a-unique-index-in-the-key-vault-collection).
+[Why aren't we creating a unique index in the key vault collection?](#why-arent-we-creating-a-unique-index-in-the-key-vault-collection)
 
 ### DataKeyOpts
 
