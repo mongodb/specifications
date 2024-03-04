@@ -1378,7 +1378,7 @@ search criteria that are provided by the driver.
 [search paths](#search-paths) in which to search for the [crypt_shared](#crypt_shared) dynamic library. The user-facing
 API does not expose this full search path functionality. This extended search path customization is intended to
 facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
-[Search Paths for Testing](#search-paths-for-testing) and `Path Resolution Behavior`).
+[Search Paths for Testing](#search-paths-for-testing) and [Path Resolution Behavior](#path-resolution-behavior)).
 
 > \[!NOTE\]
 >
