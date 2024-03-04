@@ -2129,9 +2129,10 @@ Because single threaded drivers may exceed `serverSelectionTimeoutMS` by the dur
 
 ### What's the deal with metadataClient, keyVaultClient, and the internal client?
 
-When automatically encrypting a command, the driver runs: - a `listCollections` command to determine if the target
-collection has a remote schema. This uses the `metadataClient`. - a `find` against the key vault collection to fetch
-keys. This uses the `keyVaultClient`.
+When automatically encrypting a command, the driver runs:
+
+- a `listCollections` command to determine if the target collection has a remote schema. This uses the `metadataClient`.
+- a `find` against the key vault collection to fetch keys. This uses the `keyVaultClient`.
 
 #### Why not reuse the parent MongoClient when maxPoolSize is limited?
 
