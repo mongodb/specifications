@@ -1559,17 +1559,17 @@ NOT attempt to spawn or connect to `mongocryptd`.
 
 ### Spawning [mongocryptd](#mongocryptd)
 
-If a MongoClient is configured for Client Side Encryption (eg. bypassAutoEncryption=false), then by default (unless
-mongocryptdBypassSpawn=true), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line argument
---idleShutdownTimeoutSecs. If the user does not supply one through extraOptions.mongocryptdSpawnArgs (which may be
-either in the form "--idleShutdownTimeoutSecs=60" or as two consecutive arguments `["--idleShutdownTimeoutSecs", 60]`,
-then the driver MUST append --idleShutdownTimeoutSecs=60 to the arguments. This tells mongocryptd to automatically
+If a MongoClient is configured for Client Side Encryption (eg. `bypassAutoEncryption=false`), then by default (unless
+`mongocryptdBypassSpawn=true`), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line argument
+`--idleShutdownTimeoutSecs`. If the user does not supply one through `extraOptions.mongocryptdSpawnArgs` (which may be
+either in the form `--idleShutdownTimeoutSecs=60` or as two consecutive arguments `["--idleShutdownTimeoutSecs", 60]`,
+then the driver MUST append `--idleShutdownTimeoutSecs=60` to the arguments. This tells mongocryptd to automatically
 terminate after 60 seconds of non-use. The stdout and stderr of the spawned process MUST not be exposed in the driver
-(e.g. redirect to /dev/null). Users can pass the argument --logpath to extraOptions.mongocryptdSpawnArgs if they need to
+(e.g. redirect to `/dev/null`). Users can pass the argument `--logpath` to `extraOptions.mongocryptdSpawnArgs` if they need to
 inspect mongocryptd logs.
 
 Upon construction, the MongoClient MUST create a MongoClient to mongocryptd configured with
-serverSelectionTimeoutMS=10000.
+`serverSelectionTimeoutMS=10000`.
 
 If spawning is necessary, the driver MUST spawn mongocryptd whenever server selection on the MongoClient to mongocryptd
 fails. If the MongoClient fails to connect after spawning, the server selection error is propagated to the user.
