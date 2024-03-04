@@ -1023,7 +1023,7 @@ an API for explicitly encrypting and decrypting values, and managing data keys i
 See
 [Why do we have a separate top level type for ClientEncryption?](#why-do-we-have-a-separate-top-level-type-for-clientencryption)
 and
-[Why do we need to pass a client to create a ClientEncryption?](#why-do-we-need-to-pass-a-client-to-create-a-clientencryption).
+[Why do we need to pass a client to create a ClientEncryption?](#why-do-we-need-to-pass-a-client-to-create-a-clientencryption)
 
 When implementing behavior and error handling for key vault functions, Drivers SHOULD assume the presence of a unique
 index in the key vault collection on the `keyAltNames` field with a partial index filter for only documents where
