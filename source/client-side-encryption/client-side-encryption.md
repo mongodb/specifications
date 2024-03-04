@@ -278,7 +278,7 @@ libmongocrypt is a C library providing crypto and coordination with external com
   - decrypting encrypted data keys with KMS over TLS.
 - doing I/O asynchronously as needed.
 
-See [Why require including a C library?](#why-require-including-a-c-library).
+See [Why require including a C library?](#why-require-including-a-c-library)
 
 ## User facing API
 
