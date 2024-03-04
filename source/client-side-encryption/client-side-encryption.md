@@ -1580,12 +1580,12 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 [mongocryptd](#mongocryptd). (Refer: [Detecting crypt_shared Availability](#detecting-crypt_shared-availability)).
 
 Single-threaded drivers MUST connect with
-[serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce) , connectTimeoutMS=10000,
+[serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce), `connectTimeoutMS=10000`,
 and MUST bypass [cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms) when
 connecting to mongocryptd. See
-[Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd).
+[Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
-If the ClientEncryption is configured with mongocryptdBypassSpawn=true, then the driver is not responsible for spawning
+If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for spawning
 mongocryptd. If server selection ever fails when connecting to mongocryptd, the server selection error is propagated to
 the user.
 
