@@ -348,7 +348,7 @@ Explicit encryption/decryption and automatic decryption is a community feature. 
 bypassAutoEncryption=true will still automatically decrypt.
 
 Drivers MUST document that auto encryption requires the authenticated user to have the listCollections privilege action
-by including the following in the driver documentation for MongoClient.
+by including the following in the driver documentation for MongoClient:
 
 > Automatic encryption requires the authenticated user to have the
 > [listCollections privilege action](https://www.mongodb.com/docs/manual/reference/command/listCollections/#dbcmd.listCollections).
