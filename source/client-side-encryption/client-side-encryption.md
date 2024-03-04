@@ -835,7 +835,7 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 
 > \[!NOTE\]
 >
-> Users are not expected to set the `escCollection` and `ecocCollection` in `encryptedFields`. SERVER-74069 added
+> Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`. [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added
 > server-side validation for those fields and no longer allows names to deviate from the following:
 >
 > - `enxcol_.<collectionName>.esc`
