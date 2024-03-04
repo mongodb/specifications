@@ -822,7 +822,7 @@ collection, and `$askDb$` is a boolean value. The resulting `encryptedFields` `$
    1. Issue a `listCollections` command against the database named by $dbName$, filtered by `{name: <collName>}`. Let
       the result be the document `$L$`.
    2. If `$L$` contains an `options` document element, and that element contains an `encryptedFields` document element,
-      `$EF$` is `$L$` `\["options"]["encryptedFields"]`.
+      `$EF$` is `$L$` `["options"]["encryptedFields"]`.
    3. Otherwise, $EF$ is *not-found*
 5. Otherwise, $EF$ is considered *not-found*.
 
@@ -835,8 +835,9 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 
 > \[!NOTE\]
 >
-> Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`. [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added
-> server-side validation for those fields and no longer allows names to deviate from the following:
+> Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`.
+> [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added server-side validation for those fields and no
+> longer allows names to deviate from the following:
 >
 > - `enxcol_.<collectionName>.esc`
 > - `enxcol_.<collectionName>.ecoc`
@@ -905,8 +906,9 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 
 > \[!NOTE\]
 >
-> Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`. [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added
-> server-side validation for those fields and no longer allows names to deviate from the following:
+> Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`.
+> [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added server-side validation for those fields and no
+> longer allows names to deviate from the following:
 >
 > - `enxcol_.<collectionName>.esc`
 > - `enxcol_.<collectionName>.ecoc`
@@ -1450,8 +1452,8 @@ options in [extraOptions](#extraoptions):
   locations.
 
 - If [libmongocrypt](#libmongocrypt) fails to load the [crypt_shared](#crypt_shared) library after searching the system
-  (and no \[override path\](#override path) is specified), [libmongocrypt](#libmongocrypt) will proceed without error
-  and presume that [crypt_shared](#crypt_shared) is unavailable.
+  (and no [override path](#override-path) is specified), [libmongocrypt](#libmongocrypt) will proceed without error and
+  presume that [crypt_shared](#crypt_shared) is unavailable.
 
 #### Search Paths for Testing
 
@@ -1560,13 +1562,13 @@ NOT attempt to spawn or connect to `mongocryptd`.
 ### Spawning [mongocryptd](#mongocryptd)
 
 If a MongoClient is configured for Client Side Encryption (eg. `bypassAutoEncryption=false`), then by default (unless
-`mongocryptdBypassSpawn=true`), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line argument
-`--idleShutdownTimeoutSecs`. If the user does not supply one through `extraOptions.mongocryptdSpawnArgs` (which may be
-either in the form `--idleShutdownTimeoutSecs=60` or as two consecutive arguments `["--idleShutdownTimeoutSecs", 60]`,
-then the driver MUST append `--idleShutdownTimeoutSecs=60` to the arguments. This tells mongocryptd to automatically
-terminate after 60 seconds of non-use. The stdout and stderr of the spawned process MUST not be exposed in the driver
-(e.g. redirect to `/dev/null`). Users can pass the argument `--logpath` to `extraOptions.mongocryptdSpawnArgs` if they need to
-inspect mongocryptd logs.
+`mongocryptdBypassSpawn=true`), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line
+argument `--idleShutdownTimeoutSecs`. If the user does not supply one through `extraOptions.mongocryptdSpawnArgs` (which
+may be either in the form `--idleShutdownTimeoutSecs=60` or as two consecutive arguments
+`["--idleShutdownTimeoutSecs", 60]`, then the driver MUST append `--idleShutdownTimeoutSecs=60` to the arguments. This
+tells mongocryptd to automatically terminate after 60 seconds of non-use. The stdout and stderr of the spawned process
+MUST not be exposed in the driver (e.g. redirect to `/dev/null`). Users can pass the argument `--logpath` to
+`extraOptions.mongocryptdSpawnArgs` if they need to inspect mongocryptd logs.
 
 Upon construction, the MongoClient MUST create a MongoClient to mongocryptd configured with
 `serverSelectionTimeoutMS=10000`.
@@ -1580,14 +1582,15 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 [mongocryptd](#mongocryptd). (Refer: [Detecting crypt_shared Availability](#detecting-crypt_shared-availability)).
 
 Single-threaded drivers MUST connect with
-[serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce), `connectTimeoutMS=10000`,
-and MUST bypass [cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms) when
-connecting to mongocryptd. See
+[serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce),
+`connectTimeoutMS=10000`, and MUST bypass
+[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms) when connecting to
+mongocryptd. See
 [Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
-If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for spawning
-mongocryptd. If server selection ever fails when connecting to mongocryptd, the server selection error is propagated to
-the user.
+If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for
+spawning mongocryptd. If server selection ever fails when connecting to mongocryptd, the server selection error is
+propagated to the user.
 
 > \[!NOTE\]
 >
