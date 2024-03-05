@@ -138,18 +138,18 @@ class ChangeStreamDocument {
   operationDescription: Optional<Document>
 
   /**
-   * Only present for ops of type "insert", "update", "replace", and
-   * "delete".
+   * Only present for ops of type 'insert', 'update', 'replace', and
+   * 'delete'.
    *
    * For unsharded collections this contains a single field, _id, with the
    * value of the _id of the document updated.  For sharded collections,
    * this will contain all the components of the shard key in order,
-   * followed by the _id if the _id isn"t part of the shard key.
+   * followed by the _id if the _id isn't part of the shard key.
    */
   documentKey: Optional<Document>;
 
   /**
-   * Only present for ops of type "update".
+   * Only present for ops of type 'update'.
    */
   updateDescription: Optional<UpdateDescription>;
 
@@ -257,7 +257,7 @@ class UpdateDescription {
 
   /**
    * Truncations of arrays may be reported using one of the following methods:
-   * either via this field or via the "updatedFields" field. In the latter case the entire array is considered to be replaced.
+   * either via this field or via the 'updatedFields' field. In the latter case the entire array is considered to be replaced.
    *
    * The structure of documents in this field is
    *   {
@@ -556,7 +556,7 @@ in the pipeline supplied to the helper), as the server will return an error.
 
 The helper methods MUST determine a read concern for the operation in accordance with the
 [Read and Write Concern specification](https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code).
-The initial implementation of change streams on the server requires a "majority" read concern or no read concern.
+The initial implementation of change streams on the server requires a 'majority' read concern or no read concern.
 Drivers MUST document this requirement. Drivers SHALL NOT throw an exception if any other read concern is specified, but
 instead should depend on the server to return an error.
 
