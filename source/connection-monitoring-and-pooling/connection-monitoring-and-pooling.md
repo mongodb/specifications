@@ -14,8 +14,8 @@ This specification does not apply to drivers that do not support multitasking.
 
 ## META
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and
-“OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Definitions
 
@@ -209,7 +209,7 @@ interface Connection {
   address: string;
 
   /**
-   *  An integer representing the “generation” of the pool
+   *  An integer representing the "generation" of the pool
    *  when this Connection was created.
    */
   generation: number;
@@ -431,8 +431,8 @@ connections before observing the PoolReadyEvent event.
 
 #### Creating a Connection (Internal Implementation)
 
-When creating a [Connection](#connection), the initial [Connection](#connection) is in a “pending” state. This only
-creates a “virtual” [Connection](#connection), and performs no I/O.
+When creating a [Connection](#connection), the initial [Connection](#connection) is in a "pending" state. This only
+creates a "virtual" [Connection](#connection), and performs no I/O.
 
 ```
 connection = new Connection()
@@ -772,7 +772,7 @@ implemented, drivers SHOULD use this method as the default method of checking ou
 
 All drivers that implement a connection pool MUST provide an API that allows users to subscribe to events emitted from
 the pool. If a user subscribes to Connection Monitoring events, these events MUST be emitted when specified in
-“Connection Pool Behaviors”. Events SHOULD be created and subscribed to in a manner idiomatic to their language and
+"Connection Pool Behaviors". Events SHOULD be created and subscribed to in a manner idiomatic to their language and
 driver.
 
 #### Events
@@ -1004,7 +1004,7 @@ logging.
 
 Drivers MUST support logging of connection pool information via the following types of log messages. These messages MUST
 be logged at `Debug` level and use the `connection` log component. These messages MUST be emitted when specified in
-“Connection Pool Behaviors”.
+"Connection Pool Behaviors".
 
 The log messages are intended to match the information contained in the events above. Drivers MAY implement connection
 logging support via an event subscriber if it is convenient to do so.
@@ -1241,7 +1241,7 @@ Step-Down, which will be further addressed in our [Advanced Pooling Behaviors](#
 
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
-- ConnectionCreated adds a new “pending” [Connection](#connection), meaning the totalConnectionCount and
+- ConnectionCreated adds a new "pending" [Connection](#connection), meaning the totalConnectionCount and
   pendingConnectionCount increase by one
 - ConnectionReady establishes that the [Connection](#connection) is ready for use, meaning the availableConnectionCount
   increases by one
@@ -1352,8 +1352,8 @@ them.
 
 ### SDAM
 
-This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that “A monitor SHOULD
-NOT use the client's regular Connection pool”. Some possible solutions for this include:
+This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that "A monitor SHOULD
+NOT use the client's regular Connection pool". Some possible solutions for this include:
 
 - Having each Endpoint representation in the driver create and manage a separate dedicated [Connection](#connection) for
   monitoring purposes

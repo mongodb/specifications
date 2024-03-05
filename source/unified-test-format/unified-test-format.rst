@@ -47,7 +47,7 @@ This test format can be used to define tests for the following specifications:
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `Command Logging and Monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
 - `CRUD <../crud/crud.rst>`__
-- `GridFS <../gridfs/gridfs-spec.rst>`__
+- `GridFS <../gridfs/gridfs-spec.md>`__
 - `Retryable Reads <../retryable-reads/retryable-reads.md>`__
 - `Retryable Writes <../retryable-writes/retryable-writes.rst>`__
 - `Sessions <../sessions/driver-sessions.rst>`__
@@ -472,8 +472,8 @@ The structure of this object is as follows:
 
    - Server version is 4.2.0 or higher
    - Driver has libmongocrypt enabled
-   - At least one of `crypt_shared <../client-side-encryption/client-side-encryption.rst#crypt-shared>`__
-     and/or `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`__
+   - At least one of `crypt_shared <../client-side-encryption/client-side-encryption.md#crypt_shared>`__
+     and/or `mongocryptd <../client-side-encryption/client-side-encryption.md#mongocryptd>`__
      is available
 
   If false, tests MUST NOT run if CSFLE is supported. If this field is omitted,
@@ -681,7 +681,7 @@ The structure of this object is as follows:
 
   - ``clientEncryptionOpts``: Required document. A value corresponding to a
     `ClientEncryptionOpts
-    <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
+    <../client-side-encryption/client-side-encryption.md#clientencryption>`__.
 
     Note: the ``tlsOptions`` document is intentionally omitted from the test
     format. However, drivers MAY internally configure TLS options as needed to
@@ -791,7 +791,7 @@ The structure of this object is as follows:
 .. _entity_bucket:
 
 - ``bucket``: Optional object. Defines a Bucket object, as defined in the
-  `GridFS <../gridfs/gridfs-spec.rst>`__ spec.
+  `GridFS <../gridfs/gridfs-spec.md>`__ spec.
 
   The structure of this object is as follows:
 
@@ -804,7 +804,7 @@ The structure of this object is as follows:
 
   - ``bucketOptions``: Optional object. Additional options used to construct
     the bucket object. Supported options are defined in the
-    `GridFS <../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
+    `GridFS <../gridfs/gridfs-spec.md#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
 
@@ -1781,7 +1781,7 @@ ClientEncryption Operations
 These operations and their arguments may be documented in the following
 specifications:
 
-- `Client Side Encryption <../client-side-encryption/client-side-encryption.rst>`__
+- `Client Side Encryption <../client-side-encryption/client-side-encryption.md>`__
 
 Operations that require sending and receiving KMS requests to encrypt or decrypt
 data keys may require appropriate KMS credentials to be loaded by the driver.
@@ -1795,7 +1795,7 @@ Drivers MUST be running the mock `KMS KMIP server
 when evaluating tests that require KMS requests to a KMIP KMS provider.
 
 Drivers MAY enforce a unique index on ``keyAltNames`` as described in the
-`Client Side Field Level Encryption spec <../client-side-encryption/client-side-encryption.rst#why-aren-t-we-creating-a-unique-index-in-the-key-vault-collection>`_
+`Client Side Field Level Encryption spec <../client-side-encryption/client-side-encryption.md#why-arent-we-creating-a-unique-index-in-the-key-vault-collection>`_
 when running key management operations on the key vault collection. Although
 unified tests are written assuming the existence of the unique index, no unified
 test currently requires its implementation for correctness (e.g. no unified test
@@ -2160,7 +2160,7 @@ Bucket Operations
 These operations and their arguments may be documented in the following
 specifications:
 
-- `GridFS <../gridfs/gridfs-spec.rst>`__
+- `GridFS <../gridfs/gridfs-spec.md>`__
 
 Bucket operations that require special handling or are not documented by an
 existing specification are described below.

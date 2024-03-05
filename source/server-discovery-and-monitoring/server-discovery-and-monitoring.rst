@@ -361,7 +361,7 @@ Fields:
   The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
 * (=) iscryptd: boolean indicating if the server is a
-  `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`_
+  `mongocryptd <../client-side-encryption/client-side-encryption.md#mongocryptd>`_
   server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.

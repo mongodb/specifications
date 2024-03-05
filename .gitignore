@@ -10,3 +10,4 @@ logo.png
 codereview.rc
 .idea/**
 docs_build
+.pytest_cache

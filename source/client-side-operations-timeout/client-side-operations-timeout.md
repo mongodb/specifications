@@ -13,8 +13,8 @@ but not limited to server selection, connection checkout, and server-side execut
 
 ## META
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and
-“OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Specification
 
@@ -89,10 +89,10 @@ The `timeoutMS` option applies to all operations defined in the following specif
 
 - [CRUD](../crud/crud.md)
 - [Change Streams](../change-streams/change-streams.md)
-- [Client Side Encryption](../client-side-encryption/client-side-encryption.rst)
+- [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
 - [Enumerating Collections](../enumerate-collections.rst)
 - [Enumerating Databases](../enumerate-databases.rst)
-- [GridFS](../gridfs/gridfs-spec.rst)
+- [GridFS](../gridfs/gridfs-spec.md)
 - [Index Management](../index-management/index-management.rst)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
@@ -260,7 +260,7 @@ mongocryptd and encrypted by libmongocrypt. To determine whether or not the serv
 that the `iscryptd` field in the server's description is `true`.
 
 For explicit encryption and decryption, the `ClientEncryptionOpts` options type used to construct
-[ClientEncryption](../client-side-encryption/client-side-encryption.rst#clientencryption) instances MUST support a new
+[ClientEncryption](../client-side-encryption/client-side-encryption.md#clientencryption) instances MUST support a new
 `timeoutMS` option, which specifies the timeout for all operations executed on the `ClientEncryption` object.
 
 See [maxTimeMS is not added for mongocryptd](#maxtimems-is-not-added-for-mongocryptd).

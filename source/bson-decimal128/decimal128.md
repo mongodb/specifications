@@ -38,7 +38,7 @@ of precision, a max value of approximately `10^6145`, and min value of approxima
 `BSON Decimal128` type (`"\x13"`).
 
 **Clamping**:\
-Clamping happens when a value’s exponent is too large for the destination format. This works by adding
+Clamping happens when a value's exponent is too large for the destination format. This works by adding
 zeros to the coefficient to reduce the exponent to the largest usable value. An overflow occurs if the number of digits
 required is more than allowed in the destination format.
 
@@ -164,40 +164,40 @@ number or a special value.
 * If it describes a finite number, it includes one or more decimal digits,
   with an optional decimal point. The decimal point may be embedded in the
   digits, or may be prefixed or suffixed to them. The group of digits (and
-  optional point) thus constructed may have an optional sign (‘+’ or ‘-’)
+  optional point) thus constructed may have an optional sign ('+' or '-')
   which must come before any digits or decimal point. 
-* The string thus described may optionally be followed by an ‘E’
+* The string thus described may optionally be followed by an 'E'
   (indicating an exponential part), an optional sign, and an integer
   following the sign that represents a power of ten that is to be applied.
-  The ‘E’ may be in uppercase or lowercase.
+  The 'E' may be in uppercase or lowercase.
 * If it describes a special value, it is one of the case-independent names
-  ‘Infinity’, ‘Inf’, or ‘NaN’ (where the first two represent infinity and
+  'Infinity', 'Inf', or 'NaN' (where the first two represent infinity and
   the second represent NaN). The name may be preceded by an optional sign,
   as for finite numbers. 
 * No blanks or other whitespace characters are permitted in a numeric string.
 
 Formally
 
-          sign           ::=  ’+’ | ’-’
-          digit          ::=  ’0’ | ’1’ | ’2’ | ’3’ | ’4’ | ’5’ | ’6’ | ’7’ |
-                              ’8’ | ’9’
-          indicator      ::=  ’e’ | ’E’
+          sign           ::=  '+' | '-'
+          digit          ::=  '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' |
+                              '8' | '9'
+          indicator      ::=  'e' | 'E'
           digits         ::=  digit [digit]...
-          decimal-part   ::=  digits ’.’ [digits] | [’.’] digits
+          decimal-part   ::=  digits '.' [digits] | ['.'] digits
           exponent-part  ::=  indicator [sign] digits
-          infinity       ::=  ’Infinity’ | ’Inf’
-          nan            ::=  ’NaN’
+          infinity       ::=  'Infinity' | 'Inf'
+          nan            ::=  'NaN'
           numeric-value  ::=  decimal-part [exponent-part] | infinity
           numeric-string ::=  [sign] numeric-value | [sign] nan
 
-where the characters in the strings accepted for ‘infinity’ and ‘nan’ may be in
+where the characters in the strings accepted for 'infinity' and 'nan' may be in
 any case.  If an implementation supports the concept of diagnostic information
 on NaNs, the numeric strings for NaNs MAY include one or more digits, as shown
 above.[3]  These digits encode the diagnostic information in an
 implementation-defined manner; however, conversions to and from string for
 diagnostic NaNs should be reversible if possible. If an implementation does not
 support diagnostic information on NaNs, these digits should be ignored where
-necessary. A plain ‘NaN’ is usually the same as ‘NaN0’.
+necessary. A plain 'NaN' is usually the same as 'NaN0'.
 
 
 Drivers MAY choose to support signed NaN (sNaN), along with sNaN with
@@ -249,9 +249,9 @@ greater than or equal to -6, the number will be converted to a character form
 without using exponential notation. In this case, if the exponent is zero then
 no decimal point is added. Otherwise (the exponent will be negative), a decimal
 point will be inserted with the absolute value of the exponent specifying the
-number of characters to the right of the decimal point. ‘0’ characters are
+number of characters to the right of the decimal point. '0' characters are
 added to the left of the converted coefficient as necessary. If no character
-precedes the decimal point after this insertion then a conventional ‘0’
+precedes the decimal point after this insertion then a conventional '0'
 character is prefixed.
 
 
@@ -260,10 +260,10 @@ less than -6), the number will be converted to a character form using
 exponential notation. In this case, if the converted coefficient has more than
 one digit a decimal point is inserted after the first digit. An exponent in
 character form is then suffixed to the converted coefficient (perhaps with
-inserted decimal point); this comprises the letter ‘E’ followed immediately by
+inserted decimal point); this comprises the letter 'E' followed immediately by
 the adjusted exponent converted to a character form. The latter is in base ten,
 using the characters 0 through 9 with no leading zeros, always prefixed by a
-sign character (‘-’ if the calculated exponent is negative, ‘+’ otherwise).
+sign character ('-' if the calculated exponent is negative, '+' otherwise).
 ```
 
 This corresponds to the following code snippet:
@@ -334,10 +334,10 @@ Most of the tests are converted from the
 
 ## Q&A
 
-- Is it true Decimal128 doesn’t normalize the value?
+- Is it true Decimal128 doesn't normalize the value?
 
   - Yes. As a result of non-normalization rules of the Decimal128 data type, precision is represented exactly. For
-    example, ‘2.00’ always remains stored as 200E-2 in Decimal128, and it differs from the representation of ‘2.0’
+    example, '2.00' always remains stored as 200E-2 in Decimal128, and it differs from the representation of '2.0'
     (20E-1). These two values compare equally, but represent different ideas.
 
 - How does Decimal128 "2.000" look in the shell?
