@@ -371,8 +371,8 @@ The structure of this object is as follows:
 
   - Server version is 4.2.0 or higher
   - Driver has libmongocrypt enabled
-  - At least one of [crypt_shared](../client-side-encryption/client-side-encryption.rst#crypt-shared) and/or
-    [mongocryptd](../client-side-encryption/client-side-encryption.rst#mongocryptd) is available
+  - At least one of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) and/or
+    [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) is available
 
   If false, tests MUST NOT run if CSFLE is supported. If this field is omitted, there is no CSFLE requirement.
 
@@ -537,7 +537,7 @@ The structure of this object is as follows:
     `id: &clientEncryption0 clientEncryption0`).
 
   - `clientEncryptionOpts`: Required document. A value corresponding to a
-    [ClientEncryptionOpts](../client-side-encryption/client-side-encryption.rst#clientencryption).
+    [ClientEncryptionOpts](../client-side-encryption/client-side-encryption.md#clientencryption).
 
     Note: the `tlsOptions` document is intentionally omitted from the test format. However, drivers MAY internally
     configure TLS options as needed to satisfy the requirements of configured KMS providers.
@@ -570,7 +570,7 @@ The structure of this object is as follows:
       exactly as the unnamed KMS providers. The `aws:name2` KMS provider and `aws:name1` KMS providers deliberately use
       separate AWS accounts that do not have permission to the other's keys.
 
-      See the [Client-Side Encryption test README](../client-side-encryption/tests/README.rst#credentials) for
+      See the [Client-Side Encryption test README](../client-side-encryption/tests/README.md#credentials) for
       instructions to obtain test credentials.
 
 <div id="entity_database">
@@ -1424,14 +1424,14 @@ This operation SHOULD NOT be used in test files. See [client_createChangeStream]
 
 These operations and their arguments may be documented in the following specifications:
 
-- [Client Side Encryption](../client-side-encryption/client-side-encryption.rst)
+- [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
 
 Operations that require sending and receiving KMS requests to encrypt or decrypt data keys may require appropriate KMS
 credentials to be loaded by the driver. Drivers MUST load appropriate KMS credentials (i.e. from the environment or a
 configuration file) when prompted by a test providing a placeholder value in a corresponding `kmsProviders` field as
 described under [entity.clientEncryption](#entity_clientEncryption).
 
-See the [Client-Side Encryption test README](../client-side-encryption/tests/README.rst#credentials) for instructions to
+See the [Client-Side Encryption test README](../client-side-encryption/tests/README.md#credentials) for instructions to
 obtain test credentials.
 
 Drivers MUST be running the mock
@@ -1439,7 +1439,7 @@ Drivers MUST be running the mock
 when evaluating tests that require KMS requests to a KMIP KMS provider.
 
 Drivers MAY enforce a unique index on `keyAltNames` as described in the
-[Client Side Field Level Encryption spec](../client-side-encryption/client-side-encryption.rst#why-aren-t-we-creating-a-unique-index-in-the-key-vault-collection)
+[Client Side Field Level Encryption spec](../client-side-encryption/client-side-encryption.md#why-arent-we-creating-a-unique-index-in-the-key-vault-collection)
 when running key management operations on the key vault collection. Although unified tests are written assuming the
 existence of the unique index, no unified test currently requires its implementation for correctness (e.g. no unified
 test currently attempts to create a data key with an existing keyAltName or add an existing keyAltName to a data key).
