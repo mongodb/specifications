@@ -504,7 +504,7 @@ Client construction
 '''''''''''''''''''
 
 Except for `initial DNS seed list discovery
-<https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+<../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md>`_
 when given a connection string with ``mongodb+srv`` scheme,
 the client's constructor MUST NOT do any I/O.
 This means that the constructor does not throw an exception

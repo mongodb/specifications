@@ -49,7 +49,7 @@ Other schemes are also possible and are introduced through additional specificat
 top of the connection string as documented in this specification.
 
 For example the `mongodb+srv` specification, introduced with
-[Initial DNS Seedlist Discovery](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst), obtains
+[Initial DNS Seedlist Discovery](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md), obtains
 information from DNS in addition to just the connection string.
 
 ### Userinfo (optional)
