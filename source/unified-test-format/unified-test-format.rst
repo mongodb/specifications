@@ -1935,7 +1935,7 @@ specifications:
 
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `CRUD <../crud/crud.rst>`__
-- `Index Management <../index-management/index-management.rst>`__
+- `Index Management <../index-management/index-management.md>`__
 
 Collection operations that require special handling or are not documented by an
 existing specification are described below.
@@ -2052,7 +2052,7 @@ createSearchIndex
 
 This operations proxies the collection's ``createSearchIndex`` helper with the same arguments.
 
-Each ``createSearchIndex`` operation receives a `SearchIndexModel <https://github.com/mongodb/specifications/blob/master/source/index-management/index-management.rst#common-interfaces>`.  
+Each ``createSearchIndex`` operation receives a `SearchIndexModel <../index-management/index-management.md#common-interfaces>`.  
 If a driver has chosen to implement the ``createSearchIndex(name: String, definition: Document)`` overload 
 of ``createSearchIndex``, then the ``SearchIndexModel`` should be parsed by ``createSearchIndex`` unified 
 test runner helper and the correct arguments should be passed into the driver's helper.
