@@ -48,7 +48,7 @@ tests:
       - name: createSearchIndexes
         object: *collection0
         arguments:
-          models: [ { definition: &definition { mappings: { dynamic: true } } } ]
+          models: [ { definition: &definition { mappings: { dynamic: true } } , type: 'search' } ]
         expectError:
           # This test always errors in a non-Atlas environment.  The test functions as a unit test  by asserting
           # that the driver constructs and sends the correct command.
@@ -69,7 +69,7 @@ tests:
       - name: createSearchIndexes
         object: *collection0
         arguments: 
-          models: [ { definition: &definition { mappings: { dynamic: true } } , name: 'test index' } ]
+          models: [ { definition: &definition { mappings: { dynamic: true } } , name: 'test index' , type: 'search' } ]
         expectError:
           # This test always errors in a non-Atlas environment.  The test functions as a unit test  by asserting
           # that the driver constructs and sends the correct command.
@@ -82,5 +82,5 @@ tests:
           - commandStartedEvent:
               command:
                 createSearchIndexes: *collection0
-                indexes: [ { definition: *definition, name: 'test index' } ]
+                indexes: [ { definition: *definition, name: 'test index', type: 'search' } ]
                 $db: *database0

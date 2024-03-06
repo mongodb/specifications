@@ -231,3 +231,97 @@ This test fails if it times out waiting for the deletion to succeed.
      of `true`.
 
 6. Assert that `index` has a property `latestDefinition` whose value is `{ 'mappings': { 'dynamic': false } }`
+
+#### Case 7: Driver can successfully handle search index types when creating indexes
+
+1. Create a collection with the "create" command using a randomly generated name (referred to as ``coll0``).
+
+2. Create a new search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+
+   ```typescript
+
+     {
+       name: 'test-search-index-case7-implicit',
+       definition: {
+         mappings: { dynamic: false }
+       }
+     }
+   ```
+
+3. Assert that the command returns the name of the index: ``"test-search-index-case7-implicit"``.
+
+4. Run ``coll0.listSearchIndexes('test-search-index-case7-implicit')`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index1``:
+
+   - An index with the ``name`` of ``test-search-index-case7-implicit`` is present and the index has a field ``queryable`` with a value of ``true``.
+
+5. Assert that ``index1`` has a property ``type`` whose value is ``search``
+
+6. Create a new search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+
+   ```typescript
+
+     {
+       name: 'test-search-index-case7-explicit',
+       type: 'search',
+       definition: {
+         mappings: { dynamic: false }
+       }
+     }
+   ```
+
+7. Assert that the command returns the name of the index: ``"test-search-index-case7-explicit"``.
+
+8. Run ``coll0.listSearchIndexes('test-search-index-case7-explicit')`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index2``:
+
+   - An index with the ``name`` of ``test-search-index-case7-explicit`` is present and the index has a field ``queryable`` with a value of ``true``.
+
+9. Assert that ``index2`` has a property ``type`` whose value is ``search``
+
+10. Create a new vector search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+
+   ```typescript
+
+     {
+       name: 'test-search-index-case7-vector',
+       type: 'vectorSearch',
+       definition: {
+         "fields": [
+            {
+                "type": "vector",
+                "path": "plot_embedding",
+                "numDimensions": 1536,
+                "similarity": "euclidean",
+            },
+         ]
+       }
+     }
+   ```
+
+11. Assert that the command returns the name of the index: ``"test-search-index-case7-vector"``.
+
+12. Run ``coll0.listSearchIndexes('test-search-index-case7-vector')`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index3``:
+     
+    - An index with the ``name`` of ``test-search-index-case7-vector`` is present and the index has a field ``queryable`` with a value of ``true``.
+
+13. Assert that ``index3`` has a property ``type`` whose value is ``vectorSearch``
+
+14. Create a new vector search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+
+   ```typescript
+
+     {
+       name: 'test-search-index-case7-error',
+       definition: {
+         "fields": [
+            {
+                "type": "vector",
+                "path": "plot_embedding",
+                "numDimensions": 1536,
+                "similarity": "euclidean",
+            },
+         ]
+       }
+     }
+   ```
+
+15. Assert that the command throws an exception due to the ``mappings`` field missing.
