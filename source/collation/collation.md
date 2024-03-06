@@ -135,7 +135,7 @@ The collation option is sent to the server in the form of a BSON Document. See t
 [CRUD specification](../crud/crud.md#naming) for details on supporting the option in the CRUD API.
 
 Driver helpers manipulating or using indexes MUST support a collation option. These include creating, deleting, and
-hinting an index. See the [Index Management specification](../index-management/index-management.rst) for details.
+hinting an index. See the [Index Management specification](../index-management/index-management.md) for details.
 
 ### Require maxWireVersion 5
 

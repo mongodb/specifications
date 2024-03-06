@@ -93,7 +93,7 @@ The `timeoutMS` option applies to all operations defined in the following specif
 - [Enumerating Collections](../enumerate-collections.rst)
 - [Enumerating Databases](../enumerate-databases.rst)
 - [GridFS](../gridfs/gridfs-spec.md)
-- [Index Management](../index-management/index-management.rst)
+- [Index Management](../index-management/index-management.md)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
 

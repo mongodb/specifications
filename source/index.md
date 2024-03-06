@@ -16,6 +16,7 @@
 - [FaaS Automated Testing](faas-automated-testing/faas-automated-testing.md)
 - [GridFS Spec](gridfs/gridfs-spec.md)
 - [Handling of DBRefs](./dbref.md)
+- [Index Management](index-management/index-management.md)
 - [MongoDB Driver Performance Benchmarking](benchmarking/benchmarking.md)
 - [Server Selection](server-selection/server-selection.md)
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)

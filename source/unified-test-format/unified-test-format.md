@@ -1548,7 +1548,7 @@ These operations and their arguments may be documented in the following specific
 
 - [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.md)
-- [Index Management](../index-management/index-management.rst)
+- [Index Management](../index-management/index-management.md)
 
 Collection operations that require special handling or are not documented by an existing specification are described
 below.
@@ -1641,7 +1641,7 @@ Test runners MUST NOT iterate the resulting cursor when executing this operation
 This operations proxies the collection's `createSearchIndex` helper with the same arguments.
 
 Each `createSearchIndex` operation receives a
-[SearchIndexModel](../index-management/index-management.rst#common-interfaces). If a driver has chosen to implement the
+[SearchIndexModel](../index-management/index-management.md#common-interfaces). If a driver has chosen to implement the
 `createSearchIndex(name: String, definition: Document)` overload of `createSearchIndex`, then the `SearchIndexModel`
 should be parsed by `createSearchIndex` unified test runner helper and the correct arguments should be passed into the
 driver's helper.
