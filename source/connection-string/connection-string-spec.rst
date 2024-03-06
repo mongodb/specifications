@@ -72,7 +72,7 @@ For example the ``mongodb+srv`` specification, introduced with `Initial DNS
 Seedlist Discovery`_, obtains information from DNS in addition to just the
 connection string.
 
-.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
+.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md
 
 -------------------
 Userinfo (optional)

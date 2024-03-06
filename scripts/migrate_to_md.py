@@ -43,6 +43,13 @@ if not path.name == 'README.rst':
 
 # Pre-process the file.
 for (i, line) in enumerate(lines):
+    # Replace curly quotes with regular quotes.
+    line = line.replace('”', '"')
+    line = line.replace('“', '"')
+    line = line.replace('’', "'")
+    line = line.replace('‘', "'")
+    lines[i] = line
+
     # Replace the colon fence blocks with bullets,
     # e.g. :Status:, :deprecated:, :changed:.
     # This also includes the changelog entries.
@@ -58,12 +65,6 @@ for (i, line) in enumerate(lines):
     # Remove the "".. contents::" block - handled by GitHub UI.
     if line.strip() == '.. contents::':
         lines[i] = ''
-
-    # Replace curly quotes with regular quotes.
-    line = line.replace('”', '"')
-    line = line.replace('“', '"')
-    line = line.replace('’', "'")
-    line = line.replace('‘', "'")
 
 # Run pandoc and capture output.
 proc = subprocess.Popen(['pandoc', '-f', 'rst', '-t', 'gfm'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -128,15 +129,15 @@ while curr.parent.name != 'source':
 suffix = f'\S*/{target}'
 rel_pattern = re.compile(f'(\.\.{suffix})')
 md_pattern = re.compile(f'(\(http{suffix})')
-rst_pattern = re.compile(f'(<http{suffix})')
+html_pattern = re.compile(f'(http{suffix})')
 abs_pattern = re.compile(f'(/source{suffix})')
 for p in Path("source").rglob("*"):
     if p.suffix not in ['.rst', '.md']:
         continue
-    found = False
     with p.open() as fid:
         lines = fid.readlines()
     new_lines = []
+    changed_lines = []
     relpath = os.path.relpath(md_file, start=p.parent)
     for line in lines:
         new_line = line
@@ -149,25 +150,26 @@ for p in Path("source").rglob("*"):
                 print('*** Error in link: ', matchstr, p)
             else:
                 new_line = line.replace(matchstr, f'({relpath}')
-        elif re.search(rst_pattern, line):
-            matchstr = re.search(rst_pattern, line).groups()[0]
-            if not matchstr.startswith('<https://github.com/mongodb/specifications/blob/master/source'):
+        elif re.search(html_pattern, line):
+            matchstr = re.search(html_pattern, line).groups()[0]
+            if not matchstr.startswith('https://github.com/mongodb/specifications/blob/master/source'):
                 print('*** Error in link: ', matchstr, p)
             else:
-                new_line = line.replace(matchstr, f'<{relpath}')
+                new_line = line.replace(matchstr, f'{relpath}')
         elif re.search(abs_pattern, line):
             matchstr = re.search(abs_pattern, line).groups()[0]
             new_line = line.replace(matchstr, relpath)
 
         if new_line != line:
-            found = True
-            print(new_line)
+            changed_lines.append(new_line)
         new_lines.append(new_line)
 
-    if found:
+    if changed_lines:
         with p.open('w') as fid:
             fid.writelines(new_lines)
-        print(f'Updated link(s) in {p}')
+        print('-' * 80)
+        print(f'Updated link(s) in {p}...')
+        print('    ' + '\n   '.join(changed_lines))
 
 print('Created markdown file:')
 print(md_file)

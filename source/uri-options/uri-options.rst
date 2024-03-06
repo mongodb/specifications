@@ -72,7 +72,7 @@ srvServiceName and srvMaxHosts URI options
 
 For URI option validation pertaining to ``srvServiceName`` and ``srvMaxHosts``,
 please see the
-`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#uri-validation>`_
+`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#uri-validation>`_
 for details.
 
 
@@ -321,7 +321,7 @@ pertaining to URI options apply here.
 
    * - srvMaxHosts
      - non-negative integer; 0 means no maximum
-     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts>`__
+     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts>`__
      - no
      - The maximum number of SRV results to randomly select when initially
        populating the seedlist or, during SRV polling, adding new hosts to the
@@ -331,7 +331,7 @@ pertaining to URI options apply here.
      - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_
      - "mongodb"
      - no
-     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`__
+     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvservicename>`__
        and `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
 
    * - ssl
