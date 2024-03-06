@@ -1,6 +1,3 @@
-# This file was created automatically using mongodb-spec-converter.
-# Please review the generated file, then remove this notice.
-
 # listDatabaseObjects returns an array of MongoDatabase objects.
 # Not all drivers support this functionality. For more details, see:
 # https://github.com/mongodb/specifications/blob/v1/source/enumerate-databases.rst#enumerating-mongodatabase-objects
