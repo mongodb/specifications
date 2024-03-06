@@ -1159,3 +1159,4 @@ Changelog
 :2023-07-27: Add search index management clarifications.
 :2023-11-08: Clarify that ``readConcern`` and ``writeConcern`` must not be
              applied to search index management commands.
+:2024-03-06: Update tests to include search index typing.
