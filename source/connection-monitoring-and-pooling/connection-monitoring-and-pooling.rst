@@ -1063,7 +1063,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.md#events
 
 Connection Pool Logging
 ~~~~~~~~~~~~~~~~~~~~~~~
-Please refer to the `logging specification <../logging/logging.rst>`__ for details on logging implementations in general, including log levels, log
+Please refer to the `logging specification <../logging/logging.md>`__ for details on logging implementations in general, including log levels, log
 components, handling of null values in log messages, and structured versus unstructured logging.
 
 Drivers MUST support logging of connection pool information via the following types of log messages. These messages MUST be logged at ``Debug`` level
@@ -1299,7 +1299,7 @@ In addition to the common fields defined above, this message MUST contain the fo
    * - error
      - Flexible
      - If ``reason`` is ``Error``, the associated error. The type and format of this value is flexible; see the
-       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
+       `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
@@ -1353,7 +1353,7 @@ In addition to the common fields defined above, this message MUST contain the fo
    * - error
      - Flexible
      - If ``reason`` is ``ConnectionError``, the associated error. The type and format of this value is flexible; see the
-       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
+       `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
 
    * - durationMS
      - Int64
