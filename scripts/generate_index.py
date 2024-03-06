@@ -7,6 +7,8 @@ for p in Path(source).rglob("*.md"):
     relpath = os.path.relpath(p.parent, start=source)
     if "tests" in relpath:
         continue
+    if "node_modules" in relpath:
+        continue
     if p.name in ['index.md']:
         continue
     fpath = relpath + '/' + p.name
