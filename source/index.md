@@ -18,6 +18,8 @@
 - [Handling of DBRefs](./dbref.md)
 - [Index Management](index-management/index-management.md)
 - [Initial DNS Seedlist Discovery](initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md)
+- [Max Staleness](max-staleness/max-staleness.md)
+- [Max Staleness Tests](max-staleness/max-staleness-tests.md)
 - [MongoDB Driver Performance Benchmarking](benchmarking/benchmarking.md)
 - [Server Selection](server-selection/server-selection.md)
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)
