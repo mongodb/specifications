@@ -16,7 +16,7 @@ createEntities:
       # The $$placeholder document should be replaced by auth mechanism
       # properties that enable OIDC auth on the target cloud platform. For
       # example, when running the test on AWS, replace the $$placeholder
-      # document with {"PROVIDER_NAME": "aws"}.
+      # document with {"OIDC_ENV": "aws"}.
       authMechanismProperties: { $$placeholder: 1 }
       retryReads: false
       retryWrites: false

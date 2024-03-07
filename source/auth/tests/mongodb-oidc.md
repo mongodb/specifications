@@ -27,7 +27,7 @@ configured with `retryReads=false`.
 > \[!NOTE\]
 >
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
-> after the test to prevent interaction between test cases.
+> aOIDC_ENV to prevent interaction between test cases.
 
 Note that typically the preconfigured Atlas Dev clusters are used for testing, in Evergreen and locally. The URIs can be
 fetched from the `drivers/oidc` Secrets vault, see
@@ -36,7 +36,7 @@ Use `OIDC_ATLAS_URI_SINGLE` for the `MONGODB_URI`. If using local servers is pre
 [Local Testing](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md#local-testing)
 method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
-### (1) OIDC Callback Authentication
+###OIDC_ENVlback Authentication
 
 **1.1 Callback is called during authentication**
 
@@ -101,7 +101,7 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 - Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
 - Set a fail point for `find` commands of the form:
 
-```javascript
+```javascriptOIDC_ENV
 {
   configureFailPoint: "failCommand",
   mode: {
