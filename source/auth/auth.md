@@ -1254,13 +1254,13 @@ Drivers MUST support all of the following built-in OIDC application environment 
 
 ####### Test
 
-The test integration is enabled by setting auth mechanism property `OIDC_ENV:test`. It is not meant to be documented as
-a user-facing feature, but used for testing purposes, with the self-generated token created by the script in Drivers
-Evergreen Tools.
+The test integration is enabled by setting auth mechanism property `OIDC_ENV:test`. It is meant for driver testing
+purposes, and is not meant to be documented as a user-facing feature.
 
-If enabled, drivers MUST read the file path from environment variable `AWS_WEB_IDENTITY_TOKEN_FILE` and then read the
-OIDC access token from that file. The driver MUST use the contents of that file as value in the `jwt` field of the
-`saslStart` payload.
+If enabled, drivers MUST generate a token using the script in Drivers-Evergreen-Tools. The must then set the
+`AWS_WEB_IDENTITY_TOKEN_FILE` environment variable to the path to that file. At runtime, the driver MUST use the
+`AWS_WEB_IDENTITY_TOKEN_FILE` environment variable and read the OIDC access token from that path. The driver MUST use
+the contents of that file as value in the `jwt` field of the `saslStart` payload.
 
 Drivers MAY implement the "test" integration so that it conforms to the function signature of the
 [OIDC Callback](#oidc-callback) to prevent having to re-implement the "test" integration logic in the OIDC prose tests.
