@@ -40,14 +40,14 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 **1.1 Callback is called during authentication**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
 - Close the client.
 
 **1.2 Callback is called once for multiple connections**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
 - Start 10 threads and run 100 `find` operations in each thread that all succeed.
 - Assert that the callback was called 1 time.
 - Close the client.
@@ -76,14 +76,14 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 **2.4 Invalid Client Configuration with Callback**
 
-- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `PROVIDER_NAME:aws`.
+- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `OIDC_ENV:test`.
 - Assert it returns a client configuration error.
 
 ### (3) Authentication Failure
 
 **3.1 Authentication failure with cached tokens fetch a new token and retry auth**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
 - Poison the *Client Cache* with an invalid access token.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
@@ -98,10 +98,10 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 ### (4) Reauthentication
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
 - Set a fail point for `find` commands of the form:
 
-```javascriptOIDC_ENV
+```javascript
 {
   configureFailPoint: "failCommand",
   mode: {

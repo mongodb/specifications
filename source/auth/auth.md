@@ -1217,7 +1217,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - OIDC_ENV\
     Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration to
-    use to obtain credentials. If provided, the value MUST be one of `["k8s"]`. If both `OIDC_ENV` and an
+    use to obtain credentials. If provided, the value MUST be one of `["test"]`. If both `OIDC_ENV` and an
     [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
     `MongoClient`, the driver MUST raise an error.
 
@@ -1246,27 +1246,24 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     performed after SRV record resolution, if applicable. This property is only required for drivers that support the
     [Human Authentication Flow](#human-authentication-flow).
 
+<div id="built-in-provider-integrations">
+
 #### Built-in OIDC Environment Integrations
 
 Drivers MUST support all of the following built-in OIDC application environment integrations.
 
-####### Kubernetes
+####### Test
 
-The Kubernetes integration is enabled by setting auth mechanism property `OIDC_ENV:k8s`.
+The test integration is enabled by setting auth mechanism property `OIDC_ENV:test`. It is not meant to be documented as
+a user-facing feature, but used for testing purposes, with the self-generated token created by the script in Drivers
+Evergreen Tools.
 
 If enabled, drivers MUST read the file path from environment variable `AWS_WEB_IDENTITY_TOKEN_FILE` and then read the
 OIDC access token from that file. The driver MUST use the contents of that file as value in the `jwt` field of the
 `saslStart` payload.
 
-> \[!NOTE\]
->
-> The Kubernetes integration currently only supports the AWS-hosted EKS Kubernetes environment. Drivers MUST document
-> that the "k8s" integration currently only supports AWS EKS, but will support more Kubernetes environments in the
-> future.
-
-Drivers MAY implement the Kubernetes integration so that it conforms to the function signature of the
-[OIDC Callback](#oidc-callback) to prevent having to re-implement the Kubernetes integration logic in the OIDC prose
-tests.
+Drivers MAY implement the "test" integration so that it conforms to the function signature of the
+[OIDC Callback](#oidc-callback) to prevent having to re-implement the "tet" integration logic in the OIDC prose tests.
 
 #### OIDC Callback
 

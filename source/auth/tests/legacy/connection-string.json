@@ -482,8 +482,8 @@
       }
     },
     {
-      "description": "should recognise the mechanism with k8s integration (MONGODB-OIDC)",
-      "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=OIDC_ENV:k8s",
+      "description": "should recognise the mechanism with test integration (MONGODB-OIDC)",
+      "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=OIDC_ENV:test",
       "valid": true,
       "credential": {
         "username": null,
@@ -491,13 +491,13 @@
         "source": "$external",
         "mechanism": "MONGODB-OIDC",
         "mechanism_properties": {
-          "OIDC_ENV": "k8s"
+          "OIDC_ENV": "test"
         }
       }
     },
     {
       "description": "should recognise the mechanism when auth source is explicitly specified and with provider (MONGODB-OIDC)",
-      "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authSource=$external&authMechanismProperties=OIDC_ENV:k8s",
+      "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authSource=$external&authMechanismProperties=OIDC_ENV:test",
       "valid": true,
       "credential": {
         "username": null,
@@ -505,19 +505,19 @@
         "source": "$external",
         "mechanism": "MONGODB-OIDC",
         "mechanism_properties": {
-          "OIDC_ENV": "k8s"
+          "OIDC_ENV": "test"
         }
       }
     },
     {
       "description": "should throw an exception if supplied a password (MONGODB-OIDC)",
-      "uri": "mongodb://user:pass@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=OIDC_ENV:k8s",
+      "uri": "mongodb://user:pass@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=OIDC_ENV:test",
       "valid": false,
       "credential": null
     },
     {
-      "description": "should throw an exception if username is specified for k8s (MONGODB-OIDC)",
-      "uri": "mongodb://principalName@localhost/?authMechanism=MONGODB-OIDC&OIDC_ENV:k8s",
+      "description": "should throw an exception if username is specified for test (MONGODB-OIDC)",
+      "uri": "mongodb://principalName@localhost/?authMechanism=MONGODB-OIDC&OIDC_ENV:test",
       "valid": false,
       "credential": null
     },
