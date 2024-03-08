@@ -496,7 +496,7 @@
       }
     },
     {
-      "description": "should recognise the mechanism when auth source is explicitly specified and with provider (MONGODB-OIDC)",
+      "description": "should recognise the mechanism when auth source is explicitly specified and with environment (MONGODB-OIDC)",
       "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authSource=$external&authMechanismProperties=OIDC_ENV:test",
       "valid": true,
       "credential": {
@@ -522,13 +522,13 @@
       "credential": null
     },
     {
-      "description": "should throw an exception if specified provider is not supported (MONGODB-OIDC)",
+      "description": "should throw an exception if specified environment is not supported (MONGODB-OIDC)",
       "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=OIDC_ENV:invalid",
       "valid": false,
       "credential": null
     },
     {
-      "description": "should throw an exception if neither provider nor callbacks specified (MONGODB-OIDC)",
+      "description": "should throw an exception if neither environment nor callbacks specified (MONGODB-OIDC)",
       "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC",
       "valid": false,
       "credential": null

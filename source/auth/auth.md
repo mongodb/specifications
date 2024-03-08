@@ -1263,7 +1263,7 @@ OIDC access token from that file. The driver MUST use the contents of that file 
 `saslStart` payload.
 
 Drivers MAY implement the "test" integration so that it conforms to the function signature of the
-[OIDC Callback](#oidc-callback) to prevent having to re-implement the "tet" integration logic in the OIDC prose tests.
+[OIDC Callback](#oidc-callback) to prevent having to re-implement the "test" integration logic in the OIDC prose tests.
 
 #### OIDC Callback
 
