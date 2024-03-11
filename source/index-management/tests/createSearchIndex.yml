@@ -68,7 +68,7 @@ tests:
       - name: createSearchIndex
         object: *collection0
         arguments:
-          model: { definition: &definition { fields: {"type": "vector", "path": "plot_embedding", "numDimensions": 1536, "similarity": "euclidean"} }
+          model: { definition: &definition { fields: [ {"type": "vector", "path": "plot_embedding", "numDimensions": 1536, "similarity": "euclidean"} ] }
             , name: 'test index', type: 'vectorSearch' }
         expectError:
           # This test always errors in a non-Atlas environment.  The test functions as a unit test  by asserting

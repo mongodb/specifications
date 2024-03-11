@@ -172,7 +172,7 @@
         }
       ]
     },
-        {
+    {
       "description": "create a vector search index",
       "operations": [
         {
