@@ -234,94 +234,100 @@ This test fails if it times out waiting for the deletion to succeed.
 
 #### Case 7: Driver can successfully handle search index types when creating indexes
 
-1. Create a collection with the "create" command using a randomly generated name (referred to as ``coll0``).
+01. Create a collection with the "create" command using a randomly generated name (referred to as `coll0`).
 
-2. Create a new search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+02. Create a new search index on `coll0` with the `createSearchIndex` helper. Use the following definition:
 
-   ```typescript
+    ```typescript
 
-     {
-       name: 'test-search-index-case7-implicit',
-       definition: {
-         mappings: { dynamic: false }
-       }
-     }
-   ```
+      {
+        name: 'test-search-index-case7-implicit',
+        definition: {
+          mappings: { dynamic: false }
+        }
+      }
+    ```
 
-3. Assert that the command returns the name of the index: ``"test-search-index-case7-implicit"``.
+03. Assert that the command returns the name of the index: `"test-search-index-case7-implicit"`.
 
-4. Run ``coll0.listSearchIndexes('test-search-index-case7-implicit')`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index1``:
+04. Run `coll0.listSearchIndexes('test-search-index-case7-implicit')` repeatedly every 5 seconds until the following
+    condition is satisfied and store the value in a variable `index1`:
 
-   - An index with the ``name`` of ``test-search-index-case7-implicit`` is present and the index has a field ``queryable`` with a value of ``true``.
+    - An index with the `name` of `test-search-index-case7-implicit` is present and the index has a field `queryable`
+      with a value of `true`.
 
-5. Assert that ``index1`` has a property ``type`` whose value is ``search``
+05. Assert that `index1` has a property `type` whose value is `search`.
 
-6. Create a new search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+06. Create a new search index on `coll0` with the `createSearchIndex` helper. Use the following definition:
 
-   ```typescript
+    ```typescript
 
-     {
-       name: 'test-search-index-case7-explicit',
-       type: 'search',
-       definition: {
-         mappings: { dynamic: false }
-       }
-     }
-   ```
+      {
+        name: 'test-search-index-case7-explicit',
+        type: 'search',
+        definition: {
+          mappings: { dynamic: false }
+        }
+      }
+    ```
 
-7. Assert that the command returns the name of the index: ``"test-search-index-case7-explicit"``.
+07. Assert that the command returns the name of the index: `"test-search-index-case7-explicit"`.
 
-8. Run ``coll0.listSearchIndexes('test-search-index-case7-explicit')`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index2``:
+08. Run `coll0.listSearchIndexes('test-search-index-case7-explicit')` repeatedly every 5 seconds until the following
+    condition is satisfied and store the value in a variable `index2`:
 
-   - An index with the ``name`` of ``test-search-index-case7-explicit`` is present and the index has a field ``queryable`` with a value of ``true``.
+    - An index with the `name` of `test-search-index-case7-explicit` is present and the index has a field `queryable`
+      with a value of `true`.
 
-9. Assert that ``index2`` has a property ``type`` whose value is ``search``
+09. Assert that `index2` has a property `type` whose value is `search`.
 
-10. Create a new vector search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+10. Create a new vector search index on `coll0` with the `createSearchIndex` helper. Use the following definition:
 
-   ```typescript
+```typescript
 
-     {
-       name: 'test-search-index-case7-vector',
-       type: 'vectorSearch',
-       definition: {
-         "fields": [
-            {
-                "type": "vector",
-                "path": "plot_embedding",
-                "numDimensions": 1536,
-                "similarity": "euclidean",
-            },
-         ]
-       }
-     }
-   ```
+  {
+    name: 'test-search-index-case7-vector',
+    type: 'vectorSearch',
+    definition: {
+      "fields": [
+         {
+             "type": "vector",
+             "path": "plot_embedding",
+             "numDimensions": 1536,
+             "similarity": "euclidean",
+         },
+      ]
+    }
+  }
+```
 
-11. Assert that the command returns the name of the index: ``"test-search-index-case7-vector"``.
+11. Assert that the command returns the name of the index: `"test-search-index-case7-vector"`.
 
-12. Run ``coll0.listSearchIndexes('test-search-index-case7-vector')`` repeatedly every 5 seconds until the following condition is satisfied and store the value in a variable ``index3``:
-     
-    - An index with the ``name`` of ``test-search-index-case7-vector`` is present and the index has a field ``queryable`` with a value of ``true``.
+12. Run `coll0.listSearchIndexes('test-search-index-case7-vector')` repeatedly every 5 seconds until the following
+    condition is satisfied and store the value in a variable `index3`:
 
-13. Assert that ``index3`` has a property ``type`` whose value is ``vectorSearch``
+    - An index with the `name` of `test-search-index-case7-vector` is present and the index has a field `queryable` with
+      a value of `true`.
 
-14. Create a new vector search index on ``coll0`` with the ``createSearchIndex`` helper. Use the following definition:
+13. Assert that `index3` has a property `type` whose value is `vectorSearch`.
 
-   ```typescript
+14. Create a new vector search index on `coll0` with the `createSearchIndex` helper. Use the following definition:
 
-     {
-       name: 'test-search-index-case7-error',
-       definition: {
-         "fields": [
-            {
-                "type": "vector",
-                "path": "plot_embedding",
-                "numDimensions": 1536,
-                "similarity": "euclidean",
-            },
-         ]
-       }
-     }
-   ```
+```typescript
 
-15. Assert that the command throws an exception due to the ``mappings`` field missing.
+  {
+    name: 'test-search-index-case7-error',
+    definition: {
+      "fields": [
+         {
+             "type": "vector",
+             "path": "plot_embedding",
+             "numDimensions": 1536,
+             "similarity": "euclidean",
+         },
+      ]
+    }
+  }
+```
+
+15. Assert that the command throws an exception due to the `mappings` field missing.
