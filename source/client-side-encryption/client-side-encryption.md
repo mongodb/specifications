@@ -595,8 +595,9 @@ Virtual machines running on the Azure platform have one or more *Managed Identit
 the VM, an identity can be used by obtaining an access token via HTTP from the *Azure Instance Metadata Service* (IMDS).
 [See this documentation for more information](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http)
 
-> [!NOTE] To optimize for testability, it is recommended to implement an isolated abstraction for communication with
-> IMDS. This will aide in the implementation of the prose tests of the communication with an IMDS server.
+> [!NOTE]
+> To optimize for testability, it is recommended to implement an isolated abstraction for communication with IMDS. This
+> will aide in the implementation of the prose tests of the communication with an IMDS server.
 
 The below steps should be taken:
 
@@ -608,7 +609,8 @@ The below steps should be taken:
 
 04. Prepare an HTTP GET request `$Req$` based on `$U$`.
 
-    > [!NOTE] All query parameters on `$U$` should be appropriately percent-encoded
+    > [!NOTE]
+    > All query parameters on `$U$` should be appropriately percent-encoded
 
 05. Add HTTP headers `Metadata: true` and `Accept: application/json` to `$Req$`.
 
@@ -1208,16 +1210,16 @@ insert or query. Drivers MUST document the following behavior:
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
-> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
-> changes.
+> [!NOTE]
+> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 #### contentionFactor
 
 contentionFactor only applies when algorithm is "Indexed" or "RangePreview". It is an error to set contentionFactor when
 algorithm is not "Indexed" or "RangePreview".
 
-> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
-> changes.
+> [!NOTE]
+> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 #### queryType
 
@@ -1229,16 +1231,16 @@ One of the strings:
 queryType only applies when algorithm is "Indexed" or "RangePreview". It is an error to set queryType when algorithm is
 not "Indexed" or "RangePreview".
 
-> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
-> changes.
+> [!NOTE]
+> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "rangePreview". It is an error to set rangeOpts when algorithm is not
 "rangePreview".
 
-> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
-> changes.
+> [!NOTE]
+> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 ## User facing API: When Auto Encryption Fails
 
