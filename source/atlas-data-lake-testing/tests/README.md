@@ -9,16 +9,20 @@ with [Atlas Data Lake](https://www.mongodb.com/docs/datalake/). These tests util
 Several prose tests, which are not easily expressed in YAML, are also presented in this file. Those tests will need to
 be manually implemented by each driver.
 
-## Test Environment
+## Test Considerations
 
 Running these integration tests will require a running `mongohoused` with data available in its `test.driverdata`
 collection. See the
 [ADL directory in drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/atlas_data_lake)
 and [10gen/mongohouse README](https://github.com/10gen/mongohouse/blob/master/README.md) for more information.
 
-The test runner for Atlas Data Lake Testing MUST NOT drop the collection and/or database under test. In contrast
+The test runner for Atlas Data Lake testing MUST NOT drop the collection and/or database under test. In contrast
 to most other tests, which insert their own data fixtures into an empty collection, the data for these tests is
 specified in the `mongohoused` configuration file.
+
+Additionally, the test runner MUST NOT execute `killAllSessions` (see:
+[Terminating Open Transactions](../../unified-test-format/unified-test-format.md#terminating-open-transactions)) when
+connected to Atlas Data Lake.
 
 ## Prose Tests
 
