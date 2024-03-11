@@ -724,6 +724,16 @@ Additional prose tests are specified [here](../crud/tests/README.md). These test
 constructing very large documents to test batch splitting, which is not feasible in the unified
 test format at the time of writing this specification.
 
+## Future Work
+
+### Support using document sequences in encrypted bulk writes
+
+Libmongocrypt is currently only capable of encrypting command documents, not wire protocol
+messages. This means that all command fields must be embedded within the command document. When
+[DRIVERS-2859](https://jira.mongodb.org/browse/DRIVERS-2859) is completed, drivers will be able to
+specify `ops` and `nsInfo` as document sequences (`OP_MSG` payload type 1) for encrypted bulk
+writes.
+
 ## Q&A
 
 ### Why are we adding a new bulk write API rather than updating the `MongoCollection.bulkWrite` implementation?
@@ -757,6 +767,10 @@ for each operation. Compiling the individual results server-side and consuming t
 driver-side is less performant than only recording the summary counts. We expect that most users
 are not interested in the individual results of their operations and that most users will rely on
 defaults, so `verboseResults` defaults to `false` to improve performance in the common case.
+
+### Why are document sequences not permitted for encrypted bulk writes?
+
+
 
 ## **Changelog**
 
