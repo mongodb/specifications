@@ -253,7 +253,7 @@ class BulkWriteOptions {
      * specified. If false, writes will continue to be executed if an individual write fails. If
      * true, writes will stop executing if an individual write fails.
      *
-     * Defaults to false.
+     * Defaults to true.
      */
     ordered: Optional<Boolean>;
 
@@ -493,12 +493,6 @@ documents have the following format:
 
 If the document to be inserted does not contain an `_id` field, drivers MUST generate a new
 [`ObjectId`](../objectid.rst) and add it as the `_id` field at the beginning of the document.
-
-When a user executes a bulk write with an unacknowledged write concern, drivers MUST check the
-size of the insert document to verify that it does not exceed `maxBsonObjectSize`. For acknowledged
-bulk writes, drivers MAY rely on the server to return an error if the document exceeds
-`maxBsonObjectSize`. The value for `maxBsonObjectSize` can be retrieved from the selected server's
-`hello` response.
 
 #### Update
 
