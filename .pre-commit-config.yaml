@@ -40,7 +40,7 @@ repos:
     - id: mdformat
       args: ["--wrap=120", "--number"]
       additional_dependencies:
-        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-admon]
+        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-gfm-alerts]
 
 - repo: https://github.com/tcort/markdown-link-check
   rev: v3.11.2

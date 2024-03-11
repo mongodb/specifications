@@ -537,8 +537,7 @@ a name (e.g. `aws:myname`) do not support automatic credentials. Attempting to c
 automatic credentials results in a runtime error from [libmongocrypt](#libmongocrypt). See
 [Why do on-demand KMS credentials not support named KMS providers?](#why-do-on-demand-kms-credentials-not-support-named-kms-providers)
 
-> \[!NOTE\]
->
+> [!NOTE]
 > Drivers MUST NOT eagerly fill an empty KMS options property.
 
 Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) `$P$` according to the following process:
@@ -596,7 +595,7 @@ Virtual machines running on the Azure platform have one or more *Managed Identit
 the VM, an identity can be used by obtaining an access token via HTTP from the *Azure Instance Metadata Service* (IMDS).
 [See this documentation for more information](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http)
 
-> \[!NOTE\] To optimize for testability, it is recommended to implement an isolated abstraction for communication with
+> [!NOTE] To optimize for testability, it is recommended to implement an isolated abstraction for communication with
 > IMDS. This will aide in the implementation of the prose tests of the communication with an IMDS server.
 
 The below steps should be taken:
@@ -609,7 +608,7 @@ The below steps should be taken:
 
 04. Prepare an HTTP GET request `$Req$` based on `$U$`.
 
-    > \[!NOTE\] All query parameters on `$U$` should be appropriately percent-encoded
+    > [!NOTE] All query parameters on `$U$` should be appropriately percent-encoded
 
 05. Add HTTP headers `Metadata: true` and `Accept: application/json` to `$Req$`.
 
@@ -629,13 +628,11 @@ The below steps should be taken:
 10. The resulting "expires in" duration `$d_{exp}$` is a count of seconds given as an ASCII-encoded integer string
     `expires_in` property of `$J$`.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > If JSON decoding of `$Resp$` fails, or the `access_token` property is absent from `$J$`, this is a protocol error from
 > IMDS. Indicate this error to the requester of the access token.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > If an Azure VM has more than one managed identity, requesting an access token requires additional query parameters to
 > disambiguate the request. For simplicity, these parameters are omitted, and only VMs that have a single managed
 > identity are supported.
@@ -833,8 +830,7 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 `Database.createCollection()`). This option will be interpreted by the helper method and MUST be passed to the
 [create](https://www.mongodb.com/docs/manual/reference/command/create) command.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`.
 > [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added server-side validation for those fields and no
 > longer allows names to deviate from the following:
@@ -904,8 +900,7 @@ Drivers MUST support a BSON document option named `encryptedFields` for any
 `Collection.drop()`). This option will only be interpreted by the helper method and MUST NOT be passed to the
 [drop](https://www.mongodb.com/docs/manual/reference/command/drop) command.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > Users are not expected to set the `escCollection` and `ecocCollection` options in `encryptedFields`.
 > [SERVER-74069](https://jira.mongodb.org/browse/SERVER-74069) added server-side validation for those fields and no
 > longer allows names to deviate from the following:
@@ -1213,7 +1208,7 @@ insert or query. Drivers MUST document the following behavior:
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
-> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
 > changes.
 
 #### contentionFactor
@@ -1221,7 +1216,7 @@ insert or query. Drivers MUST document the following behavior:
 contentionFactor only applies when algorithm is "Indexed" or "RangePreview". It is an error to set contentionFactor when
 algorithm is not "Indexed" or "RangePreview".
 
-> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
 > changes.
 
 #### queryType
@@ -1234,7 +1229,7 @@ One of the strings:
 queryType only applies when algorithm is "Indexed" or "RangePreview". It is an error to set queryType when algorithm is
 not "Indexed" or "RangePreview".
 
-> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
 > changes.
 
 #### rangeOpts
@@ -1242,7 +1237,7 @@ not "Indexed" or "RangePreview".
 rangeOpts only applies when algorithm is "rangePreview". It is an error to set rangeOpts when algorithm is not
 "rangePreview".
 
-> \[!NOTE\] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
+> [!NOTE] The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking
 > changes.
 
 ## User facing API: When Auto Encryption Fails
@@ -1382,8 +1377,7 @@ API does not expose this full search path functionality. This extended search pa
 facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
 [Search Paths for Testing](#search-paths-for-testing) and [Path Resolution Behavior](#path-resolution-behavior)).
 
-> \[!NOTE\]
->
+> [!NOTE]
 > The driver MUST NOT manipulate or do any validation on the [crypt_shared](#crypt_shared) path options provided in
 > [extraOptions](#extraoptions). They should be passed through to [libmongocrypt](#libmongocrypt) unchanged.
 
@@ -1414,8 +1408,7 @@ Refer to: [Path Resolution Behavior](#path-resolution-behavior) and
 If [extraOptions.cryptSharedLibPath](#extraoptions.cryptsharedlibpath) was specified by the user, the driver MUST set
 the [crypt_shared](#crypt_shared) path override on the `libmongocrypt_handle`.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > If a path override is set on a `libmongocrypt_handle` and [libmongocrypt](#libmongocrypt) fails to load
 > [crypt_shared](#crypt_shared) from that filepath, then that will result in a hard-error when initializing
 > [libmongocrypt](#libmongocrypt).
@@ -1552,8 +1545,7 @@ If the following conditions are met:
 If the [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) option is `true` then the driver MUST
 NOT attempt to spawn or connect to `mongocryptd`.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > Since spawning [mongocryptd](#mongocryptd) requires checking whether [crypt_shared](#crypt_shared) is loaded, and
 > checking whether [crypt_shared](#crypt_shared) is available can only be done *after* having initialized the
 > `libmongocrypt_handle`, drivers will need to defer spawning [mongocryptd](#mongocryptd) until *after* initializing
@@ -1592,8 +1584,7 @@ If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then t
 spawning mongocryptd. If server selection ever fails when connecting to mongocryptd, the server selection error is
 propagated to the user.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > A correctly-behaving driver will never attempt to connect to [mongocryptd](#mongocryptd) when
 > [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) is set to `true` or
 > [crypt_shared](#crypt_shared) is loaded.
