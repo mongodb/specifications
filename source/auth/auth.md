@@ -1221,10 +1221,10 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
     `MongoClient`, the driver MUST raise an error.
 
-  - TOKEN_AUDIENCE\
+  - TOKEN_RESOURCE\
     The URI of the target resource. This property is currently only used and required by the Azure
-    built-in OIDC provider integration. If `TOKEN_AUDIENCE` is provided and `PROVIDER_NAME` is not `azure` or
-    `TOKEN_AUDIENCE` is not provided and `PROVIDER_NAME` is `azure`, the driver MUST raise an error.
+    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `PROVIDER_NAME` is not `azure` or
+    `TOKEN_RESOURCE` is not provided and `PROVIDER_NAME` is `azure`, the driver MUST raise an error.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
@@ -1268,9 +1268,9 @@ Drivers MAY implement the AWS provider so that it conforms to the function signa
 
 **Azure**
 
-The Azure provider integration is enabled by setting auth mechanism property `PROVIDER_NAME:azure`.
+The Azure provider integration is enabled by setting auth mechanism property `ENVIRONMENT:azure`.
 
-If enabled, drivers MUST call the
+If enabled, drivers MUST provide a machine callback that calls the
 [Azure Instance Metadata Service](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service)
 and parse the JSON response body, as follows:
 
@@ -1287,17 +1287,16 @@ Accept: application/json
 Metadata: true
 ```
 
-where `<resource>` is the value of the `TOKEN_AUDIENCE` mechanism property and `<object_id>` is the `username` from the
+where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property and `<object_id>` is the `username` from the
 connection string. If a `username` is not provided, the `object_id` query parameter should be omitted.
 
-Example code for the above using curl, where `$TOKEN_AUDIENCE` is the value of the `TOKEN_AUDIENCE` mechanism
-property.
+Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
 
 ```bash
 curl -X GET \
   -H "Accept: application/json" \
   -H "Metadata: true" \
-  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$TOKEN_AUDIENCE"
+  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$TOKEN_RESOURCE"
 ```
 
 The JSON response will be in this format:
@@ -1319,6 +1318,9 @@ The driver MUST use the returned `"access_token"` value as the access token in a
 For more details, see
 [How to use managed identities for Azure resources on an Azure VM to acquire an access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token).
 
+The callback itself MUST not perform any caching, and the driver MUST cache its tokens in the same way as if a custom
+callback had been provided by the user.
+
 #### OIDC Callback
 
 Drivers MUST allow users to provide a callback that returns an OIDC access token. The purpose of the callback is to
@@ -1335,6 +1337,8 @@ Selection section of the CSOT spec.
 The driver MUST pass the following information to the callback:
 
 - `timeout`: A timeout, in milliseconds, a deadline, or a `timeoutContext`.
+
+- `username`: The username given as part of the connection string or `MongoClient` parameter.
 
 - `version`: The callback API version number. The version number is used to communicate callback API changes that are
   not breaking but that users may want to know about and review their implementation. Drivers MUST pass `1` for the
@@ -1366,6 +1370,7 @@ An example callback API might look like:
 ```typescript
 interface OIDCCallbackParams {
     callbackTimeoutMS: int;
+    username: str;
     version: int;
 }
 
@@ -1413,6 +1418,7 @@ interface IdpInfo {
 }
 
 interface OIDCCallbackParams {
+    username: str;
     callbackTimeoutMS: int;
     version: int;
     idpInfo: Optional<IdpInfo>;
