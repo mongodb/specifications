@@ -19,10 +19,18 @@ AWS_WEB_IDENTITY_TOKEN_FILE="$OIDC_TOKEN_DIR/test_user1" /my/test/command
 
 ______________________________________________________________________
 
+## Unified Spec Tests
+
+Drivers MUST run the unified spec tests in all supported OIDC environments.
+
+______________________________________________________________________
+
 ## Prose Tests
 
 Drivers MUST implement all prose tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be
 configured with `retryReads=false`.
+
+Drivers MUST run the prose tests in all supported OIDC environments.
 
 > \[!NOTE\]
 >
@@ -120,12 +128,32 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 - Assert that the callback was called 2 times (once during the connection handshake, and again during reauthentication).
 - Close the client.
 
+## (5) Azure Tests
+
+Drivers MUST only run the Azure tests when testing on an Azure VM. See instructions in
+[Drivers Evergreen Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/auth_oidc/azure#azure-oidc-testing)
+for test setup.
+
+# 5.1 Azure With No Username
+
+- Create a `MongoClient` configured with `ENVIRONMENT:Azure` and a valid `TOKEN_RESOURCE` and no username.
+- Perform a `find` operation that succeeds.
+- Close the client.
+
+# 5.2 Azure with Bad Usernam
+
+- Create a `MongoClient` configured with `ENVIRONMENT:Azure` and a valid `TOKEN_RESOURCE` and a username of `"bad"`.
+- Perform a `find` operation that fails.
+- Close the client.
+
 ______________________________________________________________________
 
 ## Human Authentication Flow Prose Tests
 
 Drivers that support the [Human Authentication Flow](../auth.md#human-authentication-flow) MUST implement all prose
 tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be configured with `retryReads=false`.
+
+The human workflow tests MUST only be run when testing in the default environment described beflow.
 
 > \[!NOTE\]
 >
