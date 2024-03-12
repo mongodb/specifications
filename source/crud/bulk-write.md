@@ -651,14 +651,15 @@ The documents in the results cursor have the following format:
     "idx": Int32,
     "code": Optional<Int32>,
     "errmsg": Optional<String>,
+    "errInfo": Optional<Document>,
     "n": <Int32>,
     "nModified": Optional<Int32>,
     "upsertedId": Optional<BSON value>
 }
 ```
 
-If an error occurred (i.e. the value for `ok` is 0), the `code` and `errmsg` fields will be
-populated with details about the failure.
+If an error occurred (i.e. the value for `ok` is 0), the `code`, `errmsg`, and optionally
+`errInfo` fields will be populated with details about the failure.
 
 If the write succeeded, (i.e. the value for `ok` is 1), `n`, `nModified`, and `upsertedId` will be
 populated with the following values based on the type of write:
