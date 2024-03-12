@@ -1462,8 +1462,8 @@ arguments:
 ```
 
 Because the `insertResults`, `updateResults`, and `deleteResults` may be absent or empty in the `BulkWriteResult` returned
-from a summary-only bulk write, the `clientBulkWrite` operation MUST use the [$$unsetOrMatches](#unsetormatches) operator
-for assertions on these fields when `verboseResults` is not set to true. This requirement also applies to result objects
+from a summary-only bulk write, the `clientBulkWrite` operation SHOULD use the [$$unsetOrMatches](#unsetormatches) operator
+for assertions on these fields when `verboseResults` is not set to true. This also applies to result objects
 defined in the `expectedResult` field of [expectedError](#expectederror).
 
 The `BulkWriteException` thrown by `MongoClient.bulkWrite` contains an optional `error` field that stores a top-level error
