@@ -16,6 +16,9 @@
         "pattern": "^https://github.com/10gen/mongo-enterprise-modules"
       },
       {
+        "pattern": "^https://github.com/10gen/mongohouse"
+      },
+      {
         "pattern": "cloudkms.googleapis.com"
       },
       {
