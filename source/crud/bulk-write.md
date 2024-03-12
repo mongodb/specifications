@@ -15,7 +15,7 @@ defined in the CRUD specification and the
 
 ## Specification
 
-> \[!NOTE\]
+> [!NOTE]
 >
 > The `BulkWriteOptions`, `BulkWriteResult`, and `BulkWriteException` types defined in this
 > specification are similar to those used for the `MongoCollection.bulkWrite` method. Statically
