@@ -859,8 +859,7 @@ The following diagram is a summary of the steps drivers MUST follow to calculate
 | X-MongoDB-Optional-Data\* | Optional data, base64 encoded representation of the optional object provided by the client                                    |
 | Body                      | Action=GetCallerIdentity&Version=2011-06-15                                                                                   |
 
-> \[!NOTE\]
->
+> [!NOTE]
 > `*`, Denotes a header that MUST be included in SignedHeaders, if present.
 
 #### Region Calculation
@@ -948,8 +947,7 @@ The order in which Drivers MUST search for credentials is:
 3. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
 4. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q--a)
 >
 > Drivers are not expected to handle
@@ -1153,8 +1151,7 @@ cache MUST be written atomically.
 
 If AWS authentication fails for any reason, the cache MUST be cleared.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > Five minutes was chosen based on the AWS documentation for
 > [IAM roles for EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) : "We make new
 > credentials available at least five minutes before the expiration of the old credentials". The intent is to have some

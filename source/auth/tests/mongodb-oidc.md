@@ -24,8 +24,7 @@ ______________________________________________________________________
 Drivers MUST implement all prose tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be
 configured with `retryReads=false`.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
 > after the test to prevent interaction between test cases.
 
@@ -127,8 +126,7 @@ ______________________________________________________________________
 Drivers that support the [Human Authentication Flow](../auth.md#human-authentication-flow) MUST implement all prose
 tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be configured with `retryReads=false`.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
 > after the test to prevent interaction between test cases.
 

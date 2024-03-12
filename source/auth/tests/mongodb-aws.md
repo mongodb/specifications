@@ -39,8 +39,7 @@ URI on an EC2 machine would be:
 mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
-> \[!NOTE\]
->
+> [!NOTE]
 > No username, password or session token is passed into the URI. Drivers MUST query the EC2 instance endpoint to obtain
 > these credentials.
 
@@ -53,8 +52,7 @@ would be:
 mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
-> \[!NOTE\]
->
+> [!NOTE]
 > No username, password or session token is passed into the URI. Drivers MUST query the ECS container endpoint to obtain
 > these credentials.
 
@@ -87,8 +85,7 @@ mongodb://localhost/?authMechanism=MONGODB-AWS
 
 Drivers MUST test with and without AWS_ROLE_SESSION_NAME set.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > No username, password or session token is passed into the URI.
 
 Drivers MUST check the environment variables listed above and make an
@@ -125,8 +122,7 @@ export AWS_SESSION_TOKEN="<Token>"
 URI="mongodb://localhost/?authMechanism=MONGODB-AWS"
 ```
 
-> \[!NOTE\]
->
+> [!NOTE]
 > No username, password or session token is passed into the URI. Drivers MUST check the environment variables listed
 > above for these values. If the session token is set Drivers MUST use it.
 
