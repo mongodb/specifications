@@ -14,7 +14,7 @@ For example, if the selected AWS profile ID is "drivers-test", run:
 aws configure sso
 export OIDC_TOKEN_DIR=/tmp/tokens
 AWS_PROFILE="drivers-test" oidc_get_tokens.sh
-AWS_WEB_IDENTITY_TOKEN_FILE="$OIDC_TOKEN_DIR/test_user1" /my/test/command
+OIDC_TOKEN_FILE="$OIDC_TOKEN_DIR/test_user1" /my/test/command
 ```
 
 ______________________________________________________________________
@@ -40,14 +40,14 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 **1.1 Callback is called during authentication**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
 - Close the client.
 
 **1.2 Callback is called once for multiple connections**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Start 10 threads and run 100 `find` operations in each thread that all succeed.
 - Assert that the callback was called 1 time.
 - Close the client.
@@ -76,14 +76,14 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 **2.4 Invalid Client Configuration with Callback**
 
-- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `OIDC_ENV:test`.
+- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `ENVIRONMENT:test`.
 - Assert it returns a client configuration error.
 
 ### (3) Authentication Failure
 
 **3.1 Authentication failure with cached tokens fetch a new token and retry auth**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Poison the *Client Cache* with an invalid access token.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
@@ -98,7 +98,7 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 ### (4) Reauthentication
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `OIDC_ENV:test` logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Set a fail point for `find` commands of the form:
 
 ```javascript

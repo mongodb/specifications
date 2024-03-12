@@ -1217,7 +1217,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - ENVIRONMENT\
     Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration
-    to use to obtain credentials. If provided, the value MUST be one of `["test"]`. If both `OIDC_ENV` and an
+    to use to obtain credentials. If provided, the value MUST be one of `["test"]`. If both `ENVIRONMENT` and an
     [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
     `MongoClient`, the driver MUST raise an error.
 
