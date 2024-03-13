@@ -1270,7 +1270,7 @@ Drivers MAY implement the AWS provider so that it conforms to the function signa
 
 The Azure provider integration is enabled by setting auth mechanism property `ENVIRONMENT:azure`.
 
-If enabled, drivers MUST provide a machine callback that calls the
+If enabled, drivers MUST use an internal machine callback that calls the
 [Azure Instance Metadata Service](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service)
 and parse the JSON response body, as follows:
 
