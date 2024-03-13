@@ -1,3 +1,11 @@
+
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `subtype6.md <subtype6.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 =====================
 BSON Binary Subtype 6
 =====================

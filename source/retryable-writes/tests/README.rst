@@ -9,13 +9,9 @@ Retryable Write Tests
 Introduction
 ============
 
-Tests in this directory are platform-independent tests that drivers can use to
-prove their conformance to the Retryable Writes specification.
-
-Tests in the ``unified`` directory are implemented in the
-`Unified Test Format <../../unified-test-format/unified-test-format.md>`__.
-
-Tests in the ``legacy`` directory should be executed as described below.
+The YAML and JSON files in this directory are platform-independent tests meant
+to exercise a driver's implementation of retryable writes. These tests utilize
+the [Unified Test Format](../../unified-test-format/unified-test-format.md).
 
 Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
@@ -26,80 +22,6 @@ Integration tests will require a running MongoDB cluster with server versions
 will also need to have been executed to enable support for retryable writes on
 the cluster. Some tests may have more stringent version requirements depending
 on the fail points used.
-
-Server Fail Point
-=================
-
-onPrimaryTransactionalWrite
----------------------------
-
-Some tests depend on a server fail point, ``onPrimaryTransactionalWrite``, which
-allows us to force a network error before the server would return a write result
-to the client. The fail point also allows control whether the server will
-successfully commit the write via its ``failBeforeCommitExceptionCode`` option.
-Keep in mind that the fail point only triggers for transaction writes (i.e. write
-commands including ``txnNumber`` and ``lsid`` fields). See `SERVER-29606`_ for
-more information.
-
-.. _SERVER-29606: https://jira.mongodb.org/browse/SERVER-29606
-
-The fail point may be configured like so::
-
-    db.runCommand({
-        configureFailPoint: "onPrimaryTransactionalWrite",
-        mode: <string|document>,
-        data: <document>
-    });
-
-``mode`` is a generic fail point option and may be assigned a string or document
-value. The string values ``"alwaysOn"`` and ``"off"`` may be used to enable or
-disable the fail point, respectively. A document may be used to specify either
-``times`` or ``skip``, which are mutually exclusive:
-
-- ``{ times: <integer> }`` may be used to limit the number of times the fail
-  point may trigger before transitioning to ``"off"``.
-- ``{ skip: <integer> }`` may be used to defer the first trigger of a fail
-  point, after which it will transition to ``"alwaysOn"``.
-
-The ``data`` option is a document that may be used to specify options that
-control the fail point's behavior. As noted in `SERVER-29606`_,
-``onPrimaryTransactionalWrite`` supports the following ``data`` options, which
-may be combined if desired:
-
-- ``closeConnection``: Boolean option, which defaults to ``true``. If ``true``,
-  the connection on which the write is executed will be closed before a result
-  can be returned.
-- ``failBeforeCommitExceptionCode``: Integer option, which is unset by default.
-  If set, the specified exception code will be thrown and the write will not be
-  committed. If unset, the write will be allowed to commit.
-
-failCommand
------------
-
-Some tests depend on a server fail point, ``failCommand``, which allows the
-client to force the server to return an error. Unlike
-``onPrimaryTransactionalWrite``, ``failCommand`` does not allow the client to
-directly control whether the server will commit the operation (execution of the
-write depends on whether the ``closeConnection`` and/or ``errorCode`` options
-are specified). See: `failCommand <../../transactions/tests#failcommand>`_ in
-the Transactions spec test suite for more information.
-
-Disabling Fail Points after Test Execution
-------------------------------------------
-
-After each test that configures a fail point, drivers should disable the fail
-point to avoid spurious failures in subsequent tests. The fail point may be
-disabled like so::
-
-    db.runCommand({
-        configureFailPoint: <fail point name>,
-        mode: "off"
-    });
-
-Speeding Up Tests
-=================
-
-See `Speeding Up Tests <../../retryable-reads/tests/README.rst#speeding-up-tests>`_ in the retryable reads spec tests.
 
 Use as Integration Tests
 ========================
@@ -141,119 +63,6 @@ This is because (1) the fail point only triggers when a write would be committed
 and (2) the skip and times options are mutually exclusive. That said, such a
 test would mainly assert the server's correctness for at-most once semantics and
 is not essential to assert driver correctness.
-
-Test Format
------------
-
-Each YAML file has the following keys:
-
-- ``runOn`` (optional): An array of server version and/or topology requirements
-  for which the tests can be run. If the test environment satisfies one or more
-  of these requirements, the tests may be executed; otherwise, this file should
-  be skipped. If this field is omitted, the tests can be assumed to have no
-  particular requirements and should be executed. Each element will have some or
-  all of the following fields:
-
-  - ``minServerVersion`` (optional): The minimum server version (inclusive)
-    required to successfully run the tests. If this field is omitted, it should
-    be assumed that there is no lower bound on the required server version.
-
-  - ``maxServerVersion`` (optional): The maximum server version (inclusive)
-    against which the tests can be run successfully. If this field is omitted,
-    it should be assumed that there is no upper bound on the required server
-    version.
-
-  - ``topology`` (optional): An array of server topologies against which the
-    tests can be run successfully. Valid topologies are "single",
-    "replicaset", "sharded", and "load-balanced". If this field is omitted,
-    the default is all topologies (i.e. ``["single", "replicaset", "sharded",
-    "load-balanced"]``).
-
-  - ``serverless``: (optional): Whether or not the test should be run on Atlas
-    Serverless instances. Valid values are "require", "forbid", and "allow". If
-    "require", the test MUST only be run on Atlas Serverless instances. If
-    "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted
-    or "allow", this option has no effect.
-
-    The test runner MUST be informed whether or not Atlas Serverless is being
-    used in order to determine if this requirement is met (e.g. through an
-    environment variable or configuration option).
-
-    Note: the Atlas Serverless proxy imitates mongos, so the test runner is not
-    capable of determining if Atlas Serverless is in use by issuing commands
-    such as ``buildInfo`` or ``hello``. Furthermore, connections to Atlas
-    Serverless use a load balancer, so the topology will appear as
-    "load-balanced".
-
-- ``data``: The data that should exist in the collection under test before each
-  test run.
-
-- ``tests``: An array of tests that are to be run independently of each other.
-  Each test will have some or all of the following fields:
-
-  - ``description``: The name of the test.
-
-  - ``clientOptions``: Parameters to pass to MongoClient().
-
-  - ``useMultipleMongoses`` (optional): If ``true``, and the topology type is
-    ``Sharded``, the MongoClient for this test should be initialized with multiple
-    mongos seed addresses. If ``false`` or omitted, only a single mongos address
-    should be specified.
-
-    If ``true``, the topology type is ``LoadBalanced``, and Atlas Serverless is
-    not being used, the MongoClient for this test should be initialized with the
-    URI of the load balancer fronting multiple servers. If ``false`` or omitted,
-    the MongoClient for this test should be initialized with the URI of the load
-    balancer fronting a single server.
-
-    ``useMultipleMongoses`` only affects ``Sharded`` and ``LoadBalanced``
-    topologies (excluding Atlas Serverless).
-
-  - ``failPoint`` (optional): The ``configureFailPoint`` command document to run
-    to configure a fail point on the primary server. Drivers must ensure that
-    ``configureFailPoint`` is the first field in the command. This option and
-    ``useMultipleMongoses: true`` are mutually exclusive.
-
-  - ``operation``: Document describing the operation to be executed. The
-    operation should be executed through a collection object derived from a
-    client that has been created with ``clientOptions``. The operation will have
-    some or all of the following fields:
-
-    - ``name``: The name of the operation as defined in the CRUD specification.
-
-    - ``arguments``: The names and values of arguments from the CRUD
-      specification.
-
-  - ``outcome``: Document describing the return value and/or expected state of
-    the collection after the operation is executed. This will have some or all
-    of the following fields:
-
-    - ``error``: If ``true``, the test should expect an error or exception. Note
-      that some drivers may report server-side errors as a write error within a
-      write result object.
-
-    - ``result``: The return value from the operation. This will correspond to
-      an operation's result object as defined in the CRUD specification. This
-      field may be omitted if ``error`` is ``true``. If this field is present
-      and ``error`` is ``true`` (generally for multi-statement tests), the
-      result reports information about operations that succeeded before an
-      unrecoverable failure. In that case, drivers may choose to check the
-      result object if their BulkWriteException (or equivalent) provides access
-      to a write result object.
-
-      - ``errorLabelsContain``: A list of error label strings that the
-        error is expected to have.
-
-      - ``errorLabelsOmit``: A list of error label strings that the
-        error is expected not to have.
-
-    - ``collection``:
-
-      - ``name`` (optional): The name of the collection to verify. If this isn't
-        present then use the collection under test.
-
-      - ``data``: The data that should exist in the collection after the
-        operation has been run.
 
 Split Batch Tests
 =================
@@ -457,53 +266,24 @@ and sharded clusters.
             mode: "off"
         }
 
-#. Test that in a sharded cluster writes are retried on a different mongos if
-   one available
+#. Test that in a sharded cluster writes are retried on a different mongos when
+   one is available.
 
    This test MUST be executed against a sharded cluster that has at least two
-   mongos instances.
+   mongos instances, supports ``retryWrites=true``, has enabled the
+   ``configureFailPoint`` command, and supports the ``errorLabels`` field
+   (MongoDB 4.3.1+).
 
-   This test requires MongoDB 4.3.1+ for the ``errorLabels`` fail point option.
+   Note: this test cannot reliably distinguish "retry on a different mongos due
+   to server deprioritization" (the behavior intended to be tested) from "retry
+   on a different mongos due to normal SDAM randomized suitable server
+   selection". Verify relevant code paths are correctly executed by the tests
+   using external means such as a logging, debugger, code coverage tool, etc.
 
-   1. Ensure that a test is run against a sharded cluster that has at least two
-      mongoses. If there are more than two mongoses in the cluster, pick two to
-      test against.
+   1. Create two clients ``s0`` and ``s1`` that each connect to a single mongos
+      from the sharded cluster. They must not connect to the same mongos.
 
-   2. Create a client per mongos using the direct connection, and configure the
-      following fail point on each mongos::
-
-        {
-            configureFailPoint: "failCommand",
-            mode: { times: 1 },
-            data: {
-                failCommands: ["insert"],
-                errorCode: 6,
-                errorLabels: ["RetryableWriteError"],
-                closeConnection: true
-            }
-        }
-
-   3. Create a client with ``retryWrites=true`` that connects to the cluster,
-      providing the two selected mongoses as seeds.
-
-   4. Enable command monitoring, and execute a write command that is
-      supposed to fail on both mongoses.
-
-   5. Asserts that there were failed command events from each mongos.
-
-   6. Disable the fail points.
-
-#. Test that in a sharded cluster writes are retried on the same mongos if no
-   other is available
-
-   This test MUST be executed against a sharded cluster and requires MongoDB
-   4.3.1+ for the ``errorLabels`` fail point option.
-
-   1. Ensure that a test is run against a sharded cluster. If there are multiple
-      mongoses in the cluster, pick one to test against.
-
-   2. Create a client that connects to the mongos using the direct connection,
-      and configure the following fail point on the mongos::
+   2. Configure the following fail point for both ``s0`` and ``s1``::
 
         {
             configureFailPoint: "failCommand",
@@ -511,23 +291,72 @@ and sharded clusters.
             data: {
                 failCommands: ["insert"],
                 errorCode: 6,
-                errorLabels: ["RetryableWriteError"],
-                closeConnection: true
+                errorLabels: ["RetryableWriteError"]
             }
         }
 
-   3. Create a client with ``retryWrites=true`` that connects to the cluster,
-      providing the selected mongos as the seed.
+   3. Create a client ``client`` with ``retryWrites=true`` that connects to the
+      cluster using the same two mongoses as ``s0`` and ``s1``.
 
-   4. Enable command monitoring, and execute a write command that is
-      supposed to fail.
+   4. Enable failed command event monitoring for ``client``.
 
-   5. Asserts that there was a failed command and a successful command event.
+   5. Execute an ``insert`` command with ``client``. Assert that the command
+      failed.
 
-   6. Disable the fail point.
+   6. Assert that two failed command events occurred. Assert that the failed
+      command events occurred on different mongoses.
+
+   7. Disable the fail points on both ``s0`` and ``s1``.
+
+#. Test that in a sharded cluster writes are retried on the same mongos when no
+   others are available.
+
+   This test MUST be executed against a sharded cluster that supports
+   ``retryWrites=true``, has enabled the ``configureFailPoint`` command, and
+   supports the ``errorLabels`` field (MongoDB 4.3.1+).
+
+   Note: this test cannot reliably distinguish "retry on a different mongos due
+   to server deprioritization" (the behavior intended to be tested) from "retry
+   on a different mongos due to normal SDAM behavior of randomized suitable
+   server selection". Verify relevant code paths are correctly executed by the
+   tests using external means such as a logging, debugger, code coverage tool,
+   etc.
+
+   1. Create a client ``s0`` that connects to a single mongos from the cluster.
+
+   2. Configure the following fail point for ``s0``::
+
+        {
+            configureFailPoint: "failCommand",
+            mode: { times: 1 },
+            data: {
+                failCommands: ["insert"],
+                errorCode: 6,
+                errorLabels: ["RetryableWriteError"]
+            }
+        }
+
+   3. Create a client ``client`` with ``directConnection=false`` (when not set by
+      default) and ``retryWrites=true`` that connects to the cluster using the
+      same single mongos as ``s0``.
+
+   4. Enable succeeded and failed command event monitoring for ``client``.
+
+   5. Execute an ``insert`` command with ``client``. Assert that the command
+      succeeded.
+
+   6. Assert that exactly one failed command event and one succeeded command
+      event occurred. Assert that both events occurred on the same mongos.
+
+   7. Disable the fail point on ``s0``.
 
 Changelog
 =========
+
+:2024-02-27: Convert legacy retryable writes tests to unified format.
+
+:2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing
+             execution of deprioritization code paths.
 
 :2024-01-05: Fix typo in prose test title.
 

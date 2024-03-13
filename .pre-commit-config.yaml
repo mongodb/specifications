@@ -22,13 +22,25 @@ repos:
       args: ["--severity=error"]
       stages: [manual]
 
+- repo: local
+  hooks:
+  - id: generate-index
+    name: generate-index
+    entry: python3 scripts/generate_index.py
+    language: system
+  - id: check-anchors
+    name: check-anchors
+    types: [markdown]
+    entry: bash scripts/check_anchors/check-anchors.sh
+    language: node
+    
 - repo: https://github.com/executablebooks/mdformat
   rev: 0.7.17
   hooks:
     - id: mdformat
       args: ["--wrap=120", "--number"]
       additional_dependencies:
-        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote]
+        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-gfm-alerts]
 
 - repo: https://github.com/tcort/markdown-link-check
   rev: v3.11.2
@@ -61,3 +73,6 @@ repos:
   hooks:
   - id: codespell
     args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te"]
+    exclude: |
+            (?x)^(.*\.rst
+            )$

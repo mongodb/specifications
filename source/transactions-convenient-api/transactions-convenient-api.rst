@@ -146,7 +146,7 @@ permitted as outlined in the `CRUD`_ specification). Drivers MAY support other
 parameters or options as needed (e.g. user data to pass as a parameter to the
 callback).
 
-.. _CRUD: ../crud/crud.rst#deviations
+.. _CRUD: ../crud/crud.md#deviations
 
 ~~~~~~~~~~~~~~~~~~~
 Sequence of Actions

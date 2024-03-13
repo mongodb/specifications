@@ -32,8 +32,7 @@ configured with `retryReads=false`.
 
 Drivers MUST run the prose tests in all supported OIDC environments.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
 > after the test to prevent interaction between test cases.
 
@@ -155,8 +154,7 @@ tests in this section. Unless otherwise noted, all `MongoClient` instances MUST 
 
 The human workflow tests MUST only be run when testing in the default environment described beflow.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
 > after the test to prevent interaction between test cases.
 

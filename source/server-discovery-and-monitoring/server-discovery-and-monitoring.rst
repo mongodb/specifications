@@ -361,7 +361,7 @@ Fields:
   The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
 * (=) iscryptd: boolean indicating if the server is a
-  `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`_
+  `mongocryptd <../client-side-encryption/client-side-encryption.md#mongocryptd>`_
   server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
@@ -504,7 +504,7 @@ Client construction
 '''''''''''''''''''
 
 Except for `initial DNS seed list discovery
-<https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+<../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md>`_
 when given a connection string with ``mongodb+srv`` scheme,
 the client's constructor MUST NOT do any I/O.
 This means that the constructor does not throw an exception

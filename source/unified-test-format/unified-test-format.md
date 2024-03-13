@@ -27,8 +27,8 @@ This test format can be used to define tests for the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
 - [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst)
-- [CRUD](../crud/crud.rst)
-- [GridFS](../gridfs/gridfs-spec.rst)
+- [CRUD](../crud/crud.md)
+- [GridFS](../gridfs/gridfs-spec.md)
 - [Retryable Reads](../retryable-reads/retryable-reads.rst)
 - [Retryable Writes](../retryable-writes/retryable-writes.rst)
 - [Sessions](../sessions/driver-sessions.rst)
@@ -188,7 +188,7 @@ Test runners MUST support the following types of entities:
 - ClientSession. See [entity_session](#entity_session) and [Session Operations](#session-operations).
 - GridFS Bucket. See [entity_bucket](#entity_bucket) and [Bucket Operations](#bucket-operations).
 
-<div id="entity_changestream">
+<span id="entity_changestream" />
 
 - ChangeStream. Change stream entities are special in that they are not defined in [createEntities](#createentities) but
   are instead created by using [operation.saveResultAsEntity](#operation_saveResultAsEntity) with a
@@ -213,9 +213,9 @@ Test runners MUST support the following types of entities:
 
   See [Cursor Operations](#cursor-operations) for a list of operations.
 
-- Event list. See [storeEventsAsEntities](<>). The event list MUST store BSON documents. The type of the list itself is
-  not prescribed by this specification. Test runner MAY use a BSON array or a thread-safe list data structure to
-  implement the event list.
+- Event list. See [storeEventsAsEntities](#entity_client_storeEventsAsEntities). The event list MUST store BSON
+  documents. The type of the list itself is not prescribed by this specification. Test runner MAY use a BSON array or a
+  thread-safe list data structure to implement the event list.
 
 - All known BSON types and/or equivalent language types for the target driver. For the present version of the spec, the
   following BSON types are known: 0x01-0x13, 0x7F, 0xFF.
@@ -223,14 +223,14 @@ Test runners MUST support the following types of entities:
   Tests SHOULD NOT utilize deprecated types (e.g. 0x0E: Symbol), since they may not be supported by all drivers and
   could yield runtime errors (e.g. while loading a test file with an Extended JSON parser).
 
-<div id="entity_thread">
+<span id="entity_thread" />
 
 - Test runner thread. An entity representing a "thread" that can be used to concurrently execute operations. Thread
   entities MUST be able to run concurrently with the main test runner thread and other thread entities, but they do not
   have to be implemented as actual OS threads (e.g. they can be goroutines or async tasks). See
   [entity_thread_object](#entity_thread_object) for more information on how they are created.
 
-<div id="entity_topologydescription">
+<span id="entity_topologydescription" />
 
 - TopologyDescription. An entity representing a client's
   [TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription) at a
@@ -262,7 +262,7 @@ The top-level fields of a test file are as follows:
 
   This SHOULD describe the common purpose of tests in this file and MAY refer to the filename (e.g. "updateOne-hint").
 
-<div id="schemaVersion">
+<span id="schemaVersion" />
 
 - `schemaVersion`: Required string. Version of this specification with which the test file complies.
 
@@ -274,13 +274,13 @@ The top-level fields of a test file are as follows:
   specific patch versions since patch-level changes SHOULD NOT alter the structure of the test format (as previously
   noted in [Schema Version](#schema-version)).
 
-<div id="runOnRequirements">
+<span id="runOnRequirements" />
 
 - `runOnRequirements`: Optional array of one or more [runOnRequirement](#runonrequirement) objects. List of server
   version and/or topology requirements for which the tests in this file can be run. If no requirements are met, the test
   runner MUST skip this test file.
 
-<div id="createEntities">
+<span id="createEntities" />
 
 - `createEntities`: Optional array of one or more [entity](#entity) objects. List of entities (e.g. client, collection,
   session objects) that SHALL be created before each test case is executed.
@@ -288,12 +288,12 @@ The top-level fields of a test file are as follows:
   Test files SHOULD define entities in dependency order, such that all referenced entities (e.g. client) are defined
   before any of their dependent entities (e.g. database, session).
 
-<div id="initialData">
+<span id="initialData" />
 
 - `initialData`: Optional array of one or more [collectionData](#collectiondata) objects. Data that will exist in
   collections before each test case is executed.
 
-<div id="tests">
+<span id="tests" />
 
 - `tests`: Required array of one or more [test](#test) objects. List of test cases to be executed independently of each
   other.
@@ -356,7 +356,7 @@ The structure of this object is as follows:
   parameter, test runners MUST treat the comparison as not equal and skip the test. This includes errors that occur when
   fetching a single parameter using `getParameter`.
 
-<div id="runOnRequirement_auth">
+<span id="runOnRequirement_auth" />
 
 - `auth`: Optional boolean. If true, the tests MUST only run if authentication is enabled. If false, tests MUST NOT run
   if authentication is enabled. If this field is omitted, there is no authentication requirement.
@@ -371,8 +371,8 @@ The structure of this object is as follows:
 
   - Server version is 4.2.0 or higher
   - Driver has libmongocrypt enabled
-  - At least one of [crypt_shared](../client-side-encryption/client-side-encryption.rst#crypt-shared) and/or
-    [mongocryptd](../client-side-encryption/client-side-encryption.rst#mongocryptd) is available
+  - At least one of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) and/or
+    [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) is available
 
   If false, tests MUST NOT run if CSFLE is supported. If this field is omitted, there is no CSFLE requirement.
 
@@ -395,7 +395,7 @@ on the entity's `id` key. This anchor will allow the unique name to be reference
 
 The structure of this object is as follows:
 
-<div id="entity_client">
+<span id="entity_client" />
 
 - `client`: Optional object. Defines a MongoClient object. In addition to the configuration defined below, test runners
   for drivers that implement connection pooling MUST track the number of connections checked out at any given time for
@@ -425,7 +425,7 @@ The structure of this object is as follows:
         PROVIDER_NAME: { $$placeholder: 1 }
     ```
 
-  <div id="entity_client_useMultipleMongoses">
+  <span id="entity_client_useMultipleMongoses" />
 
   - `useMultipleMongoses`: Optional boolean. If true and the topology is a sharded cluster, the test runner MUST assert
     that this MongoClient connects to multiple mongos hosts (e.g. by inspecting the connection string). If false and the
@@ -451,7 +451,7 @@ The structure of this object is as follows:
 
     This option has no effect for topologies that are not sharded or load balanced.
 
-  <div id="entity_client_observeEvents">
+  <span id="entity_client_observeEvents" />
 
   - `observeEvents`: Optional array of one or more strings. Types of events that can be observed for this client.
     Unspecified event types MUST be ignored by this client's event listeners and SHOULD NOT be included in
@@ -480,7 +480,7 @@ The structure of this object is as follows:
     - [serverHeartbeatFailedEvent](#expectedEvent_serverHeartbeatFailedEvent)
     - [topologyDescriptionChangedEvent](#expectedEvent_topologyDescriptionChangedEvent)
 
-  <div id="entity_client_ignoreCommandMonitoringEvents">
+  <span id="entity_client_ignoreCommandMonitoringEvents" />
 
   - `ignoreCommandMonitoringEvents`: Optional array of one or more strings. Command names for which the test runner MUST
     ignore any observed command monitoring events. The command(s) will be ignored in addition to `configureFailPoint`
@@ -489,9 +489,9 @@ The structure of this object is as follows:
     `observeSensitiveCommands` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring events are specified in
-    [observeEvents](<>).
+    [observeEvents](#entity_client_observeEvents).
 
-  <div id="entity_client_observeSensitiveCommands">
+  <span id="entity_client_observeSensitiveCommands" />
 
   - `observeSensitiveCommands`: Optional boolean. If true, events associated with sensitive commands (per the
     [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security)
@@ -500,7 +500,7 @@ The structure of this object is as follows:
     ignored. Authentication SHOULD be disabled when this property is true, i.e. [auth](#runOnRequirement_auth) should be
     false for each `runOnRequirement`. See [rationale_observeSensitiveCommands](#rationale_observeSensitiveCommands).
 
-  <div id="entity_client_storeEventsAsEntities">
+  <span id="entity_client_storeEventsAsEntities" />
 
   - `storeEventsAsEntities`: Optional array of one or more [storeEventsAsEntity](#storeeventsasentity) objects. Each
     object denotes an entity name and one or more events to be collected and stored in that entity. See
@@ -517,7 +517,7 @@ The structure of this object is as follows:
         events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
     ```
 
-  <div id="entity_client_observeLogMessages">
+  <span id="entity_client_observeLogMessages" />
 
   - `observeLogMessages`: Optional object where the key names are log [components](../logging/logging.rst#components)
     and the values are minimum [log severity levels](../logging/logging.rst#log-severity-levels) indicating which
@@ -526,7 +526,7 @@ The structure of this object is as follows:
     log collector(s) and SHOULD NOT be included in [test.expectLogMessages](#test_expectLogMessages) for this client.
   - `serverApi`: Optional [serverApi](#serverapi) object.
 
-<div id="entity_clientEncryption">
+<span id="entity_clientEncryption" />
 
 - `clientEncryption`: Optional object. Defines a ClientEncryption object.
 
@@ -537,7 +537,7 @@ The structure of this object is as follows:
     `id: &clientEncryption0 clientEncryption0`).
 
   - `clientEncryptionOpts`: Required document. A value corresponding to a
-    [ClientEncryptionOpts](../client-side-encryption/client-side-encryption.rst#clientencryption).
+    [ClientEncryptionOpts](../client-side-encryption/client-side-encryption.md#clientencryption).
 
     Note: the `tlsOptions` document is intentionally omitted from the test format. However, drivers MAY internally
     configure TLS options as needed to satisfy the requirements of configured KMS providers.
@@ -570,10 +570,10 @@ The structure of this object is as follows:
       exactly as the unnamed KMS providers. The `aws:name2` KMS provider and `aws:name1` KMS providers deliberately use
       separate AWS accounts that do not have permission to the other's keys.
 
-      See the [Client-Side Encryption test README](../client-side-encryption/tests/README.rst#credentials) for
+      See the [Client-Side Encryption test README](../client-side-encryption/tests/README.md#credentials) for
       instructions to obtain test credentials.
 
-<div id="entity_database">
+<span id="entity_database" />
 
 - `database`: Optional object. Defines a Database object.
 
@@ -589,7 +589,7 @@ The structure of this object is as follows:
     `databaseName: &database0Name foo`).
   - `databaseOptions`: Optional [collectionOrDatabaseOptions](#collectionordatabaseoptions) object.
 
-<div id="entity_collection">
+<span id="entity_collection" />
 
 - `collection`: Optional object. Defines a Collection object.
 
@@ -605,7 +605,7 @@ The structure of this object is as follows:
     `collectionName: &collection0Name foo`).
   - `collectionOptions`: Optional [collectionOrDatabaseOptions](#collectionordatabaseoptions) object.
 
-<div id="entity_session">
+<span id="entity_session" />
 
 - `session`: Optional object. Defines an explicit ClientSession object.
 
@@ -630,9 +630,9 @@ The structure of this object is as follows:
     When specifying TransactionOptions for `defaultTransactionOptions`, the transaction options MUST remain nested under
     `defaultTransactionOptions` and MUST NOT be flattened into `sessionOptions`.
 
-<div id="entity_bucket">
+<span id="entity_bucket" />
 
-- `bucket`: Optional object. Defines a Bucket object, as defined in the [GridFS](../gridfs/gridfs-spec.rst) spec.
+- `bucket`: Optional object. Defines a Bucket object, as defined in the [GridFS](../gridfs/gridfs-spec.md) spec.
 
   The structure of this object is as follows:
 
@@ -642,10 +642,10 @@ The structure of this object is as follows:
     [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for a database entity's `id` field (e.g.
     `database: *database0`).
   - `bucketOptions`: Optional object. Additional options used to construct the bucket object. Supported options are
-    defined in the [GridFS](../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class) specification. The `readConcern`,
+    defined in the [GridFS](../gridfs/gridfs-spec.md#configurable-gridfsbucket-class) specification. The `readConcern`,
     `readPreference`, and `writeConcern` options use the same structure as defined in [Common Options](#common-options).
 
-<div id="entity_thread_object">
+<span id="entity_thread_object" />
 
 - `thread`: Optional object. Defines a test runner "thread". Once the "thread" has been created, it should be idle and
   waiting for operations to be dispatched to it later on by [runOnThread](#runonthread) operations.
@@ -658,7 +658,7 @@ The structure of this object is as follows:
 #### storeEventsAsEntity
 
 A list of one or more events that will be observed on a client and collectively stored within an entity. This object is
-used within [storeEventsAsEntities](<>).
+used within [storeEventsAsEntities](#entity_client_storeEventsAsEntities).
 
 The structure of this object is as follows:
 
@@ -746,7 +746,7 @@ The structure of this object is as follows:
 
   This SHOULD describe the purpose of this test (e.g. "insertOne is retried").
 
-<div id="test_runOnRequirements">
+<span id="test_runOnRequirements" />
 
 - `runOnRequirements`: Optional array of one or more [runOnRequirement](#runonrequirement) objects. List of server
   version and/or topology requirements for which this test can be run. If specified, these requirements are evaluated
@@ -758,17 +758,17 @@ The structure of this object is as follows:
   of requirements MUST be satisfied in order for a test to be executed and more permissive requirements at the
   test-level could be taken out of context on their own.
 
-<div id="test_skipReason">
+<span id="test_skipReason" />
 
 - `skipReason`: Optional string. If set, the test will be skipped. The string SHOULD explain the reason for skipping the
   test (e.g. JIRA ticket).
 
-<div id="test_operations">
+<span id="test_operations" />
 
 - `operations`: Required array of one or more [operation](#operation) objects. List of operations to be executed for the
   test case.
 
-<div id="test_expectEvents">
+<span id="test_expectEvents" />
 
 - `expectEvents`: Optional array of one or more [expectedEventsForClient](#expectedeventsforclient) objects. For one or
   more clients, a list of events that are expected to be observed in a particular order.
@@ -781,7 +781,7 @@ The structure of this object is as follows:
   [expectedEventsForClient](#expectedeventsforclient) objects with the `eventType` set to `cmap` for both would either
   be redundant (if the `events` arrays were identical) or likely to fail (if the `events` arrays differed).
 
-<div id="test_expectLogMessages">
+<span id="test_expectLogMessages" />
 
 - `expectLogMessages`: Optional array of one or more [expectedLogMessagesForClient](#expectedlogmessagesforclient)
   objects. For one or more clients, a list of log messages that are expected to be observed in a particular order.
@@ -794,7 +794,7 @@ The structure of this object is as follows:
   Tests SHOULD NOT specify multiple [expectedLogMessagesForClient](#expectedlogmessagesforclient) objects for a single
   client entity.
 
-<div id="test_outcome">
+<span id="test_outcome" />
 
 - `outcome`: Optional array of one or more [collectionData](#collectiondata) objects. Data that is expected to exist in
   collections after each test case is executed.
@@ -808,18 +808,18 @@ An operation to be executed as part of the test.
 
 The structure of this object is as follows:
 
-<div id="operation_name">
+<span id="operation_name" />
 
 - `name`: Required string. Name of the operation (e.g. method) to perform on the object.
 
-<div id="operation_object">
+<span id="operation_object" />
 
 - `object`: Required string. Name of the object on which to perform the operation. This SHOULD correspond to either an
   [entity](#entity) name (for [Entity Test Operations](#entity-test-operations)) or "testRunner" (for
   [Special Test Operations](#special-test-operations)). If the object is an entity, The YAML file SHOULD use an
   [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for its `id` field (e.g. `object: *collection0`).
 
-<div id="operation_arguments">
+<span id="operation_arguments" />
 
 - `arguments`: Optional object. Map of parameter names and values for the operation. The structure of this object will
   vary based on the operation. See [Entity Test Operations](#entity-test-operations) and
@@ -827,7 +827,7 @@ The structure of this object is as follows:
 
   The `session` parameter is handled specially (see [commonOptions_session](#commonOptions_session)).
 
-<div id="operation_ignoreResultAndError">
+<span id="operation_ignoreResultAndError" />
 
 - `ignoreResultAndError`: Optional boolean. If true, both the error and result for the operation MUST be ignored.
 
@@ -836,7 +836,7 @@ The structure of this object is as follows:
 
   This field SHOULD NOT be used for [Special Test Operations](#special-test-operations) (i.e. `object: testRunner`).
 
-<div id="operation_expectError">
+<span id="operation_expectError" />
 
 - `expectError`: Optional [expectedError](#expectederror) object. One or more assertions for an error expected to be
   raised by the operation.
@@ -846,7 +846,7 @@ The structure of this object is as follows:
 
   This field SHOULD NOT be used for [Special Test Operations](#special-test-operations) (i.e. `object: testRunner`).
 
-<div id="operation_expectResult">
+<span id="operation_expectResult" />
 
 - `expectResult`: Optional mixed type. A value corresponding to the expected result of the operation. This field may be
   a scalar value, a single document, or an array of values. Test runners MUST follow the rules in
@@ -856,7 +856,7 @@ The structure of this object is as follows:
 
   This field SHOULD NOT be used for [Special Test Operations](#special-test-operations) (i.e. `object: testRunner`).
 
-<div id="operation_saveResultAsEntity">
+<span id="operation_saveResultAsEntity" />
 
 - `saveResultAsEntity`: Optional string. If specified, the actual result returned by the operation (if any) will be
   saved with this name in the [Entity Map](#entity-map). The test runner MUST raise an error if the name is already in
@@ -923,7 +923,7 @@ The structure of this object is as follows:
   to have. The test runner MUST assert that the error does not contain any of the specified labels (e.g. using the
   `hasErrorLabel` method).
 
-<div id="expectedError_errorResponse">
+<span id="expectedError_errorResponse" />
 
 - `errorResponse`: Optional document. A value corresponding to the expected server response. The test runner MUST assert
   that the error includes a server response that matches this value as a root-level document according to the rules in
@@ -934,7 +934,7 @@ The structure of this object is as follows:
   may not provide direct access to a single response. Tests SHOULD avoid using `errorResponse` for such operations if
   possible; otherwise, affected drivers SHOULD skip such tests if necessary.
 
-<div id="expectedError_expectResult">
+<span id="expectedError_expectResult" />
 
 - `expectResult`: Optional mixed type. This field follows the same rules as
   [operation.expectResult](#operation_expectResult) and is only used in cases where the error includes a result (e.g.
@@ -957,8 +957,8 @@ The structure of each object is as follows:
   for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
   events. Defaults to `command` if omitted.
 - `events`: Required array of [expectedEvent](#expectedevent) objects. List of events, which are expected to be observed
-  (in this order) on the corresponding client while executing [operations](<>). If the array is empty, the test runner
-  MUST assert that no events were observed on the client (excluding ignored events).
+  (in this order) on the corresponding client while executing [operations](#test_operations). If the array is empty, the
+  test runner MUST assert that no events were observed on the client (excluding ignored events).
 - `ignoreExtraEvents`: Optional boolean. Specifies how the `events` array is matched against the observed events. If
   `false`, observed events after all specified events have matched MUST cause a test failure; if `true`, observed events
   after all specified events have been matched MUST NOT cause a test failure. Defaults to `false`.
@@ -985,7 +985,7 @@ The events allowed in an `expectedEvent` object depend on the value of `eventTyp
 
 The structure of this object is as follows:
 
-<div id="expectedEvent_commandStartedEvent">
+<span id="expectedEvent_commandStartedEvent" />
 
 - `commandStartedEvent`: Optional object. Assertions for one or more
   [CommandStartedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
@@ -1001,7 +1001,7 @@ The structure of this object is as follows:
   - `hasServiceId`: Defined in [hasServiceId](#hasserviceid).
   - `hasServerConnectionId`: Defined in [hasServerConnectionId](#hasserverconnectionid).
 
-<div id="expectedEvent_commandSucceededEvent">
+<span id="expectedEvent_commandSucceededEvent" />
 
 - `commandSucceededEvent`: Optional object. Assertions for one or more
   [CommandSucceededEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
@@ -1017,7 +1017,7 @@ The structure of this object is as follows:
   - `hasServiceId`: Defined in [hasServiceId](#hasserviceid).
   - `hasServerConnectionId`: Defined in [hasServerConnectionId](#hasserverconnectionid).
 
-<div id="expectedEvent_commandFailedEvent">
+<span id="expectedEvent_commandFailedEvent" />
 
 - `commandFailedEvent`: Optional object. Assertions for one or more
   [CommandFailedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
@@ -1033,17 +1033,17 @@ The structure of this object is as follows:
 
 ##### expectedCmapEvent
 
-<div id="expectedEvent_poolCreatedEvent">
+<span id="expectedEvent_poolCreatedEvent" />
 
 - `poolCreatedEvent`: Optional object. If present, this object MUST be an empty document as all fields in this event are
   non-deterministic.
 
-<div id="expectedEvent_poolReadyEvent">
+<span id="expectedEvent_poolReadyEvent" />
 
 - `poolReadyEvent`: Optional object. If present, this object MUST be an empty document as all fields in this event are
   non-deterministic.
 
-<div id="expectedEvent_poolClearedEvent">
+<span id="expectedEvent_poolClearedEvent" />
 
 - `poolClearedEvent`: Optional object. Assertions for one or more
   [PoolClearedEvent](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) fields.
@@ -1054,22 +1054,22 @@ The structure of this object is as follows:
   - `interruptInUseConnections`: Optional boolean. If specified, test runners MUST assert that the field is set and
     matches this value.
 
-<div id="expectedEvent_poolClosedEvent">
+<span id="expectedEvent_poolClosedEvent" />
 
 - `poolClosedEvent`: Optional object. If present, this object MUST be an empty document as all fields in this event are
   non-deterministic.
 
-<div id="expectedEvent_connectionCreatedEvent">
+<span id="expectedEvent_connectionCreatedEvent" />
 
 - `connectionCreatedEvent`: Optional object. If present, this object MUST be an empty document as all fields in this
   event are non-deterministic.
 
-<div id="expectedEvent_connectionReadyEvent">
+<span id="expectedEvent_connectionReadyEvent" />
 
 - `connectionReadyEvent`: Optional object. If present, this object MUST be an empty document as all fields in this event
   are non-deterministic.
 
-<div id="expectedEvent_connectionClosedEvent">
+<span id="expectedEvent_connectionClosedEvent" />
 
 - `connectionClosedEvent`: Optional object. Assertions for one or more
   [ConnectionClosedEvent](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) fields.
@@ -1079,12 +1079,12 @@ The structure of this object is as follows:
   - `reason`: Optional string. Test runners MUST assert that the reason in the published event matches this value. Valid
     values for this field are defined in the CMAP spec.
 
-<div id="expectedEvent_connectionCheckOutStartedEvent">
+<span id="expectedEvent_connectionCheckOutStartedEvent" />
 
 - `connectionCheckOutStartedEvent`: Optional object. If present, this object MUST be an empty document as all fields in
   this event are non-deterministic.
 
-<div id="expectedEvent_connectionCheckOutFailedEvent">
+<span id="expectedEvent_connectionCheckOutFailedEvent" />
 
 - `connectionCheckOutFailedEvent`: Optional object. Assertions for one or more
   [ConnectionCheckOutFailedEvent](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events)
@@ -1095,12 +1095,12 @@ The structure of this object is as follows:
   - `reason`: Optional string. Test runners MUST assert that the reason in the published event matches this value. Valid
     values for this field are defined in the CMAP spec.
 
-<div id="expectedEvent_connectionCheckedOutEvent">
+<span id="expectedEvent_connectionCheckedOutEvent" />
 
 - `connectionCheckedOutEvent`: Optional object. If present, this object MUST be an empty document as all fields in this
   event are non-deterministic.
 
-<div id="expectedEvent_connectionCheckedInEvent">
+<span id="expectedEvent_connectionCheckedInEvent" />
 
 - `connectionCheckedInEvent`: Optional object. If present, this object MUST be an empty document as all fields in this
   event are non-deterministic.
@@ -1109,7 +1109,7 @@ The structure of this object is as follows:
 
 The structure of this object is as follows:
 
-<div id="expectedEvent_serverDescriptionChangedEvent">
+<span id="expectedEvent_serverDescriptionChangedEvent" />
 
 - `serverDescriptionChangedEvent`: Optional object. Assertions for one or more
   [ServerDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
@@ -1130,7 +1130,7 @@ The structure of this object is as follows:
     [SDAM: ServerType](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype) for a list of
     valid values.
 
-<div id="expectedEvent_serverHeartbeatStartedEvent">
+<span id="expectedEvent_serverHeartbeatStartedEvent" />
 
 - `serverHeartbeatStartedEvent`: Optional object. Assertions for one or more
   [ServerHeartbeatStartedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
@@ -1140,7 +1140,7 @@ The structure of this object is as follows:
 
   - `awaited`: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
-<div id="expectedEvent_serverHeartbeatSucceededEvent">
+<span id="expectedEvent_serverHeartbeatSucceededEvent" />
 
 - `serverHeartbeatSucceededEvent`: Optional object. Assertions for one or more
   [ServerHeartbeatSucceededEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
@@ -1150,7 +1150,7 @@ The structure of this object is as follows:
 
   - `awaited`: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
-<div id="expectedEvent_serverHeartbeatFailedEvent">
+<span id="expectedEvent_serverHeartbeatFailedEvent" />
 
 - `serverHeartbeatFailedEvent`: Optional object. Assertions for one or more
   [ServerHeartbeatFailedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
@@ -1160,7 +1160,7 @@ The structure of this object is as follows:
 
   - `awaited`: Optional boolean. If specified, test runners MUST assert that the field is set and matches this value.
 
-<div id="expectedEvent_topologyDescriptionChangedEvent">
+<span id="expectedEvent_topologyDescriptionChangedEvent" />
 
 - `topologyDescriptionChangedEvent`: Optional object. If present, this object MUST be an empty document as no assertions
   are currently supported for
@@ -1190,16 +1190,16 @@ The structure of each object is as follows:
 - `client`: Required string. Client entity for which the messages are expected to be observed. See
   [commonOptions_client](#commonOptions_client).
 - `messages`: Required array of [expectedLogMessage](#expectedlogmessage) objects. List of messages, which are expected
-  to be observed (in this order) on the corresponding client while executing [operations](<>). If the array is empty,
-  the test runner MUST assert that no messages were observed on the client. The driver MUST assert that the messages
-  produced are an exact match, i.e. that the expected and actual message counts are the same and that there are no extra
-  messages emitted by the client during the test run. Note: `ignoreMessages` and `ignoreExtraMessages` may exclude log
-  messages from this evaluation.
+  to be observed (in this order) on the corresponding client while executing [operations](#test_operations). If the
+  array is empty, the test runner MUST assert that no messages were observed on the client. The driver MUST assert that
+  the messages produced are an exact match, i.e. that the expected and actual message counts are the same and that there
+  are no extra messages emitted by the client during the test run. Note: `ignoreMessages` and `ignoreExtraMessages` may
+  exclude log messages from this evaluation.
 - `ignoreMessages`: Optional array of [expectedLogMessage](#expectedlogmessage) objects. Unordered set of messages,
-  which MUST be ignored on the corresponding client while executing [operations](<>). The test runner MUST exclude all
-  log messages from observed messages that match any of the messages in `ignoreMessages` array before `messages`
-  evaluation. Matching rules used to match messages in `ignoreMessages` are identical to match rules used for `messages`
-  matching.
+  which MUST be ignored on the corresponding client while executing [operations](#test_operations). The test runner MUST
+  exclude all log messages from observed messages that match any of the messages in `ignoreMessages` array before
+  `messages` evaluation. Matching rules used to match messages in `ignoreMessages` are identical to match rules used for
+  `messages` matching.
 - `ignoreExtraMessages`: Optional boolean. Specifies how the `messages` array is matched against the observed logs. If
   `false`, observed logs after all specified logs have matched MUST cause a test failure; if `true`, observed logs after
   all specified logs have been matched MUST NOT cause a test failure. Defaults to `false`.
@@ -1268,19 +1268,19 @@ Comprehensive documentation for some of these types and their parameters may be 
 
 The structure of these common options is as follows:
 
-<div id="commonOptions_collectionName">
+<span id="commonOptions_collectionName" />
 
 - `collectionName`: String. Collection name. The YAML file SHOULD use an
   [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for a collection entity's `collectionName` field (e.g.
   `collectionName: *collection0Name`).
 
-<div id="commonOptions_databaseName">
+<span id="commonOptions_databaseName" />
 
 - `databaseName`: String. Database name. The YAML file SHOULD use an
   [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for a database entity's `databaseName` field (e.g.
   `databaseName: *database0Name`).
 
-<div id="commonOptions_readConcern">
+<span id="commonOptions_readConcern" />
 
 - `readConcern`: Object. Map of parameters to construct a read concern.
 
@@ -1288,7 +1288,7 @@ The structure of these common options is as follows:
 
   - `level`: Required string.
 
-<div id="commonOptions_readPreference">
+<span id="commonOptions_readPreference" />
 
 - `readPreference`: Object. Map of parameters to construct a read preference.
 
@@ -1299,19 +1299,19 @@ The structure of these common options is as follows:
   - `maxStalenessSeconds`: Optional integer.
   - `hedge`: Optional object.
 
-<div id="commonOptions_client">
+<span id="commonOptions_client" />
 
 - `client`: String. Client entity name, which the test runner MUST resolve to a MongoClient object. The YAML file SHOULD
   use an [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for a client entity's `id` field (e.g.
   `client: *client0`).
 
-<div id="commonOptions_session">
+<span id="commonOptions_session" />
 
 - `session`: String. Session entity name, which the test runner MUST resolve to a ClientSession object. The YAML file
   SHOULD use an [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for a session entity's `id` field (e.g.
   `session: *session0`).
 
-<div id="commonOptions_writeConcern">
+<span id="commonOptions_writeConcern" />
 
 - `writeConcern`: Object. Map of parameters to construct a write concern.
 
@@ -1360,13 +1360,13 @@ directly within [operation.arguments](#operation_arguments) (e.g. `upsert` for `
 
 #### Special Handling for Arguments
 
-If `session` is specified in [operation.arguments](<>), it is defined according to
+If `session` is specified in [operation.arguments](#operation_arguments), it is defined according to
 [commonOptions_session](#commonOptions_session). Test runners MUST resolve the `session` argument to
 [session](#entity_session) entity *before* passing it as a parameter to any API method.
 
-If `readConcern`, `readPreference`, or `writeConcern` are specified in [operation.arguments](<>), test runners MUST
-interpret them according to the corresponding definition in [Common Options](#common-options) and MUST convert the value
-into the appropriate object *before* passing it as a parameter to any API method.
+If `readConcern`, `readPreference`, or `writeConcern` are specified in [operation.arguments](#operation_arguments), test
+runners MUST interpret them according to the corresponding definition in [Common Options](#common-options) and MUST
+convert the value into the appropriate object *before* passing it as a parameter to any API method.
 
 #### Converting Returned Model Objects to Documents
 
@@ -1374,7 +1374,7 @@ For operations that return a model object (e.g. `BulkWriteResult` for `bulkWrite
 model object to a document when evaluating [expectResult](#operation_expectResult) or
 [saveResultAsEntity](#operation_saveResultAsEntity). Similarly, for operations that may return iterables of model
 objects (e.g. `DatabaseInfo` for `listDatabases`), the test runner MUST convert the iterable to an array of documents
-when evaluating [expectResult](<>) or [saveResultAsEntity](<>).
+when evaluating [expectResult](#operation_expectResult) or [saveResultAsEntity](#operation_saveResultAsEntity).
 
 #### Iterating Returned Iterables
 
@@ -1402,6 +1402,8 @@ Because drivers do not consistently propagate errors encountered while closing a
 NOT specify any operations for a client entity or any entity descended from it following a `close` operation on it, as
 driver behavior when an operation is attempted on a closed client or one of its descendant objects is not consistent.
 
+<span id="client_createChangeStream" />
+
 #### createChangeStream
 
 Creates a cluster-level change stream and ensures that the server-side cursor has been created.
@@ -1422,14 +1424,14 @@ This operation SHOULD NOT be used in test files. See [client_createChangeStream]
 
 These operations and their arguments may be documented in the following specifications:
 
-- [Client Side Encryption](../client-side-encryption/client-side-encryption.rst)
+- [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
 
 Operations that require sending and receiving KMS requests to encrypt or decrypt data keys may require appropriate KMS
 credentials to be loaded by the driver. Drivers MUST load appropriate KMS credentials (i.e. from the environment or a
 configuration file) when prompted by a test providing a placeholder value in a corresponding `kmsProviders` field as
 described under [entity.clientEncryption](#entity_clientEncryption).
 
-See the [Client-Side Encryption test README](../client-side-encryption/tests/README.rst#credentials) for instructions to
+See the [Client-Side Encryption test README](../client-side-encryption/tests/README.md#credentials) for instructions to
 obtain test credentials.
 
 Drivers MUST be running the mock
@@ -1437,7 +1439,7 @@ Drivers MUST be running the mock
 when evaluating tests that require KMS requests to a KMIP KMS provider.
 
 Drivers MAY enforce a unique index on `keyAltNames` as described in the
-[Client Side Field Level Encryption spec](../client-side-encryption/client-side-encryption.rst#why-aren-t-we-creating-a-unique-index-in-the-key-vault-collection)
+[Client Side Field Level Encryption spec](../client-side-encryption/client-side-encryption.md#why-arent-we-creating-a-unique-index-in-the-key-vault-collection)
 when running key management operations on the key vault collection. Although unified tests are written assuming the
 existence of the unique index, no unified test currently requires its implementation for correctness (e.g. no unified
 test currently attempts to create a data key with an existing keyAltName or add an existing keyAltName to a data key).
@@ -1447,7 +1449,7 @@ test currently attempts to create a data key with an existing keyAltName or add 
 These operations and their arguments may be documented in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [CRUD](../crud/crud.rst)
+- [CRUD](../crud/crud.md)
 - [Enumerating Collections](../enumerate-collections.rst)
 
 Database operations that require special handling or are not documented by an existing specification are described
@@ -1457,6 +1459,8 @@ below.
 
 When executing an `aggregate` operation, the test runner MUST fully iterate the result. This will ensure consistent
 behavior between drivers that eagerly create a server-side cursor and those that do so lazily when iteration begins.
+
+<span id="database_createChangeStream" />
 
 #### createChangeStream
 
@@ -1543,11 +1547,13 @@ This operation SHOULD NOT be used in test files. See [database_createChangeStrea
 These operations and their arguments may be documented in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [CRUD](../crud/crud.rst)
-- [Index Management](../index-management/index-management.rst)
+- [CRUD](../crud/crud.md)
+- [Index Management](../index-management/index-management.md)
 
 Collection operations that require special handling or are not documented by an existing specification are described
 below.
+
+<span id="collection_aggregate" />
 
 #### aggregate
 
@@ -1603,6 +1609,8 @@ BulkWriteException MAY translate the expected code name to a number (see:
 instead, but MUST raise an error if the comparison cannot be attempted (e.g. `code` is also not available, translation
 fails).
 
+<span id="collection_createChangeStream" />
+
 #### createChangeStream
 
 Creates a collection-level change stream and ensures that the server-side cursor has been created.
@@ -1614,6 +1622,8 @@ before the resulting change stream might be saved with [operation.saveResultAsEn
 
 Test runners MUST NOT iterate the change stream when executing this operation and test files SHOULD NOT specify
 [operation.expectResult](#operation_expectResult) for this operation.
+
+<span id="collection_createFindCursor" />
 
 #### createFindCursor
 
@@ -1631,7 +1641,7 @@ Test runners MUST NOT iterate the resulting cursor when executing this operation
 This operations proxies the collection's `createSearchIndex` helper with the same arguments.
 
 Each `createSearchIndex` operation receives a
-[SearchIndexModel](../index-management/index-management.rst#common-interfaces). If a driver has chosen to implement the
+[SearchIndexModel](../index-management/index-management.md#common-interfaces). If a driver has chosen to implement the
 `createSearchIndex(name: String, definition: Document)` overload of `createSearchIndex`, then the `SearchIndexModel`
 should be parsed by `createSearchIndex` unified test runner helper and the correct arguments should be passed into the
 driver's helper.
@@ -1715,11 +1725,14 @@ callback operation raises an error, it should be possible to assert that error a
 
 These operations and their arguments may be documented in the following specifications:
 
-- [GridFS](../gridfs/gridfs-spec.rst)
+- [GridFS](../gridfs/gridfs-spec.md)
 
 Bucket operations that require special handling or are not documented by an existing specification are described below.
 
-#### download and downloadByName<span id="download">\`
+<span id="download" />
+<span id="downloadByName" />
+
+#### download and downloadByName
 
 These operations proxy the bucket's `openDownloadStream` and `openDownloadStreamByName` methods and support the same
 parameters and options, but return a string containing the stream's contents instead of the stream itself. Test runners
@@ -1736,10 +1749,14 @@ These operations SHOULD NOT be used in test files. See
 
 These operations SHOULD NOT be used in test files. See [download and downloadByName](#download-and-downloadbyname).
 
-#### openUploadStream and openUploadStreamWithId<span id="openUploadStream">\`
+<span id="openUploadStream" />
+
+#### openUploadStream and openUploadStreamWithId
 
 These operations SHOULD NOT be used in test files. See
 [IO operations for GridFS streams](#io-operations-for-gridfs-streams) in [Future Work](#future-work).
+
+<span id="upload-and-uploadWithId" />
 
 #### upload and uploadWithId
 
@@ -1822,10 +1839,11 @@ The following arguments are supported:
 
 - `client`: Required string. See [commonOptions_client](#commonOptions_client).
 
-  The client entity SHOULD specify false for [useMultipleMongoses](<>) if this operation could be executed on a sharded
-  topology (according to [runOnRequirements](#runOnRequirements) or [test.runOnRequirements](#test_runOnRequirements)).
-  This is advised because server selection rules for mongos could lead to unpredictable behavior if different servers
-  were selected for configuring the fail point and executing subsequent operations.
+  The client entity SHOULD specify false for [useMultipleMongoses](#entity_client_useMultipleMongoses) if this operation
+  could be executed on a sharded topology (according to [runOnRequirements](#runOnRequirements) or
+  [test.runOnRequirements](#test_runOnRequirements)). This is advised because server selection rules for mongos could
+  lead to unpredictable behavior if different servers were selected for configuring the fail point and executing
+  subsequent operations.
 
 When executing this operation, the test runner MUST keep a record of the fail point so that it can be disabled after the
 test. The test runner MUST also ensure that the `configureFailPoint` command is excluded from the list of observed
@@ -1966,7 +1984,7 @@ The following arguments are supported:
 
 - `client`: Required string. See [commonOptions_client](#commonOptions_client).
 
-  The client entity SHOULD include "commandStartedEvent" in [observeEvents](<>).
+  The client entity SHOULD include "commandStartedEvent" in [observeEvents](#entity_client_observeEvents).
 
 The test runner MUST fail this assertion if fewer than two CommandStartedEvents have been observed on the client or if
 either command does not include an `lsid` field.
@@ -1990,7 +2008,7 @@ The following arguments are supported:
 
 - `client`: Required string. See [commonOptions_client](#commonOptions_client).
 
-  The client entity SHOULD include "commandStartedEvent" in [observeEvents](<>).
+  The client entity SHOULD include "commandStartedEvent" in [observeEvents](#entity_client_observeEvents).
 
 The test runner MUST fail this assertion if fewer than two CommandStartedEvents have been observed on the client or if
 either command does not include an `lsid` field.
@@ -2133,6 +2151,8 @@ An example of this operation follows:
 
 Use a `listIndexes` command to check whether the index exists. Note that it is currently not possible to run
 `listIndexes` from within a transaction.
+
+<span id="operation_createEntities" />
 
 #### createEntities
 
@@ -2565,7 +2585,7 @@ The rules for comparing documents and arrays are discussed in more detail in sub
 *other* than documents and arrays, test runners MAY adopt any of the following approaches to compare expected and actual
 values, as long as they are consistent:
 
-- Convert both values to relaxed or canonical [Extended JSON](<>) and compare strings
+- Convert both values to relaxed or canonical [Extended JSON](../extended-json.rst) and compare strings
 - Convert both values to BSON, and compare bytes
 - Convert both values to native representations, and compare accordingly
 
@@ -2586,11 +2606,11 @@ present in the expected document. Examples of root-level documents include, but 
 
 - `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)
 - `reply` for [CommandSucceededEvent](#expectedEvent_commandSucceededEvent)
-- [expectResult](<>) for `findOneAndUpdate` [Collection Operations](#collection-operations)
-- [expectResult](<>) for [iterateUntilDocumentOrError](#iterateuntildocumentorerror)
+- [expectResult](#operation_expectResult) for `findOneAndUpdate` [Collection Operations](#collection-operations)
+- [expectResult](#operation_expectResult) for [iterateUntilDocumentOrError](#iterateuntildocumentorerror)
 - [expectedError_errorResponse](#expectedError_errorResponse)
-- each array element in [expectResult](<>) for [find](#find) or [collection_aggregate](#collection_aggregate)
-  [Collection Operations](#collection-operations)
+- each array element in [expectResult](#operation_expectResult) for [find](#find) or
+  [collection_aggregate](#collection_aggregate) [Collection Operations](#collection-operations)
 
 For example, the following documents match:
 
@@ -2615,7 +2635,7 @@ actual: { x: { y: 1, z: 1 } }
 
 It may be helpful to think of expected documents as a form of query criteria. The intention behind this rule is that it
 is not always feasible or relevant for a test to exhaustively specify all fields in an expected document (e.g. cluster
-time in `command` for [CommandStartedEvent](<>)).
+time in `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)).
 
 When the expected value is an array, test runners MUST differentiate between an array of values, which may be documents,
 (e.g. `distinct`) and an array of root-level documents (e.g. `find`, `aggregate`). For example, the following array of
@@ -2900,9 +2920,9 @@ tests.
 
 The instructions in this section apply for each test file loaded by the test runner.
 
-Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](<>) parser. The parser MUST
-accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.rst#parsers)), as test files
-may use either.
+Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](../extended-json.rst) parser.
+The parser MUST accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.rst#parsers)),
+as test files may use either.
 
 Upon loading a file, the test runner MUST read the [schemaVersion](#schemaVersion) field and determine if the test file
 can be processed further. Test runners MAY support multiple versions and MUST NOT process incompatible files (as
@@ -2939,11 +2959,21 @@ command to create the collection with the specified options. The test runner MUS
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
 possible runtime errors.
 
+If the test might execute a transaction against a sharded deployment, the test runner MUST collect the latest cluster
+time from processing [initialData](#initialData). See
+[MigrationConflict Errors on Sharded Clusters](#migrationconflict-errors-on-sharded-clusters) for more information.
+
 Create a new [Entity Map](#entity-map) that will be used for this test. If [createEntities](#createentities) is
 specified, the test runner MUST create each [entity](#entity) accordingly and add it to the map. If the topology is a
-sharded cluster, the test runner MUST handle [useMultipleMongoses](<>) accordingly if it is specified for any client
-entities. If the topology type is `LoadBalanced`, client entities MUST be initialized with the appropriate load balancer
-connection string as discussed in [useMultipleMongoses](<>).
+sharded cluster, the test runner MUST handle [useMultipleMongoses](#entity_client_useMultipleMongoses) accordingly if it
+is specified for any client entities. If the topology type is `LoadBalanced`, client entities MUST be initialized with
+the appropriate load balancer connection string as discussed in
+[useMultipleMongoses](#entity_client_useMultipleMongoses).
+
+If the test might execute a transaction against a sharded deployment, the test runner MUST advance the cluster time of
+any session entities created during the test using the cluster time collected from processing
+[initialData](#initialData). See
+[MigrationConflict Errors on Sharded Clusters](#migrationconflict-errors-on-sharded-clusters) for more information.
 
 If the test might execute a `distinct` command within a sharded transaction, for each target collection the test runner
 SHOULD execute a non-transactional `distinct` command on each mongos server using an internal MongoClient. See
@@ -2954,22 +2984,22 @@ value for `heartbeatFrequencyMS` (and `minHeartbeatFrequencyMS` if possible) to 
 selection after a failure; however, test runners MUST NOT do so for any client that specifies `heartbeatFrequencyMS` in
 its `uriOptions`.
 
-For each client entity where [observeEvents](<>) has been specified, the test runner MUST enable all event listeners
-necessary to collect the specified event types. Test runners MAY leave event listeners disabled for tests that do not
-assert events (i.e. tests that omit both [test.expectEvents](#test_expectEvents) and special operations such as
-[assertSameLsidOnLastTwoCommands](#assertsamelsidonlasttwocommands)).
+For each client entity where [observeEvents](#entity_client_observeEvents) has been specified, the test runner MUST
+enable all event listeners necessary to collect the specified event types. Test runners MAY leave event listeners
+disabled for tests that do not assert events (i.e. tests that omit both [test.expectEvents](#test_expectEvents) and
+special operations such as [assertSameLsidOnLastTwoCommands](#assertsamelsidonlasttwocommands)).
 
 For each client with command monitoring enabled, the test runner MUST ignore events for the following:
 
-- Any command(s) specified in [ignoreCommandMonitoringEvents](<>).
+- Any command(s) specified in [ignoreCommandMonitoringEvents](#entity_client_ignoreCommandMonitoringEvents).
 - Any `configureFailPoint` commands executed for [failPoint](#failpoint) and [targetedFailPoint](#targetedfailpoint)
   operations.
 - Any commands containing sensitive information (per the
   [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security) spec)
-  unless [observeSensitiveCommands](<>) is true. Note that drivers will redact commands and replies for sensitive
-  commands. For `hello` and legacy hello, which are conditionally sensitive based on the presence of a
-  `speculativeAuthenticate` field, the test runner may need to infer that the events are sensitive based on whether or
-  not the command and reply documents are redacted (i.e. empty documents).
+  unless [observeSensitiveCommands](#entity_client_observeSensitiveCommands) is true. Note that drivers will redact
+  commands and replies for sensitive commands. For `hello` and legacy hello, which are conditionally sensitive based on
+  the presence of a `speculativeAuthenticate` field, the test runner may need to infer that the events are sensitive
+  based on whether or not the command and reply documents are redacted (i.e. empty documents).
 
 For each element in [test.operations](#test_operations), follow the process in
 [Executing an Operation](#executing-an-operation). If an unexpected error is encountered or an assertion fails, the test
@@ -3024,17 +3054,18 @@ MUST execute the operation accordingly and, if successful, proceed to the next o
 test runner MUST raise an error for an undefined operation. The test runner MUST keep a record of any fail points
 configured by special operations so that they may be disabled after the current test.
 
-If [operation.object](<>) is not "testRunner", this is an entity operation. If [operation.object](<>) is defined in the
-current test's [Entity Map](#entity-map), the test runner MUST fetch that entity and note its type; otherwise, the test
-runner MUST raise an error for an undefined entity. If [operation.name](<>) does not correspond to a known operation for
-the entity type (per [Entity Test Operations](#entity-test-operations)), the test runner MUST raise an error for an
-unsupported operation. Test runners MAY skip tests that include operations that are intentionally unimplemented (e.g.
-`listCollectionNames`).
+If [operation.object](#operation_object) is not "testRunner", this is an entity operation. If
+[operation.object](#operation_object) is defined in the current test's [Entity Map](#entity-map), the test runner MUST
+fetch that entity and note its type; otherwise, the test runner MUST raise an error for an undefined entity. If
+[operation.name](#operation_name) does not correspond to a known operation for the entity type (per
+[Entity Test Operations](#entity-test-operations)), the test runner MUST raise an error for an unsupported operation.
+Test runners MAY skip tests that include operations that are intentionally unimplemented (e.g. `listCollectionNames`).
 
 Proceed with preparing the operation's arguments. If `session` is specified in
 [operation.arguments](#operation_arguments), the test runner MUST resolve it to a session entity and MUST raise an error
-if the name is undefined or maps to an unexpected type. If a key in [operation.arguments](<>) does not correspond to a
-known parameter/option for the operation, the test runner MUST raise an error for an unsupported argument.
+if the name is undefined or maps to an unexpected type. If a key in [operation.arguments](#operation_arguments) does not
+correspond to a known parameter/option for the operation, the test runner MUST raise an error for an unsupported
+argument.
 
 Before executing the operation, the test runner MUST be prepared to catch a potential error from the operation (e.g.
 enter a `try` block). Proceed with executing the operation and capture its result or error.
@@ -3090,6 +3121,34 @@ impossible to guarantee that an existing transaction will not block test executi
 SHOULD either ignore Unauthorized(13) command failures or avoid calling `killAllSessions` altogether when connected to
 Atlas (e.g. by detecting `mongodb.net` in the hostname or allowing the test runner to be configured externally).
 
+Test runners MUST NOT execute `killAllSessions` when connected to Atlas Data Lake.
+
+##### MigrationConflict Errors on Sharded Clusters
+
+Following [SERVER-82353](https://jira.mongodb.org/browse/SERVER-82353), drivers may encounter MigrationConflict errors
+when executing transactions on sharded clusters due to an outdated cluster time. For example:
+
+```
+Transaction fe0b9a7d-4b64-4e38-aad2-4c7dd5ab0c2b - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= -  - :1 was aborted on statement 0 due to: a non-retryable snapshot error :: caused by :: Encountered error from localhost:27217 during a transaction :: caused by :: Database transaction-tests has undergone a catalog change operation at time Timestamp(1708062645, 94) and no longer satisfies the requirements for the current transaction which requires Timestamp(1708062645, 93). Transaction will be aborted.
+```
+
+To work around this issue, a test runner MUST collect the latest cluster time from processing
+[initialData](#initialData), which is executed using the internal MongoClient, and use it to advance the cluster time of
+every session entity created during the test, by either [createEntities](#createentities) or the
+[special test operation](#operation_createEntities)). This will ensure that the cluster time is gossipped to any other
+mongo hosts that may be used to execute a transaction during the test.
+
+Depending on the test runner implementation, the cluster time may be collected in various ways. For example:
+
+- Execute a `ping` command against the same mongos host used for [initialData](#initialData) and read the `$clusterTime`
+  response field
+- Execute all operations for [initialData](#initialData) using an explicit session and read its cluster time after the
+  last operation.
+
+This logic is only necessary for tests that might execute a transaction against a sharded deployment transaction (i.e.
+[test.operations](#test_operations) includes `startTransaction` or `withTransaction` and the topology is sharded or
+load-balanced). To ease the implementation, test runners MAY apply this logic to *every* test.
+
 ##### StaleDbVersion Errors on Sharded Clusters
 
 When a shard receives its first command that contains a `databaseVersion`, the shard returns a StaleDbVersion error and
@@ -3100,7 +3159,7 @@ error to the client. For example:
 Command distinct failed: Transaction aa09e296-472a-494f-8334-48d57ab530b6:1 was aborted on statement 0 due to: an error from cluster data placement change :: caused by :: got stale databaseVersion response from shard sh01 at host localhost:27217 :: caused by :: don't know dbVersion.
 ```
 
-To workaround this limitation, a test runners MUST execute a non-transactional `distinct` command on each mongos server
+To work around this limitation, a test runners MUST execute a non-transactional `distinct` command on each mongos server
 before running any test that might execute `distinct` within a transaction. To ease the implementation, test runners MAY
 execute `distinct` before *every* test.
 
@@ -3220,6 +3279,24 @@ db.adminCommand({
   which the affected commands should be blocked. New in server 4.3.4 and backported to 4.2.9
   ([SERVER-41070](https://jira.mongodb.org/browse/SERVER-41070)).
 
+##### onPrimaryTransactionalWrite
+
+The `onPrimaryTransactionalWrite` fail point allows the client to force a network error before the server would return a
+write result to the client. The fail point also allows control whether the server will successfully commit the write via
+its `failBeforeCommitExceptionCode` option. Keep in mind that the fail point only triggers for transaction writes (i.e.
+write commands including `txnNumber` and `lsid` fields).
+
+The `onPrimaryTransactionalWrite` fail point was introduced in mongod 3.6.0
+([SERVER-29606](https://jira.mongodb.org/browse/SERVER-29606)) to facilitate testing of retryable writes. It is only
+supported on mongod and cannot be used with sharded clusters.
+
+`onPrimaryTransactionalWrite` supports the following `data` options:
+
+- `closeConnection`: Optional boolean, which defaults to `true`. If `true`, the connection on which the write is
+  executed will be closed before a result can be returned.
+- `failBeforeCommitExceptionCode`: Optional integer, which is unset by default. If set, the specified exception code
+  will be thrown and the write will not be committed. If unset, the write will be allowed to commit.
+
 ### Determining if a Sharded Cluster Uses Replica Sets
 
 When connected to a mongos server, the test runner can query the
@@ -3234,7 +3311,7 @@ Note: MongoDB 3.6+ requires that all shard servers be replica sets (see:
 ## Design Rationale
 
 This specification was primarily derived from the test formats used by the
-[Transactions](../transactions/transactions.md) and [CRUD](../crud/crud.rst) specs, which have served models or other
+[Transactions](../transactions/transactions.md) and [CRUD](../crud/crud.md) specs, which have served models or other
 specs.
 
 This specification commonly uses "SHOULD" when providing guidance on writing test files. While this may appear
@@ -3243,6 +3320,8 @@ adding comments, using YAML anchors) and cannot be enforced with a JSON schema. 
 ignored in order to test the test runner implementation (e.g. defining entities out of order to trigger runtime errors).
 The specification does prefer "MUST" in other contexts, such as discussing parts of the test file format that *are*
 enforceable by the JSON schema or the test runner implementation.
+
+<span id="rationale_observeSensitiveCommands" />
 
 ### Why can't `observeSensitiveCommands` be true when authentication is enabled?
 
@@ -3315,6 +3394,12 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-03-11: Note that `killAllSessions` should not be executed on Atlas Data Lake
+
+- 2024-02-27: Document `onPrimaryTransactionalWrite` fail point, which is used in retryable writes tests.
+
+- 2024-02-23: Require test runners to gossip cluster time from internal MongoClient to each session entity.
 
 - 2024-02-14: Clarify that errors raised from callback operations should always propagate to `withTransaction`.
 

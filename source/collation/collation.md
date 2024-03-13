@@ -49,7 +49,7 @@ Collation and the selected server has a maxWireVersion \< 5 or if using opcode-b
 
 ### Collation Document Model
 
-For naming and deviation guidance, see the [CRUD specification](../crud/crud.rst#naming). Defined below are the
+For naming and deviation guidance, see the [CRUD specification](../crud/crud.md#naming). Defined below are the
 constructs for drivers. Note that the only required field is `locale`, but the driver should let the server validate the
 presence of this field.
 
@@ -132,10 +132,10 @@ commands that take a collation option are:
 - update (command only)
 
 The collation option is sent to the server in the form of a BSON Document. See the
-[CRUD specification](../crud/crud.rst#naming) for details on supporting the option in the CRUD API.
+[CRUD specification](../crud/crud.md#naming) for details on supporting the option in the CRUD API.
 
 Driver helpers manipulating or using indexes MUST support a collation option. These include creating, deleting, and
-hinting an index. See the [Index Management specification](../index-management/index-management.rst) for details.
+hinting an index. See the [Index Management specification](../index-management/index-management.md) for details.
 
 ### Require maxWireVersion 5
 

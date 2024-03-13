@@ -1,10 +1,17 @@
+
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `client-side-encryption.md <client-side-encryption.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 ======================
 Client Side Encryption
 ======================
 
 :Status: Accepted
 :Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-:Last Modified: 2024-01-10
 :Version: 1.13.0
 
 .. _lmc-c-api: https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in
@@ -1333,11 +1340,11 @@ RewrapManyDataKeyResult
    }
 
 ``bulkWriteResult`` is the `result of the bulk write operation
-<../crud/crud.rst##write-results>`_ used to update the key vault collection with
+<../crud/crud.md#write-results>`_ used to update the key vault collection with
 one or more rewrapped data keys. If ``rewrapManyDataKey()`` does not find any
 matching keys to rewrap, no bulk write operation will be executed and this field
 will be unset. This field may also be unset if the bulk write operation is
-unacknowledged as permitted by the `CRUD API Spec <../crud/crud.rst#write-results>`_.
+unacknowledged as permitted by the `CRUD API Spec <../crud/crud.md#write-results>`_.
 
 See `Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?`_.
 
@@ -2204,12 +2211,6 @@ collections (e.g. aggregate with $lookup) are handled properly.
 Test Plan
 =========
 See the `README.rst <../client-side-encryption/tests/README.rst>`_ in the test directory.
-
-
-.. toctree::
-   :maxdepth: 2
-
-   ./tests/README
 
 
 Rationale

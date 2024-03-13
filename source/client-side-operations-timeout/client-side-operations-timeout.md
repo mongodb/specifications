@@ -13,8 +13,8 @@ but not limited to server selection, connection checkout, and server-side execut
 
 ## META
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and
-“OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Specification
 
@@ -46,7 +46,7 @@ follow the semantics for special values defined by those types. Such drivers MUS
 explicitly set `timeoutMS` to `infinite` in the API.
 
 See
-[timeoutMS cannot be changed to unset once it’s specified](#timeoutms-cannot-be-changed-to-unset-once-its-specified).
+[timeoutMS cannot be changed to unset once it's specified](#timeoutms-cannot-be-changed-to-unset-once-its-specified).
 
 #### Backwards Breaking Considerations
 
@@ -87,13 +87,13 @@ progresses.
 
 The `timeoutMS` option applies to all operations defined in the following specifications:
 
-- [CRUD](./../crud/crud.rst)
+- [CRUD](../crud/crud.md)
 - [Change Streams](../change-streams/change-streams.md)
-- [Client Side Encryption](../client-side-encryption/client-side-encryption.rst)
+- [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
 - [Enumerating Collections](../enumerate-collections.rst)
 - [Enumerating Databases](../enumerate-databases.rst)
-- [GridFS](../gridfs/gridfs-spec.rst)
-- [Index Management](../index-management/index-management.rst)
+- [GridFS](../gridfs/gridfs-spec.md)
+- [Index Management](../index-management/index-management.md)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
 
@@ -260,7 +260,7 @@ mongocryptd and encrypted by libmongocrypt. To determine whether or not the serv
 that the `iscryptd` field in the server's description is `true`.
 
 For explicit encryption and decryption, the `ClientEncryptionOpts` options type used to construct
-[ClientEncryption](../client-side-encryption/client-side-encryption.rst#clientencryption) instances MUST support a new
+[ClientEncryption](../client-side-encryption/client-side-encryption.md#clientencryption) instances MUST support a new
 `timeoutMS` option, which specifies the timeout for all operations executed on the `ClientEncryption` object.
 
 See [maxTimeMS is not added for mongocryptd](#maxtimems-is-not-added-for-mongocryptd).
@@ -448,7 +448,7 @@ elapsed.
 
 ## Design Rationale
 
-### timeoutMS cannot be changed to unset once it’s specified
+### timeoutMS cannot be changed to unset once it's specified
 
 If `timeoutMS` is specified at any level, it cannot be later changed to unset at a lower level. For example, a user
 cannot do:
@@ -527,7 +527,7 @@ prescriptive, we could mandate that drivers raise a client-side error in this ca
 expensive lookup in the command document. To avoid this additional cost, drivers are only required to document the
 behavior and suggest that `timeoutMS` be used instead of including a manual `maxTimeMS` field.
 
-### Why don’t drivers use backoff/jitter between retry attempts?
+### Why don't drivers use backoff/jitter between retry attempts?
 
 Earlier versions of this specification proposed adding backoff and/or jitter between retry attempts to avoid connection
 storming or overloading the server, but we later deemed this unnecessary. If multiple concurrent operations select the
