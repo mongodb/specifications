@@ -1285,7 +1285,8 @@ Metadata: true
 ```
 
 where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property and `<object_id>` is the `username` from the
-connection string. If a `username` is not provided, the `object_id` query parameter should be omitted.
+connection string. If a `username` is not provided, the `object_id` query parameter should be omitted. The timeout
+should equal the `callbackTimeoutMS` parameter given to the callback.
 
 Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
 
@@ -1293,6 +1294,7 @@ Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of t
 curl -X GET \
   -H "Accept: application/json" \
   -H "Metadata: true" \
+  --max-time $CALLBACK_TIMEOUT_MS \
   "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$TOKEN_RESOURCE"
 ```
 
@@ -1310,7 +1312,8 @@ The JSON response will be in this format:
 }
 ```
 
-The driver MUST use the returned `"access_token"` value as the access token in a `JwtStepRequest`.
+The driver MUST use the returned `"access_token"` value as the access token in a `JwtStepRequest`. If the response does
+not return a status code of 200, the driver MUST raise an error including the HTTP response body.
 
 For more details, see
 [How to use managed identities for Azure resources on an Azure VM to acquire an access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token).
