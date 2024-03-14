@@ -769,10 +769,6 @@ driver-side is less performant than only recording the summary counts. We expect
 are not interested in the individual results of their operations and that most users will rely on
 defaults, so `verboseResults` defaults to `false` to improve performance in the common case.
 
-### Why are document sequences not permitted for encrypted bulk writes?
-
-
-
 ## **Changelog**
 
 - TODO: Bulk write specification created.
