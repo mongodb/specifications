@@ -927,13 +927,14 @@ The structure of this object is as follows:
   contains numeric keys representing the index of the write that failed and `writeError` object values. The test runner MUST
   assert that the error contains a `writeError` for each index present in `writeErrors` and MUST assert that the `writeError`s
   match as root-level documents according to the rules in [Evaluating Matches](#evaluating-matches). The test runner MUST
-  assert that the error does not contain any additional `writeError`s.
+  assert that the error does not contain any additional `writeError`s. This field is only intended for use with the
+  [clientBulkWrite](#clientbulkwrite) operation.
 
 - `writeConcernErrors`: Optional array of one or more objects. An ordered list of write concern errors expected to be
   present in the error. The test runner MUST assert that each `writeConcernError` in this list matches the
   `writeConcernError` present at the same index in the error's list of `writeConcernError`s as a root-level document according
   to the rules in [Evaluating Matches](#evaluating-matches). The test runner MUST assert that the error does not contain any
-  additional `writeConcernErrors`s.
+  additional `writeConcernErrors`s. This field is only intended for use with the [clientBulkWrite](#clientbulkwrite) operation.
 
 <div id="expectedError_errorResponse">
 

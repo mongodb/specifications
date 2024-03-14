@@ -566,9 +566,7 @@ of the following limits is exceeded:
 - The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the
   `document` field of an `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
 - The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.
-- The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize`. The overhead
-  bytes are omitted here intentionally to accommodate additional fields that mongos appends to the
-  command document.
+- The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.
 
 See [SERVER-10643](https://jira.mongodb.org/browse/SERVER-10643) for more details on these size
 limits.
