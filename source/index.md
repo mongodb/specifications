@@ -18,6 +18,7 @@
 - [Handling of DBRefs](./dbref.md)
 - [Index Management](index-management/index-management.md)
 - [Initial DNS Seedlist Discovery](initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md)
+- [Load Balancer Support](load-balancers/load-balancers.md)
 - [MongoDB Driver Performance Benchmarking](benchmarking/benchmarking.md)
 - [Server Selection](server-selection/server-selection.md)
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)

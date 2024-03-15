@@ -717,7 +717,7 @@ MUST remove the entry for a `serviceId` once the connection count reaches 0. Onc
 connection MUST get the generation number that applies to its `serviceId` from the map and update the map to increment
 the connection count for this `serviceId`.
 
-See the [Load Balancer Specification](../load-balancers/load-balancers.rst#connection-pooling) for details.
+See the [Load Balancer Specification](../load-balancers/load-balancers.md#connection-pooling) for details.
 
 #### Forking
 
@@ -777,7 +777,7 @@ driver.
 
 #### Events
 
-See the [Load Balancer Specification](../load-balancers/load-balancers.rst#events) for details on the `serviceId` field.
+See the [Load Balancer Specification](../load-balancers/load-balancers.md#events) for details on the `serviceId` field.
 
 ```typescript
 /**

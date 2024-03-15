@@ -652,7 +652,7 @@ called multiple times.
 
 #### Pinning in Load Balancer Mode
 
-See the [Load Balancer Specification](../load-balancers/load-balancers.rst#connection-pooling) for details.
+See the [Load Balancer Specification](../load-balancers/load-balancers.md#connection-pooling) for details.
 
 ### recoveryToken field
 

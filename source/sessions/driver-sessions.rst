@@ -837,7 +837,7 @@ Algorithm to acquire a ServerSession instance from the server session pool
    * If it has at least one minute left before becoming stale use this ``ServerSession``
    * If it has less than one minute left before becoming stale discard it (let it be garbage collected) and return to step 1.
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#session-expiration>`__
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#session-expiration>`__
 for details on session expiration.
 
 

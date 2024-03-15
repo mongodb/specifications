@@ -81,7 +81,7 @@ Load Balancer Mode
 
 For URI option validation in Load Balancer mode (i.e. ``loadBalanced=true``),
 please see the
-`Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for
+`Load Balancer spec <../load-balancers/load-balancers.md#uri-validation>`_ for
 details.
 
 
@@ -186,7 +186,7 @@ pertaining to URI options apply here.
 
    * - loadBalanced
      - "true" or "false"
-     - defined in `Load Balancer spec <../load-balancers/load-balancers.rst#loadbalanced>`__
+     - defined in `Load Balancer spec <../load-balancers/load-balancers.md#loadbalanced>`__
      - no
      - Whether the driver is connecting to a load balancer.
 

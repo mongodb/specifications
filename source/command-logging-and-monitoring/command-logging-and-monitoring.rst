@@ -190,7 +190,7 @@ into account. See the previously mentioned MongoDB Handshake spec for details.
 Events API
 ----------
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#events>`__ for details on the ``serviceId`` field.
 
 .. code:: typescript
 
