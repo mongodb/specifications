@@ -218,7 +218,7 @@ pertaining to URI options apply here.
 
    * - maxStalenessSeconds
      - -1 (no max staleness check) or integer >= 90
-     - defined in `max staleness spec <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#api>`_
+     - defined in `max staleness spec <../max-staleness/max-staleness.md#api>`_
      - no
      - The maximum replication lag, in wall clock time, that a secondary can suffer and still be eligible for server selection
 

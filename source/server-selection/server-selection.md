@@ -267,8 +267,8 @@ See [checking an idle socket after socketCheckIntervalMS](#checking-an-idle-sock
 #### idleWritePeriodMS
 
 A constant, how often an idle primary writes a no-op to the oplog. See
-[idleWritePeriodMS](https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#idlewriteperiodms)
-in the [Max Staleness](https://github.com/mongodb/specifications/tree/master/source/max-staleness) spec for details.
+[idleWritePeriodMS](../max-staleness/max-staleness.md#idlewriteperiodms) in the
+[Max Staleness](https://github.com/mongodb/specifications/tree/master/source/max-staleness) spec for details.
 
 #### smallestMaxStalenessSeconds
 

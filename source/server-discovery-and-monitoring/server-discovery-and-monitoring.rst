@@ -334,7 +334,7 @@ Fields:
 * opTime: an opTime or null.
   An opaque value representing the position in the oplog of the most recently seen write. Default null.
   (Only mongos and shard servers record this field when monitoring
-  config servers as replica sets, at least until `drivers allow applications to use readConcern "afterOptime". <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#future-feature-to-support-readconcern-afteroptime>`_)
+  config servers as replica sets, at least until `drivers allow applications to use readConcern "afterOptime". <../max-staleness/max-staleness.md#future-feature-to-support-readconcern-afteroptime>`_)
 * (=) type: a `ServerType`_ enum value. Default Unknown.
 * (=) minWireVersion, maxWireVersion:
   the wire protocol version range supported by the server.
