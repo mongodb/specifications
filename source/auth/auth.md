@@ -1274,7 +1274,7 @@ and parse the JSON response body, as follows:
 Make an HTTP GET request to
 
 ```
-http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=<resource>&object_id=<object_id>
+http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=<resource>&client_id=<client_id>
 ```
 
 with headers
@@ -1284,8 +1284,8 @@ Accept: application/json
 Metadata: true
 ```
 
-where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property and `<object_id>` is the `username` from the
-connection string. If a `username` is not provided, the `object_id` query parameter should be omitted. The timeout
+where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property and `<client_id>` is the `username` from the
+connection string. If a `username` is not provided, the `client_id` query parameter should be omitted. The timeout
 should equal the `callbackTimeoutMS` parameter given to the callback.
 
 Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
