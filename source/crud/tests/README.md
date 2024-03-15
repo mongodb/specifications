@@ -202,7 +202,7 @@ code is `121` (i.e. DocumentValidationFailure), and that its `details` property 
 a CommandSucceededEvent was observed and that the `writeErrors[0].errInfo` field in the response document matches the
 WriteError's `details` property.
 
-### 3. `MongoClient.bulkWrite` handles a `writeModels` input with greater than `maxWriteBatchSize` operations
+### 3. `MongoClient.bulkWrite` batch splits a `writeModels` input with greater than `maxWriteBatchSize` operations
 
 Test that `MongoClient.bulkWrite` properly handles `writeModels` inputs containing a number of writes greater than
 `maxWriteBatchSize`.
@@ -230,59 +230,10 @@ Assert that the length of `firstEvent.command.ops` is `maxWriteBatchSize`. Asser
 is 1. If the driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to
 `secondEvent.operationId`.
 
-### 4. `MongoClient.bulkWrite` handles a `writeModels` input larger than `maxBsonObjectSize`
+### 4. `MongoClient.bulkWrite` batch splits when an `ops` payload exceeds `maxMessageSizeBytes`
 
 Test that `MongoClient.bulkWrite` properly handles a `writeModels` input which constructs an `ops` array larger than
-`maxBsonObjectSize`.
-
-This test must only be run on 8.0+ servers.
-
-Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value contained in the
-response. Then, construct the following document (referred to as `document`):
-
-```json
-{
-  "a": "b".repeat(maxBsonObjectSize / 2)
-}
-```
-
-Construct the following list of write models (referred to as `models`):
-
-```json
-[
-  InsertOne: {
-    "namespace": "db.coll",
-    "document": document
-  },
-  InsertOne: {
-    "namespace": "db.coll",
-    "document": document
-  }
-]
-```
-
-Execute `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult`
-with an `insertedCount` value of 2. Then make the following assertions based on whether or not the driver uses document
-sequences (`OP_MSG` payload type 1) with `MongoClient.bulkWrite`:
-
-#### With document sequences
-
-Assert that a single CommandStartedEvent (referred to as `event`) was observed for the `bulkWrite` command. Assert that
-the length of `event.command.ops` is 2.
-
-#### Without document sequences
-
-Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed for the `bulkWrite`
-command. For both `firstEvent` and `secondEvent`, assert that the length of `command.ops` is 1. If the driver exposes
-`operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to `secondEvent.operationId`.
-
-### 5. `MongoClient.bulkWrite` with document sequences handles a `bulkWrite` message larger than `maxMessageSizeBytes`
-
-Test that `MongoClient.bulkWrite` properly handles a `writeModels` input which constructs an `ops` array larger than
-`maxMessageSizeBytes`. Drivers that do not use document sequences (`OP_MSG` payload type 1) for bulk writes should
-not implement this test.
+`maxMessageSizeBytes`.
 
 This test must only be run on 8.0+ servers.
 
