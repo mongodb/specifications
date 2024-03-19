@@ -1356,7 +1356,10 @@ Entity operations correspond to an API method on a driver object. If [operation.
 method on that class.
 
 Test files SHALL use camelCase when referring to API methods and parameters, even if the defining specifications use
-other forms (e.g. snake_case in GridFS).
+other forms (e.g. snake_case in GridFS). Test files SHOULD use the exact API method names defined in specifications for
+entity test operations. Test files MAY use a different descriptive name if a naming conflict occurs. For example, the
+name "clientBulkWrite" is used for the client-level bulk write operation to differentiate it from the collection-level
+bulk write operation.
 
 This spec does not provide exhaustive documentation for all possible API methods that may appear in a test; however, the
 following sections discuss all supported entities and their operations in some level of detail. Special handling for
