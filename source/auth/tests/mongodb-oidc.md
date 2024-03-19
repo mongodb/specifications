@@ -293,7 +293,7 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
     failCommands: [
       "saslStart"
     ],
-    errorCode: 20
+    errorCode: 20 // IllegalOperation
   }
 }
 ```
