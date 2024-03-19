@@ -240,12 +240,14 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 ```javascript
 {
   configureFailPoint: "failCommand",
-  mode: "alwaysOn",
+  mode: {
+    times: 1
+  },
   data: {
     failCommands: [
       "saslStart"
     ],
-    errorCode: 20
+    errorCode: 18
   }
 }
 ```
@@ -261,17 +263,45 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 ```javascript
 {
   configureFailPoint: "failCommand",
-  mode: "alwaysOn",
+  mode: {
+    times: 1
+  },
   data: {
     failCommands: [
       "saslStart"
     ],
-    errorCode: 20 // IllegalOperation
+    errorCode: 18
   }
 }
 ```
 
 - Perform a `find` operation that fails.
+- Close the client.
+
+**3.3 Unexpected error code does not clear the cache**
+
+- Create a `MongoClient` with a human callback that returns a valid token.
+- Set a fail point for `saslStart` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "saslStart"
+    ],
+    errorCode: 20
+  }
+}
+```
+
+- Perform a `find` operation that fails.
+- Assert that the human callback has been called once.
+- Perform a `find` operation that succeeds.
+- Assert that the human callback has been called once.
 - Close the client.
 
 ### (4) Reauthentication

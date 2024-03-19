@@ -173,11 +173,12 @@ tests:
       client: failPointClient
       failPoint:
         configureFailPoint: failCommand
-        mode: "alwaysOn"
+        mode:
+          times: 1
         data:
           failCommands:
           - saslStart
-          errorCode: 20 # IllegalOperation
+          errorCode: 18
   - name: insertOne
     object: collection0
     arguments:
@@ -211,11 +212,12 @@ tests:
       client: failPointClient
       failPoint:
         configureFailPoint: failCommand
-        mode: "alwaysOn"
+        mode: 
+          times: 1
         data:
           failCommands:
           - saslStart
-          errorCode: 20 # IllegalOperation
+          errorCode: 18
   - name: insertOne
     object: collection0
     arguments:
@@ -223,7 +225,7 @@ tests:
         _id: 1
         x: 1
     expectError:
-      errorCode: 20 # IllegalOperation
+      errorCode: 18
 - description: Read commands should fail if reauthentication fails
   operations:
   - name: find

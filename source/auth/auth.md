@@ -1575,8 +1575,8 @@ Use the following algorithm to authenticate a new connection:
 
 - Check if the the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a `One-Step` SASL conversation using the
-    access token in the *Client Cache*. If the server returns an error, invalidate that access token, sleep 100ms then
-    continue.
+    access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access token,
+    sleep 100ms then continue.
 - Call the configured built-in provider integration or the OIDC callback to retrieve a new access token.
 - Cache the new access token in the *Client Cache* and *Connection Cache*.
 - Perform a `One-Step` SASL conversation using the new access token. Raise any errors to the user.
@@ -1588,18 +1588,21 @@ def auth(connection):
   access_token, is_cache = get_access_token()
 
   # If there is a cached access token, try to authenticate with it. If
-  # authentication fails, it's possible the cached access token is expired. In
+  # authentication fails with an Authentication error (18), 
+  # it's possible the cached access token is expired. In
   # that case, invalidate the access token, fetch a new access token, and try
   # to authenticate again.
+  # If the server fails for any other reason, do not clear the cache.
   if is_cache:
     try:
       connection.oidc_cache.access_token = access_token
       sasl_start(connection, payload={"jwt": access_token})
       return
-    except ServerError:
-      invalidate(access_token)
-      sleep(0.1)
-      access_token, _ = get_access_token()
+    except ServerError as e:
+      if e.code == 18:
+        invalidate(access_token)
+        sleep(0.1)
+        access_token, _ = get_access_token()
 
   connection.oidc_cache.access_token = access_token
   sasl_start(connection, payload={"jwt": access_token})
@@ -1610,14 +1613,15 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
 
 - Check if the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
-    using the access token. If the server returns an error, invalidate the access token token from the *Client Cache*,
-    clear the *Connection Cache*, and continue.
+    using the access token. If the server returns an Authentication error (18), invalidate the access token token from
+    the *Client Cache*, clear the *Connection Cache*, and continue. If the server returns another error, continue.
 - Check if the *Client Cache* has a refresh token.
   - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
     [One-Step](#one-step) SASL conversation using the new access token. If the
-    [OIDC Human Callback](#oidc-human-callback) or the server return an error, invalidate the access token from the
-    *Client Cache*, clear the *Connection Cache*, and continue.
+    [OIDC Human Callback](#oidc-human-callback) or the server returns an Authentication error (18), invalidate the
+    access token from the *Client Cache*, clear the *Connection Cache*, and continue. If the server returns another
+    error, continue.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional

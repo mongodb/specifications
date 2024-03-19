@@ -324,12 +324,12 @@
             "client": "failPointClient",
             "failPoint": {
               "configureFailPoint": "failCommand",
-              "mode": "alwaysOn",
+              "mode": { "times": 1 },
               "data": {
                 "failCommands": [
                   "saslStart"
                 ],
-                "errorCode": 20
+                "errorCode": 18
               }
             }
           }
@@ -399,12 +399,12 @@
             "client": "failPointClient",
             "failPoint": {
               "configureFailPoint": "failCommand",
-              "mode": "alwaysOn",
+              "mode": { "times": 1},
               "data": {
                 "failCommands": [
                   "saslStart"
                 ],
-                "errorCode": 20
+                "errorCode": 18
               }
             }
           }
@@ -419,7 +419,7 @@
             }
           },
           "expectError": {
-            "errorCode": 20
+            "errorCode": 18
           }
         }
       ]
