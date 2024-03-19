@@ -1920,6 +1920,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 ## Changelog
 
+- 2024-03-19: Specify to only invalidate cached OIDC access tokens if the server returns error 18.
+
 - 2024-01-31: Migrated from reStructuredText to Markdown.
 
 - 2024-01-17: Added MONGODB-OIDC machine auth flow spec and combine with human\
