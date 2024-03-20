@@ -1087,7 +1087,8 @@ If the kmsProvider has KMS provider type "kmip", the masterKey is required and h
 {
    keyId: Optional<String>, // keyId is the KMIP Unique Identifier to a 96 byte KMIP Secret Data managed object.
                             // If keyId is omitted, the driver creates a random 96 byte KMIP Secret Data managed object.
-   endpoint: Optional<String> // Host with optional port.
+   endpoint: Optional<String>, // Host with optional port.
+   delegated: Optional<Boolean> // If true, this key should be decrypted by the KMIP server.
 }
 ```
 
@@ -1727,12 +1728,13 @@ Data keys are stored in the MongoDB key vault collection with the following sche
 | **Name** | **Type** | **Description** |
 | provider | "local"  |                 |
 
-|          |          |                                                                                        |
-| -------- | -------- | -------------------------------------------------------------------------------------- |
-| **Name** | **Type** | **Description**                                                                        |
-| provider | "kmip"   |                                                                                        |
-| endpoint | String   | Optional. Defaults to kmip.endpoint from KMS providers.                                |
-| keyId    | String   | Required. keyId is the Unique Identifier to a 96 byte KMIP Secret Data managed object. |
+|           |          |                                                                                        |
+| --------- | -------- | -------------------------------------------------------------------------------------- |
+| **Name**  | **Type** | **Description**                                                                        |
+| provider  | "kmip"   |                                                                                        |
+| endpoint  | String   | Optional. Defaults to kmip.endpoint from KMS providers.                                |
+| delegated | Boolean  | Optional. Defaults to false.                                                           |
+| keyId     | String   | Required. keyId is the Unique Identifier to a 96 byte KMIP Secret Data managed object. |
 
 Data keys are needed for encryption and decryption. They are identified in the intent-to-encrypt marking and ciphertext.
 Data keys may be retrieved by querying the "\_id" with a UUID or by querying the "keyAltName" with a string.
@@ -2327,6 +2329,12 @@ KMS credentials would require added work in drivers inspecting the KMS providers
 additional test coverage. Supporting on-demand KMS credentials for named KMS providers can be considered as future work
 if needed.
 
+### What is the KMIP `delegated` option?
+
+By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key.
+If the `delegated` option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
+ensuring that the key encryption key never leaves the server. 
+
 ## Future work
 
 ### Make libmonogocrypt cache window configurable
@@ -2380,6 +2388,7 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.rst).
 
 ## Changelog
+- 2024-03-20: Add `delegated` option to "kmip" KMS provider
 
 - 2024-02-27: Migrated from reStructuredText to Markdown.
 
