@@ -1272,7 +1272,6 @@ If the kmsProvider has KMS provider type "kmip", the masterKey is required and h
    {
       keyId: Optional<String>, // keyId is the KMIP Unique Identifier to a 96 byte KMIP Secret Data managed object.
                                // If keyId is omitted, the driver creates a random 96 byte KMIP Secret Data managed object.
-      delegated: Optional<Boolean>, // If true, this key should be decrypted by the KMIP server.
       endpoint: Optional<String> // Host with optional port.
    }
 
@@ -1998,7 +1997,6 @@ provider "local"
 **Name**          **Type** **Description**
 provider          "kmip"
 endpoint          String   Optional. Defaults to kmip.endpoint from KMS providers.
-delegated         Boolean  Optional. Defaults to false.
 keyId             String   Required. keyId is the Unique Identifier to a 96 byte KMIP
                            Secret Data managed object.
 ================= ======== ===============================================================
@@ -2742,13 +2740,6 @@ KMS providers when obtaining credentials, as well as additional test coverage.
 Supporting on-demand KMS credentials for named KMS providers can be
 considered as future work if needed.
 
-What is the KMIP `delegated` option?
-------------------------------------
-
-By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key.
-If the `delegated` option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
-ensuring that the key encryption key never leaves the server. 
-
 Future work
 ===========
 
@@ -2822,7 +2813,6 @@ explicit session parameter as described in the
 Changelog
 =========
 
-:2024-02-08: Add ``delegated`` option to "kmip" KMS provider 
 :2024-01-10: Add named KMS providers
 :2023-03-30: Remove ECC collection
 :2023-02-01: Replace ``DataKeyOpts`` with ``masterKey`` in ``createEncryptedCollection``.
