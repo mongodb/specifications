@@ -1010,7 +1010,7 @@ Topology type: LoadBalanced
 
 During command construction, drivers MUST add a $readPreference field to the
 command when required by `Passing read preference to mongos and load balancers`_;
-see the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-selection>`__
+see the `Load Balancer Specification <../load-balancers/load-balancers.md#server-selection>`__
 for details.
 
 

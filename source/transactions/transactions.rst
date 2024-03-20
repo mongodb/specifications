@@ -842,7 +842,7 @@ the session as ``commitTransaction`` may be called multiple times.
 Pinning in Load Balancer Mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#connection-pooling>`__ for details.
 
 
 recoveryToken field

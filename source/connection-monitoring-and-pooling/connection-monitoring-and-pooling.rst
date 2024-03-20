@@ -782,7 +782,7 @@ Once the MongoDB handshake is done, the connection MUST get the
 generation number that applies to its ``serviceId`` from the map and update the
 map to increment the connection count for this ``serviceId``.
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#connection-pooling>`__ for details.
 
 
 Forking
@@ -842,7 +842,7 @@ All drivers that implement a connection pool MUST provide an API that allows use
 Events
 ------
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#events>`__ for details on the ``serviceId`` field.
 
 .. code:: typescript
 

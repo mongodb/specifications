@@ -778,7 +778,7 @@ The single server is always suitable for write operations if it is available.
 
 During command construction, drivers MUST add a $readPreference field to the command when required by
 [Passing read preference to mongos and load balancers](#passing-read-preference-to-mongos-and-load-balancers); see the
-[Load Balancer Specification](../load-balancers/load-balancers.rst#server-selection) for details.
+[Load Balancer Specification](../load-balancers/load-balancers.md#server-selection) for details.
 
 #### Topology types: ReplicaSetWithPrimary or ReplicaSetNoPrimary
 

@@ -287,7 +287,7 @@ Load Balancers
 
 When in ``loadBalanced`` mode, a driver MUST pin the connection used to execute the initial operation, and reuse it for subsequent ``getMore`` operations.
 
-* See Load Balancer's section on `Behaviour With Cursors <https://github.com/mongodb/specifications/blob/master/source/load-balancers/load-balancers.rst#behaviour-with-cursors>`_
+* See Load Balancer's section on `Behaviour With Cursors <../load-balancers/load-balancers.md#behaviour-with-cursors>`_
 
 Iterating the Cursor
 """"""""""""""""""""
