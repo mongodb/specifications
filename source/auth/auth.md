@@ -1252,7 +1252,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 Drivers MUST support all of the following built-in OIDC application environment integrations.
 
-####### Test
+**Test**
 
 The test integration is enabled by setting auth mechanism property `ENVIRONMENT:test`. It is meant for driver testing
 purposes, and is not meant to be documented as a user-facing feature.
