@@ -95,6 +95,32 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 - Assert that the callback was called 1 time.
 - Close the client.
 
+**3.3 Unexpected error code does not clear the cache**
+
+- Create a `MongoClient` with a human callback that returns a valid token.
+- Set a fail point for `saslStart` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "saslStart"
+    ],
+    errorCode: 20 // IllegalOperation
+  }
+}
+```
+
+- Perform a `find` operation that fails.
+- Assert that the human callback has been called once.
+- Perform a `find` operation that succeeds.
+- Assert that the human callback has been called once.
+- Close the client.
+
 ### (4) Reauthentication
 
 - Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
@@ -205,12 +231,37 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
   including the timeout parameter if possible.
 - Close the client.
 
-**2.3 Human Callback Returns Missing Data**
+**2.2 Human Callback Returns Missing Data**
 
 - Create a `MongoClient` with a human callback that returns data not conforming to the `OIDCCredential` with missing
   fields.
 - Perform a `find` operation that fails.
 - Close the client.
+
+**2.3 Refresh Token Is Passed To The Callback**
+
+- Create a `MongoClien`t with a human callback that checks for the presence of a refresh token.
+- Perform a find operation that succeeds.
+- Set a fail point for `find` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "find"
+    ],
+    errorCode: 391
+  }
+}
+```
+
+- Perform a `find` operation that succeeds.
+- Assert that the callback has been called twice.
+- Assert that the refresh token was used once.
 
 ### (3) Speculative Authentication
 
@@ -278,32 +329,6 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 - Perform a `find` operation that fails.
 - Close the client.
 
-**3.3 Unexpected error code does not clear the cache**
-
-- Create a `MongoClient` with a human callback that returns a valid token.
-- Set a fail point for `saslStart` commands of the form:
-
-```javascript
-{
-  configureFailPoint: "failCommand",
-  mode: {
-    times: 1
-  },
-  data: {
-    failCommands: [
-      "saslStart"
-    ],
-    errorCode: 20 // IllegalOperation
-  }
-}
-```
-
-- Perform a `find` operation that fails.
-- Assert that the human callback has been called once.
-- Perform a `find` operation that succeeds.
-- Assert that the human callback has been called once.
-- Close the client.
-
 ### (4) Reauthentication
 
 **4.1 Succeeds**
@@ -367,7 +392,7 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 
 **4.3 Succeeds after refresh fails**
 
-- Create a default OIDC client.
+- Create a default OIDC client with a human callback that returns an invalid refresh token.
 - Perform a `find` operation that succeeds.
 - Assert that the human callback has been called once.
 - Force a reauthenication using a fail point of the form:
