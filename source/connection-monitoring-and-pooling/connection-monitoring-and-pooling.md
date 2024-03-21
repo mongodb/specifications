@@ -717,7 +717,7 @@ MUST remove the entry for a `serviceId` once the connection count reaches 0. Onc
 connection MUST get the generation number that applies to its `serviceId` from the map and update the map to increment
 the connection count for this `serviceId`.
 
-See the [Load Balancer Specification](../load-balancers/load-balancers.rst#connection-pooling) for details.
+See the [Load Balancer Specification](../load-balancers/load-balancers.md#connection-pooling) for details.
 
 #### Forking
 
@@ -777,7 +777,7 @@ driver.
 
 #### Events
 
-See the [Load Balancer Specification](../load-balancers/load-balancers.rst#events) for details on the `serviceId` field.
+See the [Load Balancer Specification](../load-balancers/load-balancers.md#events) for details on the `serviceId` field.
 
 ```typescript
 /**
@@ -998,7 +998,7 @@ interface ConnectionCheckedInEvent {
 
 ### Connection Pool Logging
 
-Please refer to the [logging specification](../logging/logging.rst) for details on logging implementations in general,
+Please refer to the [logging specification](../logging/logging.md) for details on logging implementations in general,
 including log levels, log components, handling of null values in log messages, and structured versus unstructured
 logging.
 
@@ -1123,7 +1123,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 | message            | String         | "Connection closed"                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | driverConnectionId | Int64          | The driver-generated ID for the connection as defined in a [Connection](#connection).                                                                                                                                                                                                                                                                                                                                                       |
 | reason             | String         | A string describing the reason the connection was closed. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Stale: "Connection became stale because the pool was cleared<br>- Idle: "Connection has been available but unused for longer than the configured max idle time"<br>- Error: "An error occurred while using the connection"<br>- Pool closed: "Connection pool was closed" |
-| error              | Flexible       | If `reason` is `Error`, the associated error.<br>The type and format of this value is flexible; see the [logging specification](../logging/logging.rst#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                                                                                                             |
+| error              | Flexible       | If `reason` is `Error`, the associated error.<br>The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                                                                                                              |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1152,7 +1152,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 | ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | message    | String         | "Connection checkout failed"                                                                                                                                                                                                                                                                                                                                       |
 | reason     | String         | A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed" |
-| error      | Flexible       | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.rst#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                             |
+| error      | Flexible       | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                              |
 | durationMS | Int64          | `ConnectionCheckOutFailedEvent.duration` converted to milliseconds.                                                                                                                                                                                                                                                                                                |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in

@@ -1010,7 +1010,7 @@ Topology type: LoadBalanced
 
 During command construction, drivers MUST add a $readPreference field to the
 command when required by `Passing read preference to mongos and load balancers`_;
-see the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-selection>`__
+see the `Load Balancer Specification <../load-balancers/load-balancers.md#server-selection>`__
 for details.
 
 
@@ -1204,7 +1204,7 @@ individual read operation.
 
 Logging
 -------
-Please refer to the `logging specification <../logging/logging.rst>`__ for
+Please refer to the `logging specification <../logging/logging.md>`__ for
 details on logging implementations in general, including log levels, log
 components, and structured versus unstructured logging.
 
@@ -1342,7 +1342,7 @@ This message MUST contain the following key-value pairs:
    * - failure
      - Flexible
      - Representation of the error the driver will throw regarding server selection failing. The type and format of this
-       value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__
+       value is flexible; see the `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__
        for details on representing errors in log messages. Drivers MUST take care to not include any information in this
        field that is already included in the log message; e.g. the topology description should not be duplicated within
        this field.

@@ -778,7 +778,7 @@ The single server is always suitable for write operations if it is available.
 
 During command construction, drivers MUST add a $readPreference field to the command when required by
 [Passing read preference to mongos and load balancers](#passing-read-preference-to-mongos-and-load-balancers); see the
-[Load Balancer Specification](../load-balancers/load-balancers.rst#server-selection) for details.
+[Load Balancer Specification](../load-balancers/load-balancers.md#server-selection) for details.
 
 #### Topology types: ReplicaSetWithPrimary or ReplicaSetNoPrimary
 
@@ -938,7 +938,7 @@ Outside a legacy "request" API, drivers MUST use server selection for each indiv
 
 ### Logging
 
-Please refer to the [logging specification](../logging/logging.rst) for details on logging implementations in general,
+Please refer to the [logging specification](../logging/logging.md) for details on logging implementations in general,
 including log levels, log components, and structured versus unstructured logging.
 
 Drivers MUST support logging of server selection information via the following log messages. These messages MUST use the
@@ -1008,10 +1008,10 @@ implements.
 
 This message MUST contain the following key-value pairs:
 
-| Key     | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| message | String         | "Server selection failed"                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| failure | Flexible       | Representation of the error the driver will throw regarding server selection failing. The type and format of this value is flexible; see the [logging specification](../logging/logging.rst#representing-errors-in-log-messages) for details on representing errors in log messages. Drivers MUST take care to not include any information in this field that is already included in the log message; e.g. the topology description should not be duplicated within this field. |
+| Key     | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| message | String         | "Server selection failed"                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| failure | Flexible       | Representation of the error the driver will throw regarding server selection failing. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages. Drivers MUST take care to not include any information in this field that is already included in the log message; e.g. the topology description should not be duplicated within this field. |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
