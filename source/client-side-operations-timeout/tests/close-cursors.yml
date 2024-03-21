@@ -120,7 +120,7 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                killCursors: *collection
+                killCursors: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
               commandName: killCursors
           - commandSucceededEvent:
