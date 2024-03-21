@@ -172,7 +172,7 @@ methodology is in contrast to the one adopted by the SDAM spec tests that rely e
 server communication.
 
 
-.. _CMAP: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
-.. _PoolClearedEvent: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events
+.. _CMAP: ../../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
+.. _PoolClearedEvent: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events
 .. _serverStatus: https://www.mongodb.com/docs/manual/reference/command/serverStatus
 .. _connections.totalCreated: https://www.mongodb.com/docs/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated

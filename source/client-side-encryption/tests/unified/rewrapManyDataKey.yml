@@ -46,7 +46,7 @@ initialData:
         status: 1
         masterKey: &aws_masterkey
           provider: aws
-          key: arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0
+          key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
           region: us-east-1
       - _id: &azure_key_id { $binary: { base64: YXp1cmVhenVyZWF6dXJlYQ==, subType: "04" } }
         keyAltNames: ["azure_key"]
@@ -120,7 +120,7 @@ tests:
             provider: aws
             # Different key: 89fcc2c4-08b0-4bd9-9f25-e30687b580d0 -> 061334ae-07a8-4ceb-a813-8135540e837d.
             masterKey: &new_aws_masterkey
-              key: arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d
+              key: "arn:aws:kms:us-east-1:579766882180:key/061334ae-07a8-4ceb-a813-8135540e837d"
               region: us-east-1
         expectResult:
           bulkWriteResult:

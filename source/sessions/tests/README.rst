@@ -11,7 +11,7 @@ Introduction
 
 The YAML and JSON files in this directory are platform-independent tests
 meant to exercise a driver's implementation of sessions. These tests utilize the
-`Unified Test Format <../../unified-test-format/unified-test-format.rst>`__.
+`Unified Test Format <../../unified-test-format/unified-test-format.md>`__.
 
 Snapshot session tests
 ~~~~~~~~~~~~~~~~~~~~~~

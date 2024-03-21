@@ -72,7 +72,7 @@ Publishing and Subscribing
 
 The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
 
-Similarly, as described in the `logging specification <../logging/logging.rst#implementation-requirements>`__ the driver SHOULD emit log messages in a manner that is standard for the language.
+Similarly, as described in the `logging specification <../logging/logging.md#implementation-requirements>`__ the driver SHOULD emit log messages in a manner that is standard for the language.
 
 ----------
 Guarantees
@@ -413,7 +413,7 @@ the value to the default read preference, ``primary``, or treat the call as if `
 ------------
 Log Messages
 ------------
-Please refer to the `logging specification <../logging/logging.rst>`__ for details on logging implementations in general, including log levels, log
+Please refer to the `logging specification <../logging/logging.md>`__ for details on logging implementations in general, including log levels, log
 components, and structured versus unstructured logging.
 
 Drivers MUST support logging of SDAM information via the following types of log messages. These messages MUST be logged at ``Debug`` level and use
@@ -462,7 +462,7 @@ The following key-value pairs are common to all or several log messages and MUST
      - Heartbeat-related log messages 
      - Int
      - The driver-generated ID for the monitoring connection as defined in the 
-       `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_. Unlike
+       `connection monitoring and pooling specification <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md>`_. Unlike
        ``connectionId`` in the above events, this field MUST NOT contain the host/port; that information MUST be in the above fields,
        ``serverHost`` and ``serverPort``. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of
        a connection ID.
@@ -685,7 +685,7 @@ In addition to the relevant common fields, these messages MUST contain the follo
 
    * - failure
      - Flexible
-     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__ 
+     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__ 
        for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a 
        language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.
 

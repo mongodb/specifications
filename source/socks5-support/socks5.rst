@@ -120,7 +120,7 @@ was specified:
    to the destination host.
 
 Drivers MUST use the SOCKS5 proxy for connections to MongoDB services
-and `client-side field-level encryption KMS servers <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#kms-provider>`__.
+and `client-side field-level encryption KMS servers <../client-side-encryption/client-side-encryption.md#kms-provider>`__.
 
 Drivers MUST NOT use the SOCKS5 proxy for connections to
 :code:`mongocryptd` processes spawned for automatic client-side field-level encryption.

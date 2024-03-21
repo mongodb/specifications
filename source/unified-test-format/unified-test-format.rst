@@ -1,3 +1,10 @@
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `unified-test-format.md <unified-test-format.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 ===================
 Unified Test Format
 ===================
@@ -40,8 +47,8 @@ This test format can be used to define tests for the following specifications:
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `Command Logging and Monitoring <../command-logging-and-monitoring/command-logging-and-monitoring.rst>`__
 - `CRUD <../crud/crud.rst>`__
-- `GridFS <../gridfs/gridfs-spec.rst>`__
-- `Retryable Reads <../retryable-reads/retryable-reads.rst>`__
+- `GridFS <../gridfs/gridfs-spec.md>`__
+- `Retryable Reads <../retryable-reads/retryable-reads.md>`__
 - `Retryable Writes <../retryable-writes/retryable-writes.rst>`__
 - `Sessions <../sessions/driver-sessions.rst>`__
 - `Transactions <../transactions/transactions.rst>`__
@@ -465,8 +472,8 @@ The structure of this object is as follows:
 
    - Server version is 4.2.0 or higher
    - Driver has libmongocrypt enabled
-   - At least one of `crypt_shared <../client-side-encryption/client-side-encryption.rst#crypt-shared>`__
-     and/or `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`__
+   - At least one of `crypt_shared <../client-side-encryption/client-side-encryption.md#crypt_shared>`__
+     and/or `mongocryptd <../client-side-encryption/client-side-encryption.md#mongocryptd>`__
      is available
 
   If false, tests MUST NOT run if CSFLE is supported. If this field is omitted,
@@ -652,8 +659,8 @@ The structure of this object is as follows:
   .. _entity_client_observeLogMessages:
 
   - ``observeLogMessages``: Optional object where the key names are log
-    `components <../logging/logging.rst#components>`__ and the values are minimum
-    `log severity levels <../logging/logging.rst#log-severity-levels>`__ indicating
+    `components <../logging/logging.md#components>`__ and the values are minimum
+    `log severity levels <../logging/logging.md#log-severity-levels>`__ indicating
     which components to collect log messages for and what the minimum severity
     level of collected messages should be. Messages for unspecified components
     and/or with lower severity levels than those specified MUST be ignored by
@@ -674,7 +681,7 @@ The structure of this object is as follows:
 
   - ``clientEncryptionOpts``: Required document. A value corresponding to a
     `ClientEncryptionOpts
-    <../client-side-encryption/client-side-encryption.rst#clientencryption>`__.
+    <../client-side-encryption/client-side-encryption.md#clientencryption>`__.
 
     Note: the ``tlsOptions`` document is intentionally omitted from the test
     format. However, drivers MAY internally configure TLS options as needed to
@@ -775,7 +782,7 @@ The structure of this object is as follows:
     - `Causal Consistency <../causal-consistency/causal-consistency.rst#sessionoptions-changes>`__
     - `Snapshot Reads <../sessions/snapshot-sessions.rst#sessionoptions-changes>`__
     - `Transactions <../transactions/transactions.rst#sessionoptions-changes>`__
-    - `Client Side Operations Timeout <../client-side-operations-timeout/client-side-operations-timeout.md#sessions>`__
+    - `Client Side Operations Timeout <../client-side-operations-timeout/client-side-operations-timeout.rst#sessions>`__
 
     When specifying TransactionOptions for ``defaultTransactionOptions``, the
     transaction options MUST remain nested under ``defaultTransactionOptions``
@@ -784,7 +791,7 @@ The structure of this object is as follows:
 .. _entity_bucket:
 
 - ``bucket``: Optional object. Defines a Bucket object, as defined in the
-  `GridFS <../gridfs/gridfs-spec.rst>`__ spec.
+  `GridFS <../gridfs/gridfs-spec.md>`__ spec.
 
   The structure of this object is as follows:
 
@@ -797,7 +804,7 @@ The structure of this object is as follows:
 
   - ``bucketOptions``: Optional object. Additional options used to construct
     the bucket object. Supported options are defined in the
-    `GridFS <../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
+    `GridFS <../gridfs/gridfs-spec.md#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
 
@@ -944,7 +951,7 @@ The structure of this object is as follows:
 
   These requirements SHOULD be more restrictive than those specified in the
   top-level `runOnRequirements`_ (if any) and SHOULD NOT be more permissive.
-  This is advised because both sets of requirements MUST be satisfied in order
+  This is advised because both sets of requirements MUST be satisified in order
   for a test to be executed and more permissive requirements at the test-level
   could be taken out of context on their own.
 
@@ -1505,7 +1512,7 @@ The structure of each object is as follows:
    level. Test runners MUST assert that the actual level matches this value.
 
 - ``component``: Required string. This MUST be one of the component names listed
-   in `components <../logging/logging.rst#components>`__. This specifies the
+   in `components <../logging/logging.md#components>`__. This specifies the
    expected component for the log message. Note that since naming variations
    are permitted for components, some drivers may need to map this to a
    corresponding language-specific component name. Test runners MUST assert
@@ -1774,7 +1781,7 @@ ClientEncryption Operations
 These operations and their arguments may be documented in the following
 specifications:
 
-- `Client Side Encryption <../client-side-encryption/client-side-encryption.rst>`__
+- `Client Side Encryption <../client-side-encryption/client-side-encryption.md>`__
 
 Operations that require sending and receiving KMS requests to encrypt or decrypt
 data keys may require appropriate KMS credentials to be loaded by the driver.
@@ -1788,7 +1795,7 @@ Drivers MUST be running the mock `KMS KMIP server
 when evaluating tests that require KMS requests to a KMIP KMS provider.
 
 Drivers MAY enforce a unique index on ``keyAltNames`` as described in the
-`Client Side Field Level Encryption spec <../client-side-encryption/client-side-encryption.rst#why-aren-t-we-creating-a-unique-index-in-the-key-vault-collection>`_
+`Client Side Field Level Encryption spec <../client-side-encryption/client-side-encryption.md#why-arent-we-creating-a-unique-index-in-the-key-vault-collection>`_
 when running key management operations on the key vault collection. Although
 unified tests are written assuming the existence of the unique index, no unified
 test currently requires its implementation for correctness (e.g. no unified test
@@ -1928,7 +1935,7 @@ specifications:
 
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `CRUD <../crud/crud.rst>`__
-- `Index Management <../index-management/index-management.rst>`__
+- `Index Management <../index-management/index-management.md>`__
 
 Collection operations that require special handling or are not documented by an
 existing specification are described below.
@@ -2045,7 +2052,7 @@ createSearchIndex
 
 This operations proxies the collection's ``createSearchIndex`` helper with the same arguments.
 
-Each ``createSearchIndex`` operation receives a `SearchIndexModel <https://github.com/mongodb/specifications/blob/master/source/index-management/index-management.rst#common-interfaces>`.  
+Each ``createSearchIndex`` operation receives a `SearchIndexModel <../index-management/index-management.md#common-interfaces>`.  
 If a driver has chosen to implement the ``createSearchIndex(name: String, definition: Document)`` overload 
 of ``createSearchIndex``, then the ``SearchIndexModel`` should be parsed by ``createSearchIndex`` unified 
 test runner helper and the correct arguments should be passed into the driver's helper.
@@ -2153,7 +2160,7 @@ Bucket Operations
 These operations and their arguments may be documented in the following
 specifications:
 
-- `GridFS <../gridfs/gridfs-spec.rst>`__
+- `GridFS <../gridfs/gridfs-spec.md>`__
 
 Bucket operations that require special handling or are not documented by an
 existing specification are described below.
@@ -2213,7 +2220,7 @@ methods. The structure of ``source`` is as follows::
 
     { $$hexBytes: <string> }
 
-The string MUST contain an even number of hexadecimal characters
+The string MUST contain an even number of hexademical characters
 (case-insensitive) and MAY be empty. The test runner MUST raise an error if the
 structure of ``source`` or its string is malformed. The test runner MUST convert
 the string to a byte sequence denoting the stream's readable data (if any). For
@@ -2737,7 +2744,7 @@ The following arguments are supported:
   - ``time``: the number of (floating-point) seconds since the Unix epoch
     when the failure was encountered.
 
-- ``storeSuccessesAsEntity``: Optional string. If specified, the runner MUST keep
+- ``storeSuccessesAsEntity``: Optional string. If specfied, the runner MUST keep
   track of the number of sub-operations that completed successfully, and store
   that number in the specified entity. For example, if the loop contains
   two sub-operations, and they complete successfully, each loop execution
@@ -3361,7 +3368,7 @@ An example of this operator follows::
 $$matchesHexBytes
 `````````````````
 
-Syntax, where ``hexBytes`` is an even number of hexadecimal characters
+Syntax, where ``hexBytes`` is an even number of hexademical characters
 (case-insensitive) and MAY be empty::
 
     { $$matchesHexBytes: <hexBytes> }
@@ -3541,7 +3548,7 @@ For each element in `tests`_, follow the process in `Executing a Test`_.
 Executing a Test
 ~~~~~~~~~~~~~~~~
 
-The instructions in this section apply for each `test`_ occurring in a test file
+The instructions in this section apply for each `test`_ occuring in a test file
 loaded by the test runner. After processing a test, test runners MUST reset
 any internal state that resulted from doing so. For example, the `Entity Map`_
 created for one test MUST NOT be shared with another.
@@ -3611,7 +3618,7 @@ events for the following:
   spec) unless
   `observeSensitiveCommands <entity_client_observeSensitiveCommands_>`_ is true.
   Note that drivers will redact commands and replies for sensitive commands. For
-  ``hello`` and legacy hello, which are conditionally sensitive based on the
+  ``hello`` and legacy hello, which are conditionally sensistive based on the
   presence of a ``speculativeAuthenticate`` field, the test runner may need to
   infer that the events are sensitive based on whether or not the command and
   reply documents are redacted (i.e. empty documents).
@@ -3670,7 +3677,7 @@ Proceed to the subsequent test.
 Executing an Operation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The instructions in this section apply for each `operation`_ occurring in a
+The instructions in this section apply for each `operation`_ occuring in a
 `test`_ contained within a test file loaded by the test runner.
 
 If at any point while executing an operation an unexpected error is encountered
@@ -3803,7 +3810,7 @@ Server Fail Points
 
 Many tests utilize the ``configureFailPoint`` command to trigger server-side
 errors such as dropped connections or command errors. Tests can configure fail
-points using the special `failPoint`_ or `targetedFailPoint`_ operations.
+points using the special `failPoint`_ or `targetedFailPoint`_ opertions.
 
 This internal command is not documented in the MongoDB manual (pending
 `DOCS-10784`_); however, there is scattered documentation available on the
@@ -3883,12 +3890,6 @@ an error for commands listed in the ``data.failCommands`` field. Additionally,
 this fail point is documented in server wiki:
 `The failCommand Fail Point <https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point>`__.
 
-The ``failCommand`` fail point was introduced in mongod 4.0.0
-(`SERVER-34551) <https://jira.mongodb.org/browse/SERVER-34551>`__) and mongos
-4.1.5 (`SERVER-35518 <https://jira.mongodb.org/browse/SERVER-35518>`__);
-however, the fail point was not usable for testing on mongos until version 4.1.7
-(`SERVER-34943 <https://jira.mongodb.org/browse/SERVER-34943>`__).
-
 The ``failCommand`` fail point may be configured like so::
 
     db.adminCommand({
@@ -3898,7 +3899,6 @@ The ``failCommand`` fail point may be configured like so::
           failCommands: [<string>, ...],
           closeConnection: <boolean>,
           errorCode: <integer>,
-          errorLabels: [<string>, ...],
           writeConcernError: <object>,
           appName: <string>,
           blockConnection: <boolean>,
@@ -3916,21 +3916,17 @@ if desired:
 * ``errorCode``: Optional integer, which is unset by default. If set, the
   command will not be executed and the specified command error code will be
   returned as a command error.
-* ``errorLabels``: Optional array of strings. If set, this list overrides the
-  server's normal behavior for adding error labels. An empty array may be used
-  to suppress the server from adding error labels to the response. New in server
-  4.3.1 (`SERVER-43941 <https://jira.mongodb.org/browse/SERVER-43941>`__).
 * ``appName``: Optional string, which is unset by default. If set, the fail
   point will only apply to connections for MongoClients created with this
   ``appname``. New in server 4.4.0-rc2
   (`SERVER-47195 <https://jira.mongodb.org/browse/SERVER-47195>`_).
 * ``blockConnection``: Optional boolean, which defaults to ``false``. If
   ``true``, the server should block the affected commands for ``blockTimeMS``.
-  New in server 4.3.4 and backported to 4.2.9
+  New in server 4.3.4
   (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
 * ``blockTimeMS``: Optional integer, which is required when ``blockConnection``
   is ``true``. The number of milliseconds for which the affected commands should
-  be blocked. New in server 4.3.4 and backported to 4.2.9
+  be blocked. New in server 4.3.4
   (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
 
 
@@ -4072,8 +4068,6 @@ Changelog
 ..
   Please note schema version bumps in changelog entries where applicable.
 
-:2024-01-03: Document server version requirements for ``errorLabels`` and
-             ``blockConnection`` options for ``failCommand`` fail point.
 :2023-10-04: **Schema version 1.17.**
              Add ``serverHeartbeatStartedEvent``, ``serverHeartbeatSucceededEvent``, and
              ``serverHeartbeatFailedEvent`` for asserting on SDAM server heartbeat events.

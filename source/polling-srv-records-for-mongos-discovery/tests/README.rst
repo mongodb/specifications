@@ -34,8 +34,8 @@ the `test set-up`_ from the `Initial DNS Seedlist Discovery`_ specification::
     _mongodb._tcp.test3.test.build.10gen.cc.      86400  IN SRV  27017  localhost.test.build.10gen.cc.
     _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
 
-.. _`test set-up`: https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/tests/README.rst
-.. _`Initial DNS Seedlist Discovery`: ../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
+.. _`test set-up`: ../../initial-dns-seedlist-discovery/tests/README.md
+.. _`Initial DNS Seedlist Discovery`: ../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md
 
 Prose Tests
 ===========

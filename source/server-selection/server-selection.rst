@@ -1,3 +1,10 @@
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `server-selection.md <server-selection.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 ================
 Server Selection
 ================
@@ -699,7 +706,7 @@ the command and how it is invoked:
     preference, e.g.  not calling ``renameCollection`` with a ``mode`` of
     'secondary'.
 
-    N.B.: "used for server selection" does not supersede rules for server
+    N.B.: "used for server selection" does not supercede rules for server
     selection on "Standalone" topologies, which ignore any requested read
     preference.
 
@@ -797,7 +804,7 @@ Multi-threaded drivers and single-threaded drivers with
 ``serverSelectionTryOnce`` set to false MUST enforce a timeout for the server
 selection process. The timeout MUST be computed as described in
 `Client Side Operations Timeout: Server Selection
-<../client-side-operations-timeout/client-side-operations-timeout.md#server-selection>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
 
 Multi-threaded or asynchronous server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1003,7 +1010,7 @@ Topology type: LoadBalanced
 
 During command construction, drivers MUST add a $readPreference field to the
 command when required by `Passing read preference to mongos and load balancers`_;
-see the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-selection>`__
+see the `Load Balancer Specification <../load-balancers/load-balancers.md#server-selection>`__
 for details.
 
 
@@ -1197,7 +1204,7 @@ individual read operation.
 
 Logging
 -------
-Please refer to the `logging specification <../logging/logging.rst>`__ for
+Please refer to the `logging specification <../logging/logging.md>`__ for
 details on logging implementations in general, including log levels, log
 components, and structured versus unstructured logging.
 
@@ -1335,7 +1342,7 @@ This message MUST contain the following key-value pairs:
    * - failure
      - Flexible
      - Representation of the error the driver will throw regarding server selection failing. The type and format of this
-       value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__
+       value is flexible; see the `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__
        for details on representing errors in log messages. Drivers MUST take care to not include any information in this
        field that is already included in the log message; e.g. the topology description should not be duplicated within
        this field.
@@ -1927,7 +1934,7 @@ accordingly.
 .. _SERVER-11956: https://jira.mongodb.org/browse/SERVER-11956
 .. _SERVER-12273: https://jira.mongodb.org/browse/SERVER-12273
 
-Why change from mongos High Availability (HA) to random selection?
+Why change from mongos High Availablity (HA) to random selection?
 ---------------------------------------------------------------------
 
 Mongos HA has similar problems with pinning, in that one can wind up pinned

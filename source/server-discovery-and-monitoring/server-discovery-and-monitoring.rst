@@ -182,7 +182,7 @@ A server is judged "suitable" for an operation if the client can use it
 for a particular operation.
 For example, a write requires a standalone, primary, or mongos.
 Suitability is fully specified in the `Server Selection Spec
-<https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst>`_.
+<../server-selection/server-selection.md>`_.
 
 address
 ```````
@@ -361,7 +361,7 @@ Fields:
   The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
 * (=) iscryptd: boolean indicating if the server is a
-  `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`_
+  `mongocryptd <../client-side-encryption/client-side-encryption.md#mongocryptd>`_
   server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
@@ -504,7 +504,7 @@ Client construction
 '''''''''''''''''''
 
 Except for `initial DNS seed list discovery
-<https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+<../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md>`_
 when given a connection string with ``mongodb+srv`` scheme,
 the client's constructor MUST NOT do any I/O.
 This means that the constructor does not throw an exception
@@ -862,7 +862,7 @@ type Unknown.
 TopologyType LoadBalanced
 `````````````````````````
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-logging-and-monitoring>`__ for details.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#server-discovery-logging-and-monitoring>`__ for details.
 
 Other TopologyTypes
 ```````````````````
@@ -1674,7 +1674,7 @@ are prone to several classes of race, for example:
 * Authentication fails, the server requires SCRAM-SHA-1.
 
 Better to call hello or legacy hello for each new socket, as required by the `Auth Spec
-<https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`_,
+<../auth/auth.md>`_,
 and use the hello or legacy hello response associated with that socket
 for maxWireVersion, maxBsonObjectSize, etc.:
 all the fields required to correctly communicate with the server.
@@ -2567,7 +2567,7 @@ Changelog
 .. _scanning order: server-monitoring.rst#scanning-order
 .. _clients update the topology from each handshake: server-monitoring.rst#clients-update-the-topology-from-each-handshake
 .. _single-threaded monitoring: server-monitoring.rst#single-threaded-monitoring
-.. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
-.. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
-.. _Authentication spec: /source/auth/auth.rst
+.. _Connection Monitoring and Pooling spec: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
+.. _CMAP spec: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md
+.. _Authentication spec: ../auth/auth.md
 .. _Server Monitoring (Measuring RTT): server-monitoring.rst#measuring-rtt

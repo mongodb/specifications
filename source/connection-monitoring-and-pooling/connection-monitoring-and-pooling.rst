@@ -1,3 +1,11 @@
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `connection-monitoring-and-pooling.md <connection-monitoring-and-poolin.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
+
 =================================
 Connection Monitoring and Pooling
 =================================
@@ -313,7 +321,7 @@ has the following properties:
        *                      ready() method.
        *
        *   - "closed":        The pool is destroyed. No more Connections may ever be checked out nor any
-       *                      created in the background. The pool can be set to this state via the close()
+       *                      created in the background. The pool can be set to this sate via the close()
        *                      method. The pool cannot transition to any other state after being closed.
        */
       state: "paused" | "ready" | "closed";
@@ -567,7 +575,7 @@ once that request reaches the front of the queue, having the Pool find or create
 a `Connection`_ to fulfill that request. Requests MUST be subject to a timeout
 which is computed per the rules in
 `Client Side Operations Timeout: Server Selection
-<../client-side-operations-timeout/client-side-operations-timeout.md#server-selection>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
 
 To service a request for a `Connection`_, the Pool MUST first iterate over the
 list of available `Connections <#connection>`_, searching for a non-perished one
@@ -774,7 +782,7 @@ Once the MongoDB handshake is done, the connection MUST get the
 generation number that applies to its ``serviceId`` from the map and update the
 map to increment the connection count for this ``serviceId``.
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#connection-pooling>`__ for details.
 
 
 Forking
@@ -805,7 +813,7 @@ thread SHOULD
 -  Remove and close perished available `Connections <#connection>`_ including "in use" connections if `interruptInUseConnections` option was set to true in the most recent pool clear.
 - Apply timeouts to connection establishment per `Client Side Operations
   Timeout: Background Connection Pooling
-  <../client-side-operations-timeout/client-side-operations-timeout.md#background-connection-pooling>`__.
+  <../client-side-operations-timeout/client-side-operations-timeout.rst#background-connection-pooling>`__.
 
 A pool SHOULD allow immediate scheduling of the next background thread iteration after a clear is performed. 
 
@@ -834,7 +842,7 @@ All drivers that implement a connection pool MUST provide an API that allows use
 Events
 ------
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#events>`__ for details on the ``serviceId`` field.
 
 .. code:: typescript
 
@@ -1055,7 +1063,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
 
 Connection Pool Logging
 ~~~~~~~~~~~~~~~~~~~~~~~
-Please refer to the `logging specification <../logging/logging.rst>`__ for details on logging implementations in general, including log levels, log
+Please refer to the `logging specification <../logging/logging.md>`__ for details on logging implementations in general, including log levels, log
 components, handling of null values in log messages, and structured versus unstructured logging.
 
 Drivers MUST support logging of connection pool information via the following types of log messages. These messages MUST be logged at ``Debug`` level
@@ -1291,7 +1299,7 @@ In addition to the common fields defined above, this message MUST contain the fo
    * - error
      - Flexible
      - If ``reason`` is ``Error``, the associated error. The type and format of this value is flexible; see the
-       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
+       `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
 
@@ -1345,7 +1353,7 @@ In addition to the common fields defined above, this message MUST contain the fo
    * - error
      - Flexible
      - If ``reason`` is ``ConnectionError``, the associated error. The type and format of this value is flexible; see the
-       `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
+       `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__  for details on representing errors in log messages.
 
    * - durationMS
      - Int64
@@ -1549,7 +1557,7 @@ including "in use" connections are no longer healthy. In some cases connections
 will fail to detect the network timeout fast enough. For example, a server request 
 can hang at the OS level in TCP retry loop up for 17 minutes before failing. Therefore 
 these connections MUST be proactively interrupted in the case of a server monitor network timeout. 
-Requesting an immediate background thread run will speed up this process.
+Requesting an immediate backround thread run will speed up this process.
 
 Why don't we configure TCP_USER_TIMEOUT?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1557,8 +1565,8 @@ Ideally, a reasonable TCP_USER_TIMEOUT can help with detecting stale connections
 alternative to `interruptInUseConnections` in Clear. 
 Unfortunately this approach is platform dependent and not each driver allows easily configuring it.
 For example, C# driver can configure this socket option on linux only with target frameworks 
-higher or equal to .net 5.0. On macOS, there is no straight equivalent for this option, 
-it's possible that we can find some equivalent configuration, but this configuration will also 
+higher or equal to .net 5.0. On macOS, there is no straight equavalent for this option, 
+it's possible that we can find some equavalent configuration, but this configuration will also 
 require target frameworks higher than or equal to .net 5.0. The advantage of using Background Thread to 
 manage perished connections is that it will work regardless of environment setup.
 

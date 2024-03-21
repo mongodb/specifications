@@ -1,6 +1,14 @@
 .. role:: javascript(code)
   :language: javascript
 
+
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `crud.md <crud.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 ===============
 Driver CRUD API
 ===============
@@ -2252,14 +2260,14 @@ assume the backing mongos is 5.0+), drivers MUST use the available read
 preference.
 
 Drivers SHOULD augment their
-`server selection algorithm <..../server-selection/server-selection.rst#server-selection-algorithm>`_
+`server selection algorithm <../server-selection/server-selection.md#server-selection-algorithm>`_
 such that this logic can be enforced within a single server selection attempt.
 
 Drivers MUST discern the read preference used to select a server for the
 operation, which SHALL be used for specifying the
 `$readPreference global command argument <../message/OP_MSG.rst#global-command-arguments>`_
 and
-`passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_
+`passing read preference to mongos and load balancers <../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers>`_
 (if applicable).
 
 

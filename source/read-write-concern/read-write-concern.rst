@@ -49,7 +49,7 @@ Read Concern
 ------------
 
 For naming and deviation guidance, see the `CRUD specification
-<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`__.
+<../crud/crud.md#naming>`__.
 Defined below are the constructs for drivers.
 
 .. code:: typescript
@@ -287,7 +287,7 @@ of the write concern document MUST be as follows:
 When a driver provides a way for the application to specify the write concern,
 the following data structure SHOULD be used. For acceptable naming and
 deviation guidance, see the `CRUD specification
-<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`__.
+<../crud/crud.md#naming>`__.
 
 .. code:: typescript
 
@@ -525,7 +525,7 @@ Drivers SHOULD report writeConcernErrors however they report other server
 errors: by raising an exception, returning "false", or another idiom that is
 consistent with other server errors. Drivers SHOULD report writeConcernErrors
 with a ``WriteConcernError`` defined in the
-`CRUD specification </source/crud/crud.rst#error-handling>`__.
+`CRUD specification <../crud/crud.md#error-handling>`__.
 
 Drivers SHOULD NOT parse server replies for "writeConcernError" in generic
 command methods.

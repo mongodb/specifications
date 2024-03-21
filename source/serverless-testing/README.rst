@@ -53,7 +53,7 @@ In contrast to the `Load Balancer testing`_, which has separate URIs for load
 balancers fronting a single or multiple servers, there is only a single URI for
 Atlas Serverless testing (i.e. ``SERVERLESS_URI``).
 
-.. _Load Balancer testing: ../load-balancers/tests/README.rst
+.. _Load Balancer testing: ../load-balancers/tests/README.md
 
 The TXT record for ``SERVERLESS_URI`` already specifies ``loadBalanced=true`` so
 drivers need not add that.
@@ -65,7 +65,7 @@ specify a username and password (see: `Required Variables`_) when connecting to
 Drivers MUST use ``SERVERLESS_URI`` to configure both internal clients and
 clients under test (as described in the `Unified Test Format spec`_).
 
-.. _Unified Test Format spec: ../unified-test-format/unified-test-format.rst
+.. _Unified Test Format spec: ../unified-test-format/unified-test-format.md
 
 Required Variables
 ~~~~~~~~~~~~~~~~~~

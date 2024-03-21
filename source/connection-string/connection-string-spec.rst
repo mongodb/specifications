@@ -1,6 +1,14 @@
 .. role:: javascript(code)
   :language: javascript
 
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `connection-string-spec.md <connection-string-spec.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
+
 ======================
 Connection String Spec
 ======================
@@ -64,7 +72,7 @@ For example the ``mongodb+srv`` specification, introduced with `Initial DNS
 Seedlist Discovery`_, obtains information from DNS in addition to just the
 connection string.
 
-.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
+.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md
 
 -------------------
 Userinfo (optional)

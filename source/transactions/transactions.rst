@@ -1,3 +1,10 @@
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `transactions.md <transactions.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 =================================
 Driver Transactions Specification
 =================================
@@ -299,7 +306,7 @@ maxCommitTimeMS
 ^^^^^^^^^^^^^^^
 
 NOTE: This option is deprecated in favor of `timeoutMS
-<../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms>`_.
+<../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_.
 
 The maximum amount of time to allow a single commitTransaction command to run.
 
@@ -835,7 +842,7 @@ the session as ``commitTransaction`` may be called multiple times.
 Pinning in Load Balancer Mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#connection-pooling>`__ for details.
 
 
 recoveryToken field

@@ -238,7 +238,7 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   the MongoClient performing the operation has the retryWrites configuration
   option set to true.
 
-  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
+  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors
 
 - For server versions 4.4 and newer, the server will add a RetryableWriteError
   label to errors or server responses that it considers retryable before
@@ -312,7 +312,7 @@ retrying.
 For more information about error labels, see the `Transactions specification`_.
 
 .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-.. _Transactions specification: ../transactions/transactions.rst#error-labels
+.. _Transactions specification: ../transactions/transactions.md#error-labels
 
 Generating Transaction IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -343,7 +343,7 @@ executed via a specific `CRUD`_ method (e.g. ``updateOne()``) or write command
 method (e.g. ``executeWriteCommand()``) within a MongoClient where retryable
 writes have been enabled and when the selected server supports retryable writes.
 
-.. _CRUD: ../crud/crud.rst
+.. _CRUD: ../crud/crud.md
 
 If your driver offers a generic command method on your database object (e.g.
 ``runCommand()``), it MUST NOT check the user's command document to determine if

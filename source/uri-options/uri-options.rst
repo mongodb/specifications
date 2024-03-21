@@ -30,7 +30,7 @@ document are to be interpreted as described in
 Conflicting TLS options
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Per the `Connection String spec <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst#repeated-keys>`__,
+Per the `Connection String spec <../connection-string/connection-string-spec.md#repeated-keys>`__,
 the behavior of duplicates of most URI options is undefined. However, due
 to the security implications of certain options, drivers MUST raise an
 error to the user during parsing if any of the following circumstances
@@ -72,7 +72,7 @@ srvServiceName and srvMaxHosts URI options
 
 For URI option validation pertaining to ``srvServiceName`` and ``srvMaxHosts``,
 please see the
-`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#uri-validation>`_
+`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#uri-validation>`_
 for details.
 
 
@@ -81,7 +81,7 @@ Load Balancer Mode
 
 For URI option validation in Load Balancer mode (i.e. ``loadBalanced=true``),
 please see the
-`Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for
+`Load Balancer spec <../load-balancers/load-balancers.md#uri-validation>`_ for
 details.
 
 
@@ -104,7 +104,7 @@ implement the old and new names as aliases. All keys and values MUST be
 encoded in UTF-8. All integer options are 32-bit unless specified otherwise.
 Note that all requirements and recommendations described in the `Connection
 String spec
-<https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst>`_
+<../connection-string/connection-string-spec.md>`_
 pertaining to URI options apply here.
 
 .. _uri.options:
@@ -129,9 +129,9 @@ pertaining to URI options apply here.
 
    * - authMechanism
      - any string; valid values are defined in the `auth spec
-       <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
+       <../auth/auth.md#supported-authentication-methods>`_
      - None; default values for authentication exist for constructing authentication credentials per the
-       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       `auth spec <../auth/auth.md#supported-authentication-methods>`_,
        but there is no default for the URI option itself.
      - no
      - The authentication mechanism method to use for connection to the
@@ -146,14 +146,14 @@ pertaining to URI options apply here.
    * - authSource
      - any string
      - None; default values for authentication exist for constructing authentication credentials per the
-       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       `auth spec <../auth/auth.md#supported-authentication-methods>`_,
        but there is no default for the URI option itself.
      - no
      - The database that connections should authenticate against
 
    * - compressors
      - comma separated list of strings, e.g. "snappy,zlib"
-     - defined in `compression spec <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst#compressors>`_
+     - defined in `compression spec <../compression/OP_COMPRESSED.md#compressors>`_
      - no
      - The list of allowed compression types for wire protocol messages
        sent or received from the server
@@ -186,14 +186,14 @@ pertaining to URI options apply here.
 
    * - loadBalanced
      - "true" or "false"
-     - defined in `Load Balancer spec <../load-balancers/load-balancers.rst#loadbalanced>`__
+     - defined in `Load Balancer spec <../load-balancers/load-balancers.md#loadbalanced>`__
      - no
      - Whether the driver is connecting to a load balancer.
 
    * - localThresholdMS
      - non-negative integer; 0 means 0 ms (i.e. the fastest eligible server
        must be selected)
-     - defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#localthresholdms>`__
+     - defined in the `server selection spec <../server-selection/server-selection.md#localthresholdms>`__
      - no
      - The amount of time beyond the fastest round trip time that a given
        server’s round trip time can take and still be eligible for server selection
@@ -259,8 +259,8 @@ pertaining to URI options apply here.
      - Default read concern for the client
 
    * - readPreference
-     - any string; currently supported values are defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`__, but must be lowercase camelCase, e.g. "primaryPreferred"
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`__
+     - any string; currently supported values are defined in the `server selection spec <../server-selection/server-selection.md#mode>`__, but must be lowercase camelCase, e.g. "primaryPreferred"
+     - defined in `server selection spec <../server-selection/server-selection.md#mode>`__
      - no
      - Default read preference for the client (excluding tags)
 
@@ -301,13 +301,13 @@ pertaining to URI options apply here.
 
    * - serverSelectionTimeoutMS
      - positive integer; a driver may also accept 0 to be used for a special case, provided that it documents the meaning
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontimeoutms>`__
+     - defined in `server selection spec <../server-selection/server-selection.md#serverselectiontimeoutms>`__
      - no
      - A timeout in milliseconds to block for server selection before raising an error
 
    * - serverSelectionTryOnce
      - "true" or "false"
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontryonce>`__
+     - defined in `server selection spec <../server-selection/server-selection.md#serverselectiontryonce>`__
      - required for single-threaded drivers
      - Scan the topology only once after a server selection failure instead of repeatedly until the server selection times out
 
@@ -321,7 +321,7 @@ pertaining to URI options apply here.
 
    * - srvMaxHosts
      - non-negative integer; 0 means no maximum
-     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts>`__
+     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts>`__
      - no
      - The maximum number of SRV results to randomly select when initially
        populating the seedlist or, during SRV polling, adding new hosts to the
@@ -331,7 +331,7 @@ pertaining to URI options apply here.
      - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_
      - "mongodb"
      - no
-     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`__
+     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvservicename>`__
        and `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
 
    * - ssl
@@ -551,5 +551,5 @@ Changelog
 
 ----
 
-.. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
+.. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-options-1
 .. _SOCKS5 support spec: https://github.com/mongodb/specifications/blob/master/source/socks5-support/socks5.rst#mongoclient-configuration

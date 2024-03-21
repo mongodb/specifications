@@ -1,3 +1,11 @@
+
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `index-management.md <index-management.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 .. role:: javascript(code)
   :language: javascript
 
@@ -874,7 +882,7 @@ in a non-breaking manner (i.e., method overloading) drivers MAY omit the empty o
 search index management helpers.
 
 ``listSearchIndexes`` is implemented using an aggregation pipeline.  The list helper MUST support a driver's aggregation
-options as outline in the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_.  Drivers MAY combine the aggregation options with
+options as outline in the `CRUD specification <../crud/crud.md#read>`_.  Drivers MAY combine the aggregation options with
 any future ``listSearchIndexes`` stage options, if that is idiomatic for a driver's language.
 
 Asynchronicity

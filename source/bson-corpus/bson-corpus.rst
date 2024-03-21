@@ -1,3 +1,11 @@
+
+.. note::
+  This specification has been converted to Markdown and renamed to
+  `bson-corpus.md <bson-corpus.md>`_.  
+
+  Use the link above to access the latest version of the specification as the
+  current reStructuredText file will no longer be updated.
+
 ===========
 BSON Corpus
 ===========
@@ -46,7 +54,7 @@ Goals
 Non-Goals
 ---------
 
-* Replace or extend the official BSON spec at http://bsonspec.org.
+* Replace or extend the offical BSON spec at http://bsonspec.org.
 
 * Provide a formal specification for ``extjson``.
 

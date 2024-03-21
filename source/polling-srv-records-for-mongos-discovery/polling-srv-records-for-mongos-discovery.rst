@@ -25,7 +25,7 @@ Discovery specification, and modifies the `Server Discovery and Monitoring`_
 specification's definition of monitoring a set of mongos servers in a Sharded
 TopologyType.
 
-.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
+.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md
 .. _`Server Discovery and Monitoring`: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst
 
 META
@@ -127,10 +127,10 @@ every *rescanSRVIntervalMS* value. The *rescanSRVIntervalMS* period SHOULD be
 calculated from the **end** of the previous rescan (or the **end** of the
 initial DNS seedlist discovery scan).
 
-.. _seedlist: https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#seedlist-discovery
-.. _srvMaxHosts: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts
-.. _srvServiceName: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename
-.. _`initial selection`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#querying-dns
+.. _seedlist: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#seedlist-discovery
+.. _srvMaxHosts: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts
+.. _srvServiceName: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvservicename
+.. _`initial selection`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#querying-dns
 
 Multi-Threaded Drivers
 ----------------------
