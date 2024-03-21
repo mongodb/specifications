@@ -14,8 +14,14 @@ For example, if the selected AWS profile ID is "drivers-test", run:
 aws configure sso
 export OIDC_TOKEN_DIR=/tmp/tokens
 AWS_PROFILE="drivers-test" oidc_get_tokens.sh
-AWS_WEB_IDENTITY_TOKEN_FILE="$OIDC_TOKEN_DIR/test_user1" /my/test/command
+OIDC_TOKEN_FILE="$OIDC_TOKEN_DIR/test_user1" /my/test/command
 ```
+
+______________________________________________________________________
+
+## Unified Spec Tests
+
+Drivers MUST run the unified spec tests in all supported OIDC environments.
 
 ______________________________________________________________________
 
@@ -24,9 +30,11 @@ ______________________________________________________________________
 Drivers MUST implement all prose tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be
 configured with `retryReads=false`.
 
+Drivers MUST run the prose tests in all supported OIDC environments.
+
 > [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
-> after the test to prevent interaction between test cases.
+> callback to prevent interaction between test cases.
 
 Note that typically the preconfigured Atlas Dev clusters are used for testing, in Evergreen and locally. The URIs can be
 fetched from the `drivers/oidc` Secrets vault, see
@@ -35,18 +43,18 @@ Use `OIDC_ATLAS_URI_SINGLE` for the `MONGODB_URI`. If using local servers is pre
 [Local Testing](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md#local-testing)
 method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
-### (1) OIDC Callback Authentication
+### Callback Authentication
 
 **1.1 Callback is called during authentication**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
 - Close the client.
 
 **1.2 Callback is called once for multiple connections**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Start 10 threads and run 100 `find` operations in each thread that all succeed.
 - Assert that the callback was called 1 time.
 - Close the client.
@@ -75,14 +83,14 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 **2.4 Invalid Client Configuration with Callback**
 
-- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `PROVIDER_NAME:aws`.
+- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `ENVIRONMENT:test`.
 - Assert it returns a client configuration error.
 
 ### (3) Authentication Failure
 
 **3.1 Authentication failure with cached tokens fetch a new token and retry auth**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Poison the *Client Cache* with an invalid access token.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
@@ -123,7 +131,7 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 
 ### (4) Reauthentication
 
-- Create a `MongoClient` configured with an OIDC callback that implements the AWS provider logic.
+- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
 - Set a fail point for `find` commands of the form:
 
 ```javascript
@@ -145,12 +153,32 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 - Assert that the callback was called 2 times (once during the connection handshake, and again during reauthentication).
 - Close the client.
 
+## (5) Azure Tests
+
+Drivers MUST only run the Azure tests when testing on an Azure VM. See instructions in
+[Drivers Evergreen Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/auth_oidc/azure#azure-oidc-testing)
+for test setup.
+
+# 5.1 Azure With No Username
+
+- Create a `MongoClient` configured with `ENVIRONMENT:Azure` and a valid `TOKEN_RESOURCE` and no username.
+- Perform a `find` operation that succeeds.
+- Close the client.
+
+# 5.2 Azure with Bad Usernam
+
+- Create a `MongoClient` configured with `ENVIRONMENT:Azure` and a valid `TOKEN_RESOURCE` and a username of `"bad"`.
+- Perform a `find` operation that fails.
+- Close the client.
+
 ______________________________________________________________________
 
 ## Human Authentication Flow Prose Tests
 
 Drivers that support the [Human Authentication Flow](../auth.md#human-authentication-flow) MUST implement all prose
 tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be configured with `retryReads=false`.
+
+The human workflow tests MUST only be run when testing in the default environment described beflow.
 
 > [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point

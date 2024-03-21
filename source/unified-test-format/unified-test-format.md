@@ -422,7 +422,7 @@ The structure of this object is as follows:
     uriOptions:
       authMechanism: "MONGODB-OIDC"
       authMechanismProperties:
-        PROVIDER_NAME: { $$placeholder: 1 }
+        ENVIRONMENT: { $$placeholder: 1 }
     ```
 
   <span id="entity_client_useMultipleMongoses" />
@@ -519,11 +519,11 @@ The structure of this object is as follows:
 
   <span id="entity_client_observeLogMessages" />
 
-  - `observeLogMessages`: Optional object where the key names are log [components](../logging/logging.rst#components)
-    and the values are minimum [log severity levels](../logging/logging.rst#log-severity-levels) indicating which
-    components to collect log messages for and what the minimum severity level of collected messages should be. Messages
-    for unspecified components and/or with lower severity levels than those specified MUST be ignored by this client's
-    log collector(s) and SHOULD NOT be included in [test.expectLogMessages](#test_expectLogMessages) for this client.
+  - `observeLogMessages`: Optional object where the key names are log [components](../logging/logging.md#components) and
+    the values are minimum [log severity levels](../logging/logging.md#log-severity-levels) indicating which components
+    to collect log messages for and what the minimum severity level of collected messages should be. Messages for
+    unspecified components and/or with lower severity levels than those specified MUST be ignored by this client's log
+    collector(s) and SHOULD NOT be included in [test.expectLogMessages](#test_expectLogMessages) for this client.
   - `serverApi`: Optional [serverApi](#serverapi) object.
 
 <span id="entity_clientEncryption" />
@@ -1219,7 +1219,7 @@ The structure of each object is as follows:
 
 - `component`: Required string. This MUST be one of the component names listed\
   in
-  [components](../logging/logging.rst#components). This specifies the expected component for the log message. Note that
+  [components](../logging/logging.md#components). This specifies the expected component for the log message. Note that
   since naming variations are permitted for components, some drivers may need to map this to a corresponding
   language-specific component name. Test runners MUST assert that the actual component matches this value.
 

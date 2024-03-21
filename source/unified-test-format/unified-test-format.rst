@@ -659,8 +659,8 @@ The structure of this object is as follows:
   .. _entity_client_observeLogMessages:
 
   - ``observeLogMessages``: Optional object where the key names are log
-    `components <../logging/logging.rst#components>`__ and the values are minimum
-    `log severity levels <../logging/logging.rst#log-severity-levels>`__ indicating
+    `components <../logging/logging.md#components>`__ and the values are minimum
+    `log severity levels <../logging/logging.md#log-severity-levels>`__ indicating
     which components to collect log messages for and what the minimum severity
     level of collected messages should be. Messages for unspecified components
     and/or with lower severity levels than those specified MUST be ignored by
@@ -1512,7 +1512,7 @@ The structure of each object is as follows:
    level. Test runners MUST assert that the actual level matches this value.
 
 - ``component``: Required string. This MUST be one of the component names listed
-   in `components <../logging/logging.rst#components>`__. This specifies the
+   in `components <../logging/logging.md#components>`__. This specifies the
    expected component for the log message. Note that since naming variations
    are permitted for components, some drivers may need to map this to a
    corresponding language-specific component name. Test runners MUST assert
