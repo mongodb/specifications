@@ -2331,9 +2331,9 @@ if needed.
 
 ### What is the KMIP `delegated` option?
 
-By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key.
-If the `delegated` option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
-ensuring that the key encryption key never leaves the server. 
+By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key. If the
+`delegated` option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
+ensuring that the key encryption key never leaves the server.
 
 ## Future work
 
@@ -2388,6 +2388,7 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.rst).
 
 ## Changelog
+
 - 2024-03-20: Add `delegated` option to "kmip" KMS provider
 
 - 2024-02-27: Migrated from reStructuredText to Markdown.
