@@ -422,7 +422,7 @@ The structure of this object is as follows:
     uriOptions:
       authMechanism: "MONGODB-OIDC"
       authMechanismProperties:
-        PROVIDER_NAME: { $$placeholder: 1 }
+        ENVIRONMENT: { $$placeholder: 1 }
     ```
 
   <span id="entity_client_useMultipleMongoses" />

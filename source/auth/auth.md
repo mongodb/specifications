@@ -1212,9 +1212,9 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 - mechanism_properties
 
-  - PROVIDER_NAME\
-    Drivers MUST allow the user to specify the name of a built-in OIDC provider integration to use to
-    obtain credentials. If provided, the value MUST be one of `["aws"]`. If both `PROVIDER_NAME` and an
+  - ENVIRONMENT\
+    Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration
+    to use to obtain credentials. If provided, the value MUST be one of `["test"]`. If both `ENVIRONMENT` and an
     [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
     `MongoClient`, the driver MUST raise an error.
 
@@ -1243,20 +1243,25 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     performed after SRV record resolution, if applicable. This property is only required for drivers that support the
     [Human Authentication Flow](#human-authentication-flow).
 
-#### Built-in Provider Integrations
+<div id="built-in-provider-integrations">
 
-Drivers MUST support all of the following built-in OIDC providers.
+#### Built-in OIDC Environment Integrations
 
-####### AWS
+Drivers MUST support all of the following built-in OIDC application environment integrations.
 
-The AWS provider is enabled by setting auth mechanism property `PROVIDER_NAME:aws`.
+**Test**
 
-If enabled, drivers MUST read the file path from environment variable `AWS_WEB_IDENTITY_TOKEN_FILE` and then read the
-OIDC access token from that file. The driver MUST use the contents of that file as value in the `jwt` field of the
-`saslStart` payload.
+The test integration is enabled by setting auth mechanism property `ENVIRONMENT:test`. It is meant for driver testing
+purposes, and is not meant to be documented as a user-facing feature.
 
-Drivers MAY implement the AWS provider so that it conforms to the function signature of the
-[OIDC Callback](#oidc-callback) to prevent having to re-implement the AWS provider logic in the OIDC prose tests.
+If enabled, drivers MUST generate a token using a script in the `auth_oidc`
+[folder](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/auth_oidc#readme) in Drivers
+Evergreen Tools. The must then set the `OIDC_TOKEN_FILE` environment variable to the path to that file. At runtime, the
+driver MUST use the `OIDC_TOKEN_FILE` environment variable and read the OIDC access token from that path. The driver
+MUST use the contents of that file as value in the `jwt` field of the `saslStart` payload.
+
+Drivers MAY implement the "test" integration so that it conforms to the function signature of the
+[OIDC Callback](#oidc-callback) to prevent having to re-implement the "test" integration logic in the OIDC prose tests.
 
 #### OIDC Callback
 
@@ -1915,6 +1920,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-03-09: Rename OIDC integration name and values.
 
 - 2024-01-31: Migrated from reStructuredText to Markdown.
 
