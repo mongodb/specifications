@@ -420,7 +420,7 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 
 **4.3 Succeeds after refresh fails**
 
-- Create a default OIDC client with a human callback that returns an invalid refresh token.
+- Create a default client with a callback that returns the `test_user1` access token and a bad refresh token.
 - Perform a `find` operation that succeeds.
 - Assert that the human callback has been called once.
 - Force a reauthenication using a fail point of the form:
