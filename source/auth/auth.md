@@ -1214,9 +1214,14 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - ENVIRONMENT\
     Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration
-    to use to obtain credentials. If provided, the value MUST be one of `["test"]`. If both `ENVIRONMENT` and an
-    [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
+    to use to obtain credentials. If provided, the value MUST be one of `["test", "azure"]`. If both `ENVIRONMENT` and
+    an [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
     `MongoClient`, the driver MUST raise an error.
+
+  - TOKEN_RESOURCE\
+    The URI of the target resource. This property is currently only used and required by the Azure
+    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `PROVIDER_NAME` is not `azure` or
+    `TOKEN_RESOURCE` is not provided and `PROVIDER_NAME` is `azure`, the driver MUST raise an error.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
@@ -1263,6 +1268,64 @@ MUST use the contents of that file as value in the `jwt` field of the `saslStart
 Drivers MAY implement the "test" integration so that it conforms to the function signature of the
 [OIDC Callback](#oidc-callback) to prevent having to re-implement the "test" integration logic in the OIDC prose tests.
 
+**Azure**
+
+The Azure provider integration is enabled by setting auth mechanism property `ENVIRONMENT:azure`.
+
+If enabled, drivers MUST use an internal machine callback that calls the
+[Azure Instance Metadata Service](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service)
+and parse the JSON response body, as follows:
+
+Make an HTTP GET request to
+
+```
+http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=<resource>&client_id=<client_id>
+```
+
+with headers
+
+```
+Accept: application/json
+Metadata: true
+```
+
+where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property and `<client_id>` is the `username` from the
+connection string. If a `username` is not provided, the `client_id` query parameter should be omitted. The timeout
+should equal the `callbackTimeoutMS` parameter given to the callback.
+
+Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
+
+```bash
+curl -X GET \
+  -H "Accept: application/json" \
+  -H "Metadata: true" \
+  --max-time $CALLBACK_TIMEOUT_MS \
+  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$TOKEN_RESOURCE"
+```
+
+The JSON response will be in this format:
+
+```json
+{
+  "access_token": "eyJ0eXAi...",
+  "refresh_token": "",
+  "expires_in": "3599",
+  "expires_on": "1506484173",
+  "not_before": "1506480273",
+  "resource": "https://management.azure.com/",
+  "token_type": "Bearer"
+}
+```
+
+The driver MUST use the returned `"access_token"` value as the access token in a `JwtStepRequest`. If the response does
+not return a status code of 200, the driver MUST raise an error including the HTTP response body.
+
+For more details, see
+[How to use managed identities for Azure resources on an Azure VM to acquire an access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token).
+
+The callback itself MUST not perform any caching, and the driver MUST cache its tokens in the same way as if a custom
+callback had been provided by the user.
+
 #### OIDC Callback
 
 Drivers MUST allow users to provide a callback that returns an OIDC access token. The purpose of the callback is to
@@ -1279,6 +1342,8 @@ Selection section of the CSOT spec.
 The driver MUST pass the following information to the callback:
 
 - `timeout`: A timeout, in milliseconds, a deadline, or a `timeoutContext`.
+
+- `username`: The username given as part of the connection string or `MongoClient` parameter.
 
 - `version`: The callback API version number. The version number is used to communicate callback API changes that are
   not breaking but that users may want to know about and review their implementation. Drivers MUST pass `1` for the
@@ -1310,6 +1375,7 @@ An example callback API might look like:
 ```typescript
 interface OIDCCallbackParams {
     callbackTimeoutMS: int;
+    username: str;
     version: int;
 }
 
@@ -1357,6 +1423,7 @@ interface IdpInfo {
 }
 
 interface OIDCCallbackParams {
+    username: str;
     callbackTimeoutMS: int;
     version: int;
     idpInfo: Optional<IdpInfo>;
@@ -1574,7 +1641,7 @@ def invalidate(access_token):
 Drivers that support the [Human Authentication Flow](#human-authentication-flow) MUST also cache the `IdPInfo` and
 refresh token in the *Client Cache* when a [OIDC Human Callback](#oidc-human-callback) is configured.
 
-####### Authentication
+**Authentication**
 
 Use the following algorithm to authenticate a new connection:
 
@@ -1920,6 +1987,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-03-21: Added Azure built-in OIDC provider integration.
 
 - 2024-03-09: Rename OIDC integration name and values.
 
