@@ -32,8 +32,8 @@ The spec tests format is an extension of the
 - An `encrypted_fields` to set on the collection used for operations.
 - A `key_vault_data` of data that should be inserted in the key vault collection before each test.
 - Introduction `autoEncryptOpts` to `clientOptions`
-- Addition of $db`to command in`command_started_event\`
-- Addition of $$type\` to command_started_event and outcome.
+- Addition of `$db`to command in`command_started_event`
+- Addition of `$$type` to `command_started_event` and outcome.
 
 The semantics of $$type\` is that any actual value matching one of the types indicated by either a BSON type string or
 an array of BSON type strings is considered a match.
