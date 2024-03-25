@@ -32,10 +32,10 @@ The spec tests format is an extension of the
 - An `encrypted_fields` to set on the collection used for operations.
 - A `key_vault_data` of data that should be inserted in the key vault collection before each test.
 - Introduction `autoEncryptOpts` to `clientOptions`
-- Addition of `$db` to command in `command_started_event`
-- Addition of `$$type` to command_started_event and outcome.
+- Addition of $db`to command in`command_started_event\`
+- Addition of $$type\` to command_started_event and outcome.
 
-The semantics of `$$type` is that any actual value matching one of the types indicated by either a BSON type string or
+The semantics of $$type\` is that any actual value matching one of the types indicated by either a BSON type string or
 an array of BSON type strings is considered a match.
 
 For example, the following matches a command_started_event for an insert of a document where `random` must be of type
@@ -64,7 +64,7 @@ The following matches a command_started_event for an insert of a document where 
     command_name: insert
 ```
 
-The values of `$$type` correspond to
+The values of $$type\` correspond to
 [these documented string representations of BSON types](https://www.mongodb.com/docs/manual/reference/bson-types/).
 
 Each YAML file has the following keys:
@@ -2249,7 +2249,7 @@ for the field `cursor.firstBatch.encrypted`.
 These tests require valid AWS credentials. Refer:
 [Automatic AWS Credentials](../client-side-encryption.rst#automatic-aws-credentials).
 
-For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object `$C$` with the
+For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object $C$ with the
 following options:
 
 ```typescript
@@ -2265,7 +2265,7 @@ class ClientEncryptionOpts {
 Do not run this test case in an environment where AWS credentials are available (e.g. via environment variables or a
 metadata URL). (Refer: [Obtaining credentials for AWS](../../auth/auth.rst#obtaining-credentials))
 
-Attempt to create a datakey with `$C$` using the `"aws"` KMS provider. Expect this to fail due to a lack of KMS provider
+Attempt to create a datakey with $C$ using the `"aws"` KMS provider. Expect this to fail due to a lack of KMS provider
 credentials.
 
 #### Case 2: Success
@@ -2410,7 +2410,7 @@ impossible by design to omit `RewrapManyDataKeyOpts.provider` when `RewrapManyDa
 
 Refer: [Automatic GCP Credentials](../client-side-encryption.rst#automatic-gcp-credentials).
 
-For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object `$C$` with the
+For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object $C$ with the
 following options:
 
 ```typescript
@@ -2426,7 +2426,7 @@ class ClientEncryptionOpts {
 Do not run this test case in an environment with a GCP service account is attached (e.g. any
 [GCE equivalent runtime](https://google.aip.dev/auth/4115)). This may be run in an AWS EC2 instance.
 
-Attempt to create a datakey with `$C$` using the `"gcp"` KMS provider and following `DataKeyOpts`:
+Attempt to create a datakey with $C$ using the `"gcp"` KMS provider and following `DataKeyOpts`:
 
 ```typescript
 class DataKeyOpts {
@@ -2448,7 +2448,7 @@ This test case must run in a Google Compute Engine (GCE) Virtual Machine with a 
 for scripts to create a GCE instance for testing. The Evergreen task SHOULD set a `batchtime` of 14 days to reduce how
 often this test case runs.
 
-Attempt to create a datakey with `$C$` using the `"gcp"` KMS provider and following `DataKeyOpts`:
+Attempt to create a datakey with $C$ using the `"gcp"` KMS provider and following `DataKeyOpts`:
 
 ```typescript
 class DataKeyOpts {
@@ -2575,7 +2575,7 @@ a timeout.
 
 Refer: [Automatic Azure Credentials](../client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault)
 
-For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object `$C$` with the
+For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object $C$ with the
 following options:
 
 ```typescript
@@ -2590,7 +2590,7 @@ class ClientEncryptionOpts {
 
 Do not run this test case in an Azure environment with an attached identity. This may be run in an AWS EC2 instance.
 
-Attempt to create a datakey with `$C$` using the `"azure"` KMS provider and following `DataKeyOpts`:
+Attempt to create a datakey with $C$ using the `"azure"` KMS provider and following `DataKeyOpts`:
 
 ```typescript
 class DataKeyOpts {
@@ -2610,7 +2610,7 @@ This test case must run in an Azure environment with an attached identity. See
 for scripts to create a Azure instance for testing. The Evergreen task SHOULD set a `batchtime` of 14 days to reduce how
 often this test case runs.
 
-Attempt to create a datakey with `$C$` using the `"azure"` KMS provider and following `DataKeyOpts`:
+Attempt to create a datakey with $C$ using the `"azure"` KMS provider and following `DataKeyOpts`:
 
 ```typescript
 class DataKeyOpts {
@@ -2706,7 +2706,7 @@ This test is the most basic to verify that
 [CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-collection-helper) created a collection with
 queryable encryption enabled. It verifies that the server rejects an attempt to insert plaintext in an encrypted fields.
 
-1. Create a new create-collection options `$Opts$` including the following:
+1. Create a new create-collection options $Opts$ including the following:
 
    ```typescript
    {
@@ -2720,8 +2720,8 @@ queryable encryption enabled. It verifies that the server rejects an attempt to 
    }
    ```
 
-2. Invoke `$CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$` to obtain a new collection
-   `$Coll$`. Expect success.
+2. Invoke $CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$ to obtain a new collection
+   $Coll$. Expect success.
 
 3. Attempt to insert the following document into `Coll`:
 
@@ -2741,8 +2741,8 @@ The [CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-c
 create a regular collection if there are no `encryptedFields` for the collection being created. Instead, it should
 generate an error indicated that the `encryptedFields` option is missing.
 
-1. Create a new empty create-collection options `$Opts$`. (i.e. it must not contain any `encryptedFields` options.)
-2. Invoke `$CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$`.
+1. Create a new empty create-collection options $Opts$. (i.e. it must not contain any `encryptedFields` options.)
+2. Invoke $CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$.
 3. Expect the invocation to fail with an error indicating that `encryptedFields` is not defined for the collection, and
    expect that no collection was created within the database. It would be *incorrect* for
    [CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-collection-helper) to create a regular
@@ -2760,7 +2760,7 @@ with such invalid settings.
 > This test is not required if the type system of the driver has a compile-time check that fields' `keyId`s are of the
 > correct type.
 
-1. Create a new create-collection options `$Opts$` including the following:
+1. Create a new create-collection options $Opts$ including the following:
 
    ```typescript
    {
@@ -2774,7 +2774,7 @@ with such invalid settings.
    }
    ```
 
-2. Invoke `$CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$`.
+2. Invoke $CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$.
 
 3. Expect an error from the server indicating a validation error at `create.encryptedFields.fields.keyId`, which must be
    a UUID and not a boolean value.
@@ -2783,7 +2783,7 @@ with such invalid settings.
 
 This test is continuation of the case 1 and provides a way to complete inserting with encrypted value.
 
-1. Create a new create-collection options `$Opts$` including the following:
+1. Create a new create-collection options $Opts$ including the following:
 
    ```typescript
    {
@@ -2797,11 +2797,11 @@ This test is continuation of the case 1 and provides a way to complete inserting
    }
    ```
 
-2. Invoke `$CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$` to obtain a new collection
+2. Invoke $CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$ to obtain a new collection
    $Coll$ and data key $key1$. Expect success.
 
-3. Use `$CE$` to explicitly encrypt the string "123-45-6789" using algorithm $Unindexed$ and data key `$key1$`. Refer
-   result as `$encryptedPayload$`.
+3. Use $CE$ to explicitly encrypt the string "123-45-6789" using algorithm $Unindexed$ and data key $key1$. Refer result
+   as $encryptedPayload$.
 
 4. Attempt to insert the following document into `Coll`:
 
