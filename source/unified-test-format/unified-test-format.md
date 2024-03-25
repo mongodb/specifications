@@ -1162,10 +1162,28 @@ The structure of this object is as follows:
 
 <span id="expectedEvent_topologyDescriptionChangedEvent" />
 
-- `topologyDescriptionChangedEvent`: Optional object. If present, this object MUST be an empty document as no assertions
-  are currently supported for
+- `topologyDescriptionChangedEvent`: Optional object. Assertions for one 
   [TopologyDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
-  fields.
+  object.
+
+  The structure of this object is as follows:
+
+  - `previousDescription`: Optional Object. A value corresponding to the topology description as it
+    was before the change that triggered the event.
+  - `newDescription` : Optional Object. A value corresponding to the topology description as it
+    is after the change that triggered the event.
+
+    Test runners SHOULD ignore any other fields than the `previousDescription` and `newDescription`
+    fields.
+
+    The structure of a topology description object (which the `previousDescription` and
+    `newDescription` fields contain is as follows:
+
+    - `type`: Optional string. The type of the topology in the description. Test runners MUST assert
+      that the type in the published event matches this value. See [SDAM: TopologyType](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologytype) for a list of valid values.
+
+    Test runners SHOULD ignore any other fields present on the `previousDescription` and
+    `newDescription` fields of the captured `topologyDescriptionChangedEvent`.
 
 ##### hasServiceId
 
