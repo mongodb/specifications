@@ -694,6 +694,16 @@ Common API Components
     name: String;
 
     /**
+     * Optionally specify a type for the index. Defaults to "search" if not provided.
+     * Either "search" for regular search indexes or "vectorSearch" for vector search indexes.
+     *
+     * Note that to create a vector search index using a helper method, the type "vectorSearch" must be provided.
+     *
+     */
+    type: String;
+
+
+    /**
      * Optionally tells the index to only reference documents with the specified field in
      * the index.
      */
@@ -1149,3 +1159,4 @@ Changelog
 :2023-07-27: Add search index management clarifications.
 :2023-11-08: Clarify that ``readConcern`` and ``writeConcern`` must not be
              applied to search index management commands.
+:2024-03-06: Update tests to include search index typing.
