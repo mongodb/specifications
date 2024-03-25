@@ -1,6 +1,6 @@
 {
   "description": "replicaset-emit-topology-description-changed-before-close",
-  "schemaVersion": "1.17",
+  "schemaVersion": "1.19",
   "runOnRequirements": [
     {
       "topologies": [
@@ -57,44 +57,16 @@
               "topologyOpeningEvent": {}
             },
             {
-              "topologyDescriptionChangedEvent": {
-                "previousDescription": {
-                  "type": "Unknown"
-                },
-                "newDescription": {
-                  "type": "ReplicaSetNoPrimary"
-                }
-              }
+              "topologyDescriptionChangedEvent": {}
             },
             {
-              "topologyDescriptionChangedEvent": {
-                "previousDescription": {
-                  "type": "ReplicaSetNoPrimary"
-                },
-                "newDescription": {
-                  "type": "ReplicaSetWithPrimary"
-                }
-              }
+              "topologyDescriptionChangedEvent": {}
             },
             {
-              "topologyDescriptionChangedEvent": {
-                "previousDescription": {
-                  "type": "ReplicaSetWithPrimary"
-                },
-                "newDescription": {
-                  "type": "ReplicaSetWithPrimary"
-                }
-              }
+              "topologyDescriptionChangedEvent": {}
             },
             {
-              "topologyDescriptionChangedEvent": {
-                "previousDescription": {
-                  "type": "ReplicaSetWithPrimary"
-                },
-                "newDescription": {
-                  "type": "ReplicaSetWithPrimary"
-                }
-              }
+              "topologyDescriptionChangedEvent": {}
             },
             {
               "topologyDescriptionChangedEvent": {
