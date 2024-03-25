@@ -3413,6 +3413,10 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
+- 2024-03-25: **Schema version 1.20.**\
+  Add `previousDescription` and `newDescription` assertions to `topologyDescriptionChangedEvent`
+  when checking events with `expectEvents`
+
 - 2024-03-11: Note that `killAllSessions` should not be executed on Atlas Data Lake
 
 - 2024-02-27: Document `onPrimaryTransactionalWrite` fail point, which is used in retryable writes tests.
