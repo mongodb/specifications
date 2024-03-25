@@ -800,6 +800,16 @@
               "type": "boolean"
             }
           }
+        },
+        "topologyOpeningEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "topologyClosedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
         }
       }
     },
