@@ -35,7 +35,7 @@ The spec tests format is an extension of the
 - Addition of `$db`to command in`command_started_event`
 - Addition of `$$type` to `command_started_event` and outcome.
 
-The semantics of $$type\` is that any actual value matching one of the types indicated by either a BSON type string or
+The semantics of `$$type` is that any actual value matching one of the types indicated by either a BSON type string or
 an array of BSON type strings is considered a match.
 
 For example, the following matches a command_started_event for an insert of a document where `random` must be of type
