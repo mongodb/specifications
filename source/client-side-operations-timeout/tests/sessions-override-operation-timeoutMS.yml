@@ -50,7 +50,7 @@ tests:
             data:
               failCommands: ["commitTransaction"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 600
       - name: startTransaction
         object: *session
       - name: insertOne
@@ -61,7 +61,7 @@ tests:
       - name: commitTransaction
         object: *session
         arguments:
-          timeoutMS: 50
+          timeoutMS: 500
         expectError:
           isTimeoutError: true
     expectEvents:
@@ -95,7 +95,7 @@ tests:
             data:
               failCommands: ["abortTransaction"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 600
       - name: startTransaction
         object: *session
       - name: insertOne
@@ -106,7 +106,7 @@ tests:
       - name: abortTransaction
         object: *session
         arguments:
-          timeoutMS: 50
+          timeoutMS: 500
     expectEvents:
       - client: *client
         events:
@@ -138,11 +138,11 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 600
       - name: withTransaction
         object: *session
         arguments:
-          timeoutMS: 50
+          timeoutMS: 500
           callback:
             - name: insertOne
               object: *collection
