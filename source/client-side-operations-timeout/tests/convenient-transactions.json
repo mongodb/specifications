@@ -81,6 +81,9 @@
                 }
               }
             ]
+          },
+          "expectError": {
+            "isClientError": true
           }
         }
       ],
@@ -174,6 +177,21 @@
                 "databaseName": "test",
                 "command": {
                   "insert": "coll",
+                  "maxTimeMS": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "abortTransaction",
+                "databaseName": "admin",
+                "command": {
+                  "abortTransaction": 1,
                   "maxTimeMS": {
                     "$$type": [
                       "int",

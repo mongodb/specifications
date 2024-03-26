@@ -156,9 +156,6 @@ tests:
     expectEvents:
       - client: *client
         events:
-          # Because the insert expects an error and gets an error, it technically succeeds, so withTransaction will
-          # try to run commitTransaction. This will fail client-side, though, because the timeout has already expired,
-          # so no command is sent.
           - commandStartedEvent:
               commandName: insert
               databaseName: *databaseName
@@ -169,3 +166,11 @@ tests:
                 maxTimeMS: { $$type: ["int", "long"] }
           - commandFailedEvent:
               commandName: insert
+          - commandStartedEvent:
+              commandName: abortTransaction
+              databaseName: admin
+              command:
+                abortTransaction: 1
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandFailedEvent:
+              commandName: abortTransaction

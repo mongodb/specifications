@@ -302,6 +302,26 @@
               "commandFailedEvent": {
                 "commandName": "insert"
               }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "abortTransaction",
+                "databaseName": "admin",
+                "command": {
+                  "abortTransaction": 1,
+                  "maxTimeMS": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "abortTransaction"
+              }
             }
           ]
         }
