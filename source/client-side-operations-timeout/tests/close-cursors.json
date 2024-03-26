@@ -215,7 +215,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "killCursors": "collection",
+                  "killCursors": "coll",
                   "maxTimeMS": {
                     "$$type": [
                       "int",
