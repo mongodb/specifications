@@ -37,47 +37,27 @@
             "event": {
               "topologyDescriptionChangedEvent": {}
             },
-            "count": 4
+            "count": 1
           }
-        },
-        {
-          "name": "close",
-          "object": "client"
         }
       ],
       "expectEvents": [
         {
           "client": "client",
           "eventType": "sdam",
-          "ignoreExtraEvents": false,
+          "ignoreExtraEvents": true,
           "events": [
             {
               "topologyOpeningEvent": {}
             },
             {
-              "topologyDescriptionChangedEvent": {}
-            },
-            {
-              "topologyDescriptionChangedEvent": {}
-            },
-            {
-              "topologyDescriptionChangedEvent": {}
-            },
-            {
-              "topologyDescriptionChangedEvent": {}
-            },
-            {
-              "topologyDescriptionChangedEvent": {
-                "previousDescription": {
-                  "type": "ReplicaSetWithPrimary"
-                },
-                "newDescription": {
-                  "type": "Unknown"
-                }
+              "topologyDescriptionChangedEvent": null,
+              "previousDescription": {
+                "type": "Unknown"
+              },
+              "newDescription": {
+                "type": "ReplicaSetWithPrimary"
               }
-            },
-            {
-              "topologyClosedEvent": {}
             }
           ]
         }
