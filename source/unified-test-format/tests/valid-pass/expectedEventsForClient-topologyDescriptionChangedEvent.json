@@ -1,5 +1,5 @@
 {
-  "description": "expectedEventsForClient-topologyDescriptionChangedEvent.yml",
+  "description": "expectedEventsForClient-topologyDescriptionChangedEvent",
   "schemaVersion": "1.20",
   "runOnRequirements": [
     {
@@ -51,12 +51,13 @@
               "topologyOpeningEvent": {}
             },
             {
-              "topologyDescriptionChangedEvent": null,
-              "previousDescription": {
-                "type": "Unknown"
-              },
-              "newDescription": {
-                "type": "ReplicaSetWithPrimary"
+              "topologyDescriptionChangedEvent": {
+                "previousDescription": {
+                  "type": "Unknown"
+                },
+                "newDescription": {
+                  "type": "ReplicaSetWithPrimary"
+                }
               }
             }
           ]

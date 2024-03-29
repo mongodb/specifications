@@ -34,8 +34,8 @@ tests:
         events:
           - topologyOpeningEvent: {}
           - topologyDescriptionChangedEvent: 
-            previousDescription:
-              type: "Unknown"
-            newDescription:
-              type: "ReplicaSetWithPrimary"
+              previousDescription:
+                type: "Unknown"
+              newDescription:
+                type: "ReplicaSetWithPrimary"
 
