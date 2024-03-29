@@ -2,20 +2,9 @@
 
 ## Local Testing
 
-To test locally, use the
-[oidc_get_tokens.sh](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/oidc_get_tokens.sh)
-script from [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools/) to download a set of
-OIDC tokens, including `test_user1` and `test_user1_expires`. You first have to install the AWS CLI and login using the
-SSO flow.
-
-For example, if the selected AWS profile ID is "drivers-test", run:
-
-```shell
-aws configure sso
-export OIDC_TOKEN_DIR=/tmp/tokens
-AWS_PROFILE="drivers-test" oidc_get_tokens.sh
-OIDC_TOKEN_FILE="$OIDC_TOKEN_DIR/test_user1" /my/test/command
-```
+See the detailed instructions in
+[drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md)
+for how to set up your environment for OIDC testing.
 
 ______________________________________________________________________
 
@@ -36,12 +25,9 @@ Drivers MUST run the prose tests in all supported OIDC environments.
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
 > callback to prevent interaction between test cases.
 
-Note that typically the preconfigured Atlas Dev clusters are used for testing, in Evergreen and locally. The URIs can be
-fetched from the `drivers/oidc` Secrets vault, see
-[vault instructions](https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets).
-Use `OIDC_ATLAS_URI_SINGLE` for the `MONGODB_URI`. If using local servers is preferred, using the
-[Local Testing](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md#local-testing)
-method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
+After setting up your OIDC
+[environment](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md),
+source the `secrets-export.sh` file and use the associated env variables in your tests.
 
 ### Callback Authentication
 
@@ -130,7 +116,7 @@ method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI`.
 ## (5) Azure Tests
 
 Drivers MUST only run the Azure tests when testing on an Azure VM. See instructions in
-[Drivers Evergreen Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/auth_oidc/azure#azure-oidc-testing)
+[Drivers Evergreen Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/azure/README.md)
 for test setup.
 
 # 5.1 Azure With No Username
@@ -152,7 +138,7 @@ ______________________________________________________________________
 Drivers that support the [Human Authentication Flow](../auth.md#human-authentication-flow) MUST implement all prose
 tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be configured with `retryReads=false`.
 
-The human workflow tests MUST only be run when testing in the default environment described beflow.
+The human workflow tests MUST only be run when in `ENVIRONMENT:test`.
 
 > [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
@@ -160,21 +146,11 @@ The human workflow tests MUST only be run when testing in the default environmen
 
 Drivers MUST be able to authenticate against a server configured with either one or two configured identity providers.
 
-Note that typically the preconfigured Atlas Dev clusters are used for testing, in Evergreen and locally. The URIs can be
-fetched from the `drivers/oidc` Secrets vault, see
-[vault instructions](https://wiki.corp.mongodb.com/display/DRIVERS/Using+AWS+Secrets+Manager+to+Store+Testing+Secrets).
-Use `OIDC_ATLAS_URI_SINGLE` for `MONGODB_URI_SINGLE` and `OIDC_ATLAS_URI_MULTI` for `MONGODB_URI_MULTI`. Currently the
-`OIDC_ATLAS_URI_MULTI` cluster does not work correctly with fail points, so all prose tests that use fail points SHOULD
-use `OIDC_ATLAS_URI_SINGLE`.
+Unless otherwise specified, use `MONGODB_URI_SINGLE` and the `test_user1` token in the `OIDC_TOKEN_DIR` as the
+"access_token", and a dummy "refresh_token" for all tests.
 
-If using local servers is preferred, using the
-[Local Testing](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md#local-testing)
-method, use `mongodb://localhost/?authMechanism=MONGODB-OIDC` for `MONGODB_URI_SINGLE` and
-`mongodb://localhost:27018/?authMechanism=MONGODB-OIDC&directConnection=true&readPreference=secondaryPreferred` for
-`MONGODB_URI_MULTI` because the other server is a secondary on a replica set, on port `27018`.
-
-The default OIDC client used in the tests is configured with `MONGODB_URI_SINGLE` and a valid human callback handler
-that returns the `test_user1` local token in `OIDC_TOKEN_DIR` as the "access_token", and a dummy "refresh_token".
+When using an explicit username for the client, we use the token name and the domain name given by `OIDC_DOMAIN`, e.g.
+`test_user1@${OIDC_DOMAIN}`.
 
 ### (1) OIDC Human Callback Authentication
 
@@ -182,41 +158,38 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 
 **1.1 Single Principal Implicit Username**
 
-- Create default OIDC client with `authMechanism=MONGODB-OIDC`.
+- Create default client
 - Perform a `find` operation that succeeds.
 - Close the client.
 
 **1.2 Single Principal Explicit Username**
 
-- Create a client with `MONGODB_URI_SINGLE`, a username of `test_user1`, `authMechanism=MONGODB-OIDC`, and the OIDC
-  human callback.
+- Create a client with `MONGODB_URI_SINGLE` and a username of `test_user1@${OIDC_DOMAIN}`.
 - Perform a `find` operation that succeeds.
 - Close the client.
 
 **1.3 Multiple Principal User 1**
 
-- Create a client with `MONGODB_URI_MULTI`, a username of `test_user1`, `authMechanism=MONGODB-OIDC`, and the OIDC human
-  callback.
+- Create a client with `MONGODB_URI_MULTI` and username of `test_user1@${OIDC_DOMAIN}`.
 - Perform a `find` operation that succeeds.
 - Close the client.
 
 **1.4 Multiple Principal User 2**
 
-- Create a human callback that reads in the generated `test_user2` token file.
-- Create a client with `MONGODB_URI_MULTI`, a username of `test_user2`, `authMechanism=MONGODB-OIDC`, and the OIDC human
-  callback.
+- Create a client with `MONGODB_URI_MULTI` and username of `test_user2@${OIDC_DOMAIN}`. that reads the `test_user2`
+  token file.
 - Perform a `find` operation that succeeds.
 - Close the client.
 
 **1.5 Multiple Principal No User**
 
-- Create a client with `MONGODB_URI_MULTI`, no username, `authMechanism=MONGODB-OIDC`, and the OIDC human callback.
+- Create a client with `MONGODB_URI_MULTI` and no username.
 - Assert that a `find` operation fails.
 - Close the client.
 
 **1.6 Allowed Hosts Blocked**
 
-- Create a default OIDC client, with an `ALLOWED_HOSTS` that is an empty list.
+- Create a client with an `ALLOWED_HOSTS` that is an empty list.
 - Assert that a `find` operation fails with a client-side error.
 - Close the client.
 - Create a client that uses the URL `mongodb://localhost/?authMechanism=MONGODB-OIDC&ignored=example.com`, a human
