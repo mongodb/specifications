@@ -111,6 +111,11 @@ Initial Server Description
 
 ``ServerDescription`` objects MUST be initialized with a default description in an “unknown” state, guaranteeing that the previous description in the events and log messages will never be null.
 
+
+Initial Topology Description
+----------------------------
+The first ``TopologyDescriptionChangedEvent`` to be emitted from a monitored Topology MUST set its ``previousDescription`` property to be a ``TopologyDescription`` object in the "unknown" state.
+
 ----------
 Events API
 ----------
@@ -698,6 +703,8 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
+:2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's
+             previousDescription field
 :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
 :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 
