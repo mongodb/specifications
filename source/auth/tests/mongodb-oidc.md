@@ -29,18 +29,21 @@ After setting up your OIDC
 [environment](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md),
 source the `secrets-export.sh` file and use the associated env variables in your tests.
 
+The default client should set the appropriate `ENVIRONMENT` `authMechanism` property and include a callback that gets
+the appropriate token for the given environment.
+
 ### Callback Authentication
 
 **1.1 Callback is called during authentication**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
+- Create an OIDC configured client.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
 - Close the client.
 
 **1.2 Callback is called once for multiple connections**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
+- Create an OIDC configured client.
 - Start 10 threads and run 100 `find` operations in each thread that all succeed.
 - Assert that the callback was called 1 time.
 - Close the client.
@@ -49,34 +52,34 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 **2.1 Valid Callback Inputs**
 
-- Create a `MongoClient` configured with an OIDC callback that validates its inputs and returns a valid access token.
+- Create an OIDC configured client with an OIDC callback that validates its inputs and returns a valid access token.
 - Perform a `find` operation that succeeds.
 - Assert that the OIDC callback was called with the appropriate inputs, including the timeout parameter if possible.
 - Close the client.
 
 **2.2 OIDC Callback Returns Null**
 
-- Create a `MongoClient` configured with an OIDC callback that returns `null`.
+- Create an OIDC configured client with an OIDC callback that returns `null`.
 - Perform a `find` operation that fails.
 - Close the client.
 
 **2.3 OIDC Callback Returns Missing Data**
 
-- Create a `MongoClient` configured with an OIDC callback that returns data not conforming to the `OIDCCredential` with
+- Create an OIDC configured client with an OIDC callback that returns data not conforming to the `OIDCCredential` with
   missing fields.
 - Perform a `find` operation that fails.
 - Close the client.
 
 **2.4 Invalid Client Configuration with Callback**
 
-- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `ENVIRONMENT:test`.
+- Create a `MongoClient` configured with an OIDC callback and auth mechanism property `ENVIRONMENT:bad`.
 - Assert it returns a client configuration error.
 
 ### (3) Authentication Failure
 
 **3.1 Authentication failure with cached tokens fetch a new token and retry auth**
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
+- Create an OIDC configured client.
 - Poison the *Client Cache* with an invalid access token.
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 1 time.
@@ -84,14 +87,14 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 **3.2 Authentication failures without cached tokens return an error**
 
-- Create a `MongoClient` configured with an OIDC callback that always returns invalid access tokens.
+- Create an OIDC configured client with an OIDC callback that always returns invalid access tokens.
 - Perform a `find` operation that fails.
 - Assert that the callback was called 1 time.
 - Close the client.
 
 ### (4) Reauthentication
 
-- Create a `MongoClient` configured with an OIDC callback that implements the `ENVIRONMENT:test` logic.
+- Create an OIDC configured client.
 - Set a fail point for `find` commands of the form:
 
 ```javascript
@@ -121,13 +124,13 @@ for test setup.
 
 # 5.1 Azure With No Username
 
-- Create a `MongoClient` configured with `ENVIRONMENT:Azure` and a valid `TOKEN_RESOURCE` and no username.
+- Create a `MongoClient` configured with `ENVIRONMENT:azure` and a valid `TOKEN_RESOURCE` and no username.
 - Perform a `find` operation that succeeds.
 - Close the client.
 
 # 5.2 Azure with Bad Usernam
 
-- Create a `MongoClient` configured with `ENVIRONMENT:Azure` and a valid `TOKEN_RESOURCE` and a username of `"bad"`.
+- Create a `MongoClient` configured with `ENVIRONMENT:azure` and a valid `TOKEN_RESOURCE` and a username of `"bad"`.
 - Perform a `find` operation that fails.
 - Close the client.
 

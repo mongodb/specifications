@@ -1988,6 +1988,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 ## Changelog
 
+- 2024-03-29: Updated OIDC test setup and descriptions.
+
 - 2024-03-21: Added Azure built-in OIDC provider integration.
 
 - 2024-03-09: Rename OIDC integration name and values.
