@@ -1,6 +1,6 @@
 description: "unacknowledged-write"
 
-schemaVersion: "1.13"
+schemaVersion: "1.16"
 
 createEntities:
   - client:
