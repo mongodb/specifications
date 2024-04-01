@@ -238,7 +238,7 @@
 `User Facing Api: When Auto Encryption Fails`_
 **********************************************
 
-.. _user facing api: when auto encryption fails: ./client-side-encryption.md#user-facing-api-when-auto-encryption-fails
+.. _user facing api when auto encryption fails: ./client-side-encryption.md#user-facing-api-when-auto-encryption-fails
 
 `User Facing Api: View Limitations`_
 ************************************
