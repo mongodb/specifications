@@ -128,12 +128,12 @@
 `For Op_msg:`_
 ^^^^^^^^^^^^^^
 
-.. _for op_msg:: ./server-selection.md#for-op-msg
+.. _for op_msg: ./server-selection.md#for-op-msg
 
 `For Op_query:`_
 ^^^^^^^^^^^^^^^^
 
-.. _for op_query:: ./server-selection.md#for-op-query
+.. _for op_query: ./server-selection.md#for-op-query
 
 `Document Structure`_
 ^^^^^^^^^^^^^^^^^^^^^
@@ -178,17 +178,17 @@
 `Topology Type: Unknown`_
 -------------------------
 
-.. _topology type: unknown: ./server-selection.md#topology-type-unknown
+.. _topology type unknown: ./server-selection.md#topology-type-unknown
 
 `Topology Type: Single`_
 ------------------------
 
-.. _topology type: single: ./server-selection.md#topology-type-single
+.. _topology type single: ./server-selection.md#topology-type-single
 
 `Topology Type: Loadbalanced`_
 ------------------------------
 
-.. _topology type: loadbalanced: ./server-selection.md#topology-type-loadbalanced
+.. _topology type loadbalanced: ./server-selection.md#topology-type-loadbalanced
 
 `Topology Types: Replicasetwithprimary Or Replicasetnoprimary`_
 ---------------------------------------------------------------

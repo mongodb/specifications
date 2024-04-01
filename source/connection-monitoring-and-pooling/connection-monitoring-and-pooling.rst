@@ -55,11 +55,6 @@
 
 .. _detailed design: ./connection-monitoring-and-pooling.md#detailed-design
 
-`Deprecated Options`_
----------------------
-
-.. _deprecated options: ./connection-monitoring-and-pooling.md#deprecated-options
-
 `Connection Pool Members`_
 ==========================
 
