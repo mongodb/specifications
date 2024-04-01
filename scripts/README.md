@@ -23,17 +23,20 @@ pre-commit install
 - Run the script as:
 
 ```bash
-python3 scripts/migrate_to_md.py "source/<path_to_rst_file>"
+python3 -m venv .venv
+source activate .venv/bin/activate
+python -m pip install docutils
+python scripts/migrate_to_md.py "source/<path_to_rst_file>"
 ```
 
 - Address any errors that were printed during the run.
 
 - Ensure that the generated markdown file is properly formatted.
 
+- Ensure that the RST stub file has appropriate links to sections in the markdown file.
+
 - Ensure that the links in the new file are working, by running `pre-commit run markdown-link-check` and addressing
   failures until that passes.
-
-- Remove the rst file using `git rm`.
 
 - Create a PR. When you commit the changes, the `mdformat` `pre-commit` hook will update the formatting as appropriate.
 

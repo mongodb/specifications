@@ -6,182 +6,87 @@
   Use the link above to access the latest version of the specification as the
   current reStructuredText file will no longer be updated.
 
-=====================
-BSON Binary Subtype 6
-=====================
+  Use the links below to access equivalent section names in the Markdown version of
+  the specification.
 
-:Status: Accepted
-:Minimum Server Version: 4.2
+########################
+`Bson Binary Subtype 6`_
+########################
 
-.. contents::
+.. _bson binary subtype 6: ./auth.md#bson-binary-subtype-6
 
---------
+`Abstract`_
+***********
 
-Abstract
-========
+.. _abstract: ./auth.md#abstract
 
-Client side encryption requires a new binary subtype to store (1)
-encrypted ciphertext with metadata, and (2) binary markings indicating
-what values must be encrypted in a document. (1) is stored in the
-server, but (2) is only used in the communication protocol between
-libmongocrypt and mongocryptd described in `Driver Spec: Client Side Encryption
-Encryption <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/client-side-encryption.rst>`_.
+`Meta`_
+*******
 
-META
-====
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
-“SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this
-document are to be interpreted as described in `RFC 2119
-<https://www.ietf.org/rfc/rfc2119.txt>`_.
+.. _meta: ./auth.md#meta
 
-Specification
-=============
-This spec introduces a new BSON binary subtype with value 6. The binary
-has multiple formats determined by the first byte, but are all related
-to client side encryption. The first byte indicates the type and layout
-of the remaining data.
+`Specification`_
+****************
 
-All values are represented in little endian. The payload is generally
-optimized for storage size. The exception is the intent-to-encrypt
-markings which are only used between libmongocrypt and mongocryptd and
-never persisted.
+.. _specification: ./auth.md#specification
 
-.. code:: typescript
+`Type 0: Intent-to-encrypt Marking`_
+====================================
 
-   struct {
-      uint8 subtype;
-      [more data - see individual type definitions]
-   }
+.. _type 0: intent-to-encrypt marking: ./auth.md#type-0-intent-to-encrypt-marking
 
-================ ======== ====================
-**Name**         **Type** **Description**
-subtype          uint8    Type of blob format.
-================ ======== ====================
+`Types 1 And 2: Ciphertext`_
+============================
 
-======== ================================================== =====================================================================================================================
-**Type** **Name**                                           **Blob Description**
-0        Intent-to-encrypt marking.                         Contains unencrypted data that will be encrypted (by libmongocrypt) along with metadata describing how to encrypt it.
-1        AEAD_AES_CBC_HMAC_SHA512 deterministic ciphertext. The metadata and encrypted data for deterministic encrypted data.
-2        AEAD_AES_CBC_HMAC_SHA512 randomized ciphertext.    The metadata and encrypted data for random encrypted data.
-======== ================================================== =====================================================================================================================
+.. _types 1 and 2: ciphertext: ./auth.md#types-1-and-2-ciphertext
 
-.. _subtype6.intent-to-encrypt:
+`Test Plan`_
+************
 
-Type 0: Intent-to-encrypt marking
----------------------------------
+.. _test plan: ./auth.md#test-plan
 
-.. code:: typescript
+`Design Rationale`_
+*******************
 
-   struct {
-      uint8 subtype = 0;
-      [ bson ];
-   }
+.. _design rationale: ./auth.md#design-rationale
 
-bson is the raw bytes of the following BSON document:
+`Why Not Use A New Bson Type?`_
+===============================
 
-======== ============= =========== =============================================================================================
-**Name** **Long Name** **Type**    **Description**
-v        value         any         Value to encrypt.
-a        algorithm     int32       Encryption algorithm to use. Same as fle_blob_subtype: 1 for deterministic, 2 for randomized.
-ki       keyId         UUID        Optional. Used to query the key vault by \_id. If omitted, then "ka" must be specified.
-ka       keyAltName    string      Optional. Used to query the key vault by keyAltName. If omitted, then "ki" must be specified.
-======== ============= =========== =============================================================================================
+.. _why not use a new bson type?: ./auth.md#why-not-use-a-new-bson-type
 
-Types 1 and 2: Ciphertext
--------------------------
+`Why Not Use Separate Bson Binary Subtypes Instead Of A Nested Subtype?`_
+=========================================================================
 
-.. code:: typescript
+.. _why not use separate bson binary subtypes instead of a nested subtype?: ./auth.md#why-not-use-separate-bson-binary-subtypes-instead-of-a-nested-subtype
 
-   struct {
-      uint8 subtype = (1 or 2);
-      uint8 key_uuid[16];
-      uint8 original_bson_type;
-      uint8 ciphertext[ciphertext_length];
-   }
+`Why Are Intent-to-encrypt Markings Needed?`_
+=============================================
 
-================== ===================================================================
-**Name**           **Description**
-subtype            Type of blob format and encryption algorithm used.
-key_uuid[16]       The value of \_id for the key used to decrypt the ciphertext.
-original_bson_type The byte representing the original BSON type of the encrypted data.
-ciphertext[]       The encrypted ciphertext (includes IV prepended).
-================== ===================================================================
+.. _why are intent-to-encrypt markings needed?: ./auth.md#why-are-intent-to-encrypt-markings-needed
 
-Test Plan
-=========
+`What Happened To The "key Vault Alias"?`_
+==========================================
 
-Covered in `Driver Spec: Client Side Encryption
-Encryption <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/client-side-encryption.rst>`_.
+.. _what happened to the "key vault alias"?: ./auth.md#what-happened-to-the-key-vault-alias
 
-Design Rationale
-================
+`Why Is The Original Bson Type Not Encrypted?`_
+===============================================
 
-Why not use a new BSON type?
-----------------------------
-An alternative to using a new binary subtype would be introducing a new
-BSON type. This would be a needless backwards breaking change. Since FLE
-is largely a client side feature, it should be possible to store
-encrypted data in old servers.
+.. _why is the original bson type not encrypted?: ./auth.md#why-is-the-original-bson-type-not-encrypted
 
-Plus, encrypted ciphertext is inherently a binary blob. Packing metadata
-inside isolates all of the encryption related data into one BSON value
-that can be treated as an opaque blob in most contexts.
+`Reference Implementation`_
+***************************
 
-Why not use separate BSON binary subtypes instead of a nested subtype?
-----------------------------------------------------------------------
-If we used separate subtypes, we'd need to reserve three (and possibly
-more in the future) of our 124 remaining subtypes.
+.. _reference implementation: ./auth.md#reference-implementation
 
-Why are intent-to-encrypt markings needed?
-------------------------------------------
-Intent-to-encrypt markings provide a simple way for mongocryptd to
-communicate what values need to be encrypted to libmongocrypt.
-Alternatively, mongocryptd could respond with a list of field paths. But
-field paths are difficult to make unambiguous, and even the query
-language is not always consistent.
+`Security Implication`_
+***********************
 
-What happened to the "key vault alias"?
----------------------------------------
-In an earlier revision of this specification the notion of a "key vault
-alias". The key vault alias identified one of possibly many key vaults
-that stored the key to decrypt the ciphertext. However, enforcing one
-key vault is a reasonable restriction for users. Users can migrate from
-one key vault to another without ciphertext data including a key vault
-alias. If we find a future need for multiple key vaults, we can easily
-introduce a new format with the fle_blob_subtype.
+.. _security implication: ./auth.md#security-implication
 
-Why distinguish between "deterministic" and "randomized" when they
-contain the same fields?
+`Changelog`_
+************
 
-Deterministic and randomized ciphertext supports different behavior.
-Deterministic ciphertext supports exact match queries but randomized
-does not.
+.. _changelog: ./auth.md#changelog
 
-Why is the original BSON type not encrypted?
---------------------------------------------
-
-Exposing the underlying BSON type gives some validation of the data that
-is encrypted. A JSONSchema on the server can validate that the
-underlying encrypted BSON type is correct.
-
-Reference Implementation
-========================
-
-libmongocrypt and mongocryptd will be the reference implementation of
-how BSON binary subtype 6 is used.
-
-Security Implication
-====================
-
-It would be a very bad security flaw if intent-to-encrypt markings were
-confused with ciphertexts. This could lead to a marking inadvertently
-being stored on a server – meaning that plaintext is stored where
-ciphertext should have been.
-
-Therefore, the leading byte of the BSON binary subtype distinguishes
-between marking and ciphertext.
-
-Changelog
-=========
-
-:2022-10-05: Remove spec front matter and create changelog.

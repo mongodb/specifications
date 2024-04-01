@@ -6,6 +6,11 @@ from pathlib import Path
 import datetime
 import subprocess
 
+import docutils.nodes
+import docutils.parsers.rst
+import docutils.utils
+import docutils.frontend
+
 if len(sys.argv) < 2:
     print('Must provide a path to an RST file')
     sys.exit(1)
@@ -32,14 +37,61 @@ TEMPLATE = """
   Use the link above to access the latest version of the specification as the
   current reStructuredText file will no longer be updated.
 
+  Use the links below to access equivalent section names in the Markdown version of
+  the specification.
+
 """
 
-# Update the RST file with a pointer to the MD file.
+def parse_rst(text: str) -> docutils.nodes.document:
+    parser = docutils.parsers.rst.Parser()
+    components = (docutils.parsers.rst.Parser,)
+    settings = docutils.frontend.OptionParser(components=components).get_default_values()
+    document = docutils.utils.new_document('<rst-doc>', settings=settings)
+    parser.parse(text, document)
+    return document
+
+sections = "#*=-^\""
+
+class MyVisitor(docutils.nodes.NodeVisitor):
+
+    def visit_section(self, node: docutils.nodes.section) -> None:
+        """Called for "section" nodes."""
+        level = 0
+        parent = node.parent
+        while parent:
+            parent = parent.parent
+            level += 1
+        if not len(node.attributes['names']):
+            return
+        name = node.attributes["names"][0]
+        title = ' '.join(word.capitalize() for word in name.split())
+        title = f'`{title}`_'
+        target = node.attributes['ids'][0]
+        if level >= len(sections):
+            return
+        if level == 1:
+            lines.append('#' * len(title))
+        new_rst_lines.append(title)
+        new_rst_lines.append(sections[level -1] * len(title))
+        new_rst_lines.append('')
+        new_rst_lines.append(f'.. _{name}: ./auth.md#{target}')
+        lines.append('')
+
+    def unknown_visit(self, node: docutils.nodes.Node) -> None:
+        """Called for all other node types."""
+        pass
+
+# Update the RST file with pointers to the MD file.
 if not path.name == 'README.rst':
-    new_lines = lines.copy()
-    new_lines.insert(0, TEMPLATE.format(os.path.basename(md_file)) )
+    new_rst_lines = []
+    doc = parse_rst('\n'.join(lines))
+    visitor = MyVisitor(doc)
+    doc.walk(visitor)
+    new_name = path.name.replace('.rst', '.md')
     with path.open('w') as fid:
-        fid.write(''.join(new_lines))
+        fid.write(TEMPLATE.format(new_name))
+        for line in lines:
+            fid.write(f'{line}\n')
 
 # Pre-process the file.
 for (i, line) in enumerate(lines):
