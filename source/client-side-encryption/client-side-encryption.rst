@@ -373,27 +373,27 @@
 `Libmongocrypt: Prohibitions And Warnings`_
 ===========================================
 
-.. _libmongocrypt: prohibitions and warnings: ./client-side-encryption.md#libmongocrypt-prohibitions-and-warnings
+.. _libmongocrypt prohibitions and warnings: ./client-side-encryption.md#libmongocrypt-prohibitions-and-warnings
 
 `Libmongocrypt: Collection Info Caching`_
 =========================================
 
-.. _libmongocrypt: collection info caching: ./client-side-encryption.md#libmongocrypt-collection-info-caching
+.. _libmongocrypt collection info caching: ./client-side-encryption.md#libmongocrypt-collection-info-caching
 
 `Libmongocrypt: Data Key Caching`_
 ==================================
 
-.. _libmongocrypt: data key caching: ./client-side-encryption.md#libmongocrypt-data-key-caching
+.. _libmongocrypt data key caching: ./client-side-encryption.md#libmongocrypt-data-key-caching
 
 `Libmongocrypt: Crypto Implementation`_
 =======================================
 
-.. _libmongocrypt: crypto implementation: ./client-side-encryption.md#libmongocrypt-crypto-implementation
+.. _libmongocrypt crypto implementation: ./client-side-encryption.md#libmongocrypt-crypto-implementation
 
 `Libmongocrypt: Auto Encryption Allow-list`_
 ============================================
 
-.. _libmongocrypt: auto encryption allow-list: ./client-side-encryption.md#libmongocrypt-auto-encryption-allow-list
+.. _libmongocrypt auto encryption allow-list: ./client-side-encryption.md#libmongocrypt-auto-encryption-allow-list
 
 `Test Plan`_
 ************
