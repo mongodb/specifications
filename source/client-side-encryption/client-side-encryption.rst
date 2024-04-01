@@ -243,7 +243,7 @@
 `User Facing Api: View Limitations`_
 ************************************
 
-.. _user facing api: view limitations: ./client-side-encryption.md#user-facing-api-view-limitations
+.. _user facing api view limitations: ./client-side-encryption.md#user-facing-api-view-limitations
 
 `Implementation`_
 *****************
