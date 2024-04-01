@@ -13,160 +13,159 @@
 `Driver Crud Api`_
 ##################
 
-.. _driver crud api: ./auth.md#driver-crud-api
+.. _driver crud api: ./crud.md#driver-crud-api
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./crud.md#abstract
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./crud.md#specification
 
 `Definitions`_
 ==============
 
-.. _definitions: ./auth.md#definitions
+.. _definitions: ./crud.md#definitions
 
 `Meta`_
 -------
 
-.. _meta: ./auth.md#meta
+.. _meta: ./crud.md#meta
 
 `Terms`_
 --------
 
-.. _terms: ./auth.md#terms
+.. _terms: ./crud.md#terms
 
 `Guidance`_
 ===========
 
-.. _guidance: ./auth.md#guidance
+.. _guidance: ./crud.md#guidance
 
 `Documentation`_
 ----------------
 
-.. _documentation: ./auth.md#documentation
+.. _documentation: ./crud.md#documentation
 
 `Operations`_
 -------------
 
-.. _operations: ./auth.md#operations
+.. _operations: ./crud.md#operations
 
 `Operation Parameters`_
 -----------------------
 
-.. _operation parameters: ./auth.md#operation-parameters
+.. _operation parameters: ./crud.md#operation-parameters
 
 `Naming`_
 ---------
 
-.. _naming: ./auth.md#naming
+.. _naming: ./crud.md#naming
 
 `Timeouts`_
 -----------
 
-.. _timeouts: ./auth.md#timeouts
+.. _timeouts: ./crud.md#timeouts
 
 `Api`_
 ======
 
-.. _api: ./auth.md#api
+.. _api: ./crud.md#api
 
 `Read`_
 -------
 
-.. _read: ./auth.md#read
+.. _read: ./crud.md#read
 
 `Count Api Details`_
 ^^^^^^^^^^^^^^^^^^^^
 
-.. _count api details: ./auth.md#count-api-details
+.. _count api details: ./crud.md#count-api-details
 
 `Estimateddocumentcount`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _estimateddocumentcount: ./auth.md#estimateddocumentcount
+.. _estimateddocumentcount: ./crud.md#estimateddocumentcount
 
 `Countdocuments`_
 ^^^^^^^^^^^^^^^^^
 
-.. _countdocuments: ./auth.md#countdocuments
+.. _countdocuments: ./crud.md#countdocuments
 
 `Combining Limit And Batch Size For The Wire Protocol`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _combining limit and batch size for the wire protocol: ./auth.md#combining-limit-and-batch-size-for-the-wire-protocol
+.. _combining limit and batch size for the wire protocol: ./crud.md#combining-limit-and-batch-size-for-the-wire-protocol
 
 `Database-level Aggregation`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _database-level aggregation: ./auth.md#database-level-aggregation
+.. _database-level aggregation: ./crud.md#database-level-aggregation
 
 `Write`_
 --------
 
-.. _write: ./auth.md#write
+.. _write: ./crud.md#write
 
 `Insert, Update, Replace, Delete, And Bulk Writes`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _insert, update, replace, delete, and bulk writes: ./auth.md#insert-update-replace-delete-and-bulk-writes
+.. _insert, update, replace, delete, and bulk writes: ./crud.md#insert-update-replace-delete-and-bulk-writes
 
 `Error Handling`_
 ^^^^^^^^^^^^^^^^^
 
-.. _error handling: ./auth.md#error-handling
+.. _error handling: ./crud.md#error-handling
 
 `Find And Modify`_
 ^^^^^^^^^^^^^^^^^^
 
-.. _find and modify: ./auth.md#find-and-modify
+.. _find and modify: ./crud.md#find-and-modify
 
 `Update Vs. Replace Validation`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _update vs. replace validation: ./auth.md#update-vs-replace-validation
+.. _update vs. replace validation: ./crud.md#update-vs-replace-validation
 
 `Aggregation Pipelines With Write Stages`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _aggregation pipelines with write stages: ./auth.md#aggregation-pipelines-with-write-stages
+.. _aggregation pipelines with write stages: ./crud.md#aggregation-pipelines-with-write-stages
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./crud.md#test-plan
 
 `Motivation`_
 *************
 
-.. _motivation: ./auth.md#motivation
+.. _motivation: ./crud.md#motivation
 
 `Backwards Compatibility`_
 **************************
 
-.. _backwards compatibility: ./auth.md#backwards-compatibility
+.. _backwards compatibility: ./crud.md#backwards-compatibility
 
 `Reference Implementation`_
 ***************************
 
-.. _reference implementation: ./auth.md#reference-implementation
+.. _reference implementation: ./crud.md#reference-implementation
 
 `Related Terminology`_
 **********************
 
-.. _related terminology: ./auth.md#related-terminology
+.. _related terminology: ./crud.md#related-terminology
 
 `Q & A`_
 ********
 
-.. _q & a: ./auth.md#q-a
+.. _q & a: ./crud.md#q-a
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./crud.md#changelog

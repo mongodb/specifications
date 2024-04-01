@@ -13,80 +13,79 @@
 `Handling Of Dbrefs`_
 #####################
 
-.. _handling of dbrefs: ./auth.md#handling-of-dbrefs
+.. _handling of dbrefs: ./dbref.md#handling-of-dbrefs
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./dbref.md#abstract
 
 `Meta`_
 *******
 
-.. _meta: ./auth.md#meta
+.. _meta: ./dbref.md#meta
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./dbref.md#specification
 
 `Dbref Structure`_
 ==================
 
-.. _dbref structure: ./auth.md#dbref-structure
+.. _dbref structure: ./dbref.md#dbref-structure
 
 `Examples Of Valid Dbrefs`_
 ---------------------------
 
-.. _examples of valid dbrefs: ./auth.md#examples-of-valid-dbrefs
+.. _examples of valid dbrefs: ./dbref.md#examples-of-valid-dbrefs
 
 `Examples Of Invalid Dbrefs`_
 -----------------------------
 
-.. _examples of invalid dbrefs: ./auth.md#examples-of-invalid-dbrefs
+.. _examples of invalid dbrefs: ./dbref.md#examples-of-invalid-dbrefs
 
 `Implementing A Dbref Model`_
 =============================
 
-.. _implementing a dbref model: ./auth.md#implementing-a-dbref-model
+.. _implementing a dbref model: ./dbref.md#implementing-a-dbref-model
 
 `Constructing A Dbref Model`_
 -----------------------------
 
-.. _constructing a dbref model: ./auth.md#constructing-a-dbref-model
+.. _constructing a dbref model: ./dbref.md#constructing-a-dbref-model
 
 `Decoding A Bson Document To A Dbref Model`_
 --------------------------------------------
 
-.. _decoding a bson document to a dbref model: ./auth.md#decoding-a-bson-document-to-a-dbref-model
+.. _decoding a bson document to a dbref model: ./dbref.md#decoding-a-bson-document-to-a-dbref-model
 
 `Encoding A Dbref Model To A Bson Document`_
 --------------------------------------------
 
-.. _encoding a dbref model to a bson document: ./auth.md#encoding-a-dbref-model-to-a-bson-document
+.. _encoding a dbref model to a bson document: ./dbref.md#encoding-a-dbref-model-to-a-bson-document
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./dbref.md#test-plan
 
 `Decoding`_
 ===========
 
-.. _decoding: ./auth.md#decoding
+.. _decoding: ./dbref.md#decoding
 
 `Encoding`_
 ===========
 
-.. _encoding: ./auth.md#encoding
+.. _encoding: ./dbref.md#encoding
 
 `Design Rationale`_
 *******************
 
-.. _design rationale: ./auth.md#design-rationale
+.. _design rationale: ./dbref.md#design-rationale
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./dbref.md#changelog

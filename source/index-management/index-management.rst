@@ -13,150 +13,149 @@
 `Index Management`_
 ###################
 
-.. _index management: ./auth.md#index-management
+.. _index management: ./index-management.md#index-management
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./index-management.md#specification
 
 `Definitions`_
 ==============
 
-.. _definitions: ./auth.md#definitions
+.. _definitions: ./index-management.md#definitions
 
 `Meta`_
 -------
 
-.. _meta: ./auth.md#meta
+.. _meta: ./index-management.md#meta
 
 `Terms`_
 --------
 
-.. _terms: ./auth.md#terms
+.. _terms: ./index-management.md#terms
 
 `Guidance`_
 ===========
 
-.. _guidance: ./auth.md#guidance
+.. _guidance: ./index-management.md#guidance
 
 `Documentation`_
 ----------------
 
-.. _documentation: ./auth.md#documentation
+.. _documentation: ./index-management.md#documentation
 
 `Operations`_
 -------------
 
-.. _operations: ./auth.md#operations
+.. _operations: ./index-management.md#operations
 
 `Operation Parameters`_
 -----------------------
 
-.. _operation parameters: ./auth.md#operation-parameters
+.. _operation parameters: ./index-management.md#operation-parameters
 
 `Deviations`_
 -------------
 
-.. _deviations: ./auth.md#deviations
+.. _deviations: ./index-management.md#deviations
 
 `Naming`_
 ---------
 
-.. _naming: ./auth.md#naming
+.. _naming: ./index-management.md#naming
 
 `Naming Deviations`_
 --------------------
 
-.. _naming deviations: ./auth.md#naming-deviations
+.. _naming deviations: ./index-management.md#naming-deviations
 
 `Index Name Generation`_
 ------------------------
 
-.. _index name generation: ./auth.md#index-name-generation
+.. _index name generation: ./index-management.md#index-name-generation
 
 `Timeouts`_
 -----------
 
-.. _timeouts: ./auth.md#timeouts
+.. _timeouts: ./index-management.md#timeouts
 
 `Standard Api`_
 ===============
 
-.. _standard api: ./auth.md#standard-api
+.. _standard api: ./index-management.md#standard-api
 
 `Index View Api`_
 =================
 
-.. _index view api: ./auth.md#index-view-api
+.. _index view api: ./index-management.md#index-view-api
 
 `Common Api Components`_
 ========================
 
-.. _common api components: ./auth.md#common-api-components
+.. _common api components: ./index-management.md#common-api-components
 
 `Enumerating Indexes`_
 ======================
 
-.. _enumerating indexes: ./auth.md#enumerating-indexes
+.. _enumerating indexes: ./index-management.md#enumerating-indexes
 
 `Getting Index Names`_
 ----------------------
 
-.. _getting index names: ./auth.md#getting-index-names
+.. _getting index names: ./index-management.md#getting-index-names
 
 `Search Indexes`_
 =================
 
-.. _search indexes: ./auth.md#search-indexes
+.. _search indexes: ./index-management.md#search-indexes
 
 `Search Index Management Helper Options`_
 -----------------------------------------
 
-.. _search index management helper options: ./auth.md#search-index-management-helper-options
+.. _search index management helper options: ./index-management.md#search-index-management-helper-options
 
 `Asynchronicity`_
 -----------------
 
-.. _asynchronicity: ./auth.md#asynchronicity
+.. _asynchronicity: ./index-management.md#asynchronicity
 
 `Where Are Read Concern And Write Concern?`_
 --------------------------------------------
 
-.. _where are read concern and write concern?: ./auth.md#where-are-read-concern-and-write-concern
+.. _where are read concern and write concern?: ./index-management.md#where-are-read-concern-and-write-concern
 
 `Consistency With Existing Apis`_
 ---------------------------------
 
-.. _consistency with existing apis: ./auth.md#consistency-with-existing-apis
+.. _consistency with existing apis: ./index-management.md#consistency-with-existing-apis
 
 `Namespacenotfound Errors`_
 ---------------------------
 
-.. _namespacenotfound errors: ./auth.md#namespacenotfound-errors
+.. _namespacenotfound errors: ./index-management.md#namespacenotfound-errors
 
 `Common Interfaces`_
 --------------------
 
-.. _common interfaces: ./auth.md#common-interfaces
+.. _common interfaces: ./index-management.md#common-interfaces
 
 `Standard Api For Search Indexes`_
 ----------------------------------
 
-.. _standard api for search indexes: ./auth.md#standard-api-for-search-indexes
+.. _standard api for search indexes: ./index-management.md#standard-api-for-search-indexes
 
 `Index View Api For Search Indexes`_
 ------------------------------------
 
-.. _index view api for search indexes: ./auth.md#index-view-api-for-search-indexes
+.. _index view api for search indexes: ./index-management.md#index-view-api-for-search-indexes
 
 `Q & A`_
 ========
 
-.. _q & a: ./auth.md#q-a
+.. _q & a: ./index-management.md#q-a
 
 `Changelog`_
 ------------
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./index-management.md#changelog

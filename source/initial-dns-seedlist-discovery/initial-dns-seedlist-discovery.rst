@@ -13,125 +13,124 @@
 `Initial Dns Seedlist Discovery`_
 #################################
 
-.. _initial dns seedlist discovery: ./auth.md#initial-dns-seedlist-discovery
+.. _initial dns seedlist discovery: ./initial-dns-seedlist-discovery.md#initial-dns-seedlist-discovery
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./initial-dns-seedlist-discovery.md#abstract
 
 `Meta`_
 *******
 
-.. _meta: ./auth.md#meta
+.. _meta: ./initial-dns-seedlist-discovery.md#meta
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./initial-dns-seedlist-discovery.md#specification
 
 `Connection String Format`_
 ===========================
 
-.. _connection string format: ./auth.md#connection-string-format
+.. _connection string format: ./initial-dns-seedlist-discovery.md#connection-string-format
 
 `Mongoclient Configuration`_
 ============================
 
-.. _mongoclient configuration: ./auth.md#mongoclient-configuration
+.. _mongoclient configuration: ./initial-dns-seedlist-discovery.md#mongoclient-configuration
 
 `Srvmaxhosts`_
 --------------
 
-.. _srvmaxhosts: ./auth.md#srvmaxhosts
+.. _srvmaxhosts: ./initial-dns-seedlist-discovery.md#srvmaxhosts
 
 `Srvservicename`_
 -----------------
 
-.. _srvservicename: ./auth.md#srvservicename
+.. _srvservicename: ./initial-dns-seedlist-discovery.md#srvservicename
 
 `Uri Validation`_
 -----------------
 
-.. _uri validation: ./auth.md#uri-validation
+.. _uri validation: ./initial-dns-seedlist-discovery.md#uri-validation
 
 `Seedlist Discovery`_
 =====================
 
-.. _seedlist discovery: ./auth.md#seedlist-discovery
+.. _seedlist discovery: ./initial-dns-seedlist-discovery.md#seedlist-discovery
 
 `Validation Before Querying Dns`_
 ---------------------------------
 
-.. _validation before querying dns: ./auth.md#validation-before-querying-dns
+.. _validation before querying dns: ./initial-dns-seedlist-discovery.md#validation-before-querying-dns
 
 `Querying Dns`_
 ---------------
 
-.. _querying dns: ./auth.md#querying-dns
+.. _querying dns: ./initial-dns-seedlist-discovery.md#querying-dns
 
 `Default Connection String Options`_
 ====================================
 
-.. _default connection string options: ./auth.md#default-connection-string-options
+.. _default connection string options: ./initial-dns-seedlist-discovery.md#default-connection-string-options
 
 `Cname Not Supported`_
 ======================
 
-.. _cname not supported: ./auth.md#cname-not-supported
+.. _cname not supported: ./initial-dns-seedlist-discovery.md#cname-not-supported
 
 `Example`_
 **********
 
-.. _example: ./auth.md#example
+.. _example: ./initial-dns-seedlist-discovery.md#example
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./initial-dns-seedlist-discovery.md#test-plan
 
 `Motivation`_
 *************
 
-.. _motivation: ./auth.md#motivation
+.. _motivation: ./initial-dns-seedlist-discovery.md#motivation
 
 `Design Rationale`_
 *******************
 
-.. _design rationale: ./auth.md#design-rationale
+.. _design rationale: ./initial-dns-seedlist-discovery.md#design-rationale
 
 `Justifications`_
 *****************
 
-.. _justifications: ./auth.md#justifications
+.. _justifications: ./initial-dns-seedlist-discovery.md#justifications
 
 `Why Are Multiple Key-value Pairs Allowed In One Txt Record?`_
 ==============================================================
 
-.. _why are multiple key-value pairs allowed in one txt record?: ./auth.md#why-are-multiple-key-value-pairs-allowed-in-one-txt-record
+.. _why are multiple key-value pairs allowed in one txt record?: ./initial-dns-seedlist-discovery.md#why-are-multiple-key-value-pairs-allowed-in-one-txt-record
 
 `Why Is There No Mention Of Utf-8 Characters?`_
 ===============================================
 
-.. _why is there no mention of utf-8 characters?: ./auth.md#why-is-there-no-mention-of-utf-8-characters
+.. _why is there no mention of utf-8 characters?: ./initial-dns-seedlist-discovery.md#why-is-there-no-mention-of-utf-8-characters
 
 `Reference Implementation`_
 ***************************
 
-.. _reference implementation: ./auth.md#reference-implementation
+.. _reference implementation: ./initial-dns-seedlist-discovery.md#reference-implementation
 
 `Backwards Compatibility`_
 **************************
 
-.. _backwards compatibility: ./auth.md#backwards-compatibility
+.. _backwards compatibility: ./initial-dns-seedlist-discovery.md#backwards-compatibility
 
 `Future Work`_
 **************
 
-.. _future work: ./auth.md#future-work
+.. _future work: ./initial-dns-seedlist-discovery.md#future-work
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./initial-dns-seedlist-discovery.md#changelog

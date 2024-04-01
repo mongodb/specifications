@@ -74,7 +74,8 @@ class MyVisitor(docutils.nodes.NodeVisitor):
         new_rst_lines.append(title)
         new_rst_lines.append(sections[level -1] * len(title))
         new_rst_lines.append('')
-        new_rst_lines.append(f'.. _{name}: ./auth.md#{target}')
+        base_md_file = os.path.basename(md_file)
+        new_rst_lines.append(f'.. _{name}: .{base_md_file}/#{target}')
         lines.append('')
 
     def unknown_visit(self, node: docutils.nodes.Node) -> None:

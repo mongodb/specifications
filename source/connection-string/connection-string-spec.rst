@@ -13,150 +13,149 @@
 `Connection String Spec`_
 #########################
 
-.. _connection string spec: ./auth.md#connection-string-spec
+.. _connection string spec: ./connection-string-spec.md#connection-string-spec
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./connection-string-spec.md#abstract
 
 `Definitions`_
 ==============
 
-.. _definitions: ./auth.md#definitions
+.. _definitions: ./connection-string-spec.md#definitions
 
 `Meta`_
 -------
 
-.. _meta: ./auth.md#meta
+.. _meta: ./connection-string-spec.md#meta
 
 `General Syntax`_
 =================
 
-.. _general syntax: ./auth.md#general-syntax
+.. _general syntax: ./connection-string-spec.md#general-syntax
 
 `Scheme`_
 =========
 
-.. _scheme: ./auth.md#scheme
+.. _scheme: ./connection-string-spec.md#scheme
 
 `Userinfo (optional)`_
 ======================
 
-.. _userinfo (optional): ./auth.md#userinfo-optional
+.. _userinfo (optional): ./connection-string-spec.md#userinfo-optional
 
 `Host Information`_
 ===================
 
-.. _host information: ./auth.md#host-information
+.. _host information: ./connection-string-spec.md#host-information
 
 `Host Identifier`_
 ------------------
 
-.. _host identifier: ./auth.md#host-identifier
+.. _host identifier: ./connection-string-spec.md#host-identifier
 
 `Host`_
 ^^^^^^^
 
-.. _host: ./auth.md#host
+.. _host: ./connection-string-spec.md#host
 
 `Port (optional)`_
 ^^^^^^^^^^^^^^^^^^
 
-.. _port (optional): ./auth.md#port-optional
+.. _port (optional): ./connection-string-spec.md#port-optional
 
 `Auth Database (optional)`_
 ===========================
 
-.. _auth database (optional): ./auth.md#auth-database-optional
+.. _auth database (optional): ./connection-string-spec.md#auth-database-optional
 
 `Connection Options (optional)`_
 ================================
 
-.. _connection options (optional): ./auth.md#connection-options-optional
+.. _connection options (optional): ./connection-string-spec.md#connection-options-optional
 
 `Key Value Pair`_
 -----------------
 
-.. _key value pair: ./auth.md#key-value-pair
+.. _key value pair: ./connection-string-spec.md#key-value-pair
 
 `Defining Connection Options`_
 ==============================
 
-.. _defining connection options: ./auth.md#defining-connection-options
+.. _defining connection options: ./connection-string-spec.md#defining-connection-options
 
 `Keys`_
 -------
 
-.. _keys: ./auth.md#keys
+.. _keys: ./connection-string-spec.md#keys
 
 `Time Based Keys`_
 ^^^^^^^^^^^^^^^^^^
 
-.. _time based keys: ./auth.md#time-based-keys
+.. _time based keys: ./connection-string-spec.md#time-based-keys
 
 `Values`_
 ---------
 
-.. _values: ./auth.md#values
+.. _values: ./connection-string-spec.md#values
 
 `Repeated Keys`_
 ================
 
-.. _repeated keys: ./auth.md#repeated-keys
+.. _repeated keys: ./connection-string-spec.md#repeated-keys
 
 `Deprecated Key Value Pairs`_
 =============================
 
-.. _deprecated key value pairs: ./auth.md#deprecated-key-value-pairs
+.. _deprecated key value pairs: ./connection-string-spec.md#deprecated-key-value-pairs
 
 `Legacy Support`_
 =================
 
-.. _legacy support: ./auth.md#legacy-support
+.. _legacy support: ./connection-string-spec.md#legacy-support
 
 `Language Specific Connection Options`_
 =======================================
 
-.. _language specific connection options: ./auth.md#language-specific-connection-options
+.. _language specific connection options: ./connection-string-spec.md#language-specific-connection-options
 
 `Connection Options Precedence`_
 ================================
 
-.. _connection options precedence: ./auth.md#connection-options-precedence
+.. _connection options precedence: ./connection-string-spec.md#connection-options-precedence
 
 `Test Plan`_
 ============
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./connection-string-spec.md#test-plan
 
 `Motivation For Change`_
 ========================
 
-.. _motivation for change: ./auth.md#motivation-for-change
+.. _motivation for change: ./connection-string-spec.md#motivation-for-change
 
 `Design Rationale`_
 ===================
 
-.. _design rationale: ./auth.md#design-rationale
+.. _design rationale: ./connection-string-spec.md#design-rationale
 
 `Backwards Compatibility`_
 ==========================
 
-.. _backwards compatibility: ./auth.md#backwards-compatibility
+.. _backwards compatibility: ./connection-string-spec.md#backwards-compatibility
 
 `Reference Implementation`_
 ===========================
 
-.. _reference implementation: ./auth.md#reference-implementation
+.. _reference implementation: ./connection-string-spec.md#reference-implementation
 
 `Q&a`_
 ======
 
-.. _q&a: ./auth.md#q-a
+.. _q&a: ./connection-string-spec.md#q-a
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./connection-string-spec.md#changelog

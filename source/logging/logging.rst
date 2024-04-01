@@ -13,160 +13,159 @@
 `Logging`_
 ##########
 
-.. _logging: ./auth.md#logging
+.. _logging: ./logging.md#logging
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./logging.md#abstract
 
 `Meta`_
 *******
 
-.. _meta: ./auth.md#meta
+.. _meta: ./logging.md#meta
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./logging.md#specification
 
 `Terms`_
 ========
 
-.. _terms: ./auth.md#terms
+.. _terms: ./logging.md#terms
 
 `Implementation Requirements`_
 ==============================
 
-.. _implementation requirements: ./auth.md#implementation-requirements
+.. _implementation requirements: ./logging.md#implementation-requirements
 
 `Minimizing Required Code Changes`_
 -----------------------------------
 
-.. _minimizing required code changes: ./auth.md#minimizing-required-code-changes
+.. _minimizing required code changes: ./logging.md#minimizing-required-code-changes
 
 `Per-component Configuration Of Log Levels`_
 --------------------------------------------
 
-.. _per-component configuration of log levels: ./auth.md#per-component-configuration-of-log-levels
+.. _per-component configuration of log levels: ./logging.md#per-component-configuration-of-log-levels
 
 `Configurable Log Destination`_
 -------------------------------
 
-.. _configurable log destination: ./auth.md#configurable-log-destination
+.. _configurable log destination: ./logging.md#configurable-log-destination
 
 `Configurable Max Document Length`_
 -----------------------------------
 
-.. _configurable max document length: ./auth.md#configurable-max-document-length
+.. _configurable max document length: ./logging.md#configurable-max-document-length
 
 `Components`_
 -------------
 
-.. _components: ./auth.md#components
+.. _components: ./logging.md#components
 
 `Log Severity Levels`_
 ----------------------
 
-.. _log severity levels: ./auth.md#log-severity-levels
+.. _log severity levels: ./logging.md#log-severity-levels
 
 `Representing Documents In Log Messages`_
 -----------------------------------------
 
-.. _representing documents in log messages: ./auth.md#representing-documents-in-log-messages
+.. _representing documents in log messages: ./logging.md#representing-documents-in-log-messages
 
 `Representing Errors In Log Messages`_
 --------------------------------------
 
-.. _representing errors in log messages: ./auth.md#representing-errors-in-log-messages
+.. _representing errors in log messages: ./logging.md#representing-errors-in-log-messages
 
 `Logging Failures`_
 -------------------
 
-.. _logging failures: ./auth.md#logging-failures
+.. _logging failures: ./logging.md#logging-failures
 
 `Performance Considerations`_
 -----------------------------
 
-.. _performance considerations: ./auth.md#performance-considerations
+.. _performance considerations: ./logging.md#performance-considerations
 
 `Standard Naming In Structured Log Messages`_
 ---------------------------------------------
 
-.. _standard naming in structured log messages: ./auth.md#standard-naming-in-structured-log-messages
+.. _standard naming in structured log messages: ./logging.md#standard-naming-in-structured-log-messages
 
 `Including Timestamps In Log Messages`_
 ---------------------------------------
 
-.. _including timestamps in log messages: ./auth.md#including-timestamps-in-log-messages
+.. _including timestamps in log messages: ./logging.md#including-timestamps-in-log-messages
 
 `Supporting Both Programmatic And Environment Variable Configuration`_
 ----------------------------------------------------------------------
 
-.. _supporting both programmatic and environment variable configuration: ./auth.md#supporting-both-programmatic-and-environment-variable-configuration
+.. _supporting both programmatic and environment variable configuration: ./logging.md#supporting-both-programmatic-and-environment-variable-configuration
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./logging.md#test-plan
 
 `Motivation For Change`_
 ************************
 
-.. _motivation for change: ./auth.md#motivation-for-change
+.. _motivation for change: ./logging.md#motivation-for-change
 
 `Design Rationale`_
 *******************
 
-.. _design rationale: ./auth.md#design-rationale
+.. _design rationale: ./logging.md#design-rationale
 
 `Truncation Of Large Documents`_
 ================================
 
-.. _truncation of large documents: ./auth.md#truncation-of-large-documents
+.. _truncation of large documents: ./logging.md#truncation-of-large-documents
 
 `Invalid Values Of Environment Variables`_
 ==========================================
 
-.. _invalid values of environment variables: ./auth.md#invalid-values-of-environment-variables
+.. _invalid values of environment variables: ./logging.md#invalid-values-of-environment-variables
 
 `Programmatic Configuration Taking Precedence`_
 ===============================================
 
-.. _programmatic configuration taking precedence: ./auth.md#programmatic-configuration-taking-precedence
+.. _programmatic configuration taking precedence: ./logging.md#programmatic-configuration-taking-precedence
 
 `Backwards Compatibility`_
 **************************
 
-.. _backwards compatibility: ./auth.md#backwards-compatibility
+.. _backwards compatibility: ./logging.md#backwards-compatibility
 
 `Reference Implementation`_
 ***************************
 
-.. _reference implementation: ./auth.md#reference-implementation
+.. _reference implementation: ./logging.md#reference-implementation
 
 `Security Implication`_
 ***********************
 
-.. _security implication: ./auth.md#security-implication
+.. _security implication: ./logging.md#security-implication
 
 `Future Work`_
 **************
 
-.. _future work: ./auth.md#future-work
+.. _future work: ./logging.md#future-work
 
 `Additional Log Components`_
 ============================
 
-.. _additional log components: ./auth.md#additional-log-components
+.. _additional log components: ./logging.md#additional-log-components
 
 `Preventing Recursion When Using Mongodb As A Log Sink`_
 ========================================================
 
-.. _preventing recursion when using mongodb as a log sink: ./auth.md#preventing-recursion-when-using-mongodb-as-a-log-sink
+.. _preventing recursion when using mongodb as a log sink: ./logging.md#preventing-recursion-when-using-mongodb-as-a-log-sink
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./logging.md#changelog

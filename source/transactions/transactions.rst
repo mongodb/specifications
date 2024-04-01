@@ -13,370 +13,369 @@
 `Driver Transactions Specification`_
 ####################################
 
-.. _driver transactions specification: ./auth.md#driver-transactions-specification
+.. _driver transactions specification: ./transactions.md#driver-transactions-specification
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./transactions.md#abstract
 
 `Meta`_
 *******
 
-.. _meta: ./auth.md#meta
+.. _meta: ./transactions.md#meta
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./transactions.md#specification
 
 `Terms`_
 ========
 
-.. _terms: ./auth.md#terms
+.. _terms: ./transactions.md#terms
 
 `Resource Management Block`_
 ----------------------------
 
-.. _resource management block: ./auth.md#resource-management-block
+.. _resource management block: ./transactions.md#resource-management-block
 
 `Read Operation`_
 -----------------
 
-.. _read operation: ./auth.md#read-operation
+.. _read operation: ./transactions.md#read-operation
 
 `Write Operation`_
 ------------------
 
-.. _write operation: ./auth.md#write-operation
+.. _write operation: ./transactions.md#write-operation
 
 `Retryable Error`_
 ------------------
 
-.. _retryable error: ./auth.md#retryable-error
+.. _retryable error: ./transactions.md#retryable-error
 
 `Command Error`_
 ----------------
 
-.. _command error: ./auth.md#command-error
+.. _command error: ./transactions.md#command-error
 
 `Network Error`_
 ----------------
 
-.. _network error: ./auth.md#network-error
+.. _network error: ./transactions.md#network-error
 
 `Error Label`_
 --------------
 
-.. _error label: ./auth.md#error-label
+.. _error label: ./transactions.md#error-label
 
 `Transient Transaction Error`_
 ------------------------------
 
-.. _transient transaction error: ./auth.md#transient-transaction-error
+.. _transient transaction error: ./transactions.md#transient-transaction-error
 
 `Naming Variations`_
 ====================
 
-.. _naming variations: ./auth.md#naming-variations
+.. _naming variations: ./transactions.md#naming-variations
 
 `Transaction Api`_
 ==================
 
-.. _transaction api: ./auth.md#transaction-api
+.. _transaction api: ./transactions.md#transaction-api
 
 `Transactionoptions`_
 =====================
 
-.. _transactionoptions: ./auth.md#transactionoptions
+.. _transactionoptions: ./transactions.md#transactionoptions
 
 `Readconcern`_
 --------------
 
-.. _readconcern: ./auth.md#readconcern
+.. _readconcern: ./transactions.md#readconcern
 
 `Writeconcern`_
 ---------------
 
-.. _writeconcern: ./auth.md#writeconcern
+.. _writeconcern: ./transactions.md#writeconcern
 
 `Readpreference`_
 -----------------
 
-.. _readpreference: ./auth.md#readpreference
+.. _readpreference: ./transactions.md#readpreference
 
 `Maxcommittimems`_
 ------------------
 
-.. _maxcommittimems: ./auth.md#maxcommittimems
+.. _maxcommittimems: ./transactions.md#maxcommittimems
 
 `Sessionoptions Changes`_
 =========================
 
-.. _sessionoptions changes: ./auth.md#sessionoptions-changes
+.. _sessionoptions changes: ./transactions.md#sessionoptions-changes
 
 `Defaulttransactionoptions`_
 ----------------------------
 
-.. _defaulttransactionoptions: ./auth.md#defaulttransactionoptions
+.. _defaulttransactionoptions: ./transactions.md#defaulttransactionoptions
 
 `Clientsession Changes`_
 ========================
 
-.. _clientsession changes: ./auth.md#clientsession-changes
+.. _clientsession changes: ./transactions.md#clientsession-changes
 
 `Starttransaction`_
 -------------------
 
-.. _starttransaction: ./auth.md#starttransaction
+.. _starttransaction: ./transactions.md#starttransaction
 
 `Endsession Changes`_
 ---------------------
 
-.. _endsession changes: ./auth.md#endsession-changes
+.. _endsession changes: ./transactions.md#endsession-changes
 
 `Error Reporting Changes`_
 ==========================
 
-.. _error reporting changes: ./auth.md#error-reporting-changes
+.. _error reporting changes: ./transactions.md#error-reporting-changes
 
 `Transactions Wire Protocol`_
 *****************************
 
-.. _transactions wire protocol: ./auth.md#transactions-wire-protocol
+.. _transactions wire protocol: ./transactions.md#transactions-wire-protocol
 
 `Constructing Commands Within A Transaction`_
 =============================================
 
-.. _constructing commands within a transaction: ./auth.md#constructing-commands-within-a-transaction
+.. _constructing commands within a transaction: ./transactions.md#constructing-commands-within-a-transaction
 
 `Behavior Of The Starttransaction Field`_
 -----------------------------------------
 
-.. _behavior of the starttransaction field: ./auth.md#behavior-of-the-starttransaction-field
+.. _behavior of the starttransaction field: ./transactions.md#behavior-of-the-starttransaction-field
 
 `Behavior Of The Autocommit Field`_
 -----------------------------------
 
-.. _behavior of the autocommit field: ./auth.md#behavior-of-the-autocommit-field
+.. _behavior of the autocommit field: ./transactions.md#behavior-of-the-autocommit-field
 
 `Behavior Of The Readconcern Field`_
 ------------------------------------
 
-.. _behavior of the readconcern field: ./auth.md#behavior-of-the-readconcern-field
+.. _behavior of the readconcern field: ./transactions.md#behavior-of-the-readconcern-field
 
 `Behavior Of The Writeconcern Field`_
 -------------------------------------
 
-.. _behavior of the writeconcern field: ./auth.md#behavior-of-the-writeconcern-field
+.. _behavior of the writeconcern field: ./transactions.md#behavior-of-the-writeconcern-field
 
 `Behavior Of The Recoverytoken Field`_
 --------------------------------------
 
-.. _behavior of the recoverytoken field: ./auth.md#behavior-of-the-recoverytoken-field
+.. _behavior of the recoverytoken field: ./transactions.md#behavior-of-the-recoverytoken-field
 
 `Constructing The First Command Within A Transaction`_
 ------------------------------------------------------
 
-.. _constructing the first command within a transaction: ./auth.md#constructing-the-first-command-within-a-transaction
+.. _constructing the first command within a transaction: ./transactions.md#constructing-the-first-command-within-a-transaction
 
 `Constructing Any Other Command Within A Transaction`_
 ------------------------------------------------------
 
-.. _constructing any other command within a transaction: ./auth.md#constructing-any-other-command-within-a-transaction
+.. _constructing any other command within a transaction: ./transactions.md#constructing-any-other-command-within-a-transaction
 
 `Generic Runcommand Helper Within A Transaction`_
 -------------------------------------------------
 
-.. _generic runcommand helper within a transaction: ./auth.md#generic-runcommand-helper-within-a-transaction
+.. _generic runcommand helper within a transaction: ./transactions.md#generic-runcommand-helper-within-a-transaction
 
 `Interaction With Causal Consistency`_
 ======================================
 
-.. _interaction with causal consistency: ./auth.md#interaction-with-causal-consistency
+.. _interaction with causal consistency: ./transactions.md#interaction-with-causal-consistency
 
 `Interaction With Retryable Writes`_
 ====================================
 
-.. _interaction with retryable writes: ./auth.md#interaction-with-retryable-writes
+.. _interaction with retryable writes: ./transactions.md#interaction-with-retryable-writes
 
 `Server Commands`_
 ==================
 
-.. _server commands: ./auth.md#server-commands
+.. _server commands: ./transactions.md#server-commands
 
 `Sharded Transactions`_
 ***********************
 
-.. _sharded transactions: ./auth.md#sharded-transactions
+.. _sharded transactions: ./transactions.md#sharded-transactions
 
 `Mongos Pinning`_
 =================
 
-.. _mongos pinning: ./auth.md#mongos-pinning
+.. _mongos pinning: ./transactions.md#mongos-pinning
 
 `When To Unpin`_
 ----------------
 
-.. _when to unpin: ./auth.md#when-to-unpin
+.. _when to unpin: ./transactions.md#when-to-unpin
 
 `Pinning In Load Balancer Mode`_
 --------------------------------
 
-.. _pinning in load balancer mode: ./auth.md#pinning-in-load-balancer-mode
+.. _pinning in load balancer mode: ./transactions.md#pinning-in-load-balancer-mode
 
 `Recoverytoken Field`_
 ======================
 
-.. _recoverytoken field: ./auth.md#recoverytoken-field
+.. _recoverytoken field: ./transactions.md#recoverytoken-field
 
 `Error Reporting And Retrying Transactions`_
 ********************************************
 
-.. _error reporting and retrying transactions: ./auth.md#error-reporting-and-retrying-transactions
+.. _error reporting and retrying transactions: ./transactions.md#error-reporting-and-retrying-transactions
 
 `Error Labels`_
 ===============
 
-.. _error labels: ./auth.md#error-labels
+.. _error labels: ./transactions.md#error-labels
 
 `Transienttransactionerror`_
 ============================
 
-.. _transienttransactionerror: ./auth.md#transienttransactionerror
+.. _transienttransactionerror: ./transactions.md#transienttransactionerror
 
 `Retrying Transactions That Fail With Transienttransactionerror`_
 -----------------------------------------------------------------
 
-.. _retrying transactions that fail with transienttransactionerror: ./auth.md#retrying-transactions-that-fail-with-transienttransactionerror
+.. _retrying transactions that fail with transienttransactionerror: ./transactions.md#retrying-transactions-that-fail-with-transienttransactionerror
 
 `Unknowntransactioncommitresult`_
 =================================
 
-.. _unknowntransactioncommitresult: ./auth.md#unknowntransactioncommitresult
+.. _unknowntransactioncommitresult: ./transactions.md#unknowntransactioncommitresult
 
 `Retrying Committransaction`_
 -----------------------------
 
-.. _retrying committransaction: ./auth.md#retrying-committransaction
+.. _retrying committransaction: ./transactions.md#retrying-committransaction
 
 `Handling Command Errors`_
 **************************
 
-.. _handling command errors: ./auth.md#handling-command-errors
+.. _handling command errors: ./transactions.md#handling-command-errors
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./transactions.md#test-plan
 
 `Design Rationale`_
 *******************
 
-.. _design rationale: ./auth.md#design-rationale
+.. _design rationale: ./transactions.md#design-rationale
 
 `Drivers Ignore All Aborttransaction Errors`_
 =============================================
 
-.. _drivers ignore all aborttransaction errors: ./auth.md#drivers-ignore-all-aborttransaction-errors
+.. _drivers ignore all aborttransaction errors: ./transactions.md#drivers-ignore-all-aborttransaction-errors
 
 `Drivers Add The "transienttransactionerror" Label To Network Errors`_
 ======================================================================
 
-.. _drivers add the "transienttransactionerror" label to network errors: ./auth.md#drivers-add-the-transienttransactionerror-label-to-network-errors
+.. _drivers add the "transienttransactionerror" label to network errors: ./transactions.md#drivers-add-the-transienttransactionerror-label-to-network-errors
 
 `Transactions In Gridfs`_
 =========================
 
-.. _transactions in gridfs: ./auth.md#transactions-in-gridfs
+.. _transactions in gridfs: ./transactions.md#transactions-in-gridfs
 
 `Causal Consistency With Runcommand Helper`_
 ============================================
 
-.. _causal consistency with runcommand helper: ./auth.md#causal-consistency-with-runcommand-helper
+.. _causal consistency with runcommand helper: ./transactions.md#causal-consistency-with-runcommand-helper
 
 `Calling Committransaction With The Generic Runcommand Helper Is Undefined Behavior`_
 =====================================================================================
 
-.. _calling committransaction with the generic runcommand helper is undefined behavior: ./auth.md#calling-committransaction-with-the-generic-runcommand-helper-is-undefined-behavior
+.. _calling committransaction with the generic runcommand helper is undefined behavior: ./transactions.md#calling-committransaction-with-the-generic-runcommand-helper-is-undefined-behavior
 
 `Dependencies`_
 ***************
 
-.. _dependencies: ./auth.md#dependencies
+.. _dependencies: ./transactions.md#dependencies
 
 `Backwards Compatibility`_
 **************************
 
-.. _backwards compatibility: ./auth.md#backwards-compatibility
+.. _backwards compatibility: ./transactions.md#backwards-compatibility
 
 `Reference Implementation`_
 ***************************
 
-.. _reference implementation: ./auth.md#reference-implementation
+.. _reference implementation: ./transactions.md#reference-implementation
 
 `Future Work`_
 **************
 
-.. _future work: ./auth.md#future-work
+.. _future work: ./transactions.md#future-work
 
 `Justifications`_
 *****************
 
-.. _justifications: ./auth.md#justifications
+.. _justifications: ./transactions.md#justifications
 
 `Why Is There No Transaction Object?`_
 ======================================
 
-.. _why is there no transaction object?: ./auth.md#why-is-there-no-transaction-object
+.. _why is there no transaction object?: ./transactions.md#why-is-there-no-transaction-object
 
 `Why Is Readpreference Part Of Transactionoptions?`_
 ====================================================
 
-.. _why is readpreference part of transactionoptions?: ./auth.md#why-is-readpreference-part-of-transactionoptions
+.. _why is readpreference part of transactionoptions?: ./transactions.md#why-is-readpreference-part-of-transactionoptions
 
 `Users Cannot Pass Readconcern Or Writeconcern To Operations In Transactions`_
 ==============================================================================
 
-.. _users cannot pass readconcern or writeconcern to operations in transactions: ./auth.md#users-cannot-pass-readconcern-or-writeconcern-to-operations-in-transactions
+.. _users cannot pass readconcern or writeconcern to operations in transactions: ./transactions.md#users-cannot-pass-readconcern-or-writeconcern-to-operations-in-transactions
 
 `Aggregate With Write Stage Is A Read Operation`_
 =================================================
 
-.. _aggregate with write stage is a read operation: ./auth.md#aggregate-with-write-stage-is-a-read-operation
+.. _aggregate with write stage is a read operation: ./transactions.md#aggregate-with-write-stage-is-a-read-operation
 
 `A Server Selection Error Is Labeled Unknowntransactioncommitresult`_
 =====================================================================
 
-.. _a server selection error is labeled unknowntransactioncommitresult: ./auth.md#a-server-selection-error-is-labeled-unknowntransactioncommitresult
+.. _a server selection error is labeled unknowntransactioncommitresult: ./transactions.md#a-server-selection-error-is-labeled-unknowntransactioncommitresult
 
 `Faq`_
 ******
 
-.. _faq: ./auth.md#faq
+.. _faq: ./transactions.md#faq
 
 `What Commands Can Be Run In A Transaction?`_
 =============================================
 
-.. _what commands can be run in a transaction?: ./auth.md#what-commands-can-be-run-in-a-transaction
+.. _what commands can be run in a transaction?: ./transactions.md#what-commands-can-be-run-in-a-transaction
 
 `Why Don’t Drivers Automatically Retry Commit After A Write Concern Timeout Error?`_
 ====================================================================================
 
-.. _why don’t drivers automatically retry commit after a write concern timeout error?: ./auth.md#why-dont-drivers-automatically-retry-commit-after-a-write-concern-timeout-error
+.. _why don’t drivers automatically retry commit after a write concern timeout error?: ./transactions.md#why-dont-drivers-automatically-retry-commit-after-a-write-concern-timeout-error
 
 `What Happens When A Command Object Passed To Runcommand Already Contains A Transaction Field (eg. Lsid, Txnnumber, Etc...)?`_
 ==============================================================================================================================
 
-.. _what happens when a command object passed to runcommand already contains a transaction field (eg. lsid, txnnumber, etc...)?: ./auth.md#what-happens-when-a-command-object-passed-to-runcommand-already-contains-a-transaction-field-eg-lsid-txnnumber-etc
+.. _what happens when a command object passed to runcommand already contains a transaction field (eg. lsid, txnnumber, etc...)?: ./transactions.md#what-happens-when-a-command-object-passed-to-runcommand-already-contains-a-transaction-field-eg-lsid-txnnumber-etc
 
 `Majority Write Concern Is Used When Retrying Committransaction`_
 =================================================================
 
-.. _majority write concern is used when retrying committransaction: ./auth.md#majority-write-concern-is-used-when-retrying-committransaction
+.. _majority write concern is used when retrying committransaction: ./transactions.md#majority-write-concern-is-used-when-retrying-committransaction
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./transactions.md#changelog

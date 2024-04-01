@@ -13,80 +13,79 @@
 `Bson Binary Subtype 6`_
 ########################
 
-.. _bson binary subtype 6: ./auth.md#bson-binary-subtype-6
+.. _bson binary subtype 6: ./subtype6.md#bson-binary-subtype-6
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./subtype6.md#abstract
 
 `Meta`_
 *******
 
-.. _meta: ./auth.md#meta
+.. _meta: ./subtype6.md#meta
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./subtype6.md#specification
 
 `Type 0: Intent-to-encrypt Marking`_
 ====================================
 
-.. _type 0: intent-to-encrypt marking: ./auth.md#type-0-intent-to-encrypt-marking
+.. _type 0: intent-to-encrypt marking: ./subtype6.md#type-0-intent-to-encrypt-marking
 
 `Types 1 And 2: Ciphertext`_
 ============================
 
-.. _types 1 and 2: ciphertext: ./auth.md#types-1-and-2-ciphertext
+.. _types 1 and 2: ciphertext: ./subtype6.md#types-1-and-2-ciphertext
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./subtype6.md#test-plan
 
 `Design Rationale`_
 *******************
 
-.. _design rationale: ./auth.md#design-rationale
+.. _design rationale: ./subtype6.md#design-rationale
 
 `Why Not Use A New Bson Type?`_
 ===============================
 
-.. _why not use a new bson type?: ./auth.md#why-not-use-a-new-bson-type
+.. _why not use a new bson type?: ./subtype6.md#why-not-use-a-new-bson-type
 
 `Why Not Use Separate Bson Binary Subtypes Instead Of A Nested Subtype?`_
 =========================================================================
 
-.. _why not use separate bson binary subtypes instead of a nested subtype?: ./auth.md#why-not-use-separate-bson-binary-subtypes-instead-of-a-nested-subtype
+.. _why not use separate bson binary subtypes instead of a nested subtype?: ./subtype6.md#why-not-use-separate-bson-binary-subtypes-instead-of-a-nested-subtype
 
 `Why Are Intent-to-encrypt Markings Needed?`_
 =============================================
 
-.. _why are intent-to-encrypt markings needed?: ./auth.md#why-are-intent-to-encrypt-markings-needed
+.. _why are intent-to-encrypt markings needed?: ./subtype6.md#why-are-intent-to-encrypt-markings-needed
 
 `What Happened To The "key Vault Alias"?`_
 ==========================================
 
-.. _what happened to the "key vault alias"?: ./auth.md#what-happened-to-the-key-vault-alias
+.. _what happened to the "key vault alias"?: ./subtype6.md#what-happened-to-the-key-vault-alias
 
 `Why Is The Original Bson Type Not Encrypted?`_
 ===============================================
 
-.. _why is the original bson type not encrypted?: ./auth.md#why-is-the-original-bson-type-not-encrypted
+.. _why is the original bson type not encrypted?: ./subtype6.md#why-is-the-original-bson-type-not-encrypted
 
 `Reference Implementation`_
 ***************************
 
-.. _reference implementation: ./auth.md#reference-implementation
+.. _reference implementation: ./subtype6.md#reference-implementation
 
 `Security Implication`_
 ***********************
 
-.. _security implication: ./auth.md#security-implication
+.. _security implication: ./subtype6.md#security-implication
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./subtype6.md#changelog

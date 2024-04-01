@@ -13,180 +13,179 @@
 `Change Streams`_
 #################
 
-.. _change streams: ./auth.md#change-streams
+.. _change streams: ./change-streams.md#change-streams
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./change-streams.md#abstract
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./change-streams.md#specification
 
 `Definitions`_
 ==============
 
-.. _definitions: ./auth.md#definitions
+.. _definitions: ./change-streams.md#definitions
 
 `Meta`_
 -------
 
-.. _meta: ./auth.md#meta
+.. _meta: ./change-streams.md#meta
 
 `Terms`_
 --------
 
-.. _terms: ./auth.md#terms
+.. _terms: ./change-streams.md#terms
 
 `Resumable Error`_
 ^^^^^^^^^^^^^^^^^^
 
-.. _resumable error: ./auth.md#resumable-error
+.. _resumable error: ./change-streams.md#resumable-error
 
 `Guidance`_
 ===========
 
-.. _guidance: ./auth.md#guidance
+.. _guidance: ./change-streams.md#guidance
 
 `Server Specification`_
 =======================
 
-.. _server specification: ./auth.md#server-specification
+.. _server specification: ./change-streams.md#server-specification
 
 `Response Format`_
 ------------------
 
-.. _response format: ./auth.md#response-format
+.. _response format: ./change-streams.md#response-format
 
 `Driver Api`_
 =============
 
-.. _driver api: ./auth.md#driver-api
+.. _driver api: ./change-streams.md#driver-api
 
 `Helper Method`_
 ----------------
 
-.. _helper method: ./auth.md#helper-method
+.. _helper method: ./change-streams.md#helper-method
 
 `Collection.watch Helper`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _collection.watch helper: ./auth.md#collection-watch-helper
+.. _collection.watch helper: ./change-streams.md#collection-watch-helper
 
 `Database.watch Helper`_
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _database.watch helper: ./auth.md#database-watch-helper
+.. _database.watch helper: ./change-streams.md#database-watch-helper
 
 `Mongoclient.watch Helper`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _mongoclient.watch helper: ./auth.md#mongoclient-watch-helper
+.. _mongoclient.watch helper: ./change-streams.md#mongoclient-watch-helper
 
 `Changestream`_
 ---------------
 
-.. _changestream: ./auth.md#changestream
+.. _changestream: ./change-streams.md#changestream
 
 `Single Server Topologies`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _single server topologies: ./auth.md#single-server-topologies
+.. _single server topologies: ./change-streams.md#single-server-topologies
 
 `Startatoperationtime`_
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _startatoperationtime: ./auth.md#startatoperationtime
+.. _startatoperationtime: ./change-streams.md#startatoperationtime
 
 `Resumeafter`_
 ^^^^^^^^^^^^^^
 
-.. _resumeafter: ./auth.md#resumeafter
+.. _resumeafter: ./change-streams.md#resumeafter
 
 `Resume Process`_
 ^^^^^^^^^^^^^^^^^
 
-.. _resume process: ./auth.md#resume-process
+.. _resume process: ./change-streams.md#resume-process
 
 `Exposing All Resume Tokens`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _exposing all resume tokens: ./auth.md#exposing-all-resume-tokens
+.. _exposing all resume tokens: ./change-streams.md#exposing-all-resume-tokens
 
 `Timeouts`_
 ^^^^^^^^^^^
 
-.. _timeouts: ./auth.md#timeouts
+.. _timeouts: ./change-streams.md#timeouts
 
 `Notes And Restrictions`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _notes and restrictions: ./auth.md#notes-and-restrictions
+.. _notes and restrictions: ./change-streams.md#notes-and-restrictions
 
 `Rationale`_
 ************
 
-.. _rationale: ./auth.md#rationale
+.. _rationale: ./change-streams.md#rationale
 
 `Why Helper Methods?`_
 ======================
 
-.. _why helper methods?: ./auth.md#why-helper-methods
+.. _why helper methods?: ./change-streams.md#why-helper-methods
 
 `Why Are Changestreams Required To Retry Once On A Resumable Error?`_
 =====================================================================
 
-.. _why are changestreams required to retry once on a resumable error?: ./auth.md#why-are-changestreams-required-to-retry-once-on-a-resumable-error
+.. _why are changestreams required to retry once on a resumable error?: ./change-streams.md#why-are-changestreams-required-to-retry-once-on-a-resumable-error
 
 `Why Do We Allow Access To The Resume Token To Users`_
 ======================================================
 
-.. _why do we allow access to the resume token to users: ./auth.md#why-do-we-allow-access-to-the-resume-token-to-users
+.. _why do we allow access to the resume token to users: ./change-streams.md#why-do-we-allow-access-to-the-resume-token-to-users
 
 `Why Is There No Example Of The Desired User Experience?`_
 ==========================================================
 
-.. _why is there no example of the desired user experience?: ./auth.md#why-is-there-no-example-of-the-desired-user-experience
+.. _why is there no example of the desired user experience?: ./change-streams.md#why-is-there-no-example-of-the-desired-user-experience
 
 `Why Is An Allow List Of Error Codes Preferable To A Deny List?`_
 =================================================================
 
-.. _why is an allow list of error codes preferable to a deny list?: ./auth.md#why-is-an-allow-list-of-error-codes-preferable-to-a-deny-list
+.. _why is an allow list of error codes preferable to a deny list?: ./change-streams.md#why-is-an-allow-list-of-error-codes-preferable-to-a-deny-list
 
 `Why Is Cursornotfound Special-cased When Determining Resumability?`_
 =====================================================================
 
-.. _why is cursornotfound special-cased when determining resumability?: ./auth.md#why-is-cursornotfound-special-cased-when-determining-resumability
+.. _why is cursornotfound special-cased when determining resumability?: ./change-streams.md#why-is-cursornotfound-special-cased-when-determining-resumability
 
 `Why Do We Need To Send A Default Startatoperationtime When Resuming A Changestream?`_
 ======================================================================================
 
-.. _why do we need to send a default startatoperationtime when resuming a changestream?: ./auth.md#why-do-we-need-to-send-a-default-startatoperationtime-when-resuming-a-changestream
+.. _why do we need to send a default startatoperationtime when resuming a changestream?: ./change-streams.md#why-do-we-need-to-send-a-default-startatoperationtime-when-resuming-a-changestream
 
 `Why Do We Need To Expose The Postbatchresumetoken?`_
 =====================================================
 
-.. _why do we need to expose the postbatchresumetoken?: ./auth.md#why-do-we-need-to-expose-the-postbatchresumetoken
+.. _why do we need to expose the postbatchresumetoken?: ./change-streams.md#why-do-we-need-to-expose-the-postbatchresumetoken
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./change-streams.md#test-plan
 
 `Backwards Compatibility`_
 **************************
 
-.. _backwards compatibility: ./auth.md#backwards-compatibility
+.. _backwards compatibility: ./change-streams.md#backwards-compatibility
 
 `Reference Implementations`_
 ****************************
 
-.. _reference implementations: ./auth.md#reference-implementations
+.. _reference implementations: ./change-streams.md#reference-implementations
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./change-streams.md#changelog

@@ -13,135 +13,134 @@
 `Causal Consistency Specification`_
 ###################################
 
-.. _causal consistency specification: ./auth.md#causal-consistency-specification
+.. _causal consistency specification: ./causal-consistency.md#causal-consistency-specification
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./causal-consistency.md#abstract
 
 `Definitions`_
 **************
 
-.. _definitions: ./auth.md#definitions
+.. _definitions: ./causal-consistency.md#definitions
 
 `Meta`_
 =======
 
-.. _meta: ./auth.md#meta
+.. _meta: ./causal-consistency.md#meta
 
 `Terms`_
 ========
 
-.. _terms: ./auth.md#terms
+.. _terms: ./causal-consistency.md#terms
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./causal-consistency.md#specification
 
 `Naming Variations`_
 ********************
 
-.. _naming variations: ./auth.md#naming-variations
+.. _naming variations: ./causal-consistency.md#naming-variations
 
 `High Level Summary Of The Api Changes For Causal Consistency`_
 ***************************************************************
 
-.. _high level summary of the api changes for causal consistency: ./auth.md#high-level-summary-of-the-api-changes-for-causal-consistency
+.. _high level summary of the api changes for causal consistency: ./causal-consistency.md#high-level-summary-of-the-api-changes-for-causal-consistency
 
 `Mongoclient Changes`_
 **********************
 
-.. _mongoclient changes: ./auth.md#mongoclient-changes
+.. _mongoclient changes: ./causal-consistency.md#mongoclient-changes
 
 `Sessionoptions Changes`_
 *************************
 
-.. _sessionoptions changes: ./auth.md#sessionoptions-changes
+.. _sessionoptions changes: ./causal-consistency.md#sessionoptions-changes
 
 `Causalconsistency`_
 ====================
 
-.. _causalconsistency: ./auth.md#causalconsistency
+.. _causalconsistency: ./causal-consistency.md#causalconsistency
 
 `Clientsession Changes`_
 ************************
 
-.. _clientsession changes: ./auth.md#clientsession-changes
+.. _clientsession changes: ./causal-consistency.md#clientsession-changes
 
 `Operationtime`_
 ================
 
-.. _operationtime: ./auth.md#operationtime
+.. _operationtime: ./causal-consistency.md#operationtime
 
 `Advanceoperationtime`_
 =======================
 
-.. _advanceoperationtime: ./auth.md#advanceoperationtime
+.. _advanceoperationtime: ./causal-consistency.md#advanceoperationtime
 
 `Mongodatabase Changes`_
 ************************
 
-.. _mongodatabase changes: ./auth.md#mongodatabase-changes
+.. _mongodatabase changes: ./causal-consistency.md#mongodatabase-changes
 
 `Mongocollection Changes`_
 **************************
 
-.. _mongocollection changes: ./auth.md#mongocollection-changes
+.. _mongocollection changes: ./causal-consistency.md#mongocollection-changes
 
 `Server Commands`_
 ******************
 
-.. _server commands: ./auth.md#server-commands
+.. _server commands: ./causal-consistency.md#server-commands
 
 `Server Command Responses`_
 ***************************
 
-.. _server command responses: ./auth.md#server-command-responses
+.. _server command responses: ./causal-consistency.md#server-command-responses
 
 `Causally Consistent Read Commands`_
 ************************************
 
-.. _causally consistent read commands: ./auth.md#causally-consistent-read-commands
+.. _causally consistent read commands: ./causal-consistency.md#causally-consistent-read-commands
 
 `Unacknowledged Writes`_
 ************************
 
-.. _unacknowledged writes: ./auth.md#unacknowledged-writes
+.. _unacknowledged writes: ./causal-consistency.md#unacknowledged-writes
 
 `Test Plan`_
 ************
 
-.. _test plan: ./auth.md#test-plan
+.. _test plan: ./causal-consistency.md#test-plan
 
 `Motivation`_
 *************
 
-.. _motivation: ./auth.md#motivation
+.. _motivation: ./causal-consistency.md#motivation
 
 `Design Rationale`_
 *******************
 
-.. _design rationale: ./auth.md#design-rationale
+.. _design rationale: ./causal-consistency.md#design-rationale
 
 `Backwards Compatibility`_
 **************************
 
-.. _backwards compatibility: ./auth.md#backwards-compatibility
+.. _backwards compatibility: ./causal-consistency.md#backwards-compatibility
 
 `Reference Implementation`_
 ***************************
 
-.. _reference implementation: ./auth.md#reference-implementation
+.. _reference implementation: ./causal-consistency.md#reference-implementation
 
 `Q&a`_
 ******
 
-.. _q&a: ./auth.md#q-a
+.. _q&a: ./causal-consistency.md#q-a
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./causal-consistency.md#changelog

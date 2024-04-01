@@ -13,50 +13,49 @@
 `Faas Automated Testing`_
 #########################
 
-.. _faas automated testing: ./auth.md#faas-automated-testing
+.. _faas automated testing: ./faas-automated-testing.md#faas-automated-testing
 
 `Abstract`_
 ***********
 
-.. _abstract: ./auth.md#abstract
+.. _abstract: ./faas-automated-testing.md#abstract
 
 `Meta`_
 *******
 
-.. _meta: ./auth.md#meta
+.. _meta: ./faas-automated-testing.md#meta
 
 `Specification`_
 ****************
 
-.. _specification: ./auth.md#specification
+.. _specification: ./faas-automated-testing.md#specification
 
 `Terms`_
 ========
 
-.. _terms: ./auth.md#terms
+.. _terms: ./faas-automated-testing.md#terms
 
 `Faas`_
 -------
 
-.. _faas: ./auth.md#faas
+.. _faas: ./faas-automated-testing.md#faas
 
 `Implementing Automated Faas Tests`_
 ====================================
 
-.. _implementing automated faas tests: ./auth.md#implementing-automated-faas-tests
+.. _implementing automated faas tests: ./faas-automated-testing.md#implementing-automated-faas-tests
 
 `Aws Lambda`_
 -------------
 
-.. _aws lambda: ./auth.md#aws-lambda
+.. _aws lambda: ./faas-automated-testing.md#aws-lambda
 
 `Local Execution`_
 ^^^^^^^^^^^^^^^^^^
 
-.. _local execution: ./auth.md#local-execution
+.. _local execution: ./faas-automated-testing.md#local-execution
 
 `Changelog`_
 ************
 
-.. _changelog: ./auth.md#changelog
-
+.. _changelog: ./faas-automated-testing.md#changelog
