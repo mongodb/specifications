@@ -280,6 +280,14 @@ class BulkWriteOptions {
     writeConcern: Optional<WriteConcern>;
 
     /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    comment: Optional<BSON value>;
+
+    /**
      * Whether detailed results for each successful operation should be included in the returned
      * BulkWriteResult.
      *
