@@ -660,7 +660,7 @@ The documents in the results cursor have the following format:
     "errInfo": Optional<Document>,
     "n": <Int32>,
     "nModified": Optional<Int32>,
-    "upsertedId": Optional<BSON value>
+    "upserted": Optional<Document with "_id" field>
 }
 ```
 
@@ -674,7 +674,7 @@ populated with the following values based on the type of write:
 | -------------- | ------ | ------ | ------ |
 | `n` | The number of documents that were inserted. | The number of documents that matched the filter. | The number of documents that were deleted. |
 | `nModified` | Not present. | The number of documents that were modified. | Not present. |
-| `upsertedId` | Not present. | The `_id` value for the upserted document. Only present if an upsert took place. | Not present. |
+| `upserted` | Not present. | A document containing the `_id` value for the upserted document. Only present if an upsert took place. | Not present. |
 
 Note that the responses do not contain information about the type of operation that was performed.
 Drivers may need to maintain the user's list of write models to infer which type of result should
