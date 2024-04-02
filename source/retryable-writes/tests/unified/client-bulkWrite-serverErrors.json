@@ -149,12 +149,16 @@
               "1": {
                 "matchedCount": 1,
                 "modifiedCount": 1,
-                "upsertedId": null
+                "upsertedId": {
+                  "$$exists": false
+                }
               },
               "2": {
                 "matchedCount": 1,
                 "modifiedCount": 1,
-                "upsertedId": null
+                "upsertedId": {
+                  "$$exists": false
+                }
               }
             },
             "deleteResults": {
@@ -499,12 +503,16 @@
               "1": {
                 "matchedCount": 1,
                 "modifiedCount": 1,
-                "upsertedId": null
+                "upsertedId": {
+                  "$$exists": false
+                }
               },
               "2": {
                 "matchedCount": 1,
                 "modifiedCount": 1,
-                "upsertedId": null
+                "upsertedId": {
+                  "$$exists": false
+                }
               }
             },
             "deleteResults": {
