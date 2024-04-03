@@ -1661,8 +1661,7 @@ def auth(connection):
 
   # If there is a cached access token, try to authenticate with it. If
   # authentication fails with an Authentication error (18), 
-  # it's possible the cached access token is expired. In
-  # that case, invalidate the access token, fetch a new access token, and try
+  # invalidate the access token, fetch a new access token, and try
   # to authenticate again.
   # If the server fails for any other reason, do not clear the cache.
   if is_cache:
