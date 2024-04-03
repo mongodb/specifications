@@ -115,6 +115,8 @@ tests:
                     multi: false
                 nsInfo:
                   - ns: *namespace
+                lsid: { $$exists: true }
+                txnNumber: { $$exists: true }
           - commandStartedEvent:
               commandName: bulkWrite
               databaseName: admin
@@ -139,6 +141,8 @@ tests:
                     multi: false
                 nsInfo:
                   - ns: *namespace
+                lsid: { $$exists: true }
+                txnNumber: { $$exists: true }
     outcome:
       - collectionName: *collection0Name
         databaseName: *database0Name
@@ -280,6 +284,8 @@ tests:
                     multi: false
                 nsInfo:
                   - ns: *namespace
+                lsid: { $$exists: true }
+                txnNumber: { $$exists: true }
           - commandStartedEvent:
               commandName: bulkWrite
               databaseName: admin
@@ -304,6 +310,8 @@ tests:
                     multi: false
                 nsInfo:
                   - ns: *namespace
+                lsid: { $$exists: true }
+                txnNumber: { $$exists: true }
   - description: "client bulkWrite with multi: true operations fails after retryable writeConcernError"
     operations:
       - object: testRunner
@@ -335,7 +343,7 @@ tests:
         expectError:
           writeConcernErrors:
             - code: 91
-              errmsg: "Replication is being shut down"
+              message: "Replication is being shut down"
     expectEvents:
       - client: *client0
         events:
