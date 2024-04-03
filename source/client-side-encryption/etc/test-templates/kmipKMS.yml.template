@@ -5,7 +5,7 @@ collection_name: &collection_name "default"
 
 data: []
 json_schema: {{schema("all")}}
-key_vault_data: [{{key("kmip")}}]
+key_vault_data: [{{key("kmip")}},{{key("kmip_delegated")}}]
 
 tests:
   - description: "Insert a document with auto encryption using KMIP KMS provider"
@@ -44,3 +44,46 @@ tests:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - *doc0_encrypted
+
+  - description: "Insert a document with auto encryption using KMIP delegated KMS provider"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          kmip: {}
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc1 { _id: 1, encrypted_string_kmip_delegated: "string0" }
+    expectations:
+    - command_started_event:
+        command:
+          listCollections: 1
+          filter:
+            name: *collection_name
+        command_name: listCollections
+    # Auto encryption will request the collection info.
+    - command_started_event:
+        command:
+          listCollections: 1
+          filter:
+            name: datakeys
+        command_name: listCollections
+    # Then key is fetched from the key vault.
+    - command_started_event:
+        command:
+          find: datakeys
+          filter: { $or: [ { _id: { $in: [ {{key("kmip_delegated")["_id"]}} ] } }, { keyAltNames: { $in: [] } } ] }
+          $db: keyvault
+        command_name: find
+    - command_started_event:
+        command:
+          insert: *collection_name
+          documents:
+            - &doc1_encrypted { _id: 1, encrypted_string_kmip_delegated: {{ciphertext("string0", field="encrypted_string_kmip_delegated", schema="all")}} }
+          ordered: true
+        command_name: insert
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - *doc1_encrypted
