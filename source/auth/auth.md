@@ -1220,8 +1220,8 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - TOKEN_RESOURCE\
     The URI of the target resource. This property is currently only used and required by the Azure
-    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `PROVIDER_NAME` is not `azure` or
-    `TOKEN_RESOURCE` is not provided and `PROVIDER_NAME` is `azure`, the driver MUST raise an error.
+    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not `azure` or
+    `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is `azure`, the driver MUST raise an error.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
