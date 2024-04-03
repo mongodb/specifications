@@ -29,7 +29,7 @@ After setting up your OIDC
 [environment](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md),
 source the `secrets-export.sh` file and use the associated env variables in your tests.
 
-The default client should set the appropriate `ENVIRONMENT` auth mechanism property and include a callback that gets the
+An OIDC configured client MUST set the appropriate `ENVIRONMENT` auth mechanism property and include a callback that gets the
 appropriate token for the given environment.
 
 ### Callback Authentication
