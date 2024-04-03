@@ -265,7 +265,7 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 
 - Perform a `find` operation that succeeds.
 - Assert that the callback has been called twice.
-- Assert that the refresh token was used once.
+- Assert that the refresh token was provided to the callback once.
 
 ### (3) Speculative Authentication
 
