@@ -212,7 +212,7 @@ This test must only be run on 8.0+ servers.
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
-response. Then, construct the following write model (referred to as `writeModel`):
+response. Then, construct the following write model (referred to as `model`):
 
 ```json
 InsertOne: {
@@ -221,7 +221,7 @@ InsertOne: {
 }
 ```
 
-Construct a list of write models (referred to as `models`) with `writeModel` repeated `maxWriteBatchSize + 1` times.
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times.
 Execute `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult`
 with an `insertedCount` value of `maxWriteBatchSize + 1`.
 
@@ -269,3 +269,45 @@ Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEve
 length of `firstEvent.command.ops` is `numModels - 1`. Assert that the length of `secondEvent.command.ops` is 1. If
 the driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to
 `secondEvent.operationId`.
+
+### `MongoClient.bulkWrite` collects `writeConcernError`s across batches
+
+Test that `MongoClient.bulkWrite` properly collects and reports `writeConcernError`s returned in separate batches.
+
+This test must only be run on 8.0+ servers.
+
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
+using `client` and record the `maxWriteBatchSize` value contained in the response. Then, configure the following
+fail point with `client`:
+
+```json
+{
+  "configureFailPoint": "failCommand",
+  "mode": { "times": 2 },
+  "data": {
+    "failCommands": ["bulkWrite"],
+    "writeConcernError": {
+      "code": 91,
+      "errmsg": "Replication is being shut down"
+    }
+  }
+}
+```
+
+Construct the following write model (referred to as `model`):
+
+```json
+InsertOne: {
+  "namespace": "db.coll",
+  "document": { "a": "b" }
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times.
+Execute `bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteError`
+(referred to as `error`).
+
+Assert that `error.writeConcernErrors` has a length of 2.
+
+Assert that `error.partialResult` is populated. Assert that `error.partialResult.insertedCount` is equal to
+`maxWriteBatchSize + 1`.
