@@ -265,6 +265,7 @@ Construct as list of write models (referred to as `models`) with `model` repeate
 `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult` with
 an `insertedCount` value of `numModels`.
 
-Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed. Assert that the sum
-of the lengths of `firstEvent.command.ops` and `secondEvent.command.ops` is equal to `numModels`. If the driver exposes
-`operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to `secondEvent.operationId`.
+Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed. Assert that the
+length of `firstEvent.command.ops` is `numModels - 1`. Assert that the length of `secondEvent.command.ops` is 1. If
+the driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to
+`secondEvent.operationId`.
