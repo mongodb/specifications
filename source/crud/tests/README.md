@@ -270,7 +270,7 @@ length of `firstEvent.command.ops` is `numModels - 1`. Assert that the length of
 the driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to
 `secondEvent.operationId`.
 
-### `MongoClient.bulkWrite` collects `writeConcernError`s across batches
+### 5. `MongoClient.bulkWrite` collects `WriteConcernError`s across batches
 
 Test that `MongoClient.bulkWrite` properly collects and reports `writeConcernError`s returned in separate batches.
 
@@ -311,3 +311,53 @@ Assert that `error.writeConcernErrors` has a length of 2.
 
 Assert that `error.partialResult` is populated. Assert that `error.partialResult.insertedCount` is equal to
 `maxWriteBatchSize + 1`.
+
+### 6. `MongoClient.bulkWrite` handles `WriteError`s across batches
+
+Test that `MongoClient.bulkWrite` handles individual write errors across batches for ordered and unordered bulk
+writes.
+
+This test must only be run on 8.0+ servers.
+
+Construct a `MongoClient` (referred to as `client`). Perform a `hello` command using `client` and record the
+`maxWriteBatchSize` value contained in the response.
+
+Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
+Drop `collection`. Then, construct the following document (referred to as `document`):
+
+```json
+{
+  "_id": 1
+}
+```
+
+Insert `document` into `collection`.
+
+Create the following write model (referred to as `model`):
+
+```json
+InsertOne {
+  "namespace": namespace,
+  "document": document
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times.
+
+#### Unordered
+
+Test that an unordered bulk write collects `WriteError`s across batches.
+
+Execute `bulkWrite` on `client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns
+a `BulkWriteError` (referred to as `unorderedError`).
+
+Assert that `unorderedError.writeErrors` has a length of `maxWriteBatchSize + 1`.
+
+#### Ordered
+
+Test that an ordered bulk write does not execute further batches when a `WriteError` occurs.
+
+Execute `bulkWrite` on `client` with `models` and `ordered` set to true. Assert that the bulk write fails and returns
+a `BulkWriteError` (referred to as `orderedError`).
+
+Assert that `orderedError.writeErrors` has a length of 1.
