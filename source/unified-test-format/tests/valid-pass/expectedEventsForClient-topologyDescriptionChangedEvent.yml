@@ -16,10 +16,10 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  directConnection: true
                 observeEvents:
                   - topologyDescriptionChangedEvent
-      # ensure the topology has been fully discovered before closing the client.
-      # expected events are initial server discovery and 3 server connect events.
       - name: waitForEvent
         object: testRunner
         arguments:
@@ -32,10 +32,9 @@ tests:
         eventType: sdam
         ignoreExtraEvents: true 
         events:
-          - topologyOpeningEvent: {}
           - topologyDescriptionChangedEvent: 
               previousDescription:
                 type: "Unknown"
               newDescription:
-                type: "ReplicaSetWithPrimary"
+                type: "Single"
 

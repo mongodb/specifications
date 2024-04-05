@@ -21,6 +21,9 @@
               {
                 "client": {
                   "id": "client",
+                  "uriOptions": {
+                    "directConnection": true
+                  },
                   "observeEvents": [
                     "topologyDescriptionChangedEvent"
                   ]
@@ -48,15 +51,12 @@
           "ignoreExtraEvents": true,
           "events": [
             {
-              "topologyOpeningEvent": {}
-            },
-            {
               "topologyDescriptionChangedEvent": {
                 "previousDescription": {
                   "type": "Unknown"
                 },
                 "newDescription": {
-                  "type": "ReplicaSetWithPrimary"
+                  "type": "Single"
                 }
               }
             }
