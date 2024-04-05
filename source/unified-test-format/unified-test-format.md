@@ -1434,7 +1434,8 @@ Test runners MUST NOT iterate the change stream when executing this operation an
 
 #### clientBulkWrite
 
-These considerations only apply to the `MongoClient.bulkWrite` method. See [bulkWrite](#bulkwrite) for special considerations for `MongoCollection.bulkWrite`.
+These considerations only apply to the `MongoClient.bulkWrite` method. See [bulkWrite](#bulkwrite) for special considerations
+for `MongoCollection.bulkWrite`.
 
 The `models` parameter for `clientBulkWrite` is documented as a list of WriteModel interfaces. Each WriteModel
 implementation (e.g. InsertOneModel) provides important context to the method, but that type information is not easily
@@ -1478,6 +1479,10 @@ the contents of the `errorCode` and `errorContains` fields in [expectedError](#e
 write concern errors that occurred during the bulk write. Unified tests SHOULD use `writeErrors` and `writeConcernErrors` in
 `expectedError` to assert on the contents of these fields. Test runners MUST NOT inspect the contents of these fields when
 making assertions based on any other fields defined in `expectedError`.
+
+While operations typically raise an error *or* return a result, the `MongoClient.bulkWrite` operation may
+report both via the `partialResult` property of a `BulkWriteException`. In this case, the intermediary write result may be
+matched with [expectedError_expectResult](#expectedError_expectResult)
 
 #### watch
 
