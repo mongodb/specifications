@@ -705,7 +705,9 @@ error.
 
 Encountering a top-level error MUST halt execution of a bulk write for both ordered and unordered
 bulk writes. This means that drivers MUST NOT attempt to retrieve more responses from the cursor or
-execute any further `bulkWrite` batches and MUST immediately throw an exception.
+execute any further `bulkWrite` batches and MUST immediately throw an exception. If the results
+cursor has not been exhausted on the server when a top-level error occurs, drivers MUST send the
+`killCursors` command to attempt to close it.
 
 ### Write Concern Errors
 
