@@ -1214,14 +1214,15 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - ENVIRONMENT\
     Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration
-    to use to obtain credentials. If provided, the value MUST be one of `["test", "azure"]`. If both `ENVIRONMENT` and
-    an [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
-    `MongoClient`, the driver MUST raise an error.
+    to use to obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp"]`. If both
+    `ENVIRONMENT` and an [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for
+    the same `MongoClient`, the driver MUST raise an error.
 
   - TOKEN_RESOURCE\
     The URI of the target resource. This property is currently only used and required by the Azure
-    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not `azure` or
-    `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is `azure`, the driver MUST raise an error.
+    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
+    `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
+    MUST raise an error.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
@@ -1325,6 +1326,67 @@ For more details, see
 
 The callback itself MUST not perform any caching, and the driver MUST cache its tokens in the same way as if a custom
 callback had been provided by the user.
+
+For details on test environment setup, see the README in
+[Drivers-Evergreen-Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/azure/README.md).
+
+**GCP**
+
+The GCP provider integration is enabled by setting auth mechanism property `ENVIRONMENT:gcp`.
+
+If enabled, drivers MUST use an internal machine callback that calls the
+[Google Cloud VM metadata](https://cloud.google.com/compute/docs/metadata/overview) endpoint and parse the JSON response
+body, as follows:
+
+Make an HTTP GET request to
+
+```
+http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=<resource>
+```
+
+with headers
+
+```
+Accept: application/json
+Metadata-Flavor: Google
+```
+
+where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property. The timeout should equal the
+`callbackTimeoutMS` parameter given to the callback.
+
+Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
+
+```bash
+curl -X GET \
+  -H "Accept: application/json" \
+  -H "Metadata-Flavor: Google" \
+  --max-time $CALLBACK_TIMEOUT_MS \
+  "http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=$TOKEN_RESOURCE"
+```
+
+The JSON response will be in this format:
+
+```json
+{
+  "aud": "https://example.com",
+  "azp": "118153013249117554930",
+  "exp": 1707488566,
+  "iat": 1707484966,
+  "iss": "https://accounts.google.com",
+  "sub": "118153013249117554930"
+}
+```
+
+The driver MUST use the returned `"access_token"` value as the access token in a `JwtStepRequest`. If the response does
+not return a status code of 200, the driver MUST raise an error including the HTTP response body.
+
+For more details, see [View and query VM metadata](https://cloud.google.com/compute/docs/metadata/querying-metadata).
+
+The callback itself MUST not perform any caching, and the driver MUST cache its tokens in the same way as if a custom
+callback had been provided by the user.
+
+For details on test environment setup, see the README in
+[Drivers-Evergreen-Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/gcp/README.md).
 
 #### OIDC Callback
 
@@ -1987,6 +2049,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-04-03: Added GCP built-in OIDC provider integration.
 
 - 2024-03-29: Updated OIDC test setup and descriptions.
 
