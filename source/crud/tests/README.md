@@ -276,9 +276,10 @@ Test that `MongoClient.bulkWrite` properly collects and reports `writeConcernErr
 
 This test must only be run on 8.0+ servers.
 
-Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
-using `client` and record the `maxWriteBatchSize` value contained in the response. Then, configure the following
-fail point with `client`:
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained
+in the response. Then, configure the following fail point with `client`:
 
 ```json
 {
@@ -312,6 +313,8 @@ Assert that `error.writeConcernErrors` has a length of 2.
 Assert that `error.partialResult` is populated. Assert that `error.partialResult.insertedCount` is equal to
 `maxWriteBatchSize + 1`.
 
+Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
+
 ### 6. `MongoClient.bulkWrite` handles `WriteError`s across batches
 
 Test that `MongoClient.bulkWrite` handles individual write errors across batches for ordered and unordered bulk
@@ -319,8 +322,10 @@ writes.
 
 This test must only be run on 8.0+ servers.
 
-Construct a `MongoClient` (referred to as `client`). Perform a `hello` command using `client` and record the
-`maxWriteBatchSize` value contained in the response.
+Construct a `MongoClient` (referred to as `client`) with
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
+response.
 
 Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
 Drop `collection`. Then, construct the following document (referred to as `document`):
@@ -353,6 +358,8 @@ a `BulkWriteError` (referred to as `unorderedError`).
 
 Assert that `unorderedError.writeErrors` has a length of `maxWriteBatchSize + 1`.
 
+Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
+
 #### Ordered
 
 Test that an ordered bulk write does not execute further batches when a `WriteError` occurs.
@@ -361,3 +368,95 @@ Execute `bulkWrite` on `client` with `models` and `ordered` set to true. Assert 
 a `BulkWriteError` (referred to as `orderedError`).
 
 Assert that `orderedError.writeErrors` has a length of 1.
+
+Assert that one CommandStartedEvent was observed for the `bulkWrite` command.
+
+### 7. `MongoClient.bulkWrite` handles a cursor requiring a `getMore`
+
+Test that `MongoClient.bulkWrite` properly iterates the results cursor when `getMore` is required. This test creates
+a list of operation results that requires cursor iteration by performing inserts that each yield a `DuplicateKeyError`
+containing a very large `_id` value.
+
+This test must only be run on 8.0+ servers.
+
+Construct a `MongoClient` (referred to as `client`) with
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
+response. Then, construct the following document (referred to as `document`):
+
+```json
+{
+  "_id": "a".repeat(maxBsonObjectSize - 500)
+}
+```
+
+Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
+Drop `collection`. Insert `document` into `collection`.
+
+Create the following write model (referred to as `model`):
+
+```json
+InsertOne {
+  "namespace": namespace,
+  "document": document
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated 2 times. Execute `bulkWrite` on
+`client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns a `BulkWriteError`
+(referred to as `error`).
+
+Assert that the length of `error.writeErrors` is 2.
+
+Assert that a CommandStartedEvent was observed for the `getMore` command.
+
+
+### 8. `MongoClient` handles a `getMore` error
+
+Test that `MongoClient.bulkWrite` properly handles a failure that occurs when attempting a `getMore`.
+
+This test must only be run on 8.0+ servers.
+
+Construct a `MongoClient` (referred to as `client`) with
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
+response. Then, configure the following fail point with `client`:
+
+```json
+{
+  "configureFailPoint": "failCommand",
+  "mode": { "times": 1 },
+  "data": {
+    "failCommands": ["getMore"],
+    "errorCode": 8
+  }
+}
+```
+
+Construct the following document (referred to as `document`):
+
+```json
+{
+  "_id": "a".repeat(maxBsonObjectSize - 500)
+}
+```
+
+Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
+Drop `collection`. Insert `document` into `collection`.
+
+Create the following write model (referred to as `model`):
+
+```json
+InsertOne {
+  "namespace": namespace,
+  "document": document
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated 2 times. Execute `bulkWrite` on
+`client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns a `BulkWriteError`
+(referred to as `bulkWriteError`).
+
+Assert that the length of `bulkWriteError.writeErrors` is 2.
+
+Assert that a CommandStartedEvent was observed for the `getMore` command.
