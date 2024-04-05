@@ -457,6 +457,8 @@ Construct a list of write models (referred to as `models`) with `model` repeated
 `client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns a `BulkWriteError`
 (referred to as `bulkWriteError`).
 
-Assert that the length of `bulkWriteError.writeErrors` is 2.
+Assert that the length of `bulkWriteError.writeErrors` is 1.
+
+Assert that `bulkWriteError.error` is populated with an error with error code 8.
 
 Assert that a CommandStartedEvent was observed for the `getMore` command.
