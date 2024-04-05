@@ -666,15 +666,6 @@ interface IndexOptions {
   name: String;
   
   /**
-   * Optionally specify a type for the index. Defaults to "search" if not provided.
-   * Either "search" for regular search indexes or "vectorSearch" for vector search indexes.
-   *
-   * Note that to create a vector search index using a helper method, the type "vectorSearch" must be provided.
-   *
-   */
-  type: String;
-
-  /**
    * Optionally tells the index to only reference documents with the specified field in
    * the index.
    */
@@ -912,6 +903,9 @@ interface SearchIndexModel {
 
   // The name for this index, if present.
   name: Optional<string>;
+     
+  // The type for this index, if present. Can be either "search" or "vectorSearch", defaulting to "search".  
+  type: Optional<string>;
 }
 
 interface SearchIndexOptions {

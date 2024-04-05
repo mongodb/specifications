@@ -283,23 +283,23 @@ This test fails if it times out waiting for the deletion to succeed.
 
 10. Create a new vector search index on `coll0` with the `createSearchIndex` helper. Use the following definition:
 
-```typescript
+    ```typescript
 
-  {
-    name: 'test-search-index-case7-vector',
-    type: 'vectorSearch',
-    definition: {
-      "fields": [
-         {
-             "type": "vector",
-             "path": "plot_embedding",
-             "numDimensions": 1536,
-             "similarity": "euclidean",
-         },
-      ]
-    }
-  }
-```
+      {
+        name: 'test-search-index-case7-vector',
+        type: 'vectorSearch',
+        definition: {
+          fields: [
+             {
+                 type: 'vector',
+                 path: 'plot_embedding',
+                 numDimensions: 1536,
+                 similarity: 'euclidean',
+             },
+          ]
+        }
+      }
+    ```
 
 11. Assert that the command returns the name of the index: `"test-search-index-case7-vector"`.
 
@@ -311,23 +311,28 @@ This test fails if it times out waiting for the deletion to succeed.
 
 13. Assert that `index3` has a property `type` whose value is `vectorSearch`.
 
-14. Create a new vector search index on `coll0` with the `createSearchIndex` helper. Use the following definition:
+#### Case 8: Driver requires explicit type to create a vector search index
 
-```typescript
+1. Create a collection with the "create" command using a randomly generated name (referred to as `coll0`).
 
-  {
-    name: 'test-search-index-case7-error',
-    definition: {
-      "fields": [
-         {
-             "type": "vector",
-             "path": "plot_embedding",
-             "numDimensions": 1536,
-             "similarity": "euclidean",
-         },
-      ]
-    }
-  }
-```
+2. Create a new vector search index on `coll0` with the `createSearchIndex` helper. Use the following definition:
 
-15. Assert that the command throws an exception due to the `mappings` field missing.
+   ```typescript
+
+     {
+       name: 'test-search-index-case8-error',
+       definition: {
+         fields: [
+            {
+                type: 'vector',
+                path: 'plot_embedding',
+                numDimensions: 1536,
+                similarity: 'euclidean',
+            },
+         ]
+       }
+     }
+   ```
+
+3. Assert that the command throws an exception containing the string "Attribute mappings missing" due to the `mappings`
+   field missing.
