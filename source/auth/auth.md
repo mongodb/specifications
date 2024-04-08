@@ -53,7 +53,7 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 - username (string)
 
   - Applies to all mechanisms.
-  - Optional for MONGODB-X509 and MONGODB-AWS.
+  - Optional for MONGODB-X509, MONGODB-AWS, and MONGODB-OIDC.
 
 - source (string)
 
@@ -1361,10 +1361,10 @@ The driver MUST pass the following information to the callback:
 The callback MUST be able to return the following information:
 
 - `accessToken`: An OIDC access token string. The driver MUST NOT attempt to validate `accessToken` directly.
-- `expiresIn`: An optional expiry duration for the access token. Drivers MUST interpret the value 0 as an infinite
-  duration and error if a negative value is returned. Drivers SHOULD use the most idiomatic type for representing a
-  duration in the driver's language. Note that the access token expiry value is currently not used in
-  [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
+- `expiresIn`: An optional expiry duration for the access token. Drivers with optional parameters MAY interpret a
+  missing value as infinite. Drivers MUST error if a negative value is returned. Drivers SHOULD use the most idiomatic
+  type for representing a duration in the driver's language. Note that the access token expiry value is currently not
+  used in [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
 
 The signature and naming of the callback API is up to the driver's discretion. Drivers MUST ensure that additional
 optional input parameters and return values can be added to the callback signature in the future without breaking
@@ -1418,7 +1418,7 @@ An example human callback API might look like:
 ```typescript
 interface IdpInfo {
   issuer: string;
-  clientId: string;
+  clientId: Optional<string>;
   requestScopes: Optional<Array<string>>;
 }
 
@@ -1647,9 +1647,9 @@ Use the following algorithm to authenticate a new connection:
 
 - Check if the the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a `One-Step` SASL conversation using the
-    access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access token,
-    sleep 100ms then continue.
-- Call the configured built-in provider integration or the OIDC callback to retrieve a new access token.
+    access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access token.
+- Call the configured built-in provider integration or the OIDC callback to retrieve a new access token. Wait until it
+  has been at least 100ms since the last callback invocation, to avoid overloading the callback.
 - Cache the new access token in the *Client Cache* and *Connection Cache*.
 - Perform a `One-Step` SASL conversation using the new access token. Raise any errors to the user.
 
@@ -1685,14 +1685,15 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
 - Check if the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
     using the access token. If the server returns an Authentication error (18), invalidate the access token token from
-    the *Client Cache*, clear the *Connection Cache*, and continue. If the server returns another error, continue.
+    the *Client Cache*, clear the *Connection Cache*, and restart the loop. If the server returns another error, restart
+    the authentication flow.
 - Check if the *Client Cache* has a refresh token.
   - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
     [One-Step](#one-step) SASL conversation using the new access token. If the
     [OIDC Human Callback](#oidc-human-callback) or the server returns an Authentication error (18), invalidate the
-    access token from the *Client Cache*, clear the *Connection Cache*, and continue. If the server returns another
-    error, continue.
+    access token from the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. If the
+    server returns another error, restart the authentication flow.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional
@@ -1714,7 +1715,7 @@ Use the following algorithm to perform speculative authentication:
   - If it does, cache the access token in the *Connection Cache* and send a `JwtStepRequest` with the cached access
     token in the speculative authentication SASL payload. If the response is missing a speculative authentication
     document or the speculative authentication document indicates authentication was not successful, clear the the
-    *Connection Cache* and continue.
+    *Connection Cache* and proceed to the next step.
 - Authenticate with the standard authentication handshake.
 
 Example code for speculative authentication using the `auth` function described above:

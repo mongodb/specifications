@@ -226,6 +226,24 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 - Assert that a `find` operation fails with a client-side error.
 - Close the client.
 
+**1.7 Allowed Hosts in Connection String Ignored**
+
+- Create an OIDC configured client with the connection string:
+  `mongodb+srv://example.com/?authMechanism=MONGODB-OIDC&authMechanismProperties=ALLOWED_HOSTS:%5B%22example.com%22%5D`
+  and a Human Callback.
+- Assert that the creation of the client raises a configuration error.
+
+**1.8 Machine IdP with Human Callback**
+
+This test MUST only be run when `OIDC_IS_LOCAL` is set. This indicates that the server is local and not using Atlas. In
+this case, `MONGODB_URI_SINGLE` will be configured with a human user `test_user1`, and a machine user `test_machine`.
+This test uses the machine user with a human callback, ensuring that the missing `clientId` in the
+`PrincipalStepRequest` response is handled by the driver.
+
+- Create an OIDC configured client with `MONGODB_URI_SINGLE` and a username of `test_machine`.
+- Perform a find operation that succeeds.
+- Close the client.
+
 ### (2) OIDC Human Callback Validation
 
 **2.1 Valid Callback Inputs**
