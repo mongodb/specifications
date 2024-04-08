@@ -283,7 +283,7 @@ This test uses the machine user with a human callback, ensuring that the missing
 
 - Perform a `find` operation that succeeds.
 - Assert that the callback has been called twice.
-- Assert that the refresh token was used once.
+- Assert that the refresh token was provided to the callback once.
 
 ### (3) Speculative Authentication
 
