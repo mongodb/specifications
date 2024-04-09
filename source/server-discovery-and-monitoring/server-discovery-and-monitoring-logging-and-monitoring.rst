@@ -114,6 +114,7 @@ Initial Server Description
 
 Initial Topology Description
 ----------------------------
+
 The first ``TopologyDescriptionChangedEvent`` to be emitted from a monitored Topology MUST set its ``previousDescription`` property to be a ``TopologyDescription`` object in the "unknown" state.
 
 ----------
