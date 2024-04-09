@@ -386,7 +386,7 @@ response. Then, construct the following document (referred to as `document`):
 
 ```json
 {
-  "_id": "a".repeat(maxBsonObjectSize - 500)
+  "_id": "a".repeat(maxBsonObjectSize / 2)
 }
 ```
 
@@ -437,7 +437,7 @@ Construct the following document (referred to as `document`):
 
 ```json
 {
-  "_id": "a".repeat(maxBsonObjectSize - 500)
+  "_id": "a".repeat(maxBsonObjectSize / 2)
 }
 ```
 
