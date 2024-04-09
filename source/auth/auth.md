@@ -1747,15 +1747,14 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
 - Check if the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
     using the access token. If the server returns an Authentication error (18), invalidate the access token token from
-    the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. If the server returns another
-    error, restart the authentication flow.
+    the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. Raise any other errors to the
+    user.
 - Check if the *Client Cache* has a refresh token.
   - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
-    [One-Step](#one-step) SASL conversation using the new access token. If the
-    [OIDC Human Callback](#oidc-human-callback) or the server returns an Authentication error (18), clear the refresh
-    token, invalidate the access token from the *Client Cache*, clear the *Connection Cache*, and restart the
-    authentication flow. If the server returns another error, restart the authentication flow.
+    [One-Step](#one-step) SASL conversation using the new access token. If the the server returns an Authentication
+    error (18), clear the refresh token, invalidate the access token from the *Client Cache*, clear the *Connection
+    Cache*, and restart the authentication flow. Raise any other errors to the user.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional
@@ -2053,6 +2052,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-04-09: Updated OIDC authentication flow and prose tests.
 
 - 2024-04-03: Added GCP built-in OIDC provider integration.
 
