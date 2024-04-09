@@ -1747,15 +1747,15 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
 - Check if the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
     using the access token. If the server returns an Authentication error (18), invalidate the access token token from
-    the *Client Cache*, clear the *Connection Cache*, and restart the loop. If the server returns another error, restart
-    the authentication flow.
+    the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. If the server returns another
+    error, restart the authentication flow.
 - Check if the *Client Cache* has a refresh token.
   - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
     [One-Step](#one-step) SASL conversation using the new access token. If the
-    [OIDC Human Callback](#oidc-human-callback) or the server returns an Authentication error (18), invalidate the
-    access token from the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. If the
-    server returns another error, restart the authentication flow.
+    [OIDC Human Callback](#oidc-human-callback) or the server returns an Authentication error (18), clear the refresh
+    token, invalidate the access token from the *Client Cache*, clear the *Connection Cache*, and restart the
+    authentication flow. If the server returns another error, restart the authentication flow.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional

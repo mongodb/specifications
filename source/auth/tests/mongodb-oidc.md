@@ -423,11 +423,11 @@ This test uses the machine user with a human callback, ensuring that the missing
 {
   configureFailPoint: "failCommand",
   mode: {
-    times: 2
+    times: 1
   },
   data: {
     failCommands: [
-      "find", "saslStart"
+      "find",
     ],
     errorCode: 391 // ReauthenticationRequired
   }
@@ -435,12 +435,13 @@ This test uses the machine user with a human callback, ensuring that the missing
 ```
 
 - Perform a `find` operation that succeeds.
-- Assert that the human callback has been called 3 times.
+- Assert that the human callback has been called 2 times.
 - Close the client.
 
 **4.4 Fails**
 
-- Create an OIDC configured client.
+- Create an OIDC configured client that returns invalid refresh tokens and returns invalid access tokens after the first
+  access.
 - Perform a find operation that succeeds (to force a speculative auth).
 - Assert that the human callback has been called once.
 - Force a reauthenication using a failCommand of the form:
@@ -449,11 +450,11 @@ This test uses the machine user with a human callback, ensuring that the missing
 {
   configureFailPoint: "failCommand",
   mode: {
-    times: 3
+    times: 1
   },
   data: {
     failCommands: [
-      "find", "saslStart"
+      "find",
     ],
     errorCode: 391 // ReauthenticationRequired
   }
@@ -461,5 +462,5 @@ This test uses the machine user with a human callback, ensuring that the missing
 ```
 
 - Perform a find operation that fails.
-- Assert that the human callback has been called twice.
+- Assert that the human callback has been called three times.
 - Close the client.
