@@ -462,3 +462,54 @@ Assert that the length of `bulkWriteError.writeErrors` is 1.
 Assert that `bulkWriteError.error` is populated with an error with error code 8.
 
 Assert that a CommandStartedEvent was observed for the `getMore` command.
+
+### 9. `MongoClient.bulkWrite` returns error for unacknowledged too-large insert
+
+This test must only be run on 8.0+ servers.
+
+Construct a `MongoClient` (referred to as `client`).
+
+Perform a `hello` command using `client` and record the following values from the response: `maxBsonObjectSize`.
+
+Then, construct the following document (referred to as `document`):
+
+```json
+{
+  "a": "b".repeat(maxBsonObjectSize)
+}
+```
+
+#### With insert
+
+Construct the following write model (referred to as `model`):
+
+```json
+InsertOne: {
+  "namespace": "db.coll",
+  "document": document
+}
+```
+
+Construct as list of write models (referred to as `models`) with the one `model`.
+
+Call `MongoClient.bulkWrite` with `models` and `BulkWriteOptions.writeConcern` set to an unacknowledged write concern.
+
+Expect a client-side error due the size.
+
+#### With replace
+
+Construct the following write model (referred to as `model`):
+
+```json
+ReplaceOne: {
+  "namespace": "db.coll",
+  "filter": {},
+  "replacement": document
+}
+```
+
+Construct as list of write models (referred to as `models`) with the one `model`.
+
+Call `MongoClient.bulkWrite` with `models` and `BulkWriteOptions.writeConcern` set to an unacknowledged write concern.
+
+Expect a client-side error due the size.
