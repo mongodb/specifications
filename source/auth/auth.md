@@ -1710,6 +1710,7 @@ Use the following algorithm to authenticate a new connection:
 - Check if the the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a `One-Step` SASL conversation using the
     access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access token.
+    Raise any other errors to the user. On success, exit the algorithm.
 - Call the configured built-in provider integration or the OIDC callback to retrieve a new access token. Wait until it
   has been at least 100ms since the last callback invocation, to avoid overloading the callback.
 - Cache the new access token in the *Client Cache* and *Connection Cache*.
