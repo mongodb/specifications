@@ -1748,7 +1748,7 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
   - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
     using the access token. If the server returns an Authentication error (18), invalidate the access token token from
     the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. Raise any other errors to the
-    user.
+    user. On success, exit the algorithm.
 - Check if the *Client Cache* has a refresh token.
   - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
