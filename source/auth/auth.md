@@ -1735,7 +1735,6 @@ def auth(connection):
     except ServerError as e:
       if e.code == 18:
         invalidate(access_token)
-        sleep(0.1)
         access_token, _ = get_access_token()
 
   connection.oidc_cache.access_token = access_token
