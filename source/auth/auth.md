@@ -1219,8 +1219,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     the same `MongoClient`, the driver MUST raise an error.
 
   - TOKEN_RESOURCE\
-    The URI of the target resource. This property is currently only used and required by the Azure
-    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
+    The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
     `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
     MUST raise an error.
 
@@ -1754,8 +1753,7 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
     [One-Step](#one-step) SASL conversation using the new access token. If the the server returns an Authentication
     error (18), clear the refresh token, invalidate the access token from the *Client Cache*, clear the *Connection
-    Cache*, and restart the authentication flow. Raise any other errors to the user.
-    On success, exit the algorithm.
+    Cache*, and restart the authentication flow. Raise any other errors to the user. On success, exit the algorithm.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional
