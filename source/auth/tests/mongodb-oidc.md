@@ -262,7 +262,7 @@ This test uses the machine user with a human callback, ensuring that the missing
 
 **2.3 Refresh Token Is Passed To The Callback**
 
-- Create a `MongoClien`t with a human callback that checks for the presence of a refresh token.
+- Create a `MongoClient` with a human callback that checks for the presence of a refresh token.
 - Perform a find operation that succeeds.
 - Set a fail point for `find` commands of the form:
 
