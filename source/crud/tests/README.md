@@ -315,7 +315,7 @@ Assert that `error.partialResult` is populated. Assert that `error.partialResult
 
 Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
 
-### 6. `MongoClient.bulkWrite` handles `WriteError`s across batches
+### 6. `MongoClient.bulkWrite` handles individual `WriteError`s across batches
 
 Test that `MongoClient.bulkWrite` handles individual write errors across batches for ordered and unordered bulk
 writes.
@@ -373,45 +373,86 @@ Assert that one CommandStartedEvent was observed for the `bulkWrite` command.
 
 ### 7. `MongoClient.bulkWrite` handles a cursor requiring a `getMore`
 
-Test that `MongoClient.bulkWrite` properly iterates the results cursor when `getMore` is required. This test creates
-a list of operation results that requires cursor iteration by performing inserts that each yield a `DuplicateKeyError`
-containing a very large `_id` value.
+Test that `MongoClient.bulkWrite` properly iterates the results cursor when `getMore` is required.
 
 This test must only be run on 8.0+ servers.
 
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
-response. Then, construct the following document (referred to as `document`):
-
-```json
-{
-  "_id": "a".repeat(maxBsonObjectSize / 2)
-}
-```
+response.
 
 Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
-Drop `collection`. Insert `document` into `collection`.
-
-Create the following write model (referred to as `model`):
+Drop `collection`. Then create the following list of write models (referred to as `models`):
 
 ```json
-InsertOne {
+UpdateOne {
   "namespace": namespace,
-  "document": document
-}
+  "filter": { "_id": "a".repeat(maxBsonObjectSize / 2) },
+  "update": { "$set": { "x": 1 } },
+  "upsert": true
+},
+UpdateOne {
+  "namespace": namespace,
+  "filter": { "_id": "b".repeat(maxBsonObjectSize / 2) },
+  "update": { "$set": { "x": 1 } },
+  "upsert": true
+},
 ```
 
-Construct a list of write models (referred to as `models`) with `model` repeated 2 times. Execute `bulkWrite` on
-`client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns a `BulkWriteError`
-(referred to as `error`).
+Execute `bulkWrite` on `client` with `models` and `verboseResults` set to true. Assert that the bulk write succeeds and
+returns a `BulkWriteResult` (referred to as `result`).
 
-Assert that the length of `error.writeErrors` is 2.
+Assert that `result.upsertedCount` is equal to 2.
+
+Assert that the length of `result.updateResults` is equal to 2.
 
 Assert that a CommandStartedEvent was observed for the `getMore` command.
 
+### 8. `MongoClient.bulkWrite` handles a cursor requiring `getMore` within a transaction
 
-### 8. `MongoClient` handles a `getMore` error
+Test that `MongoClient.bulkWrite` executed within a transaction properly iterates the results cursor when `getMore` is
+required.
+
+This test must only be run on 8.0+ servers. This test must not be run against standalone servers.
+
+Construct a `MongoClient` (referred to as `client`) with
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
+response.
+
+Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
+Drop `collection`.
+
+Start a session on `client` (referred to as `session`). Start a transaction on `session`.
+
+Create the following list of write models (referred to as `models`):
+
+```json
+UpdateOne {
+  "namespace": namespace,
+  "filter": { "_id": "a".repeat(maxBsonObjectSize / 2) },
+  "update": { "$set": { "x": 1 } },
+  "upsert": true
+},
+UpdateOne {
+  "namespace": namespace,
+  "filter": { "_id": "b".repeat(maxBsonObjectSize / 2) },
+  "update": { "$set": { "x": 1 } },
+  "upsert": true
+},
+```
+
+Execute `bulkWrite` on `client` with `models`, `session`, and `verboseResults` set to true. Assert that the bulk write
+succeeds and returns a `BulkWriteResult` (referred to as `result`).
+
+Assert that `result.upsertedCount` is equal to 2.
+
+Assert that the length of `result.updateResults` is equal to 2.
+
+Assert that a CommandStartedEvent was observed for the `getMore` command.
+
+### 9. `MongoClient.bulkWrite` handles a `getMore` error
 
 Test that `MongoClient.bulkWrite` properly handles a failure that occurs when attempting a `getMore`.
 
@@ -433,37 +474,38 @@ response. Then, configure the following fail point with `client`:
 }
 ```
 
-Construct the following document (referred to as `document`):
-
-```json
-{
-  "_id": "a".repeat(maxBsonObjectSize / 2)
-}
-```
-
 Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
-Drop `collection`. Insert `document` into `collection`.
-
-Create the following write model (referred to as `model`):
+Drop `collection`. Then create the following list of write models (referred to as `models`):
 
 ```json
-InsertOne {
+UpdateOne {
   "namespace": namespace,
-  "document": document
-}
+  "filter": { "_id": "a".repeat(maxBsonObjectSize / 2) },
+  "update": { "$set": { "x": 1 } },
+  "upsert": true
+},
+UpdateOne {
+  "namespace": namespace,
+  "filter": { "_id": "b".repeat(maxBsonObjectSize / 2) },
+  "update": { "$set": { "x": 1 } },
+  "upsert": true
+},
 ```
 
-Construct a list of write models (referred to as `models`) with `model` repeated 2 times. Execute `bulkWrite` on
-`client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns a `BulkWriteError`
-(referred to as `bulkWriteError`).
+Execute `bulkWrite` on `client` with `models` and `verboseResults` set to true. Assert that the bulk write fails and returns
+a `BulkWriteError` (referred to as `bulkWriteError`).
 
-Assert that the length of `bulkWriteError.writeErrors` is 1.
+Assert that `bulkWriteError.error` is populated with an error (referred to as `topLevelError`). Assert that
+`topLevelError.errorCode` is equal to 8.
 
-Assert that `bulkWriteError.error` is populated with an error with error code 8.
+Assert that `bulkWriteError.partialResult` is populated with a result (referred to as `partialResult`). Assert that
+`partialResult.upsertedCount` is equal to 2. Assert that the length of `partialResult.updateResults` is equal to 1.
 
 Assert that a CommandStartedEvent was observed for the `getMore` command.
 
-### 9. `MongoClient.bulkWrite` returns error for unacknowledged too-large insert
+Assert that a CommandStartedEvent was observed for the `killCursors` command.
+
+### 10. `MongoClient.bulkWrite` returns error for unacknowledged too-large insert
 
 This test must only be run on 8.0+ servers.
 
