@@ -711,6 +711,9 @@ failing or a write concern error. Examples include network errors that occur whe
 with the server, command errors (`{ "ok": 0 }`) returned from the server, client-side errors, and
 errors that occur when attempting to perform a `getMore` to retrieve results from the server.
 
+When a top-level error is caused by a command error (i.e. an `{ "ok": 0 }` server response),
+drivers MUST provide access to the raw server reply in the error returned to the user.
+
 When a top-level error is encountered and individual results and/or errors have already been
 observed, drivers MUST embed the top-level error within a `BulkWriteException` as the `error` field
 to retain this information. Otherwise, drivers MAY throw an exception containing only the top-level
@@ -720,7 +723,8 @@ Encountering a top-level error MUST halt execution of a bulk write for both orde
 bulk writes. This means that drivers MUST NOT attempt to retrieve more responses from the cursor or
 execute any further `bulkWrite` batches and MUST immediately throw an exception. If the results
 cursor has not been exhausted on the server when a top-level error occurs, drivers MUST send the
-`killCursors` command to attempt to close it.
+`killCursors` command to attempt to close it. The result returned from the `killCursors` command
+MAY be ignored.
 
 ### Write Concern Errors
 
