@@ -482,7 +482,7 @@
       }
     },
     {
-      "description": "should recognise the mechanism with test integration (MONGODB-OIDC)",
+      "description": "should recognise the mechanism with test environment (MONGODB-OIDC)",
       "uri": "mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:test",
       "valid": true,
       "credential": {

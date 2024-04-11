@@ -390,7 +390,6 @@ tests:
   uri: mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=UnsupportedProperty:unexisted
   valid: false
   credential:
-  credential:
 - description: should recognise the mechanism with azure provider (MONGODB-OIDC)
   uri: mongodb://localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:azure,TOKEN_RESOURCE:foo
   valid: true
