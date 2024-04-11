@@ -4,7 +4,8 @@
 
 ### Test that the driver accepts an arbitrary auth mechanism
 
-1. Mock the server response in a way that `hello` command response contains an arbitrary string in the `saslSupportedMechs` attribute.
+1. Mock the server response in a way that `hello` command response contains an arbitrary string in the
+   `saslSupportedMechs` attribute.
 
 2. Connect to the server.
 
