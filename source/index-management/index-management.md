@@ -904,7 +904,7 @@ interface SearchIndexModel {
   // The name for this index, if present.
   name: Optional<string>;
      
-  // The type for this index, if present. Can be either "search" or "vectorSearch", defaulting to "search".  
+  // The type for this index, if present. Can be either "search" or "vectorSearch".  
   type: Optional<string>;
 }
 
