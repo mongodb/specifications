@@ -415,6 +415,11 @@ The structure of this object is as follows:
     notable exception: if `readPreferenceTags` is specified in this object, the key will map to an array of strings,
     each representing a tag set, since it is not feasible to define multiple `readPreferenceTags` keys in the object.
 
+    Note also that when specifying `directConnection` as true, the connection string used to
+    instantiate a client MUST only have a single seed and MUST NOT specify the `replicaSet` option.
+    See the [`directConnection` specification](../uri-options/uri-options.rst#directconnection-uri-option-with-multiple-seeds-or-srv-uri)
+    for more information.
+
     Any field in `uriOptions` may be a [$$placeholder](#placeholder) document and the test runner MUST support replacing
     the placeholder document with values loaded from the test environment. For example:
 
@@ -3414,6 +3419,9 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-04-15: Note that when `directConnection` is set to true test runners should only provide a
+  single seed.
 
 - 2024-03-25: **Schema version 1.20.**\
   Add `previousDescription` and `newDescription` assertions to
