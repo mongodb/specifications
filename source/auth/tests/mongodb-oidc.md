@@ -10,16 +10,20 @@ ______________________________________________________________________
 
 ## Unified Spec Tests
 
-Drivers MUST run the unified spec tests in all supported OIDC environments.
+Drivers MUST run the unified spec tests in all supported OIDC environments. Drivers MUST set the placeholder
+authMechanism properties (`ENVIRONMENT` and `TOKEN_RESOURCE`, if applicable).
 
 ______________________________________________________________________
 
-## Prose Tests
+## Machine Authentication Flow Prose Tests
+
+Drivers MUST run the machine prose tests when `OIDC_TOKEN_DIR` is set. Drivers can either set the `ENVIRONMENT:test`
+auth mechanism property, or use a custom callback that also reads the file.
+
+Drivers can also choose to run the machine prose tests on GCP or Azure VMs.
 
 Drivers MUST implement all prose tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be
 configured with `retryReads=false`.
-
-Drivers MUST run the prose tests in all supported OIDC environments.
 
 > [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
@@ -28,9 +32,6 @@ Drivers MUST run the prose tests in all supported OIDC environments.
 After setting up your OIDC
 [environment](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md),
 source the `secrets-export.sh` file and use the associated env variables in your tests.
-
-An OIDC configured client MUST set the appropriate `ENVIRONMENT` auth mechanism property and include a callback that
-gets the appropriate token for the given environment.
 
 ### Callback Authentication
 
@@ -167,7 +168,7 @@ ______________________________________________________________________
 Drivers that support the [Human Authentication Flow](../auth.md#human-authentication-flow) MUST implement all prose
 tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be configured with `retryReads=false`.
 
-The human workflow tests MUST only be run when in `ENVIRONMENT:test`.
+The human workflow tests MUST only be run when `OIDC_TOKEN_DIR` is set.
 
 > [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
