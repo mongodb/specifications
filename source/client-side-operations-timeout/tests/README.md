@@ -24,7 +24,7 @@ test MUST be unset using `internalClient` after the test has been executed. All 
 MUST be configured with read/write concern `majority`, read preference `primary`, and command monitoring enabled to
 listen for `command_started` events.
 
-### 1. Multi-batch writes
+### 1. Multi-batch inserts
 
 This test MUST only run against standalones on server versions 4.4 and higher. The `insertMany` call takes an
 exceedingly long time on replicasets and sharded clusters. Drivers MAY adjust the timeouts used in this test to allow
@@ -597,6 +597,39 @@ Tests in this section MUST only run against replica sets and sharded clusters wi
 
    1. `command_started` and `command_failed` events for an `insert` command.
    2. `command_started` and `command_failed` events for an `abortTransaction` command.
+
+
+### 11. Multi-batch bulkWrites
+
+This test MUST only run against standalones on server versions 8.0 and higher. The `bulkWrite` call takes an
+exceedingly long time on replicasets and sharded clusters. Drivers MAY adjust the timeouts used in this test to allow
+for differing bulk encoding performance.
+
+1. Using `internalClient`, drop the `db.coll` collection.
+
+2. Using `internalClient`, set the following fail point:
+
+   ```javascript
+   {
+       configureFailPoint: "failCommand",
+       mode: {
+           times: 2
+       },
+       data: {
+           failCommands: ["bulkWrite"],
+           blockConnection: true,
+           blockTimeMS: 1010
+       }
+   }
+   ```
+
+3. Create a new MongoClient (referred to as `client`) with `timeoutMS=2000`.
+
+4. Using `client`, insert 50 1-megabyte documents in a single `MongoClient.bulkWrite` call.
+
+   - Expect this to fail with a timeout error.
+
+5. Verify that two `bulkWrite` commands were executed against `db.coll` as part of the `MongoClient.bulkWrite` call.
 
 ## Unit Tests
 
