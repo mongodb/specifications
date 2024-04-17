@@ -291,6 +291,11 @@ OPS = {
             insert: *collection_name
             documents:
               - { _id : 1 }'''),
+    # clientBulkWrite:
+    'clientBulkWrite': ('bulkWrite', '*client0', r'''models:
+          - insertOne:
+              namespace: database0.collection0
+              document: { _id: 8, x: 88 }'''),
 }
 
 # Maps from error_name to error_data.
