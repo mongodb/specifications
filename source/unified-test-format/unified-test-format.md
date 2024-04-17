@@ -417,8 +417,8 @@ The structure of this object is as follows:
 
     Note also that when specifying `directConnection` as true, the connection string used to instantiate a client MUST
     only have a single seed and MUST NOT specify the `replicaSet` option. See the
-    [`directConnection` specification](../uri-options/uri-options.rst#directconnection-uri-option-with-multiple-seeds-or-srv-uri)
-    for more information.
+    [URI Options spec](../uri-options/uri-options.rst#directconnection-uri-option-with-multiple-seeds-or-srv-uri) for
+    more information.
 
     Any field in `uriOptions` may be a [$$placeholder](#placeholder) document and the test runner MUST support replacing
     the placeholder document with values loaded from the test environment. For example:
