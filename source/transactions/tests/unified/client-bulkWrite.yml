@@ -22,6 +22,15 @@ createEntities:
   - session:
       id: &session0 session0
       client: *client0
+  - client:
+      id: &client_with_wmajority client_with_wmajority
+      uriOptions:
+        w: majority
+      observeEvents:
+        - commandStartedEvent
+  - session:
+      id: &session_with_wmajority session_with_wmajority
+      client: *client_with_wmajority
 
 _yamlAnchors:
   namespace: &namespace "transaction-tests.coll0"
@@ -160,4 +169,77 @@ tests:
           - { _id: 2, x: 24 }
           - { _id: 3, x: 35 }
           - { _id: 4, x: 44 }
+          - { _id: 8, x: 88 }
+  - description: 'client writeConcern ignored for client bulkWrite in transaction'
+    operations:
+      - object: *session_with_wmajority
+        name: startTransaction
+        arguments:
+          writeConcern:
+            w: 1
+      - object: *client_with_wmajority
+        name: clientBulkWrite
+        arguments:
+          session: *session_with_wmajority
+          models:
+            - insertOne:
+                namespace: *namespace
+                document: { _id: 8, x: 88 }
+        expectResult:
+          insertedCount: 1
+          upsertedCount: 0
+          matchedCount: 0
+          modifiedCount: 0
+          deletedCount: 0
+          insertResults:
+            $$unsetOrMatches: {}
+          updateResults:
+            $$unsetOrMatches: {}
+          deleteResults:
+            $$unsetOrMatches: {}
+      - object: *session_with_wmajority
+        name: commitTransaction
+    expectEvents:
+      -
+        client: *client_with_wmajority
+        events:
+          - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
+              command:
+                lsid: { $$sessionLsid: *session_with_wmajority }
+                txnNumber: 1
+                startTransaction: true
+                autocommit: false
+                writeConcern: { $$exists: false }
+                bulkWrite: 1
+                errorsOnly: true
+                ordered: true
+                ops:
+                  - insert: 0
+                    document: { _id: 8, x: 88 }
+                nsInfo:
+                  - ns: *namespace
+          -
+            commandStartedEvent:
+              command:
+                commitTransaction: 1
+                lsid: { $$sessionLsid: *session_with_wmajority }
+                txnNumber: { $numberLong: '1' }
+                startTransaction: { $$exists: false }
+                autocommit: false
+                writeConcern:
+                  w: 1
+              commandName: commitTransaction
+              databaseName: admin
+    outcome:
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
+          - { _id: 5, x: 55 }
+          - { _id: 6, x: 66 }
+          - { _id: 7, x: 77 }
           - { _id: 8, x: 88 }
