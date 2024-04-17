@@ -11,7 +11,8 @@ ______________________________________________________________________
 ## Unified Spec Tests
 
 Drivers MUST run the unified spec tests in all supported OIDC environments. Drivers MUST set the placeholder
-authMechanism properties (`ENVIRONMENT` and `TOKEN_RESOURCE`, if applicable).
+authMechanism properties (`ENVIRONMENT` and `TOKEN_RESOURCE`, if applicable). These will typically be read from
+environment variables set by the test runner, e,g. `AZUREOIDC_RESOURCE`.
 
 ______________________________________________________________________
 
