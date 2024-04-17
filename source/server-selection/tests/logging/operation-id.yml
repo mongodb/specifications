@@ -219,5 +219,3 @@ tests:
               message: "Server selection failed"
               operationId: { $$type: [int, long] }
               operation: bulkWrite
-
-
