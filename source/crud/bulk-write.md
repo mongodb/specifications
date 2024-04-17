@@ -809,6 +809,12 @@ unnecessary work for drivers. Always sending the user's specified value also saf
 unlikely event that the server changes the default value for `bypassDocumentValidation` in the
 future.
 
+### Why is providing access to the raw server response when a command error occurs required?
+
+This allows users to access new error fields that the server may add in the future without needing
+to upgrade their driver version. See [DRIVERS-2385](https://jira.mongodb.org/browse/DRIVERS-2385)
+for more details.
+
 ## **Changelog**
 
 - TODO: Bulk write specification created.
