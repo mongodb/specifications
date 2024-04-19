@@ -1540,6 +1540,7 @@ An example OIDC one-step SASL conversation with access token string "abcd1234" l
 {
   saslStart: 1,
   mechanism: "MONGODB-OIDC",
+  db: "$external"
   // payload is a BSON generic binary field containing a JwtStepRequest BSON
   // document: {"jwt": "abcd1234"}
   payload: BinData(0, "FwAAAAJqd3QACQAAAGFiY2QxMjM0AAA=")
@@ -1614,6 +1615,7 @@ An example OIDC two-step SASL conversation with username "myidp" and access toke
 {
   saslStart: 1,
   mechanism: "MONGODB-OIDC",
+  db: "$external",
   // payload is a BSON generic binary field containing a PrincipalStepRequest
   // BSON document: {"n": "myidp"}
   payload: BinData(0, "EgAAAAJuAAYAAABteWlkcAAA")
