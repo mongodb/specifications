@@ -1261,9 +1261,9 @@ purposes, and is not meant to be documented as a user-facing feature.
 
 If enabled, drivers MUST generate a token using a script in the `auth_oidc`
 [folder](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/auth_oidc#readme) in Drivers
-Evergreen Tools. The must then set the `OIDC_TOKEN_FILE` environment variable to the path to that file. At runtime, the
-driver MUST use the `OIDC_TOKEN_FILE` environment variable and read the OIDC access token from that path. The driver
-MUST use the contents of that file as value in the `jwt` field of the `saslStart` payload.
+Evergreen Tools. The driver MUST then set the `OIDC_TOKEN_FILE` environment variable to the path to that file. At
+runtime, the driver MUST use the `OIDC_TOKEN_FILE` environment variable and read the OIDC access token from that path.
+The driver MUST use the contents of that file as value in the `jwt` field of the `saslStart` payload.
 
 Drivers MAY implement the "test" integration so that it conforms to the function signature of the
 [OIDC Callback](#oidc-callback) to prevent having to re-implement the "test" integration logic in the OIDC prose tests.
