@@ -46,6 +46,7 @@ All Unit Tests have some of the following fields:
   - `type`: The type of event emitted
   - `address`: The address of the pool emitting the event
   - `connectionId`: The id of a connection associated with the event
+  - `duration`: The event duration
   - `options`: Options used to create the pool
   - `reason`: A reason giving more information on why the event was emitted
 - `ignore`: An array of event names to ignore
