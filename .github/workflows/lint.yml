@@ -27,13 +27,3 @@ jobs:
           echo "    pre-commit run"
           echo "or after-the-fact on already committed files with"
           echo "    pre-commit run --all-files --hook-stage manual"
-
-  sphinx-build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-      - run:  pip install sphinx
-      - run:  cd source && sphinx-build -W -b text . docs_build index.rst

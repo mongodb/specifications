@@ -28,18 +28,13 @@ TEMPLATE = """
 .. note::
   This specification has been converted to Markdown and renamed to
   `{0} <{0}>`_.  
-
-  Use the link above to access the latest version of the specification as the
-  current reStructuredText file will no longer be updated.
-
 """
 
-# Update the RST file with a pointer to the MD file.
+# Update the RST file with a stub pointer to the MD file.
 if not path.name == 'README.rst':
-    new_lines = lines.copy()
-    new_lines.insert(0, TEMPLATE.format(os.path.basename(md_file)) )
+    new_body = TEMPLATE.format(os.path.basename(md_file))
     with path.open('w') as fid:
-        fid.write(''.join(new_lines))
+        fid.write(''.join(new_body))
 
 # Pre-process the file.
 for (i, line) in enumerate(lines):
