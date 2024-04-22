@@ -1666,7 +1666,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
-:2024-04-19: Clarify that driver should not validate ``saslSupportedMechs`` content.
+:2024-04-22: Clarify that driver should not validate ``saslSupportedMechs`` content.
 :2023-04-28: Added MONGODB-OIDC auth mechanism
 :2022-11-02: Require environment variables to be read dynamically.
 :2022-10-28: Recommend the use of AWS SDKs where available.

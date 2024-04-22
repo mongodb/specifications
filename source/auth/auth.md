@@ -2053,7 +2053,7 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 ## Changelog
 
-- 2024-04-19: Clarify that driver should not validate `saslSupportedMechs` content.
+- 2024-04-22: Clarify that driver should not validate `saslSupportedMechs` content.
 
 - 2024-04-03: Added GCP built-in OIDC provider integration.
 

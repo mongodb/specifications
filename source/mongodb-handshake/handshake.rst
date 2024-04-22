@@ -679,4 +679,4 @@ Changelog
 :2023-04-03: Simplify truncation for metadata
 :2023-05-04: ``AWS_EXECUTION_ENV`` must start with ``"AWS_Lambda_"``
 :2023-08-24: Added container awareness
-:2024-04-19: Clarify that driver should not validate ``saslSupportedMechs`` content.
+:2024-04-22: Clarify that driver should not validate ``saslSupportedMechs`` content.
