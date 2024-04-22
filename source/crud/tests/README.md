@@ -555,3 +555,48 @@ Construct as list of write models (referred to as `models`) with the one `model`
 Call `MongoClient.bulkWrite` with `models` and `BulkWriteOptions.writeConcern` set to an unacknowledged write concern.
 
 Expect a client-side error due the size.
+
+### 11. `MongoClient.bulkWrite` excludes namespaces from other batches
+
+Test that `MongoClient.bulkWrite` only includes the namespaces used for the operations in a single batch.
+
+This test must only be run on 8.0+ servers.
+
+Construct a `MongoClient` (referred to as `client`) with
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value from the
+response.
+
+Create the following write model (referred to as `model`):
+
+```json
+InsertOne {
+  "namespace": "db.coll",
+  "document": { "a": "b" }
+}
+```
+
+Create a list of write models containing `model` repeated `maxWriteBatchSize` times (referred to as `models`).
+
+Append the following write model to `models`:
+
+```json
+InsertOne {
+  "namespace": "db.coll1",
+  "document": { "a": "b" }
+}
+```
+
+Execute `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult`
+(referred to as `result`).
+
+Assert that `result.insertedCount` is equal to `maxWriteBatchSize + 1`.
+
+Assert that two CommandStartedEvents were observed for the `bulkWrite` command (referred to as `firstEvent` and
+`secondEvent`).
+
+Assert that the length of `firstEvent.command.nsInfo` is 1. Assert that the the namespace contained in
+`firstEvent.command.nsInfo` is "db.coll".
+
+Assert that the length of `secondEvent.command.nsInfo` is 1. Assert that the the namespace contained in
+`secondEvent.command.nsInfo` is "db.coll1".

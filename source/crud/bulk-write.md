@@ -594,14 +594,18 @@ limits.
 
 ## Command Batching
 
-Drivers MUST accept an arbitrary number of operations as input to the `MongoClient.bulkWrite` method.
-Because the server imposes restrictions on the size of write operations, this means that a single
-call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the server.
-Drivers MUST split bulk writes into separate commands when the user's list of operations exceeds
-one or more of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize` (for `OP_MSG` payload type
-0), and `maxMessageSizeBytes` (for `OP_MSG` payload type 1). Each of these values can be retrieved
-from the selected server's `hello` command response. Drivers MUST merge results from multiple batches
-into a single `BulkWriteResult` or `BulkWriteException` to return from `MongoClient.bulkWrite`.
+Drivers MUST accept an arbitrary number of operations as input to the `MongoClient.bulkWrite`
+method. Because the server imposes restrictions on the size of write operations, this means that a
+single call to `MongoClient.bulkWrite` may require multiple `bulkWrite` commands to be sent to the
+server. Drivers MUST split bulk writes into separate commands when the user's list of operations
+exceeds one or more of these maximums: `maxWriteBatchSize`, `maxBsonObjectSize` (for `OP_MSG`
+payload type 0), and `maxMessageSizeBytes` (for `OP_MSG` payload type 1). Each of these values can
+be retrieved from the selected server's `hello` command response. Drivers MUST merge results from
+multiple batches into a single `BulkWriteResult` or `BulkWriteException` to return from
+`MongoClient.bulkWrite`.
+
+When constructing the `nsInfo` array for a `bulkWrite` batch, drivers MUST only include the
+namespaces that are referenced in the `ops` array for that batch.
 
 ### Number of Writes
 
@@ -814,6 +818,15 @@ future.
 This allows users to access new error fields that the server may add in the future without needing
 to upgrade their driver version. See [DRIVERS-2385](https://jira.mongodb.org/browse/DRIVERS-2385)
 for more details.
+
+### Why are drivers required to send `nsInfo` as a document sequence?
+
+`nsInfo` could exceed `maxBsonObjectSize` if a user is doing `maxWriteBatchSize` operations, each
+operation is on a unique namespace, and each namespace is near the
+[maximum length](https://www.mongodb.com/docs/manual/reference/limits/#mongodb-limit-Restriction-on-Collection-Names)
+allowed for namespaces given the values for these limits at the time of writing this specification.
+Providing `nsInfo` as a document sequence reduces the likelihood that a driver would need to batch
+split a user's bulk write in this scenario.
 
 ## **Changelog**
 
