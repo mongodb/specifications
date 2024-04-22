@@ -175,7 +175,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 - Create a `MongoClient` whose OIDC callback returns one good token and then bad tokens after the first call.
 - Perform an `insert` operation that succeeds.
-- Set a fail point for `inter` commands of the form:
+- Set a fail point for `insert` commands of the form:
 
 ```javascript
 {
