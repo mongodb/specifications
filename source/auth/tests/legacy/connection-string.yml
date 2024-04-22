@@ -374,7 +374,7 @@ tests:
   uri: mongodb://user:pass@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:test
   valid: false
   credential:
-- description: should throw an exception if username is specified for aws (MONGODB-OIDC)
+- description: should throw an exception if username is specified for test (MONGODB-OIDC)
   uri: mongodb://principalName@localhost/?authMechanism=MONGODB-OIDC&ENVIRONMENT:test
   valid: false
   credential:

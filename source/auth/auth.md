@@ -53,7 +53,7 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 - username (string)
 
   - Applies to all mechanisms.
-  - Optional for MONGODB-X509 and MONGODB-AWS.
+  - Optional for MONGODB-X509, MONGODB-AWS, and MONGODB-OIDC.
 
 - source (string)
 
@@ -1222,8 +1222,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     the same `MongoClient`, the driver MUST raise an error.
 
   - TOKEN_RESOURCE\
-    The URI of the target resource. This property is currently only used and required by the Azure
-    built-in OIDC provider integration. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
+    The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
     `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
     MUST raise an error.
 
@@ -1265,9 +1264,9 @@ purposes, and is not meant to be documented as a user-facing feature.
 
 If enabled, drivers MUST generate a token using a script in the `auth_oidc`
 [folder](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/auth_oidc#readme) in Drivers
-Evergreen Tools. The must then set the `OIDC_TOKEN_FILE` environment variable to the path to that file. At runtime, the
-driver MUST use the `OIDC_TOKEN_FILE` environment variable and read the OIDC access token from that path. The driver
-MUST use the contents of that file as value in the `jwt` field of the `saslStart` payload.
+Evergreen Tools. The driver MUST then set the `OIDC_TOKEN_FILE` environment variable to the path to that file. At
+runtime, the driver MUST use the `OIDC_TOKEN_FILE` environment variable and read the OIDC access token from that path.
+The driver MUST use the contents of that file as value in the `jwt` field of the `saslStart` payload.
 
 Drivers MAY implement the "test" integration so that it conforms to the function signature of the
 [OIDC Callback](#oidc-callback) to prevent having to re-implement the "test" integration logic in the OIDC prose tests.
@@ -1426,10 +1425,10 @@ The driver MUST pass the following information to the callback:
 The callback MUST be able to return the following information:
 
 - `accessToken`: An OIDC access token string. The driver MUST NOT attempt to validate `accessToken` directly.
-- `expiresIn`: An optional expiry duration for the access token. Drivers MUST interpret the value 0 as an infinite
-  duration and error if a negative value is returned. Drivers SHOULD use the most idiomatic type for representing a
-  duration in the driver's language. Note that the access token expiry value is currently not used in
-  [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
+- `expiresIn`: An optional expiry duration for the access token. Drivers with optional parameters MAY interpret a
+  missing value as infinite. Drivers MUST error if a negative value is returned. Drivers SHOULD use the most idiomatic
+  type for representing a duration in the driver's language. Note that the access token expiry value is currently not
+  used in [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
 
 The signature and naming of the callback API is up to the driver's discretion. Drivers MUST ensure that additional
 optional input parameters and return values can be added to the callback signature in the future without breaking
@@ -1483,7 +1482,7 @@ An example human callback API might look like:
 ```typescript
 interface IdpInfo {
   issuer: string;
-  clientId: string;
+  clientId: Optional<string>;
   requestScopes: Optional<Array<string>>;
 }
 
@@ -1544,6 +1543,7 @@ An example OIDC one-step SASL conversation with access token string "abcd1234" l
 {
   saslStart: 1,
   mechanism: "MONGODB-OIDC",
+  db: "$external"
   // payload is a BSON generic binary field containing a JwtStepRequest BSON
   // document: {"jwt": "abcd1234"}
   payload: BinData(0, "FwAAAAJqd3QACQAAAGFiY2QxMjM0AAA=")
@@ -1618,6 +1618,7 @@ An example OIDC two-step SASL conversation with username "myidp" and access toke
 {
   saslStart: 1,
   mechanism: "MONGODB-OIDC",
+  db: "$external",
   // payload is a BSON generic binary field containing a PrincipalStepRequest
   // BSON document: {"n": "myidp"}
   payload: BinData(0, "EgAAAAJuAAYAAABteWlkcAAA")
@@ -1712,9 +1713,10 @@ Use the following algorithm to authenticate a new connection:
 
 - Check if the the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a `One-Step` SASL conversation using the
-    access token in the *Client Cache*. If the server returns an error, invalidate that access token, sleep 100ms then
-    continue.
-- Call the configured built-in provider integration or the OIDC callback to retrieve a new access token.
+    access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access token.
+    Raise any other errors to the user. On success, exit the algorithm.
+- Call the configured built-in provider integration or the OIDC callback to retrieve a new access token. Wait until it
+  has been at least 100ms since the last callback invocation, to avoid overloading the callback.
 - Cache the new access token in the *Client Cache* and *Connection Cache*.
 - Perform a `One-Step` SASL conversation using the new access token. Raise any errors to the user.
 
@@ -1725,18 +1727,19 @@ def auth(connection):
   access_token, is_cache = get_access_token()
 
   # If there is a cached access token, try to authenticate with it. If
-  # authentication fails, it's possible the cached access token is expired. In
-  # that case, invalidate the access token, fetch a new access token, and try
+  # authentication fails with an Authentication error (18), 
+  # invalidate the access token, fetch a new access token, and try
   # to authenticate again.
+  # If the server fails for any other reason, do not clear the cache.
   if is_cache:
     try:
       connection.oidc_cache.access_token = access_token
       sasl_start(connection, payload={"jwt": access_token})
       return
-    except ServerError:
-      invalidate(access_token)
-      sleep(0.1)
-      access_token, _ = get_access_token()
+    except ServerError as e:
+      if e.code == 18:
+        invalidate(access_token)
+        access_token, _ = get_access_token()
 
   connection.oidc_cache.access_token = access_token
   sasl_start(connection, payload={"jwt": access_token})
@@ -1747,14 +1750,15 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
 
 - Check if the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
-    using the access token. If the server returns an error, invalidate the access token token from the *Client Cache*,
-    clear the *Connection Cache*, and continue.
+    using the access token. If the server returns an Authentication error (18), invalidate the access token token from
+    the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. Raise any other errors to the
+    user. On success, exit the algorithm.
 - Check if the *Client Cache* has a refresh token.
   - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
-    [One-Step](#one-step) SASL conversation using the new access token. If the
-    [OIDC Human Callback](#oidc-human-callback) or the server return an error, invalidate the access token from the
-    *Client Cache*, clear the *Connection Cache*, and continue.
+    [One-Step](#one-step) SASL conversation using the new access token. If the the server returns an Authentication
+    error (18), clear the refresh token, invalidate the access token from the *Client Cache*, clear the *Connection
+    Cache*, and restart the authentication flow. Raise any other errors to the user. On success, exit the algorithm.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional
@@ -1776,7 +1780,7 @@ Use the following algorithm to perform speculative authentication:
   - If it does, cache the access token in the *Connection Cache* and send a `JwtStepRequest` with the cached access
     token in the speculative authentication SASL payload. If the response is missing a speculative authentication
     document or the speculative authentication document indicates authentication was not successful, clear the the
-    *Connection Cache* and continue.
+    *Connection Cache* and proceed to the next step.
 - Authenticate with the standard authentication handshake.
 
 Example code for speculative authentication using the `auth` function described above:
@@ -2052,6 +2056,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-04-22: Updated OIDC authentication flow and prose tests.
 
 - 2024-04-22: Clarify that driver should not validate `saslSupportedMechs` content.
 
