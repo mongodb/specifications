@@ -174,6 +174,9 @@ If the handshake response includes a `saslSupportedMechs` field, then drivers MU
 select a default mechanism as described later. If the command succeeds and the response does not include a
 `saslSupportedMechs` field, then drivers MUST use the legacy default mechanism rules for servers older than 4.0.
 
+Drivers MUST NOT validate the contents of the `saslSupportedMechs` attribute of the initial handshake reply. Drivers
+MUST NOT raise an error if the `saslSupportedMechs` attribute of the reply includes an unknown mechanism.
+
 ### Single-credential drivers
 
 When the authentication mechanism is not specified, drivers that allow only a single credential per client MUST perform
@@ -2054,7 +2057,9 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 ## Changelog
 
-- 2024-04-20: Updated OIDC authentication flow and prose tests.
+- 2024-04-22: Updated OIDC authentication flow and prose tests.
+
+- 2024-04-22: Clarify that driver should not validate `saslSupportedMechs` content.
 
 - 2024-04-03: Added GCP built-in OIDC provider integration.
 

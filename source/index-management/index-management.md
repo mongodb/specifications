@@ -664,7 +664,7 @@ interface IndexOptions {
    * @example For an index of name: 1, age: -1, the generated name would be "name_1_age_-1".
    */
   name: String;
-
+  
   /**
    * Optionally tells the index to only reference documents with the specified field in
    * the index.
@@ -903,6 +903,9 @@ interface SearchIndexModel {
 
   // The name for this index, if present.
   name: Optional<string>;
+     
+  // The type for this index, if present. Can be either "search" or "vectorSearch".  
+  type: Optional<string>;
 }
 
 interface SearchIndexOptions {
