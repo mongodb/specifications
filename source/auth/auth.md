@@ -2054,7 +2054,7 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 ## Changelog
 
-- 2024-04-09: Updated OIDC authentication flow and prose tests.
+- 2024-04-20: Updated OIDC authentication flow and prose tests.
 
 - 2024-04-03: Added GCP built-in OIDC provider integration.
 

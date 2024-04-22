@@ -122,6 +122,8 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 ### (4) Reauthentication
 
+\*\*4.1 Reauthentication Succeeds
+
 - Create an OIDC configured client.
 - Set a fail point for `find` commands of the form:
 
@@ -142,6 +144,56 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 - Perform a `find` operation that succeeds.
 - Assert that the callback was called 2 times (once during the connection handshake, and again during reauthentication).
+- Close the client.
+
+\*\*4.2 Read Commands Fail If Reauthentication Fails
+
+- Create a `MongoClient` whose OIDC callback returns one good token and then bad tokens after the first call.
+- Perform a `find` operation that succeeds.
+- Set a fail point for `find` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "find"
+    ],
+    errorCode: 391 // ReauthenticationRequired
+  }
+}
+```
+
+- Perform a `find` operation that fails.
+- Assert that the callback was called 2 times.
+- Close the client.
+
+\*\*4.3 Write Commands Fail If Reauthentication Fails
+
+- Create a `MongoClient` whose OIDC callback returns one good token and then bad tokens after the first call.
+- Perform an `insert` operation that succeeds.
+- Set a fail point for `inter` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "insert"
+    ],
+    errorCode: 391 // ReauthenticationRequired
+  }
+}
+```
+
+- Perform a `find` operation that fails.
+- Assert that the callback was called 2 times.
 - Close the client.
 
 ## (5) Azure Tests
