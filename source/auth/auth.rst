@@ -217,6 +217,11 @@ to select a default mechanism as described later.  If the command succeeds and
 the response does not include a ``saslSupportedMechs`` field, then drivers MUST
 use the legacy default mechanism rules for servers older than 4.0.
 
+Drivers MUST NOT validate the contents of the ``saslSupportedMechs``
+attribute of the initial handshake reply. Drivers MUST NOT raise an error if
+the ``saslSupportedMechs`` attribute of the reply includes an unknown mechanism.
+
+
 Single-credential drivers
 `````````````````````````
 
@@ -1661,6 +1666,7 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Changelog
 =========
 
+:2024-04-22: Clarify that driver should not validate ``saslSupportedMechs`` content.
 :2023-04-28: Added MONGODB-OIDC auth mechanism
 :2022-11-02: Require environment variables to be read dynamically.
 :2022-10-28: Recommend the use of AWS SDKs where available.

@@ -424,6 +424,10 @@ The ``speculativeAuthenticate`` reply has the same fields, except for the ``ok``
 as seen in the conversation sections for MONGODB-X509, SCRAM-SHA-1 and SCRAM-SHA-256
 in the `Driver Authentication spec <../auth/auth.md#supported-authentication-methods>`_.
 
+Drivers MUST NOT validate the contents of the ``saslSupportedMechs`` attribute
+of the initial handshake reply. Drivers MUST NOT raise an error if the
+``saslSupportedMechs`` attribute of the reply includes an unknown mechanism.
+
 If an authentication mechanism is not provided either via connection string or code, but
 a credential is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
 authentication and drivers MUST send ``saslSupportedMechs``.
@@ -675,3 +679,4 @@ Changelog
 :2023-04-03: Simplify truncation for metadata
 :2023-05-04: ``AWS_EXECUTION_ENV`` must start with ``"AWS_Lambda_"``
 :2023-08-24: Added container awareness
+:2024-04-22: Clarify that driver should not validate ``saslSupportedMechs`` content.
