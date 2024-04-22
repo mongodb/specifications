@@ -294,7 +294,7 @@ this case, `MONGODB_URI_SINGLE` will be configured with a human user `test_user1
 This test uses the machine user with a human callback, ensuring that the missing `clientId` in the
 `PrincipalStepRequest` response is handled by the driver.
 
-- Create an OIDC configured client with `MONGODB_URI_SINGLE` and a username of `test_machine`.
+- Create an OIDC configured client with `MONGODB_URI_SINGLE` and a username of `test_machine` that uses the `test_machine` token.
 - Perform a find operation that succeeds.
 - Close the client.
 
