@@ -541,6 +541,60 @@ and sharded clusters.
 
    7. Disable the fail point on ``s0``.
 
+#. Test that a failed ``getMore`` causes a retry of the ``bulkWrite`` command.
+
+  This test must only be run against replica sets and sharded clusters on server versions 8.0+.
+
+  1. Create a client (referred to as ``client``) with command monitoring enabled. If testing
+     against a sharded deployment, be sure to connect to only a single mongos.
+
+  2. Perform a ``hello`` on ``client`` and record the ``maxBsonObjectSize`` value in the response.
+
+  3. Create a collection (referred to as ``collection``) with the namespace "db.coll". Drop
+     ``collection``.
+
+  4. Enable the following failpoint::
+
+     {
+         configureFailPoint: "failCommand",
+         mode: { times: 1 },
+         data: {
+             failCommands: ["getMore"],
+             errorCode: 6
+         }
+     }
+
+  5. Create the following list of write models (referred to as ``models``)::
+
+     [
+        ReplaceOneModel {
+          namespace: namespace,
+          filter: { _id: "a".repeat(maxBsonObjectSize / 2) }
+          replacement: { x: 1 },
+          upsert: true
+        },
+        ReplaceOneModel {
+          namespace: namespace,
+          filter: { _id: "b".repeat(maxBsonObjectSize / 2) }
+          replacement: { x: 1 },
+          upsert: true
+        }
+     ]
+
+  6. Execute ``bulkWrite()`` on ``client`` with ``models`` and ``verboseResults`` set to true.
+     Assert that the bulk write succeeds.
+
+  7. Assert that the following sequence of command events occurred:
+
+     - CommandStartedEvent for ``bulkWrite``
+     - CommandSucceededEvent for ``bulkWrite``
+     - CommandStartedEvent for ``getMore``
+     - CommandFailedEvent for ``getMore``
+     - CommandStartedEvent for ``bulkWrite``
+     - CommandSucceededEvent for ``bulkWrite``
+     - CommandStartedEvent for ``getMore``
+     - CommandSucceededEvent for ``getMore``
+
 Changelog
 =========
 

@@ -246,15 +246,44 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   returning them to the driver. As new server versions are released, the errors
   that are labeled with the RetryableWriteError label may change. Drivers MUST
   NOT add a RetryableWriteError label to any error derived from a 4.4+ server
-  response (i.e. any error that is not a network error).
+  response to a write command (i.e. any error that is not a network error).
 
-- When receiving a command result with an error from a pre-4.4 server that
-  supports retryable writes, the driver MUST add a RetryableWriteError label to
-  errors that meet the following criteria if the retryWrites option is set to
-  true on the client performing the relevant operation:
+- When receiving a command result with an error from a pre-4.4 server that supports retryable
+  writes, the driver MUST add a RetryableWriteError label to errors that meet the
+  `Error Code Criteria`_ if the retryWrites option is set to true on the client performing the
+  relevant operation.
 
-  - a mongod or mongos response with any the following error codes in the
-    top-level ``code`` field:
+- When the driver receives an error response to the ``getMore`` command while attempting to iterate
+  the results cursor returned from the ``bulkWrite`` command, it MUST add a RetryableWriteError
+  label to the overall error for the bulk write if the error meets the `Error Code Criteria`_,
+  the retryWrites option is set to true on the client performing the operation, and the
+  ``bulkWrite`` is retryable (i.e. it does not contain multi:true operations). If a
+  RetryableWriteError label is attached, drivers MUST attempt to retry the entire ``bulkWrite``
+  command and MUST NOT attempt to retry the ``getMore`` that failed.
+
+To understand why the driver should only add the RetryableWriteError label to an
+error when the retryWrites option is true on the MongoClient performing the
+operation, see `Why does the driver only add the RetryableWriteError label to
+errors that occur on a MongoClient with retryWrites set to true?`_
+
+Note: During a retryable write operation on a sharded cluster, mongos may retry
+the operation internally, in which case it will not add a RetryableWriteError
+label to any error that occurs after those internal retries to prevent excessive
+retrying.
+
+For more information about error labels, see the `Transactions specification`_.
+
+.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+.. _Transactions specification: ../transactions/transactions.md#error-labels
+
+Error Code Criteria
+"""""""""""""""""""
+
+The following errors are eligible for attaching a RetryableWriteError label when evaluating based
+on error code:
+
+  - a mongod or mongos response with any of the following error codes in the top-level ``code``
+    field:
 
     .. list-table::
       :header-rows: 1
@@ -289,31 +318,16 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   - a mongod response with any of the previously listed codes in the
     ``writeConcernError.code`` field.
 
-  Drivers MUST NOT add a RetryableWriteError label based on the following:
+Drivers MUST NOT add a RetryableWriteError label based on the following:
 
   - any ``writeErrors[].code`` fields in a mongod or mongos response
 
   - the ``writeConcernError.code`` field in a mongos response
 
-  The criteria for retryable errors is similar to the discussion in the SDAM
-  spec's section on `Error Handling`_, but includes additional error codes. See
-  `What do the additional error codes mean?`_ for the reasoning behind these
-  additional errors.
-
-To understand why the driver should only add the RetryableWriteError label to an
-error when the retryWrites option is true on the MongoClient performing the
-operation, see `Why does the driver only add the RetryableWriteError label to
-errors that occur on a MongoClient with retryWrites set to true?`_
-
-Note: During a retryable write operation on a sharded cluster, mongos may retry
-the operation internally, in which case it will not add a RetryableWriteError
-label to any error that occurs after those internal retries to prevent excessive
-retrying.
-
-For more information about error labels, see the `Transactions specification`_.
-
-.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-.. _Transactions specification: ../transactions/transactions.md#error-labels
+The criteria for retryable errors is similar to the discussion in the SDAM
+spec's section on `Error Handling`_, but includes additional error codes. See
+`What do the additional error codes mean?`_ for the reasoning behind these
+additional errors.
 
 Generating Transaction IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
