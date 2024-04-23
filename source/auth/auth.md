@@ -1349,7 +1349,6 @@ http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?au
 with headers
 
 ```
-Accept: application/json
 Metadata-Flavor: Google
 ```
 
@@ -1360,27 +1359,15 @@ Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of t
 
 ```bash
 curl -X GET \
-  -H "Accept: application/json" \
   -H "Metadata-Flavor: Google" \
   --max-time $CALLBACK_TIMEOUT_MS \
   "http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=$TOKEN_RESOURCE"
 ```
 
-The JSON response will be in this format:
+The response body will be the access token itself.
 
-```json
-{
-  "aud": "https://example.com",
-  "azp": "118153013249117554930",
-  "exp": 1707488566,
-  "iat": 1707484966,
-  "iss": "https://accounts.google.com",
-  "sub": "118153013249117554930"
-}
-```
-
-The driver MUST use the returned `"access_token"` value as the access token in a `JwtStepRequest`. If the response does
-not return a status code of 200, the driver MUST raise an error including the HTTP response body.
+The driver MUST use the returned value as the access token in a `JwtStepRequest`. If the response does not return a
+status code of 200, the driver MUST raise an error including the HTTP response body.
 
 For more details, see [View and query VM metadata](https://cloud.google.com/compute/docs/metadata/querying-metadata).
 
@@ -2056,6 +2043,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-04-22: Fix API description for GCP built-in OIDC provider.
 
 - 2024-04-22: Updated OIDC authentication flow and prose tests.
 
