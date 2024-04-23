@@ -208,7 +208,7 @@ for test setup.
 - Perform a `find` operation that succeeds.
 - Close the client.
 
-# 5.2 Azure with Bad Usernam
+# 5.2 Azure with Bad Username
 
 - Create an OIDC configured client with `ENVIRONMENT:azure` and a valid `TOKEN_RESOURCE` and a username of `"bad"`.
 - Perform a `find` operation that fails.
