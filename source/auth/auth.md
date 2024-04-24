@@ -1224,8 +1224,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
   - TOKEN_RESOURCE\
     The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
     `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
-    MUST raise an error. Drivers MUST ensure that `TOKEN_RESOURCE` is url-encoded, while ensuring that it is not
-    double-encoded.
+    MUST raise an error.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
@@ -1295,7 +1294,8 @@ Metadata: true
 
 where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property and `<client_id>` is the `username` from the
 connection string. If a `username` is not provided, the `client_id` query parameter should be omitted. The timeout
-should equal the `callbackTimeoutMS` parameter given to the callback.
+should equal the `callbackTimeoutMS` parameter given to the callback. Drivers MUST ensure that `TOKEN_RESOURCE` is
+url-encoded, while ensuring that it is not double-encoded.
 
 Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
 
@@ -1354,7 +1354,8 @@ Metadata-Flavor: Google
 ```
 
 where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property. The timeout should equal the
-`callbackTimeoutMS` parameter given to the callback.
+`callbackTimeoutMS` parameter given to the callback. Drivers MUST ensure that `TOKEN_RESOURCE` is url-encoded, while
+ensuring that it is not double-encoded.
 
 Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
 
