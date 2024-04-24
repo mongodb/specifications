@@ -371,7 +371,7 @@ Assert that `orderedError.writeErrors` has a length of 1.
 
 Assert that one CommandStartedEvent was observed for the `bulkWrite` command.
 
-### 7. `MongoClient.bulkWrite` handles a results cursor requiring a `getMore`
+### 7. `MongoClient.bulkWrite` handles a cursor requiring a `getMore`
 
 Test that `MongoClient.bulkWrite` properly iterates the results cursor when `getMore` is required.
 
