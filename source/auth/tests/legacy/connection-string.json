@@ -571,7 +571,7 @@
     },
     {
       "description": "should accept a url-encoded TOKEN_RESOURCE (MONGODB-OIDC)",
-      "uri": "mongodb://user@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:azure,TOKEN_RESOURCE:mongodb%253A//test-cluster",
+      "uri": "mongodb://user@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:azure,TOKEN_RESOURCE:mongodb%3A//test-cluster",
       "valid": true,
       "credential": {
         "username": "user",

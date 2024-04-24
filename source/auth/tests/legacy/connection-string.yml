@@ -413,7 +413,7 @@ tests:
       ENVIRONMENT: azure
       TOKEN_RESOURCE: foo
 - description: should accept a url-encoded TOKEN_RESOURCE (MONGODB-OIDC)
-  uri: mongodb://user@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:azure,TOKEN_RESOURCE:mongodb%253A//test-cluster
+  uri: mongodb://user@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:azure,TOKEN_RESOURCE:mongodb%3A//test-cluster
   valid: true
   credential:
     username: user
@@ -422,7 +422,7 @@ tests:
     mechanism: MONGODB-OIDC
     mechanism_properties:
       ENVIRONMENT: azure
-      TOKEN_RESOURCE: mongodb%253A//test-cluster
+      TOKEN_RESOURCE: mongodb%3A//test-cluster
 - description: should url-encode a TOKEN_RESOURCE (MONGODB-OIDC)
   uri: mongodb://user@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:azure,TOKEN_RESOURCE:a$b
   valid: true
