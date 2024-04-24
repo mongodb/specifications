@@ -580,7 +580,7 @@
         "mechanism": "MONGODB-OIDC",
         "mechanism_properties": {
           "ENVIRONMENT": "azure",
-          "TOKEN_RESOURCE": "mongodb%253A//test-cluster"
+          "TOKEN_RESOURCE": "mongodb%3A//test-cluster"
         }
       }
     },
