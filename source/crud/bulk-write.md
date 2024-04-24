@@ -625,11 +625,57 @@ limits defined in the
 #### Unencrypted bulk writes
 
 When `ops` and `nsInfo` are provided as document sequences, drivers MUST ensure that the total size
-of the `OP_MSG` built for each `bulkWrite` command does not exceed `maxMessageSizeBytes`. Some
-drivers may perform batch-splitting prior to constructing the full `OP_MSG` to be sent to the
-server. In this case, drivers MAY use `maxMessageSizeBytes - 16,384` as the upper bound for the
-combined number of bytes in `ops` and `nsInfo`. 16KiB is subtracted as an approximate overhead
-allowance to accommodate for the bytes in the rest of the message.
+of the `OP_MSG` built for each `bulkWrite` command does not exceed `maxMessageSizeBytes`.
+
+The upper bound for the size of an `OP_MSG` includes opcode-related bytes (e.g. the `OP_MSG`
+header) and operation-agnostic command field bytes (e.g. `txnNumber`, `lsid`). Drivers MUST limit
+the combined size of the `bulkWrite`-specific command fields, `ops` document sequence, and `nsInfo`
+document sequence to `maxMessageSizeBytes - 1000` to account for this overhead. The following
+pseudocode demonstrates how to apply this limit in batch-splitting logic:
+
+```
+MESSAGE_OVERHEAD_BYTES = 1000
+
+bulkWriteCommand = Document { "bulkWrite": 1 }
+bulkWriteCommand.appendOptions(bulkWriteOptions)
+
+maxOpsNsInfoBytes = MESSAGE_OVERHEAD_BYTES - bulkWriteCommand.numBytes()
+
+while writeModels.hasNext() {
+    ops = DocumentSequence {}
+    nsInfo = DocumentSequence {}
+    loop {
+        if !writeModels.hasNext() {
+            break
+        }
+        model = writeModels.next()
+
+        modelDoc = writeModel.toOpsDoc()
+        bytesAdded = modelDoc.numBytes()
+
+        nsInfoDoc = null
+        if !nsInfo.contains(model.namespace) {
+            nsInfoDoc = model.namespace.toNsInfoDoc()
+            bytesAdded += nsInfoDoc.numBytes()
+        }
+
+        newSize = ops.numBytes() + nsInfo.numBytes() + bytesAdded
+        if newSize > maxOpsNsInfoBytes {
+            break
+        } else {
+            ops.push(modelDoc)
+            if nsInfoDoc != null {
+                nsInfo.push(nsInfoDoc)
+            }
+        }
+    }
+
+    // construct and send OP_MSG
+}
+```
+
+See [this Q&A entry](#how-was-the-op_msg-overhead-allowance-determined) for more details on how the
+overhead allowance was determined.
 
 ## Handling the `bulkWrite` Server Response
 
@@ -764,6 +810,13 @@ messages. This means that all command fields must be embedded within the command
 specify `ops` and `nsInfo` as document sequences (`OP_MSG` payload type 1) for encrypted bulk
 writes.
 
+### Retry `bulkWrite` when `getMore` fails with a retryable error
+
+When a `getMore` fails with a retryable error when attempting to iterate the results cursor,
+drivers could retry the entire `bulkWrite` command to receive a fresh cursor and retry iteration.
+This work was omitted to minimize the scope of the initial implementation and testing of the new
+bulk write API, but may be revisited in the future.
+
 ## Q&A
 
 ### Why are we adding a new bulk write API rather than updating the `MongoCollection.bulkWrite` implementation?
@@ -827,6 +880,19 @@ operation is on a unique namespace, and each namespace is near the
 allowed for namespaces given the values for these limits at the time of writing this specification.
 Providing `nsInfo` as a document sequence reduces the likelihood that a driver would need to batch
 split a user's bulk write in this scenario.
+
+### How was the `OP_MSG` overhead allowance determined?
+
+The Command Batching [Total Message Size](#total-message-size) section uses a 1000 byte overhead
+allowance to approximate the number of non-`bulkWrite`-specific bytes contained in an `OP_MSG` sent
+for a `bulkWrite` batch. This number was determined by constructing `OP_MSG`s with various fields
+attached to the command, including `startTransaction`, `autocommit`, and `apiVersion`. Additional
+room was allocated to allow for future additions to the `OP_MSG` structure or the introduction of
+new command-agnostic fields.
+
+Drivers are required to use this value even if they are capable of determining the exact size of
+the message prior to batch-splitting to standardize implementations across drivers and simplify
+batch-splitting testing.
 
 ## **Changelog**
 
