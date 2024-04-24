@@ -1224,8 +1224,8 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
   - TOKEN_RESOURCE\
     The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
     `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
-    MUST raise an error. Drivers MUST ensure that `TOKEN_RESOURCE` is url-encoded, such as by using a regex for special
-    characters or by checking if unencoding the value changes it, and then encoding if necessary.
+    MUST raise an error. Drivers MUST ensure that `TOKEN_RESOURCE` is url-encoded, while ensuring that it is not
+    double-encoded.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
