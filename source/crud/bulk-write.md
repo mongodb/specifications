@@ -677,6 +677,8 @@ while writeModels.hasNext() {
 See [this Q&A entry](#how-was-the-op_msg-overhead-allowance-determined) for more details on how the
 overhead allowance was determined.
 
+Drivers MUST return an error if there is not room to add at least one operation to `ops`.
+
 ## Handling the `bulkWrite` Server Response
 
 The server's response to `bulkWrite` has the following format:

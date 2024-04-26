@@ -566,8 +566,8 @@ This test must only be run on 8.0+ servers.
 
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxMessageSizeBytes` value contained
-in the response.
+CommandStartedEvents. Perform a `hello` command using `client` and record the following values from the response:
+`maxBsonObjectSize` and `maxMessageSizeBytes`.
 
 Calculate the following values:
 
@@ -702,3 +702,25 @@ remainingMessageSize = maxTotalMessageSize - existingMessageBytes - secondModelB
 # With the actual numbers plugged in
 remainingMessageSize = maxMessageSizeBytes - 1122
 ```
+
+### 12. `MongoClient.bulkWrite` returns an error if no operations can be added to `ops`
+
+Test that `MongoClient.bulkWrite` returns an error if an operation provided exceeds `maxMessageSizeBytes`.
+
+This test must only be run on 8.0+ servers. This test may be skipped by drivers that are not able to construct
+arbitrarily large documents.
+
+Construct a `MongoClient` (referred to as `client`). Perform a `hello` command using `client` and record the
+`maxMessageSizeBytes` value contained in the response.
+
+Construct the following write model (referred to as `model`):
+
+```json
+InsertOne {
+  "namespace": "db.coll",
+  "document": { "a": "b".repeat(maxMessageSizeBytes) }
+}
+```
+
+Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned.
+Assert that `error` is a client error.
