@@ -555,48 +555,150 @@ Construct as list of write models (referred to as `models`) with the one `model`
 Call `MongoClient.bulkWrite` with `models` and `BulkWriteOptions.writeConcern` set to an unacknowledged write concern.
 
 Expect a client-side error due the size.
+`secondEvent.command.nsInfo` is "db.coll1".
 
-### 11. `MongoClient.bulkWrite` excludes namespaces from other batches
+### 11. `MongoClient.bulkWrite` batch splits when the addition of a new namespace exceeds the maximum message size
 
-Test that `MongoClient.bulkWrite` only includes the namespaces used for the operations in a single batch.
+Test that `MongoClient.bulkWrite` batch splits a bulk write when the addition of a new namespace to `nsInfo`
+causes the size of the message to exceed `maxMessageSizeBytes - 1000`.
 
 This test must only be run on 8.0+ servers.
 
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value from the
-response.
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxMessageSizeBytes` value contained
+in the response.
 
-Create the following write model (referred to as `model`):
+Calculate the following values:
+
+```
+opsBytes = maxMessageSizeBytes - 1122
+numModels = opsBytes / maxBsonObjectSize
+remainderBytes = opsBytes % maxBsonObjectSize
+```
+
+Construct the following write model (referred to as `firstModel`):
 
 ```json
 InsertOne {
   "namespace": "db.coll",
-  "document": { "a": "b" }
+  "document": { "a": "b".repeat(maxBsonObjectSize - 57) }
 }
 ```
 
-Create a list of write models containing `model` repeated `maxWriteBatchSize` times (referred to as `models`).
+Create a list of write models (referred to as `models`) with `firstModel` repeated `numModels` times.
 
-Append the following write model to `models`:
+If `remainderBytes` is greater than or equal to 217, add 1 to `numModels` and append the following write model
+to `models`:
 
 ```json
 InsertOne {
-  "namespace": "db.coll1",
-  "document": { "a": "b" }
+  "namespace": "db.coll",
+  "document": { "a": "b".repeat(remainderBytes - 57) }
 }
 ```
+
+Construct the following namespace (referred to as `namespace`):
+
+```
+"db." + "c".repeat(200)
+```
+
+Create the following write model (referred to as `secondModel`):
+
+```json
+InsertOne {
+  namespace: namespace,
+  document: { "a": "b" }
+}
+```
+
+Append `secondModel` to `models`.
 
 Execute `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult`
 (referred to as `result`).
 
-Assert that `result.insertedCount` is equal to `maxWriteBatchSize + 1`.
+Assert that `result.insertedCount` is equal to `numModels + 1`.
 
 Assert that two CommandStartedEvents were observed for the `bulkWrite` command (referred to as `firstEvent` and
 `secondEvent`).
 
-Assert that the length of `firstEvent.command.nsInfo` is 1. Assert that the the namespace contained in
-`firstEvent.command.nsInfo` is "db.coll".
+Assert that the length of `firstEvent.command.ops` is equal to `numModels`. Assert that the length of
+`firstEvent.command.nsInfo` is equal to 1. Assert that the namespace contained in `firstEvent.command.nsInfo` is
+"db.coll".
 
-Assert that the length of `secondEvent.command.nsInfo` is 1. Assert that the the namespace contained in
-`secondEvent.command.nsInfo` is "db.coll1".
+Assert that the length of `secondEvent.command.ops` is equal to 1. Assert that the length of
+`secondEvent.command.nsInfo` is equal to 1. Assert that the namespace contained in `secondEvent.command.nsInfo` is
+`namespace`.
+
+#### Details on size calculations
+
+This information is not needed to implement this prose test, but is documented for future reference. This test is
+designed to work if `maxBsonObjectSize` or `maxMessageSizeBytes` changes, but will need to be updated if a required
+field is added to the `bulkWrite` command or the `insert` operation document, or if the overhead `OP_MSG` allowance
+is changed in the bulk write specification.
+
+The command document for the `bulkWrite` has the following structure and size:
+
+```json
+{
+  "bulkWrite": 1,
+  "errorsOnly": true,
+  "ordered": true
+}
+
+Size: 43 bytes
+```
+
+All of the write models will create an `ops` document with the following structure and size:
+
+```json
+{
+  "insert": <0 | 1>,
+  "document": { "a": <string> }
+}
+
+Size: 57 bytes + <number of characters in string>
+```
+
+The `ops` document for `secondModel` has a string with one character, so it is a total of 58 bytes.
+
+`secondModel` will create an `nsInfo` document with the following structure and size:
+
+```json
+{
+  "ns": "db.<c repeated 200 times>"
+}
+
+Size: 217 bytes
+```
+
+`firstModel` (and the remainder model, if added) will create an `nsInfo` document with the following structure
+and size:
+
+```json
+{
+  "ns": "db.coll"
+}
+
+Size: 21 bytes
+```
+
+We need to fill up the rest of the message with bytes such that `secondModels`'s `ops` document will fit,
+but its `nsInfo` entry won't. The following calculations are used:
+
+```
+# 1000 is the OP_MSG overhead required in the spec
+maxTotalMessageSize = maxMessageSizeBytes - 1000
+
+# bulkWrite command + first namespace entry
+existingMessageBytes = 43 + 21
+
+# Space to fit the second model's ops entry but not its nsInfo entry
+secondModelBytes = 58
+
+remainingMessageSize = maxTotalMessageSize - existingMessageBytes - secondModelBytes
+
+# With the actual numbers plugged in
+remainingMessageSize = maxMessageSizeBytes - 1122
+```

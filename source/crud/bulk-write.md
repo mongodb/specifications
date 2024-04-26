@@ -629,9 +629,9 @@ of the `OP_MSG` built for each `bulkWrite` command does not exceed `maxMessageSi
 
 The upper bound for the size of an `OP_MSG` includes opcode-related bytes (e.g. the `OP_MSG`
 header) and operation-agnostic command field bytes (e.g. `txnNumber`, `lsid`). Drivers MUST limit
-the combined size of the `bulkWrite`-specific command fields, `ops` document sequence, and `nsInfo`
-document sequence to `maxMessageSizeBytes - 1000` to account for this overhead. The following
-pseudocode demonstrates how to apply this limit in batch-splitting logic:
+the combined size of the `bulkWrite` command document (excluding command-agnostic fields), `ops`
+document sequence, and `nsInfo` document sequence to `maxMessageSizeBytes - 1000` to account for this
+overhead. The following pseudocode demonstrates how to apply this limit in batch-splitting logic:
 
 ```
 MESSAGE_OVERHEAD_BYTES = 1000
@@ -639,7 +639,7 @@ MESSAGE_OVERHEAD_BYTES = 1000
 bulkWriteCommand = Document { "bulkWrite": 1 }
 bulkWriteCommand.appendOptions(bulkWriteOptions)
 
-maxOpsNsInfoBytes = MESSAGE_OVERHEAD_BYTES - bulkWriteCommand.numBytes()
+maxOpsNsInfoBytes = maxMessageSizeBytes - (MESSAGE_OVERHEAD_BYTES + bulkWriteCommand.numBytes())
 
 while writeModels.hasNext() {
     ops = DocumentSequence {}
