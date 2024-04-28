@@ -49,7 +49,7 @@ Transaction ID
    component is a monotonically increasing (per server session), positive 64-bit
    integer.
 
-   .. _Driver Session: ../sessions/driver-sessions.rst
+.. _Driver Session: ../sessions/driver-sessions.rst
 
 ClientSession
    Driver object representing a client session, which is defined in the
