@@ -328,9 +328,7 @@ The structure of this object is as follows:
   matching a "sharded" topology, test runners MUST accept any type of sharded cluster (i.e. "sharded" implies
   "sharded-replicaset", but not vice versa).
 
-  The "sharded-replicaset" topology type is deprecated. MongoDB 3.6+ requires that all shard servers be replica sets
-  (see:
-  [release notes](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-sharded-cluster/#shard-replica-sets)).
+  The "sharded-replicaset" topology type is deprecated. MongoDB 3.6+ requires that all shard servers be replica sets.
   Therefore, tests SHOULD use "sharded" instead of "sharded-replicaset" when targeting 3.6+ server versions in order to
   avoid unnecessary overhead.
 
@@ -3330,8 +3328,7 @@ Each shard in the cluster is represented by a document in this collection. If th
 the `host` field will contain a single host. If the shard is backed by a replica set, the `host` field contain the name
 of the replica followed by a forward slash and a comma-delimited list of hosts.
 
-Note: MongoDB 3.6+ requires that all shard servers be replica sets (see:
-[release notes](https://www.mongodb.com/docs/manual/release-notes/3.6-upgrade-sharded-cluster/#shard-replica-sets)).
+Note: MongoDB 3.6+ requires that all shard servers be replica sets.
 
 ## Design Rationale
 

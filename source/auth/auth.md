@@ -1201,6 +1201,15 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 #### [MongoCredential](#mongocredential) Properties
 
+> [!NOTE]
+> Drivers MUST NOT url-decode the entire `authMechanismProperties` given in an connection string when the
+> `authMechanism` is `MONGODB-OIDC`. This is because the `TOKEN_RESOURCE` itself will typically be a URL and may contain
+> a `,` character. The values of the individual `authMechanismProperties` MUST still be url-decoded when given as part
+> of the connection string, and MUST NOT be url-decoded when not given as part of the connection string, such as through
+> a `MongoClient` or `Credential` property. Drivers MUST parse the `TOKEN_RESOURCE` by splitting only on the first `:`
+> character. Drivers MUST document that users must url-encode `TOKEN_RESOURCE` when it is provided in the connection
+> string and it contains and of the special characters in \[`,`, `+`, `&`, `%`\].
+
 - username\
   MAY be specified. Its meaning varies depending on the OIDC provider integration used.
 
@@ -1292,18 +1301,16 @@ Accept: application/json
 Metadata: true
 ```
 
-where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property and `<client_id>` is the `username` from the
-connection string. If a `username` is not provided, the `client_id` query parameter should be omitted. The timeout
-should equal the `callbackTimeoutMS` parameter given to the callback.
-
-Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
+where `<resource>` is the url-encoded value of the `TOKEN_RESOURCE` mechanism property and `<client_id>` is the
+`username` from the connection string. If a `username` is not provided, the `client_id` query parameter should be
+omitted. The timeout should equal the `callbackTimeoutMS` parameter given to the callback.
 
 ```bash
 curl -X GET \
   -H "Accept: application/json" \
   -H "Metadata: true" \
   --max-time $CALLBACK_TIMEOUT_MS \
-  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$TOKEN_RESOURCE"
+  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$ENCODED_TOKEN_RESOURCE"
 ```
 
 The JSON response will be in this format:
@@ -1352,16 +1359,14 @@ with headers
 Metadata-Flavor: Google
 ```
 
-where `<resource>` is the value of the `TOKEN_RESOURCE` mechanism property. The timeout should equal the
+where `<resource>` is the url-encoded value of the `TOKEN_RESOURCE` mechanism property. The timeout should equal the
 `callbackTimeoutMS` parameter given to the callback.
-
-Example code for the above using curl, where `$TOKEN_RESOURCE` is the value of the `TOKEN_RESOURCE` mechanism property.
 
 ```bash
 curl -X GET \
   -H "Metadata-Flavor: Google" \
   --max-time $CALLBACK_TIMEOUT_MS \
-  "http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=$TOKEN_RESOURCE"
+  "http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=$ENCODED_TOKEN_RESOURCE"
 ```
 
 The response body will be the access token itself.
@@ -2043,6 +2048,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-04-24: Clarify that TOKEN_RESOURCE for MONGODB-OIDC must be url-encoded.
 
 - 2024-04-22: Fix API description for GCP built-in OIDC provider.
 
