@@ -1208,7 +1208,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 > of the connection string, and MUST NOT be url-decoded when not given as part of the connection string, such as through
 > a `MongoClient` or `Credential` property. Drivers MUST parse the `TOKEN_RESOURCE` by splitting only on the first `:`
 > character. Drivers MUST document that users must url-encode `TOKEN_RESOURCE` when it is provided in the connection
-> string and it contains and of the special characters in \[`,`, `+`, `&`\].
+> string and it contains and of the special characters in \[`,`, `+`, `&`, `%`\].
 
 - username\
   MAY be specified. Its meaning varies depending on the OIDC provider integration used.
