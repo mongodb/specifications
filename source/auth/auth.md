@@ -1202,7 +1202,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 #### [MongoCredential](#mongocredential) Properties
 
 > [!NOTE]
-> Drivers MUST not url-decode the entire `authMechanismProperties` given in an connection string when the
+> Drivers MUST NOT url-decode the entire `authMechanismProperties` given in an connection string when the
 > `authMechanism` is `MONGODB-OIDC`. This is because the `TOKEN_RESOURCE` itself will typically be a URL containing a
 > `:` character. The values of the individual `authMechanismProperties` MUST still be url-decoded when given as part of
 > the connection string, and MUST NOT be url-decoded when given as part of a `MongoClient` property.
