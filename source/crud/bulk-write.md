@@ -560,9 +560,9 @@ should contain only errors and omit individual results. If false, both individua
 successful operations and errors will be returned. This field is optional and defaults to false on
 the server.
 
-`errorsOnly` corresponds to the `verboseResults` option defined on `BulkWriteOptions`. If the user
-specified a value for `verboseResults`, drivers MUST define `errorsOnly` as the opposite of
-`verboseResults`. If the user did not specify a value for `verboseResults`, drivers MUST define
+`errorsOnly` corresponds inversely to the `verboseResults` option defined on `BulkWriteOptions`. If
+the user specified a value for `verboseResults`, drivers MUST define `errorsOnly` as the opposite
+of `verboseResults`. If the user did not specify a value for `verboseResults`, drivers MUST define
 `errorsOnly` as `true`.
 
 ### `ordered`
@@ -641,11 +641,11 @@ bulkWriteCommand.appendOptions(bulkWriteOptions)
 
 maxOpsNsInfoBytes = maxMessageSizeBytes - (MESSAGE_OVERHEAD_BYTES + bulkWriteCommand.numBytes())
 
-while writeModels.hasNext() {
+while (writeModels.hasNext()) {
     ops = DocumentSequence {}
     nsInfo = DocumentSequence {}
-    loop {
-        if !writeModels.hasNext() {
+    while (true) {
+        if (!writeModels.hasNext()) {
             break
         }
         model = writeModels.next()
@@ -654,17 +654,17 @@ while writeModels.hasNext() {
         bytesAdded = modelDoc.numBytes()
 
         nsInfoDoc = null
-        if !nsInfo.contains(model.namespace) {
+        if (!nsInfo.contains(model.namespace)) {
             nsInfoDoc = model.namespace.toNsInfoDoc()
             bytesAdded += nsInfoDoc.numBytes()
         }
 
         newSize = ops.numBytes() + nsInfo.numBytes() + bytesAdded
-        if newSize > maxOpsNsInfoBytes {
+        if (newSize > maxOpsNsInfoBytes) {
             break
         } else {
             ops.push(modelDoc)
-            if nsInfoDoc != null {
+            if (nsInfoDoc != null) {
                 nsInfo.push(nsInfoDoc)
             }
         }
@@ -709,7 +709,7 @@ user or embedded in a `BulkWriteException`. Drivers MUST NOT populate the `parti
 Drivers MUST attempt to consume the contents of the cursor returned in the server's `bulkWrite`
 response before returning to the user. This is required regardless of whether the user requested
 verbose or summary results, as the results cursor always contains any write errors that occurred.
-If the cursor contains a nonzero cursor ID, drivers MUST perform `getMore`s until the cursor has
+If the cursor contains a nonzero cursor ID, drivers MUST perform `getMore` until the cursor has
 been exhausted. Drivers MUST use the same session used for the `bulkWrite` command for each
 `getMore` call. When connected to a load balancer, drivers MUST use the connection used for the
 `bulkWrite` command to create the cursor to ensure the same server is targeted.
@@ -749,7 +749,7 @@ be recorded based on the value of `idx`.
 
 Unlike the other result types, `InsertOneResult` contains an `insertedId` field that is generated
 driver-side, either by recording the `_id` field present in the user's insert document or creating
-and adding one. Drivers MUST only record these `insertedId`s in a `BulkWriteResult` when a
+and adding one. Drivers MUST only record these `insertedId` values in a `BulkWriteResult` when a
 successful response for the insert operation (i.e. `{ "ok": 1, "n": 1 }`) is received in the
 results cursor. This ensures that drivers only report an `insertedId` when it is confirmed that the
 insert succeeded.
@@ -887,10 +887,10 @@ split a user's bulk write in this scenario.
 
 The Command Batching [Total Message Size](#total-message-size) section uses a 1000 byte overhead
 allowance to approximate the number of non-`bulkWrite`-specific bytes contained in an `OP_MSG` sent
-for a `bulkWrite` batch. This number was determined by constructing `OP_MSG`s with various fields
-attached to the command, including `startTransaction`, `autocommit`, and `apiVersion`. Additional
-room was allocated to allow for future additions to the `OP_MSG` structure or the introduction of
-new command-agnostic fields.
+for a `bulkWrite` batch. This number was determined by constructing `OP_MSG` messages with various
+fields attached to the command, including `startTransaction`, `autocommit`, and `apiVersion`.
+Additional room was allocated to allow for future additions to the `OP_MSG` structure or the
+introduction of new command-agnostic fields.
 
 Drivers are required to use this value even if they are capable of determining the exact size of
 the message prior to batch-splitting to standardize implementations across drivers and simplify
