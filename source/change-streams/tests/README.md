@@ -176,7 +176,7 @@ and sharded clusters unless otherwise specified:
 04. `ChangeStream` will not attempt to resume on any error encountered while executing an `aggregate` command. Note that
     retryable reads may retry `aggregate` commands. Drivers should be careful to distinguish retries from resume
     attempts. Alternatively, drivers may specify `retryReads=false` or avoid using a
-    [retryable error](../../retryable-reads/retryable-reads.rst#retryable-error) for this test.
+    [retryable error](../../retryable-reads/retryable-reads.md#retryable-error) for this test.
 
 05. **Removed**
 
