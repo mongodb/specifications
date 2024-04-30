@@ -121,9 +121,9 @@ curr = path
 while curr.parent.name != 'source':
     target = f'{curr.parent.name}/{target}'
     curr = curr.parent
-suffix = f'\S*/{target}'
-rel_pattern = re.compile(f'(\.\.{suffix})')
-md_pattern = re.compile(f'(\(http{suffix})')
+suffix = fr'\S*/{target}'
+rel_pattern = re.compile(fr'(\.\.{suffix})')
+md_pattern = re.compile(fr'(\(http{suffix})')
 html_pattern = re.compile(f'(http{suffix})')
 abs_pattern = re.compile(f'(/source{suffix})')
 for p in Path("source").rglob("*"):
