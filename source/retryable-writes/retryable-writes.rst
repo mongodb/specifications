@@ -861,7 +861,7 @@ inconsistent with the server and potentially confusing to developers.
 Changelog
 =========
 
-:2024-04-29: Correct the path of some referenced documents.
+:2024-04-29: Fix the link to the Driver Sessions spec.
 :2024-01-16: Do not use ``writeConcernError.code`` in pre-4.4 mongos response to
              determine retryability. Do not use ``writeErrors[].code`` in
              pre-4.4 server responses to determine retryability.
