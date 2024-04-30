@@ -105,7 +105,7 @@ OP_MSG
 
 The ``$db`` global command argument MUST be set on the command sent to the server and it MUST equal the database name RunCommand was invoked on.
 
-* See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
+* See OP_MSG's section on `Global Command Arguments <../message/OP_MSG.md#global-command-arguments>`_
 
 ReadPreference
 """"""""""""""
@@ -117,7 +117,7 @@ To facilitate server selection the RunCommand operation MUST accept an optional 
 
 If the provided ReadPreference is NOT ``{mode: primary}`` and the selected server is NOT a standalone, the command sent MUST include the ``$readPreference`` global command argument.
 
-* See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
+* See OP_MSG's section on `Global Command Arguments <../message/OP_MSG.md#global-command-arguments>`_
 
 Driver Sessions
 """""""""""""""

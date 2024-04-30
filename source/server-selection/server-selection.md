@@ -466,7 +466,7 @@ db.collection.find(
 
 If a server of type Mongos or LoadBalancer is selected for a read operation, the read preference is passed to the
 selected mongos through the use of `$readPreference` (as a
-[Global Command Argument](../message/OP_MSG.rst#global-command-arguments) for OP_MSG or a query modifier for OP_QUERY)
+[Global Command Argument](../message/OP_MSG.md#global-command-arguments) for OP_MSG or a query modifier for OP_QUERY)
 and, for OP_QUERY only, the `SecondaryOk` wire protocol flag, according to the following rules.
 
 ##### For OP_MSG:
