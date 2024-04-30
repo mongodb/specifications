@@ -655,7 +655,10 @@ All of the write models will create an `ops` document with the following structu
 ```json
 {
   "insert": <0 | 1>,
-  "document": { "a": <string> }
+  "document": {
+    "_id": <object ID>,
+    "a": <string>
+  }
 }
 
 Size: 57 bytes + <number of characters in string>
