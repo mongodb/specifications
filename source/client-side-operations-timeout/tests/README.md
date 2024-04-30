@@ -601,9 +601,7 @@ Tests in this section MUST only run against replica sets and sharded clusters wi
 
 ### 11. Multi-batch bulkWrites
 
-This test MUST only run against standalones on server versions 8.0 and higher. The `bulkWrite` call takes an
-exceedingly long time on replicasets and sharded clusters. Drivers MAY adjust the timeouts used in this test to allow
-for differing bulk encoding performance.
+This test MUST only run against server versions 8.0+.
 
 1. Using `internalClient`, drop the `db.coll` collection.
 
@@ -623,13 +621,28 @@ for differing bulk encoding performance.
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) with `timeoutMS=2000`.
+3. Using `internalClient`, perform a `hello` command and record the `maxBsonObjectSize` and `maxMessageSizeBytes`
+   values in the response.
 
-4. Using `client`, insert 50 1-megabyte documents in a single `MongoClient.bulkWrite` call.
+4. Create a new MongoClient (referred to as `client`) with `timeoutMS=2000`.
+
+5. Create a list of write models (referred to as `models`) with the following write model repeated
+   (`maxMessageSizeBytes / maxBsonObjectSize + 1`) times:
+
+   ```javascript
+   {
+      InsertOne {
+         namespace: "db.coll",
+         document: { "a": "b".repeat(maxBsonObjectSize - 500) }
+      }
+   }
+   ```
+
+6. Call `bulkWrite` on `client` with `models`.
 
    - Expect this to fail with a timeout error.
 
-5. Verify that two `bulkWrite` commands were executed against `db.coll` as part of the `MongoClient.bulkWrite` call.
+7. Verify that two `bulkWrite` commands were executed as part of the `MongoClient.bulkWrite` call.
 
 ## Unit Tests
 
