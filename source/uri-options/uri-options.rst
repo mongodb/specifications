@@ -283,7 +283,7 @@ pertaining to URI options apply here.
 
    * - retryReads
      - "true" or "false"
-     - defined in `retryable reads spec <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/retryable-reads.rst#retryreads>`_
+     - defined in `retryable reads spec <../retryable-reads/retryable-reads.md#retryreads>`_
      - no
      - Enables retryable reads on server 3.6+
 

@@ -29,7 +29,7 @@ This test format can be used to define tests for the following specifications:
 - [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst)
 - [CRUD](../crud/crud.md)
 - [GridFS](../gridfs/gridfs-spec.md)
-- [Retryable Reads](../retryable-reads/retryable-reads.rst)
+- [Retryable Reads](../retryable-reads/retryable-reads.md)
 - [Retryable Writes](../retryable-writes/retryable-writes.rst)
 - [Sessions](../sessions/driver-sessions.rst)
 - [Transactions](../transactions/transactions.md)
