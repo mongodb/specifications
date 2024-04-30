@@ -20,6 +20,7 @@
 - [Initial DNS Seedlist Discovery](initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md)
 - [Load Balancer Support](load-balancers/load-balancers.md)
 - [Logging](logging/logging.md)
+- [Max Staleness](max-staleness/max-staleness.md)
 - [Max Staleness Tests](max-staleness/max-staleness-tests.md)
 - [MongoDB Driver Performance Benchmarking](benchmarking/benchmarking.md)
 - [OP_MSG](message/OP_MSG.md)
