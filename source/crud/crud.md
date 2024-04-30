@@ -2194,7 +2194,7 @@ Drivers SHOULD augment their
 can be enforced within a single server selection attempt.
 
 Drivers MUST discern the read preference used to select a server for the operation, which SHALL be used for specifying
-the [$readPreference global command argument](../message/OP_MSG.rst#global-command-arguments) and
+the [$readPreference global command argument](../message/OP_MSG.md#global-command-arguments) and
 [passing read preference to mongos and load balancers](../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers)
 (if applicable).
 
