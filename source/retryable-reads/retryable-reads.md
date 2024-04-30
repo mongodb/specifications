@@ -511,7 +511,7 @@ Test Plan
 =========
 
 See the `README
-<https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`__
+<tests/README.md>`__
 for tests.
 
 At a high level, the test plan will cover executing supported read operations
@@ -602,7 +602,7 @@ Future work
 
 4. Once `DRIVERS-560`_ is resolved, tests will be added to allow testing
    Retryable Reads on MongoDB 3.6. See the `test plan
-   <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`__
+   <tests/README.md>`__
    for additional information.
 
 .. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
