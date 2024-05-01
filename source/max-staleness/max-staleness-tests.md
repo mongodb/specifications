@@ -34,7 +34,9 @@ mongodb://host/?readPreference=secondary&maxStalenessSeconds=-1
 
 This connection string is valid and does not raise an error:
 
-> <mongodb://host/?readPreference=primary&maxStalenessSeconds=-1>
+```
+mongodb://host/?readPreference=primary&maxStalenessSeconds=-1>
+```
 
 ### No validation
 
