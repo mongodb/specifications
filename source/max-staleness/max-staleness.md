@@ -279,20 +279,6 @@ The same story as a table:
 | 60    | Client checks P and S | 60               | 60              | 50               | 60              | 10.5        |
 | 60    | Idle write completes  | 60               |                 | 60               |                 |             |
 
-> from table import Table
->
-> data = \[\
-> \['Clock', 'Event', 'S.lastUpdateTime', 'S.lastWriteDate',\
-> 'P.lastUpdateTime', 'P.lastWriteDate', 'S
-> staleness'\],
->
-> \['50', 'Idle write', '50', '', '50', '', ''\], \['60', 'Idle write begins', '60', '', '50', '', ''\], \['60', 'Client
-> checks P and S', '60', '60', '50', '60', '10.5'\], \['60', 'Idle write completes', '60', '', '60', '', ''\],
->
-> \]
->
-> print Table(data).create_table()
-
 In this scenario the actual secondary lag is between 0 and 10 seconds. But the staleness estimate can be as large as:
 
 ```
