@@ -229,20 +229,6 @@ The same story as a table:
 | 70           | 20            | S responds      | 70               | 5               | 60               | 10              | 25 seconds  |
 | 80           | 30            | P responds      | 70               | 5               | 80               | 30              | 25 seconds  |
 
-> from table import Table
->
-> data = \[\
-> \['Client clock', 'Primary clock', 'Event', 'S.lastUpdateTime', 'S.lastWriteDate',\
-> 'P.lastUpdateTime',
-> 'P.lastWriteDate', 'S staleness'\],
->
-> \['60', '10', 'P and S respond', '60', '0', '60', '10', '20 seconds'\], \['70', '20', 'S responds', '70', '5', '60',
-> '10', '25 seconds'\], \['80', '30', 'P responds', '70', '5', '80', '30', '25 seconds'\]
->
-> \]
->
-> print Table(data).create_table()
-
 ## Estimating Staleness: Example With No Primary
 
 Consider a replica set with secondaries S1 and S2, and no primary. S2 lags 15 seconds *farther* behind S1 and has not
