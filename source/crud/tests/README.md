@@ -555,7 +555,6 @@ Construct as list of write models (referred to as `models`) with the one `model`
 Call `MongoClient.bulkWrite` with `models` and `BulkWriteOptions.writeConcern` set to an unacknowledged write concern.
 
 Expect a client-side error due the size.
-`secondEvent.command.nsInfo` is "db.coll1".
 
 ### 11. `MongoClient.bulkWrite` batch splits when the addition of a new namespace exceeds the maximum message size
 
@@ -563,6 +562,10 @@ Test that `MongoClient.bulkWrite` batch splits a bulk write when the addition of
 causes the size of the message to exceed `maxMessageSizeBytes - 1000`.
 
 This test must only be run on 8.0+ servers.
+
+Repeat the following setup for each test case:
+
+### Setup
 
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
@@ -598,22 +601,49 @@ InsertOne {
 }
 ```
 
+Then perform the following two tests:
+
+#### Case 1: No batch-splitting required
+
+Create the following write model (referred to as `sameNamespaceModel`):
+
+```json
+InsertOne {
+  "namespace": "db.coll",
+  "document": { "a": "b" }
+}
+```
+
+Append `sameNamespaceModel` to `models`.
+
+Execute `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult`
+(referred to as `result`).
+
+Assert that `result.insertedCount` is equal to `numModels + 1`.
+
+Assert that one CommandStartedEvent was observed for the `bulkWrite` command (referred to as `event`).
+
+Assert that the length of `event.command.ops` is `numModels + 1`. Assert that the length of `event.command.nsInfo`
+is 1. Assert that the namespace contained in `event.command.nsInfo` is "db.coll".
+
+#### Case 2: Batch-splitting required
+
 Construct the following namespace (referred to as `namespace`):
 
 ```
 "db." + "c".repeat(200)
 ```
 
-Create the following write model (referred to as `secondModel`):
+Create the following write model (referred to as `newNamespaceModel`):
 
 ```json
 InsertOne {
-  namespace: namespace,
-  document: { "a": "b" }
+  "namespace": namespace,
+  "document": { "a": "b" }
 }
 ```
 
-Append `secondModel` to `models`.
+Append `newNamespaceModel` to `models`.
 
 Execute `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult`
 (referred to as `result`).
@@ -650,7 +680,7 @@ The command document for the `bulkWrite` has the following structure and size:
 Size: 43 bytes
 ```
 
-All of the write models will create an `ops` document with the following structure and size:
+Each write model will create an `ops` document with the following structure and size:
 
 ```json
 {
@@ -664,20 +694,10 @@ All of the write models will create an `ops` document with the following structu
 Size: 57 bytes + <number of characters in string>
 ```
 
-The `ops` document for `secondModel` has a string with one character, so it is a total of 58 bytes.
+The `ops` document for both `newNamespaceModel` and `sameNamespaceModel` has a string with one character, so
+it is a total of 58 bytes.
 
-`secondModel` will create an `nsInfo` document with the following structure and size:
-
-```json
-{
-  "ns": "db.<c repeated 200 times>"
-}
-
-Size: 217 bytes
-```
-
-`firstModel` (and the remainder model, if added) will create an `nsInfo` document with the following structure
-and size:
+The models using the "db.coll" namespace will create one `nsInfo` document with the following structure and size:
 
 ```json
 {
@@ -687,29 +707,39 @@ and size:
 Size: 21 bytes
 ```
 
-We need to fill up the rest of the message with bytes such that `secondModels`'s `ops` document will fit,
-but its `nsInfo` entry won't. The following calculations are used:
+`newNamespaceModel` will create an `nsInfo` document with the following structure and size:
+
+```json
+{
+  "ns": "db.<c repeated 200 times>"
+}
+
+Size: 217 bytes
+```
+
+We need to fill up the rest of the message with bytes such that another `ops` document will fit, but another
+`nsInfo` entry will not. The following calculations are used:
 
 ```
 # 1000 is the OP_MSG overhead required in the spec
-maxTotalMessageSize = maxMessageSizeBytes - 1000
+maxBulkWriteBytes = maxMessageSizeBytes - 1000
 
 # bulkWrite command + first namespace entry
 existingMessageBytes = 43 + 21
 
-# Space to fit the second model's ops entry but not its nsInfo entry
-secondModelBytes = 58
+# Space to fit the last model's ops entry
+lastModelBytes = 58
 
-remainingMessageSize = maxTotalMessageSize - existingMessageBytes - secondModelBytes
+remainingBulkWriteBytes = maxBulkWriteBytes - existingMessageBytes - lastModelBytes
 
 # With the actual numbers plugged in
-remainingMessageSize = maxMessageSizeBytes - 1122
+remainingBulkWriteBytes = maxMessageSizeBytes - 1122
 ```
 
 ### 12. `MongoClient.bulkWrite` returns an error if no operations can be added to `ops`
 
 Test that `MongoClient.bulkWrite` returns an error if an operation provided exceeds `maxMessageSizeBytes` such
-that an empty `ops` payload would be sent.
+that no operations would be sent.
 
 This test must only be run on 8.0+ servers. This test may be skipped by drivers that are not able to construct
 arbitrarily large documents.
@@ -717,7 +747,9 @@ arbitrarily large documents.
 Construct a `MongoClient` (referred to as `client`). Perform a `hello` command using `client` and record the
 `maxMessageSizeBytes` value contained in the response.
 
-Construct the following write model (referred to as `model`):
+#### Case 1: `document` too large
+
+Construct the following write model (referred to as `largeDocumentModel`):
 
 ```json
 InsertOne {
@@ -726,5 +758,25 @@ InsertOne {
 }
 ```
 
-Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned.
+Execute `bulkWrite` on `client` with `largeDocumentModel`. Assert that an error (referred to as `error`) is returned.
+Assert that `error` is a client error.
+
+#### Case 2: `namespace` too large
+
+Construct the following namespace (referred to as `namespace`):
+
+```
+"db." + "c".repeat(maxMessageSizeBytes)
+```
+
+Construct the following write model (referred to as `largeNamespaceModel`):
+
+```json
+InsertOne {
+  "namespace": namespace,
+  "document": { "a": "b" }
+}
+```
+
+Execute `bulkWrite` on `client` with `largeNamespaceModel`. Assert that an error (referred to as `error`) is returned.
 Assert that `error` is a client error.
