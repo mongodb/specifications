@@ -21,7 +21,7 @@
       "client": {
         "id": "client",
         "uriOptions": {
-          "timeoutMS": 50
+          "timeoutMS": 500
         },
         "useMultipleMongoses": false,
         "observeEvents": [
@@ -109,7 +109,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 30
+                "blockTimeMS": 300
               }
             }
           }
