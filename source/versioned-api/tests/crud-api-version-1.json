@@ -429,6 +429,11 @@
     },
     {
       "description": "client bulkWrite appends declared API version",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0"
+        }
+      ],
       "operations": [
         {
           "name": "clientBulkWrite",

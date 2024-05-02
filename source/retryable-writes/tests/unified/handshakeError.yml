@@ -51,6 +51,8 @@ tests:
   #   - Tests whether operation successfully retries the handshake and succeeds.
 
   - description: "client.clientBulkWrite succeeds after retryable handshake network error"
+    runOnRequirements:
+      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0
     operations:
       - name: failPoint
         object: testRunner
@@ -94,6 +96,8 @@ tests:
               commandName: bulkWrite
 
   - description: "client.clientBulkWrite succeeds after retryable handshake server error (ShutdownInProgress)"
+    runOnRequirements:
+      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0
     operations:
       - name: failPoint
         object: testRunner

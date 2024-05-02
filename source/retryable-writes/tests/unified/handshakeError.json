@@ -55,6 +55,11 @@
   "tests": [
     {
       "description": "client.clientBulkWrite succeeds after retryable handshake network error",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",
@@ -158,6 +163,11 @@
     },
     {
       "description": "client.clientBulkWrite succeeds after retryable handshake server error (ShutdownInProgress)",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",

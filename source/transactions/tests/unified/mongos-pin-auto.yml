@@ -703,6 +703,8 @@ tests:
       - *assertSessionPinned
       - *abortTransaction
     outcome: *outcome
+    runOnRequirements:
+      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0"
 
   - description: unpin after transient connection error on insertOne insert
     operations:
@@ -1669,6 +1671,8 @@ tests:
       - *assertSessionUnpinned
       - *abortTransaction
     outcome: *outcome
+    runOnRequirements:
+      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0"
 
   - description: unpin after transient ShutdownInProgress error on clientBulkWrite bulkWrite
     operations:
@@ -1697,4 +1701,6 @@ tests:
       - *assertSessionUnpinned
       - *abortTransaction
     outcome: *outcome
+    runOnRequirements:
+      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0"
 

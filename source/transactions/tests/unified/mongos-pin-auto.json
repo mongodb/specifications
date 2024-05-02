@@ -2095,6 +2095,11 @@
             }
           ]
         }
+      ],
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0"
+        }
       ]
     },
     {
@@ -5360,6 +5365,11 @@
             }
           ]
         }
+      ],
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0"
+        }
       ]
     },
     {
@@ -5452,6 +5462,11 @@
               "_id": 2
             }
           ]
+        }
+      ],
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0"
         }
       ]
     }

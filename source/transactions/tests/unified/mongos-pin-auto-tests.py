@@ -318,7 +318,11 @@ def create_pin_test(op_name, error_name):
     error_data = NON_TRANSIENT_ERRORS[error_name]
     if op_name.startswith('bulkWrite'):
         op_name = 'bulkWrite'
-    return TEMPLATE.format(**locals())
+    test = TEMPLATE.format(**locals())
+    if op_name == 'clientBulkWrite':
+        test += '    runOnRequirements:\n'
+        test += '      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0"\n'
+    return test
 
 
 def create_unpin_test(op_name, error_name):
@@ -329,7 +333,12 @@ def create_unpin_test(op_name, error_name):
     error_data = TRANSIENT_ERRORS[error_name]
     if op_name.startswith('bulkWrite'):
         op_name = 'bulkWrite'
-    return TEMPLATE.format(**locals())
+    test = TEMPLATE.format(**locals())
+    if op_name == 'clientBulkWrite':
+        test += '    runOnRequirements:\n'
+        test += '      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0"\n'
+    return test
+
 
 
 tests = []
