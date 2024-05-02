@@ -739,7 +739,7 @@ remainingBulkWriteBytes = maxMessageSizeBytes - 1122
 ### 12. `MongoClient.bulkWrite` returns an error if no operations can be added to `ops`
 
 Test that `MongoClient.bulkWrite` returns an error if an operation provided exceeds `maxMessageSizeBytes` such
-that no operations would be sent.
+that an empty `ops` payload would be sent.
 
 This test must only be run on 8.0+ servers. This test may be skipped by drivers that are not able to construct
 arbitrarily large documents.
