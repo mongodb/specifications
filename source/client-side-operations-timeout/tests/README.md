@@ -629,12 +629,10 @@ This test MUST only run against server versions 8.0+.
 5. Create a list of write models (referred to as `models`) with the following write model repeated
    (`maxMessageSizeBytes / maxBsonObjectSize + 1`) times:
 
-   ```javascript
-   {
-      InsertOne {
-         namespace: "db.coll",
-         document: { "a": "b".repeat(maxBsonObjectSize - 500) }
-      }
+   ```json
+   InsertOne {
+      "namespace": "db.coll",
+      "document": { "a": "b".repeat(maxBsonObjectSize - 500) }
    }
    ```
 
