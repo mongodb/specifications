@@ -77,6 +77,11 @@ source the `secrets-export.sh` file and use the associated env variables in your
 - Create an OIDC configured client with an OIDC callback and auth mechanism property `ENVIRONMENT:test`.
 - Assert it returns a client configuration error.
 
+**2.5 Invalid use of ALLOWED_HOSTS**
+
+- Create an OIDC configured client with auth mechanism properties `{"ENVIRONMENT": "azure", "ALLOWED_HOSTS": []}`.
+- Assert it returns a client configuration error.
+
 ### (3) Authentication Failure
 
 **3.1 Authentication failure with cached tokens fetch a new token and retry auth**
@@ -96,7 +101,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 **3.3 Unexpected error code does not clear the cache**
 
-- Create a `MongoClient` with a human callback that returns a valid token.
+- Create a `MongoClient` with an OIDC callback that returns a valid token.
 - Set a fail point for `saslStart` commands of the form:
 
 ```javascript
