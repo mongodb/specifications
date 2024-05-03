@@ -27,7 +27,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 #### Retryable Error
 
 An error is considered retryable if it meets any of the criteria defined under
-[Retryable Writes: Terms: Retryable Error](../retryable-writes/retryable-writes.rst#terms), minus the final criterion
+[Retryable Writes: Terms: Retryable Error](../retryable-writes/retryable-writes.md#terms), minus the final criterion
 about write concern errors. For convenience, the relevant criteria have been adapted to retryable reads and reproduced
 below.
 
@@ -64,14 +64,14 @@ This specification introduces the following client-level configuration option.
 
 This boolean option determines whether retryable behavior will be applied to all read operations executed within the
 MongoClient. This option MUST default to true.
-[As with retryable writes](../retryable-writes/retryable-writes.rst#retrywrites), this option MUST NOT be configurable
-at the level of an individual read operation, collection object, or database object. Drivers that expose a "high" and
+[As with retryable writes](../retryable-writes/retryable-writes.md#retrywrites), this option MUST NOT be configurable at
+the level of an individual read operation, collection object, or database object. Drivers that expose a "high" and
 "core" API (e.g. Java and C# driver) MUST NOT expose a configurable option at the level of an individual read operation,
 collection object, or database object in "high", but MAY expose the option in "core."
 
 ##### Naming Deviations
 
-[As with retryable writes](../retryable-writes/retryable-writes.rst#retrywrites), drivers MUST use the defined name of
+[As with retryable writes](../retryable-writes/retryable-writes.md#retrywrites), drivers MUST use the defined name of
 `retryReads` for the connection string parameter to ensure portability of connection strings across applications and
 drivers. If drivers solicit MongoClient options through another mechanism (e.g. an options dictionary provided to the
 MongoClient constructor), drivers SHOULD use the defined name but MAY deviate to comply with their existing conventions.
@@ -165,7 +165,7 @@ Drivers MUST NOT retry the following operations:
 #### Executing Retryable Read Commands
 
 Executing retryable read commands is extremely similar to
-[executing retryable write commands](../retryable-writes/retryable-writes.rst#executing-retryable-write-commands). The
+[executing retryable write commands](../retryable-writes/retryable-writes.md#executing-retryable-write-commands). The
 following explanation for executing retryable read commands has been adapted from the explanation for executing
 retryable write commands.
 
@@ -264,7 +264,7 @@ When retrying a read command, drivers MUST NOT resend the original wire protocol
 #### Pseudocode
 
 The following pseudocode for executing retryable read commands has been adapted from
-[the pseudocode for executing retryable write commands](../retryable-writes/retryable-writes.rst#executing-retryable-write-commands)
+[the pseudocode for executing retryable write commands](../retryable-writes/retryable-writes.md#executing-retryable-write-commands)
 and reflects the flow described above.
 
 ```typescript
@@ -382,12 +382,12 @@ function executeRetryableRead(command, session) {
 
 ### Logging Retry Attempts
 
-[As with retryable writes](../retryable-writes/retryable-writes.rst#logging-retry-attempts), drivers MAY choose to log
+[As with retryable writes](../retryable-writes/retryable-writes.md#logging-retry-attempts), drivers MAY choose to log
 retry attempts for read operations. This specification does not define a format for such log messages.
 
 ### Command Monitoring
 
-[As with retryable writes](../retryable-writes/retryable-writes.rst#command-monitoring), in accordance with the
+[As with retryable writes](../retryable-writes/retryable-writes.md#command-monitoring), in accordance with the
 [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst) specification,
 drivers MUST guarantee that each `CommandStartedEvent` has either a correlating `CommandSucceededEvent` or
 `CommandFailedEvent` and that every "command started" log message has either a correlating "command succeeded" log
@@ -424,7 +424,7 @@ to be extended to include support for retryable behavior for read operations.
 ## Design Rationale
 
 The design of this specification is based off the
-[Retryable Writes specification](../retryable-writes/retryable-writes.rst#design-rationale). It modifies the driver API
+[Retryable Writes specification](../retryable-writes/retryable-writes.md#design-rationale). It modifies the driver API
 as little as possible to introduce the concept retryable behavior for read operations.
 
 Alternative retry strategies (e.g. exponential back-off, incremental intervals, regular intervals, immediate retry,
@@ -496,7 +496,7 @@ circumstances, so that we may revisit this decision to disallow trying `getMore(
 
 ### Why are read operations only retried once by default?
 
-[Read operations are only retried once for the same reasons that writes are also only retried once.](../retryable-writes/retryable-writes.rst#why-are-write-operations-only-retried-once-by-default)
+[Read operations are only retried once for the same reasons that writes are also only retried once.](../retryable-writes/retryable-writes.md#why-are-write-operations-only-retried-once-by-default)
 For convenience's sake, that reasoning has been adapted for reads and reproduced below:
 
 The spec concerns itself with retrying read operations that encounter a retryable error (i.e. no response due to network
@@ -517,7 +517,7 @@ restarts during planned maintenance events.
 ### Can drivers resend the same wire protocol message on retry attempts?
 
 No.
-[This is in contrast to the answer supplied in in the retryable writes specification.](../retryable-writes/retryable-writes.rst#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts)
+[This is in contrast to the answer supplied in in the retryable writes specification.](../retryable-writes/retryable-writes.md#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts)
 However, when retryable writes were implemented, no driver actually chose to resend the same wire protocol message.
 Today, if a driver attempted to resend the same wire protocol message, this could violate
 [the rules for gossiping $clusterTime](../sessions/driver-sessions.rst#gossipping-the-cluster-time): specifically
