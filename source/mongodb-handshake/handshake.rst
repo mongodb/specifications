@@ -79,7 +79,7 @@ ASIDE: If the legacy handshake response includes ``helloOk: true``, then
 subsequent topology monitoring commands MUST use the ``hello`` command. If the
 legacy handshake response does not include ``helloOk: true``, then subsequent
 topology monitoring commands MUST use the legacy hello command. See the
-`Server Discovery and Monitoring spec <../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.rst>`__
+`Server Discovery and Monitoring spec <../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md>`__
 for further information.
 
 The initial handshake MUST be performed on every socket to any and all servers
