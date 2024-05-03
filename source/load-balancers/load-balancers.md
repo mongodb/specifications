@@ -88,14 +88,14 @@ events when operating in this mode.
 #### Log Messages
 
 SDAM events details described in [Monitoring](#monitoring) apply to corresponding log messages. Please refer to the
-[SDAM logging specification](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#log-messages)
+[SDAM logging specification](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#log-messages)
 for details on SDAM logging. Drivers MUST emit the relevant SDAM log messages, such as:
 
-- [Starting Topology Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#starting-topology-monitoring-log-message)
-- [Stopped Topology Mmonitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#stopped-topology-monitoring-log-message)
-- [Starting Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#starting-server-monitoring-log-message)
-- [Stopped Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#stopped-server-monitoring-log-message)
-- [Topology Description Changed](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#topology-description-changed-log-message)
+- [Starting Topology Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#starting-topology-monitoring-log-message)
+- [Stopped Topology Mmonitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#stopped-topology-monitoring-log-message)
+- [Starting Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#starting-server-monitoring-log-message)
+- [Stopped Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#stopped-server-monitoring-log-message)
+- [Topology Description Changed](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#topology-description-changed-log-message)
 
 ### Driver Sessions
 
