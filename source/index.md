@@ -25,6 +25,7 @@
 - [MongoDB Driver Performance Benchmarking](benchmarking/benchmarking.md)
 - [OP_MSG](message/OP_MSG.md)
 - [Retryable Reads](retryable-reads/retryable-reads.md)
+- [Retryable Writes](retryable-writes/retryable-writes.md)
 - [Server Selection](server-selection/server-selection.md)
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)
 - [Unified Test Format](unified-test-format/unified-test-format.md)

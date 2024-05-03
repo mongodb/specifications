@@ -30,7 +30,7 @@ This test format can be used to define tests for the following specifications:
 - [CRUD](../crud/crud.md)
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Retryable Reads](../retryable-reads/retryable-reads.md)
-- [Retryable Writes](../retryable-writes/retryable-writes.rst)
+- [Retryable Writes](../retryable-writes/retryable-writes.md)
 - [Sessions](../sessions/driver-sessions.rst)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
