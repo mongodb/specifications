@@ -104,7 +104,7 @@ supported. `Command Logging and Monitoring`_ may be used to check for the presen
 ``txnNumber`` field in the command document. Note that command documents may
 always include an ``lsid`` field per the `Driver Session`_ specification.
 
-.. _Command Logging and Monitoring: ../../command-logging-and-monitoring/command-logging-and-monitoring.rst
+.. _Command Logging and Monitoring: ../../command-logging-and-monitoring/command-logging-and-monitoring.md
 .. _Driver Session: ../../sessions/driver-sessions.rst
 
 These tests may be run against both a replica set and shard cluster.

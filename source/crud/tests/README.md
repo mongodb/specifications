@@ -59,7 +59,7 @@ Using a 5.0+ server, create a collection with
 }
 ```
 
-Enable [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) to observe
+Enable [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) to observe
 CommandSucceededEvents. Then, insert an invalid document (e.g. `{x: 1}`) and assert that a WriteError occurs, that its
 code is `121` (i.e. DocumentValidationFailure), and that its `details` property is accessible. Additionally, assert that
 a CommandSucceededEvent was observed and that the `writeErrors[0].errInfo` field in the response document matches the

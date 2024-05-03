@@ -388,7 +388,7 @@ retry attempts for read operations. This specification does not define a format 
 ### Command Monitoring
 
 [As with retryable writes](../retryable-writes/retryable-writes.rst#command-monitoring), in accordance with the
-[Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst) specification,
+[Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) specification,
 drivers MUST guarantee that each `CommandStartedEvent` has either a correlating `CommandSucceededEvent` or
 `CommandFailedEvent` and that every "command started" log message has either a correlating "command succeeded" log
 message or "command failed" log message. If the first attempt of a retryable read operation encounters a retryable

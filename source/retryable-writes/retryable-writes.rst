@@ -594,7 +594,7 @@ separate ``CommandStartedEvent`` and "command succeeded" log message when execut
 the second ``CommandStartedEvent`` and "command succeeded" log message may have a different ``connectionId``, since
 a writable server is reselected for the retry attempt.
 
-.. _Command Logging and Monitoring: ../command-logging-and-monitoring/command-logging-and-monitoring.rst
+.. _Command Logging and Monitoring: ../command-logging-and-monitoring/command-logging-and-monitoring.md
 
 Each attempt of a retryable write operation SHOULD report a different
 ``requestId`` so that events for each attempt can be properly correlated with

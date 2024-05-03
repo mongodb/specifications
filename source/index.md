@@ -8,6 +8,7 @@
 - [Client Side Encryption](client-side-encryption/client-side-encryption.md)
 - [Client Side Operations Timeout](client-side-operations-timeout/client-side-operations-timeout.md)
 - [Collation](collation/collation.md)
+- [Command Logging and Monitoring](command-logging-and-monitoring/command-logging-and-monitoring.md)
 - [Connection Monitoring and Pooling](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)
 - [Connection String Spec](connection-string/connection-string-spec.md)
 - [Driver Authentication](auth/auth.md)
