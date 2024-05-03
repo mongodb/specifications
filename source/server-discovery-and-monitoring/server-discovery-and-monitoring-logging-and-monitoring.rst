@@ -120,7 +120,7 @@ The first ``TopologyDescriptionChangedEvent`` to be emitted from a monitored Top
 Closing Topology Description
 ----------------------------
 
-When a ``Topology`` object or equivalent is being shut-down or closed, the driver SHOULD change the
+When a ``Topology`` object or equivalent is being shut-down or closed, the driver MUST change the
 ``TopologyDescription`` to an "unknown" state.
 
 ----------
