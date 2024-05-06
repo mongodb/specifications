@@ -75,12 +75,14 @@ source the `secrets-export.sh` file and use the associated env variables in your
 **2.4 Invalid Client Configuration with Callback**
 
 - Create an OIDC configured client with an OIDC callback and auth mechanism property `ENVIRONMENT:test`.
-- Assert it returns a client configuration error.
+- Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
+  connection.
 
 **2.5 Invalid use of ALLOWED_HOSTS**
 
 - Create an OIDC configured client with auth mechanism properties `{"ENVIRONMENT": "azure", "ALLOWED_HOSTS": []}`.
-- Assert it returns a client configuration error.
+- Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
+  connection.
 
 ### (3) Authentication Failure
 
@@ -120,9 +122,9 @@ source the `secrets-export.sh` file and use the associated env variables in your
 ```
 
 - Perform a `find` operation that fails.
-- Assert that the human callback has been called once.
+- Assert that the callback has been called once.
 - Perform a `find` operation that succeeds.
-- Assert that the human callback has been called once.
+- Assert that the callback has been called once.
 - Close the client.
 
 ### (4) Reauthentication
