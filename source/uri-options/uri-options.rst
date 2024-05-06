@@ -289,7 +289,7 @@ pertaining to URI options apply here.
 
    * - retryWrites
      - "true" or "false"
-     - defined in `retryable writes spec <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#retrywrites>`_
+     - defined in `retryable writes spec <../retryable-writes/retryable-writes.md#retrywrites>`_
      - no
      - Enables retryable writes on server 3.6+
 
