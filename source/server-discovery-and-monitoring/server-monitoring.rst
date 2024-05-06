@@ -756,7 +756,9 @@ The event API here is assumed to be like the standard `Python Event
             # Server API versioning implies that the server supports hello.
             helloOk = stableApi != Null
             connection = new Connection(serverAddress)
-            set connection timeout to connectTimeoutMS
+
+            if connectTimeoutMS != 0:
+              set connection timeout to connectTimeoutMS
 
         # Do any potentially blocking operations after releasing the mutex.
         create the socket and perform connection handshake
@@ -1231,6 +1233,7 @@ Changelog
 :2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
 :2023-10-05: Add serverMonitoringMode and default to the polling protocol on FaaS.
              Clients MUST NOT use dedicated connections to measure RTT when using the polling protocol.
+:2024-01-17: Clarify zero-case connectTimeoutMS in SDAM setupConnection.
 
 ----
 
