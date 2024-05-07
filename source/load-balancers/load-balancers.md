@@ -81,8 +81,9 @@ Although there is no monitoring connection in load balanced mode, drivers MUST e
 - `TopologyDescriptionChangedEvent`. The `newDescription` MUST have `TopologyType` `LoadBalanced` and one server with
   `ServerType` `LoadBalancer`.
 
-Drivers MUST also emit a `ServerClosedEvent` and `TopologyClosedEvent` when the topology is closed and MUST NOT emit any
-other events when operating in this mode.
+Drivers MUST also emit a `ServerClosedEvent` followed by a `TopologyDescriptionChangedEvent` that transitions the
+`Topology` to the `UNKNOWN` state and a `TopologyClosedEvent` when the topology is closed and MUST NOT emit any other
+events when operating in this mode.
 
 #### Log Messages
 
@@ -328,6 +329,7 @@ only load balancers that support the PROXY protocol would be supported.
 
 ## Changelog
 
+- 2024-04-25: Clarify that `TopologyDescriptionChangedEvent` must be emitted on topology close
 - 2024-03-06: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter and reformat changelog.
 - 2022-01-18: Clarify that `OP_MSG` must be used in load balanced mode.

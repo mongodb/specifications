@@ -117,6 +117,12 @@ Initial Topology Description
 
 The first ``TopologyDescriptionChangedEvent`` to be emitted from a monitored Topology MUST set its ``previousDescription`` property to be a ``TopologyDescription`` object in the "unknown" state.
 
+Closing Topology Description
+----------------------------
+
+When a ``Topology`` object or equivalent is being shut-down or closed, the driver MUST change the
+``TopologyDescription`` to an "unknown" state.
+
 ----------
 Events API
 ----------
@@ -706,6 +712,7 @@ Changelog
 
 :2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's
              previousDescription field
+:2024-01-17: Updated to require that ``TopologyDescriptionChangedEvent`` should be emitted before just ``TopologyClosedEvent`` is emitted
 :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
 :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 
