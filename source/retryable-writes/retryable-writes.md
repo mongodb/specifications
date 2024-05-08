@@ -108,12 +108,12 @@ MongoDB 3.6 will support retryability for some, but not all, write operations.
 Supported single-statement write operations include `insertOne()`, `updateOne()`, `replaceOne()`, `deleteOne()`,
 `findOneAndDelete()`, `findOneAndReplace()`, and `findOneAndUpdate()`.
 
-Supported multi-statement write operations include `insertMany()` and `bulkWrite()`. The ordered option may be `true`
-or `false`. For both the collection-level and client-level `bulkWrite()` methods, a bulk write batch is only retryable
-if it does not contain any `multi: true` writes (i.e. `UpdateMany` and `DeleteMany`). Drivers MUST evaluate eligibility
-for each write command sent as part of the `bulkWrite()` (after order and batch splitting) individually. Drivers MUST
-NOT alter existing logic for order and batch splitting in an attempt to maximize retryability for operations within a
-bulk write.
+Supported multi-statement write operations include `insertMany()` and `bulkWrite()`. The ordered option may be `true` or
+`false`. For both the collection-level and client-level `bulkWrite()` methods, a bulk write batch is only retryable if
+it does not contain any `multi: true` writes (i.e. `UpdateMany` and `DeleteMany`). Drivers MUST evaluate eligibility for
+each write command sent as part of the `bulkWrite()` (after order and batch splitting) individually. Drivers MUST NOT
+alter existing logic for order and batch splitting in an attempt to maximize retryability for operations within a bulk
+write.
 
 These methods above are defined in the [CRUD](../crud/crud.md) specification.
 

@@ -598,7 +598,6 @@ Tests in this section MUST only run against replica sets and sharded clusters wi
    1. `command_started` and `command_failed` events for an `insert` command.
    2. `command_started` and `command_failed` events for an `abortTransaction` command.
 
-
 ### 11. Multi-batch bulkWrites
 
 This test MUST only run against server versions 8.0+.
@@ -621,8 +620,8 @@ This test MUST only run against server versions 8.0+.
    }
    ```
 
-3. Using `internalClient`, perform a `hello` command and record the `maxBsonObjectSize` and `maxMessageSizeBytes`
-   values in the response.
+3. Using `internalClient`, perform a `hello` command and record the `maxBsonObjectSize` and `maxMessageSizeBytes` values
+   in the response.
 
 4. Create a new MongoClient (referred to as `client`) with `timeoutMS=2000`.
 

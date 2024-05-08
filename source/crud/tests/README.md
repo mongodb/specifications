@@ -84,14 +84,14 @@ InsertOne: {
 }
 ```
 
-Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times.
-Execute `bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult`
-with an `insertedCount` value of `maxWriteBatchSize + 1`.
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times. Execute
+`bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult` with an
+`insertedCount` value of `maxWriteBatchSize + 1`.
 
-Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed for the `bulkWrite` command.
-Assert that the length of `firstEvent.command.ops` is `maxWriteBatchSize`. Assert that the length of `secondEvent.command.ops`
-is 1. If the driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to
-`secondEvent.operationId`.
+Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed for the `bulkWrite`
+command. Assert that the length of `firstEvent.command.ops` is `maxWriteBatchSize`. Assert that the length of
+`secondEvent.command.ops` is 1. If the driver exposes `operationId`s in its CommandStartedEvents, assert that
+`firstEvent.operationId` is equal to `secondEvent.operationId`.
 
 ### 4. `MongoClient.bulkWrite` batch splits when an `ops` payload exceeds `maxMessageSizeBytes`
 
@@ -125,12 +125,12 @@ Use the following calculation to determine the number of inserts that should be 
 provided to `MongoClient.bulkWrite` will require multiple `bulkWrite` commands to be sent to the server.
 
 Construct as list of write models (referred to as `models`) with `model` repeated `numModels` times. Then execute
-`bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult` with
-an `insertedCount` value of `numModels`.
+`bulkWrite` on `client` with `models`. Assert that the bulk write succeeds and returns a `BulkWriteResult` with an
+`insertedCount` value of `numModels`.
 
 Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed. Assert that the
-length of `firstEvent.command.ops` is `numModels - 1`. Assert that the length of `secondEvent.command.ops` is 1. If
-the driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to
+length of `firstEvent.command.ops` is `numModels - 1`. Assert that the length of `secondEvent.command.ops` is 1. If the
+driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEvent.operationId` is equal to
 `secondEvent.operationId`.
 
 ### 5. `MongoClient.bulkWrite` collects `WriteConcernError`s across batches
@@ -141,8 +141,8 @@ This test must only be run on 8.0+ servers.
 
 Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained
-in the response. Then, configure the following fail point with `client`:
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
+response. Then, configure the following fail point with `client`:
 
 ```json
 {
@@ -167,9 +167,9 @@ InsertOne: {
 }
 ```
 
-Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times.
-Execute `bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteError`
-(referred to as `error`).
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times. Execute
+`bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteError` (referred to as
+`error`).
 
 Assert that `error.writeConcernErrors` has a length of 2.
 
@@ -180,8 +180,7 @@ Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
 
 ### 6. `MongoClient.bulkWrite` handles individual `WriteError`s across batches
 
-Test that `MongoClient.bulkWrite` handles individual write errors across batches for ordered and unordered bulk
-writes.
+Test that `MongoClient.bulkWrite` handles individual write errors across batches for ordered and unordered bulk writes.
 
 This test must only be run on 8.0+ servers.
 
@@ -216,8 +215,8 @@ Construct a list of write models (referred to as `models`) with `model` repeated
 
 Test that an unordered bulk write collects `WriteError`s across batches.
 
-Execute `bulkWrite` on `client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns
-a `BulkWriteError` (referred to as `unorderedError`).
+Execute `bulkWrite` on `client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns a
+`BulkWriteError` (referred to as `unorderedError`).
 
 Assert that `unorderedError.writeErrors` has a length of `maxWriteBatchSize + 1`.
 
@@ -227,8 +226,8 @@ Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
 
 Test that an ordered bulk write does not execute further batches when a `WriteError` occurs.
 
-Execute `bulkWrite` on `client` with `models` and `ordered` set to true. Assert that the bulk write fails and returns
-a `BulkWriteError` (referred to as `orderedError`).
+Execute `bulkWrite` on `client` with `models` and `ordered` set to true. Assert that the bulk write fails and returns a
+`BulkWriteError` (referred to as `orderedError`).
 
 Assert that `orderedError.writeErrors` has a length of 1.
 
@@ -355,8 +354,8 @@ UpdateOne {
 },
 ```
 
-Execute `bulkWrite` on `client` with `models` and `verboseResults` set to true. Assert that the bulk write fails and returns
-a `BulkWriteError` (referred to as `bulkWriteError`).
+Execute `bulkWrite` on `client` with `models` and `verboseResults` set to true. Assert that the bulk write fails and
+returns a `BulkWriteError` (referred to as `bulkWriteError`).
 
 Assert that `bulkWriteError.error` is populated with an error (referred to as `topLevelError`). Assert that
 `topLevelError.errorCode` is equal to 8.
@@ -421,8 +420,8 @@ Expect a client-side error due the size.
 
 ### 11. `MongoClient.bulkWrite` batch splits when the addition of a new namespace exceeds the maximum message size
 
-Test that `MongoClient.bulkWrite` batch splits a bulk write when the addition of a new namespace to `nsInfo`
-causes the size of the message to exceed `maxMessageSizeBytes - 1000`.
+Test that `MongoClient.bulkWrite` batch splits a bulk write when the addition of a new namespace to `nsInfo` causes the
+size of the message to exceed `maxMessageSizeBytes - 1000`.
 
 This test must only be run on 8.0+ servers.
 
@@ -454,8 +453,8 @@ InsertOne {
 
 Create a list of write models (referred to as `models`) with `firstModel` repeated `numModels` times.
 
-If `remainderBytes` is greater than or equal to 217, add 1 to `numModels` and append the following write model
-to `models`:
+If `remainderBytes` is greater than or equal to 217, add 1 to `numModels` and append the following write model to
+`models`:
 
 ```json
 InsertOne {
@@ -486,8 +485,8 @@ Assert that `result.insertedCount` is equal to `numModels + 1`.
 
 Assert that one CommandStartedEvent was observed for the `bulkWrite` command (referred to as `event`).
 
-Assert that the length of `event.command.ops` is `numModels + 1`. Assert that the length of `event.command.nsInfo`
-is 1. Assert that the namespace contained in `event.command.nsInfo` is "db.coll".
+Assert that the length of `event.command.ops` is `numModels + 1`. Assert that the length of `event.command.nsInfo` is 1.
+Assert that the namespace contained in `event.command.nsInfo` is "db.coll".
 
 #### Case 2: Batch-splitting required
 
@@ -528,8 +527,8 @@ Assert that the length of `secondEvent.command.ops` is equal to 1. Assert that t
 
 This information is not needed to implement this prose test, but is documented for future reference. This test is
 designed to work if `maxBsonObjectSize` or `maxMessageSizeBytes` changes, but will need to be updated if a required
-field is added to the `bulkWrite` command or the `insert` operation document, or if the overhead `OP_MSG` allowance
-is changed in the bulk write specification.
+field is added to the `bulkWrite` command or the `insert` operation document, or if the overhead `OP_MSG` allowance is
+changed in the bulk write specification.
 
 The command document for the `bulkWrite` has the following structure and size:
 
@@ -557,8 +556,8 @@ Each write model will create an `ops` document with the following structure and 
 Size: 57 bytes + <number of characters in string>
 ```
 
-The `ops` document for both `newNamespaceModel` and `sameNamespaceModel` has a string with one character, so
-it is a total of 58 bytes.
+The `ops` document for both `newNamespaceModel` and `sameNamespaceModel` has a string with one character, so it is a
+total of 58 bytes.
 
 The models using the "db.coll" namespace will create one `nsInfo` document with the following structure and size:
 
@@ -580,8 +579,8 @@ Size: 21 bytes
 Size: 217 bytes
 ```
 
-We need to fill up the rest of the message with bytes such that another `ops` document will fit, but another
-`nsInfo` entry will not. The following calculations are used:
+We need to fill up the rest of the message with bytes such that another `ops` document will fit, but another `nsInfo`
+entry will not. The following calculations are used:
 
 ```
 # 1000 is the OP_MSG overhead required in the spec
@@ -601,8 +600,8 @@ remainingBulkWriteBytes = maxMessageSizeBytes - 1122
 
 ### 12. `MongoClient.bulkWrite` returns an error if no operations can be added to `ops`
 
-Test that `MongoClient.bulkWrite` returns an error if an operation provided exceeds `maxMessageSizeBytes` such
-that an empty `ops` payload would be sent.
+Test that `MongoClient.bulkWrite` returns an error if an operation provided exceeds `maxMessageSizeBytes` such that an
+empty `ops` payload would be sent.
 
 This test must only be run on 8.0+ servers. This test may be skipped by drivers that are not able to construct
 arbitrarily large documents.
@@ -646,8 +645,7 @@ Assert that `error` is a client error.
 
 ### 13. `MongoClient.bulkWrite` returns an error if auto-encryption is configured
 
-This test is expected to be removed when
-[DRIVERS-2888](https://jira.mongodb.org/browse/DRIVERS-2888) is resolved.
+This test is expected to be removed when [DRIVERS-2888](https://jira.mongodb.org/browse/DRIVERS-2888) is resolved.
 
 Test that `MongoClient.bulkWrite` returns an error if the client has auto-encryption configured.
 
@@ -676,6 +674,5 @@ InsertOne {
 }
 ```
 
-Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned.
-Assert that `error` is a client error containing the message: "bulkWrite does not currently support automatic
-encryption".
+Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned. Assert that
+`error` is a client error containing the message: "bulkWrite does not currently support automatic encryption".

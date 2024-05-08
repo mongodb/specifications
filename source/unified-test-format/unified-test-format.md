@@ -927,17 +927,18 @@ The structure of this object is as follows:
   `hasErrorLabel` method).
 
 - `writeErrors`: Optional document. The write errors expected to be present in the error. The `writeErrors` document
-  contains numeric keys representing the index of the write that failed and `writeError` object values. The test runner MUST
-  assert that the error contains a `writeError` for each index present in `writeErrors` and MUST assert that the `writeError`s
-  match as root-level documents according to the rules in [Evaluating Matches](#evaluating-matches). The test runner MUST
-  assert that the error does not contain any additional `writeError`s. This field is only intended for use with the
-  [clientBulkWrite](#clientbulkwrite) operation.
+  contains numeric keys representing the index of the write that failed and `writeError` object values. The test runner
+  MUST assert that the error contains a `writeError` for each index present in `writeErrors` and MUST assert that the
+  `writeError`s match as root-level documents according to the rules in [Evaluating Matches](#evaluating-matches). The
+  test runner MUST assert that the error does not contain any additional `writeError`s. This field is only intended for
+  use with the [clientBulkWrite](#clientbulkwrite) operation.
 
 - `writeConcernErrors`: Optional array of one or more objects. An ordered list of write concern errors expected to be
   present in the error. The test runner MUST assert that each `writeConcernError` in this list matches the
-  `writeConcernError` present at the same index in the error's list of `writeConcernError`s as a root-level document according
-  to the rules in [Evaluating Matches](#evaluating-matches). The test runner MUST assert that the error does not contain any
-  additional `writeConcernErrors`s. This field is only intended for use with the [clientBulkWrite](#clientbulkwrite) operation.
+  `writeConcernError` present at the same index in the error's list of `writeConcernError`s as a root-level document
+  according to the rules in [Evaluating Matches](#evaluating-matches). The test runner MUST assert that the error does
+  not contain any additional `writeConcernErrors`s. This field is only intended for use with the
+  [clientBulkWrite](#clientbulkwrite) operation.
 
 <span id="expectedError_errorResponse" />
 
@@ -1457,8 +1458,8 @@ Test runners MUST NOT iterate the change stream when executing this operation an
 
 #### clientBulkWrite
 
-These considerations only apply to the `MongoClient.bulkWrite` method. See [bulkWrite](#bulkwrite) for special considerations
-for `MongoCollection.bulkWrite`.
+These considerations only apply to the `MongoClient.bulkWrite` method. See [bulkWrite](#bulkwrite) for special
+considerations for `MongoCollection.bulkWrite`.
 
 The `models` parameter for `clientBulkWrite` is documented as a list of WriteModel interfaces. Each WriteModel
 implementation (e.g. InsertOneModel) provides important context to the method, but that type information is not easily
@@ -1489,23 +1490,23 @@ arguments:
   ordered: true
 ```
 
-Because the `insertResults`, `updateResults`, and `deleteResults` may be absent or empty in the `BulkWriteResult` returned
-from a summary-only bulk write, the `clientBulkWrite` operation SHOULD use the [$$unsetOrMatches](#unsetormatches) operator
-for assertions on these fields when `verboseResults` is not set to true. This also applies to result objects
-defined in the `expectedResult` field of [expectedError](#expectederror).
+Because the `insertResults`, `updateResults`, and `deleteResults` may be absent or empty in the `BulkWriteResult`
+returned from a summary-only bulk write, the `clientBulkWrite` operation SHOULD use the
+[$$unsetOrMatches](#unsetormatches) operator for assertions on these fields when `verboseResults` is not set to true.
+This also applies to result objects defined in the `expectedResult` field of [expectedError](#expectederror).
 
-The `BulkWriteException` thrown by `MongoClient.bulkWrite` contains an optional `error` field that stores a top-level error
-that occurred during the bulk write. Test runners MUST inspect the contents of this field when making assertions based on
-the contents of the `errorCode` and `errorContains` fields in [expectedError](#expectederror).
+The `BulkWriteException` thrown by `MongoClient.bulkWrite` contains an optional `error` field that stores a top-level
+error that occurred during the bulk write. Test runners MUST inspect the contents of this field when making assertions
+based on the contents of the `errorCode` and `errorContains` fields in [expectedError](#expectederror).
 
-`BulkWriteException` also contains `writeErrors` and `writeConcernErrors` fields that define the individual write errors and
-write concern errors that occurred during the bulk write. Unified tests SHOULD use `writeErrors` and `writeConcernErrors` in
-`expectedError` to assert on the contents of these fields. Test runners MUST NOT inspect the contents of these fields when
-making assertions based on any other fields defined in `expectedError`.
+`BulkWriteException` also contains `writeErrors` and `writeConcernErrors` fields that define the individual write errors
+and write concern errors that occurred during the bulk write. Unified tests SHOULD use `writeErrors` and
+`writeConcernErrors` in `expectedError` to assert on the contents of these fields. Test runners MUST NOT inspect the
+contents of these fields when making assertions based on any other fields defined in `expectedError`.
 
-While operations typically raise an error *or* return a result, the `MongoClient.bulkWrite` operation may
-report both via the `partialResult` property of a `BulkWriteException`. In this case, the intermediary write result may be
-matched with [expectedError_expectResult](#expectedError_expectResult)
+While operations typically raise an error *or* return a result, the `MongoClient.bulkWrite` operation may report both
+via the `partialResult` property of a `BulkWriteException`. In this case, the intermediary write result may be matched
+with [expectedError_expectResult](#expectedError_expectResult)
 
 #### watch
 
@@ -1653,7 +1654,8 @@ behavior between drivers that eagerly create a server-side cursor and those that
 
 #### bulkWrite
 
-These considerations only apply to the `MongoCollection.bulkWrite` method. See [clientBulkWrite](#clientbulkwrite) for special considerations for `MongoClient.bulkWrite`.
+These considerations only apply to the `MongoCollection.bulkWrite` method. See [clientBulkWrite](#clientbulkwrite) for
+special considerations for `MongoClient.bulkWrite`.
 
 The `requests` parameter for `bulkWrite` is documented as a list of WriteModel interfaces. Each WriteModel
 implementation (e.g. InsertOneModel) provides important context to the method, but that type information is not easily
@@ -3488,7 +3490,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 ## Changelog
 
 - 2024-05-08: **Schema version 1.21.**\
-  Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the client-level bulk write API.
+  Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the
+  client-level bulk write API.
 
 - 2024-04-15: Note that when `directConnection` is set to true test runners should only provide a single seed.
 
