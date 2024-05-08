@@ -3443,7 +3443,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- TODO: **Schema version 1.20.**\
+- 2024-05-08: **Schema version 1.21.**\
   Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the client-level bulk write API.
 
 - 2024-02-23: Require test runners to gossip cluster time from internal MongoClient to each session entity.
