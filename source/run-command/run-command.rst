@@ -105,7 +105,7 @@ OP_MSG
 
 The ``$db`` global command argument MUST be set on the command sent to the server and it MUST equal the database name RunCommand was invoked on.
 
-* See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
+* See OP_MSG's section on `Global Command Arguments <../message/OP_MSG.md#global-command-arguments>`_
 
 ReadPreference
 """"""""""""""
@@ -117,7 +117,7 @@ To facilitate server selection the RunCommand operation MUST accept an optional 
 
 If the provided ReadPreference is NOT ``{mode: primary}`` and the selected server is NOT a standalone, the command sent MUST include the ``$readPreference`` global command argument.
 
-* See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
+* See OP_MSG's section on `Global Command Arguments <../message/OP_MSG.md#global-command-arguments>`_
 
 Driver Sessions
 """""""""""""""
@@ -173,8 +173,8 @@ Retryability
 All commands executed via RunCommand are non-retryable operations.
 Drivers MUST NOT inspect the command to determine if it is a write and MUST NOT attach a ``txnNumber``.
 
-* See Retryable Reads' section on `Unsupported Read Operations <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/retryable-reads.rst#unsupported-read-operations>`_
-* See Retryable Writes' section on `Behavioral Changes for Write Commands <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#behavioral-changes-for-write-commands>`_
+* See Retryable Reads' section on `Unsupported Read Operations <../retryable-reads/retryable-reads.md#unsupported-read-operations>`_
+* See Retryable Writes' section on `Behavioral Changes for Write Commands <../retryable-writes/retryable-writes.md#behavioral-changes-for-write-commands>`_
 
 Stable API
 """"""""""
@@ -287,7 +287,7 @@ Load Balancers
 
 When in ``loadBalanced`` mode, a driver MUST pin the connection used to execute the initial operation, and reuse it for subsequent ``getMore`` operations.
 
-* See Load Balancer's section on `Behaviour With Cursors <https://github.com/mongodb/specifications/blob/master/source/load-balancers/load-balancers.rst#behaviour-with-cursors>`_
+* See Load Balancer's section on `Behaviour With Cursors <../load-balancers/load-balancers.md#behaviour-with-cursors>`_
 
 Iterating the Cursor
 """"""""""""""""""""

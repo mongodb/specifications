@@ -60,7 +60,7 @@ Publishing & Subscribing
 
 The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
 
-Similarly, as described in the `logging specification <../logging/logging.rst#implementation-requirements>`__ the driver SHOULD emit log messages in a manner that is standard for the language.
+Similarly, as described in the `logging specification <../logging/logging.md#implementation-requirements>`__ the driver SHOULD emit log messages in a manner that is standard for the language.
 
 
 Guarantees
@@ -190,7 +190,7 @@ into account. See the previously mentioned MongoDB Handshake spec for details.
 Events API
 ----------
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#events>`__ for details on the ``serviceId`` field.
 
 .. code:: typescript
 
@@ -363,7 +363,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
 
 Log Messages
 ------------
-Please refer to the `logging specification <../logging/logging.rst>`__ for details on logging implementations in general, including log levels, log
+Please refer to the `logging specification <../logging/logging.md>`__ for details on logging implementations in general, including log levels, log
 components, and structured versus unstructured logging.
 
 Drivers MUST support logging of command information via the following types of log messages. These messages MUST be logged at ``Debug`` level and use
@@ -451,7 +451,7 @@ In addition to the common fields, command started messages MUST contain the foll
    * - command
      - String
      - Relaxed extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the 
-       `logging specification <../logging/logging.rst#configurable-max-document-length>`__, and MUST be replaced with an empty document
+       `logging specification <../logging/logging.md#configurable-max-document-length>`__, and MUST be replaced with an empty document
        "{ }" if the command is considered sensitive.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -484,7 +484,7 @@ In addition to the common fields, command succeeded messages MUST contain the fo
    * - reply
      - String
      - Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the 
-       `logging specification <../logging/logging.rst#configurable-max-document-length>`__, and MUST be replaced with an empty document
+       `logging specification <../logging/logging.md#configurable-max-document-length>`__, and MUST be replaced with an empty document
        "{ }" if the command is considered sensitive.
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in placeholders as appropriate:
@@ -516,7 +516,7 @@ In addition to the common fields, command failed messages MUST contain the follo
 
    * - failure
      - Flexible
-     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__ 
+     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__ 
        for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a 
        language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.
 

@@ -334,7 +334,7 @@ Fields:
 * opTime: an opTime or null.
   An opaque value representing the position in the oplog of the most recently seen write. Default null.
   (Only mongos and shard servers record this field when monitoring
-  config servers as replica sets, at least until `drivers allow applications to use readConcern "afterOptime". <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#future-feature-to-support-readconcern-afteroptime>`_)
+  config servers as replica sets, at least until `drivers allow applications to use readConcern "afterOptime". <../max-staleness/max-staleness.md#future-feature-to-support-readconcern-afteroptime>`_)
 * (=) type: a `ServerType`_ enum value. Default Unknown.
 * (=) minWireVersion, maxWireVersion:
   the wire protocol version range supported by the server.
@@ -361,7 +361,7 @@ Fields:
   The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
 * (=) iscryptd: boolean indicating if the server is a
-  `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`_
+  `mongocryptd <../client-side-encryption/client-side-encryption.md#mongocryptd>`_
   server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
@@ -504,7 +504,7 @@ Client construction
 '''''''''''''''''''
 
 Except for `initial DNS seed list discovery
-<https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+<../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md>`_
 when given a connection string with ``mongodb+srv`` scheme,
 the client's constructor MUST NOT do any I/O.
 This means that the constructor does not throw an exception
@@ -532,6 +532,15 @@ Single-threaded client construction
 Single-threaded clients do no I/O in the constructor.
 They MUST `scan`_ the servers on demand,
 when the first operation is attempted.
+
+Client closing
+''''''''''''''
+
+When a client is closing, before it emits the ``TopologyClosedEvent`` as per the
+`Events API <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events-api>`_, 
+it SHOULD `remove`_ all servers from its ``TopologyDescription`` and set its
+``TopologyType`` to ``Unknown``, emitting the corresponding
+``TopologyDescriptionChangedEvent``.
 
 Monitoring
 ''''''''''
@@ -853,7 +862,7 @@ type Unknown.
 TopologyType LoadBalanced
 `````````````````````````
 
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-logging-and-monitoring>`__ for details.
+See the `Load Balancer Specification <../load-balancers/load-balancers.md#server-discovery-logging-and-monitoring>`__ for details.
 
 Other TopologyTypes
 ```````````````````
@@ -2543,6 +2552,7 @@ Changelog
 :2022-09-30: Update ``updateRSFromPrimary`` to include logic before and after 6.0 servers
 :2022-10-05: Remove spec front matter, move footnote, and reformat changelog.
 :2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
+:2024-01-17: Add section on expected client close behaviour
 
 ----
 

@@ -72,7 +72,7 @@ Publishing and Subscribing
 
 The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
 
-Similarly, as described in the `logging specification <../logging/logging.rst#implementation-requirements>`__ the driver SHOULD emit log messages in a manner that is standard for the language.
+Similarly, as described in the `logging specification <../logging/logging.md#implementation-requirements>`__ the driver SHOULD emit log messages in a manner that is standard for the language.
 
 ----------
 Guarantees
@@ -110,6 +110,18 @@ Initial Server Description
 --------------------------
 
 ``ServerDescription`` objects MUST be initialized with a default description in an “unknown” state, guaranteeing that the previous description in the events and log messages will never be null.
+
+
+Initial Topology Description
+----------------------------
+
+The first ``TopologyDescriptionChangedEvent`` to be emitted from a monitored Topology MUST set its ``previousDescription`` property to be a ``TopologyDescription`` object in the "unknown" state.
+
+Closing Topology Description
+----------------------------
+
+When a ``Topology`` object or equivalent is being shut-down or closed, the driver MUST change the
+``TopologyDescription`` to an "unknown" state.
 
 ----------
 Events API
@@ -407,7 +419,7 @@ the value to the default read preference, ``primary``, or treat the call as if `
 ------------
 Log Messages
 ------------
-Please refer to the `logging specification <../logging/logging.rst>`__ for details on logging implementations in general, including log levels, log
+Please refer to the `logging specification <../logging/logging.md>`__ for details on logging implementations in general, including log levels, log
 components, and structured versus unstructured logging.
 
 Drivers MUST support logging of SDAM information via the following types of log messages. These messages MUST be logged at ``Debug`` level and use
@@ -679,7 +691,7 @@ In addition to the relevant common fields, these messages MUST contain the follo
 
    * - failure
      - Flexible
-     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.rst#representing-errors-in-log-messages>`__ 
+     - The error. The type and format of this value is flexible; see the `logging specification <../logging/logging.md#representing-errors-in-log-messages>`__ 
        for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a 
        language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.
 
@@ -698,6 +710,9 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
+:2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's
+             previousDescription field
+:2024-01-17: Updated to require that ``TopologyDescriptionChangedEvent`` should be emitted before just ``TopologyClosedEvent`` is emitted
 :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
 :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
              for SDAM log messages. 

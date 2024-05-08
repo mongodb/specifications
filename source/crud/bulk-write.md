@@ -890,4 +890,4 @@ batch-splitting testing.
 
 ## **Changelog**
 
-- TODO: Bulk write specification created.
+- 2024-05-08: Bulk write specification created.

@@ -72,7 +72,7 @@ srvServiceName and srvMaxHosts URI options
 
 For URI option validation pertaining to ``srvServiceName`` and ``srvMaxHosts``,
 please see the
-`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#uri-validation>`_
+`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#uri-validation>`_
 for details.
 
 
@@ -81,7 +81,7 @@ Load Balancer Mode
 
 For URI option validation in Load Balancer mode (i.e. ``loadBalanced=true``),
 please see the
-`Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for
+`Load Balancer spec <../load-balancers/load-balancers.md#uri-validation>`_ for
 details.
 
 
@@ -186,7 +186,7 @@ pertaining to URI options apply here.
 
    * - loadBalanced
      - "true" or "false"
-     - defined in `Load Balancer spec <../load-balancers/load-balancers.rst#loadbalanced>`__
+     - defined in `Load Balancer spec <../load-balancers/load-balancers.md#loadbalanced>`__
      - no
      - Whether the driver is connecting to a load balancer.
 
@@ -218,7 +218,7 @@ pertaining to URI options apply here.
 
    * - maxStalenessSeconds
      - -1 (no max staleness check) or integer >= 90
-     - defined in `max staleness spec <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#api>`_
+     - defined in `max staleness spec <../max-staleness/max-staleness.md#api>`_
      - no
      - The maximum replication lag, in wall clock time, that a secondary can suffer and still be eligible for server selection
 
@@ -283,13 +283,13 @@ pertaining to URI options apply here.
 
    * - retryReads
      - "true" or "false"
-     - defined in `retryable reads spec <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/retryable-reads.rst#retryreads>`_
+     - defined in `retryable reads spec <../retryable-reads/retryable-reads.md#retryreads>`_
      - no
      - Enables retryable reads on server 3.6+
 
    * - retryWrites
      - "true" or "false"
-     - defined in `retryable writes spec <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#retrywrites>`_
+     - defined in `retryable writes spec <../retryable-writes/retryable-writes.md#retrywrites>`_
      - no
      - Enables retryable writes on server 3.6+
 
@@ -321,7 +321,7 @@ pertaining to URI options apply here.
 
    * - srvMaxHosts
      - non-negative integer; 0 means no maximum
-     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts>`__
+     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts>`__
      - no
      - The maximum number of SRV results to randomly select when initially
        populating the seedlist or, during SRV polling, adding new hosts to the
@@ -331,7 +331,7 @@ pertaining to URI options apply here.
      - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_
      - "mongodb"
      - no
-     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`__
+     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvservicename>`__
        and `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
 
    * - ssl

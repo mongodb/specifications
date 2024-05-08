@@ -13,8 +13,8 @@ a driver performs authentication with a MongoDB server.
 
 ### META
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and
-“OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ### References
 
@@ -53,7 +53,7 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 - username (string)
 
   - Applies to all mechanisms.
-  - Optional for MONGODB-X509 and MONGODB-AWS.
+  - Optional for MONGODB-X509, MONGODB-AWS, and MONGODB-OIDC.
 
 - source (string)
 
@@ -173,6 +173,9 @@ SASLprep), as the server uses the raw form to look for conflicts with legacy cre
 If the handshake response includes a `saslSupportedMechs` field, then drivers MUST use the contents of that field to
 select a default mechanism as described later. If the command succeeds and the response does not include a
 `saslSupportedMechs` field, then drivers MUST use the legacy default mechanism rules for servers older than 4.0.
+
+Drivers MUST NOT validate the contents of the `saslSupportedMechs` attribute of the initial handshake reply. Drivers
+MUST NOT raise an error if the `saslSupportedMechs` attribute of the reply includes an unknown mechanism.
 
 ### Single-credential drivers
 
@@ -855,12 +858,11 @@ The following diagram is a summary of the steps drivers MUST follow to calculate
 | X-Amz-Date\*              | See [Amazon Documentation](https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html)                                 |
 | X-Amz-Security-Token\*    | Optional, see [Amazon Documentation](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true) |
 | X-MongoDB-Server-Nonce\*  | Base64 string of server nonce                                                                                                 |
-| X-MongoDB-GS2-CB-Flag\*   | ASCII lower-case character ‘n’ or ‘y’ or ‘p’                                                                                  |
+| X-MongoDB-GS2-CB-Flag\*   | ASCII lower-case character 'n' or 'y' or 'p'                                                                                  |
 | X-MongoDB-Optional-Data\* | Optional data, base64 encoded representation of the optional object provided by the client                                    |
 | Body                      | Action=GetCallerIdentity&Version=2011-06-15                                                                                   |
 
-> \[!NOTE\]
->
+> [!NOTE]
 > `*`, Denotes a header that MUST be included in SignedHeaders, if present.
 
 #### Region Calculation
@@ -948,8 +950,7 @@ The order in which Drivers MUST search for credentials is:
 3. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
 4. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q--a)
 >
 > Drivers are not expected to handle
@@ -1153,8 +1154,7 @@ cache MUST be written atomically.
 
 If AWS authentication fails for any reason, the cache MUST be cleared.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > Five minutes was chosen based on the AWS documentation for
 > [IAM roles for EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) : "We make new
 > credentials available at least five minutes before the expiration of the old credentials". The intent is to have some
@@ -1201,6 +1201,15 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 #### [MongoCredential](#mongocredential) Properties
 
+> [!NOTE]
+> Drivers MUST NOT url-decode the entire `authMechanismProperties` given in an connection string when the
+> `authMechanism` is `MONGODB-OIDC`. This is because the `TOKEN_RESOURCE` itself will typically be a URL and may contain
+> a `,` character. The values of the individual `authMechanismProperties` MUST still be url-decoded when given as part
+> of the connection string, and MUST NOT be url-decoded when not given as part of the connection string, such as through
+> a `MongoClient` or `Credential` property. Drivers MUST parse the `TOKEN_RESOURCE` by splitting only on the first `:`
+> character. Drivers MUST document that users must url-encode `TOKEN_RESOURCE` when it is provided in the connection
+> string and it contains and of the special characters in \[`,`, `+`, `&`, `%`\].
+
 - username\
   MAY be specified. Its meaning varies depending on the OIDC provider integration used.
 
@@ -1215,11 +1224,16 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 - mechanism_properties
 
-  - PROVIDER_NAME\
-    Drivers MUST allow the user to specify the name of a built-in OIDC provider integration to use to
-    obtain credentials. If provided, the value MUST be one of `["aws"]`. If both `PROVIDER_NAME` and an
-    [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
-    `MongoClient`, the driver MUST raise an error.
+  - ENVIRONMENT\
+    Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration
+    to use to obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp"]`. If both
+    `ENVIRONMENT` and an [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for
+    the same `MongoClient`, the driver MUST raise an error.
+
+  - TOKEN_RESOURCE\
+    The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
+    `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
+    MUST raise an error.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
@@ -1246,20 +1260,127 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     performed after SRV record resolution, if applicable. This property is only required for drivers that support the
     [Human Authentication Flow](#human-authentication-flow).
 
-#### Built-in Provider Integrations
+<div id="built-in-provider-integrations">
 
-Drivers MUST support all of the following built-in OIDC providers.
+#### Built-in OIDC Environment Integrations
 
-####### AWS
+Drivers MUST support all of the following built-in OIDC application environment integrations.
 
-The AWS provider is enabled by setting auth mechanism property `PROVIDER_NAME:aws`.
+**Test**
 
-If enabled, drivers MUST read the file path from environment variable `AWS_WEB_IDENTITY_TOKEN_FILE` and then read the
-OIDC access token from that file. The driver MUST use the contents of that file as value in the `jwt` field of the
-`saslStart` payload.
+The test integration is enabled by setting auth mechanism property `ENVIRONMENT:test`. It is meant for driver testing
+purposes, and is not meant to be documented as a user-facing feature.
 
-Drivers MAY implement the AWS provider so that it conforms to the function signature of the
-[OIDC Callback](#oidc-callback) to prevent having to re-implement the AWS provider logic in the OIDC prose tests.
+If enabled, drivers MUST generate a token using a script in the `auth_oidc`
+[folder](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/auth_oidc#readme) in Drivers
+Evergreen Tools. The driver MUST then set the `OIDC_TOKEN_FILE` environment variable to the path to that file. At
+runtime, the driver MUST use the `OIDC_TOKEN_FILE` environment variable and read the OIDC access token from that path.
+The driver MUST use the contents of that file as value in the `jwt` field of the `saslStart` payload.
+
+Drivers MAY implement the "test" integration so that it conforms to the function signature of the
+[OIDC Callback](#oidc-callback) to prevent having to re-implement the "test" integration logic in the OIDC prose tests.
+
+**Azure**
+
+The Azure provider integration is enabled by setting auth mechanism property `ENVIRONMENT:azure`.
+
+If enabled, drivers MUST use an internal machine callback that calls the
+[Azure Instance Metadata Service](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service)
+and parse the JSON response body, as follows:
+
+Make an HTTP GET request to
+
+```
+http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=<resource>&client_id=<client_id>
+```
+
+with headers
+
+```
+Accept: application/json
+Metadata: true
+```
+
+where `<resource>` is the url-encoded value of the `TOKEN_RESOURCE` mechanism property and `<client_id>` is the
+`username` from the connection string. If a `username` is not provided, the `client_id` query parameter should be
+omitted. The timeout should equal the `callbackTimeoutMS` parameter given to the callback.
+
+```bash
+curl -X GET \
+  -H "Accept: application/json" \
+  -H "Metadata: true" \
+  --max-time $CALLBACK_TIMEOUT_MS \
+  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=$ENCODED_TOKEN_RESOURCE"
+```
+
+The JSON response will be in this format:
+
+```json
+{
+  "access_token": "eyJ0eXAi...",
+  "refresh_token": "",
+  "expires_in": "3599",
+  "expires_on": "1506484173",
+  "not_before": "1506480273",
+  "resource": "https://management.azure.com/",
+  "token_type": "Bearer"
+}
+```
+
+The driver MUST use the returned `"access_token"` value as the access token in a `JwtStepRequest`. If the response does
+not return a status code of 200, the driver MUST raise an error including the HTTP response body.
+
+For more details, see
+[How to use managed identities for Azure resources on an Azure VM to acquire an access token](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-to-use-vm-token).
+
+The callback itself MUST not perform any caching, and the driver MUST cache its tokens in the same way as if a custom
+callback had been provided by the user.
+
+For details on test environment setup, see the README in
+[Drivers-Evergreen-Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/azure/README.md).
+
+**GCP**
+
+The GCP provider integration is enabled by setting auth mechanism property `ENVIRONMENT:gcp`.
+
+If enabled, drivers MUST use an internal machine callback that calls the
+[Google Cloud VM metadata](https://cloud.google.com/compute/docs/metadata/overview) endpoint and parse the JSON response
+body, as follows:
+
+Make an HTTP GET request to
+
+```
+http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=<resource>
+```
+
+with headers
+
+```
+Metadata-Flavor: Google
+```
+
+where `<resource>` is the url-encoded value of the `TOKEN_RESOURCE` mechanism property. The timeout should equal the
+`callbackTimeoutMS` parameter given to the callback.
+
+```bash
+curl -X GET \
+  -H "Metadata-Flavor: Google" \
+  --max-time $CALLBACK_TIMEOUT_MS \
+  "http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=$ENCODED_TOKEN_RESOURCE"
+```
+
+The response body will be the access token itself.
+
+The driver MUST use the returned value as the access token in a `JwtStepRequest`. If the response does not return a
+status code of 200, the driver MUST raise an error including the HTTP response body.
+
+For more details, see [View and query VM metadata](https://cloud.google.com/compute/docs/metadata/querying-metadata).
+
+The callback itself MUST not perform any caching, and the driver MUST cache its tokens in the same way as if a custom
+callback had been provided by the user.
+
+For details on test environment setup, see the README in
+[Drivers-Evergreen-Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/gcp/README.md).
 
 #### OIDC Callback
 
@@ -1272,11 +1393,13 @@ use asynchronous functions.
 Drivers MUST provide a way for the callback to be either automatically canceled, or to cancel itself. This can be as a
 timeout argument to the callback, a cancellation context passed to the callback, or some other language-appropriate
 mechanism. The timeout value MUST be `min(remaining connectTimeoutMS, remaining timeoutMS)` as described in the Server
-Selection section of the CSOT spec.
+Selection section of the CSOT spec. If CSOT is not applied, then the driver MUST use 1 minute as the timeout.
 
 The driver MUST pass the following information to the callback:
 
 - `timeout`: A timeout, in milliseconds, a deadline, or a `timeoutContext`.
+
+- `username`: The username given as part of the connection string or `MongoClient` parameter.
 
 - `version`: The callback API version number. The version number is used to communicate callback API changes that are
   not breaking but that users may want to know about and review their implementation. Drivers MUST pass `1` for the
@@ -1294,10 +1417,10 @@ The driver MUST pass the following information to the callback:
 The callback MUST be able to return the following information:
 
 - `accessToken`: An OIDC access token string. The driver MUST NOT attempt to validate `accessToken` directly.
-- `expiresIn`: An optional expiry duration for the access token. Drivers MUST interpret the value 0 as an infinite
-  duration and error if a negative value is returned. Drivers SHOULD use the most idiomatic type for representing a
-  duration in the driver's language. Note that the access token expiry value is currently not used in
-  [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
+- `expiresIn`: An optional expiry duration for the access token. Drivers with optional parameters MAY interpret a
+  missing value as infinite. Drivers MUST error if a negative value is returned. Drivers SHOULD use the most idiomatic
+  type for representing a duration in the driver's language. Note that the access token expiry value is currently not
+  used in [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
 
 The signature and naming of the callback API is up to the driver's discretion. Drivers MUST ensure that additional
 optional input parameters and return values can be added to the callback signature in the future without breaking
@@ -1308,6 +1431,7 @@ An example callback API might look like:
 ```typescript
 interface OIDCCallbackParams {
     callbackTimeoutMS: int;
+    username: str;
     version: int;
 }
 
@@ -1350,11 +1474,12 @@ An example human callback API might look like:
 ```typescript
 interface IdpInfo {
   issuer: string;
-  clientId: string;
+  clientId: Optional<string>;
   requestScopes: Optional<Array<string>>;
 }
 
 interface OIDCCallbackParams {
+    username: str;
     callbackTimeoutMS: int;
     version: int;
     idpInfo: Optional<IdpInfo>;
@@ -1410,6 +1535,7 @@ An example OIDC one-step SASL conversation with access token string "abcd1234" l
 {
   saslStart: 1,
   mechanism: "MONGODB-OIDC",
+  db: "$external"
   // payload is a BSON generic binary field containing a JwtStepRequest BSON
   // document: {"jwt": "abcd1234"}
   payload: BinData(0, "FwAAAAJqd3QACQAAAGFiY2QxMjM0AAA=")
@@ -1484,6 +1610,7 @@ An example OIDC two-step SASL conversation with username "myidp" and access toke
 {
   saslStart: 1,
   mechanism: "MONGODB-OIDC",
+  db: "$external",
   // payload is a BSON generic binary field containing a PrincipalStepRequest
   // BSON document: {"n": "myidp"}
   payload: BinData(0, "EgAAAAJuAAYAAABteWlkcAAA")
@@ -1572,15 +1699,16 @@ def invalidate(access_token):
 Drivers that support the [Human Authentication Flow](#human-authentication-flow) MUST also cache the `IdPInfo` and
 refresh token in the *Client Cache* when a [OIDC Human Callback](#oidc-human-callback) is configured.
 
-####### Authentication
+**Authentication**
 
 Use the following algorithm to authenticate a new connection:
 
 - Check if the the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a `One-Step` SASL conversation using the
-    access token in the *Client Cache*. If the server returns an error, invalidate that access token, sleep 100ms then
-    continue.
-- Call the configured built-in provider integration or the OIDC callback to retrieve a new access token.
+    access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access token.
+    Raise any other errors to the user. On success, exit the algorithm.
+- Call the configured built-in provider integration or the OIDC callback to retrieve a new access token. Wait until it
+  has been at least 100ms since the last callback invocation, to avoid overloading the callback.
 - Cache the new access token in the *Client Cache* and *Connection Cache*.
 - Perform a `One-Step` SASL conversation using the new access token. Raise any errors to the user.
 
@@ -1591,18 +1719,19 @@ def auth(connection):
   access_token, is_cache = get_access_token()
 
   # If there is a cached access token, try to authenticate with it. If
-  # authentication fails, it's possible the cached access token is expired. In
-  # that case, invalidate the access token, fetch a new access token, and try
+  # authentication fails with an Authentication error (18), 
+  # invalidate the access token, fetch a new access token, and try
   # to authenticate again.
+  # If the server fails for any other reason, do not clear the cache.
   if is_cache:
     try:
       connection.oidc_cache.access_token = access_token
       sasl_start(connection, payload={"jwt": access_token})
       return
-    except ServerError:
-      invalidate(access_token)
-      sleep(0.1)
-      access_token, _ = get_access_token()
+    except ServerError as e:
+      if e.code == 18:
+        invalidate(access_token)
+        access_token, _ = get_access_token()
 
   connection.oidc_cache.access_token = access_token
   sasl_start(connection, payload={"jwt": access_token})
@@ -1613,14 +1742,15 @@ authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback)
 
 - Check if the *Client Cache* has an access token.
   - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
-    using the access token. If the server returns an error, invalidate the access token token from the *Client Cache*,
-    clear the *Connection Cache*, and continue.
+    using the access token. If the server returns an Authentication error (18), invalidate the access token token from
+    the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. Raise any other errors to the
+    user. On success, exit the algorithm.
 - Check if the *Client Cache* has a refresh token.
   - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
     a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
-    [One-Step](#one-step) SASL conversation using the new access token. If the
-    [OIDC Human Callback](#oidc-human-callback) or the server return an error, invalidate the access token from the
-    *Client Cache*, clear the *Connection Cache*, and continue.
+    [One-Step](#one-step) SASL conversation using the new access token. If the the server returns an Authentication
+    error (18), clear the refresh token, invalidate the access token from the *Client Cache*, clear the *Connection
+    Cache*, and restart the authentication flow. Raise any other errors to the user. On success, exit the algorithm.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional
@@ -1642,7 +1772,7 @@ Use the following algorithm to perform speculative authentication:
   - If it does, cache the access token in the *Connection Cache* and send a `JwtStepRequest` with the cached access
     token in the speculative authentication SASL payload. If the response is missing a speculative authentication
     document or the speculative authentication document indicates authentication was not successful, clear the the
-    *Connection Cache* and continue.
+    *Connection Cache* and proceed to the next step.
 - Authenticate with the standard authentication handshake.
 
 Example code for speculative authentication using the `auth` function described above:
@@ -1918,6 +2048,25 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-05-03: Clarify timeout behavior for OIDC machine callback. Add `serverless:forbid` to OIDC unified tests. Add an
+  additional prose test for the behavior of `ALLOWED_HOSTS`.
+
+- 2024-04-24: Clarify that TOKEN_RESOURCE for MONGODB-OIDC must be url-encoded.
+
+- 2024-04-22: Fix API description for GCP built-in OIDC provider.
+
+- 2024-04-22: Updated OIDC authentication flow and prose tests.
+
+- 2024-04-22: Clarify that driver should not validate `saslSupportedMechs` content.
+
+- 2024-04-03: Added GCP built-in OIDC provider integration.
+
+- 2024-03-29: Updated OIDC test setup and descriptions.
+
+- 2024-03-21: Added Azure built-in OIDC provider integration.
+
+- 2024-03-09: Rename OIDC integration name and values.
 
 - 2024-01-31: Migrated from reStructuredText to Markdown.
 

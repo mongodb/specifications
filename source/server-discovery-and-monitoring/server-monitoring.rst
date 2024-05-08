@@ -1249,8 +1249,8 @@ Changelog
 .. _connection handshake: mongodb-handshake/handshake.rst
 .. _localThresholdMS: ../server-selection/server-selection.md#localThresholdMS
 .. _SDAM Monitoring spec: server-discovery-and-monitoring-logging-and-monitoring.rst#heartbeats
-.. _OP_MSG Spec: /source/message/OP_MSG.rst
-.. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
+.. _OP_MSG Spec: ../message/OP_MSG.md
+.. _OP_MSG exhaustAllowed flag: ../message/OP_MSG.md#exhaustAllowed
 .. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#Connection-Pool
 .. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring.rst#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?
 .. _Client Side Operations Timeout Spec: /source/client-side-operations-timeout/client-side-operations-timeout.rst

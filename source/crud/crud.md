@@ -108,8 +108,7 @@ operations that return cursors MUST support the timeout options documented in th
 
 #### Read
 
-> \[!NOTE\]
->
+> [!NOTE]
 > The term `Iterable<T>` is used below to indicate many of T. This spec is flexible on what that means as different
 > drivers will have different requirements, types, and idioms.
 
@@ -1460,8 +1459,7 @@ The acknowledged property is defined for languages/frameworks without a sufficie
 choose to return an optional result (e.g. `Optional<BulkWriteResult>`) such that unacknowledged writes don't have a
 value and acknowledged writes do have a value.
 
-> \[!NOTE\]
->
+> [!NOTE]
 > If you have a choice, consider providing the acknowledged member and raising an error if the other fields are accessed
 > in an unacknowledged write. Instead of users receiving a null reference exception, you have the opportunity to provide
 > an informative error message indicating the correct way to handle the situation. For instance, "The insertedCount
@@ -2196,7 +2194,7 @@ Drivers SHOULD augment their
 can be enforced within a single server selection attempt.
 
 Drivers MUST discern the read preference used to select a server for the operation, which SHALL be used for specifying
-the [$readPreference global command argument](../message/OP_MSG.rst#global-command-arguments) and
+the [$readPreference global command argument](../message/OP_MSG.md#global-command-arguments) and
 [passing read preference to mongos and load balancers](../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers)
 (if applicable).
 

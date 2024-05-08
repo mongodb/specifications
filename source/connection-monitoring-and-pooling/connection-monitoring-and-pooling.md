@@ -14,8 +14,8 @@ This specification does not apply to drivers that do not support multitasking.
 
 ## META
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and
-“OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Definitions
 
@@ -209,7 +209,7 @@ interface Connection {
   address: string;
 
   /**
-   *  An integer representing the “generation” of the pool
+   *  An integer representing the "generation" of the pool
    *  when this Connection was created.
    */
   generation: number;
@@ -431,8 +431,8 @@ connections before observing the PoolReadyEvent event.
 
 #### Creating a Connection (Internal Implementation)
 
-When creating a [Connection](#connection), the initial [Connection](#connection) is in a “pending” state. This only
-creates a “virtual” [Connection](#connection), and performs no I/O.
+When creating a [Connection](#connection), the initial [Connection](#connection) is in a "pending" state. This only
+creates a "virtual" [Connection](#connection), and performs no I/O.
 
 ```
 connection = new Connection()
@@ -717,7 +717,7 @@ MUST remove the entry for a `serviceId` once the connection count reaches 0. Onc
 connection MUST get the generation number that applies to its `serviceId` from the map and update the map to increment
 the connection count for this `serviceId`.
 
-See the [Load Balancer Specification](../load-balancers/load-balancers.rst#connection-pooling) for details.
+See the [Load Balancer Specification](../load-balancers/load-balancers.md#connection-pooling) for details.
 
 #### Forking
 
@@ -772,12 +772,12 @@ implemented, drivers SHOULD use this method as the default method of checking ou
 
 All drivers that implement a connection pool MUST provide an API that allows users to subscribe to events emitted from
 the pool. If a user subscribes to Connection Monitoring events, these events MUST be emitted when specified in
-“Connection Pool Behaviors”. Events SHOULD be created and subscribed to in a manner idiomatic to their language and
+"Connection Pool Behaviors". Events SHOULD be created and subscribed to in a manner idiomatic to their language and
 driver.
 
 #### Events
 
-See the [Load Balancer Specification](../load-balancers/load-balancers.rst#events) for details on the `serviceId` field.
+See the [Load Balancer Specification](../load-balancers/load-balancers.md#events) for details on the `serviceId` field.
 
 ```typescript
 /**
@@ -998,13 +998,13 @@ interface ConnectionCheckedInEvent {
 
 ### Connection Pool Logging
 
-Please refer to the [logging specification](../logging/logging.rst) for details on logging implementations in general,
+Please refer to the [logging specification](../logging/logging.md) for details on logging implementations in general,
 including log levels, log components, handling of null values in log messages, and structured versus unstructured
 logging.
 
 Drivers MUST support logging of connection pool information via the following types of log messages. These messages MUST
 be logged at `Debug` level and use the `connection` log component. These messages MUST be emitted when specified in
-“Connection Pool Behaviors”.
+"Connection Pool Behaviors".
 
 The log messages are intended to match the information contained in the events above. Drivers MAY implement connection
 logging support via an event subscriber if it is convenient to do so.
@@ -1123,7 +1123,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 | message            | String         | "Connection closed"                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | driverConnectionId | Int64          | The driver-generated ID for the connection as defined in a [Connection](#connection).                                                                                                                                                                                                                                                                                                                                                       |
 | reason             | String         | A string describing the reason the connection was closed. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Stale: "Connection became stale because the pool was cleared<br>- Idle: "Connection has been available but unused for longer than the configured max idle time"<br>- Error: "An error occurred while using the connection"<br>- Pool closed: "Connection pool was closed" |
-| error              | Flexible       | If `reason` is `Error`, the associated error.<br>The type and format of this value is flexible; see the [logging specification](../logging/logging.rst#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                                                                                                             |
+| error              | Flexible       | If `reason` is `Error`, the associated error.<br>The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                                                                                                              |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1152,7 +1152,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 | ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | message    | String         | "Connection checkout failed"                                                                                                                                                                                                                                                                                                                                       |
 | reason     | String         | A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed" |
-| error      | Flexible       | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.rst#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                             |
+| error      | Flexible       | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                              |
 | durationMS | Int64          | `ConnectionCheckOutFailedEvent.duration` converted to milliseconds.                                                                                                                                                                                                                                                                                                |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
@@ -1241,7 +1241,7 @@ Step-Down, which will be further addressed in our [Advanced Pooling Behaviors](#
 
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
-- ConnectionCreated adds a new “pending” [Connection](#connection), meaning the totalConnectionCount and
+- ConnectionCreated adds a new "pending" [Connection](#connection), meaning the totalConnectionCount and
   pendingConnectionCount increase by one
 - ConnectionReady establishes that the [Connection](#connection) is ready for use, meaning the availableConnectionCount
   increases by one
@@ -1352,8 +1352,8 @@ them.
 
 ### SDAM
 
-This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that “A monitor SHOULD
-NOT use the client's regular Connection pool”. Some possible solutions for this include:
+This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that "A monitor SHOULD
+NOT use the client's regular Connection pool". Some possible solutions for this include:
 
 - Having each Endpoint representation in the driver create and manage a separate dedicated [Connection](#connection) for
   monitoring purposes
