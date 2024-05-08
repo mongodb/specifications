@@ -107,19 +107,21 @@ property to be a `TopologyDescription` object in the "unknown" state.
 
 ### Events API
 
-The first ``TopologyDescriptionChangedEvent`` to be emitted from a monitored Topology MUST set its ``previousDescription`` property to be a ``TopologyDescription`` object in the "unknown" state.
+The first `TopologyDescriptionChangedEvent` to be emitted from a monitored Topology MUST set its `previousDescription`
+property to be a `TopologyDescription` object in the "unknown" state.
 
-Closing Topology Description
-----------------------------
+## Closing Topology Description
 
-When a ``Topology`` object or equivalent is being shut-down or closed, the driver MUST change the
-``TopologyDescription`` to an "unknown" state.
+When a `Topology` object or equivalent is being shut-down or closed, the driver MUST change the `TopologyDescription` to
+an "unknown" state.
 
-----------
-Events API
-----------
+______________________________________________________________________
 
-This specification defines 9 main events that MUST be published in the scenarios described. 6 of these events are the core behaviour within the cluster lifecycle, and the remaining 3 server heartbeat events are fired from the server monitor and follow the guidelines for publishing in the command monitoring specification.
+## Events API
+
+This specification defines 9 main events that MUST be published in the scenarios described. 6 of these events are the
+core behaviour within the cluster lifecycle, and the remaining 3 server heartbeat events are fired from the server
+monitor and follow the guidelines for publishing in the command monitoring specification.
 
 Events that MUST be published (with their conditions) are as follows.
 
@@ -615,34 +617,11 @@ See the [README](tests/monitoring/README.md).
 
 - 2021-05-06: Updated to use modern terminology.
 
-<<<<<<< HEAD
-:2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's
-             previousDescription field
-:2024-01-17: Updated to require that ``TopologyDescriptionChangedEvent`` should be emitted before just ``TopologyClosedEvent`` is emitted
-:2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
-:2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
-             for SDAM log messages. 
-:2022-10-05: Remove spec front matter and reformat changelog.
-:2021-05-06: Updated to use modern terminology.
-:2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
-:2018:12-12: Clarified table of rules for readable/writable servers
-:2016-08-31: Added table of rules for determining if topology has readable/writable servers.
-:2016-10-11: TopologyDescription objects MAY have additional methods and properties.
-||||||| parent of 469393fd (DRIVERS-2789 Convert SDAM Spec to Markdown)
-:2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's
-             previousDescription field
-:2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
-:2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements
-             for SDAM log messages. 
-:2022-10-05: Remove spec front matter and reformat changelog.
-:2021-05-06: Updated to use modern terminology.
-:2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
-:2018:12-12: Clarified table of rules for readable/writable servers
-:2016-08-31: Added table of rules for determining if topology has readable/writable servers.
-:2016-10-11: TopologyDescription objects MAY have additional methods and properties.
-=======
+# \<\<\<\<\<\<\< HEAD :2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's previousDescription field :2024-01-17: Updated to require that `TopologyDescriptionChangedEvent` should be emitted before just `TopologyClosedEvent` is emitted :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements for SDAM log messages. :2022-10-05: Remove spec front matter and reformat changelog. :2021-05-06: Updated to use modern terminology. :2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events. :2018:12-12: Clarified table of rules for readable/writable servers :2016-08-31: Added table of rules for determining if topology has readable/writable servers. :2016-10-11: TopologyDescription objects MAY have additional methods and properties. ||||||| parent of 469393fd (DRIVERS-2789 Convert SDAM Spec to Markdown) :2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's previousDescription field :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements for SDAM log messages. :2022-10-05: Remove spec front matter and reformat changelog. :2021-05-06: Updated to use modern terminology. :2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events. :2018:12-12: Clarified table of rules for readable/writable servers :2016-08-31: Added table of rules for determining if topology has readable/writable servers. :2016-10-11: TopologyDescription objects MAY have additional methods and properties.
+
 - 2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
->>>>>>> 469393fd (DRIVERS-2789 Convert SDAM Spec to Markdown)
+
+> > > > > > > 469393fd (DRIVERS-2789 Convert SDAM Spec to Markdown)
 
 - 2018:12-12: Clarified table of rules for readable/writable servers
 
