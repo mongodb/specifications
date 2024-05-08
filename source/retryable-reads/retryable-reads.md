@@ -52,7 +52,7 @@ An error is considered retryable if it meets any of the following criteria:
 | NetworkTimeout                     | 89             |
 | SocketException                    | 9001           |
 
-- a [PoolClearedError](<>)
+- a [PoolClearedError](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors)
 - Any of the above retryable errors that occur during a connection handshake (including the authentication step). For
   example, a network error or ShutdownInProgress error encountered when running the hello or saslContinue commands.
 

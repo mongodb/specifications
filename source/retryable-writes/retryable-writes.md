@@ -176,9 +176,10 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   MUST add a RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
   configuration option set to true.
 
-- When a CMAP-compliant driver encounters a [PoolClearedError](<>) during connection check out, it MUST add a
-  RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites configuration
-  option set to true.
+- When a CMAP-compliant driver encounters a
+  [PoolClearedError](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors)
+  during connection check out, it MUST add a RetryableWriteError label to that error if the MongoClient performing the
+  operation has the retryWrites configuration option set to true.
 
 - For server versions 4.4 and newer, the server will add a RetryableWriteError label to errors or server responses that
   it considers retryable before returning them to the driver. As new server versions are released, the errors that are
