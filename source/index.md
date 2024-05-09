@@ -29,6 +29,7 @@
 - [Retryable Reads](retryable-reads/retryable-reads.md)
 - [Retryable Writes](retryable-writes/retryable-writes.md)
 - [SDAM Logging and Monitoring Specification](server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md)
+- [Server Discovery And Monitoring](server-discovery-and-monitoring/server-discovery-and-monitoring.md)
 - [Server Discovery And Monitoring -- Summary](server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
 - [Server Discovery And Monitoring -- Test Plan](server-discovery-and-monitoring/server-discovery-and-monitoring-tests.md)
 - [Server Monitoring](server-discovery-and-monitoring/server-monitoring.md)

@@ -202,7 +202,7 @@ Drivers MUST only attempt to retry a read command if
 
 If the driver decides to allow retry and the previous attempt of a retryable read command encounters a retryable error,
 the driver MUST update its topology according to the Server Discovery and Monitoring spec (see
-[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)) and
+[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)) and
 capture this original retryable error. Drivers should then proceed with selecting a server for a retry attempt.
 
 ###### 3a. Selecting the server for retry
@@ -247,7 +247,7 @@ and the timeout has not yet expired, then the Driver MUST jump back to step 2b a
 attempts.
 
 Otherwise, drivers MUST update their topology according to the SDAM spec (see
-[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)). If an
+[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)). If an
 error would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
 driver), the previous error should be raised. If a retry failed due to another retryable error or some other error
 originating from the server, that error should be raised instead as the caller can infer that an attempt was made and

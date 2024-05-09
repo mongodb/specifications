@@ -26,7 +26,7 @@ specification's definition of monitoring a set of mongos servers in a Sharded
 TopologyType.
 
 .. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md
-.. _`Server Discovery and Monitoring`: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst
+.. _`Server Discovery and Monitoring`: ../server-discovery-and-monitoring/server-discovery-and-monitoring.md
 
 META
 ====
@@ -144,7 +144,7 @@ Single-Threaded Drivers
 The rescan MUST happen **before** scanning all servers as part of the normal
 scanning_ functionality, but only if *rescanSRVIntervalMS* has passed.
 
-.. _scanning: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#scanning
+.. _scanning: ../server-discovery-and-monitoring/server-discovery-and-monitoring.md#scanning
 
 Test Plan
 =========

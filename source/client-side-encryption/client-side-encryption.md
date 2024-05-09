@@ -1574,7 +1574,7 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 Single-threaded drivers MUST connect with
 [serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce),
 `connectTimeoutMS=10000`, and MUST bypass
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms) when connecting to
+[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms) when connecting to
 mongocryptd. See
 [Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
@@ -2115,7 +2115,7 @@ server before making another attempt. Meaning if the first attempt to mongocrypt
 observe a 5 second delay. This is not configurable in the URI, so this must be overridden internally. Since mongocryptd
 is a local process, there should only be a very short delay after spawning mongocryptd for it to start listening on
 sockets. See the SDAM spec description of
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms).
+[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms).
 
 Because single threaded drivers may exceed `serverSelectionTimeoutMS` by the duration of the topology scan,
 `connectTimeoutMS` is also reduced.

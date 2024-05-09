@@ -33,8 +33,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 `Server`
 
 > The term `Server` refers to the implementation in the driver's language of an abstraction of a mongod or mongos
-> process, or a load balancer, as defined by the
-> [SDAM specification](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server).
+> process, or a load balancer, as defined by the [SDAM specification](server-discovery-and-monitoring.md#server).
 
 ### Specification
 

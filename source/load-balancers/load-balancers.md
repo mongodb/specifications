@@ -21,7 +21,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 #### SDAM
 
 An abbreviated form of "Server Discovery and Monitoring", specification defined in
-[Server Discovery and Monitoring Specification](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst).
+[Server Discovery and Monitoring Specification](../server-discovery-and-monitoring/server-discovery-and-monitoring.md).
 
 #### Service
 

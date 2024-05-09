@@ -216,7 +216,7 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   - the `writeConcernError.code` field in a mongos response
 
   The criteria for retryable errors is similar to the discussion in the SDAM spec's section on
-  [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling), but includes
+  [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling), but includes
   additional error codes. See [What do the additional error codes mean?](#what-do-the-additional-error-codes-mean) for
   the reasoning behind these additional errors.
 
@@ -300,8 +300,8 @@ MUST NOT attempt to retry a write command on any other error.
 
 If the first attempt of a write command including a transaction ID encounters a retryable error, the driver MUST update
 its topology according to the SDAM spec (see:
-[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)) and capture
-this original retryable error.
+[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)) and capture this
+original retryable error.
 
 Drivers MUST then retry the operation as many times as necessary until any one of the following conditions is reached:
 
@@ -319,7 +319,7 @@ retrying is not possible and drivers MUST raise the retryable error from the pre
 is able to infer that an attempt was made.
 
 If a retry attempt also fails, drivers MUST update their topology according to the SDAM spec (see:
-[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)). If an error
+[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)). If an error
 would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
 driver) or the error is labeled "NoWritesPerformed", the error from the previous attempt should be raised. If all server
 errors are labeled "NoWritesPerformed", then the first error should be raised.
@@ -449,7 +449,7 @@ function executeRetryableWrite(command, session) {
 ```
 
 `handleError` in the above pseudocode refers to the function defined in the
-[Error handling pseudocode](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling-pseudocode)
+[Error handling pseudocode](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
 section of the SDAM specification.
 
 When retrying a write command, drivers MUST resend the command with the same transaction ID. Drivers MUST NOT resend the
@@ -557,7 +557,7 @@ The spec concerns itself with retrying write operations that encounter a retryab
 network error or a response indicating that the node is no longer a primary). A retryable error may be classified as
 either a transient error (e.g. dropped connection, replica set failover) or persistent outage. In the case of a
 transient error, the driver will mark the server as "unknown" per the
-[SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst) spec. A subsequent retry attempt will
+[SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec. A subsequent retry attempt will
 allow the driver to rediscover the primary within the designated server selection timeout period (30 seconds by
 default). If server selection times out during this retry attempt, we can reasonably assume that there is a persistent
 outage. In the case of a persistent outage, multiple retry attempts are fruitless and would waste time. See

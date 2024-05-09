@@ -380,13 +380,13 @@ interface ConnectionPool {
 This specification does not define how a pool is to be created, leaving it up to the driver. Creation of a connection
 pool is generally an implementation detail of the driver, i.e., is not a part of the public API of the driver. The SDAM
 specification defines
-[when](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#connection-pool-creation)
-the driver should create connection pools.
+[when](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#connection-pool-creation) the driver should
+create connection pools.
 
 When a pool is created, its state MUST initially be set to "paused". Even if minPoolSize is set, the pool MUST NOT begin
 being [populated](#populating-the-pool-with-a-connection-internal-implementation) with [Connections](#connection) until
 it has been marked as "ready". SDAM will mark the pool as "ready" on each successful check. See
-[Connection Pool Management](/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#connection-pool-management)
+[Connection Pool Management](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#connection-pool-management)
 section in the SDAM specification for more information.
 
 ```
@@ -508,8 +508,8 @@ Populating the pool MUST NOT block any application threads. For example, it coul
 via the use of non-blocking/async I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
 If an error is encountered while populating a connection, it MUST be handled via the SDAM machinery according to the
-[Application Errors](/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#application-errors)
-section in the SDAM specification.
+[Application Errors](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#application-errors) section
+in the SDAM specification.
 
 If minPoolSize is set, the [Connection](#connection) Pool MUST be populated until it has at least minPoolSize total
 [Connections](#connection). This MUST occur only while the pool is "ready". If the pool implements a background thread,

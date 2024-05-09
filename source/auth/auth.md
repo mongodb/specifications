@@ -148,7 +148,7 @@ Drivers MUST follow the following steps for an authentication handshake:
 
 If the authentication handshake fails for a socket, drivers MUST mark the server Unknown and clear the server's
 connection pool. (See [Q & A](#q--a) below and SDAM's
-[Why mark a server Unknown after an auth error](/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#why-mark-a-server-unknown-after-an-auth-error)
+[Why mark a server Unknown after an auth error](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#why-mark-a-server-unknown-after-an-auth-error)
 for rationale.)
 
 All blocking operations executed as part of the authentication handshake MUST apply timeouts per the

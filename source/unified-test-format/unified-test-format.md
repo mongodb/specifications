@@ -34,7 +34,7 @@ This test format can be used to define tests for the following specifications:
 - [Sessions](../sessions/driver-sessions.md)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
-- [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst)
+- [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md)
 
 This is not an exhaustive list. Specifications that are known to not be supported by this format may be discussed under
 [Future Work](#future-work).
@@ -233,7 +233,7 @@ Test runners MUST support the following types of entities:
 <span id="entity_topologydescription" />
 
 - TopologyDescription. An entity representing a client's
-  [TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription) at a
+  [TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#topologydescription) at a
   certain point in time. These entities are not defined in [createEntities](#createentities) but are instead created via
   [recordTopologyDescription](#recordtopologydescription) test runner operations.
 
@@ -1144,7 +1144,7 @@ The structure of this object is as follows:
 
   - `type`: Optional string. The type of the server in the description. Test runners MUST assert that the type in the
     published event matches this value. See
-    [SDAM: ServerType](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#servertype) for a list of
+    [SDAM: ServerType](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#servertype) for a list of
     valid values.
 
 <span id="expectedEvent_serverHeartbeatStartedEvent" />
@@ -1198,7 +1198,7 @@ The structure of this object is as follows:
 
     - `type`: Optional string. The type of the topology in the description. Test runners MUST assert that the type in
       the published event matches this value. See
-      [SDAM: TopologyType](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologytype) for a
+      [SDAM: TopologyType](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#topologytype) for a
       list of valid values.
 
     Test runners SHOULD ignore any other fields present on the `previousDescription` and `newDescription` fields of the
@@ -1301,7 +1301,7 @@ Comprehensive documentation for some of these types and their parameters may be 
 
 - [Read and Write Concern](../read-write-concern/read-write-concern.rst).
 - [Server Selection: Read Preference](../server-selection/server-selection.md#read-preference).
-- [Server Discovery and Monitoring: TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription).
+- [Server Discovery and Monitoring: TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#topologydescription).
 
 The structure of these common options is as follows:
 
@@ -2545,8 +2545,8 @@ The following arguments are supported:
 
 - `topologyDescription`: Required string. TopologyDescription entity whose TopologyType will be inspected.
 - `topologyType`: Required string. Expected TopologyType for the TopologyDescription. See
-  [SDAM: TopologyType](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologytype) for a list
-  of possible values.
+  [SDAM: TopologyType](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#topologytype) for a list of
+  possible values.
 
 For example:
 
