@@ -8,8 +8,8 @@ ______________________________________________________________________
 ## **Abstract**
 
 Version 4.0 of the server introduces multi-statement transactions. This spec builds upon the
-[Driver Sessions Specification](../sessions/driver-sessions.rst) to define how an application uses transactions and how
-a driver interacts with the server to implement transactions.
+[Driver Sessions Specification](../sessions/driver-sessions.md) to define how an application uses transactions and how a
+driver interacts with the server to implement transactions.
 
 The API for transactions must be specified to ensure that all drivers and the mongo shell are consistent with each
 other, and to provide a natural interface for application developers and DBAs who use multi-statement transactions.
@@ -23,7 +23,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### **Terms**
 
-This specification uses the terms defined in the [Driver Sessions Specification](../sessions/driver-sessions.rst) and
+This specification uses the terms defined in the [Driver Sessions Specification](../sessions/driver-sessions.md) and
 [Retryable Writes Specification](../retryable-writes/retryable-writes.md). Additional terms are defined below.
 
 #### Resource Management Block
@@ -289,7 +289,7 @@ containing the message "Transaction already in progress" without modifying any s
 startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
 A deployment does not support transactions when the deployment does not support sessions, or maxWireVersion \< 7, or the
 maxWireVersion \< 8 and the topology type is Sharded, see
-[How to Check Whether a Deployment Supports Sessions](https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions).
+[How to Check Whether a Deployment Supports Sessions](../sessions/driver-sessions.md#how-to-check-whether-a-deployment-supports-sessions).
 Note that checking the maxWireVersion does not guarantee that the deployment supports transactions, for example a
 MongoDB 4.0 replica set using MMAPv1 will report maxWireVersion 7 but does not support transactions. In this case,
 Drivers rely on the deployment to report an error when a transaction is started.
@@ -778,7 +778,7 @@ The Python driver serves as a reference implementation.
 
 ## **Design Rationale**
 
-The design of this specification builds on the [Driver Sessions Specification](../sessions/driver-sessions.rst) and
+The design of this specification builds on the [Driver Sessions Specification](../sessions/driver-sessions.md) and
 modifies the driver API as little as possible.
 
 Drivers will rely on the server to yield an error if an unsupported command is executed within a transaction. This will
@@ -859,7 +859,7 @@ execute a command directly with minimum additional client-side logic.
 
 This specification depends on:
 
-1. [Driver Sessions Specification](../sessions/driver-sessions.rst)
+1. [Driver Sessions Specification](../sessions/driver-sessions.md)
 2. [Retryable Writes Specification](../retryable-writes/retryable-writes.md)
 
 ## **Backwards Compatibility**

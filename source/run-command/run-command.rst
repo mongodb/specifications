@@ -76,7 +76,7 @@ The following represents how a runCommand API SHOULD be exposed.
        * An optional explicit client session.
        * The associated logical session id (`lsid`) the driver MUST apply to the command.
        *
-       * @see https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#clientsession
+       * @see ../sessions/driver-sessions.md#clientsession
        */
       session?: ClientSession;
 
@@ -129,11 +129,11 @@ Drivers MUST NOT attempt to check the command document for the presence of an ``
 Every ClientSession has a corresponding logical session ID representing the server-side session ID.
 The logical session ID MUST be included under ``lsid`` in the command sent to the server without modifying user input.
 
-* See Driver Sessions' section on `Sending the session ID to the server on all commands <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-session-id-to-the-server-on-all-commands>`_
+* See Driver Sessions' section on `Sending the session ID to the server on all commands <../sessions/driver-sessions.md#sending-the-session-id-to-the-server-on-all-commands>`_
 
 The command sent to the server MUST gossip the ``$clusterTime`` if cluster time support is detected.
 
-* See Driver Sessions' section on `Gossipping the cluster time <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#gossipping-the-cluster-time>`_
+* See Driver Sessions' section on `Gossipping the cluster time <../sessions/driver-sessions.md#gossipping-the-cluster-time>`_
 
 Transactions
 """"""""""""
@@ -274,7 +274,7 @@ All ``getMore`` commands constructed for this cursor MUST send the same ``lsid``
 A cursor is considered exhausted or closed when the server reports its ``id`` as zero.
 When the cursor is exhausted the client session MUST be ended and the server session returned to the pool as early as possible rather than waiting for a caller to completely iterate the final batch.
 
-* See Drivers Sessions' section on `Sessions and Cursors <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sessions-and-cursors>`_
+* See Drivers Sessions' section on `Sessions and Cursors <../sessions/driver-sessions.md#sessions-and-cursors>`_
 
 Server Selection
 """"""""""""""""
@@ -320,7 +320,7 @@ Drivers MUST provide an explicit mechanism for releasing the cursor resources, t
 If the cursor id is nonzero a KillCursors operation MUST be attempted, the result of the operation SHOULD be ignored.
 The ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.
 
-* See Driver Sessions' section on `When sending a killCursors command <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#when-sending-a-killcursors-command>`_
+* See Driver Sessions' section on `When sending a killCursors command <../sessions/driver-sessions.md#when-sending-a-killcursors-command>`_
 * See Find, getMore and killCursors commands' section on `killCursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#killcursors>`_
 
 Client Side Operations Timeout

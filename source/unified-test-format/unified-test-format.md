@@ -31,7 +31,7 @@ This test format can be used to define tests for the following specifications:
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Retryable Reads](../retryable-reads/retryable-reads.md)
 - [Retryable Writes](../retryable-writes/retryable-writes.md)
-- [Sessions](../sessions/driver-sessions.rst)
+- [Sessions](../sessions/driver-sessions.md)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
 - [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst)
@@ -622,11 +622,11 @@ The structure of this object is as follows:
     `client: *client0`).
 
   - `sessionOptions`: Optional object. Map of parameters to pass to
-    [MongoClient.startSession](../sessions/driver-sessions.rst#startsession) when creating the session. Supported
-    options are defined in the following specifications:
+    [MongoClient.startSession](../sessions/driver-sessions.md#startsession) when creating the session. Supported options
+    are defined in the following specifications:
 
     - [Causal Consistency](../causal-consistency/causal-consistency.md#sessionoptions-changes)
-    - [Snapshot Reads](../sessions/snapshot-sessions.rst#sessionoptions-changes)
+    - [Snapshot Reads](../sessions/snapshot-sessions.md#sessionoptions-changes)
     - [Transactions](../transactions/transactions.md#sessionoptions-changes)
     - [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md#sessions)
 
@@ -1800,7 +1800,7 @@ This operation SHOULD NOT be used in test files. See [collection_createChangeStr
 These operations and their arguments may be documented in the following specifications:
 
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
-- [Driver Sessions](../sessions/driver-sessions.rst)
+- [Driver Sessions](../sessions/driver-sessions.md)
 
 Session operations that require special handling or are not documented by an existing specification are described below.
 
@@ -3127,7 +3127,7 @@ will be invoked at the end of each test and provided with the entity map (or an 
 previously discussed in [Entity Map](#entity-map), test runners MAY restrict access to driver objects if necessary.
 
 Clear the entity map for this test. For each ClientSession in the entity map, the test runner MUST end the session (e.g.
-call [endSession](../sessions/driver-sessions.rst#endsession)). For each ChangeStream and FindCursor in the entity map,
+call [endSession](../sessions/driver-sessions.md#endsession)). For each ChangeStream and FindCursor in the entity map,
 the test runner MUST close the cursor.
 
 If the test started a transaction (i.e. executed a `startTransaction` or `withTransaction` operation), the test runner
