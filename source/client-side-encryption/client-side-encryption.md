@@ -2385,7 +2385,7 @@ libmongocrypt would create multiple OP_MSGs to send.
 
 Key management functions currently assume there are no concurrent accesses of the key vault collection being operated
 on. To support concurrent access of the key vault collection, the key management functions may be overloaded to take an
-explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.rst).
+explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
 

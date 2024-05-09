@@ -363,8 +363,8 @@ See [Change stream behavior](#change-stream-behavior).
 
 ### Sessions
 
-The [SessionOptions](../sessions/driver-sessions.rst#mongoclient-changes) used to construct explicit
-[ClientSession](../sessions/driver-sessions.rst#clientsession) instances MUST accept a new `defaultTimeoutMS` option,
+The [SessionOptions](../sessions/driver-sessions.md#mongoclient-changes) used to construct explicit
+[ClientSession](../sessions/driver-sessions.md#clientsession) instances MUST accept a new `defaultTimeoutMS` option,
 which specifies the `timeoutMS` value for the following operations executed on the session:
 
 1. commitTransaction

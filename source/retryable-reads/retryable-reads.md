@@ -520,8 +520,8 @@ No.
 [This is in contrast to the answer supplied in in the retryable writes specification.](../retryable-writes/retryable-writes.md#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts)
 However, when retryable writes were implemented, no driver actually chose to resend the same wire protocol message.
 Today, if a driver attempted to resend the same wire protocol message, this could violate
-[the rules for gossiping $clusterTime](../sessions/driver-sessions.rst#gossipping-the-cluster-time): specifically
-[the rule that a driver must send the highest seen $clusterTime](../sessions/driver-sessions.rst#sending-the-highest-seen-cluster-time).
+[the rules for gossiping $clusterTime](../sessions/driver-sessions.md#gossipping-the-cluster-time): specifically
+[the rule that a driver must send the highest seen $clusterTime](../sessions/driver-sessions.md#sending-the-highest-seen-cluster-time).
 
 Additionally, there would be a behavioral difference between a driver resending the same wire protocol message and one
 that does not. For example, a driver that creates a new wire protocol message could exhibit the following

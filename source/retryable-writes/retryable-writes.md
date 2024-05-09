@@ -32,12 +32,12 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 The transaction ID identifies the transaction as part of which the command is running. In a write
 command where the client has requested retryable behavior, it is expressed by the top-level `lsid` and `txnNumber`
 fields. The `lsid` component is the corresponding server session ID. which is a BSON value defined in the
-[Driver Session](../sessions/driver-sessions.rst) specification. The `txnNumber` component is a monotonically increasing
+[Driver Session](../sessions/driver-sessions.md) specification. The `txnNumber` component is a monotonically increasing
 (per server session), positive 64-bit integer.
 
 **ClientSession**\
 Driver object representing a client session, which is defined in the
-[Driver Session](../sessions/driver-sessions.rst) specification. This object is always associated with a server session;
+[Driver Session](../sessions/driver-sessions.md) specification. This object is always associated with a server session;
 however, drivers will pool server sessions so that creating a ClientSession will not always entail creation of a new
 server session. The name of this object MAY vary across drivers.
 
@@ -45,7 +45,7 @@ server session. The name of this object MAY vary across drivers.
 An error is considered retryable if it has a RetryableWriteError label in its top-level
 "errorLabels" field. See [Determining Retryable Errors](#determining-retryable-errors) for more information.
 
-Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.rst) specification.
+Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.md) specification.
 
 ### Naming Deviations
 
@@ -265,8 +265,8 @@ enabled.
 When constructing a supported write command that will be executed within a MongoClient where retryable writes have been
 enabled, drivers MUST increment the transaction number for the corresponding server session and include the server
 session ID and transaction number in top-level `lsid` and `txnNumber` fields, respectively. `lsid` is a BSON value
-(discussed in the [Driver Session](../sessions/driver-sessions.rst) specification). `txnNumber` MUST be a positive
-64-bit integer (BSON type 0x12).
+(discussed in the [Driver Session](../sessions/driver-sessions.md) specification). `txnNumber` MUST be a positive 64-bit
+integer (BSON type 0x12).
 
 The following example illustrates a possible write command for an `updateOne()` operation:
 
@@ -454,7 +454,7 @@ section of the SDAM specification.
 
 When retrying a write command, drivers MUST resend the command with the same transaction ID. Drivers MUST NOT resend the
 original wire protocol message if doing so would violate rules for
-[gossipping the cluster time](../sessions/driver-sessions.rst#gossipping-the-cluster-time) (see:
+[gossipping the cluster time](../sessions/driver-sessions.md#gossipping-the-cluster-time) (see:
 [Can drivers resend the same wire protocol message on retry attempts?](#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts)).
 
 In the case of a multi-statement write operation split across multiple write commands, a failed retry attempt will also
@@ -513,7 +513,7 @@ driver API needs to be extended to support this behavior.
 
 ## Design Rationale
 
-The design of this specification piggy-backs that of the [Driver Session](../sessions/driver-sessions.rst) specification
+The design of this specification piggy-backs that of the [Driver Session](../sessions/driver-sessions.md) specification
 in that it modifies the driver API as little as possible to introduce the concept of at-most-once semantics and
 retryable behavior for write operations. A transaction ID will be included in all supported write commands executed
 within the scope of a MongoClient where retryable writes have been enabled.
@@ -635,7 +635,7 @@ Since retry attempts entail sending the same command and transaction ID to the s
 the same wire protocol message in order to avoid constructing a new message and computing its checksum. The server will
 not complain if it receives two messages with the same `requestId`, as the field is only used for logging and populating
 the `responseTo` field in its replies to the client. That said, re-using a wire protocol message might violate rules for
-[gossipping the cluster time](../sessions/driver-sessions.rst#gossipping-the-cluster-time) and might also have
+[gossipping the cluster time](../sessions/driver-sessions.md#gossipping-the-cluster-time) and might also have
 implications for [Command Monitoring](#command-monitoring), since the original write command and its retry attempt may
 report the same `requestId`.
 
