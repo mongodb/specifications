@@ -409,13 +409,13 @@ The structure of this object is as follows:
   - `uriOptions`: Optional object. Additional URI options to apply to the test suite's connection string that is used to
     create this client. Any keys in this object MUST override conflicting keys in the connection string.
 
-    Documentation for supported options may be found in the [URI Options](../uri-options/uri-options.rst) spec, with one
+    Documentation for supported options may be found in the [URI Options](../uri-options/uri-options.md) spec, with one
     notable exception: if `readPreferenceTags` is specified in this object, the key will map to an array of strings,
     each representing a tag set, since it is not feasible to define multiple `readPreferenceTags` keys in the object.
 
     Note also that when specifying `directConnection` as true, the connection string used to instantiate a client MUST
     only have a single seed and MUST NOT specify the `replicaSet` option. See the
-    [URI Options spec](../uri-options/uri-options.rst#directconnection-uri-option-with-multiple-seeds-or-srv-uri) for
+    [URI Options spec](../uri-options/uri-options.md#directconnection-uri-option-with-multiple-seeds-or-srv-uri) for
     more information.
 
     Any field in `uriOptions` may be a [$$placeholder](#placeholder) document and the test runner MUST support replacing

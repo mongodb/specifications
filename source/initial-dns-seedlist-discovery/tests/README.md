@@ -92,7 +92,7 @@ These YAML and JSON files contain the following fields:
 - `hosts`: the discovered topology's list of hosts once SDAM completes a scan
 - `numHosts`: the expected number of hosts discovered once SDAM completes a scan. This is mainly used to test
   `srvMaxHosts`, since randomly selected hosts cannot be deterministically asserted.
-- `options`: the parsed [URI options](../../uri-options/uri-options.rst) as discovered from the
+- `options`: the parsed [URI options](../../uri-options/uri-options.md) as discovered from the
   [Connection String](../../connection-string/connection-string-spec.md)'s "Connection Options" component and SRV
   resolution (e.g. TXT records, implicit `tls` default).
 - `parsed_options`: additional, parsed options from other
