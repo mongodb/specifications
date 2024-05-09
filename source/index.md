@@ -3,6 +3,7 @@
 - [BSON Binary Subtype 6](client-side-encryption/subtype6.md)
 - [BSON Corpus](bson-corpus/bson-corpus.md)
 - [BSON Decimal128 Type Handling in Drivers](bson-decimal128/decimal128.md)
+- [Bulk Write](crud/bulk-write.md)
 - [Causal Consistency Specification](causal-consistency/causal-consistency.md)
 - [Change Streams](change-streams/change-streams.md)
 - [Client Side Encryption](client-side-encryption/client-side-encryption.md)

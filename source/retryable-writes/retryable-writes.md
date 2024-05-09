@@ -109,10 +109,11 @@ Supported single-statement write operations include `insertOne()`, `updateOne()`
 `findOneAndDelete()`, `findOneAndReplace()`, and `findOneAndUpdate()`.
 
 Supported multi-statement write operations include `insertMany()` and `bulkWrite()`. The ordered option may be `true` or
-`false`. In the case of `bulkWrite()`, `UpdateMany` or `DeleteMany` operations within the `requests` parameter may make
-some write commands ineligible for retryability. Drivers MUST evaluate eligibility for each write command sent as part
-of the `bulkWrite()` (after order and batch splitting) individually. Drivers MUST NOT alter existing logic for order and
-batch splitting in an attempt to maximize retryability for operations within a bulk write.
+`false`. For both the collection-level and client-level `bulkWrite()` methods, a bulk write batch is only retryable if
+it does not contain any `multi: true` writes (i.e. `UpdateMany` and `DeleteMany`). Drivers MUST evaluate eligibility for
+each write command sent as part of the `bulkWrite()` (after order and batch splitting) individually. Drivers MUST NOT
+alter existing logic for order and batch splitting in an attempt to maximize retryability for operations within a bulk
+write.
 
 These methods above are defined in the [CRUD](../crud/crud.md) specification.
 
@@ -672,6 +673,8 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 
 - 2024-05-02: Migrated from reStructuredText to Markdown.
 

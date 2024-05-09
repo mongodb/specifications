@@ -6,10 +6,16 @@ import sys
 Operation = namedtuple(
     'Operation', ['operation_name', 'command_name', 'object', 'arguments'])
 
+CLIENT_BULK_WRITE_ARGUMENTS = '''models:
+          - insertOne:
+              namespace: retryable-writes-handshake-tests.coll
+              document: { _id: 8, x: 88 }'''
+
 CLIENT_OPERATIONS = [
     Operation('listDatabases', 'listDatabases', 'client', ['filter: {}']),
     Operation('listDatabaseNames', 'listDatabases', 'client', []),
-    Operation('createChangeStream', 'aggregate', 'client', ['pipeline: []'])
+    Operation('createChangeStream', 'aggregate', 'client', ['pipeline: []']),
+    Operation('clientBulkWrite', 'bulkWrite', 'client', [CLIENT_BULK_WRITE_ARGUMENTS])
 ]
 
 RUN_COMMAND_ARGUMENTS = '''command: { ping: 1 }
@@ -107,6 +113,7 @@ RETRYABLE_WRITE_OPERATIONS = [op for op in OPERATIONS if op.operation_name in
                                'findOneAndReplace',
                                'insertMany',
                                'bulkWrite',
+                               'clientBulkWrite'
                                ]
                               ]
 
