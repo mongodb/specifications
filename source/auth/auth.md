@@ -1393,7 +1393,7 @@ use asynchronous functions.
 Drivers MUST provide a way for the callback to be either automatically canceled, or to cancel itself. This can be as a
 timeout argument to the callback, a cancellation context passed to the callback, or some other language-appropriate
 mechanism. The timeout value MUST be `min(remaining connectTimeoutMS, remaining timeoutMS)` as described in the Server
-Selection section of the CSOT spec.
+Selection section of the CSOT spec. If CSOT is not applied, then the driver MUST use 1 minute as the timeout.
 
 The driver MUST pass the following information to the callback:
 
@@ -2048,6 +2048,9 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-05-03: Clarify timeout behavior for OIDC machine callback. Add `serverless:forbid` to OIDC unified tests. Add an
+  additional prose test for the behavior of `ALLOWED_HOSTS`.
 
 - 2024-04-24: Clarify that TOKEN_RESOURCE for MONGODB-OIDC must be url-encoded.
 

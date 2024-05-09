@@ -24,7 +24,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 ### **Terms**
 
 This specification uses the terms defined in the [Driver Sessions Specification](../sessions/driver-sessions.rst) and
-[Retryable Writes Specification](../retryable-writes/retryable-writes.rst). Additional terms are defined below.
+[Retryable Writes Specification](../retryable-writes/retryable-writes.md). Additional terms are defined below.
 
 #### Resource Management Block
 
@@ -46,7 +46,7 @@ including (but not limited to) creating, updating, or deleting databases, collec
 
 #### Retryable Error
 
-An error considered retryable by the [Retryable Writes Specification](../retryable-writes/retryable-writes.rst).
+An error considered retryable by the [Retryable Writes Specification](../retryable-writes/retryable-writes.md).
 
 #### Command Error
 
@@ -375,7 +375,7 @@ state. When the session is in the "starting transaction" state, meaning, no oper
 transaction, drivers MUST NOT run the abortTransaction command.
 
 abortTransaction is a retryable write command. Drivers MUST retry after abortTransaction fails with a retryable error
-according to the [Retryable Writes Specification](../retryable-writes/retryable-writes.rst), including a handshake
+according to the [Retryable Writes Specification](../retryable-writes/retryable-writes.md), including a handshake
 network error, regardless of whether retryWrites is set on the MongoClient or not.
 
 If the operation times out or fails with a non-retryable error, drivers MUST ignore all errors from the abortTransaction
@@ -553,7 +553,7 @@ been enabled on the MongoClient.
 
 Drivers MUST retry the commitTransaction and abortTransaction commands even when retryWrites has been disabled on the
 MongoClient. commitTransaction and abortTransaction are retryable write commands and MUST be retried according to the
-[Retryable Writes Specification](../retryable-writes/retryable-writes.rst).
+[Retryable Writes Specification](../retryable-writes/retryable-writes.md).
 
 Retryable writes and transactions both use the `txnNumber` associated with a ServerSession. For retryable writes,
 `txnNumber` would normally increment before each retryable command, whereas in a transaction, the `txnNumber` is
@@ -860,7 +860,7 @@ execute a command directly with minimum additional client-side logic.
 This specification depends on:
 
 1. [Driver Sessions Specification](../sessions/driver-sessions.rst)
-2. [Retryable Writes Specification](../retryable-writes/retryable-writes.rst)
+2. [Retryable Writes Specification](../retryable-writes/retryable-writes.md)
 
 ## **Backwards Compatibility**
 

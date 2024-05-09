@@ -414,7 +414,7 @@ retry ``commitTransaction`` if it fails with any error bearing the
 `UnknownTransactionCommitResult`_ error label. This label is applied for the
 the following errors:
 
-.. _Retryable Writes: ../retryable-writes/retryable-writes.rst#terms
+.. _Retryable Writes: ../retryable-writes/retryable-writes.md#terms
 
 .. _UnknownTransactionCommitResult: ../transactions/transactions.md#unknowntransactioncommitresult
 

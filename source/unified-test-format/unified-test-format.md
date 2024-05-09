@@ -30,7 +30,7 @@ This test format can be used to define tests for the following specifications:
 - [CRUD](../crud/crud.md)
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Retryable Reads](../retryable-reads/retryable-reads.md)
-- [Retryable Writes](../retryable-writes/retryable-writes.rst)
+- [Retryable Writes](../retryable-writes/retryable-writes.md)
 - [Sessions](../sessions/driver-sessions.rst)
 - [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
@@ -957,7 +957,7 @@ The structure of each object is as follows:
 - `eventType`: Optional string. Specifies the type of the monitor which captured the events. Valid values are `command`
   for [Command Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) events,
   `cmap` for [CMAP](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) events, and `sdam`
-  for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
+  for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
   events. Defaults to `command` if omitted.
 - `events`: Required array of [expectedEvent](#expectedevent) objects. List of events, which are expected to be observed
   (in this order) on the corresponding client while executing [operations](#test_operations). If the array is empty, the
@@ -1115,7 +1115,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverDescriptionChangedEvent" />
 
 - `serverDescriptionChangedEvent`: Optional object. Assertions for one or more
-  [ServerDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
+  [ServerDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
   fields.
 
   The structure of this object is as follows:
@@ -1136,7 +1136,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatStartedEvent" />
 
 - `serverHeartbeatStartedEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatStartedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
+  [ServerHeartbeatStartedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
   fields.
 
   The structure of this object is as follows:
@@ -1146,7 +1146,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatSucceededEvent" />
 
 - `serverHeartbeatSucceededEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatSucceededEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
+  [ServerHeartbeatSucceededEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
   fields.
 
   The structure of this object is as follows:
@@ -1156,7 +1156,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatFailedEvent" />
 
 - `serverHeartbeatFailedEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatFailedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
+  [ServerHeartbeatFailedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
   fields.
 
   The structure of this object is as follows:
@@ -1166,7 +1166,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_topologyDescriptionChangedEvent" />
 
 - `topologyDescriptionChangedEvent`: Optional object. Assertions for one
-  [TopologyDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#events)
+  [TopologyDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
   object.
 
   The structure of this object is as follows:

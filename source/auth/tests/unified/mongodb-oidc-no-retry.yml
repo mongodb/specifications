@@ -5,6 +5,7 @@ runOnRequirements:
 - minServerVersion: "7.0"
   auth: true
   authMechanism: "MONGODB-OIDC"
+  serverless: forbid
 createEntities:
 - client:
     id: &failPointClient failPointClient
