@@ -209,7 +209,7 @@ See [serverSelectionTimeoutMS is not deprecated](#serverselectiontimeoutms-is-no
 If `timeoutMS` is set, drivers MUST append a `maxTimeMS` field to commands executed against a MongoDB server using the
 `minRoundTripTime` field of the selected server. Note that this value MUST be retrieved during server selection using
 the `servers` field of the same
-[TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#TopologyDescription) that
+[TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#TopologyDescription) that
 was used for selection before the selected server's description can be modified. Otherwise, drivers may be subject to a
 race condition where a server is reset to the default description (e.g. due to an error in the monitoring thread) after
 it has been selected but before the RTT is retrieved.

@@ -228,7 +228,7 @@ once after server selection fails, then either selects a server or raises an err
 
 The serverSelectionTryOnce option MUST be true by default. If it is set false, then the driver repeatedly searches for
 an appropriate server until the selection process times out (pausing
-[minHeartbeatFrequencyMS](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms)
+[minHeartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#minheartbeatfrequencyms)
 between attempts, as required by the
 [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
 spec).
@@ -249,8 +249,8 @@ for a ["try once" mode](#try-once-mode).)
 #### heartbeatFrequencyMS
 
 This controls when topology updates are scheduled. See
-[heartbeatFrequencyMS](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms)
-in the
+[heartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#heartbeatfrequencyms) in
+the
 [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
 spec for details.
 
