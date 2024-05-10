@@ -34,7 +34,7 @@
 - [Server Monitoring](server-discovery-and-monitoring/server-monitoring.md)
 - [Server Selection](server-selection/server-selection.md)
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)
-- [URI Options Specification](uri-options/uri-options.md)
 - [Snapshot Reads Specification](sessions/snapshot-sessions.md)
+- [URI Options Specification](uri-options/uri-options.md)
 - [Unified Test Format](unified-test-format/unified-test-format.md)
 - [Wire Compression in Drivers](compression/OP_COMPRESSED.md)
