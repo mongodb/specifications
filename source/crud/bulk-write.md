@@ -850,4 +850,6 @@ batch-splitting to standardize implementations across drivers and simplify batch
 
 ## **Changelog**
 
+- 2024-05-10: Improve rendered format for JSON-like code blocks.
+
 - 2024-05-08: Bulk write specification created.
