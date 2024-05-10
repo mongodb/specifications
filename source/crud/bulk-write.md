@@ -465,7 +465,7 @@ class BulkWriteException {
 
 The `bulkWrite` server command has the following format:
 
-```json
+```javascript
 {
     "bulkWrite": 1,
     "ops": <Array>,
