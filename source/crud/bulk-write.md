@@ -492,7 +492,7 @@ operation should be performed as its value. The documents have the following for
 
 #### Insert
 
-```json
+```javascript
 {
     "insert": <Int32>,
     "document": <Document>
@@ -504,7 +504,7 @@ If the document to be inserted does not contain an `_id` field, drivers MUST gen
 
 #### Update
 
-```json
+```javascript
 {
     "update": <Int32>,
     "filter": <Document>,
@@ -518,7 +518,7 @@ If the document to be inserted does not contain an `_id` field, drivers MUST gen
 
 #### Delete
 
-```json
+```javascript
 {
     "delete": <Int32>,
     "filter": <Document>,
@@ -533,7 +533,7 @@ If the document to be inserted does not contain an `_id` field, drivers MUST gen
 The `nsInfo` field is an array containing the namespaces on which the write operations should be performed. Drivers MUST
 NOT include duplicate namespaces in this list. The documents in the `nsInfo` array have the following format:
 
-```json
+```javascript
 {
     "ns": <String>
 }
@@ -659,7 +659,7 @@ Drivers MUST return an error if there is not room to add at least one operation 
 
 The server's response to `bulkWrite` has the following format:
 
-```json
+```javascript
 {
     "ok": <0 | 1>,
     "cursor": {
@@ -690,7 +690,7 @@ command for each `getMore` call. When connected to a load balancer, drivers MUST
 
 The documents in the results cursor have the following format:
 
-```json
+```javascript
 {
     "ok": <0 | 1>,
     "idx": Int32,
