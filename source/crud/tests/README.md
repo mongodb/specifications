@@ -77,7 +77,7 @@ Construct a `MongoClient` (referred to as `client`) with
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
 response. Then, construct the following write model (referred to as `model`):
 
-```json
+```javascript
 InsertOne: {
   "namespace": "db.coll",
   "document": { "a": "b" }
@@ -105,7 +105,7 @@ Construct a `MongoClient` (referred to as `client`) with
 CommandStartedEvents. Perform a `hello` command using `client` and record the following values from the response:
 `maxBsonObjectSize` and `maxMessageSizeBytes`. Then, construct the following document (referred to as `document`):
 
-```json
+```javascript
 {
   "a": "b".repeat(maxBsonObjectSize - 500)
 }
@@ -113,7 +113,7 @@ CommandStartedEvents. Perform a `hello` command using `client` and record the fo
 
 Construct the following write model (referred to as `model`):
 
-```json
+```javascript
 InsertOne: {
   "namespace": "db.coll",
   "document": document
@@ -144,7 +144,7 @@ Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` co
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
 response. Then, configure the following fail point with `client`:
 
-```json
+```javascript
 {
   "configureFailPoint": "failCommand",
   "mode": { "times": 2 },
@@ -160,7 +160,7 @@ response. Then, configure the following fail point with `client`:
 
 Construct the following write model (referred to as `model`):
 
-```json
+```javascript
 InsertOne: {
   "namespace": "db.coll",
   "document": { "a": "b" }
@@ -192,7 +192,7 @@ response.
 Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
 Drop `collection`. Then, construct the following document (referred to as `document`):
 
-```json
+```javascript
 {
   "_id": 1
 }
@@ -202,7 +202,7 @@ Insert `document` into `collection`.
 
 Create the following write model (referred to as `model`):
 
-```json
+```javascript
 InsertOne {
   "namespace": namespace,
   "document": document
@@ -247,7 +247,7 @@ response.
 Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
 Drop `collection`. Then create the following list of write models (referred to as `models`):
 
-```json
+```javascript
 UpdateOne {
   "namespace": namespace,
   "filter": { "_id": "a".repeat(maxBsonObjectSize / 2) },
@@ -290,7 +290,7 @@ Start a session on `client` (referred to as `session`). Start a transaction on `
 
 Create the following list of write models (referred to as `models`):
 
-```json
+```javascript
 UpdateOne {
   "namespace": namespace,
   "filter": { "_id": "a".repeat(maxBsonObjectSize / 2) },
@@ -325,7 +325,7 @@ Construct a `MongoClient` (referred to as `client`) with
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
 response. Then, configure the following fail point with `client`:
 
-```json
+```javascript
 {
   "configureFailPoint": "failCommand",
   "mode": { "times": 1 },
@@ -339,7 +339,7 @@ response. Then, configure the following fail point with `client`:
 Construct a `MongoCollection` (referred to as `collection`) with the namespace "db.coll" (referred to as `namespace`).
 Drop `collection`. Then create the following list of write models (referred to as `models`):
 
-```json
+```javascript
 UpdateOne {
   "namespace": namespace,
   "filter": { "_id": "a".repeat(maxBsonObjectSize / 2) },
@@ -377,7 +377,7 @@ Perform a `hello` command using `client` and record the following values from th
 
 Then, construct the following document (referred to as `document`):
 
-```json
+```javascript
 {
   "a": "b".repeat(maxBsonObjectSize)
 }
@@ -387,7 +387,7 @@ Then, construct the following document (referred to as `document`):
 
 Construct the following write model (referred to as `model`):
 
-```json
+```javascript
 InsertOne: {
   "namespace": "db.coll",
   "document": document
@@ -404,7 +404,7 @@ Expect a client-side error due the size.
 
 Construct the following write model (referred to as `model`):
 
-```json
+```javascript
 ReplaceOne: {
   "namespace": "db.coll",
   "filter": {},
@@ -444,7 +444,7 @@ remainderBytes = opsBytes % maxBsonObjectSize
 
 Construct the following write model (referred to as `firstModel`):
 
-```json
+```javascript
 InsertOne {
   "namespace": "db.coll",
   "document": { "a": "b".repeat(maxBsonObjectSize - 57) }
@@ -456,7 +456,7 @@ Create a list of write models (referred to as `models`) with `firstModel` repeat
 If `remainderBytes` is greater than or equal to 217, add 1 to `numModels` and append the following write model to
 `models`:
 
-```json
+```javascript
 InsertOne {
   "namespace": "db.coll",
   "document": { "a": "b".repeat(remainderBytes - 57) }
@@ -469,7 +469,7 @@ Then perform the following two tests:
 
 Create the following write model (referred to as `sameNamespaceModel`):
 
-```json
+```javascript
 InsertOne {
   "namespace": "db.coll",
   "document": { "a": "b" }
@@ -498,7 +498,7 @@ Construct the following namespace (referred to as `namespace`):
 
 Create the following write model (referred to as `newNamespaceModel`):
 
-```json
+```javascript
 InsertOne {
   "namespace": namespace,
   "document": { "a": "b" }
@@ -532,7 +532,7 @@ changed in the bulk write specification.
 
 The command document for the `bulkWrite` has the following structure and size:
 
-```json
+```javascript
 {
   "bulkWrite": 1,
   "errorsOnly": true,
@@ -544,7 +544,7 @@ Size: 43 bytes
 
 Each write model will create an `ops` document with the following structure and size:
 
-```json
+```javascript
 {
   "insert": <0 | 1>,
   "document": {
@@ -561,7 +561,7 @@ total of 58 bytes.
 
 The models using the "db.coll" namespace will create one `nsInfo` document with the following structure and size:
 
-```json
+```javascript
 {
   "ns": "db.coll"
 }
@@ -571,7 +571,7 @@ Size: 21 bytes
 
 `newNamespaceModel` will create an `nsInfo` document with the following structure and size:
 
-```json
+```javascript
 {
   "ns": "db.<c repeated 200 times>"
 }
@@ -613,7 +613,7 @@ Construct a `MongoClient` (referred to as `client`). Perform a `hello` command u
 
 Construct the following write model (referred to as `largeDocumentModel`):
 
-```json
+```javascript
 InsertOne {
   "namespace": "db.coll",
   "document": { "a": "b".repeat(maxMessageSizeBytes) }
@@ -633,7 +633,7 @@ Construct the following namespace (referred to as `namespace`):
 
 Construct the following write model (referred to as `largeNamespaceModel`):
 
-```json
+```javascript
 InsertOne {
   "namespace": namespace,
   "document": { "a": "b" }
@@ -653,7 +653,7 @@ This test must only be run on 8.0+ servers.
 
 Construct a `MongoClient` (referred to as `client`) configured with the following `AutoEncryptionOpts`:
 
-```json
+```javascript
 AutoEncryptionOpts {
   "keyVaultNamespace": "db.coll",
   "kmsProviders": {
@@ -667,7 +667,7 @@ AutoEncryptionOpts {
 
 Construct the following write model (referred to as `model`):
 
-```json
+```javascript
 InsertOne {
   "namespace": "db.coll",
   "document": { "a": "b" }
