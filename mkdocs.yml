@@ -1,0 +1,4 @@
+site_name: MongoDB Specifications
+docs_dir: source
+nav:
+  - 'index.md'

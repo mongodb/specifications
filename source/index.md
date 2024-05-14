@@ -13,6 +13,7 @@
 - [Connection String Spec](connection-string/connection-string-spec.md)
 - [Driver Authentication](auth/auth.md)
 - [Driver CRUD API](crud/crud.md)
+- [Driver Mantras](./driver-mantras.md)
 - [Driver Sessions Specification](sessions/driver-sessions.md)
 - [Driver Transactions Specification](transactions/transactions.md)
 - [FaaS Automated Testing](faas-automated-testing/faas-automated-testing.md)

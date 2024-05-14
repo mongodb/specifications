@@ -1265,7 +1265,7 @@ longer full, it is immediately filled. It is not a favorable situation to be in,
 guarantee that the waitQueue normally provides.
 
 Because of these issues, it does not make sense to
-[go against driver mantras and provide an additional knob](../../README.md#). We may eventually pursue an alternative
+[go against driver mantras and provide an additional knob](../driver-mantras.md#). We may eventually pursue an alternative
 configurations to address wait queue size in [Advanced Pooling Behaviors](#advanced-pooling-behaviors).
 
 Users that wish to have this functionality can achieve similar results by utilizing other methods to limit concurrency.
