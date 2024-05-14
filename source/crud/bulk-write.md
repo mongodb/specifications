@@ -1,6 +1,6 @@
 # Bulk Write
 
-- Status: In Review
+- Status: Accepted
 - Minimum Server Version: 8.0
 
 ## Abstract
