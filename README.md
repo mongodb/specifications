@@ -46,7 +46,7 @@ entire test with a note (e.g. *Removed*).
 
 ## Building Documents
 
-We use [mkdocs](https://www.mkdocs.org/) to render the documentation.  To see a live view of the documentation, run:
+We use [mkdocs](https://www.mkdocs.org/) to render the documentation. To see a live view of the documentation, run:
 
 ```bash
 pip install mkdocs
