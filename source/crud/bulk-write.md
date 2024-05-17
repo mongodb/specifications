@@ -1,6 +1,6 @@
 # Bulk Write
 
-- Status: In Review
+- Status: Accepted
 - Minimum Server Version: 8.0
 
 ## Abstract
@@ -849,6 +849,8 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-05-17: Update specification status to "Accepted".
 
 - 2024-05-10: Improve rendered format for JSON-like code blocks.
 
