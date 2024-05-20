@@ -2388,8 +2388,9 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+- 2024-05-20: Add retry prose test.
 
-- 2024-03-20: Add `delegated` option to "kmip" KMS provider
+- 2024-03-20: Add `delegated` option to "kmip" KMS provider.
 
 - 2024-02-27: Migrated from reStructuredText to Markdown.
 
