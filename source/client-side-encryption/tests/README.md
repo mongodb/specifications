@@ -3296,3 +3296,60 @@ Assert the returned payload size is greater than the size of `payload_defaults`.
 > [!NOTE]
 > Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly affect
 > the payload size.
+
+### 24. KMS Retry Tests
+
+The following tests that certain AWS, Azure, and GCP KMS operations are retried on transient errors.
+
+This test uses a mock server with configurable failpoints to simulate network failures. To start the server:
+```
+python -u kms_failpoint_server.py --port 9003
+```
+See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen. See [the mock server implementation](TODO)
+and the [C driver tests](TODO) for how to configure failpoints.
+
+
+#### Setup
+
+1. Start a `mongod` process with **server version 4.2.0 or later**.
+2. Create a `MongoClient` for key vault operations.
+3. Create a `ClientEncryption` object (referred to as `client_encryption`) with `keyVaultNamespace` set to
+   `keyvault.datakeys`.
+
+#### createDataKey
+1. Start a mock KMS server on port 9003 with
+   [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA file
+   and [expired.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem)
+   as a cert file.
+2. Configure the mock server to simulate two HTTP failures and two TCP failures.
+3. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   ```javascript
+   {
+      "region": "foo",
+      "key": "bar",
+      "endpoint": "127.0.0.1:9003",
+   }
+   ```
+   Expect this to succeed.
+
+Repeat this test with the following providers and masterKeys:
+
+#### "azure" provider
+   ```javascript
+   {
+      "keyVaultEndpoint": "127.0.0.1:9003",
+      "keyName": "foo",
+   }
+   ```
+
+#### "gcp" provider
+   ```javascript
+   {
+      "projectId": "foo",
+      "location": "bar",
+      "keyRing": "baz",
+      "keyName": "qux",
+      "endpoint": "127.0.0.1:9003"
+   }
+   ```

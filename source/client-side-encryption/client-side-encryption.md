@@ -2385,6 +2385,7 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+- 2024-05-20: Add retry prose test.
 
 - 2024-07-29: Document range as stable.
 
