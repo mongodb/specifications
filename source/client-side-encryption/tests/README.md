@@ -2820,8 +2820,6 @@ must be skipped on MongoDB server 8.0+.
 
 > [!NOTE]
 > MongoDB Server 8.0 introduced a backwards breaking change to the Queryable Encryption (QE) range protocol: QE Range
-> V2. Skip tests using `rangePreview` when using Server 8.0 or newer until DRIVERS-2767 is addressed.
-
 > [!NOTE]
 > MongoDB Server 7.0 introduced a backwards breaking change to the Queryable Encryption (QE) protocol: QEv2.
 > libmongocrypt 1.8.0 is configured to use the QEv2 protocol.
@@ -2886,7 +2884,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -2987,7 +2985,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3016,8 +3014,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3051,8 +3049,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3085,8 +3083,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3118,8 +3116,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3150,7 +3148,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3172,7 +3170,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3197,7 +3195,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type with precision added>,
 }

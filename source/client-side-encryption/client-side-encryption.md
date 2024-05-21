@@ -982,7 +982,7 @@ class ClientEncryption {
    // 2. An Aggregate Expression of this form:
    //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
    // $gt may also be $gte. $lt may also be $lte.
-   // Only supported when queryType is "rangePreview" and algorithm is "RangePreview".
+   // Only supported when queryType is "range" and algorithm is "Range".
    // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
    encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
@@ -1169,7 +1169,7 @@ class EncryptOpts {
 }
 
 // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
-// RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
+// RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
 // min, max, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
 class RangeOpts {
@@ -1202,12 +1202,12 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
-- "RangePreview"
+- "Range"
 
-The result of explicit encryption with the "Indexed" or "RangePreview" algorithm must be processed by the server to
+The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to
 insert or query. Drivers MUST document the following behavior:
 
-> To insert or query with an "Indexed" or "RangePreview" encrypted payload, use a `MongoClient` configured with
+> To insert or query with an "Indexed" or "Range" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
@@ -1216,8 +1216,8 @@ insert or query. Drivers MUST document the following behavior:
 
 #### contentionFactor
 
-contentionFactor only applies when algorithm is "Indexed" or "RangePreview". It is an error to set contentionFactor when
-algorithm is not "Indexed" or "RangePreview".
+contentionFactor only applies when algorithm is "Indexed" or "Range". It is an error to set contentionFactor when
+algorithm is not "Indexed" or "Range".
 
 > [!NOTE]
 > The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
@@ -1227,18 +1227,18 @@ algorithm is not "Indexed" or "RangePreview".
 One of the strings:
 
 - "equality"
-- "rangePreview"
+- "range"
 
-queryType only applies when algorithm is "Indexed" or "RangePreview". It is an error to set queryType when algorithm is
-not "Indexed" or "RangePreview".
+queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is
+not "Indexed" or "Range".
 
 > [!NOTE]
 > The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "rangePreview". It is an error to set rangeOpts when algorithm is not
-"rangePreview".
+rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not
+"range".
 
 > [!NOTE]
 > The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
