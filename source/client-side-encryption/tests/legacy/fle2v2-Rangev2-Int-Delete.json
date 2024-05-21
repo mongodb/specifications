@@ -1,13 +1,13 @@
 {
   "runOn": [
     {
-      "minServerVersion": "7.0.0",
+      "minServerVersion": "8.0.0",
       "topology": [
         "replicaset",
         "sharded",
         "load-balanced"
       ],
-      "maxServerVersion": "7.99.99"
+      "maxServerVersion": "8.99.99"
     }
   ],
   "database_name": "default",
@@ -25,7 +25,7 @@
         "path": "encryptedInt",
         "bsonType": "int",
         "queries": {
-          "queryType": "rangePreview",
+          "queryType": "range",
           "contention": {
             "$numberLong": "0"
           },
@@ -205,7 +205,7 @@
                         "path": "encryptedInt",
                         "bsonType": "int",
                         "queries": {
-                          "queryType": "rangePreview",
+                          "queryType": "range",
                           "contention": {
                             "$numberLong": "0"
                           },
@@ -258,7 +258,7 @@
                         "path": "encryptedInt",
                         "bsonType": "int",
                         "queries": {
-                          "queryType": "rangePreview",
+                          "queryType": "range",
                           "contention": {
                             "$numberLong": "0"
                           },
@@ -318,7 +318,7 @@
                         "path": "encryptedInt",
                         "bsonType": "int",
                         "queries": {
-                          "queryType": "rangePreview",
+                          "queryType": "range",
                           "contention": {
                             "$numberLong": "0"
                           },
