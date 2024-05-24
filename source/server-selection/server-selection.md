@@ -1576,8 +1576,6 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 
 ## Changelog
 
-- 2024-02-07: Migrated from reStructuredText to Markdown.
-
 - 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
 - 2015-08-10: Updated single-threaded selection logic to ensure a scan always\
@@ -1655,6 +1653,8 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - 2022-11-09: Add log messages and tests.
 
 - 2023-08-26: Add list of deprioritized servers for sharded cluster topology.
+
+- 2024-02-07: Migrated from reStructuredText to Markdown.
 
 [^1]: mongos 3.4 refuses to connect to mongods with maxWireVersion \< 5, so it does no additional wire version checks
     related to maxStalenessSeconds.
