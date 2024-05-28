@@ -1266,7 +1266,7 @@ guarantee that the waitQueue normally provides.
 
 Because of these issues, it does not make sense to
 [go against driver mantras and provide an additional knob](../driver-mantras.md#). We may eventually pursue an
-alternative configurations to address wait queue size in [Advanced Pooling Behaviors](#advanced-pooling-behaviors).
+alternative configuration to address wait queue size in [Advanced Pooling Behaviors](#advanced-pooling-behaviors).
 
 Users that wish to have this functionality can achieve similar results by utilizing other methods to limit concurrency.
 Examples include implementing either a thread pool or an operation queue with a capped size in the user application.
