@@ -220,7 +220,7 @@ The values in connection options MUST be URL decoded by the parser. The values c
   MUST handle subsequent colon signs (":") within the value, unless otherwise specified in this document.\
   If any keys
   or values contain a comma (",") they MUST not be provided as part of the connection string, since it would interfere
-  with parsing. For example:
+  with parsing. Key value pair example:
 
   ```
   ?readPreferenceTags=dc:ny,rack:1
