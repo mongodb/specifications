@@ -216,15 +216,23 @@ The values in connection options MUST be URL decoded by the parser. The values c
   ```
 
 - Key value pairs: A value that represents one or more key and value pairs. Multiple key value pairs are delimited by a
-  comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards. Drivers
-  MUST handle subsequent colon signs (":") within the value, unless otherwise specified in this document.\
-  If any keys
-  or values contain a comma (",") they MUST not be provided as part of the connection string, since it would interfere
-  with parsing. Key value pair example:
+  comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards. Reserved
+  characters such as ':' must be escaped according to [RFC 2396](https://www.rfc-editor.org/rfc/rfc2396)
+
+  For example:
 
   ```
   ?readPreferenceTags=dc:ny,rack:1
   ```
+
+  Drivers MUST handle unencoded colon signs (":") within the value. For example:
+
+  ```
+  ?authMechanismProperties=TOKEN_RESOURCE:mongodb%3A%2F%2F...
+  ```
+
+  If any keys or values contain a comma (",") they MUST not be provided as part of the connection string, since it would
+  interfere with parsing.
 
 Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:
 
@@ -446,6 +454,8 @@ than `+`, this will be portable across all implementations. Implementations MAY 
 many languages treat strings as `x-www-form-urlencoded` data by default.
 
 ## Changelog
+
+- 2024-05-29: Clarify handling of key-value pairs and add specification test.
 
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 
