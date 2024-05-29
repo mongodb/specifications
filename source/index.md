@@ -16,6 +16,7 @@
 - [Driver Mantras](./driver-mantras.md)
 - [Driver Sessions Specification](sessions/driver-sessions.md)
 - [Driver Transactions Specification](transactions/transactions.md)
+- [Extended JSON](./extended-json.md)
 - [FaaS Automated Testing](faas-automated-testing/faas-automated-testing.md)
 - [GridFS Spec](gridfs/gridfs-spec.md)
 - [Handling of DBRefs](./dbref.md)

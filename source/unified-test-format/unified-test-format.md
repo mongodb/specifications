@@ -2634,7 +2634,7 @@ Note: the test runner is not required to validate the type or value of a `$$plac
 ### Evaluating Matches
 
 Expected values in tests (e.g. [operation.expectResult](#operation_expectResult)) are expressed as either relaxed or
-canonical [Extended JSON](../extended-json.rst).
+canonical [Extended JSON](../extended-json.md).
 
 The algorithm for matching expected and actual values is specified with the following pseudo-code:
 
@@ -2680,7 +2680,7 @@ The rules for comparing documents and arrays are discussed in more detail in sub
 *other* than documents and arrays, test runners MAY adopt any of the following approaches to compare expected and actual
 values, as long as they are consistent:
 
-- Convert both values to relaxed or canonical [Extended JSON](../extended-json.rst) and compare strings
+- Convert both values to relaxed or canonical [Extended JSON](../extended-json.md) and compare strings
 - Convert both values to BSON, and compare bytes
 - Convert both values to native representations, and compare accordingly
 
@@ -3015,8 +3015,8 @@ tests.
 
 The instructions in this section apply for each test file loaded by the test runner.
 
-Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](../extended-json.rst) parser.
-The parser MUST accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.rst#parsers)),
+Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](../extended-json.md) parser.
+The parser MUST accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.md#parsers)),
 as test files may use either.
 
 Upon loading a file, the test runner MUST read the [schemaVersion](#schemaVersion) field and determine if the test file
