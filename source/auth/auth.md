@@ -2045,6 +2045,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 ## Changelog
 
+- 2024-05-29: Disallow comma character when `TOKEN_RESOURCE` is given in a connection string.
+
 - 2024-05-03: Clarify timeout behavior for OIDC machine callback. Add `serverless:forbid` to OIDC unified tests. Add an
   additional prose test for the behavior of `ALLOWED_HOSTS`.
 
