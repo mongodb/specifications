@@ -216,8 +216,11 @@ The values in connection options MUST be URL decoded by the parser. The values c
   ```
 
 - Key value pairs: A value that represents one or more key and value pairs. Multiple key value pairs are delimited by a
-  comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards. If any
-  keys or values containing a comma (",") or a colon (":") they must be URL encoded. For example:
+  comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards. Drivers
+  MUST handle subsequent colon signs (":") within the value, unless otherwise specified in this document.\
+  If any keys
+  or values contain a comma (",") they MUST not be provided as part of the connection string, since it would interfere
+  with parsing. For example:
 
   ```
   ?readPreferenceTags=dc:ny,rack:1

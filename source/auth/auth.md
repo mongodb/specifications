@@ -1201,11 +1201,6 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 #### [MongoCredential](#mongocredential) Properties
 
-> [!NOTE]
-> Drivers MUST parse the `TOKEN_RESOURCE` by splitting only on the first `:` character. Drivers MUST document that users
-> must specify `TOKEN_RESOURCE` as part of a `MongoClient` option it contains a comma `,` character, since it would
-> interfere with the parsing rules for `authMechanismProperties`.
-
 - username\
   MAY be specified. Its meaning varies depending on the OIDC provider integration used.
 
