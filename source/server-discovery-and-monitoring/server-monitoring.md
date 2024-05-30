@@ -581,7 +581,7 @@ class Monitor(Thread):
           wait()
 
   def setUpConnection():
-      # Take the mutex to avoid a data race becauase this code writes to the connection field and a concurrent
+      # Take the mutex to avoid a data race because this code writes to the connection field and a concurrent
       # cancelCheck call could be reading from it.
       with lock:
           # Server API versioning implies that the server supports hello.

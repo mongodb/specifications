@@ -834,7 +834,7 @@ The structure of this object is as follows:
 
 - `ignoreResultAndError`: Optional boolean. If true, both the error and result for the operation MUST be ignored.
 
-  This field is mutally exclusive with [expectResult](#operation_expectResult), [expectError](#operation_expectError),
+  This field is mutually exclusive with [expectResult](#operation_expectResult), [expectError](#operation_expectError),
   and [saveResultAsEntity](#operation_saveResultAsEntity).
 
   This field SHOULD NOT be used for [Special Test Operations](#special-test-operations) (i.e. `object: testRunner`).
