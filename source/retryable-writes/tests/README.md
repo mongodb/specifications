@@ -71,7 +71,7 @@ Drivers should also assert that command documents are properly constructed with 
 on whether the write operation is supported.
 [Command Logging and Monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) may be used to
 check for the presence of a `txnNumber` field in the command document. Note that command documents may always include an
-`lsid` field per the [Driver Session](../../sessions/driver-sessions.rst) specification.
+`lsid` field per the [Driver Session](../../sessions/driver-sessions.md) specification.
 
 These tests may be run against both a replica set and shard cluster.
 
@@ -106,155 +106,160 @@ Drivers should test that transactions IDs are always included in commands for su
 
 The following tests ensure that retryable writes work properly with replica sets and sharded clusters.
 
-- Test that retryable writes raise an exception when using the MMAPv1 storage engine. For this test, execute a write
-  operation, such as `insertOne`, which should generate an exception. Assert that the error message is the replacement
-  error message:
+### 1. Test that retryable writes raise an exception when using the MMAPv1 storage engine.
 
-  ```
-  This MongoDB deployment does not support retryable writes. Please add
-  retryWrites=false to your connection string.
-  ```
+For this test, execute a write operation, such as `insertOne`, which should generate an exception. Assert that the error
+message is the replacement error message:
 
-  and the error code is 20.
+```
+This MongoDB deployment does not support retryable writes. Please add
+retryWrites=false to your connection string.
+```
 
-  > [!NOTE]
-  > Drivers that rely on `serverStatus` to determine the storage engine in use MAY skip this test for sharded clusters,
-  > since `mongos` does not report this information in its `serverStatus` response.
+and the error code is 20.
 
-- Test that drivers properly retry after encountering PoolClearedErrors. This test MUST be implemented by any driver
-  that implements the CMAP specification.
+> [!NOTE]
+> Drivers that rely on `serverStatus` to determine the storage engine in use MAY skip this test for sharded clusters,
+> since `mongos` does not report this information in its `serverStatus` response.
 
-  This test requires MongoDB 4.3.4+ for both the `errorLabels` and `blockConnection` fail point options.
+### 2. Test that drivers properly retry after encountering PoolClearedErrors.
 
-  - Create a client with maxPoolSize=1 and retryWrites=true. If testing against a sharded deployment, be sure to connect
-    to only a single mongos.
+This test MUST be implemented by any driver that implements the CMAP specification.
 
-  - Enable the following failpoint:
+This test requires MongoDB 4.3.4+ for both the `errorLabels` and `blockConnection` fail point options.
 
-    ```javascript
-    {
-        configureFailPoint: "failCommand",
-        mode: { times: 1 },
-        data: {
-            failCommands: ["insert"],
-            errorCode: 91,
-            blockConnection: true,
-            blockTimeMS: 1000,
-            errorLabels: ["RetryableWriteError"]
-        }
+1. Create a client with maxPoolSize=1 and retryWrites=true. If testing against a sharded deployment, be sure to connect
+   to only a single mongos.
+
+2. Enable the following failpoint:
+
+```javascript
+{
+    configureFailPoint: "failCommand",
+    mode: { times: 1 },
+    data: {
+        failCommands: ["insert"],
+        errorCode: 91,
+        blockConnection: true,
+        blockTimeMS: 1000,
+        errorLabels: ["RetryableWriteError"]
     }
-    ```
+}
+```
 
-  - Start two threads and attempt to perform an `insertOne` simultaneously on both.
+3. Start two threads and attempt to perform an `insertOne` simultaneously on both.
 
-  - Verify that both `insertOne` attempts succeed.
+4. Verify that both `insertOne` attempts succeed.
 
-  - Via CMAP monitoring, assert that the first check out succeeds.
+5. Via CMAP monitoring, assert that the first check out succeeds.
 
-  - Via CMAP monitoring, assert that a PoolClearedEvent is then emitted.
+6. Via CMAP monitoring, assert that a PoolClearedEvent is then emitted.
 
-  - Via CMAP monitoring, assert that the second check out then fails due to a connection error.
+7. Via CMAP monitoring, assert that the second check out then fails due to a connection error.
 
-  - Via Command Monitoring, assert that exactly three `insert` CommandStartedEvents were observed in total.
+8. Via Command Monitoring, assert that exactly three `insert` CommandStartedEvents were observed in total.
 
-  - Disable the failpoint.
+9. Disable the failpoint.
 
-- Test that drivers return the original error after encountering a WriteConcernError with a RetryableWriteError label.
-  This test MUST
+### 3. Test that drivers return the original error after encountering a WriteConcernError with a RetryableWriteError label.
 
-  - be implemented by any driver that implements the Command Monitoring specification,
+This test MUST:
 
-  - only run against replica sets as mongos does not propagate the NoWritesPerformed label to the drivers.
+1. be implemented by any driver that implements the Command Monitoring specification,
 
-  - be run against server versions 6.0 and above.
+2. only run against replica sets as mongos does not propagate the NoWritesPerformed label to the drivers.
 
-    Additionally, this test requires drivers to set a fail point after an `insertOne` operation but before the
-    subsequent retry. Drivers that are unable to set a failCommand after the CommandSucceededEvent SHOULD use mocking or
-    write a unit test to cover the same sequence of events.
+3. be run against server versions 6.0 and above.
 
-  - Create a client with `retryWrites=true`.
+```
+Additionally, this test requires drivers to set a fail point after an `insertOne` operation but before the
+subsequent retry. Drivers that are unable to set a failCommand after the CommandSucceededEvent SHOULD use mocking or
+write a unit test to cover the same sequence of events.
+```
 
-  - Configure a fail point with error code `91` (ShutdownInProgress):
+4. Create a client with `retryWrites=true`.
 
-    ```javascript
-    {
-        configureFailPoint: "failCommand",
-        mode: {times: 1},
-        data: {
-            failCommands: ["insert"],
-            errorLabels: ["RetryableWriteError"],
-            writeConcernError: { code: 91 }
-        }
+5. Configure a fail point with error code `91` (ShutdownInProgress):
+
+```javascript
+{
+    configureFailPoint: "failCommand",
+    mode: {times: 1},
+    data: {
+        failCommands: ["insert"],
+        errorLabels: ["RetryableWriteError"],
+        writeConcernError: { code: 91 }
     }
-    ```
+}
+```
 
-  - Via the command monitoring CommandSucceededEvent, configure a fail point with error code `10107`
-    (NotWritablePrimary) and a NoWritesPerformed label:
+6. Via the command monitoring CommandSucceededEvent, configure a fail point with error code `10107` (NotWritablePrimary)
+   and a NoWritesPerformed label:
 
-    ```javascript
-    {
-        configureFailPoint: "failCommand",
-        mode: {times: 1},
-        data: {
-            failCommands: ["insert"],
-            errorCode: 10107,
-            errorLabels: ["RetryableWriteError", "NoWritesPerformed"]
-        }
+```javascript
+{
+    configureFailPoint: "failCommand",
+    mode: {times: 1},
+    data: {
+        failCommands: ["insert"],
+        errorCode: 10107,
+        errorLabels: ["RetryableWriteError", "NoWritesPerformed"]
     }
-    ```
+}
+```
 
-    Drivers SHOULD only configure the `10107` fail point command if the the succeeded event is for the `91` error
-    configured in step 2.
+Drivers SHOULD only configure the `10107` fail point command if the the succeeded event is for the `91` error configured
+in step 2.
 
-  - Attempt an `insertOne` operation on any record for any database and collection. For the resulting error, assert that
-    the associated error code is `91`.
+7. Attempt an `insertOne` operation on any record for any database and collection. For the resulting error, assert that
+   the associated error code is `91`.
 
-  - Disable the fail point:
+8. Disable the fail point:
 
-  ```javascript
-  {
-      configureFailPoint: "failCommand",
-      mode: "off"
-  }
-  ```
+```javascript
+{
+    configureFailPoint: "failCommand",
+    mode: "off"
+}
+```
 
-- Test that in a sharded cluster writes are retried on a different mongos when one is available. This test MUST be
-  executed against a sharded cluster that has at least two mongos instances, supports `retryWrites=true`, has enabled
-  the `configureFailPoint` command, and supports the `errorLabels` field (MongoDB 4.3.1+).
+### 4. Test that in a sharded cluster writes are retried on a different mongos when one is available.
 
-  Note: this test cannot reliably distinguish "retry on a different mongos due to server deprioritization" (the behavior
-  intended to be tested) from "retry on a different mongos due to normal SDAM randomized suitable server selection".
-  Verify relevant code paths are correctly executed by the tests using external means such as a logging, debugger, code
-  coverage tool, etc.
+This test MUST be executed against a sharded cluster that has at least two mongos instances, supports
+`retryWrites=true`, has enabled the `configureFailPoint` command, and supports the `errorLabels` field (MongoDB 4.3.1+).
 
-  - Create two clients `s0` and `s1` that each connect to a single mongos from the sharded cluster. They must not
-    connect to the same mongos.
+> [!NOTE] This test cannot reliably distinguish "retry on a different mongos due to server deprioritization" (the behavior
+> intended to be tested) from "retry on a different mongos due to normal SDAM randomized suitable server selection".
+> Verify relevant code paths are correctly executed by the tests using external means such as a logging, debugger, code
+> coverage tool, etc.
 
-  - Configure the following fail point for both `s0` and `s1`:
+1. Create two clients `s0` and `s1` that each connect to a single mongos from the sharded cluster. They must not connect
+   to the same mongos.
 
-    ```javascript
-    {
-        configureFailPoint: "failCommand",
-        mode: { times: 1 },
-        data: {
-            failCommands: ["insert"],
-            errorCode: 6,
-            errorLabels: ["RetryableWriteError"]
-        }
+2. Configure the following fail point for both `s0` and `s1`:
+
+```javascript
+{
+    configureFailPoint: "failCommand",
+    mode: { times: 1 },
+    data: {
+        failCommands: ["insert"],
+        errorCode: 6,
+        errorLabels: ["RetryableWriteError"]
     }
-    ```
+}
+```
 
-  - Create a client `client` with `retryWrites=true` that connects to the cluster using the same two mongoses as `s0`
-    and `s1`.
+3. Create a client `client` with `retryWrites=true` that connects to the cluster using the same two mongoses as `s0` and
+   `s1`.
 
-  - Enable failed command event monitoring for `client`.
+4. Enable failed command event monitoring for `client`.
 
-  - Execute an `insert` command with `client`. Assert that the command failed.
+5. Execute an `insert` command with `client`. Assert that the command failed.
 
-  - Assert that two failed command events occurred. Assert that the failed command events occurred on different
-    mongoses.
+6. Assert that two failed command events occurred. Assert that the failed command events occurred on different mongoses.
 
-  - Disable the fail points on both `s0` and `s1`.
+7. Disable the fail points on both `s0` and `s1`.
 
 ## Changelog
 
