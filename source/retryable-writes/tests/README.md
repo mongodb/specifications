@@ -266,20 +266,23 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 - 2024-02-27: Convert legacy retryable writes tests to unified format.
 
 - 2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing\
-  execution of deprioritization code
+  execution of deprioritization
+  code\
   paths.
 
 - 2024-01-05: Fix typo in prose test title.
 
 - 2024-01-03: Note server version requirements for fail point options and revise\
-  tests to specify the
+  tests to specify
+  the\
   `errorLabels`\
   option at the top-level instead of within `writeConcernError`.
 
 - 2023-08-26: Add prose tests for retrying in a sharded cluster.
 
 - 2022-08-30: Add prose test verifying correct error handling for errors with\
-  the NoWritesPerformed label, which is
+  the NoWritesPerformed label, which
+  is\
   to\
   return the original error.
 
@@ -302,7 +305,8 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 - 2019-03-01: Add top-level `runOn` field to denote server version and/or\
   topology requirements requirements for
   the\
-  test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now expressed
+  test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now
+  expressed\
   within\
   `runOn` elements.
 
