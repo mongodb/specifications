@@ -226,10 +226,11 @@ in step 2.
 This test MUST be executed against a sharded cluster that has at least two mongos instances, supports
 `retryWrites=true`, has enabled the `configureFailPoint` command, and supports the `errorLabels` field (MongoDB 4.3.1+).
 
-> [!NOTE] This test cannot reliably distinguish "retry on a different mongos due to server deprioritization" (the behavior
+> [!NOTE]
+> This test cannot reliably distinguish "retry on a different mongos due to server deprioritization" (the behavior
 > intended to be tested) from "retry on a different mongos due to normal SDAM randomized suitable server selection".
 > Verify relevant code paths are correctly executed by the tests using external means such as a logging, debugger, code
-> coverage tool, etc.
+> coverage tool, etc. --> -->
 
 1. Create two clients `s0` and `s1` that each connect to a single mongos from the sharded cluster. They must not connect
    to the same mongos.
@@ -266,24 +267,19 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 - 2024-02-27: Convert legacy retryable writes tests to unified format.
 
 - 2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing\
-  execution of deprioritization
-  code\
+  execution of deprioritization code
   paths.
 
 - 2024-01-05: Fix typo in prose test title.
 
 - 2024-01-03: Note server version requirements for fail point options and revise\
-  tests to specify
-  the\
-  `errorLabels`\
+  tests to specify the `errorLabels`
   option at the top-level instead of within `writeConcernError`.
 
 - 2023-08-26: Add prose tests for retrying in a sharded cluster.
 
 - 2022-08-30: Add prose test verifying correct error handling for errors with\
-  the NoWritesPerformed label, which
-  is\
-  to\
+  the NoWritesPerformed label, which is to
   return the original error.
 
 - 2022-04-22: Clarifications to `serverless` and `useMultipleMongoses`.
@@ -303,11 +299,8 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 - 2019-06-07: Mention $merge stage for aggregate alongside $out
 
 - 2019-03-01: Add top-level `runOn` field to denote server version and/or\
-  topology requirements requirements for
-  the\
-  test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now
-  expressed\
-  within\
+  topology requirements requirements for the
+  test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now expressed within
   `runOn` elements.
 
   Add test-level `useMultipleMongoses` field.
