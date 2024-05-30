@@ -272,13 +272,15 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 - 2024-01-05: Fix typo in prose test title.
 
 - 2024-01-03: Note server version requirements for fail point options and revise\
-  tests to specify the `errorLabels`
+  tests to specify the
+  `errorLabels`\
   option at the top-level instead of within `writeConcernError`.
 
 - 2023-08-26: Add prose tests for retrying in a sharded cluster.
 
 - 2022-08-30: Add prose test verifying correct error handling for errors with\
-  the NoWritesPerformed label, which is to
+  the NoWritesPerformed label, which is
+  to\
   return the original error.
 
 - 2022-04-22: Clarifications to `serverless` and `useMultipleMongoses`.
@@ -298,8 +300,10 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 - 2019-06-07: Mention $merge stage for aggregate alongside $out
 
 - 2019-03-01: Add top-level `runOn` field to denote server version and/or\
-  topology requirements requirements for the
-  test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now expressed within
+  topology requirements requirements for
+  the\
+  test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now expressed
+  within\
   `runOn` elements.
 
   Add test-level `useMultipleMongoses` field.
