@@ -15,6 +15,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
       - name: "Run pre-commit"
-        run:
-          pip install -U pre-commit
+        run: |
+          pip install -U -q pre-commit
           pre-commit run --all-files --hook-stage manual
