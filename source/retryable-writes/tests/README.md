@@ -1,7 +1,5 @@
 # Retryable Write Tests
 
-______________________________________________________________________
-
 ## Introduction
 
 The YAML and JSON files in this directory are platform-independent tests meant to exercise a driver's implementation of
