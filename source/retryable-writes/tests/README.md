@@ -230,7 +230,7 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 > This test cannot reliably distinguish "retry on a different mongos due to server deprioritization" (the behavior
 > intended to be tested) from "retry on a different mongos due to normal SDAM randomized suitable server selection".
 > Verify relevant code paths are correctly executed by the tests using external means such as a logging, debugger, code
-> coverage tool, etc. --> -->
+> coverage tool, etc.
 
 1. Create two clients `s0` and `s1` that each connect to a single mongos from the sharded cluster. They must not connect
    to the same mongos.
