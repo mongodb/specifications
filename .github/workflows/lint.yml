@@ -14,16 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
-
-      # ref: https://github.com/pre-commit/action
-      - uses: pre-commit/action@v3.0.1
-      - name: Help message if pre-commit fail
-        if: ${{ failure() }}
-        run: |
-          echo "You can install pre-commit hooks to automatically run formatting"
-          echo "on each commit with:"
-          echo "    pre-commit install"
-          echo "or you can run by hand on staged files with"
-          echo "    pre-commit run"
-          echo "or after-the-fact on already committed files with"
-          echo "    pre-commit run --all-files --hook-stage manual"
+      - name: "Run pre-commit"
+        run:
+          pip install -U pre-commit
+          pre-commit run --all-files --hook-stage manual
