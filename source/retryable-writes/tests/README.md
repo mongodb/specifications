@@ -131,19 +131,19 @@ This test requires MongoDB 4.3.4+ for both the `errorLabels` and `blockConnectio
 
 2. Enable the following failpoint:
 
-```javascript
-{
-    configureFailPoint: "failCommand",
-    mode: { times: 1 },
-    data: {
-        failCommands: ["insert"],
-        errorCode: 91,
-        blockConnection: true,
-        blockTimeMS: 1000,
-        errorLabels: ["RetryableWriteError"]
-    }
-}
-```
+   ```javascript
+   {
+       configureFailPoint: "failCommand",
+       mode: { times: 1 },
+       data: {
+           failCommands: ["insert"],
+           errorCode: 91,
+           blockConnection: true,
+           blockTimeMS: 1000,
+           errorLabels: ["RetryableWriteError"]
+       }
+   }
+   ```
 
 3. Start two threads and attempt to perform an `insertOne` simultaneously on both.
 
@@ -163,63 +163,59 @@ This test requires MongoDB 4.3.4+ for both the `errorLabels` and `blockConnectio
 
 This test MUST:
 
-1. be implemented by any driver that implements the Command Monitoring specification,
+- be implemented by any driver that implements the Command Monitoring specification,
+- only run against replica sets as mongos does not propagate the NoWritesPerformed label to the drivers.
+- be run against server versions 6.0 and above.
 
-2. only run against replica sets as mongos does not propagate the NoWritesPerformed label to the drivers.
-
-3. be run against server versions 6.0 and above.
-
-```
 Additionally, this test requires drivers to set a fail point after an `insertOne` operation but before the
 subsequent retry. Drivers that are unable to set a failCommand after the CommandSucceededEvent SHOULD use mocking or
 write a unit test to cover the same sequence of events.
-```
 
-4. Create a client with `retryWrites=true`.
+1. Create a client with `retryWrites=true`.
 
-5. Configure a fail point with error code `91` (ShutdownInProgress):
+2. Configure a fail point with error code `91` (ShutdownInProgress):
 
-```javascript
-{
-    configureFailPoint: "failCommand",
-    mode: {times: 1},
-    data: {
-        failCommands: ["insert"],
-        errorLabels: ["RetryableWriteError"],
-        writeConcernError: { code: 91 }
-    }
-}
-```
+   ```javascript
+   {
+       configureFailPoint: "failCommand",
+       mode: {times: 1},
+       data: {
+           failCommands: ["insert"],
+           errorLabels: ["RetryableWriteError"],
+           writeConcernError: { code: 91 }
+       }
+   }
+   ```
 
-6. Via the command monitoring CommandSucceededEvent, configure a fail point with error code `10107` (NotWritablePrimary)
+3. Via the command monitoring CommandSucceededEvent, configure a fail point with error code `10107` (NotWritablePrimary)
    and a NoWritesPerformed label:
 
-```javascript
-{
-    configureFailPoint: "failCommand",
-    mode: {times: 1},
-    data: {
-        failCommands: ["insert"],
-        errorCode: 10107,
-        errorLabels: ["RetryableWriteError", "NoWritesPerformed"]
-    }
-}
-```
+   ```javascript
+   {
+       configureFailPoint: "failCommand",
+       mode: {times: 1},
+       data: {
+           failCommands: ["insert"],
+           errorCode: 10107,
+           errorLabels: ["RetryableWriteError", "NoWritesPerformed"]
+       }
+   }
+   ```
 
-Drivers SHOULD only configure the `10107` fail point command if the the succeeded event is for the `91` error configured
-in step 2.
+   Drivers SHOULD only configure the `10107` fail point command if the the succeeded event is for the `91` error
+   configured in step 2.
 
-7. Attempt an `insertOne` operation on any record for any database and collection. For the resulting error, assert that
+4. Attempt an `insertOne` operation on any record for any database and collection. For the resulting error, assert that
    the associated error code is `91`.
 
-8. Disable the fail point:
+5. Disable the fail point:
 
-```javascript
-{
-    configureFailPoint: "failCommand",
-    mode: "off"
-}
-```
+   ```javascript
+   {
+       configureFailPoint: "failCommand",
+       mode: "off"
+   }
+   ```
 
 ### 4. Test that in a sharded cluster writes are retried on a different mongos when one is available.
 
@@ -237,17 +233,17 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 
 2. Configure the following fail point for both `s0` and `s1`:
 
-```javascript
-{
-    configureFailPoint: "failCommand",
-    mode: { times: 1 },
-    data: {
-        failCommands: ["insert"],
-        errorCode: 6,
-        errorLabels: ["RetryableWriteError"]
-    }
-}
-```
+   ```javascript
+   {
+       configureFailPoint: "failCommand",
+       mode: { times: 1 },
+       data: {
+           failCommands: ["insert"],
+           errorCode: 6,
+           errorLabels: ["RetryableWriteError"]
+       }
+   }
+   ```
 
 3. Create a client `client` with `retryWrites=true` that connects to the cluster using the same two mongoses as `s0` and
    `s1`.
