@@ -3210,12 +3210,13 @@ Assert that an error was raised.
 The following tests that certain AWS, Azure, and GCP KMS operations are retried on transient errors.
 
 This test uses a mock server with configurable failpoints to simulate network failures. To start the server:
+
 ```
 python -u kms_failpoint_server.py --port 9003
 ```
+
 See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen. See
 [the mock server implementation](TODO) and the [C driver tests](TODO) for how to configure failpoints.
-
 
 #### Setup
 
@@ -3225,6 +3226,7 @@ See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen.
    `keyvault.datakeys`.
 
 #### createDataKey
+
 1. Start a mock KMS server on port 9003 with
    [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA file
    and [expired.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem)
@@ -3239,11 +3241,13 @@ See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen.
    "endpoint": "127.0.0.1:9003",
 }
 ```
-   Expect this to succeed.
+
+Expect this to succeed.
 
 Repeat this test with the following providers and masterKeys:
 
 #### "azure" provider
+
 ```javascript
 {
    "keyVaultEndpoint": "127.0.0.1:9003",
@@ -3252,6 +3256,7 @@ Repeat this test with the following providers and masterKeys:
 ```
 
 #### "gcp" provider
+
 ```javascript
 {
    "projectId": "foo",
