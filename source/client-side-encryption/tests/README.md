@@ -2911,6 +2911,7 @@ skipped.
 
    ```typescript
    class RangeOpts {
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
@@ -2921,6 +2922,7 @@ skipped.
    class RangeOpts {
       min: { "$numberDecimal": "0" },
       max: { "$numberDecimal": "200" },
+      trimFactor: 1,
       sparsity: 1,
       precision: 2,
    }
@@ -2930,6 +2932,7 @@ skipped.
 
    ```typescript
    class RangeOpts {
+      trimFactor: 1
       sparsity: 1,
    }
    ```
@@ -2940,6 +2943,7 @@ skipped.
    class RangeOpts {
       min: { "$numberDouble": "0" },
       max: { "$numberDouble": "200" },
+      trimFactor: 1,
       sparsity: 1,
       precision: 2,
    }
@@ -2951,6 +2955,7 @@ skipped.
    class RangeOpts {
       min: {"$date": { "$numberLong": "0" } } ,
       max: {"$date": { "$numberLong": "200" } },
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
@@ -2961,6 +2966,7 @@ skipped.
    class RangeOpts {
       min: {"$numberInt": "0" } ,
       max: {"$numberInt": "200" },
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
@@ -2971,6 +2977,7 @@ skipped.
    class RangeOpts {
       min: {"$numberLong": "0" } ,
       max: {"$numberLong": "200" },
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
