@@ -1224,7 +1224,9 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
   - TOKEN_RESOURCE\
     The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
     `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
-    MUST raise an error.
+    MUST raise an error. Note: because the `TOKEN_RESOURCE` is often itself a URL, drivers MUST document that a
+    `TOKEN_RESOURCE` with a comma `,` must be given as a `MongoClient` configuration and not as part of the connection
+    string, and that the `TOKEN_RESOURCE` value can contain a colon `:` character.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
