@@ -127,12 +127,6 @@ tests:
               "__safeContent__": [
                 {
                     "$binary": {
-                        "base64": "5nRutVIyq7URVOVtbE4vM01APSIajAVnsShMwjBlzkM=",
-                        "subType": "00"
-                    }
-                },
-                {
-                    "$binary": {
                         "base64": "RjBYT2h3ZAoHxhf8DU6/dFbDkEBZp0IxREcsRTu2MXs=",
                         "subType": "00"
                     }

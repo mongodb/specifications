@@ -119,12 +119,6 @@ tests:
               "__safeContent__": [
                   {
                       "$binary": {
-                          "base64": "5nRutVIyq7URVOVtbE4vM01APSIajAVnsShMwjBlzkM=",
-                          "subType": "00"
-                      }
-                  },
-                  {
-                      "$binary": {
                           "base64": "RjBYT2h3ZAoHxhf8DU6/dFbDkEBZp0IxREcsRTu2MXs=",
                           "subType": "00"
                       }
@@ -178,12 +172,6 @@ tests:
               "_id": 1,
               "encryptedLong": { $$type: "binData" },
               "__safeContent__": [
-                  {
-                      "$binary": {
-                          "base64": "bE1vqWj3KNyM7cCYUv/cnYm8BPaUL3eMp5syTHq6NF4=",
-                          "subType": "00"
-                      }
-                  },
                   {
                       "$binary": {
                           "base64": "25j9sQXZCihCmHKvTHgaBsAVZFcGPn7JjHdrCGlwyyw=",
