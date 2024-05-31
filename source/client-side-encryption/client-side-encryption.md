@@ -983,7 +983,6 @@ class ClientEncryption {
    //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
    // $gt may also be $gte. $lt may also be $lte.
    // Only supported when queryType is "range" and algorithm is "Range".
-   // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
    encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
    // Decrypts an encrypted value (BSON binary of subtype 6).
@@ -1211,16 +1210,10 @@ insert or query. Drivers MUST document the following behavior:
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
-
 #### contentionFactor
 
 contentionFactor only applies when algorithm is "Indexed" or "Range". It is an error to set contentionFactor when
 algorithm is not "Indexed" or "Range".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 #### queryType
 
@@ -1232,16 +1225,10 @@ One of the strings:
 queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is
 not "Indexed" or "Range".
 
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
-
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not
 "range".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 
 ## User facing API: When Auto Encryption Fails
 
@@ -2388,6 +2375,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-05-31: Replace rangePreview with range.
 
 - 2024-03-20: Add `delegated` option to "kmip" KMS provider
 
