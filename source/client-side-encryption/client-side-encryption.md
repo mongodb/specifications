@@ -1168,15 +1168,15 @@ class EncryptOpts {
    rangeOpts: Optional<RangeOpts>
 }
 
-// NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
 // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
-// min, max, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
+// min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
 class RangeOpts {
    // min is required if precision is set.
    min: Optional<BSONValue>,
    // max is required if precision is set.
    max: Optional<BSONValue>,
+   trimFactor: Int64,
    sparsity: Int64,
    // precision may only be set for double or decimal128.
    precision: Optional<Int32>
