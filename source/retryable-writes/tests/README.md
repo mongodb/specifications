@@ -268,6 +268,8 @@ debugger, code coverage tool, etc.
 
 1. Create a client `s0` that connects to a single mongos from the cluster.
 
+2. Configure the following fail point for `s0`:
+
    ```javascript
    {
        configureFailPoint: "failCommand",
@@ -281,17 +283,17 @@ debugger, code coverage tool, etc.
    }
    ```
 
-2. Create a client `client` with `directConnection=false` (when not set by default) and `retryWrites=true` that connects
+3. Create a client `client` with `directConnection=false` (when not set by default) and `retryWrites=true` that connects
    to the cluster using the same single mongos as `s0`.
 
-3. Enable succeeded and failed command event monitoring for `client`.
+4. Enable succeeded and failed command event monitoring for `client`.
 
-4. Execute an `insert` command with `client`. Assert that the command succeeded.
+5. Execute an `insert` command with `client`. Assert that the command succeeded.
 
-5. Assert that exactly one failed command event and one succeeded command event occurred. Assert that both events
+6. Assert that exactly one failed command event and one succeeded command event occurred. Assert that both events
    occurred on the same mongos.
 
-6. Disable the fail point on `s0`.
+7. Disable the fail point on `s0`.
 
 ## Changelog
 
