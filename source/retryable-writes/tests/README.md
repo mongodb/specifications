@@ -256,15 +256,17 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 
 7. Disable the fail points on both `s0` and `s1`.
 
-### 5. Test that in a sharded cluster on the same mongos if no other is available
+### 5. Test that in a sharded cluster writes are retried on the same mongos when no others are available.
 
-This test MUST be executed against a sharded cluster
+This test MUST be executed against a sharded cluster that supports `retryWrites=true`, has enabled the
+`configureFailPoint` command, and supports the `errorLabels` field (MongoDB 4.3.1+).
 
-1. Ensure that a test is run against a sharded cluster. If there are multiple mongoses in the cluster, pick one to test
-   against.
+Note: this test cannot reliably distinguish "retry on a different mongos due to server deprioritization" (the behavior
+intended to be tested) from "retry on a different mongos due to normal SDAM behavior of randomized suitable server
+selection". Verify relevant code paths are correctly executed by the tests using external means such as a logging,
+debugger, code coverage tool, etc.
 
-2. Create a client that connects to the mongos using the direct connection, and configure the following fail point on
-   the mongos:
+1. Create a client `s0` that connects to a single mongos from the cluster.
 
    ```javascript
    {
@@ -279,13 +281,17 @@ This test MUST be executed against a sharded cluster
    }
    ```
 
-3. Create a client with `retryWrites=true` that connects to the cluster, providing the selected mongos as the seed.
+2. Create a client `client` with `directConnection=false` (when not set by default) and `retryWrites=true` that connects
+   to the cluster using the same single mongos as `s0`.
 
-4. Enable command monitoring, and execute a write command that is supposed to fail.
+3. Enable succeeded and failed command event monitoring for `client`.
 
-5. Asserts that there was a failed command and a successful command event.
+4. Execute an `insert` command with `client`. Assert that the command succeeded.
 
-6. Disable the fail point.
+5. Assert that exactly one failed command event and one succeeded command event occurred. Assert that both events
+   occurred on the same mongos.
+
+6. Disable the fail point on `s0`.
 
 ## Changelog
 
