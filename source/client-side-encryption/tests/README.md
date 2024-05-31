@@ -3305,8 +3305,8 @@ This test uses a mock server with configurable failpoints to simulate network fa
 ```
 python -u kms_failpoint_server.py --port 9003
 ```
-See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen. See [the mock server implementation](TODO)
-and the [C driver tests](TODO) for how to configure failpoints.
+See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen. See
+[the mock server implementation](TODO) and the [C driver tests](TODO) for how to configure failpoints.
 
 
 #### Setup
@@ -3324,24 +3324,24 @@ and the [C driver tests](TODO) for how to configure failpoints.
 2. Configure the mock server to simulate two HTTP failures and two TCP failures.
 3. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
 
-   ```javascript
-   {
-      "region": "foo",
-      "key": "bar",
-      "endpoint": "127.0.0.1:9003",
-   }
-   ```
+```javascript
+{
+   "region": "foo",
+   "key": "bar",
+   "endpoint": "127.0.0.1:9003",
+}
+```
    Expect this to succeed.
 
 Repeat this test with the following providers and masterKeys:
 
 #### "azure" provider
-   ```javascript
-   {
-      "keyVaultEndpoint": "127.0.0.1:9003",
-      "keyName": "foo",
-   }
-   ```
+```javascript
+{
+   "keyVaultEndpoint": "127.0.0.1:9003",
+   "keyName": "foo",
+}
+```
 
 #### "gcp" provider
    ```javascript
