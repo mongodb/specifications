@@ -264,7 +264,7 @@ This test MUST be executed against a sharded cluster
    against.
 
 2. Create a client that connects to the mongos using the direct connection, and configure the following fail point on
-   the mongos::
+   the mongos:
 
 ```javascript
 {
