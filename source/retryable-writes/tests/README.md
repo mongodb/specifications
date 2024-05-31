@@ -266,18 +266,18 @@ This test MUST be executed against a sharded cluster
 2. Create a client that connects to the mongos using the direct connection, and configure the following fail point on
    the mongos:
 
-```javascript
-{
-    configureFailPoint: "failCommand",
-    mode: { times: 1 },
-    data: {
-        failCommands: ["insert"],
-        errorCode: 6,
-        errorLabels: ["RetryableWriteError"],
-        closeConnection: true
-    }
-}
-```
+   ```javascript
+   {
+       configureFailPoint: "failCommand",
+       mode: { times: 1 },
+       data: {
+           failCommands: ["insert"],
+           errorCode: 6,
+           errorLabels: ["RetryableWriteError"],
+           closeConnection: true
+       }
+   }
+   ```
 
 3. Create a client with `retryWrites=true` that connects to the cluster, providing the selected mongos as the seed.
 
