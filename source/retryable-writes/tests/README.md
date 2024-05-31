@@ -167,9 +167,9 @@ This test MUST:
 - only run against replica sets as mongos does not propagate the NoWritesPerformed label to the drivers.
 - be run against server versions 6.0 and above.
 
-Additionally, this test requires drivers to set a fail point after an `insertOne` operation but before the
-subsequent retry. Drivers that are unable to set a failCommand after the CommandSucceededEvent SHOULD use mocking or
-write a unit test to cover the same sequence of events.
+Additionally, this test requires drivers to set a fail point after an `insertOne` operation but before the subsequent
+retry. Drivers that are unable to set a failCommand after the CommandSucceededEvent SHOULD use mocking or write a unit
+test to cover the same sequence of events.
 
 1. Create a client with `retryWrites=true`.
 
@@ -255,6 +255,37 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 6. Assert that two failed command events occurred. Assert that the failed command events occurred on different mongoses.
 
 7. Disable the fail points on both `s0` and `s1`.
+
+### 5. Test that in a sharded cluster on the same mongos if no other is available
+
+This test MUST be executed against a sharded cluster
+
+1. Ensure that a test is run against a sharded cluster. If there are multiple mongoses in the cluster, pick one to test
+   against.
+
+2. Create a client that connects to the mongos using the direct connection, and configure the following fail point on
+   the mongos::
+
+```javascript
+{
+    configureFailPoint: "failCommand",
+    mode: { times: 1 },
+    data: {
+        failCommands: ["insert"],
+        errorCode: 6,
+        errorLabels: ["RetryableWriteError"],
+        closeConnection: true
+    }
+}
+```
+
+3. Create a client with `retryWrites=true` that connects to the cluster, providing the selected mongos as the seed.
+
+4. Enable command monitoring, and execute a write command that is supposed to fail.
+
+5. Asserts that there was a failed command and a successful command event.
+
+6. Disable the fail point.
 
 ## Changelog
 
