@@ -1203,8 +1203,8 @@ One of the strings:
 - "Unindexed"
 - "Range"
 
-The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to
-insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
+query. Drivers MUST document the following behavior:
 
 > To insert or query with an "Indexed" or "Range" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
@@ -1222,13 +1222,12 @@ One of the strings:
 - "equality"
 - "range"
 
-queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is
-not "Indexed" or "Range".
+queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is not
+"Indexed" or "Range".
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not
-"range".
+rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not "range".
 
 ## User facing API: When Auto Encryption Fails
 
