@@ -464,13 +464,24 @@ response would look, had the request asked for that write concern.
 FAQ
 ---
 
-Can a driver still use the OP_INSERT, OP_DELETE, OP_UPDATE?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Why are ``_id`` values generated client-side by default for new documents?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Though drivers may expose configuration options to prevent this behavior, by default a new ``ObjectId`` value will be created client-side before an insert or upsert operation. 
+
+This design decision primarily stems from the fact that MongoDB is a distributed database and the typical unique auto-incrementing scalar value most RDBMS' use for generating a primary key would not be robust enough, necessitating the need for a more robust data type (``ObjectId`` in this case). These ``_id`` values can be generated either on the client or the server, however when done client-side a new document's ``_id`` value is immediately available for use without the need for a network round trip. 
+
+Prior to MongoDB 3.6, an ``insert`` operation would use the  ``OP_INSERT`` opcode of the wire protocol to send the operation, and retrieve the results subsequently with a ``getLastError`` command. If client-side ``_id`` values were omitted, this command response wouldn't contain the server-created ``_id`` values for new documents. Following MongoDB 3.6 when all commands would be issued using the ``OP_MSG`` wire protocol opcode (``insert`` included), the response to the command still wouldn't contain the ``_id`` values for inserted documents.
+
+
+Can a driver still use the ``OP_INSERT``, ``OP_DELETE``, ``OP_UPDATE``?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Yes, a 2.6 server will still support those. But it is unlikely that a 2.8 server would.  Of course, when talking to older servers, the usual op codes will continue working the same. An older server is one that reports ``hello.maxWireVersion`` to be less than 2 or does not include the field.
 
 The rationale here is that we may choose to divert all the write traffic to the new
 protocol. (This depends on the having the overhead to issue a batch with one item very low.)
+
 
 Can an application still issue requests with write concerns {w: 0}?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -494,10 +505,11 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 Changelog
 ---------
 
-:2014-05-14: First public version
+:2024-06-04: Add FAQ entry outlining client-side _id value generation 
+:2022-10-05: Revise spec front matter and reformat changelog.
+:2022-07-25: Remove outdated value for ``maxWriteBatchSize``
+:2021-04-22: Updated to use hello command
 :2014-05-15: Removed text related to bulk operations; see the Bulk API spec for
              bulk details. Clarified some paragraphs; re-ordered the response
              field sections.
-:2021-04-22: Updated to use hello command
-:2022-07-25: Remove outdated value for ``maxWriteBatchSize``
-:2022-10-05: Revise spec front matter and reformat changelog.
+:2014-05-14: First public version
