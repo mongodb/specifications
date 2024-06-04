@@ -467,7 +467,7 @@ FAQ
 Why are ``_id`` values generated client-side by default for new documents?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Though drivers may expose configuration options to prevent this behavior, by default a new ``ObjectId`` value will be created client-side before an insert or upsert operation. 
+Though drivers may expose configuration options to prevent this behavior, by default a new ``ObjectId`` value will be created client-side before an ``insert`` operation. 
 
 This design decision primarily stems from the fact that MongoDB is a distributed database and the typical unique auto-incrementing scalar value most RDBMS' use for generating a primary key would not be robust enough, necessitating the need for a more robust data type (``ObjectId`` in this case). These ``_id`` values can be generated either on the client or the server, however when done client-side a new document's ``_id`` value is immediately available for use without the need for a network round trip. 
 
@@ -477,7 +477,9 @@ Prior to MongoDB 3.6, an ``insert`` operation would use the  ``OP_INSERT`` opcod
 Can a driver still use the ``OP_INSERT``, ``OP_DELETE``, ``OP_UPDATE``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Yes, a 2.6 server will still support those. But it is unlikely that a 2.8 server would.  Of course, when talking to older servers, the usual op codes will continue working the same. An older server is one that reports ``hello.maxWireVersion`` to be less than 2 or does not include the field.
+The `legacy opcodes were removed in MongoDB 6.0 <https://www.mongodb.com/docs/manual/release-notes/6.0-compatibility/#legacy-opcodes-removed>`_.
+
+For historical context, a 2.6 server would still support those, however it is unlikely that a 2.8 server would.  Of course, when talking to older servers, the usual op codes will continue working the same. An older server is one that reports ``hello.maxWireVersion`` to be less than 2 or does not include the field.
 
 The rationale here is that we may choose to divert all the write traffic to the new
 protocol. (This depends on the having the overhead to issue a batch with one item very low.)
@@ -505,7 +507,8 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 Changelog
 ---------
 
-:2024-06-04: Add FAQ entry outlining client-side _id value generation 
+:2024-06-04: Add FAQ entry outlining client-side _id value generation
+             Update FAQ to indicate legacy opcodes were removed
 :2022-10-05: Revise spec front matter and reformat changelog.
 :2022-07-25: Remove outdated value for ``maxWriteBatchSize``
 :2021-04-22: Updated to use hello command
