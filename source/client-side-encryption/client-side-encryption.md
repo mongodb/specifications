@@ -982,8 +982,7 @@ class ClientEncryption {
    // 2. An Aggregate Expression of this form:
    //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
    // $gt may also be $gte. $lt may also be $lte.
-   // Only supported when queryType is "rangePreview" and algorithm is "RangePreview".
-   // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+   // Only supported when queryType is "range" and algorithm is "Range".
    encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
    // Decrypts an encrypted value (BSON binary of subtype 6).
@@ -1168,15 +1167,15 @@ class EncryptOpts {
    rangeOpts: Optional<RangeOpts>
 }
 
-// NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
-// RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
-// min, max, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
+// RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
+// min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
 class RangeOpts {
    // min is required if precision is set.
    min: Optional<BSONValue>,
    // max is required if precision is set.
    max: Optional<BSONValue>,
+   trimFactor: Int32,
    sparsity: Int64,
    // precision may only be set for double or decimal128.
    precision: Optional<Int32>
@@ -1202,46 +1201,33 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
-- "RangePreview"
+- "Range"
 
-The result of explicit encryption with the "Indexed" or "RangePreview" algorithm must be processed by the server to
-insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
+query. Drivers MUST document the following behavior:
 
-> To insert or query with an "Indexed" or "RangePreview" encrypted payload, use a `MongoClient` configured with
+> To insert or query with an "Indexed" or "Range" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
-
 #### contentionFactor
 
-contentionFactor only applies when algorithm is "Indexed" or "RangePreview". It is an error to set contentionFactor when
-algorithm is not "Indexed" or "RangePreview".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+contentionFactor only applies when algorithm is "Indexed" or "Range". It is an error to set contentionFactor when
+algorithm is not "Indexed" or "Range".
 
 #### queryType
 
 One of the strings:
 
 - "equality"
-- "rangePreview"
+- "range"
 
-queryType only applies when algorithm is "Indexed" or "RangePreview". It is an error to set queryType when algorithm is
-not "Indexed" or "RangePreview".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is not
+"Indexed" or "Range".
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "rangePreview". It is an error to set rangeOpts when algorithm is not
-"rangePreview".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not "range".
 
 ## User facing API: When Auto Encryption Fails
 
@@ -2388,6 +2374,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-05-31: Replace rangePreview with range.
 
 - 2024-03-20: Add `delegated` option to "kmip" KMS provider
 
