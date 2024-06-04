@@ -224,7 +224,7 @@ The values in connection options MUST be URL decoded by the parser. The values c
   ?readPreferenceTags=dc:ny,rack:1
   ```
 
-  Drivers MUST handle unencoded colon signs (":") within the value. For example, given the encoded input:
+  Drivers MUST handle unencoded colon signs (":") within the value. For example, given the connection string:
 
   ```
   ?authMechanismProperties=TOKEN_RESOURCE%3Amongodb%3A%2F%2Ffoo
