@@ -232,8 +232,9 @@ The values in connection options MUST be URL decoded by the parser. The values c
 
   the driver MUST interpret the key as `TOKEN_RESOURCE` and the value as `mongodb://foo`.
 
-  For any option key-value pair that may contain a comma (such as `TOKEN_RESOURCE`), drivers MUST document that: a value containing a comma (",") MUST NOT be provided as part of the connection
-  string. This prevents use of values that would interfere with parsing.
+  For any option key-value pair that may contain a comma (such as `TOKEN_RESOURCE`), drivers MUST document that: a value
+  containing a comma (",") MUST NOT be provided as part of the connection string. This prevents use of values that would
+  interfere with parsing.
 
 Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:
 
