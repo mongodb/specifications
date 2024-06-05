@@ -178,7 +178,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 - Assert that the callback was called 2 times.
 - Close the client.
 
-\*\*4.3 Write Commands Fail If Reauthentication Fails
+#### 4.3 Write Commands Fail If Reauthentication Fails
 
 - Create a `MongoClient` whose OIDC callback returns one good token and then bad tokens after the first call.
 - Perform an `insert` operation that succeeds.

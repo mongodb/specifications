@@ -216,12 +216,25 @@ The values in connection options MUST be URL decoded by the parser. The values c
   ```
 
 - Key value pairs: A value that represents one or more key and value pairs. Multiple key value pairs are delimited by a
-  comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards. If any
-  keys or values containing a comma (",") or a colon (":") they must be URL encoded. For example:
+  comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards.
+
+  For example:
 
   ```
   ?readPreferenceTags=dc:ny,rack:1
   ```
+
+  Drivers MUST handle unencoded colon signs (":") within the value. For example, given the connection string:
+
+  ```
+  ?authMechanismProperties=TOKEN_RESOURCE:mongodb://foo
+  ```
+
+  the driver MUST interpret the key as `TOKEN_RESOURCE` and the value as `mongodb://foo`.
+
+  For any option key-value pair that may contain a comma (such as `TOKEN_RESOURCE`), drivers MUST document that: a value
+  containing a comma (",") MUST NOT be provided as part of the connection string. This prevents use of values that would
+  interfere with parsing.
 
 Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:
 
@@ -443,6 +456,8 @@ than `+`, this will be portable across all implementations. Implementations MAY 
 many languages treat strings as `x-www-form-urlencoded` data by default.
 
 ## Changelog
+
+- 2024-05-29: Clarify handling of key-value pairs and add specification test.
 
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 

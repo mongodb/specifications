@@ -1201,15 +1201,6 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 #### [MongoCredential](#mongocredential) Properties
 
-> [!NOTE]
-> Drivers MUST NOT url-decode the entire `authMechanismProperties` given in an connection string when the
-> `authMechanism` is `MONGODB-OIDC`. This is because the `TOKEN_RESOURCE` itself will typically be a URL and may contain
-> a `,` character. The values of the individual `authMechanismProperties` MUST still be url-decoded when given as part
-> of the connection string, and MUST NOT be url-decoded when not given as part of the connection string, such as through
-> a `MongoClient` or `Credential` property. Drivers MUST parse the `TOKEN_RESOURCE` by splitting only on the first `:`
-> character. Drivers MUST document that users must url-encode `TOKEN_RESOURCE` when it is provided in the connection
-> string and it contains and of the special characters in \[`,`, `+`, `&`, `%`\].
-
 - username\
   MAY be specified. Its meaning varies depending on the OIDC provider integration used.
 
@@ -1233,7 +1224,9 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
   - TOKEN_RESOURCE\
     The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
     `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
-    MUST raise an error.
+    MUST raise an error. Note: because the `TOKEN_RESOURCE` is often itself a URL, drivers MUST document that a
+    `TOKEN_RESOURCE` with a comma `,` must be given as a `MongoClient` configuration and not as part of the connection
+    string, and that the `TOKEN_RESOURCE` value can contain a colon `:` character.
 
   - OIDC_CALLBACK\
     An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
@@ -2048,6 +2041,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-05-29: Disallow comma character when `TOKEN_RESOURCE` is given in a connection string.
 
 - 2024-05-03: Clarify timeout behavior for OIDC machine callback. Add `serverless:forbid` to OIDC unified tests. Add an
   additional prose test for the behavior of `ALLOWED_HOSTS`.
