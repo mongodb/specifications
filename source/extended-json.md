@@ -509,7 +509,7 @@ The two formats in this specification address these two categories of use cases.
 Parsers need to accept any valid Extended JSON string that a generator can produce. Parsers and generators are permitted
 to accept and output strings in other formats as well for backwards compatibility.
 
-<div id="levels of nesting">
+<span id="levels of nesting">
 
 Acceptable nesting depth has implications for resource usage so unlimited nesting is not permitted.
 
