@@ -477,12 +477,7 @@ Prior to MongoDB 3.6, an ``insert`` operation would use the  ``OP_INSERT`` opcod
 Can a driver still use the ``OP_INSERT``, ``OP_DELETE``, ``OP_UPDATE``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `legacy opcodes were removed in MongoDB 6.0 <https://www.mongodb.com/docs/manual/release-notes/6.0-compatibility/#legacy-opcodes-removed>`_.
-
-For historical context, a 2.6 server would still support those, however it is unlikely that a 2.8 server would.  Of course, when talking to older servers, the usual op codes will continue working the same. An older server is one that reports ``hello.maxWireVersion`` to be less than 2 or does not include the field.
-
-The rationale here is that we may choose to divert all the write traffic to the new
-protocol. (This depends on the having the overhead to issue a batch with one item very low.)
+The `legacy opcodes were removed in MongoDB 6.0 <https://www.mongodb.com/docs/manual/release-notes/6.0-compatibility/#legacy-opcodes-removed>`_. As of MongoDB 3.6 these opcodes were superceded by `OP_MSG <https://www.mongodb.com/docs/manual/reference/mongodb-wire-protocol/#op_msg>`_, however all server versions up until 6.0 continued to support the legacy opcodes.
 
 
 Can an application still issue requests with write concerns {w: 0}?
