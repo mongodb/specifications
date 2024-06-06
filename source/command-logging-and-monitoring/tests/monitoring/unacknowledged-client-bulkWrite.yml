@@ -1,6 +1,6 @@
 description: "unacknowledged-client-bulkWrite"
 
-schemaVersion: "1.16"
+schemaVersion: "1.7"
 
 createEntities:
   - client:
@@ -77,7 +77,7 @@ tests:
     expectEvents:
       -
         client: *client
-        ignoreExtraMessages: true
+        ignoreExtraEvents: true
         events:
           - commandStartedEvent:
               commandName: bulkWrite
