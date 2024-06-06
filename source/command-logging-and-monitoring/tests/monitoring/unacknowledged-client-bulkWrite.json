@@ -1,10 +1,11 @@
 {
   "description": "unacknowledged-client-bulkWrite",
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.16",
   "createEntities": [
     {
       "client": {
         "id": "client",
+        "useMultipleMongoses": false,
         "observeEvents": [
           "commandStartedEvent",
           "commandSucceededEvent",
@@ -112,11 +113,33 @@
               "$$unsetOrMatches": {}
             }
           }
+        },
+        {
+          "object": "collection",
+          "name": "find",
+          "arguments": {
+            "filter": {}
+          },
+          "expectResult": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
+            },
+            {
+              "_id": 3
+            },
+            {
+              "_id": 4
+            }
+          ]
         }
       ],
       "expectEvents": [
         {
           "client": "client",
+          "ignoreExtraMessages": true,
           "events": [
             {
               "commandStartedEvent": {
