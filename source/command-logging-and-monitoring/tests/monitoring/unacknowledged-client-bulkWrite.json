@@ -1,6 +1,11 @@
 {
   "description": "unacknowledged-client-bulkWrite",
   "schemaVersion": "1.7",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "8.0"
+    }
+  ],
   "createEntities": [
     {
       "client": {
