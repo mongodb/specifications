@@ -517,7 +517,7 @@
     },
     {
       "description": "should throw an exception if username is specified for test (MONGODB-OIDC)",
-      "uri": "mongodb://principalName@localhost/?authMechanism=MONGODB-OIDC&ENVIRONMENT:test",
+      "uri": "mongodb://principalName@localhost/?authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:test",
       "valid": false,
       "credential": null
     },
