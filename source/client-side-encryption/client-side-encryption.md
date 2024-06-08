@@ -296,7 +296,7 @@ as described in [Handling of Native UUID Types](../uuid.rst).
 
 ### MongoClient Changes
 
-<span id="MongoClient" />
+<span id="MongoClient"></span>
 
 ```typescript
 class MongoClient {
@@ -315,7 +315,7 @@ class MongoClient {
 }
 ```
 
-<span id="AutoEncryptionOpts" />
+<span id="AutoEncryptionOpts"></span>
 
 ```typescript
 class AutoEncryptionOpts {
@@ -423,12 +423,8 @@ Drivers MUST document that an additional `MongoClient` may be created, using the
 See
 [What's the deal with metadataClient, keyVaultClient, and the internal client?](#whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client)
 
-<span id="GCPKMSOptions" />
-<span id="AWSKMSOptions" />
-<span id="KMSProvider" />
-<span id="KMSProviders" />
-<span id="AzureAccessToken" />
-<span id="kmsproviders" />
+<span id="GCPKMSOptions"></span> <span id="AWSKMSOptions"></span> <span id="KMSProvider"></span>
+<span id="KMSProviders"></span> <span id="AzureAccessToken"></span> <span id="kmsproviders"></span>
 
 #### kmsProviders
 
@@ -570,7 +566,7 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
          $t_0 + d\_{exp}$.
 6. Return $P$ as the additional KMS providers to [libmongocrypt](#libmongocrypt).
 
-<span id="obtaining-gcp-credentials" />
+<span id="obtaining-gcp-credentials"></span>
 
 ##### Obtaining GCP Credentials
 
@@ -744,7 +740,7 @@ Drivers MUST implement extraOptions in a way that allows deprecating/removing op
 break, such as with a BSON document or map type instead of a struct type with fixed fields. See
 [Why are extraOptions and kmsProviders maps?](#why-are-extraoptions-and-kmsproviders-maps).
 
-<span id="extraoptions.cryptsharedlibpath" />
+<span id="extraoptions.cryptsharedlibpath"></span>
 
 ##### `extraOptions.cryptSharedLibPath`
 
@@ -757,7 +753,7 @@ Allow the user to specify an absolute path to a [crypt_shared](#crypt_shared) dy
 - [Path Resolution Behavior](#path-resolution-behavior)
 - [Enabling crypt_shared](#enabling-crypt_shared)
 
-<span id="extraoptions.cryptsharedlibrequired" />
+<span id="extraoptions.cryptsharedlibrequired"></span>
 
 ##### `extraOptions.cryptSharedLibRequired`
 
@@ -770,8 +766,7 @@ If, after initializing a `libmongocrypt_handle`, [crypt_shared](#crypt_shared) i
 [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) is `true`, the driver MUST consider the
 `libmongocrypt_handle` to be invalid and return an error to the user. Refer:
 
-<span id="managing-mongocryptd" />
-<span id="detecting-crypt_shared-availability" />
+<span id="managing-mongocryptd"></span> <span id="detecting-crypt_shared-availability"></span>
 
 #### encryptedFieldsMap
 
@@ -802,7 +797,7 @@ See [Why is bypassQueryAnalysis needed?](#why-is-bypassqueryanalysis-needed).
 
 A collection supporting Queryable Encryption requires an index and three additional collections.
 
-<span id="GetEncryptedFields" />
+<span id="GetEncryptedFields"></span>
 
 #### Collection `encryptedFields` Lookup (GetEncryptedFields)
 
@@ -995,9 +990,9 @@ class ClientEncryption {
 }
 ```
 
-<span id="ClientEncryptionOpts" />
+<span id="ClientEncryptionOpts"></span>
 
-<span id="KMSProvidersTLSOptions" />
+<span id="KMSProvidersTLSOptions"></span>
 
 ```typescript
 interface ClientEncryptionOpts {
@@ -1350,7 +1345,7 @@ Drivers MUST propagate errors from libmongocrypt in whatever way is idiomatic to
 etc.). These errors MUST be distinguished in some way (e.g. exception type) to make it easier for users to distinguish
 when a command fails due to client side encryption.
 
-<span id="enabling-crypt_shared" />
+<span id="enabling-crypt_shared"></span>
 
 ## Enabling Command Marking with the `crypt_shared` Library
 
@@ -1370,8 +1365,7 @@ facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
 > The driver MUST NOT manipulate or do any validation on the [crypt_shared](#crypt_shared) path options provided in
 > [extraOptions](#extraoptions). They should be passed through to [libmongocrypt](#libmongocrypt) unchanged.
 
-<span id="search-path" />
-<span id="search-paths" />
+<span id="search-path"></span> <span id="search-paths"></span>
 
 ### Setting Search Paths
 
@@ -1390,7 +1384,7 @@ execution from the ambient state of the host system.
 Refer to: [Path Resolution Behavior](#path-resolution-behavior) and
 [Search Paths for Testing](#search-paths-for-testing)
 
-<span id="override-path" />
+<span id="override-path"></span>
 
 ### Overriding the `crypt_shared` Library Path
 
@@ -1464,7 +1458,7 @@ successfully loaded by asking [libmongocrypt](#libmongocrypt) for the [crypt_sha
 the result is an empty string, [libmongocrypt](#libmongocrypt) did not load [crypt_shared](#crypt_shared) and the driver
 must rely on [mongocryptd](#mongocryptd) to mark command documents for encryption.
 
-<span id="disabling-crypt_shared" />
+<span id="disabling-crypt_shared"></span>
 
 ### "Disabling" `crypt_shared`
 

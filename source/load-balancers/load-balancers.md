@@ -60,7 +60,7 @@ SRV record as is done for non-load balanced sharded clusters.
 
 ### Server Discovery Logging and Monitoring
 
-<span id="monitoring">
+<span id="monitoring"></span>
 
 #### Monitoring
 
