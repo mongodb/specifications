@@ -1,0 +1,6 @@
+[book]
+authors = ["Alex Bevilacqua"]
+language = "en"
+multilingual = false
+src = "source"
+title = "MongoDB Driver Specifications"
