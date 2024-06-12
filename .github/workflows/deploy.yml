@@ -1,26 +1,39 @@
-name: CI
-
+name: Deploy
 on:
   push:
-    branches: [ mkbook ]
-  pull_request:
-    branches: [ mkbook ]
+    branches:
+      - main
 
 jobs:
-  build:
-    name: Build and Deploy
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # To push a branch
-      pull-requests: write  # To create a PR from that branch
+      pages: write  # To push to a GitHub Pages site
+      id-token: write # To update the deployment status
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
-      - run: (test -x $HOME/.cargo/bin/mdbook || cargo install --vers "^0.4" mdbook)
-      - run: mdbook build # In case of custom book path: mdbook build path/to/mybook && mdbook test path/to/mybook
-      - uses: JamesIves/github-pages-deploy-action@4.1.7
+          fetch-depth: 0
+      - name: Install latest mdbook
+        run: |
+          tag=$(curl 'https://api.github.com/repos/rust-lang/mdbook/releases/latest' | jq -r '.tag_name')
+          url="https://github.com/rust-lang/mdbook/releases/download/${tag}/mdbook-${tag}-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir mdbook
+          curl -sSL $url | tar -xz --directory=./mdbook
+          echo `pwd`/mdbook >> $GITHUB_PATH
+      - name: Build Book
+        run: |
+          # This assumes your book is in the root of your repository.
+          # Just add a `cd` here if you need to change to another directory.
+          mdbook build
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: book # The folder the action should deploy.
+          # Upload entire repository
+          path: 'book'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
