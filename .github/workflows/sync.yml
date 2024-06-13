@@ -1,6 +1,6 @@
 name: 'Upstream Sync'
 on:
-  pull_request:
+  push:
     branches: [ mkbook ]
   schedule:
     - cron:  '0 8 * * *'
