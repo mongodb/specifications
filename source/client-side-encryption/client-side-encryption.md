@@ -983,6 +983,7 @@ class ClientEncryption {
    //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
    // $gt may also be $gte. $lt may also be $lte.
    // Only supported when queryType is "range" and algorithm is "Range".
+   // NOTE: The "range" queryType and "Range" algorithm are currently unstable API and subject to backwards breaking changes.
    encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
    // Decrypts an encrypted value (BSON binary of subtype 6).
@@ -1167,6 +1168,7 @@ class EncryptOpts {
    rangeOpts: Optional<RangeOpts>
 }
 
+// NOTE: RangeOpts is currently unstable API and subject to backwards breaking changes.
 // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
 // min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
@@ -1201,7 +1203,7 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
-- "Range"
+- "Range" (unstable)
 
 The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
 query. Drivers MUST document the following behavior:
@@ -1209,6 +1211,9 @@ query. Drivers MUST document the following behavior:
 > To insert or query with an "Indexed" or "Range" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
+
+> [!NOTE]
+> The "Range" algorithm is currently unstable API and subject to backwards breaking changes.
 
 #### contentionFactor
 
@@ -1225,9 +1230,15 @@ One of the strings:
 queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is not
 "Indexed" or "Range".
 
+> [!NOTE]
+> The "range" queryType is currently unstable API and subject to backwards breaking changes.
+
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not "range".
+
+> [!NOTE]
+> rangeOpts is currently unstable API and subject to backwards breaking changes.
 
 ## User facing API: When Auto Encryption Fails
 
@@ -2374,6 +2385,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-06-13: Document range as unstable.
 
 - 2024-05-31: Replace rangePreview with range.
 
