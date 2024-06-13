@@ -29,7 +29,7 @@
 ---
 
 - [Connectivity]()
-  - [Server Discovery and Monitoring](server-discovery-and-monitoring/server-discovery-and-monitoring.md)
+  - [Server Discovery and Monitoring](server-discovery-and-monitoring/server-discovery-and-monitoring.rst)
   - [Connection Monitoring and Pooling](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)
   - [Load Balancer Support](load-balancers/load-balancers.md)
 
