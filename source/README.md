@@ -28,7 +28,7 @@ From the provided connection string and options a socket connection is establish
 
 Now that a valid host has been found, the cluster’s topology can be discovered and monitoring connections can be established. Connection pools can then be created and populated with connections. The monitoring connections will subsequently be used for ensuring operations are routed to available hosts, or hosts that meet certain criteria (such as a configured [read preference](https://www.mongodb.com/docs/upcoming/core/read-preference/) or acceptable latency window).
 
-> **Specifications:** [SDAM](server-discovery-and-monitoring/server-discovery-and-monitoring.rst), [CMAP](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md), [Load Balancer Support](load-balancers/load-balancers.md)
+> **Specifications:** [SDAM](server-discovery-and-monitoring/server-discovery-and-monitoring.md), [CMAP](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md), [Load Balancer Support](load-balancers/load-balancers.md)
 
 ### Authentication
 
