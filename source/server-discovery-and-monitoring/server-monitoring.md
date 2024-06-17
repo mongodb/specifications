@@ -20,7 +20,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-See the terms in the [main SDAM spec](server-discovery-and-monitoring.rst).
+See the terms in the [main SDAM spec](server-discovery-and-monitoring.md).
 
 #### check
 
@@ -104,9 +104,9 @@ users configure the timeouts for monitoring sockets separately if necessary to p
 The client begins monitoring a server when:
 
 - ... the client is initialized and begins monitoring each seed. See
-  [initial servers](server-discovery-and-monitoring.rst#initial-servers).
-- ... [updateRSWithoutPrimary](server-discovery-and-monitoring.rst#updateRSWithoutPrimary) or
-  [updateRSFromPrimary](server-discovery-and-monitoring.rst#updateRSFromPrimary) discovers new replica set members.
+  [initial servers](server-discovery-and-monitoring.md#initial-servers).
+- ... [updateRSWithoutPrimary](server-discovery-and-monitoring.md#updateRSWithoutPrimary) or
+  [updateRSFromPrimary](server-discovery-and-monitoring.md#updateRSFromPrimary) discovers new replica set members.
 
 The following subsections specify how monitoring works, first in multi-threaded or asynchronous clients, and second in
 single-threaded clients. This spec provides detailed requirements for monitoring because it intends to make all drivers
@@ -141,7 +141,7 @@ NOT run while a previous check is still in progress.
 ##### Requesting an immediate check
 
 At any time, the client can request that a monitor check its server immediately. (For example, after a "not writable
-primary" error. See [error handling](server-discovery-and-monitoring.rst#error-handling).) If the monitor is sleeping
+primary" error. See [error handling](server-discovery-and-monitoring.md#error-handling).) If the monitor is sleeping
 when this request arrives, it MUST wake and check as soon as possible. If a hello or legacy hello call is already in
 progress, the request MUST be ignored. If the previous check ended less than
 [minHeartbeatFrequencyMS](#minheartbeatfrequencyms) ago, the monitor MUST sleep until the minimum delay has passed, then
@@ -154,7 +154,7 @@ MUST proceed if the new TopologyDescription now contains a suitable server.
 
 ##### Clients update the topology from each handshake
 
-When a monitor check creates a new connection, the [connection handshake](../mongodb-handshake/handshake.rst) response
+When a monitor check creates a new connection, the [connection handshake](../mongodb-handshake/handshake.md) response
 MUST be used to satisfy the check and update the topology.
 
 When a client successfully calls hello or legacy hello to handshake a new connection for application operations, it
@@ -235,11 +235,11 @@ This algorithm might be better understood with an example:
 3. The secondary's hello or legacy hello response includes the "primary" field with the address of the server that the
    secondary thinks is primary.
 4. The client creates a ServerDescription with that address, type PossiblePrimary, and lastUpdateTime "infinity ago".
-   (See [updateRSWithoutPrimary](server-discovery-and-monitoring.rst#updateRSWithoutPrimary).)
+   (See [updateRSWithoutPrimary](server-discovery-and-monitoring.md#updateRSWithoutPrimary).)
 5. On the next iteration, there is still no RSPrimary, so the new PossiblePrimary is the top-priority server to check.
 6. The PossiblePrimary is checked and replaced with an RSPrimary. The client has now acquired an authoritative host
    list. Any new hosts in the list are added to the TopologyDescription with lastUpdateTime "infinity ago". (See
-   [updateRSFromPrimary](server-discovery-and-monitoring.rst#updateRSFromPrimary).)
+   [updateRSFromPrimary](server-discovery-and-monitoring.md#updateRSFromPrimary).)
 7. The client continues scanning until all known hosts have been checked.
 
 Another common case might be scanning a pool of mongoses. When the client first scans its seed list, they all have the
@@ -264,7 +264,7 @@ breaks backwards compatibility.
 For both multi- and single-threaded drivers, the driver MUST NOT permit users to configure it less than
 minHeartbeatFrequencyMS (500ms).
 
-(See [heartbeatFrequencyMS in the main SDAM spec](server-discovery-and-monitoring.rst#heartbeatFrequencyMS).)
+(See [heartbeatFrequencyMS in the main SDAM spec](server-discovery-and-monitoring.md#heartbeatFrequencyMS).)
 
 ### Awaitable hello or legacy hello Server Specification
 
@@ -460,7 +460,7 @@ streaming hello or legacy hello response MUST be interrupted such that threads m
 maxAwaitTimeMS.
 
 When a client marks a server Unknown from
-[Network error when reading or writing](server-discovery-and-monitoring.rst#network-error-when-reading-or-writing),
+[Network error when reading or writing](server-discovery-and-monitoring.md#network-error-when-reading-or-writing),
 clients MUST cancel the hello or legacy hello check on that server and close the current monitoring connection. (See
 [Drivers cancel in-progress monitor checks](#drivers-cancel-in-progress-monitor-checks).)
 
@@ -490,7 +490,7 @@ the client MUST follow these steps:
 3. Clear the connection pool for the server (See
    [Clear the connection pool on both network and command errors](#clear-the-connection-pool-on-both-network-and-command-errors)).
    For CMAP compliant drivers, clearing the pool MUST be synchronized with marking the server as Unknown (see
-   [Why synchronize clearing a server's pool with updating the topology?](server-discovery-and-monitoring.rst#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?)).
+   [Why synchronize clearing a server's pool with updating the topology?](server-discovery-and-monitoring.md#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?)).
    If this was a network timeout error, then the pool MUST be cleared with interruptInUseConnections = true (see
    [Why does the pool need to support closing in use connections as part of its clear logic?](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#Why-does-the-pool-need-to-support-closing-in-use-connections-as-part-of-its-clear-logic?))
 4. If this was a network error and the server was in a known state before the error, the client MUST NOT sleep and MUST
