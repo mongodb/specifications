@@ -84,4 +84,5 @@ tests:
                 host: "localhost"
                 port: ~
         auth: ~
-        options: ~
+        options:
+            authMechanism: MONGODB-OIDC
