@@ -37,6 +37,7 @@
 - [Server Monitoring](server-discovery-and-monitoring/server-monitoring.md)
 - [Server Selection](server-selection/server-selection.md)
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)
+- [Server Wire version and Feature List](./wireversion-featurelist.md)
 - [Snapshot Reads Specification](sessions/snapshot-sessions.md)
 - [URI Options Specification](uri-options/uri-options.md)
 - [Unified Test Format](unified-test-format/unified-test-format.md)

@@ -1,27 +1,25 @@
 # Server Wire version and Feature List
 
-|Server version|Wire version|Feature List|
-|---|---|---|
-|2.6|1|<p>Aggregation cursor</p> <p>Auth commands</p>|
-|2.6|2|<p>Write commands (insert/update/delete)</p> <p>Aggregation $out pipeline operator</p>|
-|3.0|3|<p>listCollections</p> <p>listIndexes</p> <p>SCRAM-SHA-1</p> <p>explain command</p>|
-|3.2|4|<p>(find/getMore/killCursors) commands</p> <p>currentOp command</p> <p>fsyncUnlock command</p> <p>findAndModify take write concern</p> <p>Commands take read concern</p> <p>Document-level validation</p> <p>explain command supports distinct and findAndModify</p>|
-|3.4|5|<p>Commands take write concern</p> <p>Commands take collation</p>|
-|3.6|6|<p>Supports OP_MSG</p> <p>Collection-level ChangeStream support</p> <p>Retryable Writes</p> <p>Causally Consistent Reads</p> <p>Logical Sessions</p> <p>update "arrayFilters" option</p>|
-|4.0|7|<p>ReplicaSet transactions</p> <p>Database and cluster-level change streams and startAtOperationTime</p> <p>option</p>|
-|4.2|8|<p>Sharded transactions</p> <p>Aggregation $merge pipeline operator</p> <p>update "hint" option</p>|
-|4.4|9|<p>Streaming protocol for SDAM</p> <p>ResumableChangeStreamError error label</p> <p>delete "hint" option</p> <p>findAndModify "hint" option</p> <p>createIndexes "commitQuorum" option</p>|
-|5.0|13|<p>$out and $merge on secondaries (technically</p> <p>FCV 4.4+)</p>|
-|5.1|14||
-|5.2|15||
-|5.3|16||
+| Server version | Wire version | Feature List                                                                                                                                                                                                                                                         |
+| -------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.6            | 1            | <p>Aggregation cursor</p> <p>Auth commands</p>                                                                                                                                                                                                                       |
+| 2.6            | 2            | <p>Write commands (insert/update/delete)</p> <p>Aggregation $out pipeline operator</p>                                                                                                                                                                               |
+| 3.0            | 3            | <p>listCollections</p> <p>listIndexes</p> <p>SCRAM-SHA-1</p> <p>explain command</p>                                                                                                                                                                                  |
+| 3.2            | 4            | <p>(find/getMore/killCursors) commands</p> <p>currentOp command</p> <p>fsyncUnlock command</p> <p>findAndModify take write concern</p> <p>Commands take read concern</p> <p>Document-level validation</p> <p>explain command supports distinct and findAndModify</p> |
+| 3.4            | 5            | <p>Commands take write concern</p> <p>Commands take collation</p>                                                                                                                                                                                                    |
+| 3.6            | 6            | <p>Supports OP_MSG</p> <p>Collection-level ChangeStream support</p> <p>Retryable Writes</p> <p>Causally Consistent Reads</p> <p>Logical Sessions</p> <p>update "arrayFilters" option</p>                                                                             |
+| 4.0            | 7            | <p>ReplicaSet transactions</p> <p>Database and cluster-level change streams and startAtOperationTime option</p>                                                                                                                                                      |
+| 4.2            | 8            | <p>Sharded transactions</p> <p>Aggregation $merge pipeline operator</p> <p>update "hint" option</p>                                                                                                                                                                  |
+| 4.4            | 9            | <p>Streaming protocol for SDAM</p> <p>ResumableChangeStreamError error label</p> <p>delete "hint" option</p> <p>findAndModify "hint" option</p> <p>createIndexes "commitQuorum" option</p>                                                                           |
+| 5.0            | 13           | $out and $merge on secondaries (technically FCV 4.4+)                                                                                                                                                                                                                |
+| 5.1            | 14           |                                                                                                                                                                                                                                                                      |
+| 5.2            | 15           |                                                                                                                                                                                                                                                                      |
+| 5.3            | 16           |                                                                                                                                                                                                                                                                      |
 
-In server versions 5.0 and earlier, the wire version was defined as a
-numeric literal in
-[src/mongo/db/wire_version.h](https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h).
-Since server version 5.1
-([SERVER-58346](https://jira.mongodb.org/browse/SERVER-58346)), the wire
-version is derived from the number of releases since 4.0 (using
+In server versions 5.0 and earlier, the wire version was defined as a numeric literal in
+[src/mongo/db/wire_version.h](https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h). Since server
+version 5.1 ([SERVER-58346](https://jira.mongodb.org/browse/SERVER-58346)), the wire version is derived from the number
+of releases since 4.0 (using
 [src/mongo/util/version/releases.h.tpl](https://github.com/mongodb/mongo/blob/master/src/mongo/util/version/releases.h.tpl)
 and
 [src/mongo/util/version/releases.yml](https://github.com/mongodb/mongo/blob/master/src/mongo/util/version/releases.yml)).
