@@ -78,7 +78,7 @@ An OP_QUERY operation targeting the '$cmd' collection namespace.
 A driver connection mode that sends all database operations to a single server without regard for
 type.
 
-<span id="eligible"/>
+<span id="eligible"></span>
 
 **Eligible**\
 Describes candidate servers that also meet the criteria specified by the `tag_sets` and

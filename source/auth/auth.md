@@ -1,4 +1,4 @@
-# Driver Authentication
+# Authentication
 
 - Status: Accepted
 - Minimum Server Version: 2.6
@@ -1253,7 +1253,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     performed after SRV record resolution, if applicable. This property is only required for drivers that support the
     [Human Authentication Flow](#human-authentication-flow).
 
-<div id="built-in-provider-integrations">
+<span id="built-in-provider-integrations"/>
 
 #### Built-in OIDC Environment Integrations
 

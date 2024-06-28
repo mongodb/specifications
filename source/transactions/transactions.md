@@ -1,4 +1,4 @@
-# Driver Transactions Specification
+# Transactions Specification
 
 - Status: Accepted
 - Minimum Server Version: 4.0

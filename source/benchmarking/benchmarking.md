@@ -1,4 +1,4 @@
-# MongoDB Driver Performance Benchmarking
+# Performance Benchmarking
 
 - Status: Accepted
 - Minimum Server Version: N/A

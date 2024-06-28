@@ -1,4 +1,4 @@
-# Driver CRUD API
+# CRUD API
 
 - Status: Accepted
 - Minimum Server Version: 2.6
