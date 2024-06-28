@@ -1,107 +1,44 @@
 # Server Wire version and Feature List
 
-<table>
-<thead>
-<tr class="header">
-<th>Server version</th>
-<th>Wire version</th>
-<th>Feature List</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2.6</td>
-<td>1</td>
-<td><div class="line-block">Aggregation cursor<br />
-Auth commands</div></td>
-</tr>
-<tr class="even">
-<td>2.6</td>
-<td>2</td>
-<td><div class="line-block">Write commands (insert/update/delete)<br />
-Aggregation $out pipeline operator</div></td>
-</tr>
-<tr class="odd">
-<td>3.0</td>
-<td>3</td>
-<td><div class="line-block">listCollections<br />
-listIndexes<br />
-SCRAM-SHA-1<br />
-explain command</div></td>
-</tr>
-<tr class="even">
-<td>3.2</td>
-<td>4</td>
-<td><div class="line-block">(find/getMore/killCursors) commands<br />
-currentOp command<br />
-fsyncUnlock command<br />
-findAndModify take write concern<br />
-Commands take read concern<br />
-Document-level validation<br />
-explain command supports distinct and findAndModify</div></td>
-</tr>
-<tr class="odd">
-<td>3.4</td>
-<td>5</td>
-<td><div class="line-block">Commands take write concern<br />
-Commands take collation</div></td>
-</tr>
-<tr class="even">
-<td>3.6</td>
-<td>6</td>
-<td><div class="line-block">Supports OP_MSG<br />
-Collection-level ChangeStream support<br />
-Retryable Writes<br />
-Causally Consistent Reads<br />
-Logical Sessions<br />
-update "arrayFilters" option</div></td>
-</tr>
-<tr class="odd">
-<td>4.0</td>
-<td>7</td>
-<td><div class="line-block">ReplicaSet transactions<br />
-Database and cluster-level change streams and startAtOperationTime
-option</div></td>
-</tr>
-<tr class="even">
-<td>4.2</td>
-<td>8</td>
-<td><div class="line-block">Sharded transactions<br />
-Aggregation $merge pipeline operator<br />
-update "hint" option</div></td>
-</tr>
-<tr class="odd">
-<td>4.4</td>
-<td>9</td>
-<td><div class="line-block">Streaming protocol for SDAM<br />
-ResumableChangeStreamError error label<br />
-delete "hint" option<br />
-findAndModify "hint" option<br />
-createIndexes "commitQuorum" option</div></td>
-</tr>
-<tr class="even">
-<td>5.0</td>
-<td>13</td>
-<td><div class="line-block">$out and $merge on secondaries (technically
-FCV 4.4+)</div></td>
-</tr>
-<tr class="odd">
-<td>5.1</td>
-<td>14</td>
-<td><div class="line-block"></div></td>
-</tr>
-<tr class="even">
-<td>5.2</td>
-<td>15</td>
-<td><div class="line-block"></div></td>
-</tr>
-<tr class="odd">
-<td>5.3</td>
-<td>16</td>
-<td><div class="line-block"></div></td>
-</tr>
-</tbody>
-</table>
+|Server version|Wire version|Feature List|
+|---|---|---|
+|2.6|1|Aggregation cursor|
+| | |Auth commands|
+|2.6|2|Write commands (insert/update/delete)|
+| | |Aggregation $out pipeline operator|
+|3.0|3|listCollections|
+| | |listIndexes|
+| | |SCRAM-SHA-1|
+| | |explain command|
+|3.2|4|(find/getMore/killCursors) commands|
+| | |currentOp command|
+| | |fsyncUnlock command|
+| | |findAndModify take write concern|
+| | |Commands take read concern|
+| | |Document-level validation|
+| | |explain command supports distinct and findAndModify|
+|3.4|5|Commands take write concern
+| | |Commands take collation|
+|3.6|6|Supports OP_MSG|
+| | |Collection-level ChangeStream support|
+| | |Retryable Writes|
+| | |Causally Consistent Reads|
+| | |Logical Sessions|
+| | |update "arrayFilters" option|
+|4.0|7|ReplicaSet transactions
+| | |Database and cluster-level change streams and startAtOperationTime option|
+|4.2|8|Sharded transactions|
+| | |Aggregation $merge pipeline operator|
+| | |update "hint" option|
+|4.4|9|Streaming protocol for SDAM|
+| | |ResumableChangeStreamError error label|
+| | |delete "hint" option|
+| | |findAndModify "hint" option|
+| | |createIndexes "commitQuorum" option|
+|5.0|13|$out and $merge on secondaries (technically FCV 4.4+)|
+|5.1|14||
+|5.2|15||
+|5.3|16||
 
 In server versions 5.0 and earlier, the wire version was defined as a
 numeric literal in
