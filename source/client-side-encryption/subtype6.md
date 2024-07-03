@@ -103,7 +103,7 @@ data into one BSON value that can be treated as an opaque blob in most contexts.
 If we used separate subtypes, we'd need to reserve three (and possibly more in the future) of our 124 remaining
 subtypes.
 
-<span id="intent-to-encrypt"/>
+<span id="intent-to-encrypt"></span>
 
 ### Why are intent-to-encrypt markings needed?
 
