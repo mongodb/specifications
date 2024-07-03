@@ -1,4 +1,4 @@
-# Driver Sessions Specification
+# Sessions Specification
 
 - Status: Accepted
 - Minimum Server Version: 3.6
