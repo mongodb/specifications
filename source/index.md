@@ -35,6 +35,7 @@
 - [Server Monitoring](server-discovery-and-monitoring/server-monitoring.md)
 - [Server Selection](server-selection/server-selection.md)
 - [Server Selection Test Plan](server-selection/server-selection-tests.md)
+- [Server Wire version and Feature List](./wireversion-featurelist.md)
 - [Sessions Specification](sessions/driver-sessions.md)
 - [Snapshot Reads Specification](sessions/snapshot-sessions.md)
 - [Transactions Specification](transactions/transactions.md)

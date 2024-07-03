@@ -84,7 +84,7 @@ the defined name but MAY deviate to comply with their existing conventions.
 
 Drivers MUST verify server eligibility by ensuring that `maxWireVersion` is at least 6 because retryable reads require a
 MongoDB 3.6 standalone, replica set or shard cluster, MongoDB 3.6 server wire version is 6 as defined in the
-[Server Wire version and Feature List specification](../wireversion-featurelist.rst).
+[Server Wire version and Feature List specification](../wireversion-featurelist.md).
 
 The minimum server version is 3.6 because
 
