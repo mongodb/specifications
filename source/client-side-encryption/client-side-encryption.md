@@ -1172,8 +1172,8 @@ class RangeOpts {
    min: Optional<BSONValue>,
    // max is required if precision is set.
    max: Optional<BSONValue>,
-   trimFactor: Int32,
-   sparsity: Int64,
+   trimFactor: Optional<Int32>,
+   sparsity: Optional<Int64>,
    // precision may only be set for double or decimal128.
    precision: Optional<Int32>
 }
