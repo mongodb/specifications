@@ -3231,7 +3231,7 @@ class ClientEncryptionOpts {
 
 Create a key with `clientEncryption.createDataKey`. Store the returned key ID in a variable named `keyId`.
 
-Call `clientEncryption.encrypt` to encrypt the int32 value 123 with these options:
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
 
 ```typescript
 class EncryptOpts {
@@ -3249,7 +3249,7 @@ Store the result in a variable named `payload_defaults`.
 
 #### Case 1: Uses libmongocrypt defaults
 
-Call `clientEncryption.encrypt` to encrypt the int32 value 123 with these options:
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
 
 ```typescript
 class EncryptOpts {
@@ -3273,7 +3273,7 @@ Assert the returned payload size equals the size of `payload_defaults`.
 
 #### Case 2: Accepts `trimFactor` 0
 
-Call `clientEncryption.encrypt` to encrypt the int32 value 123 with these options:
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
 
 ```typescript
 class EncryptOpts {
