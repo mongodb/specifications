@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-- Version: 1.13.0
+- Version: 1.14.0
 
 ______________________________________________________________________
 
@@ -2381,6 +2381,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-07-22: Make `trimFactor` and `sparsity` optional.
 
 - 2024-06-13: Document range as unstable.
 
