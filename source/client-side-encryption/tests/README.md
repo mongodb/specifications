@@ -3268,7 +3268,7 @@ class EncryptOpts {
 Assert the returned payload size equals the size of `payload_defaults`.
 
 > [!NOTE]
-> The payload contents are not compared. The payloads include random data. The `trimFactor` and `sparsity` directly
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly
 > affect the payload size.
 
 #### Case 2: Accepts `trimFactor` 0
@@ -3291,5 +3291,5 @@ class EncryptOpts {
 Assert the returned payload size is greater than the size of `payload_defaults`.
 
 > [!NOTE]
-> The payload contents are not compared. The payloads include random data. The `trimFactor` and `sparsity` directly
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly
 > affect the payload size.
