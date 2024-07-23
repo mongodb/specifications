@@ -3213,7 +3213,7 @@ Assert that an error was raised.
 
 ### 22. Range Explicit Encryption applies defaults
 
-This test requires libmongocrypt with changes of [MONGOCRYPT-698](https://jira.mongodb.org/browse/MONGOCRYPT-698).
+This test requires libmongocrypt with changes in [14ccd9ce](https://github.com/mongodb/libmongocrypt/commit/14ccd9ce8a030158aec07f63e8139d34b95d88e6) ([MONGOCRYPT-698](https://jira.mongodb.org/browse/MONGOCRYPT-698)).
 
 #### Test Setup
 
