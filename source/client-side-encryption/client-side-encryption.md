@@ -1168,15 +1168,15 @@ class EncryptOpts {
 // min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
 class RangeOpts {
-   // min is required if precision is set.
+   // min is the minimum value for the encrypted index. Required if precision is set.
    min: Optional<BSONValue>,
-   // max is required if precision is set.
+   // max is the maximum value for the encrypted index. Required if precision is set.
    max: Optional<BSONValue>,
    // trimFactor may be used to tune performance. May be omitted to rely on defaults.
    trimFactor: Optional<Int32>,
    // sparsity may be used to tune performance. May be omitted to rely on defaults.
    sparsity: Optional<Int64>,
-   // precision may only be set for double or decimal128.
+   // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
    precision: Optional<Int32>
 }
 ```
@@ -1214,8 +1214,8 @@ query. Drivers MUST document the following behavior:
 
 #### contentionFactor
 
-contentionFactor only applies when algorithm is "Indexed" or "Range". It is an error to set contentionFactor when
-algorithm is not "Indexed" or "Range".
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". It is an error to
+set contentionFactor when algorithm is not "Indexed" or "Range".
 
 #### queryType
 
