@@ -1172,9 +1172,9 @@ class RangeOpts {
    min: Optional<BSONValue>,
    // max is the maximum value for the encrypted index. Required if precision is set.
    max: Optional<BSONValue>,
-   // trimFactor may be used to tune performance. May be omitted to rely on defaults.
+   // trimFactor may be used to tune performance. When omitted, a default value is used.
    trimFactor: Optional<Int32>,
-   // sparsity may be used to tune performance. May be omitted to rely on defaults.
+   // sparsity may be used to tune performance. When omitted, a default value is used.
    sparsity: Optional<Int64>,
    // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
    precision: Optional<Int32>
