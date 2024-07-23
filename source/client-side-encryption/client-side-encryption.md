@@ -1214,8 +1214,8 @@ query. Drivers MUST document the following behavior:
 
 #### contentionFactor
 
-contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". It is an error to
-set contentionFactor when algorithm is not "Indexed" or "Range".
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". libmongocrypt
+returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
 
@@ -1224,15 +1224,16 @@ One of the strings:
 - "equality"
 - "range"
 
-queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is not
-"Indexed" or "Range".
+queryType only applies when algorithm is "Indexed" or "Range". libmongocrypt returns an error if queryType is set for a
+non-applicable queryType.
 
 > [!NOTE]
 > The "range" queryType is currently unstable API and subject to backwards breaking changes.
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not "range".
+rangeOpts only applies when algorithm is "range". libmongocrypt returns an error if rangeOpts is set for a
+non-applicable algorithm.
 
 > [!NOTE]
 > rangeOpts is currently unstable API and subject to backwards breaking changes.
