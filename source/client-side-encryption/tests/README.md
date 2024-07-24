@@ -3213,7 +3213,9 @@ Assert that an error was raised.
 
 ### 22. Range Explicit Encryption applies defaults
 
-This test requires libmongocrypt with changes in [14ccd9ce](https://github.com/mongodb/libmongocrypt/commit/14ccd9ce8a030158aec07f63e8139d34b95d88e6) ([MONGOCRYPT-698](https://jira.mongodb.org/browse/MONGOCRYPT-698)).
+This test requires libmongocrypt with changes in
+[14ccd9ce](https://github.com/mongodb/libmongocrypt/commit/14ccd9ce8a030158aec07f63e8139d34b95d88e6)
+([MONGOCRYPT-698](https://jira.mongodb.org/browse/MONGOCRYPT-698)).
 
 #### Test Setup
 
@@ -3268,8 +3270,8 @@ class EncryptOpts {
 Assert the returned payload size equals the size of `payload_defaults`.
 
 > [!NOTE]
-> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly
-> affect the payload size.
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly affect
+> the payload size.
 
 #### Case 2: Accepts `trimFactor` 0
 
@@ -3291,5 +3293,5 @@ class EncryptOpts {
 Assert the returned payload size is greater than the size of `payload_defaults`.
 
 > [!NOTE]
-> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly
-> affect the payload size.
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly affect
+> the payload size.
