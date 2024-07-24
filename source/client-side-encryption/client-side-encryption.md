@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-- Version: 1.13.0
+- Version: 1.14.0
 
 ______________________________________________________________________
 
@@ -1168,13 +1168,15 @@ class EncryptOpts {
 // min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
 class RangeOpts {
-   // min is required if precision is set.
+   // min is the minimum value for the encrypted index. Required if precision is set.
    min: Optional<BSONValue>,
-   // max is required if precision is set.
+   // max is the maximum value for the encrypted index. Required if precision is set.
    max: Optional<BSONValue>,
-   trimFactor: Int32,
-   sparsity: Int64,
-   // precision may only be set for double or decimal128.
+   // trimFactor may be used to tune performance. When omitted, a default value is used.
+   trimFactor: Optional<Int32>,
+   // sparsity may be used to tune performance. When omitted, a default value is used.
+   sparsity: Optional<Int64>,
+   // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
    precision: Optional<Int32>
 }
 ```
@@ -1212,8 +1214,8 @@ query. Drivers MUST document the following behavior:
 
 #### contentionFactor
 
-contentionFactor only applies when algorithm is "Indexed" or "Range". It is an error to set contentionFactor when
-algorithm is not "Indexed" or "Range".
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". libmongocrypt
+returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
 
@@ -1222,15 +1224,16 @@ One of the strings:
 - "equality"
 - "range"
 
-queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is not
-"Indexed" or "Range".
+queryType only applies when algorithm is "Indexed" or "Range". libmongocrypt returns an error if queryType is set for a
+non-applicable queryType.
 
 > [!NOTE]
 > The "range" queryType is currently unstable API and subject to backwards breaking changes.
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not "range".
+rangeOpts only applies when algorithm is "range". libmongocrypt returns an error if rangeOpts is set for a
+non-applicable algorithm.
 
 > [!NOTE]
 > rangeOpts is currently unstable API and subject to backwards breaking changes.
@@ -2379,6 +2382,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-07-22: Make `trimFactor` and `sparsity` optional.
 
 - 2024-06-13: Document range as unstable.
 

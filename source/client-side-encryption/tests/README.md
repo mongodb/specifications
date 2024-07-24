@@ -3210,3 +3210,88 @@ class EncryptOpts {
 ```
 
 Assert that an error was raised.
+
+### 22. Range Explicit Encryption applies defaults
+
+This test requires libmongocrypt with changes in
+[14ccd9ce](https://github.com/mongodb/libmongocrypt/commit/14ccd9ce8a030158aec07f63e8139d34b95d88e6)
+([MONGOCRYPT-698](https://jira.mongodb.org/browse/MONGOCRYPT-698)).
+
+#### Test Setup
+
+Create a MongoClient named `keyVaultClient`.
+
+Create a ClientEncryption object named `clientEncryption` with these options:
+
+```typescript
+class ClientEncryptionOpts {
+   keyVaultClient: keyVaultClient,
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": "<base64 decoding of LOCAL_MASTERKEY>" } },
+}
+```
+
+Create a key with `clientEncryption.createDataKey`. Store the returned key ID in a variable named `keyId`.
+
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
+
+```typescript
+class EncryptOpts {
+   keyId : keyId,
+   algorithm: "Range",
+   contentionFactor: 0,
+   rangeOpts: RangeOpts {
+      min: 0,
+      max: 1000
+   }
+}
+```
+
+Store the result in a variable named `payload_defaults`.
+
+#### Case 1: Uses libmongocrypt defaults
+
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
+
+```typescript
+class EncryptOpts {
+   keyId : keyId,
+   algorithm: "Range",
+   contentionFactor: 0,
+   rangeOpts: RangeOpts {
+      min: 0,
+      max: 1000,
+      sparsity: 2,
+      trimFactor: 6
+   }
+}
+```
+
+Assert the returned payload size equals the size of `payload_defaults`.
+
+> [!NOTE]
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly affect
+> the payload size.
+
+#### Case 2: Accepts `trimFactor` 0
+
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
+
+```typescript
+class EncryptOpts {
+   keyId : keyId,
+   algorithm: "Range",
+   contentionFactor: 0,
+   rangeOpts: RangeOpts {
+      min: 0,
+      max: 1000,
+      trimFactor: 0
+   }
+}
+```
+
+Assert the returned payload size is greater than the size of `payload_defaults`.
+
+> [!NOTE]
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly affect
+> the payload size.
