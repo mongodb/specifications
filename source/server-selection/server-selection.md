@@ -78,7 +78,7 @@ An OP_QUERY operation targeting the '$cmd' collection namespace.
 A driver connection mode that sends all database operations to a single server without regard for
 type.
 
-<span id="eligible"/>
+<span id="eligible"></span>
 
 **Eligible**\
 Describes candidate servers that also meet the criteria specified by the `tag_sets` and
@@ -228,7 +228,7 @@ once after server selection fails, then either selects a server or raises an err
 
 The serverSelectionTryOnce option MUST be true by default. If it is set false, then the driver repeatedly searches for
 an appropriate server until the selection process times out (pausing
-[minHeartbeatFrequencyMS](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms)
+[minHeartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#minheartbeatfrequencyms)
 between attempts, as required by the
 [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
 spec).
@@ -249,8 +249,8 @@ for a ["try once" mode](#try-once-mode).)
 #### heartbeatFrequencyMS
 
 This controls when topology updates are scheduled. See
-[heartbeatFrequencyMS](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms)
-in the
+[heartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#heartbeatfrequencyms) in
+the
 [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
 spec for details.
 
@@ -1576,8 +1576,6 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 
 ## Changelog
 
-- 2024-02-07: Migrated from reStructuredText to Markdown.
-
 - 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
 - 2015-08-10: Updated single-threaded selection logic to ensure a scan always\
@@ -1655,6 +1653,8 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - 2022-11-09: Add log messages and tests.
 
 - 2023-08-26: Add list of deprioritized servers for sharded cluster topology.
+
+- 2024-02-07: Migrated from reStructuredText to Markdown.
 
 [^1]: mongos 3.4 refuses to connect to mongods with maxWireVersion \< 5, so it does no additional wire version checks
     related to maxStalenessSeconds.

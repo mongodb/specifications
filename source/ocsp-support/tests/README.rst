@@ -14,7 +14,7 @@ drivers can use to prove their conformance to the OCSP Support
 specification. These tests MUST BE implemented by all drivers.
 
 Additional YAML and JSON tests have also been added to the `URI
-Options Tests <../../uri-options/tests/README.rst>`__.  Specifically,
+Options Tests <../../uri-options/tests/README.md>`__.  Specifically,
 the `TLS Options Test <../../uri-options/tests/tls-options.yml>`__ has
 been updated with additional tests for the new URI options
 ``tlsDisableOCSPEndpointCheck`` and ``tlsDisableCertificateRevocationCheck``.

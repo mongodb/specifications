@@ -581,7 +581,7 @@ class Monitor(Thread):
           wait()
 
   def setUpConnection():
-      # Take the mutex to avoid a data race becauase this code writes to the connection field and a concurrent
+      # Take the mutex to avoid a data race because this code writes to the connection field and a concurrent
       # cancelCheck call could be reading from it.
       with lock:
           # Server API versioning implies that the server supports hello.
@@ -874,7 +874,7 @@ above mentioned concerns.
 
 In the streaming protocol, clients use the hello or legacy hello command on a dedicated connection to measure a server's
 RTT. However, errors encountered when running the RTT command MUST NOT mark a server Unknown. We reached this decision
-because the dedicate RTT connection does not come from a connection pool and thus does not have a generation number
+because the dedicated RTT connection does not come from a connection pool and thus does not have a generation number
 associated with it. Without a generation number we cannot handle errors from the RTT command without introducing race
 conditions. Introducing such a generation number would add complexity to this design without much benefit. It is safe to
 ignore these errors because the Monitor will soon discover the server's state regardless (either through an updated

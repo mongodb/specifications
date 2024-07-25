@@ -44,7 +44,7 @@ ClientSession
    `Driver Session`_ specification. The name of this object MAY vary across
    drivers.
 
-.. _Driver Session: ../sessions/driver-sessions.rst
+.. _Driver Session: ../sessions/driver-sessions.md
 
 MongoClient
    The root object of a driver's API. The name of this object MAY vary across

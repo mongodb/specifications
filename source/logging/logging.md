@@ -134,7 +134,7 @@ produce.
 | Component Name  | Specification(s)                                                                                               | Environment Variable           |
 | --------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------ |
 | command         | [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md)          | `MONGODB_LOG_COMMAND`          |
-| topology        | [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst)      | `MONGODB_LOG_TOPOLOGY`         |
+| topology        | [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md)      | `MONGODB_LOG_TOPOLOGY`         |
 | serverSelection | [Server Selection](../server-selection/server-selection.md)                                                    | `MONGODB_LOG_SERVER_SELECTION` |
 | connection      | [Connection Monitoring and Pooling](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md) | `MONGODB_LOG_CONNECTION`       |
 

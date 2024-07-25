@@ -33,8 +33,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 `Server`
 
 > The term `Server` refers to the implementation in the driver's language of an abstraction of a mongod or mongos
-> process, or a load balancer, as defined by the
-> [SDAM specification](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server).
+> process, or a load balancer, as defined by the [SDAM specification](server-discovery-and-monitoring.md#server).
 
 ### Specification
 
@@ -369,59 +368,14 @@ The following table describes the rules for determining if a topology type has r
 preference is passed to `hasReadableServer`, the driver MUST default the value to the default read preference,
 `primary`, or treat the call as if `primary` was provided.
 
-<table style="width:99%;">
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 38%" />
-<col style="width: 38%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topology Type</th>
-<th><code>hasReadableServer</code></th>
-<th><code>hasWritableServer</code></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Unknown</td>
-<td><code>false</code></td>
-<td><code>false</code></td>
-</tr>
-<tr class="even">
-<td>Single</td>
-<td><code>true</code> if the server is available</td>
-<td><code>true</code> if the server is available</td>
-</tr>
-<tr class="odd">
-<td>ReplicaSetNoPrimary</td>
-<td><div class="line-block">Called with <code>primary</code>:
-<code>false</code><br />
-Called with any other option: uses the read preference to determine if
-any server in the cluster is suitable for reading.<br />
-Called with no option: <code>false</code></div></td>
-<td><code>false</code></td>
-</tr>
-<tr class="even">
-<td>ReplicaSetWithPrimary</td>
-<td><div class="line-block">Called with any valid option: uses the read
-preference to determine if any server in the cluster is suitable for
-reading.<br />
-Called with no option: <code>true</code></div></td>
-<td><code>true</code></td>
-</tr>
-<tr class="odd">
-<td>Sharded</td>
-<td><code>true</code> if 1+ servers are available</td>
-<td><code>true</code> if 1+ servers are available</td>
-</tr>
-<tr class="even">
-<td>LoadBalanced</td>
-<td><code>true</code></td>
-<td><code>true</code></td>
-</tr>
-</tbody>
-</table>
+| Topology Type         | `hasReadableServer`                                                                                                                                                                               | `hasWritableServer`                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Unknown               | `false`                                                                                                                                                                                           | `false`                            |
+| Single                | `true` if the server is available                                                                                                                                                                 | `true` if the server is available  |
+| ReplicaSetNoPrimary   | Called with `primary`: `false`  <br>Called with any other option: uses the read preference to determine if any server in the cluster is suitable for reading.  <br>Called with no option: `false` | `false`                            |
+| ReplicaSetWithPrimary | Called with any valid option: uses the read preference to determine if any server in the cluster is suitable for reading.  <br>Called with no option: `true`                                      | `true`                             |
+| Sharded               | `true` if 1+ servers are available                                                                                                                                                                | `true` if 1+ servers are available |
+| LoadBalanced          | `true`                                                                                                                                                                                            | `true`                             |
 
 ### Log Messages
 
@@ -617,13 +571,9 @@ See the [README](tests/monitoring/README.md).
 
 - 2021-05-06: Updated to use modern terminology.
 
-# \<\<\<\<\<\<\< HEAD :2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's previousDescription field :2024-01-17: Updated to require that `TopologyDescriptionChangedEvent` should be emitted before just `TopologyClosedEvent` is emitted :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements for SDAM log messages. :2022-10-05: Remove spec front matter and reformat changelog. :2021-05-06: Updated to use modern terminology. :2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events. :2018:12-12: Clarified table of rules for readable/writable servers :2016-08-31: Added table of rules for determining if topology has readable/writable servers. :2016-10-11: TopologyDescription objects MAY have additional methods and properties. ||||||| parent of 469393fd (DRIVERS-2789 Convert SDAM Spec to Markdown) :2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's previousDescription field :2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted :2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and added requirements for SDAM log messages. :2022-10-05: Remove spec front matter and reformat changelog. :2021-05-06: Updated to use modern terminology. :2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events. :2018:12-12: Clarified table of rules for readable/writable servers :2016-08-31: Added table of rules for determining if topology has readable/writable servers. :2016-10-11: TopologyDescription objects MAY have additional methods and properties.
-
 - 2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
 
-> > > > > > > 469393fd (DRIVERS-2789 Convert SDAM Spec to Markdown)
-
-- 2018:12-12: Clarified table of rules for readable/writable servers
+- 2018-12-12: Clarified table of rules for readable/writable servers
 
 - 2016-08-31: Added table of rules for determining if topology has readable/writable servers.
 

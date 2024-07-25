@@ -84,7 +84,7 @@ the defined name but MAY deviate to comply with their existing conventions.
 
 Drivers MUST verify server eligibility by ensuring that `maxWireVersion` is at least 6 because retryable reads require a
 MongoDB 3.6 standalone, replica set or shard cluster, MongoDB 3.6 server wire version is 6 as defined in the
-[Server Wire version and Feature List specification](../wireversion-featurelist.rst).
+[Server Wire version and Feature List specification](../wireversion-featurelist.md).
 
 The minimum server version is 3.6 because
 
@@ -202,7 +202,7 @@ Drivers MUST only attempt to retry a read command if
 
 If the driver decides to allow retry and the previous attempt of a retryable read command encounters a retryable error,
 the driver MUST update its topology according to the Server Discovery and Monitoring spec (see
-[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)) and
+[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)) and
 capture this original retryable error. Drivers should then proceed with selecting a server for a retry attempt.
 
 ###### 3a. Selecting the server for retry
@@ -247,7 +247,7 @@ and the timeout has not yet expired, then the Driver MUST jump back to step 2b a
 attempts.
 
 Otherwise, drivers MUST update their topology according to the SDAM spec (see
-[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)). If an
+[SDAM: Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)). If an
 error would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
 driver), the previous error should be raised. If a retry failed due to another retryable error or some other error
 originating from the server, that error should be raised instead as the caller can infer that an attempt was made and
@@ -520,8 +520,8 @@ No.
 [This is in contrast to the answer supplied in in the retryable writes specification.](../retryable-writes/retryable-writes.md#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts)
 However, when retryable writes were implemented, no driver actually chose to resend the same wire protocol message.
 Today, if a driver attempted to resend the same wire protocol message, this could violate
-[the rules for gossiping $clusterTime](../sessions/driver-sessions.rst#gossipping-the-cluster-time): specifically
-[the rule that a driver must send the highest seen $clusterTime](../sessions/driver-sessions.rst#sending-the-highest-seen-cluster-time).
+[the rules for gossiping $clusterTime](../sessions/driver-sessions.md#gossipping-the-cluster-time): specifically
+[the rule that a driver must send the highest seen $clusterTime](../sessions/driver-sessions.md#sending-the-highest-seen-cluster-time).
 
 Additionally, there would be a behavioral difference between a driver resending the same wire protocol message and one
 that does not. For example, a driver that creates a new wire protocol message could exhibit the following

@@ -32,12 +32,12 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 The transaction ID identifies the transaction as part of which the command is running. In a write
 command where the client has requested retryable behavior, it is expressed by the top-level `lsid` and `txnNumber`
 fields. The `lsid` component is the corresponding server session ID. which is a BSON value defined in the
-[Driver Session](../sessions/driver-sessions.rst) specification. The `txnNumber` component is a monotonically increasing
+[Driver Session](../sessions/driver-sessions.md) specification. The `txnNumber` component is a monotonically increasing
 (per server session), positive 64-bit integer.
 
 **ClientSession**\
 Driver object representing a client session, which is defined in the
-[Driver Session](../sessions/driver-sessions.rst) specification. This object is always associated with a server session;
+[Driver Session](../sessions/driver-sessions.md) specification. This object is always associated with a server session;
 however, drivers will pool server sessions so that creating a ClientSession will not always entail creation of a new
 server session. The name of this object MAY vary across drivers.
 
@@ -45,7 +45,7 @@ server session. The name of this object MAY vary across drivers.
 An error is considered retryable if it has a RetryableWriteError label in its top-level
 "errorLabels" field. See [Determining Retryable Errors](#determining-retryable-errors) for more information.
 
-Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.rst) specification.
+Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.md) specification.
 
 ### Naming Deviations
 
@@ -109,10 +109,11 @@ Supported single-statement write operations include `insertOne()`, `updateOne()`
 `findOneAndDelete()`, `findOneAndReplace()`, and `findOneAndUpdate()`.
 
 Supported multi-statement write operations include `insertMany()` and `bulkWrite()`. The ordered option may be `true` or
-`false`. In the case of `bulkWrite()`, `UpdateMany` or `DeleteMany` operations within the `requests` parameter may make
-some write commands ineligible for retryability. Drivers MUST evaluate eligibility for each write command sent as part
-of the `bulkWrite()` (after order and batch splitting) individually. Drivers MUST NOT alter existing logic for order and
-batch splitting in an attempt to maximize retryability for operations within a bulk write.
+`false`. For both the collection-level and client-level `bulkWrite()` methods, a bulk write batch is only retryable if
+it does not contain any `multi: true` writes (i.e. `UpdateMany` and `DeleteMany`). Drivers MUST evaluate eligibility for
+each write command sent as part of the `bulkWrite()` (after order and batch splitting) individually. Drivers MUST NOT
+alter existing logic for order and batch splitting in an attempt to maximize retryability for operations within a bulk
+write.
 
 These methods above are defined in the [CRUD](../crud/crud.md) specification.
 
@@ -215,7 +216,7 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   - the `writeConcernError.code` field in a mongos response
 
   The criteria for retryable errors is similar to the discussion in the SDAM spec's section on
-  [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling), but includes
+  [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling), but includes
   additional error codes. See [What do the additional error codes mean?](#what-do-the-additional-error-codes-mean) for
   the reasoning behind these additional errors.
 
@@ -264,8 +265,8 @@ enabled.
 When constructing a supported write command that will be executed within a MongoClient where retryable writes have been
 enabled, drivers MUST increment the transaction number for the corresponding server session and include the server
 session ID and transaction number in top-level `lsid` and `txnNumber` fields, respectively. `lsid` is a BSON value
-(discussed in the [Driver Session](../sessions/driver-sessions.rst) specification). `txnNumber` MUST be a positive
-64-bit integer (BSON type 0x12).
+(discussed in the [Driver Session](../sessions/driver-sessions.md) specification). `txnNumber` MUST be a positive 64-bit
+integer (BSON type 0x12).
 
 The following example illustrates a possible write command for an `updateOne()` operation:
 
@@ -299,8 +300,8 @@ MUST NOT attempt to retry a write command on any other error.
 
 If the first attempt of a write command including a transaction ID encounters a retryable error, the driver MUST update
 its topology according to the SDAM spec (see:
-[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)) and capture
-this original retryable error.
+[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)) and capture this
+original retryable error.
 
 Drivers MUST then retry the operation as many times as necessary until any one of the following conditions is reached:
 
@@ -318,7 +319,7 @@ retrying is not possible and drivers MUST raise the retryable error from the pre
 is able to infer that an attempt was made.
 
 If a retry attempt also fails, drivers MUST update their topology according to the SDAM spec (see:
-[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling)). If an error
+[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)). If an error
 would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
 driver) or the error is labeled "NoWritesPerformed", the error from the previous attempt should be raised. If all server
 errors are labeled "NoWritesPerformed", then the first error should be raised.
@@ -448,12 +449,12 @@ function executeRetryableWrite(command, session) {
 ```
 
 `handleError` in the above pseudocode refers to the function defined in the
-[Error handling pseudocode](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling-pseudocode)
+[Error handling pseudocode](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
 section of the SDAM specification.
 
 When retrying a write command, drivers MUST resend the command with the same transaction ID. Drivers MUST NOT resend the
 original wire protocol message if doing so would violate rules for
-[gossipping the cluster time](../sessions/driver-sessions.rst#gossipping-the-cluster-time) (see:
+[gossipping the cluster time](../sessions/driver-sessions.md#gossipping-the-cluster-time) (see:
 [Can drivers resend the same wire protocol message on retry attempts?](#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts)).
 
 In the case of a multi-statement write operation split across multiple write commands, a failed retry attempt will also
@@ -512,7 +513,7 @@ driver API needs to be extended to support this behavior.
 
 ## Design Rationale
 
-The design of this specification piggy-backs that of the [Driver Session](../sessions/driver-sessions.rst) specification
+The design of this specification piggy-backs that of the [Driver Session](../sessions/driver-sessions.md) specification
 in that it modifies the driver API as little as possible to introduce the concept of at-most-once semantics and
 retryable behavior for write operations. A transaction ID will be included in all supported write commands executed
 within the scope of a MongoClient where retryable writes have been enabled.
@@ -556,7 +557,7 @@ The spec concerns itself with retrying write operations that encounter a retryab
 network error or a response indicating that the node is no longer a primary). A retryable error may be classified as
 either a transient error (e.g. dropped connection, replica set failover) or persistent outage. In the case of a
 transient error, the driver will mark the server as "unknown" per the
-[SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst) spec. A subsequent retry attempt will
+[SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec. A subsequent retry attempt will
 allow the driver to rediscover the primary within the designated server selection timeout period (30 seconds by
 default). If server selection times out during this retry attempt, we can reasonably assume that there is a persistent
 outage. In the case of a persistent outage, multiple retry attempts are fruitless and would waste time. See
@@ -634,7 +635,7 @@ Since retry attempts entail sending the same command and transaction ID to the s
 the same wire protocol message in order to avoid constructing a new message and computing its checksum. The server will
 not complain if it receives two messages with the same `requestId`, as the field is only used for logging and populating
 the `responseTo` field in its replies to the client. That said, re-using a wire protocol message might violate rules for
-[gossipping the cluster time](../sessions/driver-sessions.rst#gossipping-the-cluster-time) and might also have
+[gossipping the cluster time](../sessions/driver-sessions.md#gossipping-the-cluster-time) and might also have
 implications for [Command Monitoring](#command-monitoring), since the original write command and its retry attempt may
 report the same `requestId`.
 
@@ -672,6 +673,8 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 
 - 2024-05-02: Migrated from reStructuredText to Markdown.
 
