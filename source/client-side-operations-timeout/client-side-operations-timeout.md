@@ -91,7 +91,7 @@ The `timeoutMS` option applies to all operations defined in the following specif
 - [Change Streams](../change-streams/change-streams.md)
 - [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
 - [Enumerating Collections](../enumerate-collections.rst)
-- [Enumerating Databases](../enumerate-databases.rst)
+- [Enumerating Databases](../enumerate-databases.md)
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Index Management](../index-management/index-management.md)
 - [Transactions](../transactions/transactions.md)
