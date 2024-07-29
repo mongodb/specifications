@@ -1,7 +1,7 @@
 
-# Requires libmongocrypt 1.8.0.
+# Requires libmongocrypt including MONGOCRYPT-702.
 runOn:
-  - minServerVersion: "8.0.0"
+  - minServerVersion: "8.0.0" # Requires 8.0.0-rc14 for SERVER-91889.
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
     # FLE 2 Encrypted collections are not supported on standalone.
     topology: [ "replicaset", "sharded", "load-balanced" ]

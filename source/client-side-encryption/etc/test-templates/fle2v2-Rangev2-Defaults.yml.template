@@ -1,7 +1,7 @@
 # Test "range" field with defaults for `trimFactor` and `sparsity`.
-# Test requires libmongocrypt with changes in 14ccd9ce (MONGOCRYPT-698).
+# Test requires libmongocrypt with changes in MONGOCRYPT-702.
 runOn:
-  - minServerVersion: "8.0.0" # Requires 8.0.0-rc13.
+  - minServerVersion: "8.0.0" # Requires 8.0.0-rc14 for SERVER-91889.
     topology: [ "replicaset", "sharded", "load-balanced" ] # Exclude "standalone". QE collections are not supported on standalone.
 database_name: &database_name "default"
 collection_name: &collection_name "default"
