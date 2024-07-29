@@ -13,6 +13,9 @@
         "pattern": "^logging/logging.rst#log-severity-levels"
       },
       {
+        "pattern": "./enumerate-indexes.rst"
+      },
+      {
         "pattern": "^https://github.com/10gen/mongo-enterprise-modules"
       },
       {

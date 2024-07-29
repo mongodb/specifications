@@ -144,7 +144,7 @@ Most of the above methods are defined in the following specifications:
 - [CRUD](../crud/crud.md)
 - [Enumerating Collections](../enumerate-collections.md)
 - [Enumerating Indexes](../index-management/index-management.md#enumerate-indexes)
-- [Enumerating Databases](../enumerate-databases.rst)
+- [Enumerating Databases](../enumerate-databases.md)
 - [GridFS Spec](../gridfs/gridfs-spec.md)
 
 #### Unsupported Read Operations

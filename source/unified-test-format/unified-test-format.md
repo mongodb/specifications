@@ -1428,7 +1428,7 @@ evaluated consistently.
 These operations and their arguments may be documented in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [Enumerating Databases](../enumerate-databases.rst)
+- [Enumerating Databases](../enumerate-databases.md)
 
 Client operations that require special handling or are not documented by an existing specification are described below.
 
