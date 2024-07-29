@@ -2815,7 +2815,8 @@ This test is continuation of the case 1 and provides a way to complete inserting
 
 ### 22. Range Explicit Encryption
 
-The Range Explicit Encryption tests require MongoDB server 8.0+.
+The Range Explicit Encryption tests require MongoDB server 8.0.0-rc14+ for SERVER-91889 and libmongocrypt containing
+MONGOCRYPT-705.
 
 > [!NOTE]
 > MongoDB Server 8.0 introduced a backwards breaking change to the Queryable Encryption (QE) range protocol: QE Range V2
