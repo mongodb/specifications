@@ -711,7 +711,7 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
 04. If the topology is stale, proceed as follows:
     - record the target scan time as last scan time plus `minHeartBeatFrequencyMS`
     - if [serverSelectionTryOnce](#serverselectiontryonce) is false and the target scan time would exceed the maximum
-      time, raise a \[server selection error\](#server selection error) and log a
+      time, raise a \[server selection error(#server selection error) and log a
       ["Server selection failed" message](#server-selection-failed-message).
     - if the current time is less than the target scan time, sleep until the target scan time
     - do a blocking immediate topology check (which must also update the last scan time and mark the topology as no
