@@ -275,7 +275,7 @@ JSON format. If generators provide a default format, the default SHOULD be the R
 
 A generator MAY be capable of exporting strings that adhere to other formats, such as Legacy Extended JSON formats.
 
-A generator SHOULD support at least 100 \[levels of nesting\](#levels of nesting) in a BSON document.
+A generator SHOULD support at least 100 levels of nesting in a BSON document.
 
 #### Transforming BSON
 
