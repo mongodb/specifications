@@ -1542,7 +1542,7 @@ These operations and their arguments may be documented in the following specific
 
 - [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.md)
-- [Enumerating Collections](../enumerate-collections.rst)
+- [Enumerating Collections](../enumerate-collections.md)
 
 Database operations that require special handling or are not documented by an existing specification are described
 below.

@@ -15,6 +15,7 @@
 - [Connection String Spec](connection-string/connection-string-spec.md)
 - [Driver Mantras](./driver-mantras.md)
 - [Enumerating Databases](./enumerate-databases.md)
+- [Enumerating Collections](./enumerate-collections.md)
 - [Extended JSON](./extended-json.md)
 - [FaaS Automated Testing](faas-automated-testing/faas-automated-testing.md)
 - [GridFS Spec](gridfs/gridfs-spec.md)

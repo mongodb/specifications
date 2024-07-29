@@ -142,7 +142,7 @@ Most of the above methods are defined in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.md)
-- [Enumerating Collections](../enumerate-collections.rst)
+- [Enumerating Collections](../enumerate-collections.md)
 - [Enumerating Indexes](../index-management/index-management.md#enumerate-indexes)
 - [Enumerating Databases](../enumerate-databases.md)
 - [GridFS Spec](../gridfs/gridfs-spec.md)
