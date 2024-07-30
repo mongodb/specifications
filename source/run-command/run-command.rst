@@ -303,12 +303,12 @@ If it is idiomatic for a driver to allow setting these options in ``RunCursorCom
 A driver MAY permit users to change ``getMore`` field settings at any time during the cursor's lifetime and subsequent ``getMore`` commands MUST be constructed with the changes to those fields.
 If that API is offered drivers MUST write tests asserting ``getMore`` commands are constructed with any updated fields.
 
-* See Find, getMore and killCursors commands' section on `GetMore <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#getmore>`_
+* See Find, getMore and killCursors commands' section on `GetMore <../find_getmore_killcursors_commands.md#getmore>`_
 
 Tailable and TailableAwait
 """"""""""""""""""""""""""
 
-* **See first:** Find, getMore and killCursors commands's section on `Tailable cursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#tailable-cursors>`_
+* **See first:** Find, getMore and killCursors commands's section on `Tailable cursors <../find_getmore_killcursors_commands.md#tailable-cursors>`_
 
 It is the responsibility of the caller to construct their initial command with ``awaitData`` and ``tailable`` flags **as well as** inform RunCursorCommand of the ``cursorType`` that should be constructed.
 Requesting a ``cursorType`` that does not align with the fields sent to the server on the initial command SHOULD be documented as undefined behavior.
@@ -321,7 +321,7 @@ If the cursor id is nonzero a KillCursors operation MUST be attempted, the resul
 The ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.
 
 * See Driver Sessions' section on `When sending a killCursors command <../sessions/driver-sessions.md#when-sending-a-killcursors-command>`_
-* See Find, getMore and killCursors commands' section on `killCursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#killcursors>`_
+* See Find, getMore and killCursors commands' section on `killCursors <../find_getmore_killcursors_commands.md#killcursors>`_
 
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""
