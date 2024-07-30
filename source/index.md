@@ -27,6 +27,7 @@
 - [Max Staleness](max-staleness/max-staleness.md)
 - [Max Staleness Tests](max-staleness/max-staleness-tests.md)
 - [OP_MSG](message/OP_MSG.md)
+- [ObjectID format](./objectid.md)
 - [Performance Benchmarking](benchmarking/benchmarking.md)
 - [Retryable Reads](retryable-reads/retryable-reads.md)
 - [Retryable Writes](retryable-writes/retryable-writes.md)
