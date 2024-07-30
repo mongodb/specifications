@@ -2819,7 +2819,7 @@ The Range Explicit Encryption tests require MongoDB server 8.0+.
 
 > [!NOTE]
 > MongoDB Server 8.0 introduced a backwards breaking change to the Queryable Encryption (QE) range protocol: QE Range V2
-> libmongocrypt 1.10.0 is required to use the QE Range V2.
+> libmongocrypt 1.11.0 is required to use the QE Range V2.
 
 > [!NOTE]
 > MongoDB Server 7.0 introduced a backwards breaking change to the Queryable Encryption (QE) protocol: QEv2.
