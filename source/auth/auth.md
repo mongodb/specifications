@@ -1217,15 +1217,15 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
   - ENVIRONMENT\
     Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration
-    to use to obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp"]`. If both
+    to use to obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp", "k8s"]`. If both
     `ENVIRONMENT` and an [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for
     the same `MongoClient`, the driver MUST raise an error.
 
   - TOKEN_RESOURCE\
     The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
-    `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
-    MUST raise an error. Note: because the `TOKEN_RESOURCE` is often itself a URL, drivers MUST document that a
-    `TOKEN_RESOURCE` with a comma `,` must be given as a `MongoClient` configuration and not as part of the connection
+    `["azure", "gcp", "k8s"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp", "k8s"]`,
+    the driver MUST raise an error. Note: because the `TOKEN_RESOURCE` is often itself a URL, drivers MUST document that
+    a `TOKEN_RESOURCE` with a comma `,` must be given as a `MongoClient` configuration and not as part of the connection
     string, and that the `TOKEN_RESOURCE` value can contain a colon `:` character.
 
   - OIDC_CALLBACK\
@@ -1374,6 +1374,35 @@ callback had been provided by the user.
 
 For details on test environment setup, see the README in
 [Drivers-Evergreen-Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/gcp/README.md).
+
+***Kubernetes***
+
+The Kubernetes integration is enabled by setting auth mechanism property `ENVIRONMENT:k8s`. In this configuration, the
+driver is expected to be running inside a Kubernetes environment with a configured
+[ServiceAccount](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-token-volume).
+
+If enabled, drivers MUST read the contents of the token from the local file path found using the following algorithm:
+
+```python
+if 'AZURE_FEDERATED_TOKEN_FILE' in os.environ:
+  fname = os.environ['AZURE_FEDERATED_TOKEN_FILE']
+elif 'AWS_WEB_IDENTITY_TOKEN_FILE' in os.environ:
+  fname = os.environ['AWS_WEB_IDENTITY_TOKEN_FILE']
+else:
+  fname = '/var/run/secrets/kubernetes.io/serviceaccount/token'
+```
+
+Where `AZURE_FEDERATED_TOKEN_FILE` contains the file path on Azure Kubernetes Service (AKS),
+`AWS_WEB_IDENTITY_TOKEN_FILE` contains the file path on Elastic Kubernetes Service (EKS), and
+`/var/run/secrets/kubernetes.io/serviceaccount/token` is the default path for a Kubernetes
+[ServiceAccount token](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#serviceaccount-admission-controller),
+which is used by Google Kubernetes Engine (GKE).
+
+The callback itself MUST not perform any caching, and the driver MUST cache its tokens in the same way as if a custom
+callback had been provided by the user.
+
+For details on test environment setup, see the README in
+[Drivers-Evergreen-Tools](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/k8s/README.md).
 
 #### OIDC Callback
 
@@ -2041,6 +2070,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-07-29: Add Kubernetes built-in OIDC provider integration.
 
 - 2024-05-29: Disallow comma character when `TOKEN_RESOURCE` is given in a connection string.
 
