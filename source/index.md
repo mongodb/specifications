@@ -18,6 +18,7 @@
 - [Enumerating Databases](./enumerate-databases.md)
 - [Extended JSON](./extended-json.md)
 - [FaaS Automated Testing](faas-automated-testing/faas-automated-testing.md)
+- [Find, getMore and killCursors commands.](./find_getmore_killcursors_commands.md)
 - [GridFS Spec](gridfs/gridfs-spec.md)
 - [Handling of DBRefs](./dbref.md)
 - [Index Management](index-management/index-management.md)
