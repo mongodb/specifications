@@ -46,3 +46,4 @@
 - [URI Options Specification](uri-options/uri-options.md)
 - [Unified Test Format](unified-test-format/unified-test-format.md)
 - [Wire Compression in Drivers](compression/OP_COMPRESSED.md)
+- [Write Commands Specification](./server_write_commands.md)
