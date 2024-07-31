@@ -466,9 +466,9 @@ clients MUST cancel the hello or legacy hello check on that server and close the
 
 ### Polling Protocol
 
-The polling protocol is used to monitor MongoDB \< 4.4 servers or when \[streaming is disabled\](#streaming is
-disabled). The client [checks](#check) a server with a hello or legacy hello command and then sleeps for
-heartbeatFrequencyMS before running another check.
+The polling protocol is used to monitor MongoDB \< 4.4 servers or when streaming is disabled. The client
+[checks](#check) a server with a hello or legacy hello command and then sleeps for heartbeatFrequencyMS before running
+another check.
 
 ### Marking the connection pool as ready (CMAP only)
 
@@ -499,9 +499,8 @@ the client MUST follow these steps:
    [JAVA-1159](https://jira.mongodb.org/browse/JAVA-1159).)
 5. Otherwise, wait for heartbeatFrequencyMS (or minHeartbeatFrequencyMS if a check is requested) before restarting the
    monitoring protocol on a new connection.
-   - Note that even in the streaming protocol, a monitor in this state will wait for an application operation to
-     \[request an immediate check\](#request an immediate check) or for the heartbeatFrequencyMS timeout to expire
-     before beginning the next check.
+   - Note that even in the streaming protocol, a monitor in this state will wait for an application operation to request
+     an immediate check or for the heartbeatFrequencyMS timeout to expire before beginning the next check.
 
 See the pseudocode in the `Monitor thread` section.
 

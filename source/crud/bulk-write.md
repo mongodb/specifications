@@ -499,8 +499,8 @@ operation should be performed as its value. The documents have the following for
 }
 ```
 
-If the document to be inserted does not contain an `_id` field, drivers MUST generate a new
-[`ObjectId`](../objectid.rst) and add it as the `_id` field at the beginning of the document.
+If the document to be inserted does not contain an `_id` field, drivers MUST generate a new [`ObjectId`](../objectid.md)
+and add it as the `_id` field at the beginning of the document.
 
 #### Update
 
