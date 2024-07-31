@@ -3211,7 +3211,7 @@ class EncryptOpts {
 
 Assert that an error was raised.
 
-### 22. Range Explicit Encryption applies defaults
+### 23. Range Explicit Encryption applies defaults
 
 This test requires libmongocrypt with changes in
 [14ccd9ce](https://github.com/mongodb/libmongocrypt/commit/14ccd9ce8a030158aec07f63e8139d34b95d88e6)
