@@ -20,6 +20,7 @@
 - [FaaS Automated Testing](faas-automated-testing/faas-automated-testing.md)
 - [GridFS Spec](gridfs/gridfs-spec.md)
 - [Handling of DBRefs](./dbref.md)
+- [Handling of Native UUID Types](./uuid.md)
 - [Index Management](index-management/index-management.md)
 - [Initial DNS Seedlist Discovery](initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md)
 - [Load Balancer Support](load-balancers/load-balancers.md)

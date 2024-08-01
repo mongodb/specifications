@@ -217,10 +217,9 @@ parsing JSON numbers:
 
 #### Special rules for parsing `$uuid` fields
 
-As per the [UUID specification](https://github.com/mongodb/specifications/blob/master/source/uuid.rst), Binary subtype 3
-or 4 are used to represent UUIDs in BSON. Consequently, UUIDs are handled as per the convention described for the
-`Binary` type in the [Conversion table](#conversion-table), e.g. the following document written with the MongoDB Python
-Driver:
+As per the [UUID specification](uuid.md), Binary subtype 3 or 4 are used to represent UUIDs in BSON. Consequently, UUIDs
+are handled as per the convention described for the `Binary` type in the [Conversion table](#conversion-table), e.g. the
+following document written with the MongoDB Python Driver:
 
 ```javascript
 {"Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
@@ -239,8 +238,7 @@ is transformed into the following (newlines and spaces added for readability):
 
 > [!NOTE]
 > The above described type conversion assumes that UUID representation is set to `STANDARD`. See the
-> [UUID specification](https://github.com/mongodb/specifications/blob/master/source/uuid.rst) for more information about
-> UUID representations.
+> [UUID specification](uuid.md) for more information about UUID representations.
 
 While this transformation preserves BSON subtype information (since UUIDs can be represented as BSON subtype 3 *or* 4),
 base64-encoding is not the standard way of representing UUIDs and using it makes comparing these values against textual
