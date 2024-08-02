@@ -212,4 +212,3 @@ tests:
           event:
             serverHeartbeatStartedEvent: {}
           count: 1
-#    expectEvents: *streamingStartedEvents
