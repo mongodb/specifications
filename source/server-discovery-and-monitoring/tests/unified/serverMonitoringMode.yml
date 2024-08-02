@@ -187,7 +187,6 @@ tests:
                 observeEvents:
                   - serverHeartbeatStartedEvent
                   - serverHeartbeatSucceededEvent
-                  - serverHeartbeatFailedEvent
             - database:
                 id: db
                 client: client
