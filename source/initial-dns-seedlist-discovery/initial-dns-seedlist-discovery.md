@@ -82,8 +82,7 @@ It is an error to specify more than one host name in a connection string with th
 MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.
 
 A driver MUST verify that in addition to the `{hostname}`, the `{domainname}` consists of at least two parts: the domain
-name, and a TLD. Drivers MUST raise an error and MUST NOT contact the DNS server to obtain SRV (or TXT records) if the
-full URI does not consist of at least three parts.
+name, and a TLD. In the case that an SRV or TXT record does not have three parts prior to DNS resolution, drivers MUST NOT throw an error.
 
 If `mongodb+srv` is used, a driver MUST implicitly also enable TLS. Clients can turn this off by passing `tls=false` in
 either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
