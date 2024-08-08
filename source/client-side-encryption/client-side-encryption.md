@@ -1224,7 +1224,7 @@ non-applicable queryType.
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "range". libmongocrypt returns an error if rangeOpts is set for a
+rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
 non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
