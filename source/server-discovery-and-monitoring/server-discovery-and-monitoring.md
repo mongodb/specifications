@@ -1888,6 +1888,8 @@ oversaw the specification process.
 
 ## Changelog
 
+- 2024-08-09: Updated wire versions in tests to 4.0+.
+
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 
 - 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
