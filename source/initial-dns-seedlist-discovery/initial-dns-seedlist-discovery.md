@@ -211,14 +211,14 @@ Additionally, see the `mongodb+srv` test `invalid-uris.yml` in the
   
   * Assert that creating a client with the uri `mongodb+srv//mongodb.localhost` does not cause an error.
   
-  * Assert that connecting the client from 2. to the server does not cause an error.
+  * Assert that connecting the client to the server does not cause an error.
 
 * Test #2: The driver should not throw an error when given a SRV record that only contains the TLD.
   * Stub external DNS resolution to always pass (ex: `dns.lookup`).
   
   * Assert that creating a client with the uri `mongodb+srv//localhost` does not cause an error.
   
-  * Assert that connecting the client from 2. to the server does not cause an error.
+  * Assert that connecting the client to the server does not cause an error.
 
 ## Motivation
 
