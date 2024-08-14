@@ -81,8 +81,7 @@ parse error and MUST NOT do DNS resolution or contact hosts.
 It is an error to specify more than one host name in a connection string with the `mongodb+srv` protocol, and the driver
 MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.
 
-A driver MUST verify that in addition to the `{hostname}`, the `{domainname}` consists of at least two parts: the domain
-name, and a TLD. In the case that an SRV or TXT record does not have three parts prior to DNS resolution, drivers MUST NOT throw an error.
+In the case that an hostname does not have a `{hostname}` and a `{domainname}` (consisting of a domain name and a TLD) prior to DNS resolution, drivers MUST NOT throw an error. 
 
 If `mongodb+srv` is used, a driver MUST implicitly also enable TLS. Clients can turn this off by passing `tls=false` in
 either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
@@ -199,10 +198,27 @@ mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replic
 
 ## Test Plan
 
+### Spec Tests 
 See README.md in the accompanying [test directory](tests).
 
 Additionally, see the `mongodb+srv` test `invalid-uris.yml` in the
 [Connection String Spec tests](../connection-string/tests).
+
+### Prose Tests
+* Test #1: The driver should not throw an error when given a SRV record that only contains the name of the domain and the TLD.
+
+  * Stub external DNS resolution to always pass (ex: `dns.lookup`).
+  
+  * Assert that creating a client with the uri `mongodb+srv//mongodb.localhost` does not cause an error.
+  
+  * Assert that connecting the client from 2. to the server does not cause an error.
+
+* Test #2: The driver should not throw an error when given a SRV record that only contains the TLD.
+  * Stub external DNS resolution to always pass (ex: `dns.lookup`).
+  
+  * Assert that creating a client with the uri `mongodb+srv//localhost` does not cause an error.
+  
+  * Assert that connecting the client from 2. to the server does not cause an error.
 
 ## Motivation
 
