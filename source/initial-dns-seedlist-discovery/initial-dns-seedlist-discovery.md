@@ -205,7 +205,7 @@ Additionally, see the `mongodb+srv` test `invalid-uris.yml` in the
 [Connection String Spec tests](../connection-string/tests).
 
 ### Prose Tests
-* Test #1: The driver should not throw an error when given a SRV record that only contains the name of the domain and the TLD.
+* Test #1: The driver should not throw an error when given a valid SRV record that only contains the name of the domain and the TLD.
 
   * Stub external DNS resolution to always pass (ex: `dns.lookup`).
   
@@ -213,7 +213,7 @@ Additionally, see the `mongodb+srv` test `invalid-uris.yml` in the
   
   * Assert that connecting the client to the server does not cause an error.
 
-* Test #2: The driver should not throw an error when given a SRV record that only contains the TLD.
+* Test #2: The driver should not throw an error when given a valid SRV record that only contains the TLD.
   * Stub external DNS resolution to always pass (ex: `dns.lookup`).
   
   * Assert that creating a client with the uri `mongodb+srv//localhost` does not cause an error.
