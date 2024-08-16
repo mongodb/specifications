@@ -27,6 +27,7 @@
 - [Logging](logging/logging.md)
 - [Max Staleness](max-staleness/max-staleness.md)
 - [Max Staleness Tests](max-staleness/max-staleness-tests.md)
+- [MongoDB Handshake](mongodb-handshake/handshake.md)
 - [OP_MSG](message/OP_MSG.md)
 - [ObjectID format](./objectid.md)
 - [Performance Benchmarking](benchmarking/benchmarking.md)

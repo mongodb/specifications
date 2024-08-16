@@ -77,7 +77,7 @@ The serverMonitoringMode option configures which server monitoring protocol to u
 - With "poll" mode, the client MUST use the polling protocol.
 - With "auto" mode, the client MUST behave the same as "poll" mode when running on a FaaS platform or the same as
   "stream" mode otherwise. The client detects that it's running on a FaaS platform via the same rules for generating the
-  `client.env` handshake metadata field in the [MongoDB Handshake spec](../mongodb-handshake/handshake.rst#client-env).
+  `client.env` handshake metadata field in the [MongoDB Handshake spec](../mongodb-handshake/handshake.md#client-env).
 
 Multi-threaded or asynchronous drivers MUST implement this option. See
 [Why disable the streaming protocol on FaaS platforms like AWS Lambda?](#why-disable-the-streaming-protocol-on-faas-platforms-like-aws-lambda)
@@ -154,7 +154,7 @@ MUST proceed if the new TopologyDescription now contains a suitable server.
 
 ##### Clients update the topology from each handshake
 
-When a monitor check creates a new connection, the [connection handshake](../mongodb-handshake/handshake.rst) response
+When a monitor check creates a new connection, the [connection handshake](../mongodb-handshake/handshake.md) response
 MUST be used to satisfy the check and update the topology.
 
 When a client successfully calls hello or legacy hello to handshake a new connection for application operations, it
