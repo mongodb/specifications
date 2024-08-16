@@ -1888,6 +1888,8 @@ oversaw the specification process.
 
 ## Changelog
 
+- 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
+
 - 2024-08-09: Updated wire versions in tests to 4.0+.
 
 - 2024-05-08: Migrated from reStructuredText to Markdown.
