@@ -417,7 +417,7 @@ There is a possible race condition that can happen between the time the driver c
 subsequently sends a command to the server:
 
 - The server might have supported sessions at the time the connection was first opened (and reported a value for
-  logicalSessionTimeoutMinutes in the initial response to the [handshake](../mongodb-handshake/handshake.rst)), but have
+  logicalSessionTimeoutMinutes in the initial response to the [handshake](../mongodb-handshake/handshake.md)), but have
   subsequently been downgraded to not support sessions. The server does not close the socket in this scenario, so the
   driver will conclude that the server at the other end of this connection supports sessions.
 

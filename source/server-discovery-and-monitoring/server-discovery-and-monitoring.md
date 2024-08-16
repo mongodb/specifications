@@ -22,7 +22,7 @@ mistakes when they take advantage of a design that has been well-considered, rev
 
 The server discovery and monitoring method is specified in four sections. First, a client is
 [configured](#configuration). Second, it begins [monitoring](#monitoring) by calling
-[hello or legacy hello](../mongodb-handshake/handshake.rst#terms) on all servers. (Multi-threaded and asynchronous
+[hello or legacy hello](../mongodb-handshake/handshake.md#terms) on all servers. (Multi-threaded and asynchronous
 monitoring is described first, then single-threaded monitoring.) Third, as hello or legacy hello responses are received
 the client [parses them](#parsing-a-hello-or-legacy-hello-response), and fourth, it updates its view of the topology.
 

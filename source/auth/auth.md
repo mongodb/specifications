@@ -137,7 +137,7 @@ authentication conversations.
 Drivers MUST follow the following steps for an authentication handshake:
 
 1. Upon opening a general-use socket to a server for a given MongoClient, drivers MUST issue a
-   [MongoDB Handshake](../mongodb-handshake/handshake.rst) immediately. This allows a driver to determine the server
+   [MongoDB Handshake](../mongodb-handshake/handshake.md) immediately. This allows a driver to determine the server
    type. If the `hello` or legacy hello of the MongoDB Handshake fails with an error, drivers MUST treat this as an
    authentication error.
 2. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
@@ -1930,8 +1930,7 @@ As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 
 ### Speculative Authentication
 
-See the speculative authentication section in the
-[MongoDB Handshake spec](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst).
+See the speculative authentication section in the [MongoDB Handshake spec](../mongodb-handshake/handshake.md).
 
 ### Minimum iteration count
 

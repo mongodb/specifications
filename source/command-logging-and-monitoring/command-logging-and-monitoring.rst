@@ -183,7 +183,7 @@ The list of sensitive commands is as follows:
    * - ``copydb``
    * - ``hello`` (or legacy hello) when ``speculativeAuthenticate`` is present
 
-See the `MongoDB Handshake spec <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_
+See the `MongoDB Handshake spec <../mongodb-handshake/handshake.md>`_
 for more information on ``hello`` and legacy hello. Note that legacy hello has two different letter casings that must be taken
 into account. See the previously mentioned MongoDB Handshake spec for details.
 
