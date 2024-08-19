@@ -1787,7 +1787,8 @@ def speculative_auth(connection):
 
 If any operation fails with `ReauthenticationRequired` (error code 391) and MONGODB-OIDC is in use, the driver MUST
 reauthenticate the connection. Drivers MUST NOT resend a `hello` message during reauthentication, instead using SASL
-messages directly. See the main [reauthentication](#reauthentication-1) section for more information.
+messages directly. Drivers MUST NOT try to use Speculative Authentication during reauthentication. See the main
+[reauthentication](#reauthentication-1) section for more information.
 
 To reauthenticate a connection, invalidate the access token stored on the connection (i.e. the *Connection Cache*) from
 the *Client Cache*, fetch a new access token, and re-run the SASL conversation.
@@ -2040,6 +2041,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-08-19: Clarify Reauthentication and Speculative Authentication combination behavior.
 
 - 2024-05-29: Disallow comma character when `TOKEN_RESOURCE` is given in a connection string.
 
