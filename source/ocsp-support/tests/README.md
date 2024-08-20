@@ -164,7 +164,7 @@ run all the tests in the table, irrespective of OS, in order to simplify the tes
 
 **2024-08-20**: Migrated from reStructuredText to Markdown.
 
-**2021-11-01**: Clarify that not all Linux platforms support server stapling.
+**2021-11-08**: Clarify that not all Linux platforms support server stapling.
 
 **2020-07-01**: Clarify that drivers that do not enable OCSP by default MUST enable OCSP for the tests.
 
