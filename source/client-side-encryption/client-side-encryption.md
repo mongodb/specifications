@@ -677,11 +677,10 @@ Drivers MUST NOT raise an error if `tlsDisableOCSPEndpointCheck` is set. Setting
 prevent operation errors when OCSP responders are unresponsive.
 
 See the OCSP specification for a description of the default values of
-[tlsDisableOCSPEndpointCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisableocspendpointcheck)
-and
-[tlsDisableCertificateRevocationCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisablecertificaterevocationcheck)
-Drivers MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck`
-for KMS TLS connections.
+[tlsDisableOCSPEndpointCheck](../ocsp-support/ocsp-support.md#tlsdisableocspendpointcheck) and
+[tlsDisableCertificateRevocationCheck](../ocsp-support/ocsp-support.md#tlsdisablecertificaterevocationcheck) Drivers
+MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck` for KMS
+TLS connections.
 
 See [Why do KMS providers require TLS options?](#why-do-kms-providers-require-tls-options)
 
