@@ -4,10 +4,11 @@ This directory contains platform-independent tests that drivers can use to prove
 Seedlist Discovery spec.
 
 ### Prose Tests
+
 When given a valid SRV with
+
 1. Only one domain level (ex: `{localhost}`)
-2. Only two domain levels (ex: `{mongo.local}`)
-Parse the connection string without throwing a parse related error.
+2. Only two domain levels (ex: `{mongo.local}`) Parse the connection string without throwing a parse related error.
 
 ## Test Setup
 
