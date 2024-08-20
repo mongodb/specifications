@@ -82,11 +82,11 @@ It is an error to specify more than one host name in a connection string with th
 MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.
 
 Prior to DNS resolution. `{hostname}` format can follow any of the following formats:
-* `{subdomain}`.`{second-level domain}`.`{top-level domain}`
-* `{second-level domain}`.`{top-level domain}`
-* `{top-level domain}`
+* `{subdomain}`.`{second-level domain}`.`{top-level domain}` (ex: `{blogs.mongodb.com}`)
+* `{second-level domain}`.`{top-level domain}` (ex: `{mongodb.localhost}`)
+* `{top-level domain}` (ex: `{localhost}`)
 
-For the purposes of this document, `{domainname}` refers to all parts of the host that are not the `{subdomain}`.
+For the purposes of this document, `{domainname}` refers to all parts of the hostname, excluding the `{subdomain}`.
 
 
 Node:
@@ -124,7 +124,7 @@ randomization.
 
 ### Default Connection String Options
 
-As a second preprocessing step, a Client MUST also query the DNS server for TXT records on `{subdomain}.{domainname}`. If
+As a second preprocessing step, a Client MUST also query the DNS server for TXT records on `{hostname}`. If
 available, a TXT record provides default connection string options. The maximum length of a TXT record string is 255
 characters, but there can be multiple strings per TXT record. A Client MUST support multiple TXT record strings and
 concatenate them as if they were one single string in the order they are defined in each TXT record. The order of
@@ -154,7 +154,7 @@ the Connection String spec.
 
 ### CNAME not supported
 
-The use of DNS CNAME records is not supported. Clients MUST NOT check for a CNAME record on `{subdomain}.{domainname}`. A
+The use of DNS CNAME records is not supported. Clients MUST NOT check for a CNAME record on `{hostname}`. A
 system's DNS resolver could transparently handle CNAME, but because of how clients validate records returned from SRV
 queries, use of CNAME could break validation. Seedlist discovery therefore does not recommend or support the use of
 CNAME records in concert with SRV or TXT records.

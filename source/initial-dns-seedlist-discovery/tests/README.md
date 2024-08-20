@@ -4,20 +4,10 @@ This directory contains platform-independent tests that drivers can use to prove
 Seedlist Discovery spec.
 
 ### Prose Tests
-* Test #1: The driver should not throw an error when given a valid SRV record that only contains the name of the domain and the TLD.
+When given a valid SRV with 
+1. Only one domain level (ex: `{localhost}`)
+2. Only two domain levels (ex: `{mongo.local}`)
 
-  * Stub external DNS resolution to always pass (ex: `dns.lookup`).
-  
-  * Assert that creating a client with the uri `mongodb+srv//mongodb.localhost` does not cause an error.
-  
-  * Assert that connecting the client to the server does not cause an error.
-
-* Test #2: The driver should not throw an error when given a valid SRV record that only contains the TLD.
-  * Stub external DNS resolution to always pass (ex: `dns.lookup`).
-  
-  * Assert that creating a client with the uri `mongodb+srv//localhost` does not cause an error.
-  
-  * Assert that connecting the client to the server does not cause an error.
 
 ## Test Setup
 
