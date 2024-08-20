@@ -31,7 +31,7 @@ step before it considers the connection string and SDAM specifications. In this 
 host names is replaced with a single host name. The format is:
 
 ```
-mongodb+srv://{hostname}.{domainname}/{options}
+mongodb+srv://{subdomain}.{domainname}/{options}
 ```
 
 `{options}` refers to the optional elements from the [Connection String](../connection-string/connection-string-spec.md)
@@ -81,7 +81,15 @@ parse error and MUST NOT do DNS resolution or contact hosts.
 It is an error to specify more than one host name in a connection string with the `mongodb+srv` protocol, and the driver
 MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.
 
-In the case that an hostname does not have a `{hostname}` and a `{domainname}` (consisting of a domain name and a TLD) prior to DNS resolution, drivers MUST NOT throw an error. 
+Prior to DNS resolution. `{hostname}` format can follow any of the following formats:
+* `{subdomain}`.`{second-level domain}`.`{top-level domain}`
+* `{second-level domain}`.`{top-level domain}`
+* `{top-level domain}`
+
+For the purposes of this document, `{domainname}` refers to all parts of the host that are not the `{subdomain}`.
+
+
+Node:
 
 If `mongodb+srv` is used, a driver MUST implicitly also enable TLS. Clients can turn this off by passing `tls=false` in
 either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
@@ -89,10 +97,10 @@ API for each driver), but not through a TXT record (discussed in a later section
 
 #### Querying DNS
 
-In this preprocessing step, the driver will query the DNS server for SRV records on `{hostname}.{domainname}`, prefixed
+In this preprocessing step, the driver will query the DNS server for SRV records on the hostname, prefixed
 with the SRV service name and protocol. The SRV service name is provided in the `srvServiceName` URI option and defaults
 to `mongodb`. The protocol is always `tcp`. After prefixing, the URI should look like:
-`_{srvServiceName}._tcp.{hostname}.{domainname}`. This DNS query is expected to respond with one or more SRV records.
+`_{srvServiceName}._tcp.{hostname}`. This DNS query is expected to respond with one or more SRV records.
 
 The priority and weight fields in returned SRV records MUST be ignored.
 
@@ -116,7 +124,7 @@ randomization.
 
 ### Default Connection String Options
 
-As a second preprocessing step, a Client MUST also query the DNS server for TXT records on `{hostname}.{domainname}`. If
+As a second preprocessing step, a Client MUST also query the DNS server for TXT records on `{subdomain}.{domainname}`. If
 available, a TXT record provides default connection string options. The maximum length of a TXT record string is 255
 characters, but there can be multiple strings per TXT record. A Client MUST support multiple TXT record strings and
 concatenate them as if they were one single string in the order they are defined in each TXT record. The order of
@@ -146,7 +154,7 @@ the Connection String spec.
 
 ### CNAME not supported
 
-The use of DNS CNAME records is not supported. Clients MUST NOT check for a CNAME record on `{hostname}.{domainname}`. A
+The use of DNS CNAME records is not supported. Clients MUST NOT check for a CNAME record on `{subdomain}.{domainname}`. A
 system's DNS resolver could transparently handle CNAME, but because of how clients validate records returned from SRV
 queries, use of CNAME could break validation. Seedlist discovery therefore does not recommend or support the use of
 CNAME records in concert with SRV or TXT records.
@@ -204,22 +212,6 @@ See README.md in the accompanying [test directory](tests).
 Additionally, see the `mongodb+srv` test `invalid-uris.yml` in the
 [Connection String Spec tests](../connection-string/tests).
 
-### Prose Tests
-* Test #1: The driver should not throw an error when given a valid SRV record that only contains the name of the domain and the TLD.
-
-  * Stub external DNS resolution to always pass (ex: `dns.lookup`).
-  
-  * Assert that creating a client with the uri `mongodb+srv//mongodb.localhost` does not cause an error.
-  
-  * Assert that connecting the client to the server does not cause an error.
-
-* Test #2: The driver should not throw an error when given a valid SRV record that only contains the TLD.
-  * Stub external DNS resolution to always pass (ex: `dns.lookup`).
-  
-  * Assert that creating a client with the uri `mongodb+srv//localhost` does not cause an error.
-  
-  * Assert that connecting the client to the server does not cause an error.
-
 ## Motivation
 
 Several of our users have asked for this through tickets:
@@ -268,6 +260,8 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2024-08-20: Removed requirement for URI to have three '.' separated parts
 
 - 2024-03-06: Migrated from reStructuredText to Markdown.
 
