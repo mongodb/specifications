@@ -129,7 +129,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 ### (4) Reauthentication
 
-\*\*4.1 Reauthentication Succeeds
+#### 4.1 Reauthentication Succeeds
 
 - Create an OIDC configured client.
 - Set a fail point for `find` commands of the form:
@@ -153,7 +153,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 - Assert that the callback was called 2 times (once during the connection handshake, and again during reauthentication).
 - Close the client.
 
-\*\*4.2 Read Commands Fail If Reauthentication Fails
+#### 4.2 Read Commands Fail If Reauthentication Fails
 
 - Create a `MongoClient` whose OIDC callback returns one good token and then bad tokens after the first call.
 - Perform a `find` operation that succeeds.
@@ -201,6 +201,35 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 - Perform a `find` operation that fails.
 - Assert that the callback was called 2 times.
+- Close the client.
+
+#### 4.4 Speculative Authentication should be ignored on Reauthentication
+
+- Create an OIDC configured client.
+- Populate the *Client Cache* with a valid access token to enforce Speculative Authentication.
+- Perform an `insert` operation that succeeds.
+- Assert that the callback was not called.
+- Assert there were no `SaslStart` commands executed.
+- Set a fail point for `insert` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "insert"
+    ],
+    errorCode: 391 // ReauthenticationRequired
+  }
+}
+```
+
+- Perform an `insert` operation that succeeds.
+- Assert that the callback was called once.
+- Assert there were `SaslStart` commands executed.
 - Close the client.
 
 ## (5) Azure Tests
