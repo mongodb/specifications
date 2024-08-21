@@ -57,7 +57,8 @@
       "description": "client.clientBulkWrite succeeds after retryable handshake network error",
       "runOnRequirements": [
         {
-          "minServerVersion": "8.0"
+          "minServerVersion": "8.0",
+          "serverless": "forbid"
         }
       ],
       "operations": [
@@ -165,7 +166,8 @@
       "description": "client.clientBulkWrite succeeds after retryable handshake server error (ShutdownInProgress)",
       "runOnRequirements": [
         {
-          "minServerVersion": "8.0"
+          "minServerVersion": "8.0",
+          "serverless": "forbid"
         }
       ],
       "operations": [
