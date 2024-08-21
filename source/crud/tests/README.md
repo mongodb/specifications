@@ -276,7 +276,8 @@ Assert that a CommandStartedEvent was observed for the `getMore` command.
 Test that `MongoClient.bulkWrite` executed within a transaction properly iterates the results cursor when `getMore` is
 required.
 
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test must not be run against standalone servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test must not be run
+against standalone servers.
 
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
@@ -603,8 +604,8 @@ remainingBulkWriteBytes = maxMessageSizeBytes - 1122
 Test that `MongoClient.bulkWrite` returns an error if an operation provided exceeds `maxMessageSizeBytes` such that an
 empty `ops` payload would be sent.
 
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test may be skipped by drivers that are not able to construct
-arbitrarily large documents.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test may be skipped by
+drivers that are not able to construct arbitrarily large documents.
 
 Construct a `MongoClient` (referred to as `client`). Perform a `hello` command using `client` and record the
 `maxMessageSizeBytes` value contained in the response.
