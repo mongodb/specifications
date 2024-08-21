@@ -1,6 +1,6 @@
 {
   "description": "client bulkWrite delete options",
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.4",
   "runOnRequirements": [
     {
       "minServerVersion": "8.0",
