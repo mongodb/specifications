@@ -44,7 +44,7 @@ specification following the `Host Information`. This includes the `Auth database
 This option is used to limit the number of mongos connections that may be created for sharded topologies. This option
 limits the number of SRV records used to populate the seedlist during initial discovery, as well as the number of
 additional hosts that may be added during
-[SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst). This option
+[SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md). This option
 requires a non-negative integer and defaults to zero (i.e. no limit). This option MUST only be configurable at the level
 of a `MongoClient`.
 
