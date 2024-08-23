@@ -555,10 +555,10 @@ NOT throw a custom exception if multiple `$changeStream` stages are present (e.g
 in the pipeline supplied to the helper), as the server will return an error.
 
 The helper methods MUST determine a read concern for the operation in accordance with the
-[Read and Write Concern specification](https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code).
-The initial implementation of change streams on the server requires a 'majority' read concern or no read concern.
-Drivers MUST document this requirement. Drivers SHALL NOT throw an exception if any other read concern is specified, but
-instead should depend on the server to return an error.
+[Read and Write Concern specification](../read-write-concern/read-write-concern.md#via-code). The initial implementation
+of change streams on the server requires a 'majority' read concern or no read concern. Drivers MUST document this
+requirement. Drivers SHALL NOT throw an exception if any other read concern is specified, but instead should depend on
+the server to return an error.
 
 The stage has the following shape:
 

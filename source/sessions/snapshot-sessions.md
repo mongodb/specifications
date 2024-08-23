@@ -110,7 +110,7 @@ MUST raise an error.
 
 ## ReadConcern changes
 
-`snapshot` added to [ReadConcernLevel enumeration](../read-write-concern/read-write-concern.rst#read-concern).
+`snapshot` added to [ReadConcernLevel enumeration](../read-write-concern/read-write-concern.md#read-concern).
 
 ## Server Commands
 

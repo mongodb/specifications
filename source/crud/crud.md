@@ -1672,7 +1672,7 @@ Drivers MUST construct a `WriteConcernError` from a server reply as follows:
 - Set `message` to `writeConcernError.errmsg` if available.
 - Set `details` to `writeConcernError.errInfo` if available. Drivers MUST NOT parse inside `errInfo`.
 
-See [writeConcernError Examples](../read-write-concern/read-write-concern.rst#writeconcernerror-examples) in the
+See [writeConcernError Examples](../read-write-concern/read-write-concern.md#writeconcernerror-examples) in the
 Read/Write Concern spec for examples of how a server represents write concern errors in replies.
 
 ###### WriteError
@@ -2263,7 +2263,7 @@ Write concern is about indicating how writes are acknowledged. Since all operati
 in this specification are performed on a collection, it's uncommon that two different write operations on the same
 collection would use a different write concern, potentially causing mismatched and out-of-sync data. As such, the most
 natural place to indicate write concern is on the client, the database, or the collection itself and not the operations
-within it. See the [Read/Write Concern specification](../read-write-concern/read-write-concern.rst) for the API of
+within it. See the [Read/Write Concern specification](../read-write-concern/read-write-concern.md) for the API of
 constructing a read/write concern and associated API.
 
 However, it might be that a driver needs to expose write concern to a user per operation for various reasons. As noted
