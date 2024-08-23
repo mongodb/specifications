@@ -2199,7 +2199,6 @@ the [$readPreference global command argument](../message/OP_MSG.md#global-comman
 [passing read preference to mongos and load balancers](../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers)
 (if applicable).
 
-
 ### Explain
 
 Drivers MAY provide explain helpers.  If a driver does provide explain helpers, the driver MUST ensure that its helper permits users to
@@ -2214,8 +2213,6 @@ collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
   maxTimeMS: 1000
 }
 ```
-
-Drivers SHOULD be careful to 
 
 Drivers MUST document how users can specify options on their explain helpers.
 
@@ -2333,7 +2330,7 @@ deprecate it and drivers that have not built it should not do so.
 
 Q: Should drivers offer explain helpers?\
 Originally, it was determined that explain should not be exposed via specialized APIs in drivers (runCommand was always an option after server 3.0.).  However, some drivers historically have offered explain APIs and continue to do
-so.  
+so.
 
 Explain helpers are not required because it has been determined to be not a normal use-case for a driver. We'd like users to use the
 shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier.
