@@ -280,8 +280,10 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
-- 2024-08-20: Removed requirement for URI to have three '.' separated parts. Replace usage of 'TLD' with 'top-level
-  domain'. `{hostname}` now refers to the entire hostname, not just the `{subdomain}`.
+- 2024-08-20: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
+  matching requirements for security. SRVs with three or more parts should have stricter matching requirements in next
+  major version. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now refers to the entire
+  hostname, not just the `{subdomain}`.
 
 - 2024-03-06: Migrated from reStructuredText to Markdown.
 
