@@ -1299,7 +1299,7 @@ The structure of this object is as follows:
 This section defines the structure of common options that are referenced from various contexts in the test format.
 Comprehensive documentation for some of these types and their parameters may be found in the following specifications:
 
-- [Read and Write Concern](../read-write-concern/read-write-concern.rst).
+- [Read and Write Concern](../read-write-concern/read-write-concern.md).
 - [Server Selection: Read Preference](../server-selection/server-selection.md#read-preference).
 - [Server Discovery and Monitoring: TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#topologydescription).
 

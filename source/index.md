@@ -33,6 +33,7 @@
 - [ObjectID format](./objectid.md)
 - [Performance Benchmarking](benchmarking/benchmarking.md)
 - [Polling SRV Records for mongos Discovery](polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md)
+- [Read and Write Concern](read-write-concern/read-write-concern.md)
 - [Retryable Reads](retryable-reads/retryable-reads.md)
 - [Retryable Writes](retryable-writes/retryable-writes.md)
 - [SDAM Logging and Monitoring Specification](server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md)
