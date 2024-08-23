@@ -81,19 +81,29 @@ parse error and MUST NOT do DNS resolution or contact hosts.
 It is an error to specify more than one host name in a connection string with the `mongodb+srv` protocol, and the driver
 MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.
 
-Prior to DNS resolution. `{hostname}` format can follow any of the following formats:
-
-- `{subdomain}`.`{second-level domain}`.`{top-level domain}` (ex: `{blogs.mongodb.com}`)
-- `{second-level domain}`.`{top-level domain}` (ex: `{mongodb.localhost}`)
-- `{top-level domain}` (ex: `{localhost}`)
-
-For the purposes of this document, `{domainname}` refers to all parts of the hostname, excluding the `{subdomain}`.
-
 Node:
 
 If `mongodb+srv` is used, a driver MUST implicitly also enable TLS. Clients can turn this off by passing `tls=false` in
 either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), but not through a TXT record (discussed in a later section).
+
+#### Terminology
+
+For the purposes of this document, `{hostname}` will be divided using the following terminology.
+
+If an SRV `{hostname}` has:
+
+- 3 or more `.` separated parts:
+  - the left-most part is the `{subdomain}`
+  - the remaining portion is the `{domain}`
+  - examples:
+    - `{cluster_1.tests.mongodb.co.uk}`
+    - `{hosts_34.example.com}`
+- have 1 or 2 `.` separated part(s):
+  - the `{hostname}` is equivalent to the `{domain}`
+  - examples:
+    - `{localhost}`
+    - `{mongodb.local}`
 
 #### Querying DNS
 
@@ -108,9 +118,13 @@ If the DNS result returns no SRV records, or no records at all, or a DNS error h
 indicating that the URI could not be used to find hostnames. The error SHALL include the reason why they could not be
 found.
 
-A driver MUST verify that the host names returned through SRV records have the same parent `{domainname}`. Drivers MUST
-raise an error and MUST NOT initiate a connection to any returned host name which does not share the same
+A driver MUST verify that the host names returned through SRV records end with the original SRV's `{domainname}`.
+Drivers MUST raise an error and MUST NOT initiate a connection to any returned host name which does not share the same
 `{domainname}`.
+
+In the case that the SRV record has less than three `.` separated parts, the returned address MUST NOT be identical to
+the original `{hostname}`. The next major version should the host names returned through all SRVs require to end with
+the entire `{hostname}`.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 
@@ -175,7 +189,7 @@ _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27317 mongodb1.
 _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27017 mongodb2.mongodb.com.
 ```
 
-The returned host names (`mongodb1.mongodb.com` and `mongodb2.mongodb.com`) must share the same parent domain name
+The returned host names (`mongodb1.mongodb.com` and `mongodb2.mongodb.com`) must end with the same domain name
 (`mongodb.com`) as the provided host name (`server.mongodb.com`).
 
 The driver also needs to request the DNS server for the TXT records on `server.mongodb.com`. This could return:
