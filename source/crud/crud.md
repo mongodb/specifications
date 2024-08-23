@@ -2201,8 +2201,8 @@ the [$readPreference global command argument](../message/OP_MSG.md#global-comman
 
 ### Explain
 
-Drivers MAY provide explain helpers.  If a driver does provide explain helpers, the driver MUST ensure that its helper permits users to
-specify maxTimeMS for the explain command specifically.  An example, using Node, might look like:
+Drivers MAY provide explain helpers. If a driver does provide explain helpers, the driver MUST ensure that its helper
+permits users to specify maxTimeMS for the explain command specifically. An example, using Node, might look like:
 
 ```typescript
 collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
@@ -2329,13 +2329,14 @@ able to be used as this change is non-backwards breaking. Any driver which imple
 deprecate it and drivers that have not built it should not do so.
 
 Q: Should drivers offer explain helpers?\
-Originally, it was determined that explain should not be exposed via specialized APIs in drivers (runCommand was always an option after server 3.0.).  However, some drivers historically have offered explain APIs and continue to do
-so.
+Originally, it was determined that explain should not be exposed via
+specialized APIs in drivers (runCommand was always an option after server 3.0.). However, some drivers historically have
+offered explain APIs and continue to do so.
 
-Explain helpers are not required because it has been determined to be not a normal use-case for a driver. We'd like users to use the
-shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier.
-Aggregate can be run using a runCommand method passing the explain option. In addition, server 3.0 offers an explain
-command that can be run using a runCommand method.
+Explain helpers are not required because it has been determined to be not a normal use-case for a driver. We'd like
+users to use the shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as
+a modifier. Aggregate can be run using a runCommand method passing the explain option. In addition, server 3.0 offers an
+explain command that can be run using a runCommand method.
 
 Q: What about explain?
 

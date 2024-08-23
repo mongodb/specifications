@@ -684,7 +684,8 @@ Create a MongoClient with command monitoring enabled (referred to as `client`).
 
 Create a collection, referred to as `collection`, with the namespace `explain-test.collection`.
 
-Run an explained find on `collection`.  The find will have the query predicate `{ name: 'john doe' }`.  Specify
-a maxTimeMS value of 2000ms for the `explain`.
+Run an explained find on `collection`. The find will have the query predicate `{ name: 'john doe' }`. Specify a
+maxTimeMS value of 2000ms for the `explain`.
 
-Obtain the command started event for the explain.  Confirm that the top-level explain command should has a `maxTimeMS` value of `2000`.
+Obtain the command started event for the explain. Confirm that the top-level explain command should has a `maxTimeMS`
+value of `2000`.

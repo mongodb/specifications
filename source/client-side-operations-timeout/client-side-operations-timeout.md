@@ -430,8 +430,8 @@ See [runCommand behavior](#runcommand-behavior).
 
 ### Explain Helpers
 
-If a driver provides an explain helper, drivers MUST take care to ensure that timeoutMS is correctly applied to the top-level
-explain command, when specified.  Care should be taken by drivers with a fluent API - the following example
+If a driver provides an explain helper, drivers MUST take care to ensure that timeoutMS is correctly applied to the
+top-level explain command, when specified. Care should be taken by drivers with a fluent API - the following example
 should apply a timeoutMS of 1000 to the `explain` command:
 
 ```typescript
