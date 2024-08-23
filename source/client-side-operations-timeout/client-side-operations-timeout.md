@@ -428,6 +428,16 @@ check the command document for the presence of a `maxTimeMS` field.
 
 See [runCommand behavior](#runcommand-behavior).
 
+### Explain Helpers
+
+If a driver provides an explain helper, drivers MUST take care to ensure that timeoutMS is correctly applied to the top-level
+explain command, when specified.  Care should be taken by drivers with a fluent API - the following example
+should apply a timeoutMS of 1000 to the `explain` command:
+
+```typescript
+collection.find({}, { timeoutMS: 1000 }).explain();
+```
+
 ## Test Plan
 
 See the [README.rst](tests/README.md) in the tests directory.
@@ -651,6 +661,7 @@ timeout for each database operation. This would mimic using `timeoutMode=ITERATI
 
 ## Changelog
 
+- 2024-08-23: Specify that explain helpers support support timeoutMS.
 - 2023-12-07: Migrated from reStructuredText to Markdown.
 - 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.
 - 2022-10-05: Remove spec front matter.

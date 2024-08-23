@@ -2199,6 +2199,26 @@ the [$readPreference global command argument](../message/OP_MSG.md#global-comman
 [passing read preference to mongos and load balancers](../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers)
 (if applicable).
 
+
+### Explain
+
+Drivers MAY provide explain helpers.  If a driver does provide explain helpers, the driver MUST ensure that its helper permits users to
+specify maxTimeMS for the explain command specifically.  An example, using Node, might look like:
+
+```typescript
+collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
+
+// sends:
+{ 
+  explain: { find: <collection>, query: { name: 'john doe' } },
+  maxTimeMS: 1000
+}
+```
+
+Drivers SHOULD be careful to 
+
+Drivers MUST document how users can specify options on their explain helpers.
+
 ## Test Plan
 
 See the [README](tests/README.md) for tests.
@@ -2311,6 +2331,15 @@ api be consistent with the rest of the methods in the CRUD family of operations.
 able to be used as this change is non-backwards breaking. Any driver which implemented the fluent bulk API should
 deprecate it and drivers that have not built it should not do so.
 
+Q: Should drivers offer explain helpers?\
+Originally, it was determined that explain should not be exposed via specialized APIs in drivers (runCommand was always an option after server 3.0.).  However, some drivers historically have offered explain APIs and continue to do
+so.  
+
+Explain helpers are not required because it has been determined to be not a normal use-case for a driver. We'd like users to use the
+shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier.
+Aggregate can be run using a runCommand method passing the explain option. In addition, server 3.0 offers an explain
+command that can be run using a runCommand method.
+
 Q: What about explain?
 
 Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose.
@@ -2379,6 +2408,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-08-23: Specify that explain helpers support maxTimeMS.
 
 - 2024-02-20: Migrated from reStructuredText to Markdown.
 

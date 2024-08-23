@@ -677,3 +677,14 @@ InsertOne {
 
 Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned. Assert that
 `error` is a client error containing the message: "bulkWrite does not currently support automatic encryption".
+
+### 14. `explain` helpers allow users to specify `maxTimeMS`
+
+Create a MongoClient with command monitoring enabled (referred to as `client`).
+
+Create a collection, referred to as `collection`, with the namespace `explain-test.collection`.
+
+Run an explained find on `collection`.  The find will have the query predicate `{ name: 'john doe' }`.  Specify
+a maxTimeMS value of 2000ms for the `explain`.
+
+Obtain the command started event for the explain.  Confirm that the top-level explain command should has a `maxTimeMS` value of `2000`.
