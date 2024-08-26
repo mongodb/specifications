@@ -77,7 +77,7 @@ The serverMonitoringMode option configures which server monitoring protocol to u
 - With "poll" mode, the client MUST use the polling protocol.
 - With "auto" mode, the client MUST behave the same as "poll" mode when running on a FaaS platform or the same as
   "stream" mode otherwise. The client detects that it's running on a FaaS platform via the same rules for generating the
-  `client.env` handshake metadata field in the [MongoDB Handshake spec](../mongodb-handshake/handshake.rst#client-env).
+  `client.env` handshake metadata field in the [MongoDB Handshake spec](../mongodb-handshake/handshake.md#client-env).
 
 Multi-threaded or asynchronous drivers MUST implement this option. See
 [Why disable the streaming protocol on FaaS platforms like AWS Lambda?](#why-disable-the-streaming-protocol-on-faas-platforms-like-aws-lambda)
@@ -466,9 +466,9 @@ clients MUST cancel the hello or legacy hello check on that server and close the
 
 ### Polling Protocol
 
-The polling protocol is used to monitor MongoDB \< 4.4 servers or when \[streaming is disabled\](#streaming is
-disabled). The client [checks](#check) a server with a hello or legacy hello command and then sleeps for
-heartbeatFrequencyMS before running another check.
+The polling protocol is used to monitor MongoDB \< 4.4 servers or when streaming is disabled. The client
+[checks](#check) a server with a hello or legacy hello command and then sleeps for heartbeatFrequencyMS before running
+another check.
 
 ### Marking the connection pool as ready (CMAP only)
 
@@ -499,9 +499,8 @@ the client MUST follow these steps:
    [JAVA-1159](https://jira.mongodb.org/browse/JAVA-1159).)
 5. Otherwise, wait for heartbeatFrequencyMS (or minHeartbeatFrequencyMS if a check is requested) before restarting the
    monitoring protocol on a new connection.
-   - Note that even in the streaming protocol, a monitor in this state will wait for an application operation to
-     \[request an immediate check\](#request an immediate check) or for the heartbeatFrequencyMS timeout to expire
-     before beginning the next check.
+   - Note that even in the streaming protocol, a monitor in this state will wait for an application operation to request
+     an immediate check or for the heartbeatFrequencyMS timeout to expire before beginning the next check.
 
 See the pseudocode in the `Monitor thread` section.
 
@@ -874,7 +873,7 @@ above mentioned concerns.
 
 In the streaming protocol, clients use the hello or legacy hello command on a dedicated connection to measure a server's
 RTT. However, errors encountered when running the RTT command MUST NOT mark a server Unknown. We reached this decision
-because the dedicate RTT connection does not come from a connection pool and thus does not have a generation number
+because the dedicated RTT connection does not come from a connection pool and thus does not have a generation number
 associated with it. Without a generation number we cannot handle errors from the RTT command without introducing race
 conditions. Introducing such a generation number would add complexity to this design without much benefit. It is safe to
 ignore these errors because the Monitor will soon discover the server's state regardless (either through an updated

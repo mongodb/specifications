@@ -1,4 +1,4 @@
-# Driver Sessions Specification
+# Sessions Specification
 
 - Status: Accepted
 - Minimum Server Version: 3.6
@@ -417,7 +417,7 @@ There is a possible race condition that can happen between the time the driver c
 subsequently sends a command to the server:
 
 - The server might have supported sessions at the time the connection was first opened (and reported a value for
-  logicalSessionTimeoutMinutes in the initial response to the [handshake](../mongodb-handshake/handshake.rst)), but have
+  logicalSessionTimeoutMinutes in the initial response to the [handshake](../mongodb-handshake/handshake.md)), but have
   subsequently been downgraded to not support sessions. The server does not close the socket in this scenario, so the
   driver will conclude that the server at the other end of this connection supports sessions.
 
@@ -492,7 +492,7 @@ Drivers MUST document the behavior of unacknowledged writes for both explicit an
 ### When wrapping commands in a `$query` field
 
 If the driver is wrapping the command in a `$query` field for non-OP_MSG messages in order to pass a readPreference to a
-mongos (see [ReadPreference and Mongos](../find_getmore_killcursors_commands.rst#readpreference-and-mongos)), the driver
+mongos (see [ReadPreference and Mongos](../find_getmore_killcursors_commands.md#readpreference-and-mongos)), the driver
 SHOULD NOT add the `lsid` as a top-level field, and MUST add the `lsid` as a field of the `$query`
 
 ```typescript

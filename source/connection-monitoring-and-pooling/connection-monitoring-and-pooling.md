@@ -180,8 +180,7 @@ properties:
   [Connection](#connection-1) IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
   for each new Connection.
 - **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a
-  MongoDB Handshake and Authentication as specified in the
-  [Handshake](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst),
+  MongoDB Handshake and Authentication as specified in the [Handshake](../mongodb-handshake/handshake.md),
   [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
 - **Perishable**: it is possible for a [Connection](#connection-1) to become **Perished**. A [Connection](#connection-1)
   is considered perished if any of the following are true:

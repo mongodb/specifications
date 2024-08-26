@@ -22,6 +22,14 @@ repos:
       args: ["--severity=error"]
       stages: [manual]
 
+- repo: https://github.com/executablebooks/mdformat
+  rev: 0.7.17
+  hooks:
+    - id: mdformat
+      args: ["--wrap=120", "--number"]
+      additional_dependencies:
+        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-gfm-alerts]
+
 - repo: local
   hooks:
   - id: generate-index
@@ -33,14 +41,11 @@ repos:
     types: [markdown]
     entry: bash scripts/check_anchors/check-anchors.sh
     language: node
-    
-- repo: https://github.com/executablebooks/mdformat
-  rev: 0.7.17
-  hooks:
-    - id: mdformat
-      args: ["--wrap=120", "--number"]
-      additional_dependencies:
-        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-gfm-alerts]
+  - id: markdown-link-format-check
+    name: markdown-link-format-check
+    types: [markdown]
+    language: system
+    entry: python3 scripts/check_links.py
 
 - repo: https://github.com/tcort/markdown-link-check
   rev: v3.12.2

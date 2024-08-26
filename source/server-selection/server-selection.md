@@ -78,7 +78,7 @@ An OP_QUERY operation targeting the '$cmd' collection namespace.
 A driver connection mode that sends all database operations to a single server without regard for
 type.
 
-<span id="eligible"/>
+<span id="eligible"></span>
 
 **Eligible**\
 Describes candidate servers that also meet the criteria specified by the `tag_sets` and
@@ -331,6 +331,8 @@ The primary and all secondaries are candidates, but only eligible candidates are
 spec defines several other server types that could appear in a replica set. Such types are never candidates, eligible or
 suitable.
 
+<span id="algorithm-for-filtering-by-staleness"></span>
+
 ##### maxStalenessSeconds
 
 The maximum replication lag, in wall clock time, that a secondary can suffer and still be eligible.
@@ -392,6 +394,8 @@ After filtering servers according to `mode`, and before filtering with `tag_sets
   Servers with staleness less than or equal to `maxStalenessSeconds` are eligible.
 
 See the Max Staleness Spec for overall description and justification of this feature.
+
+<span id="algorithm-for-filtering-by-tag_sets"></span>
 
 ##### tag_sets
 
@@ -687,7 +691,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
     ["Server selection succeeded" message](#server-selection-succeeded-message). Do not go onto later steps.
 09. Request an immediate topology check, then block the server selection thread until the topology changes or until the
     server selection timeout has elapsed
-10. If server selection has timed out, raise a \[server selection error\](#server selection error) and log a
+10. If server selection has timed out, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message).
 11. Goto Step #2
 
@@ -711,7 +715,7 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
 04. If the topology is stale, proceed as follows:
     - record the target scan time as last scan time plus `minHeartBeatFrequencyMS`
     - if [serverSelectionTryOnce](#serverselectiontryonce) is false and the target scan time would exceed the maximum
-      time, raise a \[server selection error\](#server selection error) and log a
+      time, raise a [server selection error](#server-selection-errors) and log a
       ["Server selection failed" message](#server-selection-failed-message).
     - if the current time is less than the target scan time, sleep until the target scan time
     - do a blocking immediate topology check (which must also update the last scan time and mark the topology as no
@@ -728,11 +732,11 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
     ["Server selection succeeded" message](#server-selection-succeeded-message).; otherwise, mark the topology stale and
     continue to step #9.
 09. If [serverSelectionTryOnce](#serverselectiontryonce) is true and the last scan time is newer than the selection
-    start time, raise a \[server selection error\](#server selection error) and log a
+    start time, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message); otherwise, log a
     ["Waiting for suitable server to become available" message](#waiting-for-suitable-server-to-become-available-message)
     if one has not already been logged for this operation, and goto Step #4
-10. If the current time exceeds the maximum time, raise a \[server selection error\](#server selection error) and log a
+10. If the current time exceeds the maximum time, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message).
 11. Goto Step #4
 
@@ -801,8 +805,8 @@ If `mode` is 'secondary' or 'nearest':
 > 3. From the remaining servers, select servers matching the `tag_sets`.
 > 4. From these, select one server within the latency window.
 
-(See \[algorithm for filtering by staleness\](#algorithm for filtering by staleness), \[algorithm for filtering by
-tag_sets\](#algorithm for filtering by tag_sets), and
+(See [algorithm for filtering by staleness](#algorithm-for-filtering-by-staleness),
+[algorithm for filtering by tag_sets](#algorithm-for-filtering-by-tag_sets), and
 [filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window) for
 details on each step, and
 [why is maxStalenessSeconds applied before tag_sets?](#why-is-maxstalenessseconds-applied-before-tag_sets).)

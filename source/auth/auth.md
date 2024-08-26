@@ -1,4 +1,4 @@
-# Driver Authentication
+# Authentication
 
 - Status: Accepted
 - Minimum Server Version: 2.6
@@ -137,7 +137,7 @@ authentication conversations.
 Drivers MUST follow the following steps for an authentication handshake:
 
 1. Upon opening a general-use socket to a server for a given MongoClient, drivers MUST issue a
-   [MongoDB Handshake](../mongodb-handshake/handshake.rst) immediately. This allows a driver to determine the server
+   [MongoDB Handshake](../mongodb-handshake/handshake.md) immediately. This allows a driver to determine the server
    type. If the `hello` or legacy hello of the MongoDB Handshake fails with an error, drivers MUST treat this as an
    authentication error.
 2. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
@@ -1253,7 +1253,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
     performed after SRV record resolution, if applicable. This property is only required for drivers that support the
     [Human Authentication Flow](#human-authentication-flow).
 
-<div id="built-in-provider-integrations">
+<span id="built-in-provider-integrations"/>
 
 #### Built-in OIDC Environment Integrations
 
@@ -1787,7 +1787,8 @@ def speculative_auth(connection):
 
 If any operation fails with `ReauthenticationRequired` (error code 391) and MONGODB-OIDC is in use, the driver MUST
 reauthenticate the connection. Drivers MUST NOT resend a `hello` message during reauthentication, instead using SASL
-messages directly. See the main [reauthentication](#reauthentication-1) section for more information.
+messages directly. Drivers MUST NOT try to use Speculative Authentication during reauthentication. See the main
+[reauthentication](#reauthentication-1) section for more information.
 
 To reauthenticate a connection, invalidate the access token stored on the connection (i.e. the *Connection Cache*) from
 the *Client Cache*, fetch a new access token, and re-run the SASL conversation.
@@ -1930,8 +1931,7 @@ As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 
 ### Speculative Authentication
 
-See the speculative authentication section in the
-[MongoDB Handshake spec](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst).
+See the speculative authentication section in the [MongoDB Handshake spec](../mongodb-handshake/handshake.md).
 
 ### Minimum iteration count
 
@@ -2041,6 +2041,8 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-08-19: Clarify Reauthentication and Speculative Authentication combination behavior.
 
 - 2024-05-29: Disallow comma character when `TOKEN_RESOURCE` is given in a connection string.
 

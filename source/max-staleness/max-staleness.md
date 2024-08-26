@@ -469,6 +469,8 @@ client-side setting.
 
 ## Changelog
 
+- 2024-08-09: Updated wire versions in tests to 4.0+.
+
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 
 - 2022-10-05: Remove spec front matter and revise changelog.

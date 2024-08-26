@@ -217,10 +217,9 @@ parsing JSON numbers:
 
 #### Special rules for parsing `$uuid` fields
 
-As per the [UUID specification](https://github.com/mongodb/specifications/blob/master/source/uuid.rst), Binary subtype 3
-or 4 are used to represent UUIDs in BSON. Consequently, UUIDs are handled as per the convention described for the
-`Binary` type in the [Conversion table](#conversion-table), e.g. the following document written with the MongoDB Python
-Driver:
+As per the [UUID specification](uuid.md), Binary subtype 3 or 4 are used to represent UUIDs in BSON. Consequently, UUIDs
+are handled as per the convention described for the `Binary` type in the [Conversion table](#conversion-table), e.g. the
+following document written with the MongoDB Python Driver:
 
 ```javascript
 {"Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
@@ -239,8 +238,7 @@ is transformed into the following (newlines and spaces added for readability):
 
 > [!NOTE]
 > The above described type conversion assumes that UUID representation is set to `STANDARD`. See the
-> [UUID specification](https://github.com/mongodb/specifications/blob/master/source/uuid.rst) for more information about
-> UUID representations.
+> [UUID specification](uuid.md) for more information about UUID representations.
 
 While this transformation preserves BSON subtype information (since UUIDs can be represented as BSON subtype 3 *or* 4),
 base64-encoding is not the standard way of representing UUIDs and using it makes comparing these values against textual
@@ -275,7 +273,7 @@ JSON format. If generators provide a default format, the default SHOULD be the R
 
 A generator MAY be capable of exporting strings that adhere to other formats, such as Legacy Extended JSON formats.
 
-A generator SHOULD support at least 100 \[levels of nesting\](#levels of nesting) in a BSON document.
+A generator SHOULD support at least 100 levels of nesting in a BSON document.
 
 #### Transforming BSON
 
@@ -509,7 +507,7 @@ The two formats in this specification address these two categories of use cases.
 Parsers need to accept any valid Extended JSON string that a generator can produce. Parsers and generators are permitted
 to accept and output strings in other formats as well for backwards compatibility.
 
-<div id="levels of nesting">
+<span id="levels of nesting"></span>
 
 Acceptable nesting depth has implications for resource usage so unlimited nesting is not permitted.
 

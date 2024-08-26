@@ -22,17 +22,15 @@ mistakes when they take advantage of a design that has been well-considered, rev
 
 The server discovery and monitoring method is specified in four sections. First, a client is
 [configured](#configuration). Second, it begins [monitoring](#monitoring) by calling
-[hello or legacy hello](../mongodb-handshake/handshake.rst#terms) on all servers. (Multi-threaded and asynchronous
+[hello or legacy hello](../mongodb-handshake/handshake.md#terms) on all servers. (Multi-threaded and asynchronous
 monitoring is described first, then single-threaded monitoring.) Third, as hello or legacy hello responses are received
-the client [parses them](#parsing-a-hello-or-legacy-hello-response), and fourth, it \[updates its view of the
-topology\](#updates its view of the topology).
+the client [parses them](#parsing-a-hello-or-legacy-hello-response), and fourth, it updates its view of the topology.
 
-Finally, this spec describes how \[drivers update their topology view in response to errors\](#drivers update their
-topology view in response to errors), and includes generous implementation notes for driver authors.
+Finally, this spec describes how drivers update their topology view in response to errors, and includes generous
+implementation notes for driver authors.
 
 This spec does not describe how a client chooses a server for an operation; that is the domain of the Server Selection
-Spec. But there is a section describing the \[interaction between monitoring and server selection\](#interaction between
-monitoring and server selection).
+Spec. But there is a section describing the interaction between monitoring and server selection.
 
 There is no discussion of driver architecture and data structures, nor is there any specification of a user-facing API.
 This spec is only concerned with the algorithm for monitoring the server topology.
@@ -206,7 +204,7 @@ Fields:
   increase, as electionId takes precedence in ordering Default null. Part of the (`electionId`, `setVersion`) tuple.
 - servers: a set of ServerDescription instances. Default contains one server: "localhost:27017", ServerType Unknown.
 - stale: a boolean for single-threaded clients, whether the topology must be re-scanned. (Not related to
-  maxStalenessSeconds, nor to \[stale primaries\](#stale primaries).)
+  maxStalenessSeconds, nor to stale primaries.)
 - compatible: a boolean. False if any server's wire protocol version range is incompatible with the client's. Default
   true.
 - compatibilityError: a string. The error message if "compatible" is false, otherwise null.
@@ -234,13 +232,13 @@ Fields:
   least until
   [drivers allow applications to use readConcern "afterOptime".](../max-staleness/max-staleness.md#future-feature-to-support-readconcern-afteroptime))
 - (=) type: a [ServerType](#servertype) enum value. Default Unknown.
-- (=) minWireVersion, maxWireVersion: the wire protocol version range supported by the server. Both default to 0. \[Use
-  min and maxWireVersion only to determine compatibility\](#use min and maxWireVersion only to determine compatibility).
+- (=) minWireVersion, maxWireVersion: the wire protocol version range supported by the server. Both default to 0.
+  [Use min and maxWireVersion only to determine compatibility](#checking-wire-protocol-compatibility).
 - (=) me: The hostname or IP, and the port number, that this server was configured with in the replica set. Default
   null.
 - (=) hosts, passives, arbiters: Sets of addresses. This server's opinion of the replica set's members, if any. These
-  [hostnames are normalized to lower-case](#hostnames-are-normalized-to-lower-case). Default empty. The client
-  \[monitors all three types of servers\](#monitors all three types of servers) in a replica set.
+  [hostnames are normalized to lower-case](#hostnames-are-normalized-to-lower-case). Default empty. The client monitors
+  all three types of servers in a replica set.
 - (=) tags: map from string to string. Default empty.
 - (=) setName: string or null. Default null.
 - (=) electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that believes it is primary. See
@@ -574,6 +572,8 @@ ServerDescription in TopologyDescription.servers.
 Whenever the client checks a server (successfully or not), and regardless of whether the new server description is equal
 to the previous server description as defined in [Server Description Equality](#server-description-equality), the
 ServerDescription in TopologyDescription.servers MUST be replaced with the new ServerDescription.
+
+<span id="checking-wire-protocol-compatibility"></span>
 
 ##### Checking wire protocol compatibility
 
@@ -960,9 +960,9 @@ See error handling in the [Server Monitoring spec](server-monitoring.rst).
 
 #### Application errors
 
-When processing a network or command error, clients MUST first check the error's \[generation number\](#generation
-number). If the error's generation number is equal to the pool's generation number then error handling MUST continue
-according to [Network error when reading or writing](#network-error-when-reading-or-writing) or
+When processing a network or command error, clients MUST first check the error's generation number. If the error's
+generation number is equal to the pool's generation number then error handling MUST continue according to
+[Network error when reading or writing](#network-error-when-reading-or-writing) or
 ["not writable primary" and "node is recovering"](#not-writable-primary-and-node-is-recovering). Otherwise, the error is
 considered stale and the client MUST NOT update any topology state. (See
 [Why ignore errors based on CMAP's generation number?](#why-ignore-errors-based-on-cmaps-generation-number))
@@ -1275,9 +1275,9 @@ Better to call hello or legacy hello for each new socket, as required by the [Au
 hello or legacy hello response associated with that socket for maxWireVersion, maxBsonObjectSize, etc.: all the fields
 required to correctly communicate with the server.
 
-The hello or legacy hello responses received by monitors determine if the topology as a whole \[is compatible\](#is
-compatible) with the driver, and which servers are suitable for selection. The monitors' responses should not be used to
-determine how to format wire protocol messages to the servers.
+The hello or legacy hello responses received by monitors determine if the topology as a whole is compatible with the
+driver, and which servers are suitable for selection. The monitors' responses should not be used to determine how to
+format wire protocol messages to the servers.
 
 ##### Immutable data
 
@@ -1667,8 +1667,8 @@ shard.
 
 ### Why ignore errors based on CMAP's generation number?
 
-Using CMAP's \[generation number\](#generation number) solves the following race condition among application threads and
-the monitor during error handling:
+Using CMAP's generation number solves the following race condition among application threads and the monitor during
+error handling:
 
 1. Two concurrent writes begin on application threads A and B.
 2. The server restarts.
@@ -1711,7 +1711,7 @@ after its check would happen after the pool was cleared and thus avoid putting i
 ### What is the purpose of topologyVersion?
 
 [topologyVersion](#topologyversion) solves the following race condition among application threads and the monitor when
-handling \[State Change Errors\](#State Change Errors):
+handling State Change Errors:
 
 1. Two concurrent writes begin on application threads A and B.
 2. The primary steps down.
@@ -1887,6 +1887,10 @@ Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6 contr
 oversaw the specification process.
 
 ## Changelog
+
+- 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
+
+- 2024-08-09: Updated wire versions in tests to 4.0+.
 
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 

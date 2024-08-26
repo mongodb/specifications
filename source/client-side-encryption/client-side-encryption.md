@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-- Version: 1.13.0
+- Version: 1.14.0
 
 ______________________________________________________________________
 
@@ -292,11 +292,11 @@ Drivers MAY deviate the spelling of option names to conform to their language's 
 in an idiomatic way (e.g. keyword arguments, builder classes, etc.).
 
 Drivers MAY use a native UUID type in place of a parameter or return type specified as a BSON binary with subtype 0x04
-as described in [Handling of Native UUID Types](../uuid.rst).
+as described in [Handling of Native UUID Types](../uuid.md).
 
 ### MongoClient Changes
 
-<span id="MongoClient" />
+<span id="MongoClient"></span>
 
 ```typescript
 class MongoClient {
@@ -315,7 +315,7 @@ class MongoClient {
 }
 ```
 
-<span id="AutoEncryptionOpts" />
+<span id="AutoEncryptionOpts"></span>
 
 ```typescript
 class AutoEncryptionOpts {
@@ -423,12 +423,8 @@ Drivers MUST document that an additional `MongoClient` may be created, using the
 See
 [What's the deal with metadataClient, keyVaultClient, and the internal client?](#whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client)
 
-<span id="GCPKMSOptions" />
-<span id="AWSKMSOptions" />
-<span id="KMSProvider" />
-<span id="KMSProviders" />
-<span id="AzureAccessToken" />
-<span id="kmsproviders" />
+<span id="GCPKMSOptions"></span> <span id="AWSKMSOptions"></span> <span id="KMSProvider"></span>
+<span id="KMSProviders"></span> <span id="AzureAccessToken"></span> <span id="kmsproviders"></span>
 
 #### kmsProviders
 
@@ -570,7 +566,7 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
          $t_0 + d\_{exp}$.
 6. Return $P$ as the additional KMS providers to [libmongocrypt](#libmongocrypt).
 
-<span id="obtaining-gcp-credentials" />
+<span id="obtaining-gcp-credentials"></span>
 
 ##### Obtaining GCP Credentials
 
@@ -681,11 +677,10 @@ Drivers MUST NOT raise an error if `tlsDisableOCSPEndpointCheck` is set. Setting
 prevent operation errors when OCSP responders are unresponsive.
 
 See the OCSP specification for a description of the default values of
-[tlsDisableOCSPEndpointCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisableocspendpointcheck)
-and
-[tlsDisableCertificateRevocationCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisablecertificaterevocationcheck)
-Drivers MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck`
-for KMS TLS connections.
+[tlsDisableOCSPEndpointCheck](../ocsp-support/ocsp-support.md#tlsdisableocspendpointcheck) and
+[tlsDisableCertificateRevocationCheck](../ocsp-support/ocsp-support.md#tlsdisablecertificaterevocationcheck) Drivers
+MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck` for KMS
+TLS connections.
 
 See [Why do KMS providers require TLS options?](#why-do-kms-providers-require-tls-options)
 
@@ -744,7 +739,7 @@ Drivers MUST implement extraOptions in a way that allows deprecating/removing op
 break, such as with a BSON document or map type instead of a struct type with fixed fields. See
 [Why are extraOptions and kmsProviders maps?](#why-are-extraoptions-and-kmsproviders-maps).
 
-<span id="extraoptions.cryptsharedlibpath" />
+<span id="extraoptions.cryptsharedlibpath"></span>
 
 ##### `extraOptions.cryptSharedLibPath`
 
@@ -757,7 +752,7 @@ Allow the user to specify an absolute path to a [crypt_shared](#crypt_shared) dy
 - [Path Resolution Behavior](#path-resolution-behavior)
 - [Enabling crypt_shared](#enabling-crypt_shared)
 
-<span id="extraoptions.cryptsharedlibrequired" />
+<span id="extraoptions.cryptsharedlibrequired"></span>
 
 ##### `extraOptions.cryptSharedLibRequired`
 
@@ -770,8 +765,7 @@ If, after initializing a `libmongocrypt_handle`, [crypt_shared](#crypt_shared) i
 [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) is `true`, the driver MUST consider the
 `libmongocrypt_handle` to be invalid and return an error to the user. Refer:
 
-<span id="managing-mongocryptd" />
-<span id="detecting-crypt_shared-availability" />
+<span id="managing-mongocryptd"></span> <span id="detecting-crypt_shared-availability"></span>
 
 #### encryptedFieldsMap
 
@@ -802,7 +796,7 @@ See [Why is bypassQueryAnalysis needed?](#why-is-bypassqueryanalysis-needed).
 
 A collection supporting Queryable Encryption requires an index and three additional collections.
 
-<span id="GetEncryptedFields" />
+<span id="GetEncryptedFields"></span>
 
 #### Collection `encryptedFields` Lookup (GetEncryptedFields)
 
@@ -983,7 +977,6 @@ class ClientEncryption {
    //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
    // $gt may also be $gte. $lt may also be $lte.
    // Only supported when queryType is "range" and algorithm is "Range".
-   // NOTE: The "range" queryType and "Range" algorithm are currently unstable API and subject to backwards breaking changes.
    encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
    // Decrypts an encrypted value (BSON binary of subtype 6).
@@ -996,9 +989,9 @@ class ClientEncryption {
 }
 ```
 
-<span id="ClientEncryptionOpts" />
+<span id="ClientEncryptionOpts"></span>
 
-<span id="KMSProvidersTLSOptions" />
+<span id="KMSProvidersTLSOptions"></span>
 
 ```typescript
 interface ClientEncryptionOpts {
@@ -1168,18 +1161,19 @@ class EncryptOpts {
    rangeOpts: Optional<RangeOpts>
 }
 
-// NOTE: RangeOpts is currently unstable API and subject to backwards breaking changes.
 // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
 // min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
 class RangeOpts {
-   // min is required if precision is set.
+   // min is the minimum value for the encrypted index. Required if precision is set.
    min: Optional<BSONValue>,
-   // max is required if precision is set.
+   // max is the maximum value for the encrypted index. Required if precision is set.
    max: Optional<BSONValue>,
-   trimFactor: Int32,
-   sparsity: Int64,
-   // precision may only be set for double or decimal128.
+   // trimFactor may be used to tune performance. When omitted, a default value is used.
+   trimFactor: Optional<Int32>,
+   // sparsity may be used to tune performance. When omitted, a default value is used.
+   sparsity: Optional<Int64>,
+   // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
    precision: Optional<Int32>
 }
 ```
@@ -1203,7 +1197,7 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
-- "Range" (unstable)
+- "Range"
 
 The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
 query. Drivers MUST document the following behavior:
@@ -1212,13 +1206,10 @@ query. Drivers MUST document the following behavior:
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
-> [!NOTE]
-> The "Range" algorithm is currently unstable API and subject to backwards breaking changes.
-
 #### contentionFactor
 
-contentionFactor only applies when algorithm is "Indexed" or "Range". It is an error to set contentionFactor when
-algorithm is not "Indexed" or "Range".
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". libmongocrypt
+returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
 
@@ -1227,18 +1218,13 @@ One of the strings:
 - "equality"
 - "range"
 
-queryType only applies when algorithm is "Indexed" or "Range". It is an error to set queryType when algorithm is not
-"Indexed" or "Range".
-
-> [!NOTE]
-> The "range" queryType is currently unstable API and subject to backwards breaking changes.
+queryType only applies when algorithm is "Indexed" or "Range". libmongocrypt returns an error if queryType is set for a
+non-applicable queryType.
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "range". It is an error to set rangeOpts when algorithm is not "range".
-
-> [!NOTE]
-> rangeOpts is currently unstable API and subject to backwards breaking changes.
+rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
+non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
 
@@ -1361,7 +1347,7 @@ Drivers MUST propagate errors from libmongocrypt in whatever way is idiomatic to
 etc.). These errors MUST be distinguished in some way (e.g. exception type) to make it easier for users to distinguish
 when a command fails due to client side encryption.
 
-<span id="enabling-crypt_shared" />
+<span id="enabling-crypt_shared"></span>
 
 ## Enabling Command Marking with the `crypt_shared` Library
 
@@ -1381,8 +1367,7 @@ facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
 > The driver MUST NOT manipulate or do any validation on the [crypt_shared](#crypt_shared) path options provided in
 > [extraOptions](#extraoptions). They should be passed through to [libmongocrypt](#libmongocrypt) unchanged.
 
-<span id="search-path" />
-<span id="search-paths" />
+<span id="search-path"></span> <span id="search-paths"></span>
 
 ### Setting Search Paths
 
@@ -1401,7 +1386,7 @@ execution from the ambient state of the host system.
 Refer to: [Path Resolution Behavior](#path-resolution-behavior) and
 [Search Paths for Testing](#search-paths-for-testing)
 
-<span id="override-path" />
+<span id="override-path"></span>
 
 ### Overriding the `crypt_shared` Library Path
 
@@ -1475,7 +1460,7 @@ successfully loaded by asking [libmongocrypt](#libmongocrypt) for the [crypt_sha
 the result is an empty string, [libmongocrypt](#libmongocrypt) did not load [crypt_shared](#crypt_shared) and the driver
 must rely on [mongocryptd](#mongocryptd) to mark command documents for encryption.
 
-<span id="disabling-crypt_shared" />
+<span id="disabling-crypt_shared"></span>
 
 ### "Disabling" `crypt_shared`
 
@@ -2385,6 +2370,10 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-07-29: Document range as stable.
+
+- 2024-07-22: Make `trimFactor` and `sparsity` optional.
 
 - 2024-06-13: Document range as unstable.
 
