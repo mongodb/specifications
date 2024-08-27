@@ -14,7 +14,7 @@ The _"drivers onion"_ is meant to represent how various concepts, components and
 
 At their lowest level all MongoDB drivers will need to know how to work with [BSON](https://bsonspec.org/). BSON (short for "Binary JSON") is a bin­ary-en­coded serialization of [JSON](https://www.json.org/json-en.html)-like documents, and like JSON, it sup­ports the nesting of arrays and documents. BSON also contains extensions that al­low representation of data types that are not part of the [JSON spec](https://datatracker.ietf.org/doc/html/rfc7159).
 
-> **Specifications:** [BSON](https://bsonspec.org/spec.html), [ObjectId](objectid.rst), [Decimal128](bson-decimal128/decimal128.md), [UUID](uuid.rst), [DBRef](dbref.md), [Extended JSON](extended-json.rst)
+> **Specifications:** [BSON](https://bsonspec.org/spec.html), [ObjectId](objectid.md), [Decimal128](bson-decimal128/decimal128.md), [UUID](uuid.md), [DBRef](dbref.md), [Extended JSON](extended-json.md)
 
 ### Communication
 
@@ -22,7 +22,7 @@ Once BSON documents can be created and manipulated, the foundation for interacti
 
 From the provided connection string and options a socket connection is established to a host, which an initial handshake verifies is in fact a valid MongoDB connection by sending a simple [`hello`](https://www.mongodb.com/docs/manual/reference/command/hello/). Based on the response to this first command a driver can continue to establish and authenticate connections.
 
-> **Specifications:** [`OP_MSG`](message/OP_MSG.md), [Command Execution](run-command/run-command.rst), [Connection String](connection-string/connection-string-spec.md), [URI Options](uri-options/uri-options.md), [OCSP](ocsp-support/ocsp-support.rst), [Initial Handshake](mongodb-handshake/handshake.rst), [Wire Compression](compression/OP_COMPRESSED.md), [SOCKS5](socks5-support/socks5.rst), [Initial DNS Seedlist Discovery](initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md)
+> **Specifications:** [`OP_MSG`](message/OP_MSG.md), [Command Execution](run-command/run-command.md), [Connection String](connection-string/connection-string-spec.md), [URI Options](uri-options/uri-options.md), [OCSP](ocsp-support/ocsp-support.md), [Initial Handshake](mongodb-handshake/handshake.md), [Wire Compression](compression/OP_COMPRESSED.md), [SOCKS5](socks5-support/socks5.md), [Initial DNS Seedlist Discovery](initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md)
 
 ### Connectivity
 
@@ -40,7 +40,7 @@ Establishing and monitoring connections to MongoDB ensures they’re available, 
 
 All client operations will be serialized as BSON and sent to MongoDB over a connection that will first be checked out of a connection pool. Various monitoring processes exist to ensure a driver’s internal state machine contains an accurate view of the cluster’s topology so that read and write requests can always be appropriately routed according to MongoDB’s [server selection algorithm](https://www.mongodb.com/docs/manual/core/read-preference-mechanics/).
 
-> **Specifications:** [Server Monitoring](server-discovery-and-monitoring/server-monitoring.md), [`SRV` Polling for mongos Discovery](polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst), [Server Selection](server-selection/server-selection.md), [Max Staleness](max-staleness/max-staleness.md)
+> **Specifications:** [Server Monitoring](server-discovery-and-monitoring/server-monitoring.md), [`SRV` Polling for mongos Discovery](polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md), [Server Selection](server-selection/server-selection.md), [Max Staleness](max-staleness/max-staleness.md)
 
 ### Resilience
 
@@ -48,7 +48,7 @@ At their core, database drivers are client libraries meant to facilitate interac
 
 To further enhance the developer experience while working with MongoDB, various resilience features can be added based on [logical sessions](https://www.mongodb.com/docs/manual/reference/server-sessions/) such as [retryable writes](https://www.mongodb.com/docs/manual/core/retryable-writes), [causal consistency](https://www.mongodb.com/docs/manual/core/read-isolation-consistency-recency/#std-label-causal-consistency), and [transactions](https://www.mongodb.com/docs/manual/core/transactions/).
 
-> **Specifications:** Retryability ([Reads](retryable-reads/retryable-reads.md), [Writes](retryable-writes/retryable-writes.md)), [CSOT](client-side-operations-timeout/client-side-operations-timeout.md), Consistency ([Sessions](sessions/driver-sessions.md), [Causal Consistency](causal-consistency/causal-consistency.md), [Snapshot Reads](sessions/snapshot-sessions.md), [Transactions](transactions/transactions.md), [Convenient Transactions API](transactions-convenient-api/transactions-convenient-api.rst))
+> **Specifications:** Retryability ([Reads](retryable-reads/retryable-reads.md), [Writes](retryable-writes/retryable-writes.md)), [CSOT](client-side-operations-timeout/client-side-operations-timeout.md), Consistency ([Sessions](sessions/driver-sessions.md), [Causal Consistency](causal-consistency/causal-consistency.md), [Snapshot Reads](sessions/snapshot-sessions.md), [Transactions](transactions/transactions.md), [Convenient Transactions API](transactions-convenient-api/transactions-convenient-api.md))
 
 ### Programmability
 
@@ -73,7 +73,7 @@ To provide a cleaner and clearer developer experience, many specifications exist
 
 Advanced security features such as [client-side field level encryption](https://www.mongodb.com/docs/manual/core/csfle/) are also defined at this layer.
 
-> **Specifications:** Resource Management ([Databases](enumerate-databases.rst), [Collections](enumerate-collections.rst), [Indexes](index-management/index-management.md)), Data Management ([CRUD](crud/crud.md), [Collation](collation/collation.md), [Write Commands](server_write_commands.rst), [Bulk API](driver-bulk-update.rst), [Bulk Write](crud/bulk-write.md), [R/W Concern](read-write-concern/read-write-concern.rst)), Cursors ([Change Streams](change-streams/change-streams.md), [`find`/`getMore`/`killCursors`](find_getmore_killcursors_commands.rst)), [GridFS](gridfs/gridfs-spec.md), [Stable API](versioned-api/versioned-api.rst), Security ([Client Side Encryption](client-side-encryption/client-side-encryption.md), [BSON Binary Subtype 6](client-side-encryption/subtype6.md))
+> **Specifications:** Resource Management ([Databases](enumerate-databases.md), [Collections](enumerate-collections.md), [Indexes](index-management/index-management.md)), Data Management ([CRUD](crud/crud.md), [Collation](collation/collation.md), [Write Commands](server_write_commands.md), [Bulk API](driver-bulk-update.md), [Bulk Write](crud/bulk-write.md), [R/W Concern](read-write-concern/read-write-concern.md)), Cursors ([Change Streams](change-streams/change-streams.md), [`find`/`getMore`/`killCursors`](find_getmore_killcursors_commands.md)), [GridFS](gridfs/gridfs-spec.md), [Stable API](versioned-api/versioned-api.md), Security ([Client Side Encryption](client-side-encryption/client-side-encryption.md), [BSON Binary Subtype 6](client-side-encryption/subtype6.md))
 
 ### Observability
 
@@ -107,7 +107,7 @@ Given the example above (using the [Node.js driver](https://www.mongodb.com/docs
 
 The preferred method of observing internal behavior would be through [standardized logging](logging/logging.md) once it is available in all drivers ([DRIVERS-1204](https://jira.mongodb.org/browse/DRIVERS-1204)), however until that time only event logging is consistently available. In the future additional observability tooling such as [Open Telemetry](https://opentelemetry.io/) support may also be introduced.
 
-> **Specifications:** [Command Logging and Monitoring](command-logging-and-monitoring/command-logging-and-monitoring.rst), [SDAM Logging and Monitoring](server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md), [Standardized Logging](logging/logging.md), [Connection Pool Logging](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-logging)
+> **Specifications:** [Command Logging and Monitoring](command-logging-and-monitoring/command-logging-and-monitoring.md), [SDAM Logging and Monitoring](server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md), [Standardized Logging](logging/logging.md), [Connection Pool Logging](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-logging)
 
 ### Testability
 
@@ -115,7 +115,7 @@ Ensuring existing as well as net-new drivers can be effectively tested for corre
 
 Though the unified test format greatly simplifies language-specific implementations, not all tests can be represented in this fashion. In those cases the specifications may describe tests to be manually implemented as prose. By limiting the number of prose tests that each driver must implement, engineers can deliver functionality with greater confidence while also minimizing the burden of upstream verification.
 
-> **Specifications:** [Unified Test Format](unified-test-format/unified-test-format.md), [Atlas Data Federation Testing](https://github.com/mongodb/specifications/tree/master/atlas-data-lake-testing/tests), [Performance Benchmarking](benchmarking/benchmarking.md), [BSON Corpus](bson-corpus/bson-corpus.md), [Replication Event Resilience](https://github.com/mongodb/specifications/tree/master/connections-survive-step-down/tests), [FAAS Automated Testing](faas-automated-testing/faas-automated-testing.md), [Atlas Serverless Testing](serverless-testing/README.rst)
+> **Specifications:** [Unified Test Format](unified-test-format/unified-test-format.md), [Atlas Data Federation Testing](https://github.com/mongodb/specifications/tree/master/atlas-data-lake-testing/tests), [Performance Benchmarking](benchmarking/benchmarking.md), [BSON Corpus](bson-corpus/bson-corpus.md), [Replication Event Resilience](https://github.com/mongodb/specifications/tree/master/connections-survive-step-down/tests), [FAAS Automated Testing](faas-automated-testing/faas-automated-testing.md), [Atlas Serverless Testing](serverless-testing/README.md)
 
 ## Conclusion
 
