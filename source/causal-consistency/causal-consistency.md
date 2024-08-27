@@ -237,8 +237,7 @@ For causal consistency the driver MUST send the `operationTime` saved in the `Cl
 ```
 
 For the lists of commands that support causally consistent reads, see
-[ReadConcern](https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#read-concern/)
-spec.
+[ReadConcern](../read-write-concern/read-write-concern.md#read-concern/) spec.
 
 The driver MUST merge the `ReadConcern` specified for the operation with the `operationTime` from the `ClientSession`
 (which goes in the `afterClusterTime` field) to generate the combined `readConcern` to send to the server. If the level
