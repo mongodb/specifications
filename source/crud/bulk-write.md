@@ -781,6 +781,10 @@ the initial implementation and testing of the new bulk write API, but may be rev
 
 ## Q&A
 
+### Is `bulkWrite` supported on Atlas Serverless?
+
+No. See [CLOUDP-256344](https://jira.mongodb.org/browse/CLOUDP-256344)
+
 ### Why are we adding a new bulk write API rather than updating the `MongoCollection.bulkWrite` implementation?
 
 The new `bulkWrite` command is only available in MongoDB 8.0+, so it cannot function as a drop-in replacement for the
