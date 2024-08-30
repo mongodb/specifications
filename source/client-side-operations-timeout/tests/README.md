@@ -600,7 +600,7 @@ Tests in this section MUST only run against replica sets and sharded clusters wi
 
 ### 11. Multi-batch bulkWrites
 
-This test MUST only run against server versions 8.0+.
+This test MUST only run against server versions 8.0+. This test must be skipped on Atlas Serverless.
 
 1. Using `internalClient`, drop the `db.coll` collection.
 
