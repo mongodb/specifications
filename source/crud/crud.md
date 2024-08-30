@@ -1048,7 +1048,6 @@ class UpdateOptions {
    */
   upsert: Optional<Boolean>;
 
-
   /**
    * Map of parameter names and values. Values must be constant or closed
    * expressions that do not reference document fields. Parameters can then be
@@ -1070,6 +1069,18 @@ class UpdateOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+
+  /**
+   * Specify which document the operation updates if the query matches multiple
+   * documents. The first document matched by the sort order will be updated.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 8.0. Older servers will report an error for using this option.
+   * The driver MUST raise an error if the caller explicitly provides a value with updateMany().
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  sort: Optional<Document>;
 }
 
 class ReplaceOptions {
@@ -1379,6 +1390,17 @@ class UpdateOneModel implements WriteModel {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   hint: Optional<(String | Document)>;
+
+  /**
+   * Specify which document the operation updates if the query matches multiple
+   * documents. The first document matched by the sort order will be updated.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 8.0. Older servers will report an error for using this option.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  sort: Optional<Document>;
 
   /**
    * When true, creates a new document if no document matches the query.
@@ -2368,6 +2390,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-08-30: Add sort option to `updateOne`.
 
 - 2024-02-20: Migrated from reStructuredText to Markdown.
 
