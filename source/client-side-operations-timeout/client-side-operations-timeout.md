@@ -13,8 +13,8 @@ but not limited to server selection, connection checkout, and server-side execut
 
 ## META
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and
-“OPTIONAL” in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## Specification
 
@@ -46,7 +46,7 @@ follow the semantics for special values defined by those types. Such drivers MUS
 explicitly set `timeoutMS` to `infinite` in the API.
 
 See
-[timeoutMS cannot be changed to unset once it’s specified](#timeoutms-cannot-be-changed-to-unset-once-its-specified).
+[timeoutMS cannot be changed to unset once it's specified](#timeoutms-cannot-be-changed-to-unset-once-its-specified).
 
 #### Backwards Breaking Considerations
 
@@ -87,14 +87,14 @@ progresses.
 
 The `timeoutMS` option applies to all operations defined in the following specifications:
 
-- [CRUD](./../crud/crud.rst)
-- [Change Streams](../change-streams/change-streams.rst)
-- [Client Side Encryption](../client-side-encryption/client-side-encryption.rst)
-- [Enumerating Collections](../enumerate-collections.rst)
-- [Enumerating Databases](../enumerate-databases.rst)
-- [GridFS](../gridfs/gridfs-spec.rst)
-- [Index Management](../index-management/index-management.rst)
-- [Transactions](../transactions/transactions.rst)
+- [CRUD](../crud/crud.md)
+- [Change Streams](../change-streams/change-streams.md)
+- [Client Side Encryption](../client-side-encryption/client-side-encryption.md)
+- [Enumerating Collections](../enumerate-collections.md)
+- [Enumerating Databases](../enumerate-databases.md)
+- [GridFS](../gridfs/gridfs-spec.md)
+- [Index Management](../index-management/index-management.md)
+- [Transactions](../transactions/transactions.md)
 - [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
 
 In addition, it applies to all operations on cursor objects that may perform blocking work (e.g. methods to iterate or
@@ -152,29 +152,29 @@ The following pieces of operation execution are considered blocking:
 
 1. Implicit session acquisition if an explicit session was not provided for the operation. This is only considered
    blocking for drivers that perform server selection to determine session support when acquiring implicit sessions.
-1. Server selection
-1. Connection checkout - If `maxPoolSize` has already been reached for the selected server, this is the amount of time
+2. Server selection
+3. Connection checkout - If `maxPoolSize` has already been reached for the selected server, this is the amount of time
    spent waiting for a connection to be available.
-1. Connection establishment - If the pool for the selected server is empty and a new connection is needed, the following
+4. Connection establishment - If the pool for the selected server is empty and a new connection is needed, the following
    pieces of connection establishment are considered blocking:
    1. TCP socket establishment
-   1. TLS handshake
+   2. TLS handshake
       1. All messages sent over the socket as part of the TLS handshake
-      1. OCSP verification - HTTP requests sent to OCSP responders.
-   1. MongoDB handshake (i.e. initial connection `hello`)
-   1. Authentication
+      2. OCSP verification - HTTP requests sent to OCSP responders.
+   3. MongoDB handshake (i.e. initial connection `hello`)
+   4. Authentication
       1. SCRAM-SHA-1, SCRAM-SHA-256, PLAIN: Execution of the command required for the SASL conversation.
-      1. GSSAPI: Execution of the commands required for the SASL conversation and requests to the KDC and TGS.
-      1. MONGODB-AWS: Execution of the commands required for the SASL conversation and all HTTP requests to ECS and EC2
+      2. GSSAPI: Execution of the commands required for the SASL conversation and requests to the KDC and TGS.
+      3. MONGODB-AWS: Execution of the commands required for the SASL conversation and all HTTP requests to ECS and EC2
          endpoints.
-      1. MONGODB-X509: Execution of the commands required for the authentication conversation.
-1. Client-side encryption
+      4. MONGODB-X509: Execution of the commands required for the authentication conversation.
+5. Client-side encryption
    1. Execution of `listCollections` commands to get collection schemas.
-   1. Execution of `find` commands against the key vault collection to get encrypted data keys.
-   1. Requests to non-local key management servers (e.g. AWS KMS) to decrypt data keys.
-   1. Requests to mongocryptd servers.
-1. Socket write to send a command to the server
-1. Socket read to receive the server’s response
+   2. Execution of `find` commands against the key vault collection to get encrypted data keys.
+   3. Requests to non-local key management servers (e.g. AWS KMS) to decrypt data keys.
+   4. Requests to mongocryptd servers.
+6. Socket write to send a command to the server
+7. Socket read to receive the server’s response
 
 The `timeoutMS` option MUST apply to all blocking sections. Drivers MUST document any exceptions. For example, drivers
 that do not have full control over OCSP verification might not be able to set timeouts for HTTP requests to responders
@@ -209,7 +209,7 @@ See [serverSelectionTimeoutMS is not deprecated](#serverselectiontimeoutms-is-no
 If `timeoutMS` is set, drivers MUST append a `maxTimeMS` field to commands executed against a MongoDB server using the
 `minRoundTripTime` field of the selected server. Note that this value MUST be retrieved during server selection using
 the `servers` field of the same
-[TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#TopologyDescription) that
+[TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#TopologyDescription) that
 was used for selection before the selected server's description can be modified. Otherwise, drivers may be subject to a
 race condition where a server is reset to the default description (e.g. due to an error in the monitoring thread) after
 it has been selected but before the RTT is retrieved.
@@ -260,7 +260,7 @@ mongocryptd and encrypted by libmongocrypt. To determine whether or not the serv
 that the `iscryptd` field in the server's description is `true`.
 
 For explicit encryption and decryption, the `ClientEncryptionOpts` options type used to construct
-[ClientEncryption](../client-side-encryption/client-side-encryption.rst#clientencryption) instances MUST support a new
+[ClientEncryption](../client-side-encryption/client-side-encryption.md#clientencryption) instances MUST support a new
 `timeoutMS` option, which specifies the timeout for all operations executed on the `ClientEncryption` object.
 
 See [maxTimeMS is not added for mongocryptd](#maxtimems-is-not-added-for-mongocryptd).
@@ -363,14 +363,14 @@ See [Change stream behavior](#change-stream-behavior).
 
 ### Sessions
 
-The [SessionOptions](../sessions/driver-sessions.rst#mongoclient-changes) used to construct explicit
-[ClientSession](../sessions/driver-sessions.rst#clientsession) instances MUST accept a new `defaultTimeoutMS` option,
+The [SessionOptions](../sessions/driver-sessions.md#mongoclient-changes) used to construct explicit
+[ClientSession](../sessions/driver-sessions.md#clientsession) instances MUST accept a new `defaultTimeoutMS` option,
 which specifies the `timeoutMS` value for the following operations executed on the session:
 
 1. commitTransaction
-1. abortTransaction
-1. withTransaction
-1. endSession
+2. abortTransaction
+3. withTransaction
+4. endSession
 
 If this option is not specified for a `ClientSession`, it MUST inherit the `timeoutMS` of its parent MongoClient.
 
@@ -429,9 +429,7 @@ See [runCommand behavior](#runcommand-behavior).
 
 ## Test Plan
 
-See the
-[README.rst](https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/tests/README.rst)
-in the tests directory.
+See the [README.rst](tests/README.md) in the tests directory.
 
 ## Motivation for Change
 
@@ -450,7 +448,7 @@ elapsed.
 
 ## Design Rationale
 
-### timeoutMS cannot be changed to unset once it’s specified
+### timeoutMS cannot be changed to unset once it's specified
 
 If `timeoutMS` is specified at any level, it cannot be later changed to unset at a lower level. For example, a user
 cannot do:
@@ -529,7 +527,7 @@ prescriptive, we could mandate that drivers raise a client-side error in this ca
 expensive lookup in the command document. To avoid this additional cost, drivers are only required to document the
 behavior and suggest that `timeoutMS` be used instead of including a manual `maxTimeMS` field.
 
-### Why don’t drivers use backoff/jitter between retry attempts?
+### Why don't drivers use backoff/jitter between retry attempts?
 
 Earlier versions of this specification proposed adding backoff and/or jitter between retry attempts to avoid connection
 storming or overloading the server, but we later deemed this unnecessary. If multiple concurrent operations select the

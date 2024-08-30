@@ -2,7 +2,7 @@
 
 description: "retryable writes handshake failures"
 
-schemaVersion: "1.3"
+schemaVersion: "1.4" # For `serverless: forbid`
 
 runOnRequirements:
   - minServerVersion: "4.2"
@@ -51,6 +51,11 @@ tests:
   #   - Tests whether operation successfully retries the handshake and succeeds.
 {% for operation in operations %}
   - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake network error"
+    {%- if (operation.operation_name == 'clientBulkWrite') %}
+    runOnRequirements:
+      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0
+        serverless: forbid
+    {%- endif %}
     operations:
       - name: failPoint
         object: testRunner
@@ -95,6 +100,11 @@ tests:
               commandName: {{operation.command_name}}
 
   - description: "{{operation.object}}.{{operation.operation_name}} succeeds after retryable handshake server error (ShutdownInProgress)"
+    {%- if (operation.operation_name == 'clientBulkWrite') %}
+    runOnRequirements:
+      - minServerVersion: "8.0" # `bulkWrite` added to server 8.0
+        serverless: forbid
+    {%- endif %}
     operations:
       - name: failPoint
         object: testRunner

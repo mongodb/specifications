@@ -1,7 +1,7 @@
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v4.6.0
   hooks:
   - id: check-case-conflict
   - id: check-executables-have-shebangs
@@ -15,7 +15,7 @@ repos:
 # We use the Python version instead of the original version which seems to require Docker
 # https://github.com/koalaman/shellcheck-precommit
 - repo: https://github.com/shellcheck-py/shellcheck-py
-  rev: v0.9.0.6
+  rev: v0.10.0.1
   hooks:
     - id: shellcheck
       name: shellcheck
@@ -26,14 +26,32 @@ repos:
   rev: 0.7.17
   hooks:
     - id: mdformat
-      args: ["--wrap=120"]
+      args: ["--wrap=120", "--number"]
       additional_dependencies:
-        [mdformat-gfm]
+        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-gfm-alerts]
+
+- repo: local
+  hooks:
+  - id: generate-index
+    name: generate-index
+    entry: python3 scripts/generate_index.py
+    language: system
+  - id: check-anchors
+    name: check-anchors
+    types: [markdown]
+    entry: bash scripts/check_anchors/check-anchors.sh
+    language: node
+  - id: markdown-link-format-check
+    name: markdown-link-format-check
+    types: [markdown]
+    language: system
+    entry: python3 scripts/check_links.py
 
 - repo: https://github.com/tcort/markdown-link-check
-  rev: v3.11.2
+  rev: v3.12.2
   hooks:
     - id: markdown-link-check
+      args: ["-c", "markdown_link_config.json"]
 
 - repo: https://github.com/rstcheck/rstcheck
   rev: v6.2.0
@@ -44,7 +62,7 @@ repos:
     stages: [manual]
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.27.3
+  rev: 0.28.4
   hooks:
     - id: check-github-workflows
 
@@ -56,7 +74,10 @@ repos:
     - id: rst-inline-touching-normal
 
 - repo: https://github.com/codespell-project/codespell
-  rev: "v2.2.6"
+  rev: "v2.3.0"
   hooks:
   - id: codespell
-    args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te"]
+    args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te,checkin"]
+    exclude: |
+            (?x)^(.*\.rst
+            )$

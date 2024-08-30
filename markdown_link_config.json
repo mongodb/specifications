@@ -1,0 +1,31 @@
+{
+    "ignorePatterns": [
+      {
+        "pattern": "^/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#"
+      },
+      {
+        "pattern": "^#"
+      },
+      {
+        "pattern": "^../command-logging-and-monitoring/command-monitoring.rst#security"
+      },
+      {
+        "pattern": "^logging/logging.rst#log-severity-levels"
+      },
+      {
+        "pattern": "./enumerate-indexes.rst"
+      },
+      {
+        "pattern": "^https://github.com/10gen/mongo-enterprise-modules"
+      },
+      {
+        "pattern": "^https://github.com/10gen/mongohouse"
+      },
+      {
+        "pattern": "cloudkms.googleapis.com"
+      },
+      {
+        "pattern": "subtype6#intent-to-encrypt"
+      }
+    ]
+}

@@ -42,7 +42,7 @@ This does not preclude a driver from offering more.
 Deviations
 ----------
 
-Please refer to `The CRUD specification's Guidance <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#guidance>`_ on how APIs may deviate between languages.
+Please refer to `The CRUD specification's Guidance <../crud/crud.md#guidance>`_ on how APIs may deviate between languages.
 
 Cursor iterating APIs MAY be offered via language syntax or predefined iterable methods.
 
@@ -68,7 +68,7 @@ The following represents how a runCommand API SHOULD be exposed.
        *
        * @defaultValue ReadPreference(mode: primary)
        *
-       * @see https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#read-preference
+       * @see ../server-selection/server-selection.md#read-preference
        */
       readPreference?: ReadPreference;
 
@@ -76,7 +76,7 @@ The following represents how a runCommand API SHOULD be exposed.
        * An optional explicit client session.
        * The associated logical session id (`lsid`) the driver MUST apply to the command.
        *
-       * @see https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#clientsession
+       * @see ../sessions/driver-sessions.md#clientsession
        */
       session?: ClientSession;
 
@@ -105,7 +105,7 @@ OP_MSG
 
 The ``$db`` global command argument MUST be set on the command sent to the server and it MUST equal the database name RunCommand was invoked on.
 
-* See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
+* See OP_MSG's section on `Global Command Arguments <../message/OP_MSG.md#global-command-arguments>`_
 
 ReadPreference
 """"""""""""""
@@ -113,11 +113,11 @@ ReadPreference
 For the purposes of server selection RunCommand MUST assume all commands are read operations.
 To facilitate server selection the RunCommand operation MUST accept an optional ``readPreference`` option.
 
-* See Server Selection's section on `Use of read preferences with commands <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#use-of-read-preferences-with-commands>`_
+* See Server Selection's section on `Use of read preferences with commands <../server-selection/server-selection.md#use-of-read-preferences-with-commands>`_
 
 If the provided ReadPreference is NOT ``{mode: primary}`` and the selected server is NOT a standalone, the command sent MUST include the ``$readPreference`` global command argument.
 
-* See OP_MSG's section on `Global Command Arguments <https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst#global-command-arguments>`_
+* See OP_MSG's section on `Global Command Arguments <../message/OP_MSG.md#global-command-arguments>`_
 
 Driver Sessions
 """""""""""""""
@@ -129,11 +129,11 @@ Drivers MUST NOT attempt to check the command document for the presence of an ``
 Every ClientSession has a corresponding logical session ID representing the server-side session ID.
 The logical session ID MUST be included under ``lsid`` in the command sent to the server without modifying user input.
 
-* See Driver Sessions' section on `Sending the session ID to the server on all commands <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-session-id-to-the-server-on-all-commands>`_
+* See Driver Sessions' section on `Sending the session ID to the server on all commands <../sessions/driver-sessions.md#sending-the-session-id-to-the-server-on-all-commands>`_
 
 The command sent to the server MUST gossip the ``$clusterTime`` if cluster time support is detected.
 
-* See Driver Sessions' section on `Gossipping the cluster time <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#gossipping-the-cluster-time>`_
+* See Driver Sessions' section on `Gossipping the cluster time <../sessions/driver-sessions.md#gossipping-the-cluster-time>`_
 
 Transactions
 """"""""""""
@@ -151,7 +151,7 @@ The command sent to the server MUST include the transaction specific fields, sum
   * ``startTransaction`` - MUST be set to true.
   * ``readConcern`` - MUST be set to the transaction's read concern if it is NOT the default.
 
-* See `Generic RunCommand helper within a transaction <https://github.com/mongodb/specifications/blob/master/source/transactions/transactions.rst#generic-runcommand-helper-within-a-transaction>`_ in the Transactions specification.
+* See `Generic RunCommand helper within a transaction <../transactions/transactions.md#generic-runcommand-helper-within-a-transaction>`_ in the Transactions specification.
 
 ReadConcern and WriteConcern
 """"""""""""""""""""""""""""
@@ -164,8 +164,8 @@ For example, default values MUST NOT be inherited from client, database, or coll
 
 If the user-provided command document already includes ``readConcern`` or ``writeConcern`` fields, the values MUST be left as-is.
 
-* See Read Concern's section on `Generic Command Method <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#generic-command-method>`__
-* See Write Concern's section on `Generic Command Method <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#generic-command-method-1>`__
+* See Read Concern's section on `Generic Command Method <../read-write-concern/read-write-concern.md#generic-command-method>`__
+* See Write Concern's section on `Generic Command Method <../read-write-concern/read-write-concern.md#generic-command-method-1>`__
 
 Retryability
 """"""""""""
@@ -173,8 +173,8 @@ Retryability
 All commands executed via RunCommand are non-retryable operations.
 Drivers MUST NOT inspect the command to determine if it is a write and MUST NOT attach a ``txnNumber``.
 
-* See Retryable Reads' section on `Unsupported Read Operations <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/retryable-reads.rst#unsupported-read-operations>`_
-* See Retryable Writes' section on `Behavioral Changes for Write Commands <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#behavioral-changes-for-write-commands>`_
+* See Retryable Reads' section on `Unsupported Read Operations <../retryable-reads/retryable-reads.md#unsupported-read-operations>`_
+* See Retryable Writes' section on `Behavioral Changes for Write Commands <../retryable-writes/retryable-writes.md#behavioral-changes-for-write-commands>`_
 
 Stable API
 """"""""""
@@ -223,7 +223,7 @@ Drivers MAY expose a runCursorCommand API with the following syntax.
 
       /**
        * See the `cursorType` enum defined in the crud specification.
-       * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
+       * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.md#read
        *
        * Identifies the type of cursor this is for client side operations timeout to properly apply timeoutMode settings.
        *
@@ -274,7 +274,7 @@ All ``getMore`` commands constructed for this cursor MUST send the same ``lsid``
 A cursor is considered exhausted or closed when the server reports its ``id`` as zero.
 When the cursor is exhausted the client session MUST be ended and the server session returned to the pool as early as possible rather than waiting for a caller to completely iterate the final batch.
 
-* See Drivers Sessions' section on `Sessions and Cursors <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sessions-and-cursors>`_
+* See Drivers Sessions' section on `Sessions and Cursors <../sessions/driver-sessions.md#sessions-and-cursors>`_
 
 Server Selection
 """"""""""""""""
@@ -287,7 +287,7 @@ Load Balancers
 
 When in ``loadBalanced`` mode, a driver MUST pin the connection used to execute the initial operation, and reuse it for subsequent ``getMore`` operations.
 
-* See Load Balancer's section on `Behaviour With Cursors <https://github.com/mongodb/specifications/blob/master/source/load-balancers/load-balancers.rst#behaviour-with-cursors>`_
+* See Load Balancer's section on `Behaviour With Cursors <../load-balancers/load-balancers.md#behaviour-with-cursors>`_
 
 Iterating the Cursor
 """"""""""""""""""""
@@ -303,12 +303,12 @@ If it is idiomatic for a driver to allow setting these options in ``RunCursorCom
 A driver MAY permit users to change ``getMore`` field settings at any time during the cursor's lifetime and subsequent ``getMore`` commands MUST be constructed with the changes to those fields.
 If that API is offered drivers MUST write tests asserting ``getMore`` commands are constructed with any updated fields.
 
-* See Find, getMore and killCursors commands' section on `GetMore <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#getmore>`_
+* See Find, getMore and killCursors commands' section on `GetMore <../find_getmore_killcursors_commands.md#getmore>`_
 
 Tailable and TailableAwait
 """"""""""""""""""""""""""
 
-* **See first:** Find, getMore and killCursors commands's section on `Tailable cursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#tailable-cursors>`_
+* **See first:** Find, getMore and killCursors commands's section on `Tailable cursors <../find_getmore_killcursors_commands.md#tailable-cursors>`_
 
 It is the responsibility of the caller to construct their initial command with ``awaitData`` and ``tailable`` flags **as well as** inform RunCursorCommand of the ``cursorType`` that should be constructed.
 Requesting a ``cursorType`` that does not align with the fields sent to the server on the initial command SHOULD be documented as undefined behavior.
@@ -320,8 +320,8 @@ Drivers MUST provide an explicit mechanism for releasing the cursor resources, t
 If the cursor id is nonzero a KillCursors operation MUST be attempted, the result of the operation SHOULD be ignored.
 The ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.
 
-* See Driver Sessions' section on `When sending a killCursors command <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#when-sending-a-killcursors-command>`_
-* See Find, getMore and killCursors commands' section on `killCursors <https://github.com/mongodb/specifications/blob/master/source/find_getmore_killcursors_commands.rst#killcursors>`_
+* See Driver Sessions' section on `When sending a killCursors command <../sessions/driver-sessions.md#when-sending-a-killcursors-command>`_
+* See Find, getMore and killCursors commands' section on `killCursors <../find_getmore_killcursors_commands.md#killcursors>`_
 
 Client Side Operations Timeout
 """"""""""""""""""""""""""""""

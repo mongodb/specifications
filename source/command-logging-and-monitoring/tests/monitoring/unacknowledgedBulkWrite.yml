@@ -1,10 +1,11 @@
 description: "unacknowledgedBulkWrite"
 
-schemaVersion: "1.0"
+schemaVersion: "1.7"
 
 createEntities:
   - client:
       id: &client client
+      useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
         - commandSucceededEvent
@@ -36,8 +37,14 @@ tests:
             - insertOne:
                 document: { _id: "unorderedBulkWriteInsertW0", x: 44 }
           ordered: false
+      # Force completion of the w: 0 write by executing a find on the same connection
+      - name: find
+        object: *collection
+        arguments:
+          filter: { }
     expectEvents:
       - client: *client
+        ignoreExtraEvents: true
         events:
           - commandStartedEvent:
               command:
