@@ -586,7 +586,6 @@ class Monitor(Thread):
           # Server API versioning implies that the server supports hello.
           helloOk = stableApi != Null
           connection = new Connection(serverAddress)
-
           if connectTimeoutMS != 0:
               set connection timeout to connectTimeoutMS
 
