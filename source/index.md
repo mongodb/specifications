@@ -1,5 +1,6 @@
 # MongoDB Specifications
 
+- [Atlas Serverless Tests](serverless-testing/README.md)
 - [Authentication](auth/auth.md)
 - [BSON Binary Subtype 6](client-side-encryption/subtype6.md)
 - [BSON Corpus](bson-corpus/bson-corpus.md)
