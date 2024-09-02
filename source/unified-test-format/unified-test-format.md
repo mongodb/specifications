@@ -1588,7 +1588,7 @@ The following arguments are supported:
 
 #### runCursorCommand
 
-[Generic cursor returning command runner](../run-command/run-command.rst).
+[Generic cursor returning command runner](../run-command/run-command.md).
 
 This method does not inherit a read preference (per the
 [Server Selection](../server-selection/server-selection.md#use-of-read-preferences-with-commands) spec); however,

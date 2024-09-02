@@ -37,6 +37,7 @@
 - [Read and Write Concern](read-write-concern/read-write-concern.md)
 - [Retryable Reads](retryable-reads/retryable-reads.md)
 - [Retryable Writes](retryable-writes/retryable-writes.md)
+- [Run Command](run-command/run-command.md)
 - [SDAM Logging and Monitoring Specification](server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md)
 - [Server Discovery And Monitoring](server-discovery-and-monitoring/server-discovery-and-monitoring.md)
 - [Server Discovery And Monitoring -- Summary](server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
