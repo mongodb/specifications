@@ -315,6 +315,8 @@ error occurs.
 ### 6. GridFS - Upload
 
 Tests in this section MUST only be run against server versions 4.4 and higher.
+Drivers SHOULD apply [useMultipleMongoses=false](source/unified-test-format/unified-test-format.md#entity)
+as described in the unified test format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
 
 #### uploads via openUploadStream can be timed out
 
@@ -329,12 +331,12 @@ Tests in this section MUST only be run against server versions 4.4 and higher.
        data: {
            failCommands: ["insert"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) with `timeoutMS=10`.
+3. Create a new MongoClient (referred to as `client`) with `timeoutMS=150`.
 
 4. Using `client`, create a GridFS bucket (referred to as `bucket`) that wraps the `db` database.
 
@@ -364,12 +366,12 @@ This test only applies to drivers that provide an API to abort a GridFS upload s
        data: {
            failCommands: ["delete"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) with `timeoutMS=10`.
+3. Create a new MongoClient (referred to as `client`) with `timeoutMS=150`.
 
 4. Using `client`, create a GridFS bucket (referred to as `bucket`) that wraps the `db` database with
    `chunkSizeBytes=2`.
@@ -388,6 +390,8 @@ This test only applies to drivers that provide an API to abort a GridFS upload s
 ### 7. GridFS - Download
 
 This test MUST only be run against server versions 4.4 and higher.
+Drivers SHOULD apply [useMultipleMongoses=false](source/unified-test-format/unified-test-format.md#entity)
+as described in the unified test format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
 
 1. Using `internalClient`, drop and re-create the `db.fs.files` and `db.fs.chunks` collections.
 
@@ -411,7 +415,7 @@ This test MUST only be run against server versions 4.4 and higher.
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) with `timeoutMS=10`.
+3. Create a new MongoClient (referred to as `client`) with `timeoutMS=150`.
 
 4. Using `client`, create a GridFS bucket (referred to as `bucket`) that wraps the `db` database.
 
@@ -429,7 +433,7 @@ This test MUST only be run against server versions 4.4 and higher.
        data: {
            failCommands: ["find"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
