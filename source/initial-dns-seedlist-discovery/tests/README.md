@@ -5,10 +5,28 @@ Seedlist Discovery spec.
 
 ### Prose Tests
 
-When given a valid SRV with
+1. When given the following valid SRVs, parse the connection string without throwing a parse related error.
 
-1. Only one domain level (ex: `{localhost}`)
-2. Only two domain levels (ex: `{mongo.local}`) Parse the connection string without throwing a parse related error.
+   a. Only one domain level (ex: `mongodb+srv://localhost`).
+
+   b. Only two domain levels (ex: `mongodb+srv://mongo.local`).
+
+<br />
+
+2. When given an SRV that does NOT end with the original SRV's `{domainname}`, throw a runtime error.
+
+   For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com` should prompt an error.
+
+   Run this test for the following test cases: SRVs with one, two, and three `.` separated parts.
+
+<br />  
+
+3. When given an SRV with less than three `.` separated parts that returns identical address to the original
+   `{hostname}`, throw a runtime error.
+
+   For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error.
+
+   Run this test for both cases: one and two `.` separated parts.
 
 ## Test Setup
 
