@@ -108,7 +108,7 @@ each case, keys include:
 
 Because the `canonical_extjson` and other Extended JSON fields are embedded in a JSON document, all their JSON
 metacharacters are escaped. Control characters and non-ASCII codepoints are represented with `\uXXXX`. Note that this
-means that the corpus JSON will appear to have double-escaped characters `\uXXXX`. This is by design to ensure that the
+means that the corpus JSON will appear to have double-escaped characters `\\uXXXX`. This is by design to ensure that the
 Extended JSON fields remain printable ASCII without embedded null characters to ensure maximum portability to different
 language JSON or extended JSON decoders.
 
