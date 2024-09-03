@@ -28,14 +28,16 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**Bucket name**\
-A prefix under which a GridFS system"s collections are stored. Collection names for the files and
-chunks collections are prefixed with the bucket name. The bucket name MUST be configurable by the user. Multiple buckets
-may exist within a single database. The default bucket name is "fs".
+**Bucket name**
 
-**Chunk**\
-A section of a user file, stored as a single document in the "chunks" collection of a GridFS bucket. The
-default size for the data field in chunks is 255 KiB. Chunk documents have the following form:
+A prefix under which a GridFS system"s collections are stored. Collection names for the files and chunks collections are
+prefixed with the bucket name. The bucket name MUST be configurable by the user. Multiple buckets may exist within a
+single database. The default bucket name is "fs".
+
+**Chunk**
+
+A section of a user file, stored as a single document in the "chunks" collection of a GridFS bucket. The default size
+for the data field in chunks is 255 KiB. Chunk documents have the following form:
 
 ```javascript
 {
@@ -46,34 +48,41 @@ default size for the data field in chunks is 255 KiB. Chunk documents have the f
 }
 ```
 
-**\_id**\
+**\_id**
+
 a unique ID for this document of type BSON ObjectId
 
-**files_id**\
-the id for this file (the `_id` from the files collection document). This field takes the type of the
-corresponding `_id` in the files collection.
+**files_id**
 
-**n**\
+the id for this file (the `_id` from the files collection document). This field takes the type of the corresponding
+`_id` in the files collection.
+
+**\_id**
+
 the index number of this chunk, zero-based.
 
-**data**\
+**data**
+
 a chunk of data from the user file
 
-**Chunks collection**\
-A collection in which chunks of a user file are stored. The name for this collection is the word
-'chunks' prefixed by the bucket name. The default is "fs.chunks".
+**Chunks collection**
 
-**Empty chunk**\
+A collection in which chunks of a user file are stored. The name for this collection is the word 'chunks' prefixed by
+the bucket name. The default is "fs.chunks".
+
+**Empty chunk**
+
 A chunk with a zero length "data" field.
 
-**Files collection**\
-A collection in which information about stored files is stored. There will be one files collection
-document per stored file. The name for this collection is the word "files" prefixed by the bucket name. The default is
-"fs.files".
+**Files collection**
 
-**Files collection document**\
-A document stored in the files collection that contains information about a single stored
-file. Files collection documents have the following form:
+A collection in which information about stored files is stored. There will be one files collection document per stored
+file. The name for this collection is the word "files" prefixed by the bucket name. The default is "fs.files".
+
+**Files collection document**
+
+A document stored in the files collection that contains information about a single stored file. Files collection
+documents have the following form:
 
 ```javascript
 {
@@ -89,34 +98,42 @@ file. Files collection documents have the following form:
 }
 ```
 
-**\_id**\
+**\_id**
+
 a unique ID for this document. Usually this will be of type ObjectId, but a custom `_id` value provided by the
 application may be of any type.
 
-**length**\
+**length**
+
 the length of this stored file, in bytes
 
-**chunkSize**\
-the size, in bytes, of each data chunk of this file. This value is configurable by file. The default is
-255 KiB.
+**chunkSize**
 
-**uploadDate**\
-the date and time this file was added to GridFS, stored as a BSON datetime value. The value of this
-field MUST be the datetime when the upload completed, not the datetime when it was begun.
+the size, in bytes, of each data chunk of this file. This value is configurable by file. The default is 255 KiB.
 
-**md5**\
+**uploadDate**
+
+the date and time this file was added to GridFS, stored as a BSON datetime value. The value of this field MUST be the
+datetime when the upload completed, not the datetime when it was begun.
+
+**md5**
+
 DEPRECATED, a hash of the contents of the stored file
 
-**filename**\
+**filename**
+
 the name of this stored file; this does not need to be unique
 
-**contentType**\
+**contentType**
+
 DEPRECATED, any MIME type, for application use only
 
-**aliases**\
+**aliases**
+
 DEPRECATED, for application use only
 
-**metadata**\
+**metadata**
+
 any additional application data the user wishes to store
 
 Note: some older versions of GridFS implementations allowed applications to add arbitrary fields to the files collection
@@ -127,27 +144,30 @@ Note: drivers SHOULD store length as Int64 and chunkSize as Int32 when creating 
 be able to handle existing GridFS files where the length and chunkSize fields might have been stored using a different
 numeric data type.
 
-**Orphaned chunk**\
-A document in the chunks collections for which the "files_id" does not match any `_id` in the files
-collection. Orphaned chunks may be created if write or delete operations on GridFS fail part-way through.
+**Orphaned chunk**
 
-**Stored File**\
-A user file that has been stored in GridFS, consisting of a files collection document in the files
-collection and zero or more documents in the chunks collection.
+A document in the chunks collections for which the "files_id" does not match any `_id` in the files collection. Orphaned
+chunks may be created if write or delete operations on GridFS fail part-way through.
 
-**Stream**\
-An abstraction that represents streamed I/O. In some languages a different word is used to represent this
-abstraction.
+**Stored File**
 
-**TFileId**\
-While GridFS file id values are ObjectIds by default, an application may choose to use custom file id
-values, which may be of any type. In this spec the term TFileId refers to whatever data type is appropriate in the
-driver's programming language to represent a file id. This would be something like object, BsonValue or a generic
-`<TFileId>` type parameter.
+A user file that has been stored in GridFS, consisting of a files collection document in the files collection and zero
+or more documents in the chunks collection.
 
-**User File**\
-A data added by a user to GridFS. This data may map to an actual file on disk, a stream of input, a large
-data object, or any other large amount of consecutive data.
+**Stream**
+
+An abstraction that represents streamed I/O. In some languages a different word is used to represent this abstraction.
+
+**TFileId**
+
+While GridFS file id values are ObjectIds by default, an application may choose to use custom file id values, which may
+be of any type. In this spec the term TFileId refers to whatever data type is appropriate in the driver's programming
+language to represent a file id. This would be something like object, BsonValue or a generic `<TFileId>` type parameter.
+
+**User File**
+
+A data added by a user to GridFS. This data may map to an actual file on disk, a stream of input, a large data object,
+or any other large amount of consecutive data.
 
 ## Specification
 
@@ -842,158 +862,171 @@ that are undesirable or incorrect.
 
 ## Design Rationale
 
-Why is the default chunk size 255 KiB?\
-On MMAPv1, the server provides documents with extra padding to allow for
-in-place updates. When the "data" field of a chunk is limited to 255 KiB, it ensures that the whole chunk document (the
-chunk data along with an `_id` and other information) will fit into a 256 KiB section of memory, making the best use of
-the provided padding. Users setting custom chunk sizes are advised not to use round power-of-two values, as the whole
-chunk document is likely to exceed that space and demand extra padding from the system. WiredTiger handles its memory
-differently, and this optimization does not apply. However, because application code generally won"t know what storage
-engine will be used in the database, always avoiding round power-of-two chunk sizes is recommended.
+Why is the default chunk size 255 KiB?
 
-Why can"t I alter documents once they are in the system?\
-GridFS works with documents stored in multiple collections
-within MongoDB. Because there is currently no way to atomically perform operations across collections in MongoDB, there
-is no way to alter stored files in a way that prevents race conditions between GridFS clients. Updating GridFS stored
-files without that server functionality would involve a data model that could support this type of concurrency, and
-changing the GridFS data model is outside of the scope of this spec.
+On MMAPv1, the server provides documents with extra padding to allow for in-place updates. When the "data" field of a
+chunk is limited to 255 KiB, it ensures that the whole chunk document (the chunk data along with an `_id` and other
+information) will fit into a 256 KiB section of memory, making the best use of the provided padding. Users setting
+custom chunk sizes are advised not to use round power-of-two values, as the whole chunk document is likely to exceed
+that space and demand extra padding from the system. WiredTiger handles its memory differently, and this optimization
+does not apply. However, because application code generally won"t know what storage engine will be used in the database,
+always avoiding round power-of-two chunk sizes is recommended.
 
-Why provide a "rename" method?\
-By providing users with a reasonable alternative for renaming a file, we can discourage
-users from writing directly to the files collections under GridFS. With this approach we can prevent critical files
-collection documents fields from being mistakenly altered.
+Why can"t I alter documents once they are in the system?
 
-Why is there no way to perform arbitrary updates on the files collection?\
-The rename helper defined in this spec allows
-users to easily rename a stored file. While updating files collection documents in other, more granular ways might be
-helpful for some users, validating such updates to ensure that other files collection document fields remain protected
-is a complicated task. We leave the decision of how best to provide this functionality to a future spec.
+GridFS works with documents stored in multiple collections within MongoDB. Because there is currently no way to
+atomically perform operations across collections in MongoDB, there is no way to alter stored files in a way that
+prevents race conditions between GridFS clients. Updating GridFS stored files without that server functionality would
+involve a data model that could support this type of concurrency, and changing the GridFS data model is outside of the
+scope of this spec.
 
-What is the "md5" field of a files collection document and how was it used?\
-"md5" holds an MD5 checksum that is
-computed from the original contents of a user file. Historically, GridFS did not use acknowledged writes, so this
-checksum was necessary to ensure that writes went through properly. With acknowledged writes, the MD5 checksum is still
-useful to ensure that files in GridFS have not been corrupted. A third party directly accessing the 'files' and "chunks"
-collections under GridFS could, inadvertently or maliciously, make changes to documents that would make them unusable by
-GridFS. Comparing the MD5 in the files collection document to a re-computed MD5 allows detecting such errors and
-corruption. However, drivers now assume that the stored file is not corrupted, and applications that want to use the MD5
-value to check for corruption must do so themselves.
+Why provide a "rename" method?
 
-Why store the MD5 checksum instead of creating the hash as-needed?\
-The MD5 checksum must be computed when a file is
-initially uploaded to GridFS, as this is the only time we are guaranteed to have the entire uncorrupted file. Computing
-it on-the-fly as a file is read from GridFS would ensure that our reads were successful, but guarantees nothing about
-the state of the file in the system. A successful check against the stored MD5 checksum guarantees that the stored file
-matches the original and no corruption has occurred.
+By providing users with a reasonable alternative for renaming a file, we can discourage users from writing directly to
+the files collections under GridFS. With this approach we can prevent critical files collection documents fields from
+being mistakenly altered.
 
-Why are MD5 checksums now deprecated? What should users do instead?\
-MD5 is prohibited by FIPS 140-2. Operating systems
-and libraries operating in FIPS mode do not provide the MD5 algorithm. To avoid a broken GridFS feature on such systems,
-the use of MD5 with GridFS is deprecated, should not be added to new implementations, and should be removed from
-existing implementations according to the deprecation policy of individual drivers. Applications that desire a file
-digest should implement it outside of GridFS and store it with other file metadata.
+Why is there no way to perform arbitrary updates on the files collection?
 
-Why do drivers no longer need to call the filemd5 command on upload?\
-When a chunk is inserted and no error occurs the
-application can assume that the chunk was correctly inserted. No other operations that insert or modify data require the
-driver to double check that the operation succeeded. It can be assumed that any errors would have been detected by use
-of the appropriate write concern. Using filemd5 also prevents users from sharding chunk keys.
+The rename helper defined in this spec allows users to easily rename a stored file. While updating files collection
+documents in other, more granular ways might be helpful for some users, validating such updates to ensure that other
+files collection document fields remain protected is a complicated task. We leave the decision of how best to provide
+this functionality to a future spec.
 
-What about write concern?\
-This spec leaves the choice of how to set write concern to driver authors. Implementers may
-choose to accept write concern through options on the given methods, to set a configurable write concern on the GridFS
-object, to enforce a single write concern for all GridFS operations, or to do something different.
+What is the "md5" field of a files collection document and how was it used?
+
+"md5" holds an MD5 checksum that is computed from the original contents of a user file. Historically, GridFS did not use
+acknowledged writes, so this checksum was necessary to ensure that writes went through properly. With acknowledged
+writes, the MD5 checksum is still useful to ensure that files in GridFS have not been corrupted. A third party directly
+accessing the 'files' and "chunks" collections under GridFS could, inadvertently or maliciously, make changes to
+documents that would make them unusable by GridFS. Comparing the MD5 in the files collection document to a re-computed
+MD5 allows detecting such errors and corruption. However, drivers now assume that the stored file is not corrupted, and
+applications that want to use the MD5 value to check for corruption must do so themselves.
+
+Why store the MD5 checksum instead of creating the hash as-needed?
+
+The MD5 checksum must be computed when a file is initially uploaded to GridFS, as this is the only time we are
+guaranteed to have the entire uncorrupted file. Computing it on-the-fly as a file is read from GridFS would ensure that
+our reads were successful, but guarantees nothing about the state of the file in the system. A successful check against
+the stored MD5 checksum guarantees that the stored file matches the original and no corruption has occurred.
+
+Why are MD5 checksums now deprecated? What should users do instead?
+
+MD5 is prohibited by FIPS 140-2. Operating systems and libraries operating in FIPS mode do not provide the MD5
+algorithm. To avoid a broken GridFS feature on such systems, the use of MD5 with GridFS is deprecated, should not be
+added to new implementations, and should be removed from existing implementations according to the deprecation policy of
+individual drivers. Applications that desire a file digest should implement it outside of GridFS and store it with other
+file metadata.
+
+Why do drivers no longer need to call the filemd5 command on upload?
+
+When a chunk is inserted and no error occurs the application can assume that the chunk was correctly inserted. No other
+operations that insert or modify data require the driver to double check that the operation succeeded. It can be assumed
+that any errors would have been detected by use of the appropriate write concern. Using filemd5 also prevents users from
+sharding chunk keys.
+
+What about write concern?
+
+This spec leaves the choice of how to set write concern to driver authors. Implementers may choose to accept write
+concern through options on the given methods, to set a configurable write concern on the GridFS object, to enforce a
+single write concern for all GridFS operations, or to do something different.
 
 If a user has given GridFS a write concern of 0, should we perform MD5 calculations? (If supported for backwards
-compatibility)\
+compatibility)
+
 Yes, because the checksum is used for detecting future corruption or misuse of GridFS collections.
 
-Is GridFS limited by sharded systems?\
-For best performance, clients using GridFS on a sharded system should use a shard
-key that ensures all chunks for a given stored file are routed to the same shard. Therefore, if the chunks collection is
-sharded, you should shard on the files_id. Normally only the chunks collection benefits from sharding, since the files
-collection is usually small. Otherwise, there are no limitations to GridFS on sharded systems.
+Is GridFS limited by sharded systems?
 
-Why is contentType deprecated?\
-Most fields in the files collection document are directly used by the driver, with the
-exception of: metadata, contentType and aliases. All information that is purely for use of the application should be
-embedded in the 'metadata' document. Users of GridFS who would like to store a contentType for use in their applications
-are encouraged to add a 'contentType' field to the "metadata" document instead of using the deprecated top-level
-"contentType" field.
+For best performance, clients using GridFS on a sharded system should use a shard key that ensures all chunks for a
+given stored file are routed to the same shard. Therefore, if the chunks collection is sharded, you should shard on the
+files_id. Normally only the chunks collection benefits from sharding, since the files collection is usually small.
+Otherwise, there are no limitations to GridFS on sharded systems.
 
-Why are aliases deprecated?\
-The "aliases" field of the files collection documents was misleading. It implies that a
-file in GridFS could be accessed by alternate names when, in fact, none of the existing implementations offer this
-functionality. For GridFS implementations that retrieve stored files by filename or support specifying specific
-revisions of a stored file, it is unclear how "aliases" should be interpreted. Users of GridFS who would like to store
-alternate filenames for use in their applications are encouraged to add an "aliases" field to the "metadata" document
-instead of using the deprecated top-level "aliases" field.
+Why is contentType deprecated?
 
-What happened to the put and get methods from earlier drafts?\
-Upload and download are more idiomatic names that more
-clearly indicate their purpose. Get and put are often associated with getting and setting properties of a class, and
-using them instead of download and upload was confusing.
+Most fields in the files collection document are directly used by the driver, with the exception of: metadata,
+contentType and aliases. All information that is purely for use of the application should be embedded in the 'metadata'
+document. Users of GridFS who would like to store a contentType for use in their applications are encouraged to add a
+'contentType' field to the "metadata" document instead of using the deprecated top-level "contentType" field.
 
-Why aren't there methods to upload and download byte arrays?\
-We assume that GridFS files are usually quite large and
-therefore that the GridFS API must support streaming. Most languages have easy ways to wrap a stream around a byte
-array. Drivers are free to add helper methods that directly support uploading and downloading GridFS files as byte
-arrays.
+Why are aliases deprecated?
 
-Should drivers report an error if a stored file has extra chunks?\
-The length and the chunkSize fields of the files
-collection document together imply exactly how many chunks a stored file should have. If the chunks collection has any
-extra chunks the stored file is in an inconsistent state. Ideally we would like to report that as an error, but this is
-an extremely unlikely state and we don't want to pay a performance penalty checking for an error that is almost never
-there. Therefore, drivers MAY ignore extra chunks.
+The "aliases" field of the files collection documents was misleading. It implies that a file in GridFS could be accessed
+by alternate names when, in fact, none of the existing implementations offer this functionality. For GridFS
+implementations that retrieve stored files by filename or support specifying specific revisions of a stored file, it is
+unclear how "aliases" should be interpreted. Users of GridFS who would like to store alternate filenames for use in
+their applications are encouraged to add an "aliases" field to the "metadata" document instead of using the deprecated
+top-level "aliases" field.
 
-Why have we changed our mind about requiring the file id to be an ObjectId?\
-This spec originally required the file id
-for all new GridFS files to be an ObjectId and specified that the driver itself would be the one to generate the
-ObjectId when a new file was uploaded. While this sounded like a good idea, it has since become evident that there are
-valid use cases for an application to want to generate its own file id, and that an application wouldn't necessarily
-want to use ObjectId as the type of the file id. The most common case where an application would want to use a custom
-file id is when the chunks collection is to be sharded and the application wants to use a custom file id that is
-suitable for sharding. Accordingly, we have relaxed this spec to allow an application to supply a custom file id (of any
-type) when uploading a new file.
+What happened to the put and get methods from earlier drafts?
 
-How can we maintain backward compatibility while supporting custom file ids?\
-For most methods supporting custom file
-ids is as simple as relaxing the type of the id parameter from ObjectId to something more general like object or BSON
-value (or to a type parameter like `<TFileId>` in languages that support generic methods). In a few cases new methods
-were added to support custom file ids. The original upload_from_stream method returned an ObjectId, and support for
-custom file ids is implemented by adding a new method that takes the custom file id as an additional parameter. Drivers
-should continue to support the original method if possible to maintain backward compatibility. This spec does not
-attempt to completely mandate how each driver should maintain backward compatibility, as different languages have
-different approaches and capabilities for maintaining backward compatibility.
+Upload and download are more idiomatic names that more clearly indicate their purpose. Get and put are often associated
+with getting and setting properties of a class, and using them instead of download and upload was confusing.
+
+Why aren't there methods to upload and download byte arrays?
+
+We assume that GridFS files are usually quite large and therefore that the GridFS API must support streaming. Most
+languages have easy ways to wrap a stream around a byte array. Drivers are free to add helper methods that directly
+support uploading and downloading GridFS files as byte arrays.
+
+Should drivers report an error if a stored file has extra chunks?
+
+The length and the chunkSize fields of the files collection document together imply exactly how many chunks a stored
+file should have. If the chunks collection has any extra chunks the stored file is in an inconsistent state. Ideally we
+would like to report that as an error, but this is an extremely unlikely state and we don't want to pay a performance
+penalty checking for an error that is almost never there. Therefore, drivers MAY ignore extra chunks.
+
+Why have we changed our mind about requiring the file id to be an ObjectId?
+
+This spec originally required the file id for all new GridFS files to be an ObjectId and specified that the driver
+itself would be the one to generate the ObjectId when a new file was uploaded. While this sounded like a good idea, it
+has since become evident that there are valid use cases for an application to want to generate its own file id, and that
+an application wouldn't necessarily want to use ObjectId as the type of the file id. The most common case where an
+application would want to use a custom file id is when the chunks collection is to be sharded and the application wants
+to use a custom file id that is suitable for sharding. Accordingly, we have relaxed this spec to allow an application to
+supply a custom file id (of any type) when uploading a new file.
+
+How can we maintain backward compatibility while supporting custom file ids?
+
+For most methods supporting custom file ids is as simple as relaxing the type of the id parameter from ObjectId to
+something more general like object or BSON value (or to a type parameter like `<TFileId>` in languages that support
+generic methods). In a few cases new methods were added to support custom file ids. The original upload_from_stream
+method returned an ObjectId, and support for custom file ids is implemented by adding a new method that takes the custom
+file id as an additional parameter. Drivers should continue to support the original method if possible to maintain
+backward compatibility. This spec does not attempt to completely mandate how each driver should maintain backward
+compatibility, as different languages have different approaches and capabilities for maintaining backward compatibility.
 
 ## Backwards Compatibility
 
 This spec presents a new API for GridFS systems, which may break existing functionality for some drivers. The following
 are suggestions for ways to mitigate these incompatibilities.
 
-File revisions\
-This document presents a basic API that does not support specifying specific revisions of a stored file,
-and an advanced API that does. Drivers MAY choose to implement whichever API is closest to the functionality they now
-support. Note that the methods for file insertion are the same whether specifying specific revisions is supported or
-not.
+File revisions
 
-Method names\
-If drivers provide methods that conform to the functionality outlined in this document, drivers MAY
-continue to provide those methods under their existing names. In this case, drivers SHOULD make it clear in their
-documentation that these methods have equivalents defined in the spec under a different name.
+This document presents a basic API that does not support specifying specific revisions of a stored file, and an advanced
+API that does. Drivers MAY choose to implement whichever API is closest to the functionality they now support. Note that
+the methods for file insertion are the same whether specifying specific revisions is supported or not.
 
-ContentType field\
-Drivers MAY continue to create a "contentType'" field within files collection documents, so that
-applications depending on this field continue to work. However, drivers SHOULD make it clear in their documentation that
-this field is deprecated, and is not used at all in driver code. Documentation SHOULD encourage users to store
-contentType in the "metadata" document instead.
+Method names
 
-Aliases field\
-Drivers MAY continue to create an "aliases" field within files collection documents, so that applications
-depending on this field continue to work. However, drivers SHOULD make it clear in their documentation that this field
-is deprecated, and is not used at all in driver code. Documentation SHOULD encourage users to store aliases in the
+If drivers provide methods that conform to the functionality outlined in this document, drivers MAY continue to provide
+those methods under their existing names. In this case, drivers SHOULD make it clear in their documentation that these
+methods have equivalents defined in the spec under a different name.
+
+ContentType field
+
+Drivers MAY continue to create a "contentType'" field within files collection documents, so that applications depending
+on this field continue to work. However, drivers SHOULD make it clear in their documentation that this field is
+deprecated, and is not used at all in driver code. Documentation SHOULD encourage users to store contentType in the
 "metadata" document instead.
+
+Aliases field
+
+Drivers MAY continue to create an "aliases" field within files collection documents, so that applications depending on
+this field continue to work. However, drivers SHOULD make it clear in their documentation that this field is deprecated,
+and is not used at all in driver code. Documentation SHOULD encourage users to store aliases in the "metadata" document
+instead.
 
 ## Reference Implementation
 

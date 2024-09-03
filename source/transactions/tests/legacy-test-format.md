@@ -477,13 +477,10 @@ sharded transaction that uses the `dbVersion` concept so it is the only command 
 
 - 2019-03-25: Add workaround for StaleDbVersion on distinct.
 
-- 2019-03-01: Add top-level `runOn` field to denote server version and/or\
-  topology requirements requirements for the
+- 2019-03-01: Add top-level `runOn` field to denote server version and/or topology requirements requirements for the
   test file. Removes the `topology` top-level field, which is now expressed within `runOn` elements.
 
-- 2019-02-28: `useMultipleMongoses: true` and non-targeted fail points are\
-  mutually exclusive.
+- 2019-02-28: `useMultipleMongoses: true` and non-targeted fail points are mutually exclusive.
 
-- 2019-02-13: Modify test format for 4.2 sharded transactions, including\
-  "useMultipleMongoses", `object: testRunner`,
+- 2019-02-13: Modify test format for 4.2 sharded transactions, including "useMultipleMongoses", `object: testRunner`,
   the `targetedFailPoint` operation, and recoveryToken assertions.

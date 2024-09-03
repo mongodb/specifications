@@ -129,9 +129,8 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 
 - 2024-03-06: Convert legacy retryable reads tests to unified format.
 
-- 2024-02-21: Update mongos redirection prose tests to workaround SDAM behavior\
-  preventing execution of
-  deprioritization code paths.
+- 2024-02-21: Update mongos redirection prose tests to workaround SDAM behavior preventing execution of deprioritization
+  code paths.
 
 - 2023-08-26: Add prose tests for retrying in a sharded cluster.
 
@@ -141,8 +140,7 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 
 - 2021-08-27: Clarify behavior of `useMultipleMongoses` for `LoadBalanced` topologies.
 
-- 2019-03-19: Add top-level `runOn` field to denote server version and/or\
-  topology requirements requirements for the
+- 2019-03-19: Add top-level `runOn` field to denote server version and/or topology requirements requirements for the
   test file. Removes the `minServerVersion` and `topology` top-level fields, which are now expressed within `runOn`
   elements.
 

@@ -236,8 +236,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 
 8. Start 10 concurrent threads / tasks that each run 100 `findOne` operations with empty filters using that client.
 
-9. Using command monitoring events, assert that each mongos was selected\
-   roughly 50% of the time (within +/- 10%).
+9. Using command monitoring events, assert that each mongos was selected roughly 50% of the time (within +/- 10%).
 
 ## Application-Provided Server Selector
 

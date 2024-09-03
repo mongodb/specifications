@@ -258,51 +258,41 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 - 2022-10-05: Revise spec front matter and reformat changelog.
 
-- 2021-10-14: Add `srvMaxHosts` MongoClient option and restructure Seedlist\
-  Discovery section. Improve documentation
-  for the `srvServiceName` MongoClient option and add a new URI Validation section.
+- 2021-10-14: Add `srvMaxHosts` MongoClient option and restructure Seedlist Discovery section. Improve documentation for
+  the `srvServiceName` MongoClient option and add a new URI Validation section.
 
-- 2021-09-15: Clarify that service name only defaults to `mongodb`, and should\
-  be defined by the `srvServiceName` URI
+- 2021-09-15: Clarify that service name only defaults to `mongodb`, and should be defined by the `srvServiceName` URI
   option.
 
 - 2021-04-15: Adding in behaviour for load balancer mode.
 
 - 2019-03-07: Clarify that CNAME is not supported
 
-- 2018-02-08: Clarify that `{options}}` in the [Specification](#specification) section includes\
-  all the optional
+- 2018-02-08: Clarify that `{options}}` in the [Specification](#specification) section includes all the optional
   elements from the Connection String specification.
 
-- 2017-11-21: Add clause that using `mongodb+srv://` implies enabling TLS. Add\
-  restriction that only `authSource` and
+- 2017-11-21: Add clause that using `mongodb+srv://` implies enabling TLS. Add restriction that only `authSource` and
   `replicaSet` are allows in TXT records. Add restriction that only one TXT record is supported share the same parent
   domain name as the given host name.
 
-- 2017-11-17: Add new rule that indicates that host names in returned SRV records\
-  MUST share the same parent domain
-  name as the given host name. Remove language and tests for non-ASCII characters.
+- 2017-11-17: Add new rule that indicates that host names in returned SRV records MUST share the same parent domain name
+  as the given host name. Remove language and tests for non-ASCII characters.
 
-- 2017-11-07: Clarified that all parts of listable options such as\
-  readPreferenceTags are ignored if they are also
+- 2017-11-07: Clarified that all parts of listable options such as readPreferenceTags are ignored if they are also
   present in options to the MongoClient constructor. Clarified which host names to use for SRV and TXT DNS queries.
 
 - 2017-11-01: Clarified that individual TXT records can have multiple strings.
 
-- 2017-10-31: Added a clause that specifying two host names with a\
-  `mongodb+srv://` URI is not allowed. Added a few
-  more test cases.
+- 2017-10-31: Added a clause that specifying two host names with a `mongodb+srv://` URI is not allowed. Added a few more
+  test cases.
 
 - 2017-10-18: Removed prohibition of raising DNS related errors when parsing the URI.
 
-- 2017-10-04: Removed from [Future Work](#future-work) the line about multiple MongoS\
-  discovery. The current
+- 2017-10-04: Removed from [Future Work](#future-work) the line about multiple MongoS discovery. The current
   specification already allows for it, as multiple host names which are all MongoS servers is already allowed under
   SDAM. And this specification does not modify SDAM. Added support for connection string options through TXT records.
 
-- 2017-09-19: Clarify that host names in `mongodb+srv://` URLs work like normal\
-  host specifications.
+- 2017-09-19: Clarify that host names in `mongodb+srv://` URLs work like normal host specifications.
 
-- 2017-09-01: Updated test plan with YAML tests, and moved prose tests for URI\
-  parsing into invalid-uris.yml in the
+- 2017-09-01: Updated test plan with YAML tests, and moved prose tests for URI parsing into invalid-uris.yml in the
   Connection String Spec tests.

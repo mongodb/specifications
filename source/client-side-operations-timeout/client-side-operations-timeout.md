@@ -20,9 +20,10 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-min(a, b)\
-Shorthand for "the minimum of a and b" where `a` and `b` are numeric values. For any cases where 0 means
-"infinite" (e.g. [timeoutMS](#timeoutms)), `min(0, other)` MUST evaluate to `other`.
+**min(a, b)**
+
+Shorthand for "the minimum of a and b" where `a` and `b` are numeric values. For any cases where 0 means "infinite"
+(e.g. [timeoutMS](#timeoutms)), `min(0, other)` MUST evaluate to `other`.
 
 ### MongoClient Configuration
 
