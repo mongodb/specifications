@@ -5,28 +5,32 @@ Seedlist Discovery spec.
 
 ### Prose Tests
 
-1. When given the following valid SRVs, parse the connection string without throwing a parse related error.
+For the following prose tests, it is assumed drivers are be able to stub DNS results to easily test invalid DNS
+resolution results.
 
-   a. Only one domain level (ex: `mongodb+srv://localhost`).
+1. When given the following valid SRVs, the pre-DNS SRV validation step not cause any errors.
 
-   b. Only two domain levels (ex: `mongodb+srv://mongo.local`).
+   a. Only one domain level: `mongodb+srv://localhost`.
+
+   b. Only two domain levels: `mongodb+srv://mongo.local`.
 
 <br />
 
-2. When given an SRV that does NOT end with the original SRV's `{domainname}`, throw a runtime error.
+2. For the following steps, run each of these cases: SRVs with one, two, and three `.` separated parts.
 
-   For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com` should prompt an error.
+   When given an SRV that does NOT end with the original SRV's domain name, throw a runtime error.
 
-   Run this test for the following test cases: SRVs with one, two, and three `.` separated parts.
+   For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com` should prompt an error, since
+   the returned address does not end with `mongodb.com`.
 
 <br />  
 
-3. When given an SRV with less than three `.` separated parts that returns identical address to the original
-   `{hostname}`, throw a runtime error.
+3. For the following steps, run each of these cases: SRVs with one, and two `.` separated parts.
 
-   For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error.
+   When given an SRV that returns identical address to the original hostname, throw a runtime error.
 
-   Run this test for both cases: one and two `.` separated parts.
+   For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error since it is
+   identical to the original hostname.
 
 ## Test Setup
 

@@ -9,9 +9,9 @@ ______________________________________________________________________
 
 Presently, seeding a driver with an initial list of ReplicaSet or MongoS addresses is somewhat cumbersome, requiring a
 comma-delimited list of host names to attempt connections to. A standardized answer to this problem exists in the form
-of SRV records, which allow administrators to configure a single domain to return a list of host names. Supporting this
-feature would assist our users by decreasing maintenance load, primarily by removing the need to maintain seed lists at
-an application level.
+of SRV records, which allow administrators to configure a single hostname to return a list of host names. Supporting
+this feature would assist our users by decreasing maintenance load, primarily by removing the need to maintain seed
+lists at an application level.
 
 This specification builds on the [Connection String](../connection-string/connection-string-spec.md) specification. It
 adds a new protocol scheme and modifies how the
@@ -36,6 +36,30 @@ mongodb+srv://{subdomain}.{domainname}/{options}
 
 `{options}` refers to the optional elements from the [Connection String](../connection-string/connection-string-spec.md)
 specification following the `Host Information`. This includes the `Auth database` and `Connection Options`.
+
+For the purposes of this document, `{hostname}` will be divided using the following terminology. If an SRV `{hostname}`
+has:
+
+1. Three or more `.` separated parts, then the left-most part is the `{subdomain}` and the remaining portion is the
+   `{domainname}`.
+
+   - Examples:
+     - `{hostname}` = `cluster_1.tests.mongodb.co.uk`
+
+       - `{subdomain}` = `cluster_1`
+       - `{domainname}` = `tests.mongodb.co.uk`
+
+     - `{hostname}` = `hosts_34.example.com`
+
+       - `{subdomain}` = `hosts_34`
+       - `{domainname}` = `example.com`
+
+2. One or two `.` separated part(s), then the `{hostname}` is equivalent to the `{domainname}`, and there is no
+   subdomain.
+
+   - Examples:
+     - `{hostname}` = `{domainname}` = `localhost`
+     - `{hostname}` = `{domainname}` = `mongodb.local`
 
 ### MongoClient Configuration
 
@@ -87,24 +111,6 @@ If `mongodb+srv` is used, a driver MUST implicitly also enable TLS. Clients can 
 either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), but not through a TXT record (discussed in a later section).
 
-#### Terminology
-
-For the purposes of this document, `{hostname}` will be divided using the following terminology.
-
-If an SRV `{hostname}` has:
-
-- 3 or more `.` separated parts:
-  - the left-most part is the `{subdomain}`
-  - the remaining portion is the `{domain}`
-  - examples:
-    - `{cluster_1.tests.mongodb.co.uk}`
-    - `{hosts_34.example.com}`
-- have 1 or 2 `.` separated part(s):
-  - the `{hostname}` is equivalent to the `{domain}`
-  - examples:
-    - `{localhost}`
-    - `{mongodb.local}`
-
 #### Querying DNS
 
 In this preprocessing step, the driver will query the DNS server for SRV records on the hostname, prefixed with the SRV
@@ -122,9 +128,10 @@ A driver MUST verify that the host names returned through SRV records end with t
 Drivers MUST raise an error and MUST NOT initiate a connection to any returned host name which does not share the same
 `{domainname}`.
 
-In the case that the SRV record has less than three `.` separated parts, the returned address MUST NOT be identical to
-the original `{hostname}`. The next major version should the host names returned through all SRVs require to end with
-the entire `{hostname}`.
+In the case that the SRV record has less than three `.` separated parts, the returned address MUST must end with the
+SRV's entire `{hostname}` and MUST NOT be identical to the original `{hostname}`. The next major version MUST no longer
+allow an SRV record, with any number of parts, to return address that doesn't end with the SRVs' entire `{hostname}`.
+Drivers MUST document this in a prior minor release.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 
