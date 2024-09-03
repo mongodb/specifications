@@ -314,9 +314,9 @@ error occurs.
 
 ### 6. GridFS - Upload
 
-Tests in this section MUST only be run against server versions 4.4 and higher.
-Drivers SHOULD apply [useMultipleMongoses=false](source/unified-test-format/unified-test-format.md#entity)
-as described in the unified test format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
+Tests in this section MUST only be run against server versions 4.4 and higher. Drivers SHOULD apply
+[useMultipleMongoses=false](../../unified-test-format/unified-test-format.md#entity) as described in the unified test
+format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
 
 #### uploads via openUploadStream can be timed out
 
@@ -389,9 +389,9 @@ This test only applies to drivers that provide an API to abort a GridFS upload s
 
 ### 7. GridFS - Download
 
-This test MUST only be run against server versions 4.4 and higher.
-Drivers SHOULD apply [useMultipleMongoses=false](source/unified-test-format/unified-test-format.md#entity)
-as described in the unified test format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
+This test MUST only be run against server versions 4.4 and higher. Drivers SHOULD apply
+[useMultipleMongoses=false](../../unified-test-format/unified-test-format.md#entity) as described in the unified test
+format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
 
 1. Using `internalClient`, drop and re-create the `db.fs.files` and `db.fs.chunks` collections.
 
