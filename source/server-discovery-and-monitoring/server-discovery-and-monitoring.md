@@ -663,7 +663,8 @@ ServerType and a TopologyType intersect, the table shows what action the client 
 This subsection complements the [TopologyType table](#topologytype-table) with prose explanations of the TopologyTypes
 (besides Single and LoadBalanced).
 
-TopologyType Unknown\
+**TopologyType Unknown**
+
 A starting state.
 
 **Actions**:
@@ -679,7 +680,8 @@ A starting state.
 - If the type is RSSecondary, RSArbiter or RSOther, record its setName, set the TopologyType to ReplicaSetNoPrimary, and
   call [updateRSWithoutPrimary](#updaterswithoutprimary).
 
-TopologyType Sharded\
+**TopologyType Sharded**
+
 A steady state. Connected to one or more mongoses.
 
 **Actions**:
@@ -687,7 +689,8 @@ A steady state. Connected to one or more mongoses.
 - If the server is Unknown or Mongos, keep it.
 - Remove others.
 
-TopologyType ReplicaSetNoPrimary\
+**TopologyType ReplicaSetNoPrimary**
+
 A starting state. The topology is definitely a replica set, but no primary is known.
 
 **Actions**:
@@ -699,7 +702,8 @@ A starting state. The topology is definitely a replica set, but no primary is kn
 - If the type is RSPrimary call [updateRSFromPrimary](#updatersfromprimary).
 - If the type is RSSecondary, RSArbiter or RSOther, run [updateRSWithoutPrimary](#updaterswithoutprimary).
 
-TopologyType ReplicaSetWithPrimary\
+**TopologyType ReplicaSetWithPrimary**
+
 A steady state. The primary is known.
 
 **Actions**:
@@ -1902,33 +1906,27 @@ oversaw the specification process.
 
 - 2016-05-04: Added link to SDAM monitoring.
 
-- 2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server\
-  Selection Spec", and
+- 2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server Selection Spec", and
   "secondaryAcceptableLatencyMS" with "localThresholdMS".
 
 - 2016-07-21: Updated for Max Staleness support.
 
 - 2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
 
-- 2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to\
-  update the topology when they
-  handshake application connections.
+- 2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to update the topology when they handshake
+  application connections.
 
-- 2016-10-06: In updateRSWithoutPrimary the hello or legacy hello response's\
-  "primary" field should be used to update
+- 2016-10-06: In updateRSWithoutPrimary the hello or legacy hello response's "primary" field should be used to update
   the topology description, even if address != me.
 
 - 2016-10-29: Allow for idleWritePeriodMS to change someday.
 
-- 2016-11-01: "Unknown" is no longer the default TopologyType, the default is now\
-  explicitly unspecified. Update
+- 2016-11-01: "Unknown" is no longer the default TopologyType, the default is now explicitly unspecified. Update
   instructions for setting the initial TopologyType when running the spec tests.
 
-- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the\
-  future.
+- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future.
 
-- 2017-02-28: Update "network error when reading or writing": timeout while\
-  connecting does mark a server Unknown,
+- 2017-02-28: Update "network error when reading or writing": timeout while connecting does mark a server Unknown,
   unlike a timeout while reading or writing. Justify the different behaviors, and also remove obsolete reference to
   auto-retry.
 
@@ -1944,32 +1942,27 @@ oversaw the specification process.
 
 - 2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
 
-- 2020-02-13: Drivers must run SDAM flow even when server description is equal to\
-  the last one.
+- 2020-02-13: Drivers must run SDAM flow even when server description is equal to the last one.
 
-- 2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring\
-  stale application errors.
+- 2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring stale application errors.
 
 - 2020-05-07: Include error field in ServerDescription equality comparison.
 
 - 2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.
 
-- 2020-12-17: Mark the pool for a server as "ready" after performing a successful\
-  check. Synchronize pool clearing with
+- 2020-12-17: Mark the pool for a server as "ready" after performing a successful check. Synchronize pool clearing with
   SDAM updates.
 
 - 2021-01-17: Require clients to compare (electionId, setVersion) tuples.
 
-- 2021-02-11: Errors encountered during auth are handled by SDAM. Auth errors\
-  mark the server Unknown and clear the
+- 2021-02-11: Errors encountered during auth are handled by SDAM. Auth errors mark the server Unknown and clear the
   pool.
 
 - 2021-04-12: Adding in behaviour for load balancer mode.
 
 - 2021-05-03: Require parsing "isWritablePrimary" field in responses.
 
-- 2021-06-09: Connection pools must be created and eventually marked ready for\
-  any server if a direct connection is
+- 2021-06-09: Connection pools must be created and eventually marked ready for any server if a direct connection is
   used.
 
 - 2021-06-29: Updated to use modern terminology.

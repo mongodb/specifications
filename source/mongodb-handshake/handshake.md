@@ -27,18 +27,19 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Terms
 
-**hello command**\
-The command named `hello`. It is the preferred and modern command for handshakes and topology
-monitoring.
+**hello command**
 
-**legacy hello command**\
-The command named `isMaster`. It is the deprecated equivalent of the `hello` command. It was
-deprecated in MongoDB 5.0.
+The command named `hello`. It is the preferred and modern command for handshakes and topology monitoring.
 
-**isMaster / ismaster**\
-The correct casing is `isMaster`, but servers will accept the alternate casing `ismaster`.
-Other case variations result in `CommandNotFound`. Drivers MUST take this case variation into account when determining
-which commands to encrypt, redact, or otherwise treat specially.
+**legacy hello command**
+
+The command named `isMaster`. It is the deprecated equivalent of the `hello` command. It was deprecated in MongoDB 5.0.
+
+**isMaster / ismaster**
+
+The correct casing is `isMaster`, but servers will accept the alternate casing `ismaster`. Other case variations result
+in `CommandNotFound`. Drivers MUST take this case variation into account when determining which commands to encrypt,
+redact, or otherwise treat specially.
 
 ## Specification
 

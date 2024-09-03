@@ -548,18 +548,14 @@ any customers experiencing degraded performance can simply disable `retryableRea
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 
-- 2023-12-05: Add that any server information associated with retryable\
-  exceptions MUST reflect the originating server,
+- 2023-12-05: Add that any server information associated with retryable exceptions MUST reflect the originating server,
   even in the presence of retries.
 
-- 2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes\
-  that should be retried.
+- 2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes that should be retried.
 
-- 2023-11-28: Add ExceededTimeLimit to the list of error codes that should\
-  be retried.
+- 2023-11-28: Add ExceededTimeLimit to the list of error codes that should be retried.
 
-- 2023-08-26: Require that in a sharded cluster the server on which the\
-  operation failed MUST be provided to the server
+- 2023-08-26: Require that in a sharded cluster the server on which the operation failed MUST be provided to the server
   selection mechanism as a deprioritized server.
 
 - 2023-08-21: Update Q&A that contradicts SDAM transient error logic
@@ -572,8 +568,7 @@ any customers experiencing degraded performance can simply disable `retryableRea
 
 - 2022-01-25: Note that drivers should retry handshake network failures.
 
-- 2021-04-26: Replaced deprecated terminology; removed requirement to parse error\
-  message text as MongoDB 3.6+ servers
+- 2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers
   will always return an error code
 
 - 2021-03-23: Require that PoolClearedErrors are retried

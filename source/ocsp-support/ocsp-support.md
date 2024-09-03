@@ -468,8 +468,7 @@ find ~/profile/Library/Keychains -name 'ocspcache.sqlite3' \
 -exec sqlite3 "{}" 'DELETE FROM responses ;' \;
 ```
 
-To delete only "Let's Encrypt" related entries, the following command\
-could be used:
+To delete only "Let's Encrypt" related entries, the following command could be used:
 
 ```bash
 find ~/profile/Library/Keychains -name 'ocspcache.sqlite3' \
@@ -543,16 +542,13 @@ library has contacted the OCSP endpoint specified in the server's certificate. T
 
 - 2021-04-07: Updated terminology to use allowList.
 
-- 2020-07-01: Default tlsDisableOCSPEndpointCheck or\
-  tlsDisableCertificateRevocationCheck to true in the case that a
+- 2020-07-01: Default tlsDisableOCSPEndpointCheck or tlsDisableCertificateRevocationCheck to true in the case that a
   driver's TLS library exhibits hard-fail behavior and add provision for platform-specific defaults.
 
-- 2020-03-20: Clarify OCSP documentation requirements for drivers unable to\
-  enable OCSP by default on a per MongoClient
+- 2020-03-20: Clarify OCSP documentation requirements for drivers unable to enable OCSP by default on a per MongoClient
   basis.
 
-- 2020-03-03: Add tlsDisableCertificateRevocationCheck URI option. Add Go as a\
-  reference implementation. Add hard-fail
+- 2020-03-03: Add tlsDisableCertificateRevocationCheck URI option. Add Go as a reference implementation. Add hard-fail
   backwards compatibility documentation requirements.
 
 - 2020-02-26: Add tlsDisableOCSPEndpointCheck URI option.
@@ -561,8 +557,7 @@ library has contacted the OCSP endpoint specified in the server's certificate. T
 
 - 2020-02-10: Add cache requirement.
 
-- 2020-01-31: Add SNI requirement and clarify design rationale regarding\
-  minimizing round trips.
+- 2020-01-31: Add SNI requirement and clarify design rationale regarding minimizing round trips.
 
 - 2020-01-28: Clarify behavior regarding nonces and tolerance periods.
 

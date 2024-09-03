@@ -19,21 +19,25 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**MongoClient**\
-Driver object representing a connection to MongoDB. This is the root object of a driver's API and MAY
-be named differently in some drivers.
+**MongoClient**
 
-**MongoDatabase**\
-Driver object representing a database and the operations that can be performed on it. MAY be named
+Driver object representing a connection to MongoDB. This is the root object of a driver's API and MAY be named
 differently in some drivers.
 
-**Iterable**\
-An object or data structure that is a sequence of elements that can be iterated over. This spec is
-flexible on what that means as different drivers will have different requirements, types, and idioms.
+**MongoDatabase**
 
-**Document**\
-An object or data structure used by the driver to represent a BSON document. This spec is flexible on what
-that means as different drivers will have different requirements, types, and idioms.
+Driver object representing a database and the operations that can be performed on it. MAY be named differently in some
+drivers.
+
+**Iterable**
+
+An object or data structure that is a sequence of elements that can be iterated over. This spec is flexible on what that
+means as different drivers will have different requirements, types, and idioms.
+
+**Document**
+
+An object or data structure used by the driver to represent a BSON document. This spec is flexible on what that means as
+different drivers will have different requirements, types, and idioms.
 
 ### Naming Deviations
 
@@ -233,8 +237,7 @@ array of database information documents.
 
 - 2024-07-26: Migrated from reStructuredText to Markdown. Removed note that applied to pre-3.6 servers.
 
-- 2022-10-05: Remove spec front matter and reformat changelog. Also reverts the\
-  minimum server version to 3.6, which is
+- 2022-10-05: Remove spec front matter and reformat changelog. Also reverts the minimum server version to 3.6, which is
   where `nameOnly` and `filter` options were first introduced for `listDatabases`.
 
 - 2022-08-17: Clarify the behavior of comment on pre-4.4 servers.
