@@ -19,13 +19,11 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**MongoClient**\
-Driver object representing a connection to MongoDB. This is the root object of a driver's API and MAY
-be named differently in some drivers.
+MongoClient : Driver object representing a connection to MongoDB. This is the root object of a driver's API and MAY be
+named differently in some drivers.
 
-**Iterable**\
-An object or data structure that is a sequence of elements that can be iterated over. This spec is
-flexible on what that means as different drivers will have different requirements, types, and idioms.
+Iterable : An object or data structure that is a sequence of elements that can be iterated over. This spec is flexible
+on what that means as different drivers will have different requirements, types, and idioms.
 
 ### listCollections Database Command
 
@@ -298,31 +296,24 @@ The shell implements the first algorithm for falling back if the `listCollection
 
 - 2022-02-01: Add `comment` option to `listCollections` command.
 
-- 2022-01-20: Require that timeouts be applied per the client-side operations\
-  timeout spec.
+- 2022-01-20: Require that timeouts be applied per the client-side operations timeout spec.
 
-- 2021-12-17: Support `authorizedCollections` option in `listCollections`\
-  command.
+- 2021-12-17: Support `authorizedCollections` option in `listCollections` command.
 
 - 2021-04-22: Update to use secondaryOk.
 
-- 2020-03-18: MongoDB 4.4 no longer includes `ns` field in `idIndex` field\
-  for `listCollections` responses.
+- 2020-03-18: MongoDB 4.4 no longer includes `ns` field in `idIndex` field for `listCollections` responses.
 
-- 2019-03-21: The method that returns a list of collection names should be named\
-  `listCollectionNames`. The method that
+- 2019-03-21: The method that returns a list of collection names should be named `listCollectionNames`. The method that
   returns a list of collection objects may be named `listMongoCollections`.
 
-- 2018-07-03: Clarify that `nameOnly` must not be used with filters other than\
-  `name`.
+- 2018-07-03: Clarify that `nameOnly` must not be used with filters other than `name`.
 
 - 2018-05-18: Support `nameOnly` option in `listCollections` command.
 
 - 2017-09-27: Clarify reason for filtering collection names containing '$'.
 
-- 2015-01-14: Clarify trimming of database name. Put preferred method name for\
-  listing collections with a cursor as
+- 2015-01-14: Clarify trimming of database name. Put preferred method name for listing collections with a cursor as
   return value.
 
-- 2014-12-18: Update with the server change to return a cursor for\
-  `listCollections`.
+- 2014-12-18: Update with the server change to return a cursor for `listCollections`.

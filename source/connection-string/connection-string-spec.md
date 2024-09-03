@@ -149,11 +149,9 @@ for legacy reasons.
 A key value pair represents the option key and its associated value. The key is everything up to the first equals sign
 ("=") and the value is everything afterwards. Key values contain the following information:
 
-- Key:\
-  The connection option's key string. Keys should be normalised and character case should be ignored.
+- Key:<br> The connection option's key string. Keys should be normalised and character case should be ignored.
 
-- Value: (optional)\
-  The value if provided otherwise it defaults to an empty string.
+- Value: (optional)<br> The value if provided otherwise it defaults to an empty string.
 
 ### Defining connection options
 
@@ -348,18 +346,16 @@ Given the string `mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-2701
    1. Auth database: `admin`.
    2. Connection options: `w=1`.
 7. URL decode the auth database. In this example, the auth database is `admin`.
-8. Validate the \[database contains no prohibited characters\](#database contains no prohibited characters).
+8. Validate the database contains no prohibited characters.
 9. Validate, split, and URL decode the connection options. In this example, the connection options are `{w: 1}`.
 
 ### Q&A
 
-Q: What about existing Connection Options that aren't currently defined in a specification?\
-Ideally all MongoClient
+Q: What about existing Connection Options that aren't currently defined in a specification?<br> Ideally all MongoClient
 options would already belong in their relevant specifications. As we iterate and produce more specifications these
 options should be covered.
 
-Q: Why is it recommended that Connection Options take precedence over application set options?\
-This is only a
+Q: Why is it recommended that Connection Options take precedence over application set options?<br> This is only a
 recommendation but the reasoning is application code is much harder to change across deployments. By making the
 Connection String take precedence from outside the application it would be easier for the application to be portable
 across environments. The order of precedence of MongoClient hosts and options is recommended to be from low to high:
@@ -368,8 +364,7 @@ across environments. The order of precedence of MongoClient hosts and options is
 2. MongoClient hosts and options
 3. Connection String hosts and options
 
-Q: Why WARN level warning on unknown options rather than throwing an exception?\
-It is responsible to inform users of
+Q: Why WARN level warning on unknown options rather than throwing an exception?<br> It is responsible to inform users of
 possible misconfigurations and both methods achieve that. However, there are conflicting requirements of a Connection
 String. One goal is that any given driver should be configurable by a connection string but different drivers and
 languages have different feature sets. Another goal is that Connection Strings should be portable and as such some
@@ -377,33 +372,27 @@ options supported by language X might not be relevant to language Y. Any given d
 specific to a different driver or is misspelled or just not supported. So the only way to stay portable and support
 configuration of all options is to not throw an exception but rather log a warning.
 
-Q: How long should deprecation options be supported?\
-This is not declared in this specification. It's not deemed
+Q: How long should deprecation options be supported?<br> This is not declared in this specification. It's not deemed
 responsible to give a single timeline for how long deprecated options should be supported. As such any specifications
 that deprecate options that do have the context of the decision should provide the timeline.
 
-Q: Why can I not use a standard URI parser?\
-The connection string format does not follow the standard URI format (as
+Q: Why can I not use a standard URI parser?<br> The connection string format does not follow the standard URI format (as
 described in [RFC 3986](http://tools.ietf.org/html/rfc3986)) we differ in two key areas:
 
-1. Hosts\
-   The connection string allows for multiple hosts for high availability reasons but standard URI's only ever
+1. Hosts<br> The connection string allows for multiple hosts for high availability reasons but standard URI's only ever
    define a single host.
 
-2. Query Parameters / Connection Options\
-   The connection string provides a concreted definition on how the Connection
+2. Query Parameters / Connection Options<br> The connection string provides a concreted definition on how the Connection
    Options are parsed, including definitions of different data types. The [RFC 3986](http://tools.ietf.org/html/rfc3986)
    only defines that they are `key=value` pairs and gives no instruction on parsing. In fact different languages handle
    the parsing of query parameters in different ways and as such there is no such thing as a standard URI parser.
 
-Q: Can the connection string contain non-ASCII characters?\
-The connection string can contain non-ASCII characters. The
-connection string is text, which can be encoded in any way appropriate for the application (e.g. the C Driver requires
-you to pass it a UTF-8 encoded connection string).
+Q: Can the connection string contain non-ASCII characters?<br> The connection string can contain non-ASCII characters.
+The connection string is text, which can be encoded in any way appropriate for the application (e.g. the C Driver
+requires you to pass it a UTF-8 encoded connection string).
 
 Q: Why does reference implementation check for a `.sock` suffix when parsing a socket path and possible auth
-database?\
-To simplify parsing of a socket path followed by an auth database, we rely on MongoDB's
+database?<br> To simplify parsing of a socket path followed by an auth database, we rely on MongoDB's
 [naming restrictions](https://www.mongodb.com/docs/manual/reference/limits/#naming-restrictions)), which do not allow
 database names to contain a dot character, and the fact that socket paths must end with `.sock`. This allows us to
 differentiate the last part of a socket path from a database name. While we could immediately rule out an auth database
@@ -413,8 +402,7 @@ on the basis of the dot alone, this specification is primarily concerned with br
 (e.g. `"db.collection"`) for the auth database part, so we do not want to be more strict than is necessary for parsing.
 
 Q: Why throw an exception if the userinfo contains a percent sign ("%"), at-sign ("@"), or more than one colon
-(":")?\
-This is done to help users format the connection string correctly. Although at-signs ("@") or colons (":") in
+(":")?<br> This is done to help users format the connection string correctly. Although at-signs ("@") or colons (":") in
 the username must be URL encoded, users may not be aware of that requirement. Take the following example:
 
 ```
@@ -426,9 +414,8 @@ as the userinfo could cause authentication to fail, causing confusion for the us
 and percent symbols would invite further ambiguity. By throwing an exception users are made aware and then update the
 connection string so to be explicit about what forms the username and password.
 
-Q: Why must UNIX domain sockets be URL encoded?\
-This has been done to reduce ambiguity between the socket name and the
-database name. Take the following example:
+Q: Why must UNIX domain sockets be URL encoded?<br> This has been done to reduce ambiguity between the socket name and
+the database name. Take the following example:
 
 ```
 mongodb:///tmp/mongodb.sock/mongodb.sock
@@ -439,10 +426,9 @@ Is the host `/tmp/mongodb.sock` and the auth database `mongodb.sock` or does the
 be explicit about the host and the auth database. By requiring an exception to be thrown when the host contains a slash
 ("/") users can be informed on how to migrate their connection strings.
 
-Q: Why must the auth database be URL decoded by the parser?\
-On Linux systems database names can contain a question mark
-("?"), in these rare cases the auth database must be URL encoded. This disambiguates between the auth database and the
-connection options. Take the following example:
+Q: Why must the auth database be URL decoded by the parser?<br> On Linux systems database names can contain a question
+mark ("?"), in these rare cases the auth database must be URL encoded. This disambiguates between the auth database and
+the connection options. Take the following example:
 
 ```
 mongodb://localhost/admin%3F?w=1
@@ -450,10 +436,9 @@ mongodb://localhost/admin%3F?w=1
 
 In this case the auth database would be `admin?` and the connection options `w=1`.
 
-Q: How should the space character be encoded in a connection string?\
-Space characters SHOULD be encoded as `%20` rather
-than `+`, this will be portable across all implementations. Implementations MAY support decoding `+` into a space, as
-many languages treat strings as `x-www-form-urlencoded` data by default.
+Q: How should the space character be encoded in a connection string?<br> Space characters SHOULD be encoded as `%20`
+rather than `+`, this will be portable across all implementations. Implementations MAY support decoding `+` into a
+space, as many languages treat strings as `x-www-form-urlencoded` data by default.
 
 ## Changelog
 
@@ -465,18 +450,15 @@ many languages treat strings as `x-www-form-urlencoded` data by default.
 
 - 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
 
-- 2017-06-10: In Userinfo section, require username and password to be fully URI\
-  encoded, not just "%", "@", and ":".
-  In Auth Database, list the prohibited characters. In Reference Implementation, split at the first "/", not the last.
+- 2017-06-10: In Userinfo section, require username and password to be fully URI encoded, not just "%", "@", and ":". In
+  Auth Database, list the prohibited characters. In Reference Implementation, split at the first "/", not the last.
 
 - 2018-01-09: Clarified that space characters should be encoded to `%20`.
 
-- 2018-06-04: Revised Userinfo section to provide an explicit list of allowed\
-  characters and clarify rules for
+- 2018-06-04: Revised Userinfo section to provide an explicit list of allowed characters and clarify rules for
   exceptions.
 
-- 2019-02-04: In Repeated Keys section, clarified that the URI options spec may\
-  override the repeated key behavior
+- 2019-02-04: In Repeated Keys section, clarified that the URI options spec may override the repeated key behavior
   described here for certain options.
 
 - 2019-03-04: Require drivers to document option precedence rules
@@ -487,8 +469,6 @@ many languages treat strings as `x-www-form-urlencoded` data by default.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
-- 2022-12-27: Note that host information ends with a "/" character in connection\
-  options description.
+- 2022-12-27: Note that host information ends with a "/" character in connection options description.
 
-- 2023-08-02: Make delimiting slash between host information and connection options\
-  optional and update tests
+- 2023-08-02: Make delimiting slash between host information and connection options optional and update tests

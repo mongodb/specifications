@@ -4,5 +4,6 @@ nav:
   - 'index.md'
 markdown_extensions:
   - admonition
+  - def_list
 plugins:
   - gh-admonitions

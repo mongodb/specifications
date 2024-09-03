@@ -20,50 +20,39 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**Causal consistency**\
-A property that guarantees that an application can read its own writes and that a later read
-will never observe a version of the data that is older than an earlier read.
+Causal consistency : A property that guarantees that an application can read its own writes and that a later read will
+never observe a version of the data that is older than an earlier read.
 
-**ClientSession**\
-The driver object representing a client session and the operations that can be performed on it.
+ClientSession : The driver object representing a client session and the operations that can be performed on it.
 
-**Cluster time**\
-The current cluster time. The server reports its view of the current cluster time in the
-`$clusterTime` field in responses from the server and the driver participates in distributing the current cluster time
-to all nodes (called "gossipping the cluster time") by sending the highest `$clusterTime` it has seen so far in messages
-it sends to mongos servers. The current cluster time is a logical time, but is digitally signed to prevent malicious
-clients from propagating invalid cluster times. Cluster time is only used in replica sets and sharded clusters.
+Cluster time : The current cluster time. The server reports its view of the current cluster time in the `$clusterTime`
+field in responses from the server and the driver participates in distributing the current cluster time to all nodes
+(called "gossipping the cluster time") by sending the highest `$clusterTime` it has seen so far in messages it sends to
+mongos servers. The current cluster time is a logical time, but is digitally signed to prevent malicious clients from
+propagating invalid cluster times. Cluster time is only used in replica sets and sharded clusters.
 
-**Logical time**\
-A time-like quantity that can be used to determine the order in which events occurred. Logical time is
+Logical time : A time-like quantity that can be used to determine the order in which events occurred. Logical time is
 represented as a BsonTimestamp.
 
-**MongoClient**\
-The root object of a driver's API. MAY be named differently in some drivers.
+MongoClient : The root object of a driver's API. MAY be named differently in some drivers.
 
-**MongoCollection**\
-The driver object representing a collection and the operations that can be performed on it. MAY be
+MongoCollection : The driver object representing a collection and the operations that can be performed on it. MAY be
 named differently in some drivers.
 
-**MongoDatabase**\
-The driver object representing a database and the operations that can be performed on it. MAY be
-named differently in some drivers.
+MongoDatabase : The driver object representing a database and the operations that can be performed on it. MAY be named
+differently in some drivers.
 
-**Operation time**\
-The logical time at which an operation occurred. The server reports the operation time in the
-response to all commands, including error responses. The operation time by definition is always less than or equal to
-the cluster time. Operation times are tracked on a per `ClientSession` basis, so the `operationTime` of each
-`ClientSession` corresponds to the time of the last operation performed in that particular `ClientSession`.
+Operation time : The logical time at which an operation occurred. The server reports the operation time in the response
+to all commands, including error responses. The operation time by definition is always less than or equal to the cluster
+time. Operation times are tracked on a per `ClientSession` basis, so the `operationTime` of each `ClientSession`
+corresponds to the time of the last operation performed in that particular `ClientSession`.
 
-**ServerSession**\
-The driver object representing a server session.
+ServerSession : The driver object representing a server session.
 
-**Session**\
-A session is an abstract concept that represents a set of sequential operations executed by an application
+Session : A session is an abstract concept that represents a set of sequential operations executed by an application
 that are related in some way. This specification defines how sessions are used to implement causal consistency.
 
-**Unacknowledged writes**\
-Unacknowledged writes are write operations that are sent to the server without waiting for a
+Unacknowledged writes : Unacknowledged writes are write operations that are sent to the server without waiting for a
 reply acknowledging the write. See the "Unacknowledged Writes" section below for information on how unacknowledged
 writes interact with causal consistency.
 
@@ -412,10 +401,8 @@ resolving many discussions of spec details. A final reference implementation mus
 
 - 2017-10-04: Added advanceOperationTime
 
-- 2017-09-28: Remove remaining references to collections being associated with\
-  sessions. Update spec to reflect that
+- 2017-09-28: Remove remaining references to collections being associated with sessions. Update spec to reflect that
   replica sets use $clusterTime also now.
 
-- 2017-09-13: Renamed "causally consistent reads" to "causal consistency". If no\
-  value is supplied for
+- 2017-09-13: Renamed "causally consistent reads" to "causal consistency". If no value is supplied for
   `causallyConsistent` assume true.

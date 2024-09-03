@@ -28,11 +28,9 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**UUID**\
-A Universally Unique IDentifier
+UUID : A Universally Unique IDentifier
 
-**BsonBinary**\
-An object that wraps an instance of a BSON binary value
+BsonBinary : An object that wraps an instance of a BSON binary value
 
 ### Naming Deviations
 

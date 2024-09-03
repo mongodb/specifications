@@ -1024,23 +1024,19 @@ There should be no backwards compatibility concerns.
 
 - 2022-05-17: Add `wallTime` to `ChangeStreamDocument`.
 
-- 2022-04-13: Support returning point-in-time pre and post-images with\
-  `fullDocumentBeforeChange` and `fullDocument`.
+- 2022-04-13: Support returning point-in-time pre and post-images with `fullDocumentBeforeChange` and `fullDocument`.
 
 - 2022-03-25: Do not error when parsing change stream event documents.
 
 - 2022-02-28: Add `to` to `ChangeStreamDocument`.
 
-- 2022-02-10: Specify that `getMore` command must explicitly send inherited\
-  `comment`.
+- 2022-02-10: Specify that `getMore` command must explicitly send inherited `comment`.
 
 - 2022-02-01: Add `comment` to `ChangeStreamOptions`.
 
-- 2022-01-19: Require that timeouts be applied per the client-side operations\
-  timeout specification.
+- 2022-01-19: Require that timeouts be applied per the client-side operations timeout specification.
 
-- 2021-09-01: Clarify that server selection during resumption should respect\
-  normal server selection rules.
+- 2021-09-01: Clarify that server selection during resumption should respect normal server selection rules.
 
 - 2021-04-29: Add `load-balanced` to test topology requirements.
 
@@ -1050,22 +1046,19 @@ There should be no backwards compatibility concerns.
 
 - 2020-02-10: Change error handling approach to use an allow list.
 
-- 2019-07-15: Clarify resume process for change streams started with the\
-  `startAfter` option.
+- 2019-07-15: Clarify resume process for change streams started with the `startAfter` option.
 
 - 2019-07-09: Change `fullDocument` to be an optional string.
 
 - 2019-07-02: Fix server version for `startAfter`.
 
-- 2019-07-01: Clarify that close may be implemented with more idiomatic\
-  patterns instead of a method.
+- 2019-07-01: Clarify that close may be implemented with more idiomatic patterns instead of a method.
 
 - 2019-06-20: Fix server version for addition of `postBatchResumeToken`.
 
 - 2019-04-12: Clarify caching process for resume token.
 
-- 2019-04-03: Update the lowest server version that supports\
-  `postBatchResumeToken`.
+- 2019-04-03: Update the lowest server version that supports `postBatchResumeToken`.
 
 - 2019-01-10: Clarify error handling for killing the cursor.
 
@@ -1083,15 +1076,13 @@ There should be no backwards compatibility concerns.
 
 - 2018-05-24: Change `startAtClusterTime` to `startAtOperationTime`.
 
-- 2018-04-18: Add helpers for Database and MongoClient, and add\
-  `startAtClusterTime` option.
+- 2018-04-18: Add helpers for Database and MongoClient, and add `startAtClusterTime` option.
 
 - 2018-04-17: Clarify that the initial aggregate should not be retried.
 
 - 2017-12-13: Default read concern is also accepted, not just "majority".
 
-- 2017-11-06: Defer to Read and Write concern spec for determining a read\
-  concern for the helper method.
+- 2017-11-06: Defer to Read and Write concern spec for determining a read concern for the helper method.
 
 - 2017-09-26: Clarify that change stream options may be added later.
 

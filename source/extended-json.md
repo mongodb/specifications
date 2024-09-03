@@ -86,7 +86,7 @@ An Extended JSON value MUST conform to one of these two formats as described in 
 | Int32                                                                                      | {"$numberInt": \<32-bit signed integer as a _string_>}                                                                                                                                                                                                                                                                                                                                                                     | _integer_                                                                                                                                   |
 | Int64                                                                                      | {"$numberLong": \<64-bit signed integer as a _string_>}                                                                                                                                                                                                                                                                                                                                                                    | _integer_                                                                                                                                   |
 | Double \[finite\]                                                                          | {"$numberDouble": \<64-bit signed floating point as a decimal _string_>}                                                                                                                                                                                                                                                                                                                                                   | _non-integer_                                                                                                                               |
-| Double \[non-finite\]                                                                      | {"$numberDouble": \<One of the _strings_: "Infinity", "-Infinity", or "NaN">}                                                                                                                                                                                                                                                                                                                                              | <Same as Canonical Extended JSON>                                                                                                           |
+| Double \<One of the _strings_: "Infinity", "-Infinity", or "NaN">}                         | <Same as Canonical Extended JSON>                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                             |
 | Decimal128                                                                                 | {"$numberDecimal": <decimal as a _string_>}[^1]                                                                                                                                                                                                                                                                                                                                                                            | <Same as Canonical Extended JSON>                                                                                                           |
 | Binary                                                                                     | {"$binary": {"base64": \<base64-encoded (with padding as `=`) payload as a _string_>, "subType": <BSON binary type as a one- or two-character _hex string_>}}                                                                                                                                                                                                                                                              | <Same as Canonical Extended JSON>                                                                                                           |
 | Code                                                                                       | {"$code": _string_}                                                                                                                                                                                                                                                                                                                                                                                                        | <Same as Canonical Extended JSON>                                                                                                           |
@@ -172,7 +172,7 @@ or:
 { "zipCode" : { $type : "string" } }
 ```
 
-A parser SHOULD support at least 200 \[levels of nesting\](#levels of nesting) in an Extended JSON document but MAY set
+A parser SHOULD support at least 200 [levels of nesting](#levels-of-nesting) in an Extended JSON document but MAY set
 other limits on strings it can accept as defined in [section 9](https://tools.ietf.org/html/rfc7159#section-9) of the
 [JSON specification](https://tools.ietf.org/html/rfc7159).
 
@@ -507,7 +507,7 @@ The two formats in this specification address these two categories of use cases.
 Parsers need to accept any valid Extended JSON string that a generator can produce. Parsers and generators are permitted
 to accept and output strings in other formats as well for backwards compatibility.
 
-<span id="levels of nesting"></span>
+<span id="levels-of-nesting"></span>
 
 Acceptable nesting depth has implications for resource usage so unlimited nesting is not permitted.
 
@@ -605,8 +605,7 @@ following new Extended JSON type wrappers are introduced by this spec:
   this type will be indistinguishable from a double in certain languages where the distinction does not exist, such as
   Javascript.
 - `$numberDouble` - This is used to preserve the `double`type in Canonical Extended JSON, as some JSON generators might
-  omit a trailing ".0" for integral types.\
-  It also supports representing non-finite values like NaN or Infinity which
+  omit a trailing ".0" for integral types. It also supports representing non-finite values like NaN or Infinity which
   are prohibited in the JSON specification for numbers.
 - `$symbol` - The use of the `$symbol` key preserves the symbol type in Canonical Extended JSON, distinguishing it from
   JSON strings.
@@ -650,16 +649,14 @@ JSON for common historical uses. We decided to provide a second format option an
 (and limitations) inherent in each format.
 
 **Q**. My BSON parser doesn't distinguish every BSON type. Does my Extended JSON generator need to distinguish these
-types?\
-**A**. No. Some BSON parsers do not emit a unique type for each BSON type, making round-tripping BSON through
+types?<br> **A**. No. Some BSON parsers do not emit a unique type for each BSON type, making round-tripping BSON through
 such libraries impossible without changing the document. For example, a `DBPointer` will be parsed into a `DBRef` by
 PyMongo. In such cases, a generator must emit the Extended JSON form for whatever type the BSON parser emitted. It does
 not need to preserve type information when that information has been lost by the BSON parser.
 
 **Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON regular
 expressions were represented with `$regex`, handle parsing of extended JSON test representing a MongoDB query filter
-containing the `$regex` operator?\
-**A**. An implementation can handle this in a number of ways: - Introduce an
+containing the `$regex` operator?<br> **A**. An implementation can handle this in a number of ways: - Introduce an
 enumeration that determines the behavior of the parser. If the value is LEGACY, it will parse `$regex`and not treat
 `$regularExpression` specially, and if the value is CANONICAL, it will parse `$regularExpression` and not treat `$regex`
 specially. - Support both legacy and canonical forms in the parser without requiring the application to specify one or
@@ -667,11 +664,8 @@ the other. Making that work for the `$regex` query operator use case will requir
 version of this specification are followed for `$regex`; specifically, that a document with a `$regex` key whose value
 is a JSON object should be parsed as a normal document and not reported as an error.
 
-**Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON binary
-values were represented like `{"$binary": "AQIDBAU=", "$type": "80"}`, handle parsing of extended JSON test representing
-a MongoDB query filter containing the `$type`operator?\
-**A**. An implementation can handle this in a number of ways:\
-\-
+## **Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON binary values were represented like `{"$binary": "AQIDBAU=", "$type": "80"}`, handle parsing of extended JSON test representing a MongoDB query filter containing the `$type`operator?<br> **A**. An implementation can handle this in a number of ways:<br>
+
 Introduce an enumeration that determines the behavior of the parser. If the value is LEGACY, it will parse the new
 binary form and not treat the legacy one specially, and if the value is CANONICAL, it will parse the new form and not
 treat the legacy form specially. - Support both legacy and canonical forms in the parser without requiring the
@@ -680,8 +674,7 @@ rules set forth in the 1.0.0 version of this specification are followed for `$ty
 a `$type` key whose value is an integral type, or a document with a `$type` key but without a `$binary` key, should be
 parsed as a normal document and not reported as an error.
 
-**Q**. Sometimes I see the term "extjson" used in other specifications. Is "extjson" related to this
-specification?\
+**Q**. Sometimes I see the term "extjson" used in other specifications. Is "extjson" related to this specification?<br>
 **A**. Yes, "extjson" is short for "Extended JSON".
 
 ### Changelog
@@ -699,7 +692,7 @@ specification?\
   - Added support for parsing `$uuid` fields as BSON Binary subtype 4.
   - Changed the example to using the MongoDB Python Driver. It previously used the MongoDB Java Driver. The new example
     excludes the following BSON types that are unsupported in Python - `Symbol`,`SpecialFloat`,`DBPointer`, and
-    `Undefined`. Transformations for these types are now only documented in the `Conversion table`\_.
+    `Undefined`. Transformations for these types are now only documented in the [Conversion table](#conversion-table).
 - 2017-07-20:
   - Bumped specification to version 2.0.
   - Added "Relaxed" format.

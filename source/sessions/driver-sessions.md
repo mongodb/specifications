@@ -26,57 +26,44 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**ClientSession**\
-The driver object representing a client session and the operations that can be performed on it.
+ClientSession : The driver object representing a client session and the operations that can be performed on it.
 Depending on the language a driver is written in this might be an interface or a class. See also `ServerSession`.
 
-**Deployment**\
-A set of servers that are all part of a single MongoDB cluster. We avoid the word "cluster" because some
+Deployment : A set of servers that are all part of a single MongoDB cluster. We avoid the word "cluster" because some
 people interpret "cluster" to mean "sharded cluster".
 
-**Explicit session**\
-A session that was started explicitly by the application by calling `startSession` and passed as
-an argument to an operation.
+Explicit session : A session that was started explicitly by the application by calling `startSession` and passed as an
+argument to an operation.
 
-**MongoClient**\
-The root object of a driver's API. MAY be named differently in some drivers.
+MongoClient : The root object of a driver's API. MAY be named differently in some drivers.
 
-**Implicit session**\
-A session that was started implicitly by the driver because the application called an operation
+Implicit session : A session that was started implicitly by the driver because the application called an operation
 without providing an explicit session.
 
-**MongoCollection**\
-The driver object representing a collection and the operations that can be performed on it. MAY be
+MongoCollection : The driver object representing a collection and the operations that can be performed on it. MAY be
 named differently in some drivers.
 
-**MongoDatabase**\
-The driver object representing a database and the operations that can be performed on it. MAY be
-named differently in some drivers.
+MongoDatabase : The driver object representing a database and the operations that can be performed on it. MAY be named
+differently in some drivers.
 
-**ServerSession**\
-The driver object representing a server session. This type is an implementation detail and does not
-need to be public. See also `ClientSession`.
+ServerSession : The driver object representing a server session. This type is an implementation detail and does not need
+to be public. See also `ClientSession`.
 
-**Server session ID**\
-A server session ID is a token used to identify a particular server session. A driver can ask the
+Server session ID : A server session ID is a token used to identify a particular server session. A driver can ask the
 server for a session ID using the `startSession` command or it can generate one locally (see Generating a Session ID
 locally).
 
-**Session**\
-A session is an abstract concept that represents a set of sequential operations executed by an application
+Session : A session is an abstract concept that represents a set of sequential operations executed by an application
 that are related in some way. Other specifications define the various ways in which operations can be related, but
 examples include causally consistent reads and retryable writes.
 
-**Topology**\
-The current configuration and state of a deployment.
+Topology : The current configuration and state of a deployment.
 
-**Unacknowledged writes**\
-Unacknowledged writes are write operations that are sent to the server without waiting for a
+Unacknowledged writes : Unacknowledged writes are write operations that are sent to the server without waiting for a
 reply acknowledging the write. See the "When using unacknowledged writes" section below for information on how
 unacknowledged writes interact with sessions.
 
-**Network error**\
-Any network exception writing to or reading from a socket (e.g. a socket timeout or error).
+Network error : Any network exception writing to or reading from a socket (e.g. a socket timeout or error).
 
 ## Specification
 

@@ -24,25 +24,19 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Definitions
 
-- Credential\
-  The pieces of information used to establish the authenticity of a user. This is composed of an identity
+- Credential<br> The pieces of information used to establish the authenticity of a user. This is composed of an identity
   and some form of evidence such as a password or a certificate.
 
-- FQDN\
-  Fully Qualified Domain Name
+- FQDN<br> Fully Qualified Domain Name
 
-- Mechanism\
-  A SASL implementation of a particular type of credential negotiation.
+- Mechanism<br> A SASL implementation of a particular type of credential negotiation.
 
-- Source\
-  The authority used to establish credentials and/or privileges in reference to a mongodb server. In practice,
-  it is the database to which sasl authentication commands are sent.
+- Source<br> The authority used to establish credentials and/or privileges in reference to a mongodb server. In
+  practice, it is the database to which sasl authentication commands are sent.
 
-- Realm\
-  The authority used to establish credentials and/or privileges in reference to GSSAPI.
+- Realm<br> The authority used to establish credentials and/or privileges in reference to GSSAPI.
 
-- SASL\
-  Simple Authentication and Security Layer - [RFC 4422](http://www.ietf.org/rfc/rfc4422.txt)
+- SASL<br> Simple Authentication and Security Layer - [RFC 4422](http://www.ietf.org/rfc/rfc4422.txt)
 
 ### Client Implementation
 
@@ -299,20 +293,15 @@ RESP = {ok: 1}
 
 #### [MongoCredential](#mongocredential) Properties
 
-- username\
-  MUST be specified and non-zero length.
+- username<br> MUST be specified and non-zero length.
 
-- source\
-  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+- source<br> MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
-- password\
-  MUST be specified.
+- password<br> MUST be specified.
 
-- mechanism\
-  MUST be "MONGODB-CR"
+- mechanism<br> MUST be "MONGODB-CR"
 
-- mechanism_properties\
-  MUST NOT be specified.
+- mechanism_properties<br> MUST NOT be specified.
 
 ### MONGODB-X509
 
@@ -358,20 +347,15 @@ RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoD
 
 #### [MongoCredential](#mongocredential) Properties
 
-- username\
-  SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
+- username<br> SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
 
-- source\
-  MUST be "$external". Defaults to `$external`.
+- source<br> MUST be "$external". Defaults to `$external`.
 
-- password\
-  MUST NOT be specified.
+- password<br> MUST NOT be specified.
 
-- mechanism\
-  MUST be "MONGODB-X509"
+- mechanism<br> MUST be "MONGODB-X509"
 
-- mechanism_properties\
-  MUST NOT be specified.
+- mechanism_properties<br> MUST NOT be specified.
 
 TODO: Errors
 
@@ -412,36 +396,27 @@ scratch.
 
 ### GSSAPI
 
-- Since:\
-  2.4 Enterprise
-
-  2.6 Enterprise on Windows
+- Since:<br> 2.4 Enterprise<br> 2.6 Enterprise on Windows
 
 GSSAPI is kerberos authentication as defined in [RFC 4752](http://tools.ietf.org/html/rfc4752). Microsoft has a
 proprietary implementation called SSPI which is compatible with both Windows and Linux clients.
 
 [MongoCredential](#mongocredential) properties:
 
-- username\
-  MUST be specified and non-zero length.
+- username<br> MUST be specified and non-zero length.
 
-- source\
-  MUST be "$external". Defaults to `$external`.
+- source<br> MUST be "$external". Defaults to `$external`.
 
-- password\
-  MAY be specified. If omitted, drivers MUST NOT pass the username without password to SSPI on Windows and
+- password<br> MAY be specified. If omitted, drivers MUST NOT pass the username without password to SSPI on Windows and
   instead use the default credentials.
 
-- mechanism\
-  MUST be "GSSAPI"
+- mechanism<br> MUST be "GSSAPI"
 
 - mechanism_properties
 
-  - SERVICE_NAME\
-    Drivers MUST allow the user to specify a different service name. The default is "mongodb".
+  - SERVICE_NAME<br> Drivers MUST allow the user to specify a different service name. The default is "mongodb".
 
-  - CANONICALIZE_HOST_NAME\
-    Drivers MAY allow the user to request canonicalization of the hostname. This might be
+  - CANONICALIZE_HOST_NAME<br> Drivers MAY allow the user to request canonicalization of the hostname. This might be
     required when the hosts report different hostnames than what is used in the kerberos database. The value is a string
     of either "none", "forward", or "forwardAndReverse". "none" is the default and performs no canonicalization.
     "forward" performs a forward DNS lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS
@@ -449,14 +424,12 @@ proprietary implementation called SSPI which is compatible with both Windows and
     provided host if any lookup errors or returns no results. Drivers MAY decide to also keep the legacy boolean values
     where `true` equals the "forwardAndReverse" behaviour and `false` equals "none".
 
-  - SERVICE_REALM\
-    Drivers MAY allow the user to specify a different realm for the service. This might be necessary to
-    support cross-realm authentication where the user exists in one realm and the service in another.
+  - SERVICE_REALM<br> Drivers MAY allow the user to specify a different realm for the service. This might be necessary
+    to support cross-realm authentication where the user exists in one realm and the service in another.
 
-  - SERVICE_HOST\
-    Drivers MAY allow the user to specify a different host for the service. This is stored in the service
-    principal name instead of the standard host name. This is generally used for cases where the initial role is being
-    created from localhost but the actual service host would differ.
+  - SERVICE_HOST<br> Drivers MAY allow the user to specify a different host for the service. This is stored in the
+    service principal name instead of the standard host name. This is generally used for cases where the initial role is
+    being created from localhost but the actual service host would differ.
 
 #### Hostname Canonicalization
 
@@ -558,20 +531,15 @@ MongoDB supports either of these forms.
 
 #### [MongoCredential](#mongocredential) Properties
 
-- username\
-  MUST be specified and non-zero length.
+- username<br> MUST be specified and non-zero length.
 
-- source\
-  MUST be specified. Defaults to the database name if supplied on the connection string or `$external`.
+- source<br> MUST be specified. Defaults to the database name if supplied on the connection string or `$external`.
 
-- password\
-  MUST be specified.
+- password<br> MUST be specified.
 
-- mechanism\
-  MUST be "PLAIN"
+- mechanism<br> MUST be "PLAIN"
 
-- mechanism_properties\
-  MUST NOT be specified.
+- mechanism_properties<br> MUST NOT be specified.
 
 ### SCRAM-SHA-1
 
@@ -639,20 +607,15 @@ RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2a
 
 #### [MongoCredential](#mongocredential) Properties
 
-- username\
-  MUST be specified and non-zero length.
+- username<br> MUST be specified and non-zero length.
 
-- source\
-  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+- source<br> MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
-- password\
-  MUST be specified.
+- password<br> MUST be specified.
 
-- mechanism\
-  MUST be "SCRAM-SHA-1"
+- mechanism<br> MUST be "SCRAM-SHA-1"
 
-- mechanism_properties\
-  MUST NOT be specified.
+- mechanism_properties<br> MUST NOT be specified.
 
 ### SCRAM-SHA-256
 
@@ -700,20 +663,15 @@ RESP = {conversationId: 1, payload: BinData(0, "dj02cnJpVFJCaTIzV3BSUi93dHVwK21N
 
 #### [MongoCredential](#mongocredential) Properties
 
-- username\
-  MUST be specified and non-zero length.
+- username<br> MUST be specified and non-zero length.
 
-- source\
-  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+- source<br> MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
-- password\
-  MUST be specified.
+- password<br> MUST be specified.
 
-- mechanism\
-  MUST be "SCRAM-SHA-256"
+- mechanism<br> MUST be "SCRAM-SHA-256"
 
-- mechanism_properties\
-  MUST NOT be specified.
+- mechanism_properties<br> MUST NOT be specified.
 
 ### MONGODB-AWS
 
@@ -897,22 +855,17 @@ Examples are provided below.
 
 #### [MongoCredential](#mongocredential) Properties
 
-- username\
-  MAY be specified. The non-sensitive AWS access key.
+- username<br> MAY be specified. The non-sensitive AWS access key.
 
-- source\
-  MUST be "$external". Defaults to `$external`.
+- source<br> MUST be "$external". Defaults to `$external`.
 
-- password\
-  MAY be specified. The sensitive AWS secret key.
+- password<b> MAY be specified. The sensitive AWS secret key.
 
-- mechanism\
-  MUST be "MONGODB-AWS"
+- mechanism<br> MUST be "MONGODB-AWS"
 
 - mechanism_properties
 
-  - AWS_SESSION_TOKEN\
-    Drivers MUST allow the user to specify an AWS session token for authentication with temporary
+  - AWS_SESSION_TOKEN<br> Drivers MUST allow the user to specify an AWS session token for authentication with temporary
     credentials.
 
 #### Obtaining Credentials
@@ -1201,51 +1154,42 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 #### [MongoCredential](#mongocredential) Properties
 
-- username\
-  MAY be specified. Its meaning varies depending on the OIDC provider integration used.
+- username<br> MAY be specified. Its meaning varies depending on the OIDC provider integration used.
 
-- source\
-  MUST be "$external". Defaults to `$external`.
+- source<br> MUST be "$external". Defaults to `$external`.
 
-- password\
-  MUST NOT be specified.
+- password<br> MUST NOT be specified.
 
-- mechanism\
-  MUST be "MONGODB-OIDC"
+- mechanism<br> MUST be "MONGODB-OIDC"
 
 - mechanism_properties
 
-  - ENVIRONMENT\
-    Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration
-    to use to obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp"]`. If both
+  - ENVIRONMENT<br> Drivers MUST allow the user to specify the name of a built-in OIDC application environment
+    integration to use to obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp"]`. If both
     `ENVIRONMENT` and an [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for
     the same `MongoClient`, the driver MUST raise an error.
 
-  - TOKEN_RESOURCE\
-    The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
+  - TOKEN_RESOURCE<br> The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of
     `["azure", "gcp"]` or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver
     MUST raise an error. Note: because the `TOKEN_RESOURCE` is often itself a URL, drivers MUST document that a
     `TOKEN_RESOURCE` with a comma `,` must be given as a `MongoClient` configuration and not as part of the connection
     string, and that the `TOKEN_RESOURCE` value can contain a colon `:` character.
 
-  - OIDC_CALLBACK\
-    An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
+  - OIDC_CALLBACK<br> An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to
     specify an [OIDC Callback](#oidc-callback) using a `MongoClient` configuration instead of a mechanism property,
     depending on what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_CALLBACK` mechanism property
     and a `MongoClient` configuration.
 
-  - OIDC_HUMAN_CALLBACK\
-    An [OIDC Human Callback](#oidc-human-callback) that returns OIDC credentials. Drivers MAY allow
-    the user to specify a [OIDC Human Callback](#oidc-human-callback) using a `MongoClient` configuration instead of a
-    mechanism property, depending on what is idiomatic for the driver. Drivers MUST NOT support both the
+  - OIDC_HUMAN_CALLBACK<br> An [OIDC Human Callback](#oidc-human-callback) that returns OIDC credentials. Drivers MAY
+    allow the user to specify a [OIDC Human Callback](#oidc-human-callback) using a `MongoClient` configuration instead
+    of a mechanism property, depending on what is idiomatic for the driver. Drivers MUST NOT support both the
     `OIDC_HUMAN_CALLBACK` mechanism property and a `MongoClient` configuration. Drivers MUST return an error if both an
     [OIDC Callback](#oidc-callback) and `OIDC Human Callback` are provided for the same `MongoClient`. This property is
     only required for drivers that support the [Human Authentication Flow](#human-authentication-flow).
 
-  - ALLOWED_HOSTS\
-    The list of allowed hostnames or ip-addresses (ignoring ports) for MongoDB connections. The hostnames
-    may include a leading "\*." wildcard, which allows for matching (potentially nested) subdomains. `ALLOWED_HOSTS` is
-    a security feature and MUST default to
+  - ALLOWED_HOSTS<br> The list of allowed hostnames or ip-addresses (ignoring ports) for MongoDB connections. The
+    hostnames may include a leading "\*." wildcard, which allows for matching (potentially nested) subdomains.
+    `ALLOWED_HOSTS` is a security feature and MUST default to
     `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]`.
     When MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a hostname
     that does not match any of list of allowed hosts, the driver MUST raise a client-side error without invoking any
@@ -1808,29 +1752,25 @@ def reauth(connection):
 
 #### Auth Related Options
 
-- authMechanism\
-  MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
+authMechanism : MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
 
 Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256, SCRAM-SHA-1
 or MONGODB-CR, following the auth spec default mechanism rules.
 
-- authSource\
-  Sets the Source property on the MongoCredential.
+authSource : Sets the Source property on the MongoCredential.
 
 For GSSAPI, MONGODB-X509 and MONGODB-AWS authMechanisms the authSource defaults to `$external`. For PLAIN the authSource
 defaults to the database name if supplied on the connection string or `$external`. For MONGODB-CR, SCRAM-SHA-1 and
 SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or
 `admin`.
 
-- authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2\
-  A generic method to set mechanism
-  properties in the connection string.
+authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2 : A generic method to set mechanism
+properties in the connection string.
 
 For example, to set REALM and CANONICALIZE_HOST_NAME, the option would be
 `authMechanismProperties=CANONICALIZE_HOST_NAME:forward,SERVICE_REALM:AWESOME`.
 
-- gssapiServiceName (deprecated)\
-  An alias for `authMechanismProperties=SERVICE_NAME:mongodb`.
+gssapiServiceName (deprecated) : An alias for `authMechanismProperties=SERVICE_NAME:mongodb`.
 
 #### Errors
 
@@ -1970,23 +1910,19 @@ The Java and .NET drivers currently uses eager authentication and abide by this 
 ## Q & A
 
 Q: According to [Authentication Handshake](#authentication-handshake), we are calling `hello` or legacy hello for every
-socket. Isn't this a lot?\
-Drivers should be pooling connections and, as such, new sockets getting opened should be
+socket. Isn't this a lot?<br> Drivers should be pooling connections and, as such, new sockets getting opened should be
 relatively infrequent. It's simply part of the protocol for setting up a socket to be used.
 
-Q: Where is information related to user management?\
-Not here currently. Should it be? This is about authentication, not
-user management. Perhaps a new spec is necessary.
+Q: Where is information related to user management?<br> Not here currently. Should it be? This is about authentication,
+not user management. Perhaps a new spec is necessary.
 
 Q: It's possible to continue using authenticated sockets even if new sockets fail authentication. Why can't we do that
-so that applications continue to work.\
-Yes, that's technically true. The issue with doing that is for drivers using
+so that applications continue to work.<br> Yes, that's technically true. The issue with doing that is for drivers using
 connection pooling. An application would function normally until an operation needed an additional connection(s) during
 a spike. Each new connection would fail to authenticate causing intermittent failures that would be very difficult to
 understand for a user.
 
-Q: Should a driver support multiple credentials?\
-No.
+Q: Should a driver support multiple credentials?<br> No.
 
 Historically, the MongoDB server and drivers have supported multiple credentials, one per authSource, on a single
 connection. It was necessary because early versions of MongoDB allowed a user to be granted privileges to access the
@@ -2011,13 +1947,11 @@ feature that builds on sessions (e.g. retryable writes).
 Drivers should therefore guide application creators in the right direction by supporting the association of at most one
 credential with a MongoClient instance.
 
-Q: Should a driver support lazy authentication?\
-No, for the same reasons as given in the previous section, as lazy
+Q: Should a driver support lazy authentication?<br> No, for the same reasons as given in the previous section, as lazy
 authentication is another mechanism for allowing multiple credentials to be associated with a single MongoClient
 instance.
 
-Q: Why does SCRAM sometimes SASLprep and sometimes not?\
-When MongoDB implemented SCRAM-SHA-1, it required drivers to
+Q: Why does SCRAM sometimes SASLprep and sometimes not?<br> When MongoDB implemented SCRAM-SHA-1, it required drivers to
 *NOT* SASLprep usernames and passwords. The primary reason for this was to allow a smooth upgrade path from MongoDB-CR
 using existing usernames and passwords. Also, because MongoDB's SCRAM-SHA-1 passwords are hex characters of a digest,
 SASLprep of passwords was irrelevant.
@@ -2034,9 +1968,8 @@ SASLprep username. After considering various options to address or workaround th
 best user experience on upgrade and lowest technical risk of implementation is to require drivers to continue to not
 SASLprep usernames in SCRAM-SHA-256.
 
-Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?\
-No. While it's possible to allow access
-to EC2 instance metadata in ECS, for security reasons, Amazon states it's best practice to avoid this. (See
+Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?<br> No. While it's possible to allow
+access to EC2 instance metadata in ECS, for security reasons, Amazon states it's best practice to avoid this. (See
 [accessing EC2 metadata in ECS](https://aws.amazon.com/premiumsupport/knowledge-center/ecs-container-ec2-metadata/) and
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
@@ -2067,8 +2000,7 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 - 2024-01-31: Migrated from reStructuredText to Markdown.
 
-- 2024-01-17: Added MONGODB-OIDC machine auth flow spec and combine with human\
-  auth flow specs.
+- 2024-01-17: Added MONGODB-OIDC machine auth flow spec and combine with human auth flow specs.
 
 - 2023-04-28: Added MONGODB-OIDC auth mechanism
 
@@ -2096,13 +2028,11 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
 - 2020-02-04: Support shorter SCRAM conversation starting in version 4.4 of the server.
 
-- 2020-01-31: Clarify that drivers must raise an error when a connection string\
-  has an empty value for authSource.
+- 2020-01-31: Clarify that drivers must raise an error when a connection string has an empty value for authSource.
 
 - 2020-01-23: Clarify when authentication will occur.
 
-- 2020-01-22: Clarify that authSource in URI is not treated as a user configuring\
-  auth credentials.
+- 2020-01-22: Clarify that authSource in URI is not treated as a user configuring auth credentials.
 
 - 2019-12-05: Added MONGODB-IAM auth mechanism
 
@@ -2112,8 +2042,7 @@ to EC2 instance metadata in ECS, for security reasons, Amazon states it's best p
 
   - Clarify that database name in URI is not treated as a user configuring auth credentials.
 
-- 2018-08-08: Unknown users don't cause handshake errors. This was changed before\
-  server 4.0 GA in SERVER-34421, so the
+- 2018-08-08: Unknown users don't cause handshake errors. This was changed before server 4.0 GA in SERVER-34421, so the
   auth spec no longer refers to such a possibility.
 
 - 2018-04-17: Clarify authSource defaults
