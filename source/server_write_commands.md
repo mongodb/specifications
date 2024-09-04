@@ -488,8 +488,7 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 
 - 2024-07-31: Migrated from reStructuredText to Markdown.
 
-- 2024-06-04: Add FAQ entry outlining client-side `_id` value generation\
-  Update FAQ to indicate legacy opcodes were
+- 2024-06-04: Add FAQ entry outlining client-side `_id` value generation Update FAQ to indicate legacy opcodes were
   removed
 
 - 2022-10-05: Revise spec front matter and reformat changelog.
@@ -498,8 +497,7 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 
 - 2021-04-22: Updated to use hello command
 
-- 2014-05-15: Removed text related to bulk operations; see the Bulk API spec for\
-  bulk details. Clarified some
+- 2014-05-15: Removed text related to bulk operations; see the Bulk API spec for bulk details. Clarified some
   paragraphs; re-ordered the response field sections.
 
 - 2014-05-14: First public version

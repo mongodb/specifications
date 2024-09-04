@@ -28,22 +28,25 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**Transaction ID**\
-The transaction ID identifies the transaction as part of which the command is running. In a write
-command where the client has requested retryable behavior, it is expressed by the top-level `lsid` and `txnNumber`
-fields. The `lsid` component is the corresponding server session ID. which is a BSON value defined in the
+**Transaction ID**
+
+The transaction ID identifies the transaction as part of which the command is running. In a write command where the
+client has requested retryable behavior, it is expressed by the top-level `lsid` and `txnNumber` fields. The `lsid`
+component is the corresponding server session ID. which is a BSON value defined in the
 [Driver Session](../sessions/driver-sessions.md) specification. The `txnNumber` component is a monotonically increasing
 (per server session), positive 64-bit integer.
 
-**ClientSession**\
-Driver object representing a client session, which is defined in the
-[Driver Session](../sessions/driver-sessions.md) specification. This object is always associated with a server session;
-however, drivers will pool server sessions so that creating a ClientSession will not always entail creation of a new
-server session. The name of this object MAY vary across drivers.
+**ClientSession**
 
-**Retryable Error**\
-An error is considered retryable if it has a RetryableWriteError label in its top-level
-"errorLabels" field. See [Determining Retryable Errors](#determining-retryable-errors) for more information.
+Driver object representing a client session, which is defined in the [Driver Session](../sessions/driver-sessions.md)
+specification. This object is always associated with a server session; however, drivers will pool server sessions so
+that creating a ClientSession will not always entail creation of a new server session. The name of this object MAY vary
+across drivers.
+
+**Retryable Error**
+
+An error is considered retryable if it has a RetryableWriteError label in its top-level "errorLabels" field. See
+[Determining Retryable Errors](#determining-retryable-errors) for more information.
 
 Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.md) specification.
 
@@ -680,25 +683,21 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 - 2024-04-29: Fix the link to the Driver Sessions spec.
 
-- 2024-01-16: Do not use `writeConcernError.code` in pre-4.4 mongos response to\
-  determine retryability. Do not use
+- 2024-01-16: Do not use `writeConcernError.code` in pre-4.4 mongos response to determine retryability. Do not use
   `writeErrors[].code` in pre-4.4 server responses to determine retryability.
 
 - 2023-12-06: Clarify that writes are not retried within transactions.
 
-- 2023-12-05: Add that any server information associated with retryable\
-  exceptions MUST reflect the originating server,
+- 2023-12-05: Add that any server information associated with retryable exceptions MUST reflect the originating server,
   even in the presence of retries.
 
 - 2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 
-- 2023-08-26: Require that in a sharded cluster the server on which the\
-  operation failed MUST be provided to the server
+- 2023-08-26: Require that in a sharded cluster the server on which the operation failed MUST be provided to the server
   selection mechanism as a deprioritized server.
 
-- 2022-11-17: Add logic for persisting "currentError" as "previousError" on first\
-  retry attempt, avoiding raising
-  "null" errors.
+- 2022-11-17: Add logic for persisting "currentError" as "previousError" on first retry attempt, avoiding raising "null"
+  errors.
 
 - 2022-11-09: CLAM must apply both events and log messages.
 
@@ -708,32 +707,26 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 - 2022-01-25: Note that drivers should retry handshake network failures.
 
-- 2021-11-02: Clarify that error labels are only specified in a top-level field\
-  of an error.
+- 2021-11-02: Clarify that error labels are only specified in a top-level field of an error.
 
 - 2021-04-26: Replaced deprecated terminology
 
 - 2021-03-24: Require that PoolClearedErrors be retried
 
-- 2020-09-01: State the the driver should only add the RetryableWriteError label\
-  to network errors when connected to a
+- 2020-09-01: State the the driver should only add the RetryableWriteError label to network errors when connected to a
   4.4+ server.
 
-- 2020-02-25: State that the driver should only add the RetryableWriteError label\
-  when retryWrites is on, and make it
+- 2020-02-25: State that the driver should only add the RetryableWriteError label when retryWrites is on, and make it
   clear that mongos will sometimes perform internal retries and not return the RetryableWriteError label.
 
 - 2020-02-10: Remove redundant content in Tests section.
 
-- 2020-01-14: Add ExceededTimeLimit to the list of error codes that should\
-  receive a RetryableWriteError label.
+- 2020-01-14: Add ExceededTimeLimit to the list of error codes that should receive a RetryableWriteError label.
 
-- 2019-10-21: Change the definition of "retryable write" to be based on the\
-  RetryableWriteError label. Stop requiring
+- 2019-10-21: Change the definition of "retryable write" to be based on the RetryableWriteError label. Stop requiring
   drivers to parse errmsg to categorize retryable errors for pre-4.4 servers.
 
-- 2019-07-30: Drivers must rewrite error messages for error code 20 when\
-  txnNumber is not supported by the storage
+- 2019-07-30: Drivers must rewrite error messages for error code 20 when txnNumber is not supported by the storage
   engine.
 
 - 2019-06-07: Mention `$merge` stage for aggregate alongside `$out`
@@ -742,9 +735,7 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 - 2019-03-06: retryWrites now defaults to true.
 
-- 2019-03-05: Prohibit resending wire protocol messages if doing so would violate\
-  rules for gossipping the cluster
-  time.
+- 2019-03-05: Prohibit resending wire protocol messages if doing so would violate rules for gossipping the cluster time.
 
 - 2018-06-07: WriteConcernFailed is not a retryable error code.
 
@@ -752,30 +743,25 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 - 2018-03-14: Clarify that retryable writes may fail with a FCV 3.4 shard.
 
-- 2017-11-02: Drivers should not raise errors if selected server does not support\
-  retryable writes and instead fall
-  back to non-retryable behavior. In addition to wire protocol version, drivers may check for
-  `logicalSessionTimeoutMinutes` to determine if a server supports sessions and retryable writes.
+- 2017-11-02: Drivers should not raise errors if selected server does not support retryable writes and instead fall back
+  to non-retryable behavior. In addition to wire protocol version, drivers may check for `logicalSessionTimeoutMinutes`
+  to determine if a server supports sessions and retryable writes.
 
-- 2017-10-26: Errors when retrying may be raised instead of the original error\
-  provided they allow the user to infer
+- 2017-10-26: Errors when retrying may be raised instead of the original error provided they allow the user to infer
   that an attempt was made.
 
 - 2017-10-23: Drivers must document operations that support retryability.
 
-- 2017-10-23: Raise the original retryable error if server selection or wire\
-  protocol checks fail during the retry
+- 2017-10-23: Raise the original retryable error if server selection or wire protocol checks fail during the retry
   attempt. Encourage drivers to provide intermediary write results after an unrecoverable failure during a bulk write.
 
 - 2017-10-18: Standalone servers do not support retryable writes.
 
 - 2017-10-18: Also retry writes after a "not writable primary" error.
 
-- 2017-10-08: Renamed `txnNum` to `txnNumber` and noted that it must be a\
-  64-bit integer (BSON type 0x12).
+- 2017-10-08: Renamed `txnNum` to `txnNumber` and noted that it must be a 64-bit integer (BSON type 0x12).
 
-- 2017-08-25: Drivers will maintain an allow list so that only supported write\
-  operations may be retried. Transaction
+- 2017-08-25: Drivers will maintain an allow list so that only supported write operations may be retried. Transaction
   IDs will not be included in unsupported write commands, irrespective of the `retryWrites` option.
 
 - 2017-08-18: `retryWrites` is now a MongoClient option.

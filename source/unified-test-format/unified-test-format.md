@@ -1247,15 +1247,13 @@ A log message which is expected to be observed while executing the test's operat
 
 The structure of each object is as follows:
 
-- `level`: Required string. This MUST be one of the level names listed
-  in\
-  [log severity levels](logging/logging.rst#log-severity-levels). This specifies the expected level for the log
-  message and corresponds to the level used for the message in the specification that defines it. Note that since not
-  all drivers will necessarily support all log levels, some driver may need to map the specified level to the
-  corresponding driver-supported level. Test runners MUST assert that the actual level matches this value.
+- `level`: Required string. This MUST be one of the level names listed in
+  [log severity levels](logging/logging.rst#log-severity-levels). This specifies the expected level for the log message
+  and corresponds to the level used for the message in the specification that defines it. Note that since not all
+  drivers will necessarily support all log levels, some driver may need to map the specified level to the corresponding
+  driver-supported level. Test runners MUST assert that the actual level matches this value.
 
-- `component`: Required string. This MUST be one of the component names listed\
-  in
+- `component`: Required string. This MUST be one of the component names listed in
   [components](../logging/logging.md#components). This specifies the expected component for the log message. Note that
   since naming variations are permitted for components, some drivers may need to map this to a corresponding
   language-specific component name. Test runners MUST assert that the actual component matches this value.
@@ -1588,7 +1586,7 @@ The following arguments are supported:
 
 #### runCursorCommand
 
-[Generic cursor returning command runner](../run-command/run-command.rst).
+[Generic cursor returning command runner](../run-command/run-command.md).
 
 This method does not inherit a read preference (per the
 [Server Selection](../server-selection/server-selection.md#use-of-read-preferences-with-commands) spec); however,
@@ -3488,15 +3486,16 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- 2024-05-08: **Schema version 1.21.**\
-  Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the
-  client-level bulk write API.
+- 2024-05-08: **Schema version 1.21.**
+
+  Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the client-level bulk write API.
 
 - 2024-04-15: Note that when `directConnection` is set to true test runners should only provide a single seed.
 
-- 2024-03-25: **Schema version 1.20.**\
-  Add `previousDescription` and `newDescription` assertions to
-  `topologyDescriptionChangedEvent` when checking events with `expectEvents`
+- 2024-03-25: **Schema version 1.20.**
+
+  Add `previousDescription` and `newDescription` assertions to `topologyDescriptionChangedEvent` when checking events
+  with `expectEvents`
 
 - 2024-03-11: Note that `killAllSessions` should not be executed on Atlas Data Lake
 
@@ -3511,43 +3510,42 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2024-02-06: Migrated from reStructuredText to Markdown.
 
-- 2024-01-17: **Schema version 1.19.**\
-  Add `authMechanism` to `runOnRequirement` and require that `uriOptions` supports
-  placeholder documents.
+- 2024-01-17: **Schema version 1.19.**
 
-- 2024-01-11: **Schema version 1.18.**\
-  Allow named KMS providers in `kmsProviders`. Note location of Client-Side
-  Encryption test credentials.
+  Add `authMechanism` to `runOnRequirement` and require that `uriOptions` supports placeholder documents.
 
-- 2024-01-03: Document server version requirements for `errorLabels` and\
-  `blockConnection` options for `failCommand`
+- 2024-01-11: **Schema version 1.18.**
+
+  Allow named KMS providers in `kmsProviders`. Note location of Client-Side Encryption test credentials.
+
+- 2024-01-03: Document server version requirements for `errorLabels` and `blockConnection` options for `failCommand`
   fail point.
 
-- 2023-10-04: **Schema version 1.17.**\
-  Add `serverHeartbeatStartedEvent`, `serverHeartbeatSucceededEvent`, and
-  `serverHeartbeatFailedEvent` for asserting on SDAM server heartbeat events.
+- 2023-10-04: **Schema version 1.17.**
+
+  Add `serverHeartbeatStartedEvent`, `serverHeartbeatSucceededEvent`, and `serverHeartbeatFailedEvent` for asserting on
+  SDAM server heartbeat events.
 
 - 2023-09-25: Clarify that the UTR is intended to be run against enterprise servers.
 
-- 2022-07-18: **Schema version 1.16.**\
-  Add `ignoreMessages` and `ignoreExtraMessages` fields to
-  `expectedLogMessagesForClient` section.
+- 2022-07-18: **Schema version 1.16.**
 
-- 2023-06-26: `runOnRequirement.csfle` should check for crypt_shared and/or\
-  mongocryptd.
+  Add `ignoreMessages` and `ignoreExtraMessages` fields to `expectedLogMessagesForClient` section.
 
-- 2023-06-13: **Schema version 1.15.**\
+- 2023-06-26: `runOnRequirement.csfle` should check for crypt_shared and/or mongocryptd.
+
+- 2023-06-13: **Schema version 1.15.**
+
   Add `databaseName` field to `CommandFailedEvent` and `CommandSucceededEvent`.
 
-- 2023-05-26: **Schema version 1.14.**\
+- 2023-05-26: **Schema version 1.14.**
+
   Add `topologyDescriptionChangedEvent`.
 
-- 2023-05-17: Add `runCursorCommand` and `createCommandCursor` operations.\
-  Added `commandCursor` entity type which can
+- 2023-05-17: Add `runCursorCommand` and `createCommandCursor` operations. Added `commandCursor` entity type which can
   be used with existing cursor operations.
 
-- 2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+\
-  requires replica sets for shards,
+- 2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+ requires replica sets for shards,
   which is also relevant to load balanced topologies.
 
 - 2023-04-13: Remove `readConcern` and `writeConcern` options from `runCommand` operation.
@@ -3556,116 +3554,112 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2022-10-17: Add description of a `close` operation for client entities.
 
-- 2022-10-14: **Schema version 1.13.**\
-  Add support for logging assertions via the `observeLogMessages` field for client
-  entities, along with a new top-level field `expectLogMessages` containing `expectedLogMessagesForClient` objects. Add
-  new special matching operators to enable command logging assertions, `$$matchAsDocument` and `$$matchAsRoot`.
+- 2022-10-14: **Schema version 1.13.**
 
-- 2022-10-14: **Schema version 1.12.**\
+  Add support for logging assertions via the `observeLogMessages` field for client entities, along with a new top-level
+  field `expectLogMessages` containing `expectedLogMessagesForClient` objects. Add new special matching operators to
+  enable command logging assertions, `$$matchAsDocument` and `$$matchAsRoot`.
+
+- 2022-10-14: **Schema version 1.12.**
+
   Add `errorResponse` to `expectedError`.
 
-- 2022-10-05: Remove spec front matter, add "Current Schema Version" field, and\
-  reformat changelog. Add comment to
+- 2022-10-05: Remove spec front matter, add "Current Schema Version" field, and reformat changelog. Add comment to
   remind editors to note schema version bumps in changelog updates (where applicable).
 
-- 2022-09-02: **Schema version 1.11.**\
+- 2022-09-02: **Schema version 1.11.**
+
   Add `interruptInUseConnections` field to `poolClearedEvent`
 
-- 2022-07-28: **Schema version 1.10.**\
-  Add support for `thread` entities (`runOnThread`, `waitForThread`),
-  TopologyDescription entities (`recordTopologyDescription`, `waitForPrimaryChange`, `assertTopologyType`), testRunner
-  event assertion operations (`waitForEvent`, `assertEventCount`), expected SDAM events, and the `wait` operation.
+- 2022-07-28: **Schema version 1.10.**
 
-- 2022-07-27: Retroactively note schema version bumps in the changelog and\
-  require doing so for future changes.
+  Add support for `thread` entities (`runOnThread`, `waitForThread`), TopologyDescription entities
+  (`recordTopologyDescription`, `waitForPrimaryChange`, `assertTopologyType`), testRunner event assertion operations
+  (`waitForEvent`, `assertEventCount`), expected SDAM events, and the `wait` operation.
 
-- 2022-07-11: Update [Future Work](#future-work) to reflect that support for ignoring extra\
-  observed events was added
-  in schema version 1.7.
+- 2022-07-27: Retroactively note schema version bumps in the changelog and require doing so for future changes.
+
+- 2022-07-11: Update [Future Work](#future-work) to reflect that support for ignoring extra observed events was added in
+  schema version 1.7.
 
 - 2022-06-16: Require server 4.2+ for `csfle: true`.
 
-- 2022-05-10: Add reference to Client Side Encryption spec
-  under\
+- 2022-05-10: Add reference to Client Side Encryption spec under
   [ClientEncryption Operations](#clientencryption-operations).
 
-- 2022-04-27: **Schema version 1.9.**\
-  Added `createOptions` field to `initialData`, introduced a new `timeoutMS` field
-  in `collectionOrDatabaseOptions`, and added an `isTimeoutError` field to `expectedError`. Also introduced the
-  `createEntities` operation.
+- 2022-04-27: **Schema version 1.9.**
 
-- 2022-04-27: **Schema version 1.8.**\
+  Added `createOptions` field to `initialData`, introduced a new `timeoutMS` field in `collectionOrDatabaseOptions`, and
+  added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation.
+
+- 2022-04-27: **Schema version 1.8.**
+
   Add `runOnRequirement.csfle`.
 
 - 2022-04-26: Add `clientEncryption` entity and `$$placeholder` syntax.
 
-- 2022-04-22: Revise `useMultipleMongoses` and "Initializing the Test Runner"\
-  for Atlas Serverless URIs using a load
+- 2022-04-22: Revise `useMultipleMongoses` and "Initializing the Test Runner" for Atlas Serverless URIs using a load
   balancer fronting a single proxy.
 
-- 2022-03-01: **Schema version 1.7.**\
+- 2022-03-01: **Schema version 1.7.**
+
   Add `ignoreExtraEvents` field to `expectedEventsForClient`.
 
 - 2022-02-24: Rename Versioned API to Stable API
 
-- 2021-08-30: **Schema version 1.6.**\
-  Add `hasServerConnectionId` field to `commandStartedEvent`,
-  `commandSuccededEvent` and `commandFailedEvent`.
+- 2021-08-30: **Schema version 1.6.**
 
-- 2021-08-30: Test runners may create an internal MongoClient for each mongos.\
-  Better clarify how internal MongoClients
+  Add `hasServerConnectionId` field to `commandStartedEvent`, `commandSuccededEvent` and `commandFailedEvent`.
+
+- 2021-08-30: Test runners may create an internal MongoClient for each mongos. Better clarify how internal MongoClients
   may be used. Clarify that drivers creating an internal MongoClient for each mongos should use those clients for
   `targetedFailPoint` operations.
 
 - 2021-08-23: Allow `runOnRequirement` conditions to be evaluated in any order.
 
-- 2021-08-09: Updated all existing schema files to require at least one element\
-  in `test.expectEvents` if specified.
+- 2021-08-09: Updated all existing schema files to require at least one element in `test.expectEvents` if specified.
 
-- 2021-07-29: Note that events for sensitive commands will have redacted\
-  commands and replies when using
+- 2021-07-29: Note that events for sensitive commands will have redacted commands and replies when using
   `observeSensitiveCommands`, and how that affects conditionally sensitive commands such as `hello` and legacy hello.
 
-- 2021-07-01: Note that `expectError.expectResult` should use\
-  `$$unsetOrMatches` when the result is optional.
+- 2021-07-01: Note that `expectError.expectResult` should use `$$unsetOrMatches` when the result is optional.
 
-- 2021-06-09: **Schema version 1.5.**\
+- 2021-06-09: **Schema version 1.5.**
+
   Added an `observeSensitiveCommands` property to the `client` entity type.
 
 - 2021-05-17: Ensure old JSON schema files remain in place
 
-- 2021-04-19: **Schema version 1.4.**\
+- 2021-04-19: **Schema version 1.4.**
+
   Introduce `serverless` [runOnRequirement](#runonrequirement).
 
-- 2021-04-12: **Schema version 1.3.**\
-  Added a `FindCursor` entity type. Defined a set of cursor operations. Added an
-  `auth` property to `runOnRequirements` and modified the `topologies` property to accept `load-balanced`. Added CMAP
-  events to the possible event types for `expectedEvent`. Add `assertNumberConnectionsCheckedOut` operation. Add
-  `ignoreResultAndError` operation option.
+- 2021-04-12: **Schema version 1.3.**
 
-- 2021-04-08: List additional error codes that may be ignored when calling\
-  `killAllSessions` and note that the command
+  Added a `FindCursor` entity type. Defined a set of cursor operations. Added an `auth` property to `runOnRequirements`
+  and modified the `topologies` property to accept `load-balanced`. Added CMAP events to the possible event types for
+  `expectedEvent`. Add `assertNumberConnectionsCheckedOut` operation. Add `ignoreResultAndError` operation option.
+
+- 2021-04-08: List additional error codes that may be ignored when calling `killAllSessions` and note that the command
   should not be called when connected to Atlas.
 
-- 2021-03-22: Split `serverApi` into its own section. Note types for `loop`\
-  operation arguments. Clarify how `loop`
+- 2021-03-22: Split `serverApi` into its own section. Note types for `loop` operation arguments. Clarify how `loop`
   iterations are counted for `storeIterationsAsEntity`.
 
-- 2021-03-10: Clarify that `observedAt` field measures time in seconds for\
-  `storeEventsAsEntities`.
+- 2021-03-10: Clarify that `observedAt` field measures time in seconds for `storeEventsAsEntities`.
 
-- 2021-03-09: Clarify which components of a version string are relevant for\
-  comparisons.
+- 2021-03-09: Clarify which components of a version string are relevant for comparisons.
 
-- 2021-03-04: Change `storeEventsAsEntities` from a map to an array of\
-  `storeEventsAsEntity` objects.
+- 2021-03-04: Change `storeEventsAsEntities` from a map to an array of `storeEventsAsEntity` objects.
 
-- 2021-03-01: **Schema version 1.2.**\
-  Added `storeEventsAsEntities` option for client entities and `loop` operation,
-  which is needed for Atlas Driver Testing.
+- 2021-03-01: **Schema version 1.2.**
+
+  Added `storeEventsAsEntities` option for client entities and `loop` operation, which is needed for Atlas Driver
+  Testing.
 
 - 2020-12-23: Clarify how JSON schema is renamed for new minor versions.
 
-- 2020-11-06: **Schema version 1.1.**\
-  Added `serverApi` option for client entities, `_yamlAnchors` property to define
-  values for later use in YAML tests, and `serverParameters` property for `runOnRequirements`.
+- 2020-11-06: **Schema version 1.1.**
+
+  Added `serverApi` option for client entities, `_yamlAnchors` property to define values for later use in YAML tests,
+  and `serverParameters` property for `runOnRequirements`.

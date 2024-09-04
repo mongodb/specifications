@@ -19,13 +19,14 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**Structured logging**\
-Structured logging refers to producing log messages in a structured format, i.e. a series of
-key-value pairs, which can be converted to external formats such as JSON.
+**Structured logging**
 
-**Unstructured logging**\
-Unstructured logging refers to producing string log messages which embed all attached
-information within that string.
+Structured logging refers to producing log messages in a structured format, i.e. a series of key-value pairs, which can
+be converted to external formats such as JSON.
+
+**Unstructured logging**
+
+Unstructured logging refers to producing string log messages which embed all attached information within that string.
 
 ### Implementation requirements
 
@@ -279,30 +280,31 @@ of drivers for our internal teams, and improve our documentation around troubles
 
 ### Truncation of large documents
 
-1. Why have an option?\
-   We considered a number of approaches for dealing with documents of potentially very large size
-   in log messages, e.g. command documents, including 1) always logging the full document, 2) only logging documents
-   with the potential to be large when the user opts in, and 3) truncating large documents by default, but allowing the
-   user to adjust the maximum length logged. We chose the third option as we felt it struck the best balance between
-   concerns around readability and usability of log messages. In the case where data is sufficiently small, the default
-   behavior will show the user the full data. In the case where data is large, the user will receive a readable message
-   with truncated data, but have the option to see more or all of the data.
+1. Why have an option?
 
-2. Why are the units for max document length flexible?\
-   String APIs vary across languages, and not all drivers will be
-   able to easily and efficiently truncate strings in the same exact manner. The important thing is that the option
-   exists and that its default value is reasonable, and for all possible unit choices (byte, code point, code unit, or
-   grapheme) we felt 1000 was a reasonable default. See [here](https://exploringjs.com/impatient-js/ch_unicode.html) for
-   a helpful primer on related Unicode concepts.
+   We considered a number of approaches for dealing with documents of potentially very large size in log messages, e.g.
+   command documents, including 1) always logging the full document, 2) only logging documents with the potential to be
+   large when the user opts in, and 3) truncating large documents by default, but allowing the user to adjust the
+   maximum length logged. We chose the third option as we felt it struck the best balance between concerns around
+   readability and usability of log messages. In the case where data is sufficiently small, the default behavior will
+   show the user the full data. In the case where data is large, the user will receive a readable message with truncated
+   data, but have the option to see more or all of the data.
 
-3. Why do we implement naive truncation rather than truncating the JSON so it is still valid?\
-   Designing and
-   implementing a truncation algorithm for JSON that outputs valid JSON, but fits in as much of the original JSON as
-   possible, would be non-trivial. The server team wrote an entire separate truncation design document when they
-   implemented this for their log messages. This is more of a necessity for the server where the entire log message is
-   JSON, but we don't know if parsing the documents included in log messages is something that users will actually need
-   to do. Furthermore, any users who want parseable documents have an escape hatch to do so: they can set the max
-   document length to a very large value. If we hear of use cases in the future for parsing the documents in log
+2. Why are the units for max document length flexible?
+
+   String APIs vary across languages, and not all drivers will be able to easily and efficiently truncate strings in the
+   same exact manner. The important thing is that the option exists and that its default value is reasonable, and for
+   all possible unit choices (byte, code point, code unit, or grapheme) we felt 1000 was a reasonable default. See
+   [here](https://exploringjs.com/impatient-js/ch_unicode.html) for a helpful primer on related Unicode concepts.
+
+3. Why do we implement naive truncation rather than truncating the JSON so it is still valid?
+
+   Designing and implementing a truncation algorithm for JSON that outputs valid JSON, but fits in as much of the
+   original JSON as possible, would be non-trivial. The server team wrote an entire separate truncation design document
+   when they implemented this for their log messages. This is more of a necessity for the server where the entire log
+   message is JSON, but we don't know if parsing the documents included in log messages is something that users will
+   actually need to do. Furthermore, any users who want parseable documents have an escape hatch to do so: they can set
+   the max document length to a very large value. If we hear of use cases in the future for parsing the documents in log
    messages, we could make an additive change to this specification to permit a smarter truncation algorithm.
 
 ### Structured versus Unstructured Logging
@@ -411,8 +413,7 @@ on individual clients or for particular namespaces.
 
 - 2022-12-29: Fix typo in trace log level example
 
-- 2023-01-04: Elaborate on treatment of invalid values of environment variables.\
-  Permit drivers to omit direct support
+- 2023-01-04: Elaborate on treatment of invalid values of environment variables. Permit drivers to omit direct support
   for logging to file so long as they provide a straightforward way for users to consume the log messages
   programmatically and write to a file themselves. Require that programmatic configuration take precedence over
   environment variables.

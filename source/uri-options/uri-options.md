@@ -194,8 +194,7 @@ changes.
 
 - 2021-11-08: Add maxConnecting option.
 
-- 2021-10-14: Add srvMaxHosts option. Merge headings discussing URI validation\
-  for directConnection option.
+- 2021-10-14: Add srvMaxHosts option. Merge headings discussing URI validation for directConnection option.
 
 - 2021-09-15: Add srvServiceName option
 

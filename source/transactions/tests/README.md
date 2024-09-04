@@ -76,6 +76,5 @@ driver, use command monitoring instead.
 ## Changelog
 
 - 2024-02-15: Migrated from reStructuredText to Markdown.
-- 2024-02-07: Converted legacy transaction tests to unified format and moved the\
-  legacy test format docs to a separate
+- 2024-02-07: Converted legacy transaction tests to unified format and moved the legacy test format docs to a separate
   file.

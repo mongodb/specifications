@@ -156,7 +156,7 @@ interface ConnectionPoolOptions {
   /**
    *  An alternative way of setting waitQueueSize, it specifies
    *  the maximum number of threads that can wait per connection.
-   *  waitQueueSize === waitQueueMultiple \* maxPoolSize
+   *  waitQueueSize === waitQueueMultiple * maxPoolSize
    */
   waitQueueMultiple?: number
 }
@@ -699,7 +699,7 @@ interrupting in-use connections, its next run MUST be scheduled as soon as possi
 The pool MUST only interrupt in-use Connections whose generation is less than or equal to the generation of the pool at
 the moment of the clear (before the increment) that used the interruptInUseConnections flag. Any operations that have
 their Connections interrupted in this way MUST fail with a retryable error. If possible, the error SHOULD be a
-PoolClearedError with the following message: "Connection to \<pool address> interrupted due to server monitor timeout".
+PoolClearedError with the following message: "Connection to <pool address> interrupted due to server monitor timeout".
 
 ##### Clearing a load balanced pool
 
@@ -1376,8 +1376,7 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 - 2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent
 
-- 2020-09-03: Clarify Connection states and definition. Require the use of a\
-  background thread and/or async I/O. Add
+- 2020-09-03: Clarify Connection states and definition. Require the use of a background thread and/or async I/O. Add
   tests to ensure ConnectionReadyEvents are fired after ConnectionCreatedEvents.
 
 - 2020-09-24: Introduce maxConnecting requirement
@@ -1386,8 +1385,7 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 - 2021-01-12: Clarify "clear" method behavior in load balancer mode.
 
-- 2021-01-19: Require that timeouts be applied per the client-side operations\
-  timeout specification.
+- 2021-01-19: Require that timeouts be applied per the client-side operations timeout specification.
 
 - 2021-04-12: Adding in behaviour for load balancer mode.
 
