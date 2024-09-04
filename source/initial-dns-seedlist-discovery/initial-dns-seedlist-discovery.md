@@ -128,10 +128,10 @@ A driver MUST verify that the host names returned through SRV records end with t
 Drivers MUST raise an error and MUST NOT initiate a connection to any returned host name which does not share the same
 `{domainname}`.
 
-In the case that the SRV record has less than three `.` separated parts, the returned address MUST must end with the
-SRV's entire `{hostname}` and MUST NOT be identical to the original `{hostname}`. The next major version MUST no longer
-allow an SRV record, with any number of parts, to return address that doesn't end with the SRVs' entire `{hostname}`.
-Drivers MUST document this in a prior minor release.
+In the case that the SRV record has less than three `.` separated parts, the returned address MUST end with the SRV's
+entire `{hostname}` and MUST NOT be identical to the original `{hostname}`. The next major version MUST no longer allow
+an SRV record, with any number of parts, to return address that doesn't end with the SRVs' entire `{hostname}`. Drivers
+MUST document this in a prior minor release.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 

@@ -8,29 +8,25 @@ Seedlist Discovery spec.
 For the following prose tests, it is assumed drivers are be able to stub DNS results to easily test invalid DNS
 resolution results.
 
-1. When given the following valid SRVs, the pre-DNS SRV validation step not cause any errors.
+#### 1. When given the following valid SRVs, the pre-DNS SRV validation step not cause any errors.
 
-   a. Only one domain level: `mongodb+srv://localhost`.
+a. Only one domain level: `mongodb+srv://localhost`.
 
-   b. Only two domain levels: `mongodb+srv://mongo.local`.
+b. Only two domain levels: `mongodb+srv://mongo.local`.
 
-<br />
+#### 2. For the following steps, run each of these cases: SRVs with one, two, and three `.` separated parts.
 
-2. For the following steps, run each of these cases: SRVs with one, two, and three `.` separated parts.
+When given an SRV that does NOT end with the original SRV's domain name, throw a runtime error.
 
-   When given an SRV that does NOT end with the original SRV's domain name, throw a runtime error.
+For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com` should prompt an error, since the
+returned address does not end with `mongodb.com`.
 
-   For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com` should prompt an error, since
-   the returned address does not end with `mongodb.com`.
+#### 3. For the following steps, run each of these cases: SRVs with one, and two `.` separated parts.
 
-<br />  
+When given an SRV that returns identical address to the original hostname, throw a runtime error.
 
-3. For the following steps, run each of these cases: SRVs with one, and two `.` separated parts.
-
-   When given an SRV that returns identical address to the original hostname, throw a runtime error.
-
-   For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error since it is
-   identical to the original hostname.
+For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error since it is identical
+to the original hostname.
 
 ## Test Setup
 
