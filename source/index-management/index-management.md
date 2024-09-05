@@ -902,19 +902,39 @@ await collection.dropSearchIndex('my-test-index');
 
 ```typescript
 interface SearchIndexModel {
-  // The definition for this index.
+  /**
+   * Document describing the index to create.
+   *
+   * The definition syntax depends on whether you create a standard search index
+   * or a vector search index.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/createSearchIndexes/
+   */
   definition: Document;
 
-  // The name for this index, if present.
-  name: Optional<string>;
-     
-  // The type for this index, if present. Can be either "search" or "vectorSearch".  
-  type: Optional<string>;
+  /**
+   * Contains the options for the index.
+   */
+  options: SearchIndexOptions;
 }
 
 interface SearchIndexOptions {
-  // The name for this index, if present.
+  /**
+   * Name of the search index to create.
+   *
+   * The server will use "default" if this option is not specified.
+   */
   name: Optional<string>;
+
+  /**
+   * Type of search index to create. Defaults to "search" if not provided.
+   *
+   * Specify "search" for a standard search index or "vectorSearch" for a vector
+   * search index.
+   *
+   * The server will use "search" if this option is not specified.
+   */
+  type: Optional<string>;
 }
 
 /**
@@ -1124,6 +1144,10 @@ internally by the server on those versions, and its value could have adverse eff
 from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 #### Changelog
+
+- 2024-09-05: Moved options in SearchIndexModel to SearchIndexOptions for consistency with IndexModel and IndexOptions.
+
+- 2024-03-06: Added `type` option to SearchIndexOptions.
 
 - 2024-03-05: Migrated from reStructuredText to Markdown.
 
