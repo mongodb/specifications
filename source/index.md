@@ -1,5 +1,6 @@
 # MongoDB Specifications
 
+- [Atlas Serverless Tests](serverless-testing/README.md)
 - [Authentication](auth/auth.md)
 - [BSON Binary Subtype 6](client-side-encryption/subtype6.md)
 - [BSON Corpus](bson-corpus/bson-corpus.md)
@@ -39,6 +40,7 @@
 - [Retryable Writes](retryable-writes/retryable-writes.md)
 - [Run Command](run-command/run-command.md)
 - [SDAM Logging and Monitoring Specification](server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md)
+- [SOCKS5 Support](socks5-support/socks5.md)
 - [Server Discovery And Monitoring](server-discovery-and-monitoring/server-discovery-and-monitoring.md)
 - [Server Discovery And Monitoring -- Summary](server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
 - [Server Discovery And Monitoring -- Test Plan](server-discovery-and-monitoring/server-discovery-and-monitoring-tests.md)
