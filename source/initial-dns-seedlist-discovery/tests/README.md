@@ -3,30 +3,40 @@
 This directory contains platform-independent tests that drivers can use to prove their conformance to the Initial DNS
 Seedlist Discovery spec.
 
-### Prose Tests
+## Prose Tests
 
 For the following prose tests, it is assumed drivers are be able to stub DNS results to easily test invalid DNS
 resolution results.
 
-#### 1. When given the following valid SRVs, the pre-DNS SRV validation step not cause any errors.
+### 1. Allow SRVs with less than 3 `.` separated parts
 
-a. Only one domain level: `mongodb+srv://localhost`.
+For the following test, run each of these cases: SRVs with one and two `.` separated parts.
 
-b. Only two domain levels: `mongodb+srv://mongo.local`.
+When running validation on an SRV string before DNS resolution, do not throw a error due to number of SRV parts.
 
-#### 2. For the following steps, run each of these cases: SRVs with one, two, and three `.` separated parts.
+For example, `mongodb+srv://localhost` is a valid SRV string with one part/one domain level, and
+`mongodb+srv://mongo.local` is a valid SRV string with two parts/two domain levels.
 
-When given an SRV that does NOT end with the original SRV's domain name, throw a runtime error.
+### 2. Throw when return address does not end with SRV domain
+
+For the following test, run each of these cases: SRVs with one, two, and three `.` separated parts.
+
+When given a returned address that does NOT end with the original SRV's domain name, throw a runtime error.
 
 For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com` should prompt an error, since the
 returned address does not end with `mongodb.com`.
 
-#### 3. For the following steps, run each of these cases: SRVs with one, and two `.` separated parts.
+Importantly, the domain of an SRV with one or two parts is its entire hostname. For example, the domain of
+`mongodb+srv://mySite.com` is `mySite.com`. If this SRV resolves to `evil.com`, this should prompt an error.
 
-When given an SRV that returns identical address to the original hostname, throw a runtime error.
+### 3. Throw when return address is identical to SRV hostname
 
-For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error since it is identical
-to the original hostname.
+For the following test, run each of these cases: SRVs with one and two `.` separated parts.
+
+When given a returned address that is identical to the original hostname, throw a runtime error.
+
+For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error since the returned
+address is identical to the original hostname.
 
 ## Test Setup
 
