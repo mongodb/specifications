@@ -9,7 +9,7 @@ ______________________________________________________________________
 
 Presently, seeding a driver with an initial list of ReplicaSet or MongoS addresses is somewhat cumbersome, requiring a
 comma-delimited list of host names to attempt connections to. A standardized answer to this problem exists in the form
-of SRV records, which allow administrators to configure a single hostname to return a list of host names. Supporting
+of SRV records, which allow administrators to configure a single SRV record to return a list of host names. Supporting
 this feature would assist our users by decreasing maintenance load, primarily by removing the need to maintain seed
 lists at an application level.
 
@@ -31,7 +31,7 @@ step before it considers the connection string and SDAM specifications. In this 
 host names is replaced with a single host name. The format is:
 
 ```
-mongodb+srv://{subdomain}.{domainname}/{options}
+mongodb+srv://{hostname}/{options} 
 ```
 
 `{options}` refers to the optional elements from the [Connection String](../connection-string/connection-string-spec.md)
@@ -105,8 +105,6 @@ parse error and MUST NOT do DNS resolution or contact hosts.
 It is an error to specify more than one host name in a connection string with the `mongodb+srv` protocol, and the driver
 MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.
 
-Node:
-
 If `mongodb+srv` is used, a driver MUST implicitly also enable TLS. Clients can turn this off by passing `tls=false` in
 either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), but not through a TXT record (discussed in a later section).
@@ -129,9 +127,9 @@ Drivers MUST raise an error and MUST NOT initiate a connection to any returned h
 `{domainname}`.
 
 In the case that the SRV record has less than three `.` separated parts, the returned address MUST end with the SRV's
-entire `{hostname}` and MUST NOT be identical to the original `{hostname}`. The next major version MUST no longer allow
-an SRV record, with any number of parts, to return address that doesn't end with the SRVs' entire `{hostname}`. Drivers
-MUST document this in a prior minor release.
+entire `{hostname}` and MUST have at least one more domain level than the `{hostname}`. The next major version MUST no
+longer allow an SRV record, with any number of parts, to return an address that doesn't end with the SRVs' entire
+`{hostname}`. Drivers MUST document this in a prior minor release.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 
