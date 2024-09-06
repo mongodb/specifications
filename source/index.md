@@ -15,6 +15,7 @@
 - [Command Logging and Monitoring](command-logging-and-monitoring/command-logging-and-monitoring.md)
 - [Connection Monitoring and Pooling](connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)
 - [Connection String Spec](connection-string/connection-string-spec.md)
+- [Convenient API for Transactions](transactions-convenient-api/transactions-convenient-api.md)
 - [Driver Mantras](./driver-mantras.md)
 - [Enumerating Collections](./enumerate-collections.md)
 - [Enumerating Databases](./enumerate-databases.md)

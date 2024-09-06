@@ -33,7 +33,7 @@ This test format can be used to define tests for the following specifications:
 - [Retryable Writes](../retryable-writes/retryable-writes.md)
 - [Sessions](../sessions/driver-sessions.md)
 - [Transactions](../transactions/transactions.md)
-- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
+- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.md)
 - [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md)
 
 This is not an exhaustive list. Specifications that are known to not be supported by this format may be discussed under
@@ -1797,7 +1797,7 @@ This operation SHOULD NOT be used in test files. See [collection_createChangeStr
 
 These operations and their arguments may be documented in the following specifications:
 
-- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
+- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.md)
 - [Driver Sessions](../sessions/driver-sessions.md)
 
 Session operations that require special handling or are not documented by an existing specification are described below.

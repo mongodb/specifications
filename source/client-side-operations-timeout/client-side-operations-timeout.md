@@ -96,7 +96,7 @@ The `timeoutMS` option applies to all operations defined in the following specif
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Index Management](../index-management/index-management.md)
 - [Transactions](../transactions/transactions.md)
-- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
+- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.md)
 
 In addition, it applies to all operations on cursor objects that may perform blocking work (e.g. methods to iterate or
 close a cursor, any method that reads documents from a cursor into an array, etc).
