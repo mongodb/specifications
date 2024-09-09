@@ -60,8 +60,7 @@ A non-exhaustive list of acceptable deviations are as follows:
 - Using named parameters instead of an options hash. For instance, `collection.find({x:1}, sort: {a: -1})`.
 
 - When using an `Options` class, if multiple `Options` classes are structurally equatable, it is permissible to
-  consolidate them into one with a clear name. For instance, it would be permissible to use the name `UpdateOptions` as
-  the options for `UpdateOne` and `UpdateMany`.
+  consolidate them into one with a clear name.
 
 - Using a fluent style builder for find or aggregate:
 
@@ -888,7 +887,7 @@ interface Collection {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    * @throws WriteException
    */
-  updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): Optional<UpdateResult>;
+  updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOneOptions>): Optional<UpdateResult>;
 
   /**
    * Updates multiple documents.
@@ -896,7 +895,7 @@ interface Collection {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    * @throws WriteException
    */
-  updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): Optional<UpdateResult>;
+  updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateManyOptions>): Optional<UpdateResult>;
 }
 
 class BulkWriteOptions {
@@ -992,7 +991,7 @@ class InsertManyOptions {
   comment: Optional<any>;
 }
 
-class UpdateOptions {
+class UpdateOneOptions {
 
   /**
    * A set of filters specifying to which array elements an update should apply.
@@ -1081,6 +1080,85 @@ class UpdateOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   sort: Optional<Document>;
+}
+
+class UpdateManyOptions {
+
+  /**
+   * A set of filters specifying to which array elements an update should apply.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
+   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  arrayFilters: Optional<Array<Document>>;
+
+  /**
+   * If true, allows the write to opt-out of document level validation.
+   *
+   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
+   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+   */
+  bypassDocumentValidation: Optional<Boolean>;
+
+  /**
+   * Specifies a collation.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  collation: Optional<Document>;
+
+  /**
+   * The index to use. Specify either the index name as a string or the index key pattern.
+   * If specified, then the query system will only consider plans using the hinted index.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
+   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+   * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  hint: Optional<(String | Document)>;
+
+  /**
+   * When true, creates a new document if no document matches the query.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  upsert: Optional<Boolean>;
+
+  /**
+   * Map of parameter names and values. Values must be constant or closed
+   * expressions that do not reference document fields. Parameters can then be
+   * accessed as variables in an aggregate expression context (e.g. "$$var").
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  let: Optional<Document>;
+
+  /**
+   * Enables users to specify an arbitrary comment to help trace the operation through
+   * the database profiler, currentOp and logs. The default is to not send a value.
+   *
+   * The comment can be any valid BSON type for server versions 4.4 and above.
+   * Server versions prior to 4.4 do not support comment for update command,
+   * and providing one will result in a server-side error.
+   */
+  comment: Optional<any>;
 }
 
 class ReplaceOptions {
@@ -2413,7 +2491,8 @@ aforementioned allowance in the SemVer spec.
 
 ## Changelog
 
-- 2024-08-30: Add sort option to `replaceOne` and `updateOne`.
+- 2024-08-30: Add sort option to `replaceOne` and `updateOne`. Separate `UpdateOptions`\
+  to `UpdateOneOptions` and `UpdateManyOptions`.
 
 - 2024-02-20: Migrated from reStructuredText to Markdown.
 
