@@ -680,8 +680,8 @@ Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to 
 
 ### 14. `explain` helpers allow users to specify `maxTimeMS`
 
-Drivers that provide a multiple APIs to specify explain should ensure this test is run at least once with each distinct
-API. For example, the Node driver runs this test with option API (`collection.find({}, { explain: ... })`)git and the
+Drivers that provide multiple APIs to specify explain should ensure this test is run at least once with each distinct
+API. For example, the Node driver runs this test with option API (`collection.find({}, { explain: ... })`) and the
 fluent API (`collection.find({}).explain(...)`).
 
 Create a MongoClient with command monitoring enabled (referred to as `client`).

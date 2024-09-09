@@ -104,6 +104,9 @@ Drivers MUST enforce timeouts for all operations per the
 [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification. All
 operations that return cursors MUST support the timeout options documented in the
 [Cursors](../client-side-operations-timeout/client-side-operations-timeout.md#cursors) section of that specification.
+All explain helpers MUST support the timeout options documented in the
+[Explain Helpers](../client-side-operations-timeout/client-side-operations-timeout.md#explain_helpers) section of that
+specification.
 
 ### API
 
@@ -177,9 +180,6 @@ interface Collection {
    * contain other meta operators like $maxScan. However, do not validate this document
    * as it would be impossible to be forwards and backwards compatible. Let the server
    * handle the validation.
-   *
-   * Note: If $explain is specified in the modifiers, the return value is a single
-   * document. This could cause problems for static languages using strongly typed entities.
    *
    * Note: result iteration should be backed by a cursor. Depending on the implementation,
    * the cursor may back the returned Iterable instance or an iterator that it produces.
