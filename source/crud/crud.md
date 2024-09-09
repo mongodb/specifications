@@ -2491,8 +2491,8 @@ aforementioned allowance in the SemVer spec.
 
 ## Changelog
 
-- 2024-08-30: Add sort option to `replaceOne` and `updateOne`. Separate `UpdateOptions`\
-  to `UpdateOneOptions` and `UpdateManyOptions`.
+- 2024-08-30: Add sort option to `replaceOne` and `updateOne`. Separate `UpdateOptions` to `UpdateOneOptions` and
+  `UpdateManyOptions`.
 
 - 2024-02-20: Migrated from reStructuredText to Markdown.
 
