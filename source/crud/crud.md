@@ -2330,12 +2330,10 @@ deprecate it and drivers that have not built it should not do so.
 
 Q: Should drivers offer explain helpers?\
 Originally, it was determined that explain should not be exposed via
-specialized APIs in drivers (runCommand was always an option after server 3.0).
-
-Explain helpers are not required because it has been determined to be not a normal use-case for a driver. We'd like
-users to use the shell for this purpose. However, explain is still possible from a driver. Aggregate can be run using a
-runCommand method passing the explain option. In addition, server 3.0 offers an explain command that can be run using a
-runCommand method. However, some drivers historically have offered explain APIs and continue to do so.
+specialized APIs in drivers because it it was deemed to be an unusual use-case for a driver. We'd like users to use the
+shell for this purpose. However, explain is still possible from a driver. Some drivers have historically provided
+explain helpers and continue to do so. Drivers that do not offer explain helpers can run explain commands using the
+runCommand API.
 
 Q: What about explain?
 
