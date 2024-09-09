@@ -3308,7 +3308,8 @@ python -u kms_failpoint_server.py --port 9003
 ```
 
 See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen. See
-[the mock server implementation](TODO) and the [C driver tests](TODO) for how to configure failpoints.
+[the mock server implementation](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/4ba50d373652b6fb39239745664637e33e2b01e6/.evergreen/csfle/kms_failpoint_server.py)
+and the [C driver tests](TODO) for how to configure failpoints.
 
 #### Setup
 
