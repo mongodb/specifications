@@ -39,10 +39,10 @@ The root object of a driver's API. The name of this object MAY vary across drive
 
 <div id="TransactionOptions">
 
-TransactionOptions\
-Options for `ClientSession.startTransaction`, as defined in the
-[Transactions](../transactions/transactions.md) specification. The structure of these options MAY vary across drivers
-(e.g. dictionary, typed class).
+**TransactionOptions**
+
+Options for `ClientSession.startTransaction`, as defined in the [Transactions](../transactions/transactions.md)
+specification. The structure of these options MAY vary across drivers (e.g. dictionary, typed class).
 
 ### Naming Deviations
 
@@ -314,10 +314,6 @@ to exceed the user's original intention for `wtimeout`. The current design of th
 write concern timeouts, and simply retries `commitTransaction` within its timeout period for all errors bearing the
 "UnknownTransactionCommitResult" label.
 
-This change was made in light of the forthcoming Client-side Operations Timeout specification (see:
-[Future Work](#future-work)), which we expect will allow the current 120-second timeout for `withTransaction` to be
-customized and also obviate the need for users to specify `wtimeout`.
-
 ### The commit is not retried after a MaxTimeMSExpired error
 
 This specification intentionally chooses not to retry commit operations after a MaxTimeMSExpired error as doing so would
@@ -361,13 +357,6 @@ a helper method to execute a user-defined function within a transaction has few 
 provides an implementation of a technique already described in the MongoDB 4.0 documentation
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
-## Future Work
-
-The forthcoming Client-side Operations Timeout specification
-([DRIVERS-555](https://jira.mongodb.org/browse/DRIVERS-555)) may allow users to alter the default retry timeout, as a
-client-side timeout could be applied to `withTransaction` and its retry logic. In the absence of a client-side operation
-timeout, withTransaction can continue to use the 120-second default and thus preserve backwards compatibility.
-
 ## Changelog
 
 - 2024-09-06: Migrated from reStructuredText to Markdown.
@@ -376,8 +365,7 @@ timeout, withTransaction can continue to use the 120-second default and thus pre
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
-- 2022-01-19: withTransaction applies timeouts per the client-side operations\
-  timeout specification.
+- 2022-01-19: withTransaction applies timeouts per the client-side operations timeout specification.
 
 - 2019-04-24: withTransaction does not retry when commit fails with MaxTimeMSExpired.
 
