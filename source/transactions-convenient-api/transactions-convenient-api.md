@@ -290,10 +290,8 @@ sensible course of action; however, it will not detect whether the callback has 
 
 ### The callback function may be executed multiple times
 
-The implementation of withTransaction is based on the original examples for
-[Retry Transactions and Commit Operation](https://www.mongodb.com/docs/manual/core/transactions/#retry-transaction-and-commit-operation)
-from the MongoDB Manual. As such, the callback may be executed any number of times. Drivers are free to encourage their
-users to design idempotent callbacks.
+The callback may be executed any number of times. Drivers are free to encourage their users to design idempotent
+callbacks.
 
 ### The commit is retried after a write concern timeout (i.e. wtimeout) error
 
@@ -321,10 +319,8 @@ exceed the user's original intention for `maxTimeMS`.
 
 ### The transaction and commit may be retried any number of times within a timeout period
 
-The implementation of withTransaction is based on the original examples for
-[Retry Transactions and Commit Operation](https://www.mongodb.com/docs/manual/core/transactions/#retry-transaction-and-commit-operation)
-from the MongoDB Manual. As such, the transaction and commit may be continually retried as long as the error label
-indicates that retrying is possible.
+The callback may be executed any number of times. Drivers are free to encourage their users to design idempotent
+callbacks.
 
 A previous design had no limits for retrying commits or entire transactions. The callback is always able indicate that
 `withTransaction` should return to its caller (without future retry attempts) by aborting the transaction directly;
