@@ -2217,8 +2217,8 @@ interface ExplainOptions {
 }
 ```
 
-If a driver does provide explain helpers, the driver MUST ensure that its helper permits users to specify a timeout
-(maxTimeMS or timeoutMS) for the explain command specifically. An example, using Node, might look like:
+Drivers MUST ensure that its helper permits users to specify a timeout (maxTimeMS or timeoutMS) for the explain command
+specifically. An example, using Node, might look like:
 
 ```typescript
 collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
