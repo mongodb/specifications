@@ -50,6 +50,7 @@
 - [Server Wire version and Feature List](./wireversion-featurelist.md)
 - [Sessions Specification](sessions/driver-sessions.md)
 - [Snapshot Reads Specification](sessions/snapshot-sessions.md)
+- [Stable API For Drivers](versioned-api/versioned-api.md)
 - [Transactions Specification](transactions/transactions.md)
 - [URI Options Specification](uri-options/uri-options.md)
 - [Unified Test Format](unified-test-format/unified-test-format.md)

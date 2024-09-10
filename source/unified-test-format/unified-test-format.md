@@ -721,7 +721,7 @@ The structure of this object is as follows:
 
 - `deprecationErrors`: Optional boolean.
 
-See the [Stable API](../versioned-api/versioned-api.rst) spec for more details on these fields.
+See the [Stable API](../versioned-api/versioned-api.md) spec for more details on these fields.
 
 #### collectionData
 

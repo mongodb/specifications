@@ -90,7 +90,7 @@ The client monitors servers using the hello or legacy hello commands. In MongoDB
 MongoDB \<= 4.2, a monitor uses the [Polling Protocol](#polling-protocol) pausing heartbeatFrequencyMS between
 [checks](#check). Clients check servers sooner in response to certain events.
 
-If a [server API version](../versioned-api/versioned-api.rst) is requested, then the driver must use hello for
+If a [server API version](../versioned-api/versioned-api.md) is requested, then the driver must use hello for
 monitoring. If a server API version is not requested, the initial handshake using the legacy hello command must include
 `helloOk: true`. If the response contains `helloOk: true`, then the driver must use the `hello` command for monitoring.
 If the response does not contain `helloOk: true`, then the driver must use the legacy hello command for monitoring.
