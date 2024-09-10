@@ -2201,8 +2201,24 @@ the [$readPreference global command argument](../message/OP_MSG.md#global-comman
 
 ### Explain
 
-Drivers MAY provide explain helpers. If a driver does provide explain helpers, the driver MUST ensure that its helper
-permits users to specify maxTimeMS for the explain command specifically. An example, using Node, might look like:
+> [!NOTE]
+> Explain helpers are optional. Drivers that do not provide explain helpers may ignore this section.
+
+```typescript
+interface ExplainOptions {
+  /**
+   * The maximum amount of time to allow the explain to run.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * NOTE: This option is deprecated in favor of timeoutMS.
+   */
+  maxTimeMS: Optional<Int64>;
+}
+```
+
+If a driver does provide explain helpers, the driver MUST ensure that its helper permits users to specify a timeout
+(maxTimeMS or timeoutMS) for the explain command specifically. An example, using Node, might look like:
 
 ```typescript
 collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
@@ -2212,7 +2228,18 @@ collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
   explain: { find: <collection>, query: { name: 'john doe' } },
   maxTimeMS: 1000
 }
+
+collection.find({ name: 'john doe' }).explain({ timeoutMS: 1000 });
+
+// sends:
+{ 
+  explain: { find: <collection>, query: { name: 'john doe' } },
+  maxTimeMS: <1000 - average rtt>
+}
 ```
+
+This ensures that users have a mechanism to apply timeouts to `explain` specifically. Drivers MUST take care to ensure
+that
 
 Drivers MUST document how users can specify options on their explain helpers.
 
