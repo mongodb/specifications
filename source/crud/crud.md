@@ -2238,9 +2238,6 @@ collection.find({ name: 'john doe' }).explain({ timeoutMS: 1000 });
 }
 ```
 
-This ensures that users have a mechanism to apply timeouts to `explain` specifically. Drivers MUST take care to ensure
-that
-
 Drivers MUST document how users can specify options on their explain helpers.
 
 ## Test Plan
