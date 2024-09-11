@@ -329,7 +329,7 @@ BSON/Extended JSON Decimal128.
 
 ## Tests
 
-See the [BSON Corpus](https://github.com/mongodb/specifications/tree/master/source/bson-corpus) for tests.
+See the [BSON Corpus](../bson-corpus/bson-corpus.md) for tests.
 
 Most of the tests are converted from the
 [General Decimal Arithmetic Testcases](http://speleotrove.com/decimal/dectest.html).

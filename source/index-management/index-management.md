@@ -391,7 +391,7 @@ interface IndexView extends Iterable<Document> {
    * requirement is dropped in favor of the driver language standard for handling iteration
    * over a sequence of objects.
    *
-   * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst
+   * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.md
    *
    * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
    *   method. See below.

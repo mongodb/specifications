@@ -99,7 +99,7 @@ A local process the driver communicates with to determine how to encrypt values 
 
 This term, spelled in all-lowercase with an underscore, refers to the client-side field-level-encryption dynamic library
 provided as part of a MongoDB Enterprise distribution. It replaces [mongocryptd](#mongocryptd) as the method of
-`marking-up a database command for encryption <subtype6.intent-to-encrypt>`.
+[marking-up a database command for encryption](./subtype6.md#intent-to-encrypt).
 
 See also:
 
@@ -108,9 +108,8 @@ See also:
 
 **ciphertext**
 
-One of the data formats of
-[BSON binary subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst),
-representing an encoded BSON document containing encrypted ciphertext and metadata.
+One of the data formats of [BSON binary subtype 6](./subtype6.md), representing an encoded BSON document containing
+encrypted ciphertext and metadata.
 
 **FLE**
 
@@ -259,7 +258,7 @@ connect to [mongocryptd](#mongocryptd) and instead rely on [crypt_shared](#crypt
 
 [crypt_shared](#crypt_shared) is a dynamically-loaded C++ library providing query analysis for auto-encryption. It
 replaces [mongocryptd](#mongocryptd) for performing query analysis to -
-[mark-up sensitive fields within a command](./subtype6#intent-to-encrypt).
+[mark-up sensitive fields within a command](./subtype6.md#intent-to-encrypt).
 
 Drivers are not required to load and interact with [crypt_shared](#crypt_shared) directly. Instead, they inform
 [libmongocrypt](#libmongocrypt) where to find [crypt_shared](#crypt_shared) and [libmongocrypt](#libmongocrypt) will
@@ -1649,10 +1648,8 @@ CommandStartedEvent, and decryption MUST occur after generating a CommandSucceed
 ## Size limits for Write Commands
 
 Automatic encryption requires the driver to serialize write commands as a single BSON document before automatically
-encrypting with libmongocrypt (analogous to constructing
-[OP_MSG payload type 0](https://github.com/mongodb/specifications/blob/70628e30c96361346f7b6872571c0ec4d54846cb/source/message/OP_MSG.rst#sections),
-not a document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to
-send.
+encrypting with libmongocrypt (analogous to constructing [OP_MSG payload type 0](../message/OP_MSG.md#sections), not a
+document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to send.
 
 Because automatic encryption increases the size of commands, the driver MUST split bulk writes at a reduced size limit
 before undergoing automatic encryption. The write payload MUST be split at 2MiB (2097152). Where batch splitting occurs
@@ -1791,9 +1788,7 @@ struct {
 }
 ```
 
-See
-[Driver Spec: BSON Binary Subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst)
-for more information.
+See [Driver Spec: BSON Binary Subtype 6](./subtype6.md) for more information.
 
 ### JSONSchema "encrypt"
 

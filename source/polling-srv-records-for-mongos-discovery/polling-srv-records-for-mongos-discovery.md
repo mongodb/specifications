@@ -103,7 +103,7 @@ The rescan MUST happen **before** scanning all servers as part of the normal
 
 ## Test Plan
 
-See README.rst in the accompanying [test directory](tests).
+See README.md in the accompanying [test directory](tests).
 
 ## Motivation for Change
 

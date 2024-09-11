@@ -135,7 +135,7 @@ A timeout that occurs while reading from or writing to a network socket.
 
 #### minHeartbeatFrequencyMS
 
-Defined in the [Server Monitoring spec](server-monitoring.rst). This value MUST be 500 ms, and it MUST NOT be
+Defined in the [Server Monitoring spec](server-monitoring.md). This value MUST be 500 ms, and it MUST NOT be
 configurable.
 
 #### pool generation number
@@ -187,7 +187,7 @@ See [parsing a hello or legacy hello response](#parsing-a-hello-or-legacy-hello-
 
 > [!NOTE]
 > Single-threaded clients use the PossiblePrimary type to maintain proper
-> [scanning order](server-monitoring.rst#scanning-order). Multi-threaded and asynchronous clients do not need this
+> [scanning order](server-monitoring.md#scanning-order). Multi-threaded and asynchronous clients do not need this
 > ServerType; it is synonymous with Unknown.
 
 #### TopologyDescription
@@ -381,7 +381,7 @@ servers from its `TopologyDescription` and set its `TopologyType` to `Unknown`, 
 
 ### Monitoring
 
-See the [Server Monitoring spec](server-monitoring.rst) for how a driver monitors each server. In summary, the client
+See the [Server Monitoring spec](server-monitoring.md) for how a driver monitors each server. In summary, the client
 monitors each server in the topology. The scope of server monitoring is to provide the topology with updated
 ServerDescriptions based on hello or legacy hello command responses.
 
@@ -467,7 +467,7 @@ field.
 
 Drivers MUST record the server's [round trip time](#round-trip-time) (RTT) after each successful call to hello or legacy
 hello. The Server Selection Spec describes how RTT is averaged and how it is used in server selection. Drivers MUST also
-record the server's minimum RTT per [Server Monitoring (Measuring RTT)](server-monitoring.rst#measuring-rtt).
+record the server's minimum RTT per [Server Monitoring (Measuring RTT)](server-monitoring.md#measuring-rtt).
 
 If a hello or legacy hello call fails, the RTT is not updated. Furthermore, while a server's type is Unknown its RTT is
 null, and if it changes from a known type to Unknown its RTT is set to null. However, if it changes from one known type
@@ -894,7 +894,7 @@ checkIfHasPrimary()
 
 A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
 should be none or one) and replaces its description with a default ServerDescription of type "Unknown." A multi-threaded
-client MUST [request an immediate check](server-monitoring.rst#requesting-an-immediate-check) for that server as soon as
+client MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
 possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
@@ -948,7 +948,7 @@ to be [data-bearing](server-discovery-and-monitoring.md#data-bearing-server-type
 [direct connection](server-discovery-and-monitoring.md#general-requirements) to the server is requested, and does not
 already have a connection pool, the driver MUST create the connection pool for the server. Additionally, if a driver
 implements a CMAP compliant connection pool, the server's pool (even if it already existed) MUST be marked as "ready".
-See the [Server Monitoring spec](server-monitoring.rst) for more information.
+See the [Server Monitoring spec](server-monitoring.md) for more information.
 
 Clearing the connection pool for a server MUST be synchronized with the update to the corresponding ServerDescription
 (e.g. by holding the lock on the TopologyDescription when clearing the pool). This prevents a possible race between the
@@ -960,7 +960,7 @@ for more information.
 
 #### Network error during server check
 
-See error handling in the [Server Monitoring spec](server-monitoring.rst).
+See error handling in the [Server Monitoring spec](server-monitoring.md).
 
 #### Application errors
 
@@ -1188,7 +1188,7 @@ new ServerDescription's error field, including the error message from the server
 [What is the purpose of topologyVersion?](#what-is-the-purpose-of-topologyversion))
 
 Multi-threaded and asynchronous clients MUST
-[request an immediate check](server-monitoring.rst#requesting-an-immediate-check) of the server. Unlike in the "network
+[request an immediate check](server-monitoring.md#requesting-an-immediate-check) of the server. Unlike in the "network
 error" scenario above, a "not writable primary" or "node is recovering" error means the server is available but the
 client is wrong about its type, thus an immediate re-check is likely to provide useful information.
 
@@ -1222,24 +1222,24 @@ connection pool if the TopologyType is not LoadBalanced. (See
 ### Monitoring SDAM events
 
 The required driver specification for providing lifecycle hooks into server discovery and monitoring for applications to
-consume can be found in the [SDAM Monitoring Specification](server-discovery-and-monitoring-logging-and-monitoring.rst).
+consume can be found in the [SDAM Monitoring Specification](server-discovery-and-monitoring-logging-and-monitoring.md).
 
 ### Implementation notes
 
 This section intends to provide generous guidance to driver authors. It is complementary to the reference
 implementations. Words like "should", "may", and so on are used more casually here.
 
-See also, the implementation notes in the [Server Monitoring spec](server-monitoring.rst).
+See also, the implementation notes in the [Server Monitoring spec](server-monitoring.md).
 
 #### Multi-threaded or asynchronous server selection
 
 While no suitable server is available for an operation,
 [the client MUST re-check all servers every minHeartbeatFrequencyMS](#the-client-must-re-check-all-servers-every-minheartbeatfrequencyms).
-(See [requesting an immediate check](server-monitoring.rst#requesting-an-immediate-check).)
+(See [requesting an immediate check](server-monitoring.md#requesting-an-immediate-check).)
 
 #### Single-threaded server selection
 
-When a client that uses [single-threaded monitoring](server-monitoring.rst#single-threaded-monitoring) fails to select a
+When a client that uses [single-threaded monitoring](server-monitoring.md#single-threaded-monitoring) fails to select a
 suitable server for any operation, it [scans](#scan) the servers, then attempts selection again, to see if the scan
 discovered suitable servers. It repeats, waiting [minHeartbeatFrequencyMS](#minheartbeatfrequencyms) after each scan,
 until a timeout.

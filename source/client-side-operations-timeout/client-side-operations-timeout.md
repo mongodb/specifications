@@ -430,7 +430,7 @@ See [runCommand behavior](#runcommand-behavior).
 
 ## Test Plan
 
-See the [README.rst](tests/README.md) in the tests directory.
+See the [README.md](tests/README.md) in the tests directory.
 
 ## Motivation for Change
 

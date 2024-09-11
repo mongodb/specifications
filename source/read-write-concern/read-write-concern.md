@@ -20,7 +20,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 MaxWireVersion The `maxWireVersion` value reported by the `hello` command.
 
 Server Selection The process of selecting a server to read or write from. See
-[the server selection specification](https://github.com/mongodb/specifications/tree/master/source/server-selection).
+[the server selection specification](../server-selection/server-selection.md).
 
 ## Specification
 
@@ -507,7 +507,7 @@ concerns.
 
 ## Test Plan
 
-Yaml tests are located here: <https://github.com/mongodb/specifications/tree/master/source/read-write-concern/tests>
+Yaml tests are located [here](../read-write-concern/tests/README.md)
 
 Below are English descriptions of other items that should be tested:
 

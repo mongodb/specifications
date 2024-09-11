@@ -84,8 +84,7 @@ testing suite:
 - Versioned/Stable API
 - Client Side Encryption
   - Drivers MUST test with a version of the `crypt_shared` shared library that matches the MongoDB Server version
-    running in Serverless. See
-    [Using crypt_shared](https://github.com/mongodb/specifications/tree/e761591616849d9b507287811e77f7a359fb9587/source/client-side-encryption/tests#using-crypt-shared).
+    running in Serverless. See [Using crypt_shared](../client-side-encryption/tests#using-crypt-shared).
 
 Note that the legacy JSON/YAML test formats for these specifications were updated to include a new `runOnRequirement`
 specifically for Atlas Serverless testing. To ensure these requirements are enforced properly, the runner MUST be

@@ -246,7 +246,7 @@ Then for each element in `tests`:
 
 13. If the test includes a list of command-started events in `expectations`, compare them to the actual command-started
     events using the same logic as the
-    [legacy Command Monitoring Spec Tests runner](https://github.com/mongodb/specifications/blob/09ee1ebc481f1502e3246971a9419e484d736207/source/command-monitoring/tests/README.rst#expectations),
+    [legacy Command Monitoring Spec Tests runner](../../command-logging-and-monitoring/tests/README.md#expectations),
     plus the rules in the Command-Started Events instructions below.
 
 14. If `failPoint` is specified, disable the fail point to avoid spurious failures in subsequent tests. The fail point
@@ -467,7 +467,7 @@ sharded transaction that uses the `dbVersion` concept so it is the only command 
 
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 
-- 2024-02-07: Moved legacy test format docs to this file from README.rst.
+- 2024-02-07: Moved legacy test format docs to this file from README.md.
 
 - 2023-09-28: Add `load-balanced` to test topology requirements.
 

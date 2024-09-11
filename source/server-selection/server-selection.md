@@ -162,8 +162,8 @@ The process by which a server is chosen for a database operation out of all pote
 
 An enumerated type indicating whether a server is up or down, whether it is a mongod or mongos, whether it belongs to a
 replica set and, if so, what role it serves in the replica set. See the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec for more details.
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec for more
+details.
 
 **Suitable**
 
@@ -190,9 +190,8 @@ The state of a deployment, including its type, which servers are members, and th
 **Topology type**
 
 An enumerated type indicating the semantics for monitoring servers and selecting servers for database operations. See
-the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec for more details.
+the [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec for
+more details.
 
 ### Assumptions
 
@@ -203,8 +202,7 @@ spec for more details.
      reconfiguration.
    - Low-latency: all else being equal, faster responses to queries and writes are preferable.
 2. Clients know the state of a deployment based on some form of ongoing monitoring, following the rules defined in the
-   [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-   spec.
+   [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec.
    - They know which members are up or down, what their tag sets are, and their types.
    - They know average round trip times to each available member.
    - They detect reconfiguration and the addition or removal of members.
@@ -256,8 +254,7 @@ The serverSelectionTryOnce option MUST be true by default. If it is set false, t
 an appropriate server until the selection process times out (pausing
 [minHeartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#minheartbeatfrequencyms)
 between attempts, as required by the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec).
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec).
 
 Users of single-threaded drivers MUST be able to control this mode in one or both of these ways:
 
@@ -276,9 +273,8 @@ for a ["try once" mode](#try-once-mode).)
 
 This controls when topology updates are scheduled. See
 [heartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#heartbeatfrequencyms) in
-the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec for details.
+the [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec for
+details.
 
 #### socketCheckIntervalMS
 
@@ -294,7 +290,7 @@ See [checking an idle socket after socketCheckIntervalMS](#checking-an-idle-sock
 
 A constant, how often an idle primary writes a no-op to the oplog. See
 [idleWritePeriodMS](../max-staleness/max-staleness.md#idlewriteperiodms) in the
-[Max Staleness](https://github.com/mongodb/specifications/tree/master/source/max-staleness) spec for details.
+[Max Staleness](../max-staleness/max-staleness.md) spec for details.
 
 #### smallestMaxStalenessSeconds
 
@@ -358,9 +354,8 @@ Otherwise, when there are no eligible secondaries, the primary is suitable.
 The primary and all secondaries are candidates, but only eligible candidates are suitable.
 
 *Note on other server types*: The
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec defines several other server types that could appear in a replica set. Such types are never candidates, eligible or
-suitable.
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec defines
+several other server types that could appear in a replica set. Such types are never candidates, eligible or suitable.
 
 <span id="algorithm-for-filtering-by-staleness"></span>
 
@@ -384,9 +379,8 @@ maxStalenessSeconds >= smallestMaxStalenessSeconds
 ```
 
 `heartbeatFrequencyMS` is defined in the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec, and `idleWritePeriodMS` is defined to be 10 seconds in the
-[Max Staleness](https://github.com/mongodb/specifications/tree/master/source/max-staleness) spec.
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec, and
+`idleWritePeriodMS` is defined to be 10 seconds in the [Max Staleness](../max-staleness/max-staleness.md) spec.
 
 See "Smallest allowed value for maxStalenessSeconds" in the Max Staleness Spec.
 
@@ -1324,8 +1318,8 @@ The server selection test plan is given in a separate document that describes th
 ### Use of topology types
 
 The prior version of the read preference spec had only a loose definition of server or topology types. The
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec defines these terms explicitly and they are used here for consistency and clarity.
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec defines
+these terms explicitly and they are used here for consistency and clarity.
 
 ### Consistency with mongos
 
@@ -1603,9 +1597,8 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 
 ## References
 
-- [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-  specification
-- [Driver Authentication](https://github.com/mongodb/specifications/blob/master/source/auth) specification
+- [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) specification
+- [Driver Authentication](../auth/auth.md) specification
 - [Connection Monitoring and Pooling](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)
   specification
 

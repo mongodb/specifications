@@ -67,7 +67,7 @@ interface RunCommandOptions {
    * An optional timeout option to govern the amount of time that a single operation can execute before control is returned to the user.
    * This timeout applies to all of the work done to execute the operation, including but not limited to server selection, connection checkout, and server-side execution.
    *
-   * @ see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
+   * @ see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md
    */
   timeoutMS?: number;
 }
@@ -202,7 +202,7 @@ interface RunCursorCommandOptions extends RunCommandOptions {
    *
    * @defaultValue CURSOR_LIFETIME
    *
-   * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.rst
+   * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md
    */
   timeoutMode?: ITERATION | CURSOR_LIFETIME;
 

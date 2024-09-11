@@ -9,7 +9,7 @@ This specification defines the driver API for the `bulkWrite` server command int
 in this specification allows users to perform insert, update, and delete operations against mixed namespaces in a
 minimized number of round trips, and to receive detailed results for each operation performed. This API is distinct from
 the [collection-level bulkWrite method](../crud/crud.md#insert-update-replace-delete-and-bulk-writes) defined in the
-CRUD specification and the [deprecated bulk write specification](../driver-bulk-update.rst).
+CRUD specification.
 
 ## Specification
 
@@ -479,8 +479,7 @@ The `bulkWrite` server command has the following format:
 }
 ```
 
-Drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.rst) payload type 1) for the `ops` and `nsInfo`
-fields.
+Drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.md) payload type 1) for the `ops` and `nsInfo` fields.
 
 The `bulkWrite` command is executed on the "admin" database.
 

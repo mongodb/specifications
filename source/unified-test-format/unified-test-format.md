@@ -488,8 +488,8 @@ The structure of this object is as follows:
   - `ignoreCommandMonitoringEvents`: Optional array of one or more strings. Command names for which the test runner MUST
     ignore any observed command monitoring events. The command(s) will be ignored in addition to `configureFailPoint`
     and any commands containing sensitive information (per the
-    [Command Logging and Monitoring](../command-logging-and-monitoring/command-monitoring.rst#security) spec) unless
-    `observeSensitiveCommands` is true.
+    [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#security) spec)
+    unless `observeSensitiveCommands` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring events are specified in
     [observeEvents](#entity_client_observeEvents).
@@ -1248,10 +1248,10 @@ A log message which is expected to be observed while executing the test's operat
 The structure of each object is as follows:
 
 - `level`: Required string. This MUST be one of the level names listed in
-  [log severity levels](logging/logging.rst#log-severity-levels). This specifies the expected level for the log message
-  and corresponds to the level used for the message in the specification that defines it. Note that since not all
-  drivers will necessarily support all log levels, some driver may need to map the specified level to the corresponding
-  driver-supported level. Test runners MUST assert that the actual level matches this value.
+  [log severity levels](../logging/logging.md#log-severity-levels). This specifies the expected level for the log
+  message and corresponds to the level used for the message in the specification that defines it. Note that since not
+  all drivers will necessarily support all log levels, some driver may need to map the specified level to the
+  corresponding driver-supported level. Test runners MUST assert that the actual level matches this value.
 
 - `component`: Required string. This MUST be one of the component names listed in
   [components](../logging/logging.md#components). This specifies the expected component for the log message. Note that

@@ -755,8 +755,8 @@ pendingConnectionCount to become less than maxConnecting when satisfying minPool
 rest of its duties, e.g., closing available perished connections, or end.
 
 The duration of intervals between the end of one Run and the beginning of the next Run is not specified, but the
-[Test Format and Runner Specification](https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests)
-may restrict this duration, or introduce other restrictions to facilitate testing.
+[Test Format and Runner Specification](../connection-monitoring-and-pooling/tests/README.md) may restrict this duration,
+or introduce other restrictions to facilitate testing.
 
 ##### withConnection
 

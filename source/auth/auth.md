@@ -18,7 +18,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### References
 
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/)
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md)
 
 ## Specification
 
