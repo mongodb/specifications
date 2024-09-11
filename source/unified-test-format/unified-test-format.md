@@ -26,7 +26,7 @@ guidance on writing test files. This is discussed in more detail in [Design Rati
 This test format can be used to define tests for the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst)
+- [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md)
 - [CRUD](../crud/crud.md)
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Retryable Reads](../retryable-reads/retryable-reads.md)
@@ -497,11 +497,11 @@ The structure of this object is as follows:
   <span id="entity_client_observeSensitiveCommands"></span>
 
   - `observeSensitiveCommands`: Optional boolean. If true, events associated with sensitive commands (per the
-    [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security)
-    spec) will be observed for this client. Note that the command and replies for such events will already have been
-    redacted by the driver. If false or not specified, events for commands containing sensitive information MUST be
-    ignored. Authentication SHOULD be disabled when this property is true, i.e. [auth](#runOnRequirement_auth) should be
-    false for each `runOnRequirement`. See [rationale_observeSensitiveCommands](#rationale_observeSensitiveCommands).
+    [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#security) spec)
+    will be observed for this client. Note that the command and replies for such events will already have been redacted
+    by the driver. If false or not specified, events for commands containing sensitive information MUST be ignored.
+    Authentication SHOULD be disabled when this property is true, i.e. [auth](#runOnRequirement_auth) should be false
+    for each `runOnRequirement`. See [rationale_observeSensitiveCommands](#rationale_observeSensitiveCommands).
 
   <span id="entity_client_storeEventsAsEntities"></span>
 
@@ -668,7 +668,7 @@ The structure of this object is as follows:
 - `id`: Required string. Unique name for this entity.
 - `events`: Required array of one or more strings, which denote the events to be collected. Currently, only the
   following [CMAP](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md) and
-  [command monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst) events MUST be supported:
+  [command monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) events MUST be supported:
   - PoolCreatedEvent
   - PoolReadyEvent
   - PoolClearedEvent
@@ -969,7 +969,7 @@ The structure of each object is as follows:
 - `client`: Required string. Client entity on which the events are expected to be observed. See
   [commonOptions_client](#commonOptions_client).
 - `eventType`: Optional string. Specifies the type of the monitor which captured the events. Valid values are `command`
-  for [Command Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#events-api) events,
+  for [Command Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) events,
   `cmap` for [CMAP](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) events, and `sdam`
   for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
   events. Defaults to `command` if omitted.
@@ -1005,7 +1005,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandStartedEvent"></span>
 
 - `commandStartedEvent`: Optional object. Assertions for one or more
-  [CommandStartedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
+  [CommandStartedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#api) fields.
 
   The structure of this object is as follows:
 
@@ -1021,7 +1021,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandSucceededEvent"></span>
 
 - `commandSucceededEvent`: Optional object. Assertions for one or more
-  [CommandSucceededEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
+  [CommandSucceededEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#api) fields.
 
   The structure of this object is as follows:
 
@@ -1037,7 +1037,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandFailedEvent"></span>
 
 - `commandFailedEvent`: Optional object. Assertions for one or more
-  [CommandFailedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
+  [CommandFailedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#api) fields.
 
   The structure of this object is as follows:
 
@@ -1263,7 +1263,7 @@ The structure of each object is as follows:
 
   When `failureIsRedacted` is present and its value is `true`, the test runner MUST assert that a failure is present and
   that the failure has been redacted according to the rules defined for error redaction in the
-  [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security).
+  [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.md#security).
 
   When `false`, the test runner MUST assert that a failure is present and that the failure has NOT been redacted.
 
@@ -3087,7 +3087,7 @@ For each client with command monitoring enabled, the test runner MUST ignore eve
 - Any `configureFailPoint` commands executed for [failPoint](#failpoint) and [targetedFailPoint](#targetedfailpoint)
   operations.
 - Any commands containing sensitive information (per the
-  [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security) spec)
+  [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#security) spec)
   unless [observeSensitiveCommands](#entity_client_observeSensitiveCommands) is true. Note that drivers will redact
   commands and replies for sensitive commands. For `hello` and legacy hello, which are conditionally sensitive based on
   the presence of a `speculativeAuthenticate` field, the test runner may need to infer that the events are sensitive
