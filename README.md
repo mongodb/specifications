@@ -1,4 +1,4 @@
-# MongoDB Specifications
+# MongoDB Specifications 
 
 [![Documentation Status](https://readthedocs.org/projects/specifications/badge/?version=latest)](http://specifications.readthedocs.io/en/latest/?badge=latest)
 
