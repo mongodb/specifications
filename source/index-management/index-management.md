@@ -824,6 +824,8 @@ In MongoDB 4.4, the `ns` field was removed from the index specifications returne
   populate the `ns` field of the models with the appropriate namespace if the server does not report it in the
   `listIndexes` command response. The `ns` field is not required to be a part of the models, however.
 
+<span id="enumerate-indexes"></span>
+
 #### Getting Index Names
 
 Drivers MAY implement a method to enumerate all indexes, and return only the index names. The helper operates the same

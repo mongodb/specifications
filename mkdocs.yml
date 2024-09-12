@@ -4,5 +4,7 @@ nav:
   - 'index.md'
 markdown_extensions:
   - admonition
+  - toc:
+      permalink: 
 plugins:
   - gh-admonitions

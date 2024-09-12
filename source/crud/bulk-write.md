@@ -763,8 +763,7 @@ immediately throw the exception. Otherwise, drivers MUST continue to iterate the
 ## Test Plan
 
 The majority of tests for `MongoClient.bulkWrite` are written in the
-[Unified Test Format](../unified-test-format/unified-test-format.md) and reside in the
-[CRUD unified tests directory](../crud/tests/unified/).
+[Unified Test Format](../unified-test-format/unified-test-format.md) and reside in the CRUD unified tests directory.
 
 Additional prose tests are specified [here](../crud/tests/README.md). These tests require constructing very large
 documents to test batch splitting, which is not feasible in the unified test format at the time of writing this

@@ -491,6 +491,8 @@ db.collection.find(
     hedge={'enabled': true})
 ```
 
+<span id="passing-read-preference-to-mongos"></span>
+
 #### Passing read preference to mongos and load balancers
 
 If a server of type Mongos or LoadBalancer is selected for a read operation, the read preference is passed to the

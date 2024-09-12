@@ -7,11 +7,10 @@ ______________________________________________________________________
 ### Automated Tests
 
 There are tests in the [Unified Test Format](../../unified-test-format/unified-test-format.md) for both logging and
-monitoring in [/logging](./logging) and [/monitoring](./monitoring), respectively. Drivers MUST run the logging tests
-with their max document length setting (as described in the
-[logging specification](../../logging/logging.md#configurable-max-document-length)) set to a large value e.g. 10,000;
-this is necessary in order for the driver to emit the full server reply (and to allow matching against that reply) on
-certain MongoDB versions and topologies.
+monitoring in `/logging` and `monitoring`, respectively. Drivers MUST run the logging tests with their max document
+length setting (as described in the [logging specification](../../logging/logging.md#configurable-max-document-length))
+set to a large value e.g. 10,000; this is necessary in order for the driver to emit the full server reply (and to allow
+matching against that reply) on certain MongoDB versions and topologies.
 
 ### Prose Tests
 

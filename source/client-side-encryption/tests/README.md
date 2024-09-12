@@ -131,7 +131,8 @@ Test credentials to create environments are available in "drivers/gcpkms" and "d
 Do the following before running spec tests:
 
 - If available for the platform under test, obtain a [crypt_shared](../client-side-encryption.md#crypt_shared) binary
-  and place it in a location accessible to the tests. Refer to: [Using crypt_shared](#using-crypt_shared)
+  and place it in a location accessible to the tests. Refer to:
+  [Using crypt_shared](../client-side-encryption.md#enabling-crypt_shared)
 - Start the mongocryptd process.
 - Start a mongod process with **server version 4.2.0 or later**.
 - Place credentials somewhere in the environment outside of tracked code. (If testing on evergreen, project variables
@@ -1907,7 +1908,7 @@ as `key1Document`.
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
 Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
-[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#fle-2-createcollection-and-collection-drop).
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
 Drop and create the collection `keyvault.datakeys`.
 
@@ -2247,7 +2248,7 @@ for the field `cursor.firstBatch.encrypted`.
 ### 15. On-demand AWS Credentials
 
 These tests require valid AWS credentials. Refer:
-[Automatic AWS Credentials](../client-side-encryption.md#automatic-aws-credentials).
+[Automatic AWS Credentials](../client-side-encryption.md#automatic-credentials).
 
 For these cases, create a [ClientEncryption](../client-side-encryption.md#clientencryption) object $C$ with the
 following options:
@@ -2408,7 +2409,7 @@ impossible by design to omit `RewrapManyDataKeyOpts.provider` when `RewrapManyDa
 
 ### 17. On-demand GCP Credentials
 
-Refer: [Automatic GCP Credentials](../client-side-encryption.md#automatic-gcp-credentials).
+Refer: [Automatic GCP Credentials](../client-side-encryption.md#obtaining-gcp-credentials).
 
 For these cases, create a [ClientEncryption](../client-side-encryption.md#clientencryption) object $C$ with the
 following options:
@@ -2847,7 +2848,7 @@ as `key1Document`.
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
 Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
-[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#fle-2-createcollection-and-collection-drop).
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
 Drop and create the collection `keyvault.datakeys`.
 

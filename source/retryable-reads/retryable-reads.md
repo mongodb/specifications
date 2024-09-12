@@ -469,8 +469,9 @@ None.
 
 1. A later specification may allow operations (including read) to be retried any number of times during a singular
    timeout period.
-2. Any future changes to the the applicable parts of [retryable writes specification](../retryable-writes/) may also
-   need to be reflected in the retryable reads specification, and vice versa.
+2. Any future changes to the the applicable parts of
+   [retryable writes specification](../retryable-writes/retryable-writes.md) may also need to be reflected in the
+   retryable reads specification, and vice versa.
 3. We may revisit the decision not retry `Cursor.getMore()` (see [Q&A](#qa)).
 4. Once [DRIVERS-560](https://jira.mongodb.org/browse/DRIVERS-560) is resolved, tests will be added to allow testing
    Retryable Reads on MongoDB 3.6. See the [test plan](./tests/README.md) for additional information.

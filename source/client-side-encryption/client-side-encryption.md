@@ -531,6 +531,8 @@ The following shows an example object of `KMSProviders`:
 }
 ```
 
+<span id="automatic-credentials"></span>
+
 ##### Automatic Credentials
 
 Certain values of [KMSProviders](#kmsproviders) indicate a request by the user that the associated KMS providers should
@@ -832,6 +834,8 @@ and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by
    3. Otherwise, $EF$ is *not-found*
 5. Otherwise, $EF$ is considered *not-found*.
 
+<span id="create-collection-helper"></span>
+
 #### Create Collection Helper
 
 Drivers MUST support a BSON document option named `encryptedFields` for any
@@ -875,7 +879,7 @@ remaining operations are not attempted:
 #### Create Encrypted Collection Helper
 
 To support automatic generation of encryption data keys, a helper $CreateEncryptedCollection(CE, database, collName,
-collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption-1) object,
+collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption) object,
 $kmsProvider$ is a [KMSProvider](#KMSProvider) and $masterKey$ is equivalent to the $masterKey$ defined in
 [DataKeyOpts](#datakeyopts). It has the following behavior:
 
@@ -1154,7 +1158,7 @@ class RewrapManyDataKeyResult {
 }
 ```
 
-`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md##write-results) used to update the key
+`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md#write-results) used to update the key
 vault collection with one or more rewrapped data keys. If `rewrapManyDataKey()` does not find any matching keys to
 rewrap, no bulk write operation will be executed and this field will be unset. This field may also be unset if the bulk
 write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.md#write-results).
@@ -1569,8 +1573,7 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 Single-threaded drivers MUST connect with
 [serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce),
 `connectTimeoutMS=10000`, and MUST bypass
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms) when connecting to
-mongocryptd. See
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms) when connecting to mongocryptd. See
 [Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
 If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for
@@ -2107,7 +2110,7 @@ server before making another attempt. Meaning if the first attempt to mongocrypt
 observe a 5 second delay. This is not configurable in the URI, so this must be overridden internally. Since mongocryptd
 is a local process, there should only be a very short delay after spawning mongocryptd for it to start listening on
 sockets. See the SDAM spec description of
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms).
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms).
 
 Because single threaded drivers may exceed `serverSelectionTimeoutMS` by the duration of the topology scan,
 `connectTimeoutMS` is also reduced.

@@ -190,6 +190,8 @@ See [parsing a hello or legacy hello response](#parsing-a-hello-or-legacy-hello-
 > [scanning order](server-monitoring.md#scanning-order). Multi-threaded and asynchronous clients do not need this
 > ServerType; it is synonymous with Unknown.
 
+<span id="TopologyDescription"></span>
+
 #### TopologyDescription
 
 The client's representation of everything it knows about the deployment's topology.
@@ -334,6 +336,8 @@ When a driver is given an SRV URI, if the `directConnection` URI option is not s
 option is not specified, the driver MUST start in Unknown topology, and follow the rules in the
 [TopologyType table](#topologytype-table) for transitioning to other topologies. In particular, the driver MUST NOT use
 the number of hosts from the initial SRV lookup to decide what topology to start in.
+
+<span id="heartbeatFrequencyMS"></span>
 
 #### heartbeatFrequencyMS
 
@@ -734,6 +738,8 @@ else:
 See
 [TopologyType remains Unknown when one of the seeds is a Standalone](#topologytype-remains-unknown-when-one-of-the-seeds-is-a-standalone).
 
+<span id="updateRSWithoutPrimary"></span>
+
 ##### updateRSWithoutPrimary
 
 This subroutine is executed with the ServerDescription from an RSSecondary, RSArbiter, or RSOther when the TopologyType
@@ -810,6 +816,8 @@ if there is no primary in topologyDescription.servers:
 
 The special handling of description.primary ensures that a single-threaded client [scans](#scan) the possible primary
 before other members.
+
+<span id="updateRSFromPrimary"></span>
 
 ##### updateRSFromPrimary
 

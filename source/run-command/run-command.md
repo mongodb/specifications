@@ -152,7 +152,7 @@ as-is.
 - See Read Concern's section on
   [Generic Command Method](../read-write-concern/read-write-concern.md#generic-command-method)
 - See Write Concern's section on
-  [Generic Command Method](../read-write-concern/read-write-concern.md#generic-command-method-1)
+  [Generic Command Method](../read-write-concern/read-write-concern.md#generic-command-method)
 
 ##### Retryability
 

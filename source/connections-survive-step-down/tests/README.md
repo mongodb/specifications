@@ -7,7 +7,8 @@ These tests apply only to replica set topologies.
 
 ## Server Fail Point
 
-See: [Server Fail Point](../../transactions/tests#server-fail-point) in the Transactions spec test suite.
+See: [Server Fail Point](../../transactions/tests/legacy-test-format.md#server-fail-point) in the Transactions spec test
+suite.
 
 ### Disabling Fail Point after Test Execution
 

@@ -153,7 +153,7 @@ Drivers MUST follow the following steps for an authentication handshake:
    invalid credential is the same as all credentials being invalid.
 
 If the authentication handshake fails for a socket, drivers MUST mark the server Unknown and clear the server's
-connection pool. (See [Q & A](#q--a) below and SDAM's
+connection pool. (See [Q & A](#q-and-a) below and SDAM's
 [Why mark a server Unknown after an auth error](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#why-mark-a-server-unknown-after-an-auth-error)
 for rationale.)
 
@@ -995,7 +995,7 @@ The order in which Drivers MUST search for credentials is:
 4. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
 > [!NOTE]
-> See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q--a)
+> See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q-and-a)
 >
 > Drivers are not expected to handle
 > [AssumeRole](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) requests directly. See
@@ -1841,7 +1841,7 @@ def speculative_auth(connection):
 If any operation fails with `ReauthenticationRequired` (error code 391) and MONGODB-OIDC is in use, the driver MUST
 reauthenticate the connection. Drivers MUST NOT resend a `hello` message during reauthentication, instead using SASL
 messages directly. Drivers MUST NOT try to use Speculative Authentication during reauthentication. See the main
-[reauthentication](#reauthentication-1) section for more information.
+[reauthentication](#reauthentication) section for more information.
 
 To reauthenticate a connection, invalidate the access token stored on the connection (i.e. the *Connection Cache*) from
 the *Client Cache*, fetch a new access token, and re-run the SASL conversation.
@@ -1858,6 +1858,8 @@ def reauth(connection):
 ### Connection String Options
 
 `mongodb://[username[:password]@]host1[:port1][,[host2:[port2]],...[hostN:[portN]]][/database][?options]`
+
+<span id="supported-authentication-methods"></span>
 
 #### Auth Related Options
 
@@ -2022,6 +2024,8 @@ during `saslStart`.
 ## Reference Implementation
 
 The Java and .NET drivers currently uses eager authentication and abide by this specification.
+
+<span id="q-and-a"></span>
 
 ## Q & A
 

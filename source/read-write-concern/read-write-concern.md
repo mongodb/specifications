@@ -126,6 +126,8 @@ driver MUST include the command's `ReadConcern` when sending the command. This i
 server default `ReadConcern`, so that the command can override the `Client`, `Database`, or `Collection`'s `ReadConcern`
 to use the server default instead.
 
+<span id="generic-command-method"></span>
+
 ##### Generic Command Method
 
 If your driver offers a generic `RunCommand` method on your `database` object, `ReadConcern` MUST NOT be applied
