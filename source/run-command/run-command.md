@@ -169,7 +169,7 @@ it is a write and MUST NOT attach a `txnNumber`.
 The command sent MUST attach stable API fields as configured on the MongoClient.
 
 - See Stable API's section on
-  [Generic Command Helper Behaviour](https://github.com/mongodb/specifications/blob/master/source/versioned-api/versioned-api.rst#generic-command-helper)
+  [Generic Command Helper Behaviour](../versioned-api/versioned-api.md#generic-command-helper)
 
 ##### Client Side Operations Timeout
 

@@ -474,7 +474,7 @@ messages.
 ## Command Monitoring
 
 In accordance with the
-[Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst) specification,
+[Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) specification,
 drivers MUST guarantee that each `CommandStartedEvent` has either a correlating `CommandSucceededEvent` or
 `CommandFailedEvent` and that every "command started" log message has either a correlating "command succeeded" log
 message or "command failed" log message. If the first attempt of a retryable write operation encounters a retryable
@@ -486,7 +486,7 @@ writable server is reselected for the retry attempt.
 Each attempt of a retryable write operation SHOULD report a different `requestId` so that events for each attempt can be
 properly correlated with one another.
 
-The [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst) specification
+The [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) specification
 states that the `operationId` field is a driver-generated, 64-bit integer and may be "used to link events together such
 as bulk write operations." Each attempt of a retryable write operation SHOULD report the same `operationId`; however,
 drivers SHOULD NOT use the `operationId` field to relay information about a transaction ID. A bulk write operation may

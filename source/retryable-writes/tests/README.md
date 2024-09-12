@@ -67,7 +67,7 @@ allow the fail point to trigger on the second command.
 
 Drivers should also assert that command documents are properly constructed with or without a transaction ID, depending
 on whether the write operation is supported.
-[Command Logging and Monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) may be used to
+[Command Logging and Monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) may be used to
 check for the presence of a `txnNumber` field in the command document. Note that command documents may always include an
 `lsid` field per the [Driver Session](../../sessions/driver-sessions.md) specification.
 
