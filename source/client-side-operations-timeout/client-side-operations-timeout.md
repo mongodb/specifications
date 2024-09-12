@@ -433,12 +433,13 @@ See [runCommand behavior](#runcommand-behavior).
 > [!NOTE]
 > This portion of the specification is only relevant for drivers that provide `explain` helpers.
 
-When `timeoutMS` is specified, drivers MUST take care to ensure that timeoutMS is correctly applied to the top-level
-explain command. Care should be taken by drivers with a fluent API - the following example should apply a timeoutMS of
-1000 to the `explain` command:
+When `timeoutMS` is specified, drivers MUST provide a way to specify timeoutMS that results in maxTimeMS being set on
+the `explain` command. For example, Node's implementation might look like:
 
 ```typescript
-collection.find({}, { timeoutMS: 1000 }).explain();
+collection.find({}).explain({ timeoutMS: 1000 });
+// sends:
+{ explain: { find: ... }, maxTimeMS: <remaining timeoutMS - min rtt>}
 ```
 
 ## Test Plan

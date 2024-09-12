@@ -2234,7 +2234,7 @@ collection.find({ name: 'john doe' }).explain({ timeoutMS: 1000 });
 // sends:
 { 
   explain: { find: <collection>, query: { name: 'john doe' } },
-  maxTimeMS: <1000 - average rtt>
+  maxTimeMS: <1000 - min rtt>
 }
 ```
 
