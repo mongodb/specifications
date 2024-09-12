@@ -29,4 +29,4 @@ jobs:
       - name: Setup dependencies
         run: pip install -r source/requirements.txt
       - name: Check docs
-        run: mkdocs build --strict .
+        run: mkdocs build --strict
