@@ -166,28 +166,28 @@ interface ConnectionPoolOptions {
 
 #### Connection
 
-A driver-defined wrapper around a single TCP connection to an Endpoint. A [Connection](#connection-1) has the following
+A driver-defined wrapper around a single TCP connection to an Endpoint. A [Connection](#connection) has the following
 properties:
 
-- **Single Endpoint:** A [Connection](#connection-1) MUST be associated with a single Endpoint. A
-  [Connection](#connection-1) MUST NOT be associated with multiple Endpoints.
-- **Single Lifetime:** A [Connection](#connection-1) MUST NOT be used after it is closed.
-- **Single Owner:** A [Connection](#connection-1) MUST belong to exactly one Pool, and MUST NOT be shared across
-  multiple pools
-- **Single Track:** A [Connection](#connection-1) MUST limit itself to one request / response at a time. A
-  [Connection](#connection-1) MUST NOT multiplex/pipeline requests to an Endpoint.
-- **Monotonically Increasing ID:** A [Connection](#connection-1) MUST have an ID number associated with it.
-  [Connection](#connection-1) IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
+- **Single Endpoint:** A [Connection](#connection) MUST be associated with a single Endpoint. A
+  [Connection](#connection) MUST NOT be associated with multiple Endpoints.
+- **Single Lifetime:** A [Connection](#connection) MUST NOT be used after it is closed.
+- **Single Owner:** A [Connection](#connection) MUST belong to exactly one Pool, and MUST NOT be shared across multiple
+  pools
+- **Single Track:** A [Connection](#connection) MUST limit itself to one request / response at a time. A
+  [Connection](#connection) MUST NOT multiplex/pipeline requests to an Endpoint.
+- **Monotonically Increasing ID:** A [Connection](#connection) MUST have an ID number associated with it.
+  [Connection](#connection) IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
   for each new Connection.
 - **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a
   MongoDB Handshake and Authentication as specified in the [Handshake](../mongodb-handshake/handshake.md),
   [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
-- **Perishable**: it is possible for a [Connection](#connection-1) to become **Perished**. A [Connection](#connection-1)
-  is considered perished if any of the following are true:
-  - **Stale:** The [Connection](#connection-1) 's generation does not match the generation of the parent pool
-  - **Idle:** The [Connection](#connection-1) is currently "available" (as defined below) and has been for longer than
+- **Perishable**: it is possible for a [Connection](#connection) to become **Perished**. A [Connection](#connection) is
+  considered perished if any of the following are true:
+  - **Stale:** The [Connection](#connection) 's generation does not match the generation of the parent pool
+  - **Idle:** The [Connection](#connection) is currently "available" (as defined below) and has been for longer than
     **maxIdleTimeMS**.
-  - **Errored:** The [Connection](#connection-1) has experienced an error that indicates it is no longer recommended for
+  - **Errored:** The [Connection](#connection) has experienced an error that indicates it is no longer recommended for
     use. Examples include, but are not limited to:
     - Network Error
     - Network Timeout
@@ -281,7 +281,7 @@ Endpoint. The pool has the following properties:
   of [Connections](#connection) (including available and in use) MUST NOT exceed **maxPoolSize**
 - **Rate-limited:** A Pool MUST limit the number of [Connections](#connection) being
   [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
-  [pool option](#connection-pool-options-1).
+  [pool option](#connection-pool-options).
 
 ```typescript
 interface ConnectionPool {
@@ -379,8 +379,8 @@ interface ConnectionPool {
 This specification does not define how a pool is to be created, leaving it up to the driver. Creation of a connection
 pool is generally an implementation detail of the driver, i.e., is not a part of the public API of the driver. The SDAM
 specification defines
-[when](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#connection-pool-creation) the driver should
-create connection pools.
+[when](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#connection-pool-management) the driver
+should create connection pools.
 
 When a pool is created, its state MUST initially be set to "paused". Even if minPoolSize is set, the pool MUST NOT begin
 being [populated](#populating-the-pool-with-a-connection-internal-implementation) with [Connections](#connection) until
@@ -515,14 +515,14 @@ If minPoolSize is set, the [Connection](#connection) Pool MUST be populated unti
 it can be used for this. If the pool does not implement a background thread, the checkOut method is responsible for
 ensuring this requirement is met.
 
-When populating the Pool, pendingConnectionCount has to be decremented after establishing a [Connection](#connection-1)
+When populating the Pool, pendingConnectionCount has to be decremented after establishing a [Connection](#connection)
 similarly to how it is done in [Checking Out a Connection](#checking-out-a-connection) to signal that another
-[Connection](#connection-1) is allowed to be established. Such a signal MUST become observable to any [Thread](#thread)
+[Connection](#connection) is allowed to be established. Such a signal MUST become observable to any [Thread](#thread)
 after the action that
 [marks the established Connection as "available"](#marking-a-connection-as-available-internal-implementation) becomes
 observable to the [Thread](#thread). Informally, this order guarantees that no [Thread](#thread) tries to start
-establishing a [Connection](#connection-1) when there is an "available" [Connection](#connection-1) established as a
-result of populating the Pool.
+establishing a [Connection](#connection) when there is an "available" [Connection](#connection) established as a result
+of populating the Pool.
 
 ```
 wait until pendingConnectionCount < maxConnecting and pool is "ready"
@@ -537,23 +537,23 @@ except error:
 
 #### Checking Out a Connection
 
-A Pool MUST have a method that allows the driver to check out a [Connection](#connection-1). Checking out a
-[Connection](#connection-1) involves submitting a request to the WaitQueue and, once that request reaches the front of
-the queue, having the Pool find or create a [Connection](#connection-1) to fulfill that request. Requests MUST be
-subject to a timeout which is computed per the rules in
+A Pool MUST have a method that allows the driver to check out a [Connection](#connection). Checking out a
+[Connection](#connection) involves submitting a request to the WaitQueue and, once that request reaches the front of the
+queue, having the Pool find or create a [Connection](#connection) to fulfill that request. Requests MUST be subject to a
+timeout which is computed per the rules in
 [Client Side Operations Timeout: Server Selection](../client-side-operations-timeout/client-side-operations-timeout.md#server-selection).
 
-To service a request for a [Connection](#connection-1), the Pool MUST first iterate over the list of available
-[Connections](#connection), searching for a non-perished one to be returned. If a perished [Connection](#connection-1)
-is encountered, such a [Connection](#connection-1) MUST be closed (as described in
+To service a request for a [Connection](#connection), the Pool MUST first iterate over the list of available
+[Connections](#connection), searching for a non-perished one to be returned. If a perished [Connection](#connection) is
+encountered, such a [Connection](#connection) MUST be closed (as described in
 [Closing a Connection](#closing-a-connection-internal-implementation)) and the iteration of available
-[Connections](#connection) MUST continue until either a non-perished available [Connection](#connection-1) is found or
-the list of available [Connections](#connection) is exhausted.
+[Connections](#connection) MUST continue until either a non-perished available [Connection](#connection) is found or the
+list of available [Connections](#connection) is exhausted.
 
 If the list is exhausted, the total number of [Connections](#connection) is less than maxPoolSize, and
-pendingConnectionCount \< maxConnecting, the pool MUST create a [Connection](#connection-1), establish it, mark it as
-"in use" and return it. If totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting, then the pool
-MUST wait to service the request until neither of those two conditions are met or until a [Connection](#connection-1)
+pendingConnectionCount \< maxConnecting, the pool MUST create a [Connection](#connection), establish it, mark it as "in
+use" and return it. If totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting, then the pool
+MUST wait to service the request until neither of those two conditions are met or until a [Connection](#connection)
 becomes available, re-entering the checkOut loop in either case. This waiting MUST NOT prevent
 [Connections](#connection) from being checked into the pool. Additionally, the Pool MUST NOT service any newer checkOut
 requests before fulfilling the original one which could not be fulfilled. For drivers that implement the WaitQueue via a
@@ -755,8 +755,8 @@ pendingConnectionCount to become less than maxConnecting when satisfying minPool
 rest of its duties, e.g., closing available perished connections, or end.
 
 The duration of intervals between the end of one Run and the beginning of the next Run is not specified, but the
-[Test Format and Runner Specification](https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests)
-may restrict this duration, or introduce other restrictions to facilitate testing.
+[Test Format and Runner Specification](../connection-monitoring-and-pooling/tests/README.md) may restrict this duration,
+or introduce other restrictions to facilitate testing.
 
 ##### withConnection
 
@@ -773,6 +773,8 @@ All drivers that implement a connection pool MUST provide an API that allows use
 the pool. If a user subscribes to Connection Monitoring events, these events MUST be emitted when specified in
 "Connection Pool Behaviors". Events SHOULD be created and subscribed to in a manner idiomatic to their language and
 driver.
+
+<span id="events"></span>
 
 #### Events
 

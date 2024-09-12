@@ -289,7 +289,7 @@ containing the message "Transaction already in progress" without modifying any s
 startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
 A deployment does not support transactions when the deployment does not support sessions, or maxWireVersion \< 7, or the
 maxWireVersion \< 8 and the topology type is Sharded, see
-[How to Check Whether a Deployment Supports Sessions](../sessions/driver-sessions.md#how-to-check-whether-a-deployment-supports-sessions).
+[How to Tell Whether a Connection Supports Sessions](../sessions/driver-sessions.md#how-to-tell-whether-a-connection-supports-sessions).
 Note that checking the maxWireVersion does not guarantee that the deployment supports transactions, for example a
 MongoDB 4.0 replica set using MMAPv1 will report maxWireVersion 7 but does not support transactions. In this case,
 Drivers rely on the deployment to report an error when a transaction is started.

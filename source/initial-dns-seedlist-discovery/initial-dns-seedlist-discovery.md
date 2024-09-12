@@ -200,10 +200,10 @@ mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replic
 
 ## Test Plan
 
-See README.md in the accompanying [test directory](tests).
+See README.md in the accompanying [test directory](tests/README.md).
 
 Additionally, see the `mongodb+srv` test `invalid-uris.yml` in the
-[Connection String Spec tests](../connection-string/tests).
+[Connection String Spec tests](../connection-string/tests/README.md).
 
 ## Motivation
 

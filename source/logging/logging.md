@@ -182,7 +182,7 @@ support both types of logging.
 
 Note that drivers implementing unstructured logging MUST still support some internal way to intercept the data contained
 in messages in a structured form, as this is required to implement the unified tests for logging conformance. See the
-[unified test format specification](../unified-test-format/unified-test-format.md#expectedLogMessage) for details.
+[unified test format specification](../unified-test-format/unified-test-format.md#expectedlogmessage) for details.
 
 #### Representing Documents in Log Messages
 

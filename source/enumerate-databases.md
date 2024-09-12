@@ -210,9 +210,9 @@ to be expanded to support this option.
 
 ## Design Rationale
 
-The design of this specification is inspired by the [Collection Enumeration](./enumerate-collections.rst) and
-[Index Enumeration](./enumerate-indexes.rst) specifications. Since most drivers already implement a `listDatabases`
-command helper in some fashion, this spec is flexible when it comes to existing APIs.
+The design of this specification is inspired by the [Collection Enumeration](./enumerate-collections.md) and
+[Index Management](./index-management/index-management.md) specifications. Since most drivers already implement a
+`listDatabases` command helper in some fashion, this spec is flexible when it comes to existing APIs.
 
 ## Backwards Compatibility
 

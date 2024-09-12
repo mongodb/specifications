@@ -156,6 +156,8 @@ the following structure:
     }
 ```
 
+<span id="client-application-name"></span>
+
 #### client.application.name
 
 This value is application configurable.
@@ -280,6 +282,8 @@ Example:
 - clang 3.8.0 CFLAGS="-mcpu=power8 -mtune=power8 -mcmodel=medium"
 - "Oracle JVM EE 9.1.1"
 ```
+
+<span id="client-env"></span>
 
 #### client.env
 

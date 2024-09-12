@@ -567,7 +567,7 @@ outage. In the case of a persistent outage, multiple retry attempts are fruitles
 [How To Write Resilient MongoDB Applications](https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/)
 for additional discussion on this strategy.
 
-However when [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.rst) is
+However when [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) is
 enabled, the driver will retry multiple times until the operation succeeds, a non-retryable error is encountered, or the
 timeout expires. Retrying multiple times provides greater resilience to cascading failures such as rolling server
 restarts during planned maintenance events.

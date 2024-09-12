@@ -100,8 +100,8 @@ For each YAML file, for each element in `tests`:
   - Create the database `database_name` and the collection `database_name.collection_name`
   - Create the database `database2_name` and the collection `database2_name.collection2_name`
   - If the the `failPoint` field is present, configure the fail point on the primary server. See
-    [Server Fail Point](../../transactions/tests#server-fail-point) in the Transactions spec test documentation for more
-    information.
+    [Server Fail Point](../../transactions/tests/legacy-test-format.md#server-fail-point) in the Transactions spec test
+    documentation for more information.
 - Create a new MongoClient `client`
 - Begin monitoring all APM events for `client`. (If the driver uses global listeners, filter out all events that do not
   originate with `client`). Filter out any "internal" commands (e.g. `hello` or legacy hello)
