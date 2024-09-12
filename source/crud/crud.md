@@ -2428,7 +2428,7 @@ aforementioned allowance in the SemVer spec.
 
 ## Changelog
 
-- 2024-08-23: Specify that explain helpers support maxTimeMS.
+- 2024-09-12: Specify that explain helpers support maxTimeMS.
 
 - 2024-02-20: Migrated from reStructuredText to Markdown.
 
