@@ -105,7 +105,7 @@ Drivers MUST enforce timeouts for all operations per the
 operations that return cursors MUST support the timeout options documented in the
 [Cursors](../client-side-operations-timeout/client-side-operations-timeout.md#cursors) section of that specification.
 All explain helpers MUST support the timeout options documented in the
-[Explain Helpers](../client-side-operations-timeout/client-side-operations-timeout.md#explain_helpers) section of that
+[Explain Helpers](../client-side-operations-timeout/client-side-operations-timeout.md#explain) section of that
 specification.
 
 ### API
