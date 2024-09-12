@@ -42,6 +42,12 @@ repos:
     language: system
     entry: python3 scripts/check_links.py
 
+- repo: https://github.com/tcort/markdown-link-check
+  rev: v3.12.2
+  hooks:
+    - id: markdown-link-check
+      args: ["-c", "markdown_link_config.json"]
+
 - repo: https://github.com/rstcheck/rstcheck
   rev: v6.2.0
   hooks:
