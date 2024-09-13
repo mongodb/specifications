@@ -2816,16 +2816,9 @@ This test is continuation of the case 1 and provides a way to complete inserting
 
 ### 22. Range Explicit Encryption
 
-The Range Explicit Encryption tests require MongoDB server 8.0.0-rc14+ for SERVER-91889 and libmongocrypt containing
-MONGOCRYPT-705.
-
-> [!NOTE]
-> MongoDB Server 8.0 introduced a backwards breaking change to the Queryable Encryption (QE) range protocol: QE Range V2
-> libmongocrypt 1.11.0 is required to use the QE Range V2.
-
-> [!NOTE]
-> MongoDB Server 7.0 introduced a backwards breaking change to the Queryable Encryption (QE) protocol: QEv2.
-> libmongocrypt 1.8.0 is configured to use the QEv2 protocol.
+The Range Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server
+8.0.0-rc14+ for [SERVER-91889](https://jira.mongodb.org/browse/SERVER-91889) and libmongocrypt 1.11.0+ for
+[MONGOCRYPT-705](https://jira.mongodb.org/browse/MONGOCRYPT-705). The tests must not run against a standalone.
 
 Each of the following test cases must pass for each of the supported types (`DecimalNoPrecision`, `DecimalPrecision`,
 `DoublePrecision`, `DoubleNoPrecision`, `Date`, `Int`, and `Long`), unless it is stated the type should be skipped.
