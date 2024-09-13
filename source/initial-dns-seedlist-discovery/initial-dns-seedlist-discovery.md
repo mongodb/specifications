@@ -122,14 +122,14 @@ If the DNS result returns no SRV records, or no records at all, or a DNS error h
 indicating that the URI could not be used to find hostnames. The error SHALL include the reason why they could not be
 found.
 
-A driver MUST verify that the host names returned through SRV records end with the original SRV's `{domainname}`.
-Drivers MUST raise an error and MUST NOT initiate a connection to any returned host name which does not share the same
+A driver MUST verify that the host names returned through SRV records share the original SRV's `{domainname}`. Drivers
+MUST raise an error and MUST NOT initiate a connection to any returned host name which does not share the same
 `{domainname}`.
 
-In the case that the SRV record has less than three `.` separated parts, the returned address MUST end with the SRV's
-entire `{hostname}` and MUST have at least one more domain level than the `{hostname}`. The next major version MUST no
-longer allow an SRV record, with any number of parts, to return an address that doesn't end with the SRVs' entire
-`{hostname}`. Drivers MUST document this in a prior minor release.
+In the case that the SRV record name has less than three `.` separated parts, the returned address' `{domainname}` MUST
+be the SRV's entire `{hostname}` and MUST have at least one more domain level than the `{hostname}`. The next major
+version MUST no longer allow an SRV record, with any number of parts, to return an address that doesn't contain the
+SRVs' entire `{hostname}`. Drivers MUST document this in a prior minor release.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 
@@ -194,7 +194,7 @@ _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27317 mongodb1.
 _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27017 mongodb2.mongodb.com.
 ```
 
-The returned host names (`mongodb1.mongodb.com` and `mongodb2.mongodb.com`) must end with the same domain name
+The returned host names (`mongodb1.mongodb.com` and `mongodb2.mongodb.com`) must share the same domain name
 (`mongodb.com`) as the provided host name (`server.mongodb.com`).
 
 The driver also needs to request the DNS server for the TXT records on `server.mongodb.com`. This could return:
