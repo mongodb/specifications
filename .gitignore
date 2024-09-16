@@ -14,3 +14,4 @@ docs_build
 node_modules
 package-lock.json
 site
+book
