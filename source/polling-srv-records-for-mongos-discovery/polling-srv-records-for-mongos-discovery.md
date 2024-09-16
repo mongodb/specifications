@@ -98,12 +98,12 @@ other operations.
 ### Single-Threaded Drivers
 
 The rescan MUST happen **before** scanning all servers as part of the normal
-[scanning](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#scanning) functionality, but only if
+[scanning](../server-discovery-and-monitoring/server-monitoring.md#scanning) functionality, but only if
 *rescanSRVIntervalMS* has passed.
 
 ## Test Plan
 
-See README.rst in the accompanying [test directory](tests).
+See README.md in the accompanying [test directory](tests/README.md).
 
 ## Motivation for Change
 

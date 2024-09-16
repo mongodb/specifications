@@ -57,10 +57,6 @@ The `data` option is a document that may be used to specify options that control
 - `blockTimeMS`: The number of milliseconds the affect commands should be blocked for. Required when blockConnection is
   true. [New in mongod 4.3.4](https://jira.mongodb.org/browse/SERVER-41070).
 
-## Speeding Up Tests
-
-See [Speeding Up Tests](../../retryable-reads/tests/README.md#speeding-up-tests) in the retryable reads spec tests.
-
 ## Test Format
 
 Each YAML file has the following keys:
@@ -246,8 +242,8 @@ Then for each element in `tests`:
 
 13. If the test includes a list of command-started events in `expectations`, compare them to the actual command-started
     events using the same logic as the
-    [legacy Command Monitoring Spec Tests runner](https://github.com/mongodb/specifications/blob/09ee1ebc481f1502e3246971a9419e484d736207/source/command-monitoring/tests/README.rst#expectations),
-    plus the rules in the Command-Started Events instructions below.
+    [legacy Command Monitoring Spec Tests runner](../../command-logging-and-monitoring/tests/README.md), plus the rules
+    in the Command-Started Events instructions below.
 
 14. If `failPoint` is specified, disable the fail point to avoid spurious failures in subsequent tests. The fail point
     may be disabled like so:
@@ -467,7 +463,7 @@ sharded transaction that uses the `dbVersion` concept so it is the only command 
 
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 
-- 2024-02-07: Moved legacy test format docs to this file from README.rst.
+- 2024-02-07: Moved legacy test format docs to this file from README.md.
 
 - 2023-09-28: Add `load-balanced` to test topology requirements.
 

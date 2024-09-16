@@ -140,6 +140,8 @@ The client MUST be prepared to receive a response without `moreToCome` set prior
 even if an earlier response for the same cursor had the `moreToCome` flag set. To continue iterating such a cursor, the
 client MUST issue an explicit `getMore` request.
 
+<span id="exhaustAllowed"></span>
+
 ##### exhaustAllowed
 
 Setting this flag on a request indicates to the recipient that the sender is prepared to handle multiple replies (using

@@ -488,8 +488,8 @@ The structure of this object is as follows:
   - `ignoreCommandMonitoringEvents`: Optional array of one or more strings. Command names for which the test runner MUST
     ignore any observed command monitoring events. The command(s) will be ignored in addition to `configureFailPoint`
     and any commands containing sensitive information (per the
-    [Command Logging and Monitoring](../command-logging-and-monitoring/command-monitoring.rst#security) spec) unless
-    `observeSensitiveCommands` is true.
+    [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#security) spec)
+    unless `observeSensitiveCommands` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring events are specified in
     [observeEvents](#entity_client_observeEvents).
@@ -971,7 +971,7 @@ The structure of each object is as follows:
 - `eventType`: Optional string. Specifies the type of the monitor which captured the events. Valid values are `command`
   for [Command Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) events,
   `cmap` for [CMAP](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) events, and `sdam`
-  for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   events. Defaults to `command` if omitted.
 - `events`: Required array of [expectedEvent](#expectedevent) objects. List of events, which are expected to be observed
   (in this order) on the corresponding client while executing [operations](#test_operations). If the array is empty, the
@@ -1005,7 +1005,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandStartedEvent"></span>
 
 - `commandStartedEvent`: Optional object. Assertions for one or more
-  [CommandStartedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#api) fields.
+  [CommandStartedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) fields.
 
   The structure of this object is as follows:
 
@@ -1021,7 +1021,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandSucceededEvent"></span>
 
 - `commandSucceededEvent`: Optional object. Assertions for one or more
-  [CommandSucceededEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#api) fields.
+  [CommandSucceededEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) fields.
 
   The structure of this object is as follows:
 
@@ -1037,7 +1037,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandFailedEvent"></span>
 
 - `commandFailedEvent`: Optional object. Assertions for one or more
-  [CommandFailedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#api) fields.
+  [CommandFailedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) fields.
 
   The structure of this object is as follows:
 
@@ -1129,7 +1129,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverDescriptionChangedEvent"></span>
 
 - `serverDescriptionChangedEvent`: Optional object. Assertions for one or more
-  [ServerDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1150,7 +1150,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatStartedEvent"></span>
 
 - `serverHeartbeatStartedEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatStartedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerHeartbeatStartedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1160,7 +1160,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatSucceededEvent"></span>
 
 - `serverHeartbeatSucceededEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatSucceededEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerHeartbeatSucceededEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1170,7 +1170,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatFailedEvent"></span>
 
 - `serverHeartbeatFailedEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatFailedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerHeartbeatFailedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1180,7 +1180,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_topologyDescriptionChangedEvent"></span>
 
 - `topologyDescriptionChangedEvent`: Optional object. Assertions for one
-  [TopologyDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [TopologyDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   object.
 
   The structure of this object is as follows:
@@ -1241,6 +1241,8 @@ The structure of each object is as follows:
   `false`, observed logs after all specified logs have matched MUST cause a test failure; if `true`, observed logs after
   all specified logs have been matched MUST NOT cause a test failure. Defaults to `false`.
 
+<span id="expectedLogMessage"></span>
+
 #### expectedLogMessage
 
 A log message which is expected to be observed while executing the test's operations.
@@ -1248,10 +1250,10 @@ A log message which is expected to be observed while executing the test's operat
 The structure of each object is as follows:
 
 - `level`: Required string. This MUST be one of the level names listed in
-  [log severity levels](logging/logging.rst#log-severity-levels). This specifies the expected level for the log message
-  and corresponds to the level used for the message in the specification that defines it. Note that since not all
-  drivers will necessarily support all log levels, some driver may need to map the specified level to the corresponding
-  driver-supported level. Test runners MUST assert that the actual level matches this value.
+  [log severity levels](../logging/logging.md#log-severity-levels). This specifies the expected level for the log
+  message and corresponds to the level used for the message in the specification that defines it. Note that since not
+  all drivers will necessarily support all log levels, some driver may need to map the specified level to the
+  corresponding driver-supported level. Test runners MUST assert that the actual level matches this value.
 
 - `component`: Required string. This MUST be one of the component names listed in
   [components](../logging/logging.md#components). This specifies the expected component for the log message. Note that
@@ -1886,10 +1888,11 @@ first position (e.g. `rewind` in PHP).
 Iterates the cursor until either a single document is returned or an error is raised. This operation takes no arguments.
 If [expectResult](#operation_expectResult) is specified, it SHOULD be a single document.
 
-Some specification sections (e.g. [Iterating the Change Stream](../change-streams/tests#iterating-the-change-stream))
-caution drivers that implement a blocking mode of iteration (e.g. asynchronous drivers) not to iterate the cursor
-unnecessarily, as doing so could cause the test runner to block indefinitely. This should not be a concern for
-`iterateUntilDocumentOrError` as iteration only continues until either a document or error is encountered.
+Some specification sections (e.g.
+[Iterating the Change Stream](../change-streams/tests/README.md#iterating-the-change-stream)) caution drivers that
+implement a blocking mode of iteration (e.g. asynchronous drivers) not to iterate the cursor unnecessarily, as doing so
+could cause the test runner to block indefinitely. This should not be a concern for `iterateUntilDocumentOrError` as
+iteration only continues until either a document or error is encountered.
 
 #### iterateOnce
 

@@ -99,7 +99,7 @@ A local process the driver communicates with to determine how to encrypt values 
 
 This term, spelled in all-lowercase with an underscore, refers to the client-side field-level-encryption dynamic library
 provided as part of a MongoDB Enterprise distribution. It replaces [mongocryptd](#mongocryptd) as the method of
-`marking-up a database command for encryption <subtype6.intent-to-encrypt>`.
+[marking-up a database command for encryption](./subtype6.md#intent-to-encrypt).
 
 See also:
 
@@ -108,9 +108,8 @@ See also:
 
 **ciphertext**
 
-One of the data formats of
-[BSON binary subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst),
-representing an encoded BSON document containing encrypted ciphertext and metadata.
+One of the data formats of [BSON binary subtype 6](./subtype6.md), representing an encoded BSON document containing
+encrypted ciphertext and metadata.
 
 **FLE**
 
@@ -259,7 +258,7 @@ connect to [mongocryptd](#mongocryptd) and instead rely on [crypt_shared](#crypt
 
 [crypt_shared](#crypt_shared) is a dynamically-loaded C++ library providing query analysis for auto-encryption. It
 replaces [mongocryptd](#mongocryptd) for performing query analysis to -
-[mark-up sensitive fields within a command](./subtype6#intent-to-encrypt).
+[mark-up sensitive fields within a command](./subtype6.md#intent-to-encrypt).
 
 Drivers are not required to load and interact with [crypt_shared](#crypt_shared) directly. Instead, they inform
 [libmongocrypt](#libmongocrypt) where to find [crypt_shared](#crypt_shared) and [libmongocrypt](#libmongocrypt) will
@@ -531,6 +530,8 @@ The following shows an example object of `KMSProviders`:
    "aws:name2": { "accessKeyId": "foo2", "secretAccessKey": "bar2" }
 }
 ```
+
+<span id="automatic-credentials"></span>
 
 ##### Automatic Credentials
 
@@ -833,6 +834,8 @@ and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by
    3. Otherwise, $EF$ is *not-found*
 5. Otherwise, $EF$ is considered *not-found*.
 
+<span id="create-collection-helper"></span>
+
 #### Create Collection Helper
 
 Drivers MUST support a BSON document option named `encryptedFields` for any
@@ -876,7 +879,7 @@ remaining operations are not attempted:
 #### Create Encrypted Collection Helper
 
 To support automatic generation of encryption data keys, a helper $CreateEncryptedCollection(CE, database, collName,
-collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption-1) object,
+collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption) object,
 $kmsProvider$ is a [KMSProvider](#KMSProvider) and $masterKey$ is equivalent to the $masterKey$ defined in
 [DataKeyOpts](#datakeyopts). It has the following behavior:
 
@@ -1155,7 +1158,7 @@ class RewrapManyDataKeyResult {
 }
 ```
 
-`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md##write-results) used to update the key
+`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md#write-results) used to update the key
 vault collection with one or more rewrapped data keys. If `rewrapManyDataKey()` does not find any matching keys to
 rewrap, no bulk write operation will be executed and this field will be unset. This field may also be unset if the bulk
 write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.md#write-results).
@@ -1570,8 +1573,7 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 Single-threaded drivers MUST connect with
 [serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce),
 `connectTimeoutMS=10000`, and MUST bypass
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms) when connecting to
-mongocryptd. See
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms) when connecting to mongocryptd. See
 [Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
 If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for
@@ -1649,10 +1651,8 @@ CommandStartedEvent, and decryption MUST occur after generating a CommandSucceed
 ## Size limits for Write Commands
 
 Automatic encryption requires the driver to serialize write commands as a single BSON document before automatically
-encrypting with libmongocrypt (analogous to constructing
-[OP_MSG payload type 0](https://github.com/mongodb/specifications/blob/70628e30c96361346f7b6872571c0ec4d54846cb/source/message/OP_MSG.rst#sections),
-not a document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to
-send.
+encrypting with libmongocrypt (analogous to constructing [OP_MSG payload type 0](../message/OP_MSG.md#sections), not a
+document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to send.
 
 Because automatic encryption increases the size of commands, the driver MUST split bulk writes at a reduced size limit
 before undergoing automatic encryption. The write payload MUST be split at 2MiB (2097152). Where batch splitting occurs
@@ -1791,9 +1791,7 @@ struct {
 }
 ```
 
-See
-[Driver Spec: BSON Binary Subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst)
-for more information.
+See [Driver Spec: BSON Binary Subtype 6](./subtype6.md) for more information.
 
 ### JSONSchema "encrypt"
 
@@ -2112,7 +2110,7 @@ server before making another attempt. Meaning if the first attempt to mongocrypt
 observe a 5 second delay. This is not configurable in the URI, so this must be overridden internally. Since mongocryptd
 is a local process, there should only be a very short delay after spawning mongocryptd for it to start listening on
 sockets. See the SDAM spec description of
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms).
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms).
 
 Because single threaded drivers may exceed `serverSelectionTimeoutMS` by the duration of the topology scan,
 `connectTimeoutMS` is also reduced.

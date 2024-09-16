@@ -391,7 +391,7 @@ interface IndexView extends Iterable<Document> {
    * requirement is dropped in favor of the driver language standard for handling iteration
    * over a sequence of objects.
    *
-   * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst
+   * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.md
    *
    * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
    *   method. See below.
@@ -823,6 +823,8 @@ In MongoDB 4.4, the `ns` field was removed from the index specifications returne
 - For drivers that report those index specifications in the form of statically defined models, the driver MUST manually
   populate the `ns` field of the models with the appropriate namespace if the server does not report it in the
   `listIndexes` command response. The `ns` field is not required to be a part of the models, however.
+
+<span id="enumerate-indexes"></span>
 
 #### Getting Index Names
 

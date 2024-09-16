@@ -104,6 +104,9 @@ Drivers MUST enforce timeouts for all operations per the
 [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification. All
 operations that return cursors MUST support the timeout options documented in the
 [Cursors](../client-side-operations-timeout/client-side-operations-timeout.md#cursors) section of that specification.
+All explain helpers MUST support the timeout options documented in the
+[Explain Helpers](../client-side-operations-timeout/client-side-operations-timeout.md#explain) section of that
+specification.
 
 ### API
 
@@ -177,9 +180,6 @@ interface Collection {
    * contain other meta operators like $maxScan. However, do not validate this document
    * as it would be impossible to be forwards and backwards compatible. Let the server
    * handle the validation.
-   *
-   * Note: If $explain is specified in the modifiers, the return value is a single
-   * document. This could cause problems for static languages using strongly typed entities.
    *
    * Note: result iteration should be backed by a cursor. Depending on the implementation,
    * the cursor may back the returned Iterable instance or an iterator that it produces.
@@ -1797,6 +1797,8 @@ class BulkWriteException {
 }
 ```
 
+<span id="find"></span>
+
 ##### Find And Modify
 
 ```typescript
@@ -2199,6 +2201,47 @@ the [$readPreference global command argument](../message/OP_MSG.md#global-comman
 [passing read preference to mongos and load balancers](../server-selection/server-selection.md#passing-read-preference-to-mongos-and-load-balancers)
 (if applicable).
 
+### Explain
+
+> [!NOTE]
+> Explain helpers are optional. Drivers that do not provide explain helpers may ignore this section.
+
+```typescript
+interface ExplainOptions {
+  /**
+   * The maximum amount of time to allow the explain to run.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * NOTE: This option is deprecated in favor of timeoutMS.
+   */
+  maxTimeMS: Optional<Int64>;
+}
+```
+
+Drivers MUST ensure that its helper permits users to specify a timeout (maxTimeMS or timeoutMS) for the explain command
+specifically. An example, using Node, might look like:
+
+```typescript
+collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
+
+// sends:
+{ 
+  explain: { find: <collection>, query: { name: 'john doe' } },
+  maxTimeMS: 1000
+}
+
+collection.find({ name: 'john doe' }).explain({ timeoutMS: 1000 });
+
+// sends:
+{ 
+  explain: { find: <collection>, query: { name: 'john doe' } },
+  maxTimeMS: <1000 - min rtt>
+}
+```
+
+Drivers MUST document how users can specify options on their explain helpers.
+
 ## Test Plan
 
 See the [README](tests/README.md) for tests.
@@ -2311,6 +2354,13 @@ api be consistent with the rest of the methods in the CRUD family of operations.
 able to be used as this change is non-backwards breaking. Any driver which implemented the fluent bulk API should
 deprecate it and drivers that have not built it should not do so.
 
+Q: Should drivers offer explain helpers?\
+Originally, it was determined that explain should not be exposed via
+specialized APIs in drivers because it it was deemed to be an unusual use-case for a driver. We'd like users to use the
+shell for this purpose. However, explain is still possible from a driver. Some drivers have historically provided
+explain helpers and continue to do so. Drivers that do not offer explain helpers can run explain commands using the
+runCommand API.
+
 Q: What about explain?
 
 Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose.
@@ -2379,6 +2429,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-09-12: Specify that explain helpers support maxTimeMS.
 
 - 2024-02-20: Migrated from reStructuredText to Markdown.
 
