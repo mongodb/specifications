@@ -259,7 +259,7 @@ ClientSession is in one of five states: "no transaction", "starting transaction"
 diagram:
 
 <img src="client-session-transaction-states.png"
-style="width:6.5in;height:3.68056in" alt="states" />\
+style="width:6.5in;height:3.68056in" alt="states" />
 ([GraphViz source](client-session-transaction-states.dot))
 
 When a ClientSession is created it starts in the "no transaction" state. Starting, committing, and aborting a
@@ -289,7 +289,7 @@ containing the message "Transaction already in progress" without modifying any s
 startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
 A deployment does not support transactions when the deployment does not support sessions, or maxWireVersion \< 7, or the
 maxWireVersion \< 8 and the topology type is Sharded, see
-[How to Check Whether a Deployment Supports Sessions](../sessions/driver-sessions.md#how-to-check-whether-a-deployment-supports-sessions).
+[How to Tell Whether a Connection Supports Sessions](../sessions/driver-sessions.md#how-to-tell-whether-a-connection-supports-sessions).
 Note that checking the maxWireVersion does not guarantee that the deployment supports transactions, for example a
 MongoDB 4.0 replica set using MMAPv1 will report maxWireVersion 7 but does not support transactions. In this case,
 Drivers rely on the deployment to report an error when a transaction is started.
@@ -875,18 +875,15 @@ The [Python driver](https://github.com/mongodb/mongo-python-driver/) serves as a
 
 - Support retryable writes within a transaction.
 
-- Support transactions on secondaries. In this case, drivers would be\
-  required to pin a transaction to the server
+- Support transactions on secondaries. In this case, drivers would be required to pin a transaction to the server
   selected for the initial operation. All subsequent operations in the transaction would go to the pinned server.
 
-- Support for transactions that read from multiple nodes in a replica\
-  set. One interesting use case would be to run a
+- Support for transactions that read from multiple nodes in a replica set. One interesting use case would be to run a
   single transaction that performs low-latency reads with readPreference "nearest" followed by some writes.
 
-- Support for unacknowledged transaction commits. This might be useful\
-  when data consistency is paramount but
-  durability is optional. Imagine a system that increments two counters in two different collections. The system may
-  want to use transactions to guarantee that both counters are always incremented together or not at all.
+- Support for unacknowledged transaction commits. This might be useful when data consistency is paramount but durability
+  is optional. Imagine a system that increments two counters in two different collections. The system may want to use
+  transactions to guarantee that both counters are always incremented together or not at all.
 
 ## **Justifications**
 
@@ -1077,8 +1074,7 @@ objective of avoiding duplicate commits.
 
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 
-- 2023-11-22: Specify that non-transient transaction errors abort the transaction\
-  on the server.
+- 2023-11-22: Specify that non-transient transaction errors abort the transaction on the server.
 
 - 2022-10-05: Remove spec front matter and reformat changelog
 
@@ -1088,8 +1084,7 @@ objective of avoiding duplicate commits.
 
 - 2021-04-12: Adding in behaviour for load balancer mode.
 
-- 2020-04-07: Clarify that all abortTransaction attempts should unpin the session,\
-  even if the command is not executed.
+- 2020-04-07: Clarify that all abortTransaction attempts should unpin the session, even if the command is not executed.
 
 - 2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.
 
@@ -1101,8 +1096,7 @@ objective of avoiding duplicate commits.
 
 - 2019-06-07: Mention `$merge` stage for aggregate alongside `$out`
 
-- 2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired\
-  errors on commit are labelled
+- 2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired errors on commit are labelled
   UnknownTransactionCommitResult.
 
 - 2019-02-19: Add support for sharded transaction recoveryToken.
@@ -1113,13 +1107,11 @@ objective of avoiding duplicate commits.
 
 - 2018-11-13: Add mongos pinning to support sharded transaction.
 
-- 2018-06-18: Explicit readConcern and/or writeConcern are prohibited within\
-  transactions, with a client-side error.
+- 2018-06-18: Explicit readConcern and/or writeConcern are prohibited within transactions, with a client-side error.
 
 - 2018-06-07: The count command is not supported within transactions.
 
-- 2018-06-14: Any retryable writes error raised by commitTransaction must be\
-  labelled "UnknownTransactionCommitResult".
+- 2018-06-14: Any retryable writes error raised by commitTransaction must be labelled "UnknownTransactionCommitResult".
 
 [^1]: In 4.2, a new mongos waits for the *outcome* of the transaction but will never itself cause the transaction to be
     committed. If the initial commit on the original mongos itself failed to initiate the transaction's commit sequence,

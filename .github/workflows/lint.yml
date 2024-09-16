@@ -18,3 +18,15 @@ jobs:
         run: |
           pip install -U -q pre-commit
           pre-commit run --all-files --hook-stage manual
+
+  mkdocs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+      - name: Setup dependencies
+        run: pip install -r source/requirements.txt
+      - name: Check docs
+        run: mkdocs build --strict

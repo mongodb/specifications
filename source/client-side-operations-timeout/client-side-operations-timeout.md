@@ -20,9 +20,10 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-min(a, b)\
-Shorthand for "the minimum of a and b" where `a` and `b` are numeric values. For any cases where 0 means
-"infinite" (e.g. [timeoutMS](#timeoutms)), `min(0, other)` MUST evaluate to `other`.
+**min(a, b)**
+
+Shorthand for "the minimum of a and b" where `a` and `b` are numeric values. For any cases where 0 means "infinite"
+(e.g. [timeoutMS](#timeoutms)), `min(0, other)` MUST evaluate to `other`.
 
 ### MongoClient Configuration
 
@@ -95,7 +96,7 @@ The `timeoutMS` option applies to all operations defined in the following specif
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Index Management](../index-management/index-management.md)
 - [Transactions](../transactions/transactions.md)
-- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
+- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.md)
 
 In addition, it applies to all operations on cursor objects that may perform blocking work (e.g. methods to iterate or
 close a cursor, any method that reads documents from a cursor into an array, etc).
@@ -427,9 +428,23 @@ check the command document for the presence of a `maxTimeMS` field.
 
 See [runCommand behavior](#runcommand-behavior).
 
+### Explain
+
+> [!NOTE]
+> This portion of the specification is only relevant for drivers that provide `explain` helpers.
+
+When `timeoutMS` is specified, drivers MUST provide a way to specify timeoutMS that results in maxTimeMS being set on
+the `explain` command. For example, Node's implementation might look like:
+
+```typescript
+collection.find({}).explain({ timeoutMS: 1000 });
+// sends:
+{ explain: { find: ... }, maxTimeMS: <remaining timeoutMS - min rtt>}
+```
+
 ## Test Plan
 
-See the [README.rst](tests/README.md) in the tests directory.
+See the [README.md](tests/README.md) in the tests directory.
 
 ## Motivation for Change
 
@@ -650,6 +665,7 @@ timeout for each database operation. This would mimic using `timeoutMode=ITERATI
 
 ## Changelog
 
+- 2024-09-12: Specify that explain helpers support support timeoutMS.
 - 2023-12-07: Migrated from reStructuredText to Markdown.
 - 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.
 - 2022-10-05: Remove spec front matter.

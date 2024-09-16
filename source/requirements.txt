@@ -1,2 +1,3 @@
 mkdocs
 mkdocs-github-admonitions-plugin
+mkdocs-htmlproofer-plugin

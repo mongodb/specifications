@@ -53,6 +53,10 @@ pip install mkdocs
 mkdocs serve
 ```
 
+To build the docs, use `mkdocs build`.
+
+In CI we verify that there are no warnings. To replicate locally, run `mkdocs build --strict`.
+
 ## Converting to JSON
 
 There are many YAML to JSON converters. There are even several converters called `yaml2json` in NPM. Alas, we are not
