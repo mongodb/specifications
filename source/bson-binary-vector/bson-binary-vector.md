@@ -15,15 +15,13 @@ storage and retrieval of vectors. Vectors here refer to densely packed arrays of
 These representations correspond to the numeric types supported by popular numerical libraries for vector processing,
 such as NumPy, PyTorch, TensorFlow and Apache Arrow. Storing and retrieving vector data using the same densely packed
 format used by these libraries can result in up to 8x memory savings and orders of magnitude improvement in processing
-efficiency. Without this support, MongoDB will be at a competitive disadvantage to databases that do and our users will
-bear the additional cost of storing and processing vector data.
+efficiency.
 
-`*` The early addition of the "Packed Bit" representation was to facilitate partnerships in the expanding market of
-Generative AI, specifically in Vector Quantization. Succinctly put, a Binary Quantized Vector is just a vector of 0s and
-1s (bits), but it is often represented as a list of uint8 (int in Python). So, for example, the vector `[255, 0]` would
-be shorthand for the 16 bit vector `[1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]`.\
-The authors are well-aware of the inherent
-ambiguity here. This is a market-standard, unfortunately. Change is inevitable.
+`*` Succinctly put, a Binary Quantized Vector is just a vector of 0s and 1s (bits), but it is often represented as a
+list of uint8 (int in Python). So, for example, the vector `[255, 0]` would be shorthand for the 16 bit vector
+`[1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]`.\
+The authors are well-aware of the inherent ambiguity here. This is a
+market-standard, unfortunately. Change is inevitable.
 
 ## META
 
