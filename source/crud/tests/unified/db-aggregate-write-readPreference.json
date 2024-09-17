@@ -52,13 +52,6 @@
       }
     }
   ],
-  "initialData": [
-    {
-      "collectionName": "coll0",
-      "databaseName": "db0",
-      "documents": []
-    }
-  ],
   "tests": [
     {
       "description": "Database-level aggregate with $out includes read preference for 5.0+ server",

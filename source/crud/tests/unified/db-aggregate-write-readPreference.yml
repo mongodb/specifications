@@ -43,11 +43,6 @@ createEntities:
       database: *database0
       collectionName: &collection0Name coll0
 
-initialData:
-  - collectionName: *collection0Name
-    databaseName: *database0Name
-    documents: []
-
 tests:
   - description: "Database-level aggregate with $out includes read preference for 5.0+ server"
     runOnRequirements:
