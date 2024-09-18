@@ -860,6 +860,8 @@ batch-splitting to standardize implementations across drivers and simplify batch
 
 ## **Changelog**
 
+- 2024-09-18: Relax numeric type requirements for indexes.
+
 - 2024-05-17: Update specification status to "Accepted".
 
 - 2024-05-10: Improve rendered format for JSON-like code blocks.
