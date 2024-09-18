@@ -353,17 +353,17 @@ class BulkWriteResult {
     /**
      * The results of each individual insert operation that was successfully performed.
      */
-    insertResults: Map<Int64, InsertOneResult>;
+    insertResults: Map<Index, InsertOneResult>;
 
     /**
      * The results of each individual update operation that was successfully performed.
      */
-    updateResults: Map<Int64, UpdateResult>;
+    updateResults: Map<Index, UpdateResult>;
 
     /**
      * The results of each individual delete operation that was successfully performed.
      */
-    deleteResults: Map<Int64, DeleteResult>;
+    deleteResults: Map<Index, DeleteResult>;
 }
 
 class InsertOneResult {
@@ -451,7 +451,7 @@ class BulkWriteException {
      * Errors that occurred during the execution of individual write operations. This map will
      * contain at most one entry if the bulk write was ordered.
      */
-    writeErrors: Map<Int64, WriteError>;
+    writeErrors: Map<Index, WriteError>;
 
     /**
      * The results of any successful operations that were performed before the error was
@@ -460,6 +460,14 @@ class BulkWriteException {
     partialResult: Optional<BulkWriteResult>;
 }
 ```
+
+### Index Types
+
+The `insertResults`, `updateResults`, and `deleteResults` maps in `BulkWriteResult` and the `writeErrors` map in
+`BulkWriteException` specify `Index` as their key type. This value corresponds to the index of the operation in the
+`writeModels` list that was provided to `MongoClient.bulkWrite`. Drivers SHOULD use their language's standard index
+numeric type to represent these indexes (e.g. `usize` in Rust). If no standard index type exists, drivers MUST use
+`Int64`.
 
 ## Building a `bulkWrite` Command
 
