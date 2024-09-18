@@ -3365,7 +3365,7 @@ db.adminCommand({
   labels. An empty array may be used to suppress the server from adding error labels to the response. New in server
   4.3.1 ([SERVER-43941](https://jira.mongodb.org/browse/SERVER-43941)).
 - `appName`: Optional string, which is unset by default. If set, the fail point will only apply to connections for
-  MongoClients created with this `appname`. New in server 4.4.0-rc2
+  MongoClients created with this `appname`. New in server 4.4.0-rc2 and backported to 4.2.9
   ([SERVER-47195](https://jira.mongodb.org/browse/SERVER-47195)).
 - `blockConnection`: Optional boolean, which defaults to `false`. If `true`, the server should block the affected
   commands for `blockTimeMS`. New in server 4.3.4 and backported to 4.2.9
@@ -3488,6 +3488,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-09-18: Note that `failCommand` `appName` option was backported
 
 - 2024-05-08: **Schema version 1.21.**
 
