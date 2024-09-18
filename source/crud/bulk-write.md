@@ -465,9 +465,8 @@ class BulkWriteException {
 
 The `insertResults`, `updateResults`, and `deleteResults` maps in `BulkWriteResult` and the `writeErrors` map in
 `BulkWriteException` specify `Index` as their key type. This value corresponds to the index of the operation in the
-`writeModels` list that was provided to `MongoClient.bulkWrite`. Drivers SHOULD use their language's standard index
-numeric type to represent these indexes (e.g. `usize` in Rust). If no standard index type exists, drivers MUST use
-`Int64`.
+`writeModels` list that was provided to `MongoClient.bulkWrite`. Drivers SHOULD use their language's standard numeric
+type for indexes for this type (e.g. `usize` in Rust). If no standard index type exists, drivers MUST use `Int64`.
 
 ## Building a `bulkWrite` Command
 
