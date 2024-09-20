@@ -31,11 +31,11 @@ Drivers SHOULD provide idiomatic APIs to translate between arrays of numbers and
 
 Each vector can take one of multiple data types (dtypes). The following table lists the first dtypes implemented.
 
-| Vector data type | Alias      | Bits per vector element | [PyArrow Data Type](https://arrow.apache.org/docs/cpp/api/datatype.html) (for illustration) |
-| ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------- |
-| `0x03`           | INT8       | 8                       | INT8                                                                                        |
-| `0x27`           | FLOAT32    | 32                      | FLOAT                                                                                       |
-| `0x10`           | PACKED_BIT | 1     `*`               | BOOL                                                                                        |
+| Vector data type | Alias      | Bits per vector element | [Arrow Data Type](https://arrow.apache.org/docs/cpp/api/datatype.html) (for illustration) |
+| ---------------- | ---------- | ----------------------- | ----------------------------------------------------------------------------------------- |
+| `0x03`           | INT8       | 8                       | INT8                                                                                      |
+| `0x27`           | FLOAT32    | 32                      | FLOAT                                                                                     |
+| `0x10`           | PACKED_BIT | 1     `*`               | BOOL                                                                                      |
 
 `*` A Binary Quantized (PACKED_BIT) Vector is a vector of 0s and 1s (bits), but it is represented in memory as a list of
 integers in \[0, 255\]. So, for example, the vector `[0, 255]` would be shorthand for the 16 bit vector
