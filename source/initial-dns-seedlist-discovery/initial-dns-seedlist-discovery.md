@@ -61,6 +61,8 @@ has:
      - `{hostname}` = `{domainname}` = `localhost`
      - `{hostname}` = `{domainname}` = `mongodb.local`
 
+Only `{domainname}` is used during SRV record verification and `{subdomain}` is ignored.
+
 ### MongoClient Configuration
 
 #### srvMaxHosts
@@ -228,7 +230,6 @@ See README.md in the accompanying [test directory](tests/README.md).
 ### Spec Tests
 
 See README.md in the accompanying [test directory](tests/README.md).
-
 
 Additionally, see the `mongodb+srv` test `invalid-uris.yml` in the
 [Connection String Spec tests](../connection-string/tests/README.md).
