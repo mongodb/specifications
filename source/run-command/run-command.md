@@ -293,12 +293,13 @@ permit users to change `getMore` field settings at any time during the cursor's 
 commands MUST be constructed with the changes to those fields. If that API is offered drivers MUST write tests asserting
 `getMore` commands are constructed with any updated fields.
 
-- See Find, getMore and killCursors commands' section on [GetMore](../find_getmore_killcursors_commands.md#getmore)
+- See Find, getMore and killCursors commands' section on
+  [GetMore](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#getmore)
 
 ##### Tailable and TailableAwait
 
 - **See first:** Find, getMore and killCursors commands's section on
-  [Tailable cursors](../find_getmore_killcursors_commands.md#tailable-cursors)
+  [Tailable cursors](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#tailable-cursors)
 
 It is the responsibility of the caller to construct their initial command with `awaitData` and `tailable` flags **as
 well as** inform RunCursorCommand of the `cursorType` that should be constructed. Requesting a `cursorType` that does
@@ -313,7 +314,7 @@ ClientSession associated with the cursor MUST be ended and the ServerSession ret
 - See Driver Sessions' section on
   [When sending a killCursors command](../sessions/driver-sessions.md#when-sending-a-killcursors-command)
 - See Find, getMore and killCursors commands' section on
-  [killCursors](../find_getmore_killcursors_commands.md#killcursors)
+  [killCursors](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#killcursors)
 
 ##### Client Side Operations Timeout
 

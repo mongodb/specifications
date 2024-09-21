@@ -37,7 +37,7 @@ pseudo-specification provides such tests.
 ## Specification
 
 The specification for BSON lives at <http://bsonspec.org>. The `extjson` format specification is
-[here](../extended-json.md).
+[here](../extended-json/extended-json.md).
 
 ## Test Plan
 
