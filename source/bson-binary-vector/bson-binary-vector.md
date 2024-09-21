@@ -66,8 +66,7 @@ All values use the little-endian format.
 
 ### Reference Implementation
 
-Please consult the Python driver's
-[pymongo.binary](https://github.com/mongodb/mongo-python-driver/blob/master/bson/binary.py) module.
+- PYTHON (PYTHON-4577) [pymongo.binary](https://github.com/mongodb/mongo-python-driver/blob/master/bson/binary.py)
 
 ### Test Plan
 
