@@ -1,4 +1,4 @@
-# ObjectID format
+# BSON ObjectID
 
 - Status: Accepted
 - Minimum Server Version: N/A

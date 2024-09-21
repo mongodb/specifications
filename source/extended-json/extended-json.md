@@ -109,7 +109,7 @@ ______________________________________________________________________
 
 #### Representation of Non-finite Numeric Values
 
-Following the [Extended JSON format for the Decimal128 type](./bson-decimal128/decimal128.md#to-string-representation),
+Following the [Extended JSON format for the Decimal128 type](../bson-decimal128/decimal128.md#to-string-representation),
 non-finite numeric values are encoded as follows:
 
 | **Value**          | **String**  |
@@ -217,9 +217,9 @@ parsing JSON numbers:
 
 #### Special rules for parsing `$uuid` fields
 
-As per the [UUID specification](uuid.md), Binary subtype 3 or 4 are used to represent UUIDs in BSON. Consequently, UUIDs
-are handled as per the convention described for the `Binary` type in the [Conversion table](#conversion-table), e.g. the
-following document written with the MongoDB Python Driver:
+As per the [UUID specification](../bson-binary-uuid/uuid.md), Binary subtype 3 or 4 are used to represent UUIDs in BSON.
+Consequently, UUIDs are handled as per the convention described for the `Binary` type in the
+[Conversion table](#conversion-table), e.g. the following document written with the MongoDB Python Driver:
 
 ```javascript
 {"Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
@@ -238,7 +238,7 @@ is transformed into the following (newlines and spaces added for readability):
 
 > [!NOTE]
 > The above described type conversion assumes that UUID representation is set to `STANDARD`. See the
-> [UUID specification](uuid.md) for more information about UUID representations.
+> [UUID specification](../bson-binary-uuid/uuid.md) for more information about UUID representations.
 
 While this transformation preserves BSON subtype information (since UUIDs can be represented as BSON subtype 3 *or* 4),
 base64-encoding is not the standard way of representing UUIDs and using it makes comparing these values against textual
@@ -320,7 +320,7 @@ exception of the DBRef convention, which is accounted for in this spec).
 ## Test Plan
 
 Drivers, tools, and libraries can test their compliance to this specification by running the tests in version 2.0 and
-above of the [BSON Corpus Test Suite](./bson-corpus/bson-corpus.md).
+above of the [BSON Corpus Test Suite](../bson-corpus/bson-corpus.md).
 
 ## Examples
 
@@ -718,7 +718,7 @@ parsed as a normal document and not reported as an error.
   - Clarified parser and generator rules.
 - 2017-02-01: Initial specification version 1.0.
 
-[^1]: This MUST conform to the [Decimal128 specification](./bson-decimal128/decimal128.md#writing-to-extended-json)
+[^1]: This MUST conform to the [Decimal128 specification](../bson-decimal128/decimal128.md#writing-to-extended-json)
 
 [^2]: BSON Regular Expression options MUST be in alphabetical order.
 

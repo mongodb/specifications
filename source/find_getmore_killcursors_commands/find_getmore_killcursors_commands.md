@@ -120,7 +120,7 @@ The **secondaryOk** flag SHOULD not be set for all follow-up **getMore** and **k
 server keeps the original **secondaryOk** value first set on the **find** command.
 
 More detailed information about the interaction of the **secondaryOk** with **OP_QUERY** can be found in the Server
-Selection Spec [Passing a Read Preference](./server-selection/server-selection.md#passing-read-preference-to-mongos).
+Selection Spec [Passing a Read Preference](../server-selection/server-selection.md#passing-read-preference-to-mongos).
 
 #### Behavior of Limit, skip and batchSize
 
@@ -131,7 +131,7 @@ existing **OP_QUERY** behavior where there is no server-side concept of limit an
 of the limit on the client side and **MUST** send a **OP_KILL_CURSORS** wire protocol message when the limit is reached.
 
 When setting the **batchSize** on the **find** and **getMore** commands the value of **batchSize** **MUST** be based on
-the cursor limit calculations specified in the [CRUD](./crud/crud.md#find) specification.
+the cursor limit calculations specified in the [CRUD](../crud/crud.md#find) specification.
 
 Note that with 5.0, the server-side handling of cursors with a limit has changed. Before 5.0, some cursors were
 automatically closed when the limit was reached (e.g. when running **find** with **limit**), and the reply document did
@@ -452,7 +452,7 @@ The **find** command does not include a readPreference field. To pass a readPref
 This format is general for all commands when executing against a Mongos proxy.
 
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification
-[Server Selection Specification](./server-selection/server-selection.md#passing-read-preference-to-mongos).
+[Server Selection Specification](../server-selection/server-selection.md#passing-read-preference-to-mongos).
 
 ## Changelog
 
