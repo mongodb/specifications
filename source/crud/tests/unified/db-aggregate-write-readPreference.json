@@ -134,17 +134,6 @@
             }
           ]
         }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 1
-            }
-          ]
-        }
       ]
     },
     {
@@ -225,17 +214,6 @@
                   }
                 }
               }
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 1
             }
           ]
         }
@@ -325,17 +303,6 @@
             }
           ]
         }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 1
-            }
-          ]
-        }
       ]
     },
     {
@@ -419,17 +386,6 @@
                   }
                 }
               }
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 1
             }
           ]
         }
