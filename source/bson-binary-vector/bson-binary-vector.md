@@ -29,7 +29,7 @@ Drivers SHOULD provide idiomatic APIs to translate between arrays of numbers and
 
 #### Data Types
 
-Each vector can take one of multiple data types (dtypes). The following table lists the first dtypes implemented.
+Each vector can take one of multiple data types (dtypes). The following table lists the dtypes implemented.
 
 | Vector data type | Alias      | Bits per vector element | [Arrow Data Type](https://arrow.apache.org/docs/cpp/api/datatype.html) (for illustration) |
 | ---------------- | ---------- | ----------------------- | ----------------------------------------------------------------------------------------- |
@@ -53,7 +53,7 @@ final byte that are to be ignored.
 
 #### Binary structure
 
-Following the binary subtype `0x09` is a two-element byte array.
+Following the binary subtype `0x09` a two-element byte array of metadata precedes the packed numbers.
 
 - The first byte (dtype) describes its data type. The table above shows those that MUST be implemented. This table may
   increase.
@@ -62,8 +62,35 @@ Following the binary subtype `0x09` is a two-element byte array.
 
 - The remainder contains the actual vector elements packed according to dtype.
 
-For example, a vector \[6, 7\] of dtype PACKED_BIT (\\x10) with a padding of 3 would look like this:
+For example, a vector `[6, 7]` of dtype PACKED_BIT (`\x10`) with a padding of `3` would look like this:
 `b"\x10\x03\x06\x07'`: 1 byte for dtype, 1 for padding, and 1 for each uint8.
+
+<table border="1" cellspacing="0" cellpadding="5">
+  <tr>
+    <td colspan="8">1st byte: dtype (from list in previous table) </td>
+    <td colspan="8">2nd byte: padding (values in [0,7])</td>
+    <td colspan="1">binary numbers packed according to dtype</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>9</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>...</td>
+  </tr>
+</table>
 
 All values use the little-endian format.
 
