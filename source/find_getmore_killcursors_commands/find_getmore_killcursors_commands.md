@@ -1,4 +1,4 @@
-# Find, getMore and killCursors commands.
+# Find, getMore and killCursors commands
 
 - Status: Accepted
 - Minimum Server Version: 3.2

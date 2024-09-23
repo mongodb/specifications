@@ -1,4 +1,4 @@
-# BSON Decimal128 Type Handling in Drivers
+# BSON Decimal128
 
 - Status: Accepted
 - Minimum Server Version: 3.4
