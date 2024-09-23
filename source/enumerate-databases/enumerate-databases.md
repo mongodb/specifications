@@ -99,7 +99,7 @@ backwards compatibility when adding new methods.
 All methods SHOULD be implemented on the MongoClient object.
 
 All methods MUST apply timeouts per the
-[Client Side Operations Timeout](./client-side-operations-timeout/client-side-operations-timeout.md) specification.
+[Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification.
 
 #### Enumerating Full Database Information
 
@@ -210,8 +210,9 @@ to be expanded to support this option.
 
 ## Design Rationale
 
-The design of this specification is inspired by the [Collection Enumeration](./enumerate-collections.md) and
-[Index Management](./index-management/index-management.md) specifications. Since most drivers already implement a
+The design of this specification is inspired by the
+[Collection Enumeration](../enumerate-collections/enumerate-collections.md) and
+[Index Management](../index-management/index-management.md) specifications. Since most drivers already implement a
 `listDatabases` command helper in some fashion, this spec is flexible when it comes to existing APIs.
 
 ## Backwards Compatibility

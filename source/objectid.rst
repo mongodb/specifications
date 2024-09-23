@@ -1,4 +1,4 @@
 
 .. note::
   This specification has been converted to Markdown and renamed to
-  `objectid.md <objectid.md>`_.  
+  `objectid.md <bson-objectid/objectid.md>`_.  

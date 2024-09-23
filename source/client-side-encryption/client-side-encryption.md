@@ -99,7 +99,7 @@ A local process the driver communicates with to determine how to encrypt values 
 
 This term, spelled in all-lowercase with an underscore, refers to the client-side field-level-encryption dynamic library
 provided as part of a MongoDB Enterprise distribution. It replaces [mongocryptd](#mongocryptd) as the method of
-[marking-up a database command for encryption](./subtype6.md#intent-to-encrypt).
+[marking-up a database command for encryption](../bson-binary-encrypted/binary-encrypted.md#intent-to-encrypt).
 
 See also:
 
@@ -108,8 +108,8 @@ See also:
 
 **ciphertext**
 
-One of the data formats of [BSON binary subtype 6](./subtype6.md), representing an encoded BSON document containing
-encrypted ciphertext and metadata.
+One of the data formats of [BSON binary encrypted](../bson-binary-encrypted/binary-encrypted.md), representing an
+encoded BSON document containing encrypted ciphertext and metadata.
 
 **FLE**
 
@@ -258,7 +258,7 @@ connect to [mongocryptd](#mongocryptd) and instead rely on [crypt_shared](#crypt
 
 [crypt_shared](#crypt_shared) is a dynamically-loaded C++ library providing query analysis for auto-encryption. It
 replaces [mongocryptd](#mongocryptd) for performing query analysis to -
-[mark-up sensitive fields within a command](./subtype6.md#intent-to-encrypt).
+[mark-up sensitive fields within a command](../bson-binary-encrypted/binary-encrypted.md#intent-to-encrypt).
 
 Drivers are not required to load and interact with [crypt_shared](#crypt_shared) directly. Instead, they inform
 [libmongocrypt](#libmongocrypt) where to find [crypt_shared](#crypt_shared) and [libmongocrypt](#libmongocrypt) will
@@ -305,7 +305,7 @@ Drivers MAY deviate the spelling of option names to conform to their language's 
 in an idiomatic way (e.g. keyword arguments, builder classes, etc.).
 
 Drivers MAY use a native UUID type in place of a parameter or return type specified as a BSON binary with subtype 0x04
-as described in [Handling of Native UUID Types](../uuid.md).
+as described in [Handling of Native UUID Types](../bson-binary-uuid/uuid.md).
 
 ### MongoClient Changes
 
@@ -1791,7 +1791,7 @@ struct {
 }
 ```
 
-See [Driver Spec: BSON Binary Subtype 6](./subtype6.md) for more information.
+See [Driver Spec: BSON Binary Encrypted](../bson-binary-encrypted/binary-encrypted.md) for more information.
 
 ### JSONSchema "encrypt"
 
