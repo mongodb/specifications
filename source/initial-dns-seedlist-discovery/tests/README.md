@@ -38,6 +38,20 @@ When given a returned address that is identical to the original hostname, throw 
 For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error since the returned
 address is identical to the original hostname.
 
+### 4. Throw when return address does not contain `.` separating shared part of domain
+
+For the following test, run each of these cases: SRVs with one, two, and three `.` separated parts.
+
+When given a returned address that does not share the domain name of the SRV record because its missing a `.`, throw a
+runtime error.
+
+For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com` would be a valid
+resolution if there was a `.` between `test` and `mongo`. Since the `.` is missing, the driver should throw a runtime
+error.
+
+For the same reason, the SRV `mongodb+srv://mongo.local` resolving to `my_hostmongo.local` should also trigger a runtime
+error.
+
 ## Test Setup
 
 The tests in the `replica-set` directory MUST be executed against a three-node replica set on localhost ports 27017,
