@@ -1,4 +1,4 @@
-# BSON DBRef
+# DBRef
 
 - Status: Accepted
 - Minimum Server Version: N/A
