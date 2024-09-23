@@ -866,7 +866,7 @@ batch-splitting to standardize implementations across drivers and simplify batch
 
 ## **Changelog**
 
-- 2024-09-20: Update the `partialResult` population logic to account for ordered bulk writes.
+- 2024-09-23: Update the `partialResult` population logic to account for ordered bulk writes.
 
 - 2024-09-18: Relax numeric type requirements for indexes.
 
