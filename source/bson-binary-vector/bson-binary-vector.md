@@ -62,6 +62,9 @@ Following the binary subtype `0x09` is a two-element byte array.
 
 - The remainder contains the actual vector elements packed according to dtype.
 
+For example, a vector \[6, 7\] of dtype PACKED_BIT (\\x10) with a padding of 3 would look like this:
+`b"\x10\x03\x06\x07'`: 1 byte for dtype, 1 for padding, and 1 for each uint8.
+
 All values use the little-endian format.
 
 ### Reference Implementation
