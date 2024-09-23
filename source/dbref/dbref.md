@@ -1,4 +1,4 @@
-# Handling of DBRefs
+# DBRef
 
 - Status: Accepted
 - Minimum Server Version: N/A

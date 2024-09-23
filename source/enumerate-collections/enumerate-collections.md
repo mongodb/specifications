@@ -133,10 +133,10 @@ All methods:
 - MAY allow the `cursor.batchSize` option to be passed.
 - SHOULD allow the `comment` option to be passed.
 - MUST apply timeouts per the
-  [Client Side Operations Timeout](./client-side-operations-timeout/client-side-operations-timeout.md) specification.
+  [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification.
 
 All methods that return cursors MUST support the timeout options documented in
-[Client Side Operations Timeout: Cursors](./client-side-operations-timeout/client-side-operations-timeout.md#cursors).
+[Client Side Operations Timeout: Cursors](../client-side-operations-timeout/client-side-operations-timeout.md#cursors).
 
 #### Getting Collection Names
 
