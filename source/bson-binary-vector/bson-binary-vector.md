@@ -80,7 +80,7 @@ For example, a vector `[6, 7]` of dtype PACKED_BIT (`\x10`) with a padding of `3
     <td>0</td>
     <td>1</td>
     <td>0</td>
-    <td>9</td>
+    <td>0</td>
     <td>0</td>
     <td>0</td>
     <td>0</td>
