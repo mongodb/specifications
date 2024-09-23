@@ -410,17 +410,40 @@ required to implement. Drivers should follow the guidance in the CRUD specificat
 
 #### Summary vs. verbose results
 
-Users MUST be able to discern whether a `BulkWriteResult` contains summary or verbose results without inspecting the
-value provided for `verboseResults` in `BulkWriteOptions`. Drivers MUST implement this in one of the following ways:
+The `insertResults`, `updateResults`, and `deleteResults` fields MUST only be populated when `verboseResults` was set to
+true in the call to `MongoClient.bulkWrite`. Drivers MAY embed these results in a class rather than including them as
+individual fields in the overall result:
 
-- Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document that `insertResults`,
-  `updateResults`, and `deleteResults` will be undefined when `hasVerboseResults` is false. Raise an error if a user
-  tries to access one of these fields when `hasVerboseResults` is false.
-- Implement the `insertResults`, `updateResults`, and `deleteResults` fields as optional types and document that they
-  will be unset when `verboseResults` is false.
-- Introduce separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `VerboseBulkWriteResult` MUST have all
-  of the required fields defined on `BulkWriteResult` above. `SummaryBulkWriteResult` MUST have all of the required
-  fields defined on `BulkWriteResult` above except `insertResults`, `updateResults`, and `deleteResults`.
+```typescript
+class VerboseResults {
+    /**
+     * The results of each individual insert operation that was successfully performed.
+     */
+    insertResults: Map<Index, InsertOneResult>;
+
+    /**
+     * The results of each individual update operation that was successfully performed.
+     */
+    updateResults: Map<Index, UpdateResult>;
+
+    /**
+     * The results of each individual delete operation that was successfully performed.
+     */
+    deleteResults: Map<Index, DeleteResult>;
+}
+```
+
+Users MUST be able to discern whether a `BulkWriteResult` contains summary or verbose results without inspecting the
+value provided for `verboseResults` in `BulkWriteOptions`. Drivers can implement this in a number of ways, including:
+
+- Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document that the verbose results will be
+  undefined when `hasVerboseResults` is false. Drivers MAY raise an error if a user attempts to access one of these
+  fields when `hasVerboseResults` is false.
+- Use optional types for the verbose results, and document that they will be unset when `verboseResults` was not set to
+  true.
+- Define separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `SummaryBulkWriteResult` MUST only
+  contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
+  fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult` otherwise.
 
 #### Individual results
 
@@ -870,6 +893,8 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-09-30: Define more options for modeling summary vs. verbose results.
 
 - 2024-09-25: Add `collation` field to `update` document and clarify usage of `updateMods`.
 
