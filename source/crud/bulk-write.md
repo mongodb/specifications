@@ -686,8 +686,8 @@ The server's response to `bulkWrite` has the following format:
 Drivers MUST record the summary count fields in a `BulkWriteResult` to be returned to the user or embedded in a
 `BulkWriteException` if the response indicates that at least one write was successful:
 
-- For ordered bulk writes, at least one write was successful if `nErrors` is 0 or the `idx` value for the write error in
-  `cursor.firstBatch` is greater than 0.
+- For ordered bulk writes, at least one write was successful if `nErrors` is 0 or if the `idx` value for the write error
+  returned in the results cursor is greater than 0.
 - For unordered bulk writes, at least one write was successful if `nErrors` is less than the number of operations that
   were included in the `bulkWrite` command.
 
