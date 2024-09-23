@@ -686,13 +686,13 @@ The server's response to `bulkWrite` has the following format:
 Drivers MUST record the summary count fields in a `BulkWriteResult` to be returned to the user or embedded in a
 `BulkWriteException` if the response indicates that at least one write was successful:
 
-- For ordered bulk writes, at least one write was successful if `nErrors` is 0 or the `idx` value for the write error
-  in `cursor.firstBatch` is greater than 0.
+- For ordered bulk writes, at least one write was successful if `nErrors` is 0 or the `idx` value for the write error in
+  `cursor.firstBatch` is greater than 0.
 - For unordered bulk writes, at least one write was successful if `nErrors` is less than the number of operations that
   were included in the `bulkWrite` command.
 
-Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if it cannot be determined that at least
-one write was successfully performed.
+Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if it cannot be determined that at least one
+write was successfully performed.
 
 Drivers MUST attempt to consume the contents of the cursor returned in the server's `bulkWrite` response before
 returning to the user. This is required regardless of whether the user requested verbose or summary results, as the
