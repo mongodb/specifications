@@ -78,11 +78,6 @@
           "x": 33
         }
       ]
-    },
-    {
-      "collectionName": "coll1",
-      "databaseName": "db0",
-      "documents": []
     }
   ],
   "tests": [
