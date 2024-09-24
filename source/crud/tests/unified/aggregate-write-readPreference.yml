@@ -39,6 +39,10 @@ createEntities:
           # read preference to mongos or a load balancer. That would not be the
           # case with only secondaryPreferred.
           maxStalenessSeconds: 600
+  - collection:
+      id: &collection1 collection1
+      database: *database0
+      collectionName: &collection1Name coll1
 
 initialData:
   - collectionName: *collection0Name
