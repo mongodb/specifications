@@ -167,6 +167,3 @@ create_non_stale_tests()
 create_stale_generation_tests()
 create_pre_42_tests()
 create_post_42_tests()
-
-print('Running make')
-subprocess.run(f'cd {SOURCE} && make', shell=True, check=True)
