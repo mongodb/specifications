@@ -23,8 +23,8 @@ When given a returned address that does NOT end with the original SRV's domain n
 
 For this test, run each of the following cases:
 
-- the SRV `mongodb+srv://localhost` resolving to `local_host`
-- the SRV `mongodb+srv://mongo.local` resolving to `evil.local`
+- the SRV `mongodb+srv://localhost` resolving to `localhost.mongodb`
+- the SRV `mongodb+srv://mongo.local` resolving to `test_1.evil.local`
 - the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com`
 
 Remember, the domain of an SRV with one or two `.` separated parts is the SRVs entire hostname.
@@ -46,7 +46,7 @@ runtime error.
 
 For this test, run each of the following cases:
 
-- the SRV `mongodb+srv://mongo.local` resolving to `my_hostmongo.local`
+- the SRV `mongodb+srv://mongo.local` resolving to `test_1.my_hostmongo.local`
 - the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
 
 ## Test Setup
