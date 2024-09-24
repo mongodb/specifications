@@ -24,6 +24,11 @@ jobs:
         run: |
           npm install -g js-yaml
           pip3 install pymongo pyyaml jinja2
+      - name: Delete existing JSON files
+        run: |
+          cd source
+          make clean
+          cd ..
       - name: Generate error tests
         run: python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py  
       - name: Generate corpus

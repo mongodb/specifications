@@ -1,9 +1,6 @@
 YAML_FILES=$(shell find . -iname '*.yml')
 JSON_FILES=$(patsubst %.yml,%.json,$(YAML_FILES))
 
-$(info YAML_FILES: $(YAML_FILES))
-$(info JSON_FILES: $(JSON_FILES))
-
 all: $(JSON_FILES) HAS_JSYAML
 
 %.json: %.yml
@@ -20,3 +17,6 @@ HAS_JSYAML:
 	    echo 'Error: need "npm install -g js-yaml"' 1>&2; \
 	    exit 1;                                           \
 	fi
+
+clean:
+	rm -f $(JSON_FILES)
