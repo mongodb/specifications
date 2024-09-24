@@ -12,8 +12,6 @@ resolution results.
 
 When running validation on an SRV string before DNS resolution, do not throw a error due to number of SRV parts.
 
-For this test, run each of the following cases:
-
 - `mongodb+srv://localhost`
 - `mongodb+srv://mongo.local`
 
