@@ -10,47 +10,44 @@ resolution results.
 
 ### 1. Allow SRVs with less than 3 `.` separated parts
 
-For the following test, run each of these cases: SRVs with one and two `.` separated parts.
-
 When running validation on an SRV string before DNS resolution, do not throw a error due to number of SRV parts.
 
-For example, `mongodb+srv://localhost` is a valid SRV string with one part/one domain level, and
-`mongodb+srv://mongo.local` is a valid SRV string with two parts/two domain levels.
+For this test, run each of the following cases:
+
+- `mongodb+srv://localhost`
+- `mongodb+srv://mongo.local`
 
 ### 2. Throw when return address does not end with SRV domain
 
-For the following test, run each of these cases: SRVs with one, two, and three `.` separated parts.
-
 When given a returned address that does NOT end with the original SRV's domain name, throw a runtime error.
 
-For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com` should prompt an error, since the
-returned address does not end with `mongodb.com`.
+For this test, run each of the following cases:
 
-Importantly, the domain of an SRV with one or two parts is its entire hostname. For example, the domain of
-`mongodb+srv://mySite.com` is `mySite.com`. If this SRV resolves to `evil.com`, this should prompt an error.
+- the SRV `mongodb+srv://localhost` resolving to `local_host`
+- the SRV `mongodb+srv://mongo.local` resolving to `evil.local`
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com`
+
+Remember, the domain of an SRV with one or two `.` separated parts is the SRVs entire hostname.
 
 ### 3. Throw when return address is identical to SRV hostname
 
-For the following test, run each of these cases: SRVs with one and two `.` separated parts.
+When given a returned address that is identical to the SRV hostname and the SRV hostname has less than three `.`
+separated parts, throw a runtime error.
 
-When given a returned address that is identical to the original hostname, throw a runtime error.
+For this test, run each of the following cases:
 
-For example, the SRV `mongodb+srv://mongo.local` resolving to `mongo.local` should prompt an error since the returned
-address is identical to the original hostname.
+- the SRV `mongodb+srv://localhost` resolving to `localhost`
+- the SRV `mongodb+srv://mongo.local` resolving to `mongo.local`
 
 ### 4. Throw when return address does not contain `.` separating shared part of domain
 
-For the following test, run each of these cases: SRVs with one, two, and three `.` separated parts.
-
-When given a returned address that does not share the domain name of the SRV record because its missing a `.`, throw a
+When given a returned address that does NOT share the domain name of the SRV record because its missing a `.`, throw a
 runtime error.
 
-For example, the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com` would be a valid
-resolution if there was a `.` between `test` and `mongo`. Since the `.` is missing, the driver should throw a runtime
-error.
+For this test, run each of the following cases:
 
-For the same reason, the SRV `mongodb+srv://mongo.local` resolving to `my_hostmongo.local` should also trigger a runtime
-error.
+- the SRV `mongodb+srv://mongo.local` resolving to `my_hostmongo.local`
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
 
 ## Test Setup
 
