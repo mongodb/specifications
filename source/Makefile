@@ -1,6 +1,9 @@
 YAML_FILES=$(shell find . -iname '*.yml')
 JSON_FILES=$(patsubst %.yml,%.json,$(YAML_FILES))
 
+$(info YAML_FILES: $(YAML_FILES))
+$(info JSON_FILES: $(JSON_FILES))
+
 all: $(JSON_FILES) HAS_JSYAML
 
 %.json: %.yml

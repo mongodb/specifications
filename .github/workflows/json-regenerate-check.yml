@@ -37,6 +37,6 @@ jobs:
       - name: Run make
         run: |
           cd source
-          make -d
+          make
       - name: Check for differences
         run: git diff --exit-code
