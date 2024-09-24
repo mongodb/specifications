@@ -46,6 +46,7 @@ runtime error.
 
 For this test, run each of the following cases:
 
+- the SRV `mongodb+srv://localhost` resolving to `test_1.cluster_1localhost`
 - the SRV `mongodb+srv://mongo.local` resolving to `test_1.my_hostmongo.local`
 - the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
 
