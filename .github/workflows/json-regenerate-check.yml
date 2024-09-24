@@ -24,11 +24,19 @@ jobs:
         run: |
           npm install -g js-yaml
           pip3 install pymongo pyyaml jinja2
-      - name: Regenerate JSON test files
+      - name: Generate error tests
+        run: python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py  
+      - name: Generate corpus
+        run: python3 ./source/client-side-encryption/etc/generate-corpus.py ./source/client-side-encryption/corpus  
+      - name: Generate test
+        run: python3 ./source/client-side-encryption/etc/generate-test.py ./source/client-side-encryption/etc/test-templates/*.template ./source/client-side-encryption/tests/legacy  
+      - name: Generate basic tests
+        run: python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests  
+      - name: Generate handshake error tests
+        run: python3 ./source/etc/generate-handshakeError-tests.py  
+      - name: Run make
         run: |
-          python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py
-          python3 ./source/client-side-encryption/etc/generate-corpus.py ./source/client-side-encryption/corpus
-          python3 ./source/client-side-encryption/etc/generate-test.py ./source/client-side-encryption/etc/test-templates/*.template ./source/client-side-encryption/tests/legacy
-          python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests
-          python3 ./source/etc/generate-handshakeError-tests.py
-          cd source && make && git diff --exit-code
+          cd source
+          make
+      - name: Check for differences
+        run: git diff --exit-code
