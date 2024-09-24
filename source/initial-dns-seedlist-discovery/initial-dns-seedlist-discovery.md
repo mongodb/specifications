@@ -125,9 +125,9 @@ indicating that the URI could not be used to find hostnames. The error SHALL inc
 found.
 
 A driver MUST verify that the host names returned through SRV records share the original SRV's `{domainname}`. In
-addition, SRV records with less than three `.` separated parts, the returned hostname MUST have at least one more domain
-level than the SRV record hostname. Drivers MUST raise an error and MUST NOT initiate a connection to any returned
-hostname which does not fulfill these requirements.
+addition, SRV records with fewer than three `.` separated parts, the returned hostname MUST have at least one more
+domain level than the SRV record hostname. Drivers MUST raise an error and MUST NOT initiate a connection to any
+returned hostname which does not fulfill these requirements.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 

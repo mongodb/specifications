@@ -8,7 +8,7 @@ Seedlist Discovery spec.
 For the following prose tests, it is assumed drivers are be able to stub DNS results to easily test invalid DNS
 resolution results.
 
-### 1. Allow SRVs with less than 3 `.` separated parts
+### 1. Allow SRVs with fewer than 3 `.` separated parts
 
 When running validation on an SRV string before DNS resolution, do not throw a error due to number of SRV parts.
 
@@ -29,7 +29,7 @@ Remember, the domain of an SRV with one or two `.` separated parts is the SRVs e
 
 ### 3. Throw when return address is identical to SRV hostname
 
-When given a returned address that is identical to the SRV hostname and the SRV hostname has less than three `.`
+When given a returned address that is identical to the SRV hostname and the SRV hostname has fewer than three `.`
 separated parts, throw a runtime error.
 
 For this test, run each of the following cases:
@@ -39,7 +39,7 @@ For this test, run each of the following cases:
 
 ### 4. Throw when return address does not contain `.` separating shared part of domain
 
-When given a returned address that does NOT share the domain name of the SRV record because its missing a `.`, throw a
+When given a returned address that does NOT share the domain name of the SRV record because it's missing a `.`, throw a
 runtime error.
 
 For this test, run each of the following cases:
