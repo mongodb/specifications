@@ -871,6 +871,8 @@ batch-splitting to standardize implementations across drivers and simplify batch
 
 ## **Changelog**
 
+- 2024-09-25: Add `collation` field to `update` document and clarify usage of `updateMods`.
+
 - 2024-09-25: Update the `partialResult` population logic to account for ordered bulk writes.
 
 - 2024-09-18: Relax numeric type requirements for indexes.
