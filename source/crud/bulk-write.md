@@ -317,8 +317,7 @@ class BulkWriteResult {
     acknowledged: Boolean;
 
     /**
-     * Indicates whether the results are verbose. If false, the insertResults, updateResults, and
-     * deleteResults fields in this result will be undefined.
+     * Indicates whether this result contains verbose results.
      *
      * NOT REQUIRED TO IMPLEMENT. See below for other ways to differentiate summary results from
      * verbose results.
