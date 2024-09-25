@@ -43,7 +43,15 @@ tests:
           verboseResults: true
         expectError:
           expectResult:
-            $$unsetOrMatches: {}
+            $$unsetOrMatches:
+              insertedCount: { $$exists: false }
+              upsertedCount: { $$exists: false }
+              matchedCount: { $$exists: false }
+              modifiedCount: { $$exists: false }
+              deletedCount: { $$exists: false }
+              insertResults: { $$exists: false }
+              updateResults: { $$exists: false }
+              deleteResults: { $$exists: false }
   - description: "partialResult is unset when first operation fails during an ordered bulk write (summary)"
     operations:
       - object: *client0
@@ -129,7 +137,15 @@ tests:
           ordered: false
         expectError:
           expectResult:
-            $$unsetOrMatches: {}
+            $$unsetOrMatches:
+              insertedCount: { $$exists: false }
+              upsertedCount: { $$exists: false }
+              matchedCount: { $$exists: false }
+              modifiedCount: { $$exists: false }
+              deletedCount: { $$exists: false }
+              insertResults: { $$exists: false }
+              updateResults: { $$exists: false }
+              deleteResults: { $$exists: false }
   - description: "partialResult is set when first operation fails during an unordered bulk write (verbose)"
     operations:
       - object: *client0

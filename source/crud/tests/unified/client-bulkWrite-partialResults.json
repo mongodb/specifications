@@ -80,7 +80,32 @@
           },
           "expectError": {
             "expectResult": {
-              "$$unsetOrMatches": {}
+              "$$unsetOrMatches": {
+                "insertedCount": {
+                  "$$exists": false
+                },
+                "upsertedCount": {
+                  "$$exists": false
+                },
+                "matchedCount": {
+                  "$$exists": false
+                },
+                "modifiedCount": {
+                  "$$exists": false
+                },
+                "deletedCount": {
+                  "$$exists": false
+                },
+                "insertResults": {
+                  "$$exists": false
+                },
+                "updateResults": {
+                  "$$exists": false
+                },
+                "deleteResults": {
+                  "$$exists": false
+                }
+              }
             }
           }
         }
@@ -255,7 +280,32 @@
           },
           "expectError": {
             "expectResult": {
-              "$$unsetOrMatches": {}
+              "$$unsetOrMatches": {
+                "insertedCount": {
+                  "$$exists": false
+                },
+                "upsertedCount": {
+                  "$$exists": false
+                },
+                "matchedCount": {
+                  "$$exists": false
+                },
+                "modifiedCount": {
+                  "$$exists": false
+                },
+                "deletedCount": {
+                  "$$exists": false
+                },
+                "insertResults": {
+                  "$$exists": false
+                },
+                "updateResults": {
+                  "$$exists": false
+                },
+                "deleteResults": {
+                  "$$exists": false
+                }
+              }
             }
           }
         }
