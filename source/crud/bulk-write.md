@@ -518,9 +518,14 @@ If the document to be inserted does not contain an `_id` field, drivers MUST gen
     "multi": Optional<Boolean>,
     "upsert": Optional<Boolean>,
     "arrayFilters": Optional<Array>,
-    "hint": Optional<Document | String>
+    "hint": Optional<Document | String>,
+    "collation": Optional<Document>
 }
 ```
+
+The `update` command document is used for update and replace operations. For update operations, the `updateMods` field
+corresponds to the `update` field in `UpdateOneModel` and `UpdateManyModel`. For replace operations, the `updateMods`
+field corresponds to the `replacement` field in `ReplaceOneModel`.
 
 #### Delete
 
