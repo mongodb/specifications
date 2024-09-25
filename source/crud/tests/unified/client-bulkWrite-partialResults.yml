@@ -68,7 +68,15 @@ tests:
           verboseResults: false
         expectError:
           expectResult:
-            $$unsetOrMatches: {}
+            $$unsetOrMatches:
+              insertedCount: { $$exists: false }
+              upsertedCount: { $$exists: false }
+              matchedCount: { $$exists: false }
+              modifiedCount: { $$exists: false }
+              deletedCount: { $$exists: false }
+              insertResults: { $$exists: false }
+              updateResults: { $$exists: false }
+              deleteResults: { $$exists: false }
   - description: "partialResult is set when second operation fails during an ordered bulk write (verbose)"
     operations:
       - object: *client0
