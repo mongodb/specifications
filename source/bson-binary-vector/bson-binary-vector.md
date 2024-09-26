@@ -7,8 +7,8 @@ ______________________________________________________________________
 
 ## Abstract
 
-This document describes the addition of a new subtype to the Binary BSON type. This subtype is used for efficient
-storage and retrieval of vectors. Vectors here refer to densely packed arrays of numbers, all of the same type.
+This document describes the subtype of the Binary BSON type used for efficient storage and retrieval of vectors. Vectors
+here refer to densely packed arrays of numbers, all of the same type.
 
 ## Motivation
 
@@ -38,7 +38,7 @@ Each vector can take one of multiple data types (dtypes). The following table li
 | `0x10`           | PACKED_BIT | 1     `*`               | BOOL                                                                                      |
 
 `*` A Binary Quantized (PACKED_BIT) Vector is a vector of 0s and 1s (bits), but it is represented in memory as a list of
-integers in \[0, 255\]. So, for example, the vector `[0, 255]` would be shorthand for the 16 bit vector
+integers in \[0, 255\]. So, for example, the vector `[0, 255]` would be shorthand for the 16-bit vector
 `[0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1]`. The idea is that each number (a uint8) can be stored as a single byte. Of course,
 some languages, Python for one, do not have an uint8 type, so must be represented as an int in memory, but not on disk.
 
