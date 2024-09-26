@@ -518,9 +518,14 @@ If the document to be inserted does not contain an `_id` field, drivers MUST gen
     "multi": Optional<Boolean>,
     "upsert": Optional<Boolean>,
     "arrayFilters": Optional<Array>,
-    "hint": Optional<Document | String>
+    "hint": Optional<Document | String>,
+    "collation": Optional<Document>
 }
 ```
+
+The `update` command document is used for update and replace operations. For update operations, the `updateMods` field
+corresponds to the `update` field in `UpdateOneModel` and `UpdateManyModel`. For replace operations, the `updateMods`
+field corresponds to the `replacement` field in `ReplaceOneModel`.
 
 #### Delete
 
@@ -865,6 +870,8 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-09-25: Add `collation` field to `update` document and clarify usage of `updateMods`.
 
 - 2024-09-25: Update the `partialResult` population logic to account for ordered bulk writes.
 
