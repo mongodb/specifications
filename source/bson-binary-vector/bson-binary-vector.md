@@ -14,7 +14,7 @@ here refer to densely packed arrays of numbers, all of the same type.
 
 These representations correspond to the numeric types supported by popular numerical libraries for vector processing,
 such as NumPy, PyTorch, TensorFlow and Apache Arrow. Storing and retrieving vector data using the same densely packed
-format used by these libraries can result in up to significant memory savings and processing efficiency.
+format used by these libraries can result in significant memory savings and processing efficiency.
 
 ### META
 
