@@ -27,7 +27,7 @@ This specification introduces a new BSON binary subtype, the vector, with value 
 
 Drivers SHOULD provide idiomatic APIs to translate between arrays of numbers and this BSON Binary specification.
 
-#### Data Types
+### Data Types
 
 Each vector can take one of multiple data types (dtypes). The following table lists the dtypes implemented.
 
@@ -42,16 +42,13 @@ integers in \[0, 255\]. So, for example, the vector `[0, 255]` would be shorthan
 `[0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1]`. The idea is that each number (a uint8) can be stored as a single byte. Of course,
 some languages, Python for one, do not have an uint8 type, so must be represented as an int in memory, but not on disk.
 
-The authors are well-aware of the inherent ambiguity here, and alternatives. This is a market-standard, unfortunately.
-Change is inevitable.
-
-#### Byte padding
+### Byte padding
 
 As not all data types have a bit length equal to a multiple of 8, and hence do not fit squarely into a certain number of
 bytes, a second piece of metadata, the "padding" is included. This instructs the driver of the number of bits in the
 final byte that are to be ignored.
 
-#### Binary structure
+### Binary structure
 
 Following the binary subtype `0x09` a two-element byte array of metadata precedes the packed numbers.
 
@@ -94,10 +91,21 @@ For example, a vector `[6, 7]` of dtype PACKED_BIT (`\x10`) with a padding of `3
 
 All values use the little-endian format.
 
-### Reference Implementation
+## Reference Implementation
 
 - PYTHON (PYTHON-4577) [pymongo.binary](https://github.com/mongodb/mongo-python-driver/blob/master/bson/binary.py)
 
-### Test Plan
+## Test Plan
 
 See the [README](tests/README.md) for tests.
+
+## FAQ
+
+- What MongoDB Server version does this apply to?
+  - Files in the "specifications" repository have no version scheme. They are not tied to a MongoDB server version.
+- In PACKED_BIT, why would one choose to use integers in \[0, 256)?
+  - This follows a well-established precedent for packing binary-valued arrays into bytes (8 bits), This technique is
+    widely used across different fields, such as data compression, communication protocols, and file formats, where you
+    want to store or transmit binary data more efficiently by grouping 8 bits into a single byte (uint8). For an example
+    in Python, see
+    [numpy.unpackbits](https://numpy.org/doc/2.0/reference/generated/numpy.unpackbits.html#numpy.unpackbits).
