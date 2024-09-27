@@ -59,14 +59,22 @@ Following the binary subtype `0x09` a two-element byte array of metadata precede
 
 - The remainder contains the actual vector elements packed according to dtype.
 
-For example, a vector `[6, 7]` of dtype PACKED_BIT (`\x10`) with a padding of `3` would look like this:
-`b"\x10\x03\x06\x07'`: 1 byte for dtype, 1 for padding, and 1 for each uint8.
+All values use the little-endian format.
+
+#### Example
+
+Let's take a vector `[238, 224]` of dtype PACKED_BIT (`\x10`) with a padding of `4`.
+
+In hex, it looks like this: `b"\x10\x04\xee\xe0"`: 1 byte for dtype, 1 for padding, and 1 for each uint8.
+
+We can visualize the binary representation like so:
 
 <table border="1" cellspacing="0" cellpadding="5">
   <tr>
     <td colspan="8">1st byte: dtype (from list in previous table) </td>
     <td colspan="8">2nd byte: padding (values in [0,7])</td>
-    <td colspan="1">binary numbers packed according to dtype</td>
+    <td colspan="8">1st uint8: 238</td>
+    <td colspan="8">2nd uint8: 224</td>
   </tr>
   <tr>
     <td>0</td>
@@ -82,14 +90,32 @@ For example, a vector `[6, 7]` of dtype PACKED_BIT (`\x10`) with a padding of `3
     <td>0</td>
     <td>0</td>
     <td>0</td>
+    <td>1</td>
+    <td>0</td>
     <td>0</td>
     <td>1</td>
     <td>1</td>
-    <td>...</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
   </tr>
 </table>
 
-All values use the little-endian format.
+Finally, after we remove the last 4 bits of padding, the actual bit vector has a length of 12 and looks like this!
+
+| 1   | 1   | 1   | 0   | 1   | 1   | 1   | 0   | 1   | 1   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Reference Implementation
 
