@@ -50,7 +50,7 @@ final byte that are to be ignored.
 
 ### Binary structure
 
-Following the binary subtype `0x09` a two-element byte array of metadata precedes the packed numbers.
+Following the binary subtype `\x09` a two-element byte array of metadata precedes the packed numbers.
 
 - The first byte (dtype) describes its data type. The table above shows those that MUST be implemented. This table may
   increase.
