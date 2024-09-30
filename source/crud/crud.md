@@ -61,7 +61,8 @@ A non-exhaustive list of acceptable deviations are as follows:
 - Using named parameters instead of an options hash. For instance, `collection.find({x:1}, sort: {a: -1})`.
 
 - When using an `Options` class, if multiple `Options` classes are structurally equatable, it is permissible to
-  consolidate them into one with a clear name.
+  consolidate them into one with a clear name. For instance, it would be permissible to use the name `UpdateOptions` as
+  the options for `UpdateOne` and `UpdateMany`.
 
 - Using a fluent style builder for find or aggregate:
 
