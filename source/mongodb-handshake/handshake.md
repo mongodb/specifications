@@ -27,18 +27,19 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Terms
 
-**hello command**\
-The command named `hello`. It is the preferred and modern command for handshakes and topology
-monitoring.
+**hello command**
 
-**legacy hello command**\
-The command named `isMaster`. It is the deprecated equivalent of the `hello` command. It was
-deprecated in MongoDB 5.0.
+The command named `hello`. It is the preferred and modern command for handshakes and topology monitoring.
 
-**isMaster / ismaster**\
-The correct casing is `isMaster`, but servers will accept the alternate casing `ismaster`.
-Other case variations result in `CommandNotFound`. Drivers MUST take this case variation into account when determining
-which commands to encrypt, redact, or otherwise treat specially.
+**legacy hello command**
+
+The command named `isMaster`. It is the deprecated equivalent of the `hello` command. It was deprecated in MongoDB 5.0.
+
+**isMaster / ismaster**
+
+The correct casing is `isMaster`, but servers will accept the alternate casing `ismaster`. Other case variations result
+in `CommandNotFound`. Drivers MUST take this case variation into account when determining which commands to encrypt,
+redact, or otherwise treat specially.
 
 ## Specification
 
@@ -48,7 +49,7 @@ MongoDB uses the `hello` or `isMaster` commands for handshakes and topology moni
 preferred command. `hello` must always be sent using the `OP_MSG` protocol. `isMaster` is referred to as "legacy hello"
 and is maintained for backwards compatibility with servers that do not support the `hello` command.
 
-If a [server API version](../versioned-api/versioned-api.rst) is requested or `loadBalanced: True`, drivers MUST use the
+If a [server API version](../versioned-api/versioned-api.md) is requested or `loadBalanced: True`, drivers MUST use the
 `hello` command for the initial handshake and use the `OP_MSG` protocol. If server API version is not requested and
 `loadBalanced: False`, drivers MUST use legacy hello for the first message of the initial handshake with the `OP_QUERY`
 protocol (before switching to `OP_MSG` if the `maxWireVersion` indicates compatibility), and include `helloOk:true` in
@@ -154,6 +155,8 @@ the following structure:
         }
     }
 ```
+
+<span id="client-application-name"></span>
 
 #### client.application.name
 
@@ -279,6 +282,8 @@ Example:
 - clang 3.8.0 CFLAGS="-mcpu=power8 -mtune=power8 -mcmodel=medium"
 - "Oracle JVM EE 9.1.1"
 ```
+
+<span id="client-env"></span>
 
 #### client.env
 

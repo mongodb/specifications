@@ -9,7 +9,7 @@ This specification defines the driver API for the `bulkWrite` server command int
 in this specification allows users to perform insert, update, and delete operations against mixed namespaces in a
 minimized number of round trips, and to receive detailed results for each operation performed. This API is distinct from
 the [collection-level bulkWrite method](../crud/crud.md#insert-update-replace-delete-and-bulk-writes) defined in the
-CRUD specification and the [deprecated bulk write specification](../driver-bulk-update.rst).
+CRUD specification.
 
 ## Specification
 
@@ -353,17 +353,17 @@ class BulkWriteResult {
     /**
      * The results of each individual insert operation that was successfully performed.
      */
-    insertResults: Map<Int64, InsertOneResult>;
+    insertResults: Map<Index, InsertOneResult>;
 
     /**
      * The results of each individual update operation that was successfully performed.
      */
-    updateResults: Map<Int64, UpdateResult>;
+    updateResults: Map<Index, UpdateResult>;
 
     /**
      * The results of each individual delete operation that was successfully performed.
      */
-    deleteResults: Map<Int64, DeleteResult>;
+    deleteResults: Map<Index, DeleteResult>;
 }
 
 class InsertOneResult {
@@ -451,7 +451,7 @@ class BulkWriteException {
      * Errors that occurred during the execution of individual write operations. This map will
      * contain at most one entry if the bulk write was ordered.
      */
-    writeErrors: Map<Int64, WriteError>;
+    writeErrors: Map<Index, WriteError>;
 
     /**
      * The results of any successful operations that were performed before the error was
@@ -460,6 +460,13 @@ class BulkWriteException {
     partialResult: Optional<BulkWriteResult>;
 }
 ```
+
+### Index Types
+
+The `insertResults`, `updateResults`, and `deleteResults` maps in `BulkWriteResult` and the `writeErrors` map in
+`BulkWriteException` specify `Index` as their key type. This value corresponds to the index of the operation in the
+`writeModels` list that was provided to `MongoClient.bulkWrite`. Drivers SHOULD use their language's standard numeric
+type for indexes for this type (e.g. `usize` in Rust). If no standard index type exists, drivers MUST use `Int64`.
 
 ## Building a `bulkWrite` Command
 
@@ -479,8 +486,7 @@ The `bulkWrite` server command has the following format:
 }
 ```
 
-Drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.rst) payload type 1) for the `ops` and `nsInfo`
-fields.
+Drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.md) payload type 1) for the `ops` and `nsInfo` fields.
 
 The `bulkWrite` command is executed on the "admin" database.
 
@@ -499,8 +505,8 @@ operation should be performed as its value. The documents have the following for
 }
 ```
 
-If the document to be inserted does not contain an `_id` field, drivers MUST generate a new [`ObjectId`](../objectid.md)
-and add it as the `_id` field at the beginning of the document.
+If the document to be inserted does not contain an `_id` field, drivers MUST generate a new
+[`ObjectId`](../bson-objectid/objectid.md) and add it as the `_id` field at the beginning of the document.
 
 #### Update
 
@@ -512,9 +518,14 @@ and add it as the `_id` field at the beginning of the document.
     "multi": Optional<Boolean>,
     "upsert": Optional<Boolean>,
     "arrayFilters": Optional<Array>,
-    "hint": Optional<Document | String>
+    "hint": Optional<Document | String>,
+    "collation": Optional<Document>
 }
 ```
+
+The `update` command document is used for update and replace operations. For update operations, the `updateMods` field
+corresponds to the `update` field in `UpdateOneModel` and `UpdateManyModel`. For replace operations, the `updateMods`
+field corresponds to the `replacement` field in `ReplaceOneModel`.
 
 #### Delete
 
@@ -677,9 +688,16 @@ The server's response to `bulkWrite` has the following format:
 }
 ```
 
-If any operations were successful (i.e. `nErrors` is less than the number of operations that were sent), drivers MUST
-record the summary count fields in a `BulkWriteResult` to be returned to the user or embedded in a `BulkWriteException`.
-Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if no operations were successful.
+Drivers MUST record the summary count fields in a `BulkWriteResult` to be returned to the user or embedded in a
+`BulkWriteException` if the response indicates that at least one write was successful:
+
+- For ordered bulk writes, at least one write was successful if `nErrors` is 0 or if the `idx` value for the write error
+  returned in the results cursor is greater than 0.
+- For unordered bulk writes, at least one write was successful if `nErrors` is less than the number of operations that
+  were included in the `bulkWrite` command.
+
+Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if it cannot be determined that at least one
+write was successfully performed.
 
 Drivers MUST attempt to consume the contents of the cursor returned in the server's `bulkWrite` response before
 returning to the user. This is required regardless of whether the user requested verbose or summary results, as the
@@ -764,8 +782,7 @@ immediately throw the exception. Otherwise, drivers MUST continue to iterate the
 ## Test Plan
 
 The majority of tests for `MongoClient.bulkWrite` are written in the
-[Unified Test Format](../unified-test-format/unified-test-format.md) and reside in the
-[CRUD unified tests directory](../crud/tests/unified/).
+[Unified Test Format](../unified-test-format/unified-test-format.md) and reside in the CRUD unified tests directory.
 
 Additional prose tests are specified [here](../crud/tests/README.md). These tests require constructing very large
 documents to test batch splitting, which is not feasible in the unified test format at the time of writing this
@@ -853,6 +870,12 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-09-25: Add `collation` field to `update` document and clarify usage of `updateMods`.
+
+- 2024-09-25: Update the `partialResult` population logic to account for ordered bulk writes.
+
+- 2024-09-18: Relax numeric type requirements for indexes.
 
 - 2024-05-17: Update specification status to "Accepted".
 

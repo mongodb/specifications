@@ -1,4 +1,4 @@
-# Handling of Native UUID Types
+# BSON Binary UUID
 
 - Status: Accepted
 - Minimum Server Version: N/A
@@ -28,10 +28,12 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**UUID**\
+**UUID**
+
 A Universally Unique IDentifier
 
-**BsonBinary**\
+**BsonBinary**
+
 An object that wraps an instance of a BSON binary value
 
 ### Naming Deviations

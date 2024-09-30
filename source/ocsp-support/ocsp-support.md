@@ -121,7 +121,7 @@ this option.
 This boolean option determines whether a MongoClient should refrain from reaching out to an OCSP endpoint i.e. whether
 non-stapled OCSP should be disabled. When set to true, a driver MUST NOT reach out to OCSP endpoints. When set to false,
 a driver MUST reach out to OCSP endpoints if needed (as described in
-[Specification: Suggested OCSP Behavior](#suggested-ocsp-behavior-1)).
+[Specification: Suggested OCSP Behavior](#suggested-ocsp-behavior)).
 
 For drivers that pass the ["Soft Fail Test"](tests/README.md#integration-tests-permutations-to-be-tested), this option
 MUST default to false.
@@ -140,7 +140,7 @@ available (i.e. no methods are defined or the CRL distribution points/OCSP endpo
 This boolean option determines whether a MongoClient should refrain checking certificate revocation status. When set to
 true, a driver MUST NOT check certificate revocation status via CRLs or OCSP. When set to false, a driver MUST check
 certificate revocation status, reach out to OCSP endpoints if needed (as described in
-[Specification: Suggested OCSP Behavior](#suggested-ocsp-behavior-1)).
+[Specification: Suggested OCSP Behavior](#suggested-ocsp-behavior)).
 
 For drivers that pass the ["Soft Fail Test"](tests/README.md#integration-tests-permutations-to-be-tested) , this option
 MUST default to false.
@@ -291,10 +291,9 @@ No additional Atlas connectivity tests will be added because the existing tests 
 ### Suggested OCSP Behavior
 
 For drivers with finer-grain control over their OCSP behavior, the suggested OCSP behavior was chosen as a balance
-between security and availability, erring on availability while minimizing network round trips. Therefore, in the
-[Specification: Suggested OCSP Behavior](#suggested-ocsp-behavior-1) section, in order to minimize network round trips,
-drivers are advised not to reach out to OCSP endpoints and CRL distribution points in order to verify the revocation
-status of intermediate certificates.
+between security and availability, erring on availability while minimizing network round trips. Therefore, in order to
+minimize network round trips, drivers are advised not to reach out to OCSP endpoints and CRL distribution points in
+order to verify the revocation status of intermediate certificates.
 
 ## Backwards Compatibility
 
@@ -409,9 +408,9 @@ not adhering to that RFC.
 ### Why was the decision made to allow OCSP endpoint checking to be enabled/disabled via a URI option?
 
 We initially hoped that we would be able to not expose any options specifically related to OCSP to the user, in
-accordance with the "No Knobs" [drivers mantra](../../README.md#driver-mantras) However, we later decided that users may
-benefit from having the ability to disable OCSP endpoint checking when applications are deployed behind restrictive
-firewall with outbound allowLists, and this benefit is worth adding another URI option.
+accordance with the "No Knobs" [drivers mantra](../driver-mantras.md) However, we later decided that users may benefit
+from having the ability to disable OCSP endpoint checking when applications are deployed behind restrictive firewall
+with outbound allowLists, and this benefit is worth adding another URI option.
 
 ## Appendix
 
@@ -468,8 +467,7 @@ find ~/profile/Library/Keychains -name 'ocspcache.sqlite3' \
 -exec sqlite3 "{}" 'DELETE FROM responses ;' \;
 ```
 
-To delete only "Let's Encrypt" related entries, the following command\
-could be used:
+To delete only "Let's Encrypt" related entries, the following command could be used:
 
 ```bash
 find ~/profile/Library/Keychains -name 'ocspcache.sqlite3' \
@@ -543,16 +541,13 @@ library has contacted the OCSP endpoint specified in the server's certificate. T
 
 - 2021-04-07: Updated terminology to use allowList.
 
-- 2020-07-01: Default tlsDisableOCSPEndpointCheck or\
-  tlsDisableCertificateRevocationCheck to true in the case that a
+- 2020-07-01: Default tlsDisableOCSPEndpointCheck or tlsDisableCertificateRevocationCheck to true in the case that a
   driver's TLS library exhibits hard-fail behavior and add provision for platform-specific defaults.
 
-- 2020-03-20: Clarify OCSP documentation requirements for drivers unable to\
-  enable OCSP by default on a per MongoClient
+- 2020-03-20: Clarify OCSP documentation requirements for drivers unable to enable OCSP by default on a per MongoClient
   basis.
 
-- 2020-03-03: Add tlsDisableCertificateRevocationCheck URI option. Add Go as a\
-  reference implementation. Add hard-fail
+- 2020-03-03: Add tlsDisableCertificateRevocationCheck URI option. Add Go as a reference implementation. Add hard-fail
   backwards compatibility documentation requirements.
 
 - 2020-02-26: Add tlsDisableOCSPEndpointCheck URI option.
@@ -561,8 +556,7 @@ library has contacted the OCSP endpoint specified in the server's certificate. T
 
 - 2020-02-10: Add cache requirement.
 
-- 2020-01-31: Add SNI requirement and clarify design rationale regarding\
-  minimizing round trips.
+- 2020-01-31: Add SNI requirement and clarify design rationale regarding minimizing round trips.
 
 - 2020-01-28: Clarify behavior regarding nonces and tolerance periods.
 

@@ -21,37 +21,44 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-**ClientSession**\
+**ClientSession**
+
 The driver object representing a client session and the operations that can be performed on it.
 
-**MongoClient**\
+**MongoClient**
+
 The root object of a driver's API. MAY be named differently in some drivers.
 
-**MongoCollection**\
-The driver object representing a collection and the operations that can be performed on it. MAY be
-named differently in some drivers.
+**MongoCollection**
 
-**MongoDatabase**\
-The driver object representing a database and the operations that can be performed on it. MAY be
-named differently in some drivers.
+The driver object representing a collection and the operations that can be performed on it. MAY be named differently in
+some drivers.
 
-**ServerSession**\
+**MongoDatabase**
+
+The driver object representing a database and the operations that can be performed on it. MAY be named differently in
+some drivers.
+
+**ServerSession**
+
 The driver object representing a server session.
 
-**Session**\
-A session is an abstract concept that represents a set of sequential operations executed by an application
-that are related in some way. This specification defines how sessions are used to implement snapshot reads.
+**Session**
 
-**Snapshot reads**\
-Reads with read concern level `snapshot` that occur outside of transactions on both the primary and
-secondary nodes, including in sharded clusters. Snapshots reads are majority committed reads.
+A session is an abstract concept that represents a set of sequential operations executed by an application that are
+related in some way. This specification defines how sessions are used to implement snapshot reads.
 
-**Snapshot timestamp**\
-Snapshot timestamp, representing timestamp of the first supported read operation (i.e.
-find/aggregate/distinct) in the session. The server creates a cursor in response to a snapshot find/aggregate command
-and reports `atClusterTime` within the `cursor` field in the response. For the distinct command the server adds a
-top-level `atClusterTime` field to the response. The `atClusterTime` field represents the timestamp of the read and is
-guaranteed to be majority committed.
+**Snapshot reads**
+
+Reads with read concern level `snapshot` that occur outside of transactions on both the primary and secondary nodes,
+including in sharded clusters. Snapshots reads are majority committed reads.
+
+**Snapshot timestamp**
+
+Snapshot timestamp, representing timestamp of the first supported read operation (i.e. find/aggregate/distinct) in the
+session. The server creates a cursor in response to a snapshot find/aggregate command and reports `atClusterTime` within
+the `cursor` field in the response. For the distinct command the server adds a top-level `atClusterTime` field to the
+response. The `atClusterTime` field represents the timestamp of the read and is guaranteed to be majority committed.
 
 ## Specification
 

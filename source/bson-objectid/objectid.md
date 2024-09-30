@@ -1,4 +1,4 @@
-# ObjectID format
+# BSON ObjectID
 
 - Status: Accepted
 - Minimum Server Version: N/A
@@ -126,14 +126,11 @@ Currently there is no full reference implementation yet.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
-- 2019-01-14: Clarify that the random numbers don't need to be cryptographically\
-  secure. Add a test to test that the
+- 2019-01-14: Clarify that the random numbers don't need to be cryptographically secure. Add a test to test that the
   unique value is different in forked processes.
 
-- 2018-10-11: Clarify that the *Timestamp* and *Counter* fields are big endian,\
-  and add the reason why.
+- 2018-10-11: Clarify that the *Timestamp* and *Counter* fields are big endian, and add the reason why.
 
-- 2018-07-02: Replaced Machine ID and Process ID fields with a single 5-byte\
-  unique value
+- 2018-07-02: Replaced Machine ID and Process ID fields with a single 5-byte unique value
 
 - 2018-05-22: Initial Release

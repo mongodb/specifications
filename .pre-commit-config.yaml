@@ -36,11 +36,6 @@ repos:
     name: generate-index
     entry: python3 scripts/generate_index.py
     language: system
-  - id: check-anchors
-    name: check-anchors
-    types: [markdown]
-    entry: bash scripts/check_anchors/check-anchors.sh
-    language: node
   - id: markdown-link-format-check
     name: markdown-link-format-check
     types: [markdown]

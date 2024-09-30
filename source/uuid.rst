@@ -1,4 +1,4 @@
 
 .. note::
   This specification has been converted to Markdown and renamed to
-  `uuid.md <uuid.md>`_.  
+  `uuid.md <bson-binary-uuid/uuid.md>`_.  

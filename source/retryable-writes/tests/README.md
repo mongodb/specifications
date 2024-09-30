@@ -67,7 +67,7 @@ allow the fail point to trigger on the second command.
 
 Drivers should also assert that command documents are properly constructed with or without a transaction ID, depending
 on whether the write operation is supported.
-[Command Logging and Monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) may be used to
+[Command Logging and Monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) may be used to
 check for the presence of a `txnNumber` field in the command document. Note that command documents may always include an
 `lsid` field per the [Driver Session](../../sessions/driver-sessions.md) specification.
 
@@ -301,40 +301,33 @@ debugger, code coverage tool, etc.
 
 - 2024-02-27: Convert legacy retryable writes tests to unified format.
 
-- 2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing\
-  execution of deprioritization code
-  paths.
+- 2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing execution of deprioritization code paths.
 
 - 2024-01-05: Fix typo in prose test title.
 
-- 2024-01-03: Note server version requirements for fail point options and revise\
-  tests to specify the `errorLabels`
+- 2024-01-03: Note server version requirements for fail point options and revise tests to specify the `errorLabels`
   option at the top-level instead of within `writeConcernError`.
 
 - 2023-08-26: Add prose tests for retrying in a sharded cluster.
 
-- 2022-08-30: Add prose test verifying correct error handling for errors with\
-  the NoWritesPerformed label, which is to
+- 2022-08-30: Add prose test verifying correct error handling for errors with the NoWritesPerformed label, which is to
   return the original error.
 
 - 2022-04-22: Clarifications to `serverless` and `useMultipleMongoses`.
 
-- 2021-08-27: Add `serverless` to `runOn`. Clarify behavior of\
-  `useMultipleMongoses` for `LoadBalanced` topologies.
+- 2021-08-27: Add `serverless` to `runOn`. Clarify behavior of `useMultipleMongoses` for `LoadBalanced` topologies.
 
 - 2021-04-23: Add `load-balanced` to test topology requirements.
 
 - 2021-03-24: Add prose test verifying `PoolClearedErrors` are retried.
 
-- 2019-10-21: Add `errorLabelsContain` and `errorLabelsContain` fields to\
-  `result`
+- 2019-10-21: Add `errorLabelsContain` and `errorLabelsContain` fields to `result`
 
 - 2019-08-07: Add Prose Tests section
 
 - 2019-06-07: Mention $merge stage for aggregate alongside $out
 
-- 2019-03-01: Add top-level `runOn` field to denote server version and/or\
-  topology requirements requirements for the
+- 2019-03-01: Add top-level `runOn` field to denote server version and/or topology requirements requirements for the
   test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now expressed within
   `runOn` elements.
 

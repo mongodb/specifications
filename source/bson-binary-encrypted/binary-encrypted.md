@@ -1,4 +1,4 @@
-# BSON Binary Subtype 6
+# BSON Binary Encrypted
 
 - Status: Accepted
 - Minimum Server Version: 4.2
@@ -10,7 +10,7 @@ ______________________________________________________________________
 Client side encryption requires a new binary subtype to store (1) encrypted ciphertext with metadata, and (2) binary
 markings indicating what values must be encrypted in a document. (1) is stored in the server, but (2) is only used in
 the communication protocol between libmongocrypt and mongocryptd described in
-[Driver Spec: Client Side Encryption Encryption](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/client-side-encryption.rst).
+[Driver Spec: Client Side Encryption Encryption](../client-side-encryption/client-side-encryption.md).
 
 ## META
 
@@ -84,8 +84,7 @@ struct {
 
 ## Test Plan
 
-Covered in
-[Driver Spec: Client Side Encryption Encryption](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/client-side-encryption.rst).
+Covered in [Driver Spec: Client Side Encryption Encryption](../client-side-encryption/client-side-encryption.md).
 
 ## Design Rationale
 
