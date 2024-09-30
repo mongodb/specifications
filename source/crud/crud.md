@@ -991,7 +991,7 @@ class InsertManyOptions {
   comment: Optional<any>;
 }
 
-class UpdateOneOptions {
+class UpdateOptions {
 
   /**
    * A set of filters specifying to which array elements an update should apply.
@@ -1080,85 +1080,6 @@ class UpdateOneOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   sort: Optional<Document>;
-}
-
-class UpdateManyOptions {
-
-  /**
-   * A set of filters specifying to which array elements an update should apply.
-   *
-   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   *
-   * @see https://www.mongodb.com/docs/manual/reference/command/update/
-   */
-  arrayFilters: Optional<Array<Document>>;
-
-  /**
-   * If true, allows the write to opt-out of document level validation.
-   *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   */
-  bypassDocumentValidation: Optional<Boolean>;
-
-  /**
-   * Specifies a collation.
-   *
-   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   *
-   * @see https://www.mongodb.com/docs/manual/reference/command/update/
-   */
-  collation: Optional<Document>;
-
-  /**
-   * The index to use. Specify either the index name as a string or the index key pattern.
-   * If specified, then the query system will only consider plans using the hinted index.
-   *
-   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-   *
-   * @see https://www.mongodb.com/docs/manual/reference/command/update/
-   */
-  hint: Optional<(String | Document)>;
-
-  /**
-   * When true, creates a new document if no document matches the query.
-   *
-   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   *
-   * @see https://www.mongodb.com/docs/manual/reference/command/update/
-   */
-  upsert: Optional<Boolean>;
-
-  /**
-   * Map of parameter names and values. Values must be constant or closed
-   * expressions that do not reference document fields. Parameters can then be
-   * accessed as variables in an aggregate expression context (e.g. "$$var").
-   *
-   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
-   *
-   * @see https://www.mongodb.com/docs/manual/reference/command/update/
-   */
-  let: Optional<Document>;
-
-  /**
-   * Enables users to specify an arbitrary comment to help trace the operation through
-   * the database profiler, currentOp and logs. The default is to not send a value.
-   *
-   * The comment can be any valid BSON type for server versions 4.4 and above.
-   * Server versions prior to 4.4 do not support comment for update command,
-   * and providing one will result in a server-side error.
-   */
-  comment: Optional<any>;
 }
 
 class ReplaceOptions {
