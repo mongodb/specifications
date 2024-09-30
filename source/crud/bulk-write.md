@@ -309,18 +309,16 @@ class BulkWriteOptions {
 ```typescript
 class BulkWriteResult {
     /**
-     * Indicates whether this write result was acknowledged. If not, then all other members of this
-     * result will be undefined.
+     * Indicates whether this write result was acknowledged.
      *
-     * NOT REQUIRED TO IMPLEMENT. See below for more guidance on modeling unacknowledged results.
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling unacknowledged results.
      */
     acknowledged: Boolean;
 
     /**
      * Indicates whether this result contains verbose results.
      *
-     * NOT REQUIRED TO IMPLEMENT. See below for other ways to differentiate summary results from
-     * verbose results.
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
     hasVerboseResults: Boolean;
 
@@ -351,16 +349,22 @@ class BulkWriteResult {
 
     /**
      * The results of each individual insert operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
     insertResults: Map<Index, InsertOneResult>;
 
     /**
      * The results of each individual update operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
     updateResults: Map<Index, UpdateResult>;
 
     /**
      * The results of each individual delete operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
     deleteResults: Map<Index, DeleteResult>;
 }
@@ -403,17 +407,37 @@ class DeleteResult {
 
 #### Unacknowledged results
 
-`BulkWriteResult` has an optional `acknowledged` field to indicate whether the result was acknowledged. This is not
-required to implement. Drivers should follow the guidance in the CRUD specification
+Users MUST be able to discern whether a `BulkWriteResult` contains acknowledged results without inspecting the
+configured write concern. Drivers should follow the guidance in the CRUD specification
 [here](../crud/crud.md#write-results) to determine how to model unacknowledged results.
+
+If drivers expose the `acknowledged` field, they MUST document what will happen if a user attempts to access a result
+value when `acknowledged` is `false` (e.g. an undefined value is returned or an error is thrown).
 
 #### Summary vs. verbose results
 
-The `insertResults`, `updateResults`, and `deleteResults` fields MUST only be populated when `verboseResults` was set to
-true in the call to `MongoClient.bulkWrite`. Drivers MAY embed these results in a class rather than including them as
-individual fields in the overall result:
+When a user does not set the `verboseResults` option to `true`, drivers MUST NOT populate the `insertResults`,
+`updateResults`, and `deleteResults` fields. Users MUST be able to discern whether a `BulkWriteResult` contains these
+verbose results without inspecting the value provided for `verboseResults` in `BulkWriteOptions`. Drivers can implement
+this in a number of ways, including:
+
+- Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document what will happen if a user
+  attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is false.
+  Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is false.
+- Embed the verbose results in an optional type:
 
 ```typescript
+class BulkWriteResult {
+    /**
+     * The results of each individual write operation that was successfully performed.
+     *
+     * This value will only be populated if the verboseResults option was set to true.
+     */ 
+    verboseResults: Optional<VerboseResults>;
+
+    ...rest of fields
+}
+
 class VerboseResults {
     /**
      * The results of each individual insert operation that was successfully performed.
@@ -432,14 +456,6 @@ class VerboseResults {
 }
 ```
 
-Users MUST be able to discern whether a `BulkWriteResult` contains summary or verbose results without inspecting the
-value provided for `verboseResults` in `BulkWriteOptions`. Drivers can implement this in a number of ways, including:
-
-- Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document that the verbose results will be
-  undefined when `hasVerboseResults` is false. Drivers MAY raise an error if a user attempts to access one of these
-  fields when `hasVerboseResults` is false.
-- Use optional types for the verbose results, and document that they will be unset when `verboseResults` was not set to
-  true.
 - Define separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `SummaryBulkWriteResult` MUST only
   contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
   fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult` otherwise.
