@@ -2474,7 +2474,7 @@ aforementioned allowance in the SemVer spec.
 
 ## Changelog
 
-- 2024-09-30: Add sort option to `replaceOne` and `updateOne`.
+- 2024-10-01: Add sort option to `replaceOne` and `updateOne`.
 
 - 2024-09-12: Specify that explain helpers support maxTimeMS.
 
