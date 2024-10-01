@@ -435,7 +435,7 @@ class BulkWriteResult {
      */ 
     verboseResults: Optional<VerboseResults>;
 
-    ...rest of fields
+    /* rest of fields */
 }
 
 class VerboseResults {
