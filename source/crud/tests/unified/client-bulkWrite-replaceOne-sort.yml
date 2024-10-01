@@ -7,41 +7,44 @@ runOnRequirements:
 
 createEntities:
   - client:
-      id: client0
+      id: &client0 client0
       observeEvents:
         - commandStartedEvent
         - commandSucceededEvent
   - database:
-      id: database0
-      client: client0
-      databaseName: crud-tests
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name crud-tests
   - collection:
-      id: collection0
-      database: database0
-      collectionName: coll0
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
 
 initialData:
-  - collectionName: coll0
-    databaseName: crud-tests
+  - collectionName: *collection0Name
+    databaseName: *database0Name
     documents:
       - { _id: 1, x: 11 }
       - { _id: 2, x: 22 }
       - { _id: 3, x: 33 }
 
+_yamlAnchors:
+  namespace: &namespace "crud-tests.coll0"
+
 tests:
   - description: client bulkWrite replaceOne with sort option
     operations:
-      - object: client0
+      - object: *client0
         name: clientBulkWrite
         arguments:
           models:
             - replaceOne:
-                namespace: crud-tests.coll0
+                namespace: *namespace
                 filter: { _id: { $gt: 1 } }
                 sort: { _id: -1 }
                 replacement: { x: 1 }
     expectEvents:
-      - client: client0
+      - client: *client0
         events:
           - commandStartedEvent:
               commandName: bulkWrite
@@ -56,7 +59,7 @@ tests:
                     multi: { $$unsetOrMatches: false }
                     upsert: { $$unsetOrMatches: false }
                 nsInfo:
-                  - ns: crud-tests.coll0
+                  - ns: *namespace
           - commandSucceededEvent:
               reply:
                 ok: 1
@@ -65,8 +68,8 @@ tests:
                 nModified: 1
               commandName: bulkWrite
     outcome:
-      - collectionName: coll0
-        databaseName: crud-tests
+      - collectionName: *collection0Name
+        databaseName: *database0Name
         documents:
           - { _id: 1, x: 11 }
           - { _id: 2, x: 22 }
