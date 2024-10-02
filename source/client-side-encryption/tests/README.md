@@ -3314,18 +3314,15 @@ and the [C driver tests](TODO) for how to configure failpoints.
 #### Setup
 
 1. Start a `mongod` process with **server version 4.2.0 or later**.
-2. Create a `MongoClient` for key vault operations.
-3. Create a `ClientEncryption` object (referred to as `client_encryption`) with `keyVaultNamespace` set to
+2. Start the failpoint KMS server with: `python -u kms_failpoint_server.py --port 9003`.
+3. Create a `MongoClient` for key vault operations.
+4. Create a `ClientEncryption` object (referred to as `client_encryption`) with `keyVaultNamespace` set to
    `keyvault.datakeys`.
 
 #### createDataKey
 
-1. Start a mock KMS server on port 9003 with
-   [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA file
-   and [expired.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem)
-   as a cert file.
-2. Configure the mock server to simulate two HTTP failures and two TCP failures.
-3. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+1. Configure the mock server to simulate two HTTP failures and two TCP failures.
+2. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
 
 ```javascript
 {
@@ -3349,12 +3346,12 @@ Repeat this test with the following providers and masterKeys:
 ```
 
 #### "gcp" provider
-   ```javascript
-   {
-      "projectId": "foo",
-      "location": "bar",
-      "keyRing": "baz",
-      "keyName": "qux",
-      "endpoint": "127.0.0.1:9003"
-   }
-   ```
+```javascript
+{
+   "projectId": "foo",
+   "location": "bar",
+   "keyRing": "baz",
+   "keyName": "qux",
+   "endpoint": "127.0.0.1:9003"
+}
+```
