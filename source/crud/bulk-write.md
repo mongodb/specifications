@@ -614,6 +614,11 @@ returned. This field is optional and defaults to false on the server.
 value for `verboseResults`, drivers MUST define `errorsOnly` as the opposite of `verboseResults`. If the user did not
 specify a value for `verboseResults`, drivers MUST define `errorsOnly` as `true`.
 
+Drivers MUST return a client-side error if `verboseResults` is true with an unacknowledged write concern containing the
+following message:
+
+> Cannot request unacknowledged write concern and verbose results
+
 ### `ordered`
 
 The `ordered` field defines whether writes should be executed in the order in which they were specified, and, if an
@@ -621,6 +626,11 @@ error occurs, whether the server should halt execution of further writes. It is 
 server. Drivers MUST explicitly define `ordered` as `true` in the `bulkWrite` command if a value is not specified in
 `BulkWriteOptions`. This is required to avoid inconsistencies between server and driver behavior if the server default
 changes in the future.
+
+Drivers MUST return a client-side error if `ordered` is true (including when default is applied) with an unacknowledged
+write concern containing the following message:
+
+> Cannot request unacknowledged write concern and ordered writes
 
 ### Size Limits
 
