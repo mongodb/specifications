@@ -109,7 +109,7 @@ ______________________________________________________________________
 
 #### Representation of Non-finite Numeric Values
 
-Following the [Extended JSON format for the Decimal128 type](./bson-decimal128/decimal128.md#to-string-representation),
+Following the [Extended JSON format for the Decimal128 type](../bson-decimal128/decimal128.md#to-string-representation),
 non-finite numeric values are encoded as follows:
 
 | **Value**          | **String**  |
@@ -172,8 +172,8 @@ or:
 { "zipCode" : { $type : "string" } }
 ```
 
-A parser SHOULD support at least 200 \[levels of nesting\](#levels of nesting) in an Extended JSON document but MAY set
-other limits on strings it can accept as defined in [section 9](https://tools.ietf.org/html/rfc7159#section-9) of the
+A parser SHOULD support at least 200 levels of nesting in an Extended JSON document but MAY set other limits on strings
+it can accept as defined in [section 9](https://tools.ietf.org/html/rfc7159#section-9) of the
 [JSON specification](https://tools.ietf.org/html/rfc7159).
 
 When parsing a JSON object other than the top-level object, the presence of a `$`-prefixed key indicates the object
@@ -217,10 +217,9 @@ parsing JSON numbers:
 
 #### Special rules for parsing `$uuid` fields
 
-As per the [UUID specification](https://github.com/mongodb/specifications/blob/master/source/uuid.rst), Binary subtype 3
-or 4 are used to represent UUIDs in BSON. Consequently, UUIDs are handled as per the convention described for the
-`Binary` type in the [Conversion table](#conversion-table), e.g. the following document written with the MongoDB Python
-Driver:
+As per the [UUID specification](../bson-binary-uuid/uuid.md), Binary subtype 3 or 4 are used to represent UUIDs in BSON.
+Consequently, UUIDs are handled as per the convention described for the `Binary` type in the
+[Conversion table](#conversion-table), e.g. the following document written with the MongoDB Python Driver:
 
 ```javascript
 {"Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
@@ -239,8 +238,7 @@ is transformed into the following (newlines and spaces added for readability):
 
 > [!NOTE]
 > The above described type conversion assumes that UUID representation is set to `STANDARD`. See the
-> [UUID specification](https://github.com/mongodb/specifications/blob/master/source/uuid.rst) for more information about
-> UUID representations.
+> [UUID specification](../bson-binary-uuid/uuid.md) for more information about UUID representations.
 
 While this transformation preserves BSON subtype information (since UUIDs can be represented as BSON subtype 3 *or* 4),
 base64-encoding is not the standard way of representing UUIDs and using it makes comparing these values against textual
@@ -322,7 +320,7 @@ exception of the DBRef convention, which is accounted for in this spec).
 ## Test Plan
 
 Drivers, tools, and libraries can test their compliance to this specification by running the tests in version 2.0 and
-above of the [BSON Corpus Test Suite](./bson-corpus/bson-corpus.md).
+above of the [BSON Corpus Test Suite](../bson-corpus/bson-corpus.md).
 
 ## Examples
 
@@ -603,13 +601,17 @@ If a BSON type fell into category (3), above, this specification creates a type 
 following new Extended JSON type wrappers are introduced by this spec:
 
 - `$dbPointer`- See above.
+
 - `$numberInt` - This is used to preserve the "int32" BSON type in Canonical Extended JSON. Without using `$numberInt`,
   this type will be indistinguishable from a double in certain languages where the distinction does not exist, such as
   Javascript.
+
 - `$numberDouble` - This is used to preserve the `double`type in Canonical Extended JSON, as some JSON generators might
-  omit a trailing ".0" for integral types.\
-  It also supports representing non-finite values like NaN or Infinity which
-  are prohibited in the JSON specification for numbers.
+  omit a trailing ".0" for integral types.
+
+  It also supports representing non-finite values like NaN or Infinity which are prohibited in the JSON specification
+  for numbers.
+
 - `$symbol` - The use of the `$symbol` key preserves the symbol type in Canonical Extended JSON, distinguishing it from
   JSON strings.
 
@@ -646,34 +648,36 @@ This specification will need to be amended if future BSON types are added to the
 
 ## Q&A
 
-**Q**. Why was version 2 of the spec necessary? **A**. After Version 1 was released, several stakeholders raised
-concerns that not providing an option to output BSON numbers as ordinary JSON numbers limited the utility of Extended
-JSON for common historical uses. We decided to provide a second format option and more clearly distinguish the use cases
-(and limitations) inherent in each format.
+**Q**. Why was version 2 of the spec necessary?
+
+**A**. After Version 1 was released, several stakeholders raised concerns that not providing an option to output BSON
+numbers as ordinary JSON numbers limited the utility of Extended JSON for common historical uses. We decided to provide
+a second format option and more clearly distinguish the use cases (and limitations) inherent in each format.
 
 **Q**. My BSON parser doesn't distinguish every BSON type. Does my Extended JSON generator need to distinguish these
-types?\
-**A**. No. Some BSON parsers do not emit a unique type for each BSON type, making round-tripping BSON through
-such libraries impossible without changing the document. For example, a `DBPointer` will be parsed into a `DBRef` by
-PyMongo. In such cases, a generator must emit the Extended JSON form for whatever type the BSON parser emitted. It does
-not need to preserve type information when that information has been lost by the BSON parser.
+types?
+
+**A**. No. Some BSON parsers do not emit a unique type for each BSON type, making round-tripping BSON through such
+libraries impossible without changing the document. For example, a `DBPointer` will be parsed into a `DBRef` by PyMongo.
+In such cases, a generator must emit the Extended JSON form for whatever type the BSON parser emitted. It does not need
+to preserve type information when that information has been lost by the BSON parser.
 
 **Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON regular
 expressions were represented with `$regex`, handle parsing of extended JSON test representing a MongoDB query filter
-containing the `$regex` operator?\
-**A**. An implementation can handle this in a number of ways: - Introduce an
-enumeration that determines the behavior of the parser. If the value is LEGACY, it will parse `$regex`and not treat
-`$regularExpression` specially, and if the value is CANONICAL, it will parse `$regularExpression` and not treat `$regex`
-specially. - Support both legacy and canonical forms in the parser without requiring the application to specify one or
-the other. Making that work for the `$regex` query operator use case will require that the rules set forth in the 1.0.0
-version of this specification are followed for `$regex`; specifically, that a document with a `$regex` key whose value
-is a JSON object should be parsed as a normal document and not reported as an error.
+containing the `$regex` operator?
 
-**Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON binary
-values were represented like `{"$binary": "AQIDBAU=", "$type": "80"}`, handle parsing of extended JSON test representing
-a MongoDB query filter containing the `$type`operator?\
-**A**. An implementation can handle this in a number of ways:\
-\-
+**A**. An implementation can handle this in a number of ways: - Introduce an enumeration that determines the behavior of
+the parser. If the value is LEGACY, it will parse `$regex`and not treat `$regularExpression` specially, and if the value
+is CANONICAL, it will parse `$regularExpression` and not treat `$regex` specially. - Support both legacy and canonical
+forms in the parser without requiring the application to specify one or the other. Making that work for the `$regex`
+query operator use case will require that the rules set forth in the 1.0.0 version of this specification are followed
+for `$regex`; specifically, that a document with a `$regex` key whose value is a JSON object should be parsed as a
+normal document and not reported as an error.
+
+## **Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON binary values were represented like `{"$binary": "AQIDBAU=", "$type": "80"}`, handle parsing of extended JSON test representing a MongoDB query filter containing the `$type`operator?
+
+**A**. An implementation can handle this in a number of ways:
+
 Introduce an enumeration that determines the behavior of the parser. If the value is LEGACY, it will parse the new
 binary form and not treat the legacy one specially, and if the value is CANONICAL, it will parse the new form and not
 treat the legacy form specially. - Support both legacy and canonical forms in the parser without requiring the
@@ -682,8 +686,8 @@ rules set forth in the 1.0.0 version of this specification are followed for `$ty
 a `$type` key whose value is an integral type, or a document with a `$type` key but without a `$binary` key, should be
 parsed as a normal document and not reported as an error.
 
-**Q**. Sometimes I see the term "extjson" used in other specifications. Is "extjson" related to this
-specification?\
+**Q**. Sometimes I see the term "extjson" used in other specifications. Is "extjson" related to this specification?
+
 **A**. Yes, "extjson" is short for "Extended JSON".
 
 ### Changelog
@@ -701,7 +705,7 @@ specification?\
   - Added support for parsing `$uuid` fields as BSON Binary subtype 4.
   - Changed the example to using the MongoDB Python Driver. It previously used the MongoDB Java Driver. The new example
     excludes the following BSON types that are unsupported in Python - `Symbol`,`SpecialFloat`,`DBPointer`, and
-    `Undefined`. Transformations for these types are now only documented in the `Conversion table`\_.
+    `Undefined`. Transformations for these types are now only documented in the [Conversion table](#conversion-table)
 - 2017-07-20:
   - Bumped specification to version 2.0.
   - Added "Relaxed" format.
@@ -714,7 +718,7 @@ specification?\
   - Clarified parser and generator rules.
 - 2017-02-01: Initial specification version 1.0.
 
-[^1]: This MUST conform to the [Decimal128 specification](./bson-decimal128/decimal128.md#writing-to-extended-json)
+[^1]: This MUST conform to the [Decimal128 specification](../bson-decimal128/decimal128.md#writing-to-extended-json)
 
 [^2]: BSON Regular Expression options MUST be in alphabetical order.
 

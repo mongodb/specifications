@@ -59,7 +59,7 @@ Using a 5.0+ server, create a collection with
 }
 ```
 
-Enable [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) to observe
+Enable [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) to observe
 CommandSucceededEvents. Then, insert an invalid document (e.g. `{x: 1}`) and assert that a WriteError occurs, that its
 code is `121` (i.e. DocumentValidationFailure), and that its `details` property is accessible. Additionally, assert that
 a CommandSucceededEvent was observed and that the `writeErrors[0].errInfo` field in the response document matches the
@@ -70,10 +70,10 @@ WriteError's `details` property.
 Test that `MongoClient.bulkWrite` properly handles `writeModels` inputs containing a number of writes greater than
 `maxWriteBatchSize`.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
 response. Then, construct the following write model (referred to as `model`):
 
@@ -98,10 +98,10 @@ command. Assert that the length of `firstEvent.command.ops` is `maxWriteBatchSiz
 Test that `MongoClient.bulkWrite` properly handles a `writeModels` input which constructs an `ops` array larger than
 `maxMessageSizeBytes`.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the following values from the response:
 `maxBsonObjectSize` and `maxMessageSizeBytes`. Then, construct the following document (referred to as `document`):
 
@@ -137,10 +137,10 @@ driver exposes `operationId`s in its CommandStartedEvents, assert that `firstEve
 
 Test that `MongoClient.bulkWrite` properly collects and reports `writeConcernError`s returned in separate batches.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
 response. Then, configure the following fail point with `client`:
 
@@ -182,10 +182,10 @@ Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
 
 Test that `MongoClient.bulkWrite` handles individual write errors across batches for ordered and unordered bulk writes.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
 response.
 
@@ -237,10 +237,10 @@ Assert that one CommandStartedEvent was observed for the `bulkWrite` command.
 
 Test that `MongoClient.bulkWrite` properly iterates the results cursor when `getMore` is required.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
 response.
 
@@ -276,10 +276,11 @@ Assert that a CommandStartedEvent was observed for the `getMore` command.
 Test that `MongoClient.bulkWrite` executed within a transaction properly iterates the results cursor when `getMore` is
 required.
 
-This test must only be run on 8.0+ servers. This test must not be run against standalone servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test must not be run
+against standalone servers.
 
 Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
 response.
 
@@ -318,10 +319,10 @@ Assert that a CommandStartedEvent was observed for the `getMore` command.
 
 Test that `MongoClient.bulkWrite` properly handles a failure that occurs when attempting a `getMore`.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the
 response. Then, configure the following fail point with `client`:
 
@@ -369,7 +370,7 @@ Assert that a CommandStartedEvent was observed for the `killCursors` command.
 
 ### 10. `MongoClient.bulkWrite` returns error for unacknowledged too-large insert
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`).
 
@@ -423,14 +424,14 @@ Expect a client-side error due the size.
 Test that `MongoClient.bulkWrite` batch splits a bulk write when the addition of a new namespace to `nsInfo` causes the
 size of the message to exceed `maxMessageSizeBytes - 1000`.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Repeat the following setup for each test case:
 
 ### Setup
 
 Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.rst) enabled to observe
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
 CommandStartedEvents. Perform a `hello` command using `client` and record the following values from the response:
 `maxBsonObjectSize` and `maxMessageSizeBytes`.
 
@@ -603,8 +604,8 @@ remainingBulkWriteBytes = maxMessageSizeBytes - 1122
 Test that `MongoClient.bulkWrite` returns an error if an operation provided exceeds `maxMessageSizeBytes` such that an
 empty `ops` payload would be sent.
 
-This test must only be run on 8.0+ servers. This test may be skipped by drivers that are not able to construct
-arbitrarily large documents.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test may be skipped by
+drivers that are not able to construct arbitrarily large documents.
 
 Construct a `MongoClient` (referred to as `client`). Perform a `hello` command using `client` and record the
 `maxMessageSizeBytes` value contained in the response.
@@ -649,7 +650,7 @@ This test is expected to be removed when [DRIVERS-2888](https://jira.mongodb.org
 
 Test that `MongoClient.bulkWrite` returns an error if the client has auto-encryption configured.
 
-This test must only be run on 8.0+ servers.
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
 Construct a `MongoClient` (referred to as `client`) configured with the following `AutoEncryptionOpts`:
 
@@ -676,3 +677,19 @@ InsertOne {
 
 Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned. Assert that
 `error` is a client error containing the message: "bulkWrite does not currently support automatic encryption".
+
+### 14. `explain` helpers allow users to specify `maxTimeMS`
+
+Drivers that provide multiple APIs to specify explain should ensure this test is run at least once with each distinct
+API. For example, the Node driver runs this test with option API (`collection.find({}, { explain: ... })`) and the
+fluent API (`collection.find({}).explain(...)`).
+
+Create a MongoClient with command monitoring enabled (referred to as `client`).
+
+Create a collection, referred to as `collection`, with the namespace `explain-test.collection`.
+
+Run an explained find on `collection`. The find will have the query predicate `{ name: 'john doe' }`. Specify a
+maxTimeMS value of 2000ms for the `explain`.
+
+Obtain the command started event for the explain. Confirm that the top-level explain command should has a `maxTimeMS`
+value of `2000`.

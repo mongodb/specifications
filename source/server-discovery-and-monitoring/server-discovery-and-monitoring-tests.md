@@ -2,7 +2,7 @@
 
 - Status: Accepted
 
-\- Minimum Server Version: 2.4 See also the YAML test files and their accompanying README in the "tests" directory.
+- Minimum Server Version: 2.4 See also the YAML test files and their accompanying README in the "tests" directory.
 
 ______________________________________________________________________
 

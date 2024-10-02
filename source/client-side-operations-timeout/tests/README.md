@@ -314,7 +314,9 @@ error occurs.
 
 ### 6. GridFS - Upload
 
-Tests in this section MUST only be run against server versions 4.4 and higher.
+Tests in this section MUST only be run against server versions 4.4 and higher. Drivers SHOULD apply
+[useMultipleMongoses=false](../../unified-test-format/unified-test-format.md#entity) as described in the unified test
+format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
 
 #### uploads via openUploadStream can be timed out
 
@@ -329,12 +331,12 @@ Tests in this section MUST only be run against server versions 4.4 and higher.
        data: {
            failCommands: ["insert"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) with `timeoutMS=10`.
+3. Create a new MongoClient (referred to as `client`) with `timeoutMS=150`.
 
 4. Using `client`, create a GridFS bucket (referred to as `bucket`) that wraps the `db` database.
 
@@ -364,12 +366,12 @@ This test only applies to drivers that provide an API to abort a GridFS upload s
        data: {
            failCommands: ["delete"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) with `timeoutMS=10`.
+3. Create a new MongoClient (referred to as `client`) with `timeoutMS=150`.
 
 4. Using `client`, create a GridFS bucket (referred to as `bucket`) that wraps the `db` database with
    `chunkSizeBytes=2`.
@@ -387,7 +389,9 @@ This test only applies to drivers that provide an API to abort a GridFS upload s
 
 ### 7. GridFS - Download
 
-This test MUST only be run against server versions 4.4 and higher.
+This test MUST only be run against server versions 4.4 and higher. Drivers SHOULD apply
+[useMultipleMongoses=false](../../unified-test-format/unified-test-format.md#entity) as described in the unified test
+format when testing on sharded clusters to ensure failpoint are hit by only using one mongos.
 
 1. Using `internalClient`, drop and re-create the `db.fs.files` and `db.fs.chunks` collections.
 
@@ -411,7 +415,7 @@ This test MUST only be run against server versions 4.4 and higher.
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) with `timeoutMS=10`.
+3. Create a new MongoClient (referred to as `client`) with `timeoutMS=150`.
 
 4. Using `client`, create a GridFS bucket (referred to as `bucket`) that wraps the `db` database.
 
@@ -429,7 +433,7 @@ This test MUST only be run against server versions 4.4 and higher.
        data: {
            failCommands: ["find"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
@@ -524,7 +528,7 @@ and password).
 This test MUST only be run against replica sets and sharded clusters with server version 4.4 or higher. It MUST be run
 three times: once with the timeout specified via the MongoClient `timeoutMS` option, once with the timeout specified via
 the ClientSession `defaultTimeoutMS` option, and once more with the timeout specified via the `timeoutMS` option for the
-`endSession` operation. In all cases, the timeout MUST be set to 10 milliseconds.
+`endSession` operation. In all cases, the timeout MUST be set to 150 milliseconds.
 
 1. Using `internalClient`, drop the `db.coll` collection.
 
@@ -537,7 +541,7 @@ the ClientSession `defaultTimeoutMS` option, and once more with the timeout spec
        data: {
            failCommands: ["abortTransaction"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
@@ -555,7 +559,7 @@ the ClientSession `defaultTimeoutMS` option, and once more with the timeout spec
 
 5. Using `session`, execute `session.end_session`
 
-   - Expect this to fail with a timeout error after no more than 15ms.
+   - Expect this to fail with a timeout error after no more than 150ms.
 
 ### 10. Convenient Transactions
 
@@ -574,12 +578,12 @@ Tests in this section MUST only run against replica sets and sharded clusters wi
        data: {
            failCommands: ["insert", "abortTransaction"],
            blockConnection: true,
-           blockTimeMS: 15
+           blockTimeMS: 200
        }
    }
    ```
 
-3. Create a new MongoClient (referred to as `client`) configured with `timeoutMS=10` and an explicit ClientSession
+3. Create a new MongoClient (referred to as `client`) configured with `timeoutMS=150` and an explicit ClientSession
    derived from that MongoClient (referred to as `session`).
 
 4. Using `session`, execute a `withTransaction` operation with the following callback:
@@ -600,7 +604,7 @@ Tests in this section MUST only run against replica sets and sharded clusters wi
 
 ### 11. Multi-batch bulkWrites
 
-This test MUST only run against server versions 8.0+.
+This test MUST only run against server versions 8.0+. This test must be skipped on Atlas Serverless.
 
 1. Using `internalClient`, drop the `db.coll` collection.
 

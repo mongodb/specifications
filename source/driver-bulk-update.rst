@@ -100,7 +100,7 @@ https://github.com/mongodb/mongo/blob/master/src/mongo/shell/bulk_api.js
 
 If you need more information about the actual write command you can find the specification at the following location
 
-https://github.com/mongodb/specifications/blob/master/source/server_write_commands.rst
+server_write_commands.md
 
 Modes of Execution
 ------------------

@@ -128,7 +128,7 @@ During command construction, the LoadBalancer server MUST be treated like a mong
 
 In the case of the driver having the `loadBalanced=true` connection string option specified, every pooled connection
 MUST add a `loadBalanced` field to the - Code:`hello` command in its
-[handshake](../mongodb-handshake/handshake.rst#connection-handshake). The value of the field MUST be `true`. If
+[handshake](../mongodb-handshake/handshake.md#connection-handshake). The value of the field MUST be `true`. If
 `loadBalanced=true` is specified then the `OP_MSG` protocol MUST be used for all steps of the connection handshake.
 
 Example:

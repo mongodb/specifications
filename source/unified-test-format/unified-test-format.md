@@ -26,14 +26,14 @@ guidance on writing test files. This is discussed in more detail in [Design Rati
 This test format can be used to define tests for the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst)
+- [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md)
 - [CRUD](../crud/crud.md)
 - [GridFS](../gridfs/gridfs-spec.md)
 - [Retryable Reads](../retryable-reads/retryable-reads.md)
 - [Retryable Writes](../retryable-writes/retryable-writes.md)
 - [Sessions](../sessions/driver-sessions.md)
 - [Transactions](../transactions/transactions.md)
-- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
+- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.md)
 - [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md)
 
 This is not an exhaustive list. Specifications that are known to not be supported by this format may be discussed under
@@ -488,8 +488,8 @@ The structure of this object is as follows:
   - `ignoreCommandMonitoringEvents`: Optional array of one or more strings. Command names for which the test runner MUST
     ignore any observed command monitoring events. The command(s) will be ignored in addition to `configureFailPoint`
     and any commands containing sensitive information (per the
-    [Command Logging and Monitoring](../command-logging-and-monitoring/command-monitoring.rst#security) spec) unless
-    `observeSensitiveCommands` is true.
+    [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#security) spec)
+    unless `observeSensitiveCommands` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring events are specified in
     [observeEvents](#entity_client_observeEvents).
@@ -497,11 +497,11 @@ The structure of this object is as follows:
   <span id="entity_client_observeSensitiveCommands"></span>
 
   - `observeSensitiveCommands`: Optional boolean. If true, events associated with sensitive commands (per the
-    [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security)
-    spec) will be observed for this client. Note that the command and replies for such events will already have been
-    redacted by the driver. If false or not specified, events for commands containing sensitive information MUST be
-    ignored. Authentication SHOULD be disabled when this property is true, i.e. [auth](#runOnRequirement_auth) should be
-    false for each `runOnRequirement`. See [rationale_observeSensitiveCommands](#rationale_observeSensitiveCommands).
+    [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#security) spec)
+    will be observed for this client. Note that the command and replies for such events will already have been redacted
+    by the driver. If false or not specified, events for commands containing sensitive information MUST be ignored.
+    Authentication SHOULD be disabled when this property is true, i.e. [auth](#runOnRequirement_auth) should be false
+    for each `runOnRequirement`. See [rationale_observeSensitiveCommands](#rationale_observeSensitiveCommands).
 
   <span id="entity_client_storeEventsAsEntities"></span>
 
@@ -668,7 +668,7 @@ The structure of this object is as follows:
 - `id`: Required string. Unique name for this entity.
 - `events`: Required array of one or more strings, which denote the events to be collected. Currently, only the
   following [CMAP](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md) and
-  [command monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst) events MUST be supported:
+  [command monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) events MUST be supported:
   - PoolCreatedEvent
   - PoolReadyEvent
   - PoolClearedEvent
@@ -721,7 +721,7 @@ The structure of this object is as follows:
 
 - `deprecationErrors`: Optional boolean.
 
-See the [Stable API](../versioned-api/versioned-api.rst) spec for more details on these fields.
+See the [Stable API](../versioned-api/versioned-api.md) spec for more details on these fields.
 
 #### collectionData
 
@@ -969,9 +969,9 @@ The structure of each object is as follows:
 - `client`: Required string. Client entity on which the events are expected to be observed. See
   [commonOptions_client](#commonOptions_client).
 - `eventType`: Optional string. Specifies the type of the monitor which captured the events. Valid values are `command`
-  for [Command Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#events-api) events,
+  for [Command Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) events,
   `cmap` for [CMAP](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) events, and `sdam`
-  for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  for [SDAM](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   events. Defaults to `command` if omitted.
 - `events`: Required array of [expectedEvent](#expectedevent) objects. List of events, which are expected to be observed
   (in this order) on the corresponding client while executing [operations](#test_operations). If the array is empty, the
@@ -1005,7 +1005,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandStartedEvent"></span>
 
 - `commandStartedEvent`: Optional object. Assertions for one or more
-  [CommandStartedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
+  [CommandStartedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) fields.
 
   The structure of this object is as follows:
 
@@ -1021,7 +1021,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandSucceededEvent"></span>
 
 - `commandSucceededEvent`: Optional object. Assertions for one or more
-  [CommandSucceededEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
+  [CommandSucceededEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) fields.
 
   The structure of this object is as follows:
 
@@ -1037,7 +1037,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_commandFailedEvent"></span>
 
 - `commandFailedEvent`: Optional object. Assertions for one or more
-  [CommandFailedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.rst#api) fields.
+  [CommandFailedEvent](../command-logging-and-monitoring/command-logging-and-monitoring.md#events-api) fields.
 
   The structure of this object is as follows:
 
@@ -1129,7 +1129,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverDescriptionChangedEvent"></span>
 
 - `serverDescriptionChangedEvent`: Optional object. Assertions for one or more
-  [ServerDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1150,7 +1150,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatStartedEvent"></span>
 
 - `serverHeartbeatStartedEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatStartedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerHeartbeatStartedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1160,7 +1160,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatSucceededEvent"></span>
 
 - `serverHeartbeatSucceededEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatSucceededEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerHeartbeatSucceededEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1170,7 +1170,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_serverHeartbeatFailedEvent"></span>
 
 - `serverHeartbeatFailedEvent`: Optional object. Assertions for one or more
-  [ServerHeartbeatFailedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [ServerHeartbeatFailedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   fields.
 
   The structure of this object is as follows:
@@ -1180,7 +1180,7 @@ The structure of this object is as follows:
 <span id="expectedEvent_topologyDescriptionChangedEvent"></span>
 
 - `topologyDescriptionChangedEvent`: Optional object. Assertions for one
-  [TopologyDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events)
+  [TopologyDescriptionChangedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
   object.
 
   The structure of this object is as follows:
@@ -1241,21 +1241,21 @@ The structure of each object is as follows:
   `false`, observed logs after all specified logs have matched MUST cause a test failure; if `true`, observed logs after
   all specified logs have been matched MUST NOT cause a test failure. Defaults to `false`.
 
+<span id="expectedLogMessage"></span>
+
 #### expectedLogMessage
 
 A log message which is expected to be observed while executing the test's operations.
 
 The structure of each object is as follows:
 
-- `level`: Required string. This MUST be one of the level names listed
-  in\
-  [log severity levels](logging/logging.rst#log-severity-levels). This specifies the expected level for the log
+- `level`: Required string. This MUST be one of the level names listed in
+  [log severity levels](../logging/logging.md#log-severity-levels). This specifies the expected level for the log
   message and corresponds to the level used for the message in the specification that defines it. Note that since not
   all drivers will necessarily support all log levels, some driver may need to map the specified level to the
   corresponding driver-supported level. Test runners MUST assert that the actual level matches this value.
 
-- `component`: Required string. This MUST be one of the component names listed\
-  in
+- `component`: Required string. This MUST be one of the component names listed in
   [components](../logging/logging.md#components). This specifies the expected component for the log message. Note that
   since naming variations are permitted for components, some drivers may need to map this to a corresponding
   language-specific component name. Test runners MUST assert that the actual component matches this value.
@@ -1265,7 +1265,7 @@ The structure of each object is as follows:
 
   When `failureIsRedacted` is present and its value is `true`, the test runner MUST assert that a failure is present and
   that the failure has been redacted according to the rules defined for error redaction in the
-  [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security).
+  [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.md#security).
 
   When `false`, the test runner MUST assert that a failure is present and that the failure has NOT been redacted.
 
@@ -1299,7 +1299,7 @@ The structure of this object is as follows:
 This section defines the structure of common options that are referenced from various contexts in the test format.
 Comprehensive documentation for some of these types and their parameters may be found in the following specifications:
 
-- [Read and Write Concern](../read-write-concern/read-write-concern.rst).
+- [Read and Write Concern](../read-write-concern/read-write-concern.md).
 - [Server Selection: Read Preference](../server-selection/server-selection.md#read-preference).
 - [Server Discovery and Monitoring: TopologyDescription](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#topologydescription).
 
@@ -1428,7 +1428,7 @@ evaluated consistently.
 These operations and their arguments may be documented in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [Enumerating Databases](../enumerate-databases.md)
+- [Enumerating Databases](../enumerate-databases/enumerate-databases.md)
 
 Client operations that require special handling or are not documented by an existing specification are described below.
 
@@ -1542,7 +1542,7 @@ These operations and their arguments may be documented in the following specific
 
 - [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.md)
-- [Enumerating Collections](../enumerate-collections.md)
+- [Enumerating Collections](../enumerate-collections/enumerate-collections.md)
 
 Database operations that require special handling or are not documented by an existing specification are described
 below.
@@ -1588,7 +1588,7 @@ The following arguments are supported:
 
 #### runCursorCommand
 
-[Generic cursor returning command runner](../run-command/run-command.rst).
+[Generic cursor returning command runner](../run-command/run-command.md).
 
 This method does not inherit a read preference (per the
 [Server Selection](../server-selection/server-selection.md#use-of-read-preferences-with-commands) spec); however,
@@ -1799,7 +1799,7 @@ This operation SHOULD NOT be used in test files. See [collection_createChangeStr
 
 These operations and their arguments may be documented in the following specifications:
 
-- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.rst)
+- [Convenient API for Transactions](../transactions-convenient-api/transactions-convenient-api.md)
 - [Driver Sessions](../sessions/driver-sessions.md)
 
 Session operations that require special handling or are not documented by an existing specification are described below.
@@ -1888,10 +1888,11 @@ first position (e.g. `rewind` in PHP).
 Iterates the cursor until either a single document is returned or an error is raised. This operation takes no arguments.
 If [expectResult](#operation_expectResult) is specified, it SHOULD be a single document.
 
-Some specification sections (e.g. [Iterating the Change Stream](../change-streams/tests#iterating-the-change-stream))
-caution drivers that implement a blocking mode of iteration (e.g. asynchronous drivers) not to iterate the cursor
-unnecessarily, as doing so could cause the test runner to block indefinitely. This should not be a concern for
-`iterateUntilDocumentOrError` as iteration only continues until either a document or error is encountered.
+Some specification sections (e.g.
+[Iterating the Change Stream](../change-streams/tests/README.md#iterating-the-change-stream)) caution drivers that
+implement a blocking mode of iteration (e.g. asynchronous drivers) not to iterate the cursor unnecessarily, as doing so
+could cause the test runner to block indefinitely. This should not be a concern for `iterateUntilDocumentOrError` as
+iteration only continues until either a document or error is encountered.
 
 #### iterateOnce
 
@@ -2633,7 +2634,7 @@ Note: the test runner is not required to validate the type or value of a `$$plac
 ### Evaluating Matches
 
 Expected values in tests (e.g. [operation.expectResult](#operation_expectResult)) are expressed as either relaxed or
-canonical [Extended JSON](../extended-json.md).
+canonical [Extended JSON](../extended-json/extended-json.md).
 
 The algorithm for matching expected and actual values is specified with the following pseudo-code:
 
@@ -2679,7 +2680,7 @@ The rules for comparing documents and arrays are discussed in more detail in sub
 *other* than documents and arrays, test runners MAY adopt any of the following approaches to compare expected and actual
 values, as long as they are consistent:
 
-- Convert both values to relaxed or canonical [Extended JSON](../extended-json.md) and compare strings
+- Convert both values to relaxed or canonical [Extended JSON](../extended-json/extended-json.md) and compare strings
 - Convert both values to BSON, and compare bytes
 - Convert both values to native representations, and compare accordingly
 
@@ -3014,9 +3015,9 @@ tests.
 
 The instructions in this section apply for each test file loaded by the test runner.
 
-Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](../extended-json.md) parser.
-The parser MUST accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.md#parsers)),
-as test files may use either.
+Test files, which may be YAML or JSON files, MUST be interpreted using an
+[Extended JSON](../extended-json/extended-json.md) parser. The parser MUST accept relaxed and canonical Extended JSON
+(per [Extended JSON: Parsers](../extended-json/extended-json.md#parsers)), as test files may use either.
 
 Upon loading a file, the test runner MUST read the [schemaVersion](#schemaVersion) field and determine if the test file
 can be processed further. Test runners MAY support multiple versions and MUST NOT process incompatible files (as
@@ -3089,7 +3090,7 @@ For each client with command monitoring enabled, the test runner MUST ignore eve
 - Any `configureFailPoint` commands executed for [failPoint](#failpoint) and [targetedFailPoint](#targetedfailpoint)
   operations.
 - Any commands containing sensitive information (per the
-  [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst#security) spec)
+  [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md#security) spec)
   unless [observeSensitiveCommands](#entity_client_observeSensitiveCommands) is true. Note that drivers will redact
   commands and replies for sensitive commands. For `hello` and legacy hello, which are conditionally sensitive based on
   the presence of a `speculativeAuthenticate` field, the test runner may need to infer that the events are sensitive
@@ -3364,7 +3365,7 @@ db.adminCommand({
   labels. An empty array may be used to suppress the server from adding error labels to the response. New in server
   4.3.1 ([SERVER-43941](https://jira.mongodb.org/browse/SERVER-43941)).
 - `appName`: Optional string, which is unset by default. If set, the fail point will only apply to connections for
-  MongoClients created with this `appname`. New in server 4.4.0-rc2
+  MongoClients created with this `appname`. New in server 4.4.0-rc2 and backported to 4.2.9
   ([SERVER-47195](https://jira.mongodb.org/browse/SERVER-47195)).
 - `blockConnection`: Optional boolean, which defaults to `false`. If `true`, the server should block the affected
   commands for `blockTimeMS`. New in server 4.3.4 and backported to 4.2.9
@@ -3488,15 +3489,18 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- 2024-05-08: **Schema version 1.21.**\
-  Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the
-  client-level bulk write API.
+- 2024-09-18: Note that `failCommand` `appName` option was backported
+
+- 2024-05-08: **Schema version 1.21.**
+
+  Add `writeErrors` and `writeConcernErrors` field to `expectedError` for the client-level bulk write API.
 
 - 2024-04-15: Note that when `directConnection` is set to true test runners should only provide a single seed.
 
-- 2024-03-25: **Schema version 1.20.**\
-  Add `previousDescription` and `newDescription` assertions to
-  `topologyDescriptionChangedEvent` when checking events with `expectEvents`
+- 2024-03-25: **Schema version 1.20.**
+
+  Add `previousDescription` and `newDescription` assertions to `topologyDescriptionChangedEvent` when checking events
+  with `expectEvents`
 
 - 2024-03-11: Note that `killAllSessions` should not be executed on Atlas Data Lake
 
@@ -3511,43 +3515,42 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2024-02-06: Migrated from reStructuredText to Markdown.
 
-- 2024-01-17: **Schema version 1.19.**\
-  Add `authMechanism` to `runOnRequirement` and require that `uriOptions` supports
-  placeholder documents.
+- 2024-01-17: **Schema version 1.19.**
 
-- 2024-01-11: **Schema version 1.18.**\
-  Allow named KMS providers in `kmsProviders`. Note location of Client-Side
-  Encryption test credentials.
+  Add `authMechanism` to `runOnRequirement` and require that `uriOptions` supports placeholder documents.
 
-- 2024-01-03: Document server version requirements for `errorLabels` and\
-  `blockConnection` options for `failCommand`
+- 2024-01-11: **Schema version 1.18.**
+
+  Allow named KMS providers in `kmsProviders`. Note location of Client-Side Encryption test credentials.
+
+- 2024-01-03: Document server version requirements for `errorLabels` and `blockConnection` options for `failCommand`
   fail point.
 
-- 2023-10-04: **Schema version 1.17.**\
-  Add `serverHeartbeatStartedEvent`, `serverHeartbeatSucceededEvent`, and
-  `serverHeartbeatFailedEvent` for asserting on SDAM server heartbeat events.
+- 2023-10-04: **Schema version 1.17.**
+
+  Add `serverHeartbeatStartedEvent`, `serverHeartbeatSucceededEvent`, and `serverHeartbeatFailedEvent` for asserting on
+  SDAM server heartbeat events.
 
 - 2023-09-25: Clarify that the UTR is intended to be run against enterprise servers.
 
-- 2022-07-18: **Schema version 1.16.**\
-  Add `ignoreMessages` and `ignoreExtraMessages` fields to
-  `expectedLogMessagesForClient` section.
+- 2022-07-18: **Schema version 1.16.**
 
-- 2023-06-26: `runOnRequirement.csfle` should check for crypt_shared and/or\
-  mongocryptd.
+  Add `ignoreMessages` and `ignoreExtraMessages` fields to `expectedLogMessagesForClient` section.
 
-- 2023-06-13: **Schema version 1.15.**\
+- 2023-06-26: `runOnRequirement.csfle` should check for crypt_shared and/or mongocryptd.
+
+- 2023-06-13: **Schema version 1.15.**
+
   Add `databaseName` field to `CommandFailedEvent` and `CommandSucceededEvent`.
 
-- 2023-05-26: **Schema version 1.14.**\
+- 2023-05-26: **Schema version 1.14.**
+
   Add `topologyDescriptionChangedEvent`.
 
-- 2023-05-17: Add `runCursorCommand` and `createCommandCursor` operations.\
-  Added `commandCursor` entity type which can
+- 2023-05-17: Add `runCursorCommand` and `createCommandCursor` operations. Added `commandCursor` entity type which can
   be used with existing cursor operations.
 
-- 2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+\
-  requires replica sets for shards,
+- 2023-05-12: Deprecate "sharded-replicaset" topology type. Note that server 3.6+ requires replica sets for shards,
   which is also relevant to load balanced topologies.
 
 - 2023-04-13: Remove `readConcern` and `writeConcern` options from `runCommand` operation.
@@ -3556,116 +3559,112 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2022-10-17: Add description of a `close` operation for client entities.
 
-- 2022-10-14: **Schema version 1.13.**\
-  Add support for logging assertions via the `observeLogMessages` field for client
-  entities, along with a new top-level field `expectLogMessages` containing `expectedLogMessagesForClient` objects. Add
-  new special matching operators to enable command logging assertions, `$$matchAsDocument` and `$$matchAsRoot`.
+- 2022-10-14: **Schema version 1.13.**
 
-- 2022-10-14: **Schema version 1.12.**\
+  Add support for logging assertions via the `observeLogMessages` field for client entities, along with a new top-level
+  field `expectLogMessages` containing `expectedLogMessagesForClient` objects. Add new special matching operators to
+  enable command logging assertions, `$$matchAsDocument` and `$$matchAsRoot`.
+
+- 2022-10-14: **Schema version 1.12.**
+
   Add `errorResponse` to `expectedError`.
 
-- 2022-10-05: Remove spec front matter, add "Current Schema Version" field, and\
-  reformat changelog. Add comment to
+- 2022-10-05: Remove spec front matter, add "Current Schema Version" field, and reformat changelog. Add comment to
   remind editors to note schema version bumps in changelog updates (where applicable).
 
-- 2022-09-02: **Schema version 1.11.**\
+- 2022-09-02: **Schema version 1.11.**
+
   Add `interruptInUseConnections` field to `poolClearedEvent`
 
-- 2022-07-28: **Schema version 1.10.**\
-  Add support for `thread` entities (`runOnThread`, `waitForThread`),
-  TopologyDescription entities (`recordTopologyDescription`, `waitForPrimaryChange`, `assertTopologyType`), testRunner
-  event assertion operations (`waitForEvent`, `assertEventCount`), expected SDAM events, and the `wait` operation.
+- 2022-07-28: **Schema version 1.10.**
 
-- 2022-07-27: Retroactively note schema version bumps in the changelog and\
-  require doing so for future changes.
+  Add support for `thread` entities (`runOnThread`, `waitForThread`), TopologyDescription entities
+  (`recordTopologyDescription`, `waitForPrimaryChange`, `assertTopologyType`), testRunner event assertion operations
+  (`waitForEvent`, `assertEventCount`), expected SDAM events, and the `wait` operation.
 
-- 2022-07-11: Update [Future Work](#future-work) to reflect that support for ignoring extra\
-  observed events was added
-  in schema version 1.7.
+- 2022-07-27: Retroactively note schema version bumps in the changelog and require doing so for future changes.
+
+- 2022-07-11: Update [Future Work](#future-work) to reflect that support for ignoring extra observed events was added in
+  schema version 1.7.
 
 - 2022-06-16: Require server 4.2+ for `csfle: true`.
 
-- 2022-05-10: Add reference to Client Side Encryption spec
-  under\
+- 2022-05-10: Add reference to Client Side Encryption spec under
   [ClientEncryption Operations](#clientencryption-operations).
 
-- 2022-04-27: **Schema version 1.9.**\
-  Added `createOptions` field to `initialData`, introduced a new `timeoutMS` field
-  in `collectionOrDatabaseOptions`, and added an `isTimeoutError` field to `expectedError`. Also introduced the
-  `createEntities` operation.
+- 2022-04-27: **Schema version 1.9.**
 
-- 2022-04-27: **Schema version 1.8.**\
+  Added `createOptions` field to `initialData`, introduced a new `timeoutMS` field in `collectionOrDatabaseOptions`, and
+  added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation.
+
+- 2022-04-27: **Schema version 1.8.**
+
   Add `runOnRequirement.csfle`.
 
 - 2022-04-26: Add `clientEncryption` entity and `$$placeholder` syntax.
 
-- 2022-04-22: Revise `useMultipleMongoses` and "Initializing the Test Runner"\
-  for Atlas Serverless URIs using a load
+- 2022-04-22: Revise `useMultipleMongoses` and "Initializing the Test Runner" for Atlas Serverless URIs using a load
   balancer fronting a single proxy.
 
-- 2022-03-01: **Schema version 1.7.**\
+- 2022-03-01: **Schema version 1.7.**
+
   Add `ignoreExtraEvents` field to `expectedEventsForClient`.
 
 - 2022-02-24: Rename Versioned API to Stable API
 
-- 2021-08-30: **Schema version 1.6.**\
-  Add `hasServerConnectionId` field to `commandStartedEvent`,
-  `commandSuccededEvent` and `commandFailedEvent`.
+- 2021-08-30: **Schema version 1.6.**
 
-- 2021-08-30: Test runners may create an internal MongoClient for each mongos.\
-  Better clarify how internal MongoClients
+  Add `hasServerConnectionId` field to `commandStartedEvent`, `commandSuccededEvent` and `commandFailedEvent`.
+
+- 2021-08-30: Test runners may create an internal MongoClient for each mongos. Better clarify how internal MongoClients
   may be used. Clarify that drivers creating an internal MongoClient for each mongos should use those clients for
   `targetedFailPoint` operations.
 
 - 2021-08-23: Allow `runOnRequirement` conditions to be evaluated in any order.
 
-- 2021-08-09: Updated all existing schema files to require at least one element\
-  in `test.expectEvents` if specified.
+- 2021-08-09: Updated all existing schema files to require at least one element in `test.expectEvents` if specified.
 
-- 2021-07-29: Note that events for sensitive commands will have redacted\
-  commands and replies when using
+- 2021-07-29: Note that events for sensitive commands will have redacted commands and replies when using
   `observeSensitiveCommands`, and how that affects conditionally sensitive commands such as `hello` and legacy hello.
 
-- 2021-07-01: Note that `expectError.expectResult` should use\
-  `$$unsetOrMatches` when the result is optional.
+- 2021-07-01: Note that `expectError.expectResult` should use `$$unsetOrMatches` when the result is optional.
 
-- 2021-06-09: **Schema version 1.5.**\
+- 2021-06-09: **Schema version 1.5.**
+
   Added an `observeSensitiveCommands` property to the `client` entity type.
 
 - 2021-05-17: Ensure old JSON schema files remain in place
 
-- 2021-04-19: **Schema version 1.4.**\
+- 2021-04-19: **Schema version 1.4.**
+
   Introduce `serverless` [runOnRequirement](#runonrequirement).
 
-- 2021-04-12: **Schema version 1.3.**\
-  Added a `FindCursor` entity type. Defined a set of cursor operations. Added an
-  `auth` property to `runOnRequirements` and modified the `topologies` property to accept `load-balanced`. Added CMAP
-  events to the possible event types for `expectedEvent`. Add `assertNumberConnectionsCheckedOut` operation. Add
-  `ignoreResultAndError` operation option.
+- 2021-04-12: **Schema version 1.3.**
 
-- 2021-04-08: List additional error codes that may be ignored when calling\
-  `killAllSessions` and note that the command
+  Added a `FindCursor` entity type. Defined a set of cursor operations. Added an `auth` property to `runOnRequirements`
+  and modified the `topologies` property to accept `load-balanced`. Added CMAP events to the possible event types for
+  `expectedEvent`. Add `assertNumberConnectionsCheckedOut` operation. Add `ignoreResultAndError` operation option.
+
+- 2021-04-08: List additional error codes that may be ignored when calling `killAllSessions` and note that the command
   should not be called when connected to Atlas.
 
-- 2021-03-22: Split `serverApi` into its own section. Note types for `loop`\
-  operation arguments. Clarify how `loop`
+- 2021-03-22: Split `serverApi` into its own section. Note types for `loop` operation arguments. Clarify how `loop`
   iterations are counted for `storeIterationsAsEntity`.
 
-- 2021-03-10: Clarify that `observedAt` field measures time in seconds for\
-  `storeEventsAsEntities`.
+- 2021-03-10: Clarify that `observedAt` field measures time in seconds for `storeEventsAsEntities`.
 
-- 2021-03-09: Clarify which components of a version string are relevant for\
-  comparisons.
+- 2021-03-09: Clarify which components of a version string are relevant for comparisons.
 
-- 2021-03-04: Change `storeEventsAsEntities` from a map to an array of\
-  `storeEventsAsEntity` objects.
+- 2021-03-04: Change `storeEventsAsEntities` from a map to an array of `storeEventsAsEntity` objects.
 
-- 2021-03-01: **Schema version 1.2.**\
-  Added `storeEventsAsEntities` option for client entities and `loop` operation,
-  which is needed for Atlas Driver Testing.
+- 2021-03-01: **Schema version 1.2.**
+
+  Added `storeEventsAsEntities` option for client entities and `loop` operation, which is needed for Atlas Driver
+  Testing.
 
 - 2020-12-23: Clarify how JSON schema is renamed for new minor versions.
 
-- 2020-11-06: **Schema version 1.1.**\
-  Added `serverApi` option for client entities, `_yamlAnchors` property to define
-  values for later use in YAML tests, and `serverParameters` property for `runOnRequirements`.
+- 2020-11-06: **Schema version 1.1.**
+
+  Added `serverApi` option for client entities, `_yamlAnchors` property to define values for later use in YAML tests,
+  and `serverParameters` property for `runOnRequirements`.

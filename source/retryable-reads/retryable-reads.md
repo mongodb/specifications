@@ -84,7 +84,7 @@ the defined name but MAY deviate to comply with their existing conventions.
 
 Drivers MUST verify server eligibility by ensuring that `maxWireVersion` is at least 6 because retryable reads require a
 MongoDB 3.6 standalone, replica set or shard cluster, MongoDB 3.6 server wire version is 6 as defined in the
-[Server Wire version and Feature List specification](../wireversion-featurelist.md).
+[Server Wire version and Feature List specification](../wireversion-featurelist/wireversion-featurelist.md).
 
 The minimum server version is 3.6 because
 
@@ -142,9 +142,9 @@ Most of the above methods are defined in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.md)
-- [Enumerating Collections](../enumerate-collections.md)
+- [Enumerating Collections](../enumerate-collections/enumerate-collections.md)
 - [Enumerating Indexes](../index-management/index-management.md#enumerate-indexes)
-- [Enumerating Databases](../enumerate-databases.md)
+- [Enumerating Databases](../enumerate-databases/enumerate-databases.md)
 - [GridFS Spec](../gridfs/gridfs-spec.md)
 
 #### Unsupported Read Operations
@@ -388,7 +388,7 @@ retry attempts for read operations. This specification does not define a format 
 ### Command Monitoring
 
 [As with retryable writes](../retryable-writes/retryable-writes.md#command-monitoring), in accordance with the
-[Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.rst) specification,
+[Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) specification,
 drivers MUST guarantee that each `CommandStartedEvent` has either a correlating `CommandSucceededEvent` or
 `CommandFailedEvent` and that every "command started" log message has either a correlating "command succeeded" log
 message or "command failed" log message. If the first attempt of a retryable read operation encounters a retryable
@@ -469,8 +469,9 @@ None.
 
 1. A later specification may allow operations (including read) to be retried any number of times during a singular
    timeout period.
-2. Any future changes to the the applicable parts of [retryable writes specification](../retryable-writes/) may also
-   need to be reflected in the retryable reads specification, and vice versa.
+2. Any future changes to the the applicable parts of
+   [retryable writes specification](../retryable-writes/retryable-writes.md) may also need to be reflected in the
+   retryable reads specification, and vice versa.
 3. We may revisit the decision not retry `Cursor.getMore()` (see [Q&A](#qa)).
 4. Once [DRIVERS-560](https://jira.mongodb.org/browse/DRIVERS-560) is resolved, tests will be added to allow testing
    Retryable Reads on MongoDB 3.6. See the [test plan](./tests/README.md) for additional information.
@@ -509,7 +510,7 @@ attempts are fruitless and would waste time. See
 [How To Write Resilient MongoDB Applications](https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/)
 for additional discussion on this strategy.
 
-However when [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.rst) is
+However when [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) is
 enabled, the driver will retry multiple times until the operation succeeds, a non-retryable error is encountered, or the
 timeout expires. Retrying multiple times provides greater resilience to cascading failures such as rolling server
 restarts during planned maintenance events.
@@ -548,18 +549,14 @@ any customers experiencing degraded performance can simply disable `retryableRea
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 
-- 2023-12-05: Add that any server information associated with retryable\
-  exceptions MUST reflect the originating server,
+- 2023-12-05: Add that any server information associated with retryable exceptions MUST reflect the originating server,
   even in the presence of retries.
 
-- 2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes\
-  that should be retried.
+- 2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes that should be retried.
 
-- 2023-11-28: Add ExceededTimeLimit to the list of error codes that should\
-  be retried.
+- 2023-11-28: Add ExceededTimeLimit to the list of error codes that should be retried.
 
-- 2023-08-26: Require that in a sharded cluster the server on which the\
-  operation failed MUST be provided to the server
+- 2023-08-26: Require that in a sharded cluster the server on which the operation failed MUST be provided to the server
   selection mechanism as a deprioritized server.
 
 - 2023-08-21: Update Q&A that contradicts SDAM transient error logic
@@ -572,8 +569,7 @@ any customers experiencing degraded performance can simply disable `retryableRea
 
 - 2022-01-25: Note that drivers should retry handshake network failures.
 
-- 2021-04-26: Replaced deprecated terminology; removed requirement to parse error\
-  message text as MongoDB 3.6+ servers
+- 2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers
   will always return an error code
 
 - 2021-03-23: Require that PoolClearedErrors are retried

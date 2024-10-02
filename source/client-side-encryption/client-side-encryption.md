@@ -23,24 +23,27 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Terms
 
-**encrypted MongoClient**\
+**encrypted MongoClient**
+
 A MongoClient with client side encryption enabled.
 
-**data key**\
-A key used to encrypt and decrypt BSON values. Data keys are encrypted with a key management service (e.g.
-AWS KMS) and stored within a document in the MongoDB key vault collection (see
+**data key**
+
+A key used to encrypt and decrypt BSON values. Data keys are encrypted with a key management service (e.g. AWS KMS) and
+stored within a document in the MongoDB key vault collection (see
 [Key vault collection schema for data keys](#key-vault-collection-schema-for-data-keys) for a description of the data
 key document). Therefore, a client needs access to both MongoDB and the external KMS service to utilize a data key.
 
-**MongoDB key vault collection**\
-A MongoDB collection designated to contain data keys. This can either be co-located
-with the data-bearing cluster, or in a separate external MongoDB cluster.
+**MongoDB key vault collection**
 
-**Key Management Service (KMS)**\
-An external service providing fixed-size encryption/decryption. Only data keys are
-encrypted and decrypted with KMS.
+A MongoDB collection designated to contain data keys. This can either be co-located with the data-bearing cluster, or in
+a separate external MongoDB cluster.
 
-**KMS providers**\\
+**Key Management Service (KMS)**
+
+An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS.
+
+**KMS providers**
 
 > A map of KMS providers to credentials. Configured client-side. Example:
 >
@@ -56,66 +59,76 @@ encrypted and decrypted with KMS.
 > }
 > ```
 
-**KMS provider**\
-A configured KMS. Identified by a key in the KMS providers map. The key has the form
-"<KMS provider type>" or "<KMS provider type>:<KMS
-provider name>". Examples: "aws" or "aws:myname". In
-[libmongocrypt](#libmongocrypt), the key is referred to as the KMS ID.
+**KMS provider**
 
-**KMS provider type**\
+A configured KMS. Identified by a key in the KMS providers map. The key has the form "<KMS provider type>" or
+"<KMS provider type>:<KMS
+provider name>". Examples: "aws" or "aws:myname". In [libmongocrypt](#libmongocrypt), the key
+is referred to as the KMS ID.
+
+**KMS provider type**
+
 The type of backing KMS. Identified by the string: "aws", "azure", "gcp", "kmip", or "local".
 
-**KMS provider name**\
-An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the
-same KMS provider type (e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
+**KMS provider name**
 
-**Customer Master Key (CMK)**\
+An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the same KMS provider type
+(e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
+
+**Customer Master Key (CMK)**
+
 The underlying key AWS KMS uses to encrypt and decrypt. See
 [AWS Key Management Service Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys).
 
-**schema**\
-A MongoDB JSON Schema (either supplied by the server or client-side) which may include metadata about
-encrypted fields. This is a JSON Schema based on draft 4 of the JSON Schema specification,
+**schema**
+
+A MongoDB JSON Schema (either supplied by the server or client-side) which may include metadata about encrypted fields.
+This is a JSON Schema based on draft 4 of the JSON Schema specification,
 [as documented in the MongoDB manual.](https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/).
 
-**[libmongocrypt](#libmongocrypt)**\
-A library, written in C, that coordinates communication, does
-encryption/decryption, caches key and schemas. [Located here](https://github.com/mongodb/libmongocrypt).
+**[libmongocrypt](#libmongocrypt)**
 
-**[mongocryptd](#mongocryptd)**\
-A local process the driver communicates with to determine how to encrypt values in a
-command.
+A library, written in C, that coordinates communication, does encryption/decryption, caches key and schemas.
+[Located here](https://github.com/mongodb/libmongocrypt).
 
-**[crypt_shared](#crypt_shared)**\
-This term, spelled in all-lowercase with an underscore, refers to the client-side
-field-level-encryption dynamic library provided as part of a MongoDB Enterprise distribution. It replaces
-[mongocryptd](#mongocryptd) as the method of
-`marking-up a database command for encryption <subtype6.intent-to-encrypt>`.
+**[mongocryptd](#mongocryptd)**
+
+A local process the driver communicates with to determine how to encrypt values in a command.
+
+**[crypt_shared](#crypt_shared)**
+
+This term, spelled in all-lowercase with an underscore, refers to the client-side field-level-encryption dynamic library
+provided as part of a MongoDB Enterprise distribution. It replaces [mongocryptd](#mongocryptd) as the method of
+[marking-up a database command for encryption](../bson-binary-encrypted/binary-encrypted.md#intent-to-encrypt).
 
 See also:
 
 > - [Introduction on crypt_shared](#crypt_shared)
 > - [Enabling crypt_shared](#enabling-crypt_shared)
 
-**ciphertext**\
-One of the data formats of
-[BSON binary subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst),
-representing an encoded BSON document containing encrypted ciphertext and metadata.
+**ciphertext**
 
-**FLE**\
-FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the
-exception of server-side JSON schema.
+One of the data formats of [BSON binary encrypted](../bson-binary-encrypted/binary-encrypted.md), representing an
+encoded BSON document containing encrypted ciphertext and metadata.
 
-**Queryable Encryption**\
-Queryable Encryption the second version of Client-Side Field Level Encryption. Data is
-encrypted client-side. Queryable Encryption supports indexed encrypted fields, which are further processed server-side.
+**FLE**
 
-**In-Use Encryption**\
+FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the exception of
+server-side JSON schema.
+
+**Queryable Encryption**
+
+Queryable Encryption the second version of Client-Side Field Level Encryption. Data is encrypted client-side. Queryable
+Encryption supports indexed encrypted fields, which are further processed server-side.
+
+**In-Use Encryption**
+
 Is an umbrella term describing the both FLE and Queryable Encryption.
 
-**encryptedFields**\
-A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON
-Schema in FLE. The following is an example encryptedFields in extended canonical JSON:
+**encryptedFields**
+
+A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON Schema in FLE. The
+following is an example encryptedFields in extended canonical JSON:
 
 ```javascript
 {
@@ -245,7 +258,7 @@ connect to [mongocryptd](#mongocryptd) and instead rely on [crypt_shared](#crypt
 
 [crypt_shared](#crypt_shared) is a dynamically-loaded C++ library providing query analysis for auto-encryption. It
 replaces [mongocryptd](#mongocryptd) for performing query analysis to -
-[mark-up sensitive fields within a command](./subtype6#intent-to-encrypt).
+[mark-up sensitive fields within a command](../bson-binary-encrypted/binary-encrypted.md#intent-to-encrypt).
 
 Drivers are not required to load and interact with [crypt_shared](#crypt_shared) directly. Instead, they inform
 [libmongocrypt](#libmongocrypt) where to find [crypt_shared](#crypt_shared) and [libmongocrypt](#libmongocrypt) will
@@ -292,7 +305,7 @@ Drivers MAY deviate the spelling of option names to conform to their language's 
 in an idiomatic way (e.g. keyword arguments, builder classes, etc.).
 
 Drivers MAY use a native UUID type in place of a parameter or return type specified as a BSON binary with subtype 0x04
-as described in [Handling of Native UUID Types](../uuid.rst).
+as described in [Handling of Native UUID Types](../bson-binary-uuid/uuid.md).
 
 ### MongoClient Changes
 
@@ -518,6 +531,8 @@ The following shows an example object of `KMSProviders`:
 }
 ```
 
+<span id="automatic-credentials"></span>
+
 ##### Automatic Credentials
 
 Certain values of [KMSProviders](#kmsproviders) indicate a request by the user that the associated KMS providers should
@@ -677,11 +692,10 @@ Drivers MUST NOT raise an error if `tlsDisableOCSPEndpointCheck` is set. Setting
 prevent operation errors when OCSP responders are unresponsive.
 
 See the OCSP specification for a description of the default values of
-[tlsDisableOCSPEndpointCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisableocspendpointcheck)
-and
-[tlsDisableCertificateRevocationCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisablecertificaterevocationcheck)
-Drivers MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck`
-for KMS TLS connections.
+[tlsDisableOCSPEndpointCheck](../ocsp-support/ocsp-support.md#tlsdisableocspendpointcheck) and
+[tlsDisableCertificateRevocationCheck](../ocsp-support/ocsp-support.md#tlsdisablecertificaterevocationcheck) Drivers
+MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck` for KMS
+TLS connections.
 
 See [Why do KMS providers require TLS options?](#why-do-kms-providers-require-tls-options)
 
@@ -820,6 +834,8 @@ and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by
    3. Otherwise, $EF$ is *not-found*
 5. Otherwise, $EF$ is considered *not-found*.
 
+<span id="create-collection-helper"></span>
+
 #### Create Collection Helper
 
 Drivers MUST support a BSON document option named `encryptedFields` for any
@@ -863,7 +879,7 @@ remaining operations are not attempted:
 #### Create Encrypted Collection Helper
 
 To support automatic generation of encryption data keys, a helper $CreateEncryptedCollection(CE, database, collName,
-collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption-1) object,
+collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption) object,
 $kmsProvider$ is a [KMSProvider](#KMSProvider) and $masterKey$ is equivalent to the $masterKey$ defined in
 [DataKeyOpts](#datakeyopts). It has the following behavior:
 
@@ -1142,7 +1158,7 @@ class RewrapManyDataKeyResult {
 }
 ```
 
-`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md##write-results) used to update the key
+`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md#write-results) used to update the key
 vault collection with one or more rewrapped data keys. If `rewrapManyDataKey()` does not find any matching keys to
 rewrap, no bulk write operation will be executed and this field will be unset. This field may also be unset if the bulk
 write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.md#write-results).
@@ -1224,7 +1240,7 @@ non-applicable queryType.
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "range". libmongocrypt returns an error if rangeOpts is set for a
+rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
 non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
@@ -1557,8 +1573,7 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 Single-threaded drivers MUST connect with
 [serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce),
 `connectTimeoutMS=10000`, and MUST bypass
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms) when connecting to
-mongocryptd. See
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms) when connecting to mongocryptd. See
 [Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
 If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for
@@ -1636,10 +1651,8 @@ CommandStartedEvent, and decryption MUST occur after generating a CommandSucceed
 ## Size limits for Write Commands
 
 Automatic encryption requires the driver to serialize write commands as a single BSON document before automatically
-encrypting with libmongocrypt (analogous to constructing
-[OP_MSG payload type 0](https://github.com/mongodb/specifications/blob/70628e30c96361346f7b6872571c0ec4d54846cb/source/message/OP_MSG.rst#sections),
-not a document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to
-send.
+encrypting with libmongocrypt (analogous to constructing [OP_MSG payload type 0](../message/OP_MSG.md#sections), not a
+document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to send.
 
 Because automatic encryption increases the size of commands, the driver MUST split bulk writes at a reduced size limit
 before undergoing automatic encryption. The write payload MUST be split at 2MiB (2097152). Where batch splitting occurs
@@ -1657,9 +1670,10 @@ documentation in MongoClient:
 
 ### Appendix terms
 
-intent-to-encrypt marking\
-One of the data formats of BSON binary subtype 6, representing an encoded BSON document
-containing plaintext and metadata.
+**intent-to-encrypt marking**
+
+One of the data formats of BSON binary subtype 6, representing an encoded BSON document containing plaintext and
+metadata.
 
 ### Key vault collection schema for data keys
 
@@ -1777,9 +1791,7 @@ struct {
 }
 ```
 
-See
-[Driver Spec: BSON Binary Subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst)
-for more information.
+See [Driver Spec: BSON Binary Encrypted](../bson-binary-encrypted/binary-encrypted.md) for more information.
 
 ### JSONSchema "encrypt"
 
@@ -2098,7 +2110,7 @@ server before making another attempt. Meaning if the first attempt to mongocrypt
 observe a 5 second delay. This is not configurable in the URI, so this must be overridden internally. Since mongocryptd
 is a local process, there should only be a very short delay after spawning mongocryptd for it to start listening on
 sockets. See the SDAM spec description of
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#cooldownms).
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms).
 
 Because single threaded drivers may exceed `serverSelectionTimeoutMS` by the duration of the topology scan,
 `connectTimeoutMS` is also reduced.

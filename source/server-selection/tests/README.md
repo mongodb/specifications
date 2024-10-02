@@ -68,8 +68,7 @@ Each YAML file for these tests has the following format:
   - `address`: a unique address identifying this server
   - `operation_count`: the `operationCount` for this server
 
-- `iterations`: the number of selections that should be run as part of this\
-  test
+- `iterations`: the number of selections that should be run as part of this test
 
 - `outcome`: an object describing the expected outcome of the selections
 

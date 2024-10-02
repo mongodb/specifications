@@ -26,10 +26,9 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### MongoDB Handshake Amendment
 
-The
-[MongoDB Handshake Protocol](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst)
-describes an argument passed to the handshake command, `client`. This specification adds an additional argument,
-`compression`, that SHOULD be provided to the handshake command if a driver supports wire compression.
+The [MongoDB Handshake Protocol](../mongodb-handshake/handshake.md) describes an argument passed to the handshake
+command, `client`. This specification adds an additional argument, `compression`, that SHOULD be provided to the
+handshake command if a driver supports wire compression.
 
 The value of this argument is an array of supported compressors.
 
@@ -185,7 +184,7 @@ authentication requests.
 Messages using the following commands MUST NOT be compressed:
 
 - hello
-- legacy hello (see [MongoDB Handshake Protocol](../mongodb-handshake/handshake.rst) for details)
+- legacy hello (see [MongoDB Handshake Protocol](../mongodb-handshake/handshake.md) for details)
 - saslStart
 - saslContinue
 - getnonce

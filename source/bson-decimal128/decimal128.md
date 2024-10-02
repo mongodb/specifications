@@ -1,4 +1,4 @@
-# BSON Decimal128 Type Handling in Drivers
+# BSON Decimal128
 
 - Status: Accepted
 - Minimum Server Version: 3.4
@@ -32,25 +32,27 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Terminology
 
-**IEEE 754-2008 128-bit decimal floating point (Decimal128)**:\
-The Decimal128 specification supports 34 decimal digits
-of precision, a max value of approximately `10^6145`, and min value of approximately `-10^6145`. This is the new
-`BSON Decimal128` type (`"\x13"`).
+**IEEE 754-2008 128-bit decimal floating point (Decimal128)**
 
-**Clamping**:\
-Clamping happens when a value's exponent is too large for the destination format. This works by adding
-zeros to the coefficient to reduce the exponent to the largest usable value. An overflow occurs if the number of digits
-required is more than allowed in the destination format.
+The Decimal128 specification supports 34 decimal digits of precision, a max value of approximately `10^6145`, and min
+value of approximately `-10^6145`. This is the new `BSON Decimal128` type (`"\x13"`).
 
-**Binary Integer Decimal (BID)**:\
-MongoDB uses this binary encoding for the coefficient as specified in `IEEE 754-2008`
-section 3.5.2 using method 2 "binary encoding" rather than method 1 "decimal encoding". The byte order is little-endian,
-like the rest of the BSON types.
+**Clamping**
 
-**Value Object**:\
-An immutable container type representing a value (e.g. Decimal128). This Value Object MAY provide
-accessors that retrieve the abstracted value as a different type (e.g. casting it).
-`double x = valueObject.getAsDouble();`
+Clamping happens when a value's exponent is too large for the destination format. This works by adding zeros to the
+coefficient to reduce the exponent to the largest usable value. An overflow occurs if the number of digits required is
+more than allowed in the destination format.
+
+**Binary Integer Decimal (BID)**
+
+MongoDB uses this binary encoding for the coefficient as specified in `IEEE 754-2008` section 3.5.2 using method 2
+"binary encoding" rather than method 1 "decimal encoding". The byte order is little-endian, like the rest of the BSON
+types.
+
+**Value Object**
+
+An immutable container type representing a value (e.g. Decimal128). This Value Object MAY provide accessors that
+retrieve the abstracted value as a different type (e.g. casting it). `double x = valueObject.getAsDouble();`
 
 ## Specification
 
@@ -327,7 +329,7 @@ BSON/Extended JSON Decimal128.
 
 ## Tests
 
-See the [BSON Corpus](https://github.com/mongodb/specifications/tree/master/source/bson-corpus) for tests.
+See the [BSON Corpus](../bson-corpus/bson-corpus.md) for tests.
 
 Most of the tests are converted from the
 [General Decimal Arithmetic Testcases](http://speleotrove.com/decimal/dectest.html).

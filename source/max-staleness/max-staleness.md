@@ -469,6 +469,8 @@ client-side setting.
 
 ## Changelog
 
+- 2024-08-09: Updated wire versions in tests to 4.0+.
+
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 
 - 2022-10-05: Remove spec front matter and revise changelog.
@@ -483,10 +485,8 @@ client-side setting.
 
 - 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 
-- 2016-10-25: Change minimum maxStalenessSeconds value from 2 \*\
-  heartbeatFrequencyMS to heartbeatFrequencyMS +
+- 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS to heartbeatFrequencyMS +
   idleWritePeriodMS (with proper conversions of course).
 
-- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the\
-  future, require maxStalenessSeconds to
+- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future, require maxStalenessSeconds to
   be at least 90.

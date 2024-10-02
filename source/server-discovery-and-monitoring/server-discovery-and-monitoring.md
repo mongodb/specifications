@@ -22,7 +22,7 @@ mistakes when they take advantage of a design that has been well-considered, rev
 
 The server discovery and monitoring method is specified in four sections. First, a client is
 [configured](#configuration). Second, it begins [monitoring](#monitoring) by calling
-[hello or legacy hello](../mongodb-handshake/handshake.rst#terms) on all servers. (Multi-threaded and asynchronous
+[hello or legacy hello](../mongodb-handshake/handshake.md#terms) on all servers. (Multi-threaded and asynchronous
 monitoring is described first, then single-threaded monitoring.) Third, as hello or legacy hello responses are received
 the client [parses them](#parsing-a-hello-or-legacy-hello-response), and fourth, it updates its view of the topology.
 
@@ -135,7 +135,7 @@ A timeout that occurs while reading from or writing to a network socket.
 
 #### minHeartbeatFrequencyMS
 
-Defined in the [Server Monitoring spec](server-monitoring.rst). This value MUST be 500 ms, and it MUST NOT be
+Defined in the [Server Monitoring spec](server-monitoring.md). This value MUST be 500 ms, and it MUST NOT be
 configurable.
 
 #### pool generation number
@@ -187,8 +187,10 @@ See [parsing a hello or legacy hello response](#parsing-a-hello-or-legacy-hello-
 
 > [!NOTE]
 > Single-threaded clients use the PossiblePrimary type to maintain proper
-> [scanning order](server-monitoring.rst#scanning-order). Multi-threaded and asynchronous clients do not need this
+> [scanning order](server-monitoring.md#scanning-order). Multi-threaded and asynchronous clients do not need this
 > ServerType; it is synonymous with Unknown.
+
+<span id="TopologyDescription"></span>
 
 #### TopologyDescription
 
@@ -335,6 +337,8 @@ option is not specified, the driver MUST start in Unknown topology, and follow t
 [TopologyType table](#topologytype-table) for transitioning to other topologies. In particular, the driver MUST NOT use
 the number of hosts from the initial SRV lookup to decide what topology to start in.
 
+<span id="heartbeatFrequencyMS"></span>
+
 #### heartbeatFrequencyMS
 
 The interval between server [checks](#check), counted from the end of the previous check until the beginning of the next
@@ -381,7 +385,7 @@ servers from its `TopologyDescription` and set its `TopologyType` to `Unknown`, 
 
 ### Monitoring
 
-See the [Server Monitoring spec](server-monitoring.rst) for how a driver monitors each server. In summary, the client
+See the [Server Monitoring spec](server-monitoring.md) for how a driver monitors each server. In summary, the client
 monitors each server in the topology. The scope of server monitoring is to provide the topology with updated
 ServerDescriptions based on hello or legacy hello command responses.
 
@@ -467,7 +471,7 @@ field.
 
 Drivers MUST record the server's [round trip time](#round-trip-time) (RTT) after each successful call to hello or legacy
 hello. The Server Selection Spec describes how RTT is averaged and how it is used in server selection. Drivers MUST also
-record the server's minimum RTT per [Server Monitoring (Measuring RTT)](server-monitoring.rst#measuring-rtt).
+record the server's minimum RTT per [Server Monitoring (Measuring RTT)](server-monitoring.md#measuring-rtt).
 
 If a hello or legacy hello call fails, the RTT is not updated. Furthermore, while a server's type is Unknown its RTT is
 null, and if it changes from a known type to Unknown its RTT is set to null. However, if it changes from one known type
@@ -663,7 +667,8 @@ ServerType and a TopologyType intersect, the table shows what action the client 
 This subsection complements the [TopologyType table](#topologytype-table) with prose explanations of the TopologyTypes
 (besides Single and LoadBalanced).
 
-TopologyType Unknown\
+**TopologyType Unknown**
+
 A starting state.
 
 **Actions**:
@@ -679,7 +684,8 @@ A starting state.
 - If the type is RSSecondary, RSArbiter or RSOther, record its setName, set the TopologyType to ReplicaSetNoPrimary, and
   call [updateRSWithoutPrimary](#updaterswithoutprimary).
 
-TopologyType Sharded\
+**TopologyType Sharded**
+
 A steady state. Connected to one or more mongoses.
 
 **Actions**:
@@ -687,7 +693,8 @@ A steady state. Connected to one or more mongoses.
 - If the server is Unknown or Mongos, keep it.
 - Remove others.
 
-TopologyType ReplicaSetNoPrimary\
+**TopologyType ReplicaSetNoPrimary**
+
 A starting state. The topology is definitely a replica set, but no primary is known.
 
 **Actions**:
@@ -699,7 +706,8 @@ A starting state. The topology is definitely a replica set, but no primary is kn
 - If the type is RSPrimary call [updateRSFromPrimary](#updatersfromprimary).
 - If the type is RSSecondary, RSArbiter or RSOther, run [updateRSWithoutPrimary](#updaterswithoutprimary).
 
-TopologyType ReplicaSetWithPrimary\
+**TopologyType ReplicaSetWithPrimary**
+
 A steady state. The primary is known.
 
 **Actions**:
@@ -729,6 +737,8 @@ else:
 
 See
 [TopologyType remains Unknown when one of the seeds is a Standalone](#topologytype-remains-unknown-when-one-of-the-seeds-is-a-standalone).
+
+<span id="updateRSWithoutPrimary"></span>
 
 ##### updateRSWithoutPrimary
 
@@ -806,6 +816,8 @@ if there is no primary in topologyDescription.servers:
 
 The special handling of description.primary ensures that a single-threaded client [scans](#scan) the possible primary
 before other members.
+
+<span id="updateRSFromPrimary"></span>
 
 ##### updateRSFromPrimary
 
@@ -890,7 +902,7 @@ checkIfHasPrimary()
 
 A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
 should be none or one) and replaces its description with a default ServerDescription of type "Unknown." A multi-threaded
-client MUST [request an immediate check](server-monitoring.rst#requesting-an-immediate-check) for that server as soon as
+client MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
 possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
@@ -944,7 +956,7 @@ to be [data-bearing](server-discovery-and-monitoring.md#data-bearing-server-type
 [direct connection](server-discovery-and-monitoring.md#general-requirements) to the server is requested, and does not
 already have a connection pool, the driver MUST create the connection pool for the server. Additionally, if a driver
 implements a CMAP compliant connection pool, the server's pool (even if it already existed) MUST be marked as "ready".
-See the [Server Monitoring spec](server-monitoring.rst) for more information.
+See the [Server Monitoring spec](server-monitoring.md) for more information.
 
 Clearing the connection pool for a server MUST be synchronized with the update to the corresponding ServerDescription
 (e.g. by holding the lock on the TopologyDescription when clearing the pool). This prevents a possible race between the
@@ -956,7 +968,7 @@ for more information.
 
 #### Network error during server check
 
-See error handling in the [Server Monitoring spec](server-monitoring.rst).
+See error handling in the [Server Monitoring spec](server-monitoring.md).
 
 #### Application errors
 
@@ -1184,7 +1196,7 @@ new ServerDescription's error field, including the error message from the server
 [What is the purpose of topologyVersion?](#what-is-the-purpose-of-topologyversion))
 
 Multi-threaded and asynchronous clients MUST
-[request an immediate check](server-monitoring.rst#requesting-an-immediate-check) of the server. Unlike in the "network
+[request an immediate check](server-monitoring.md#requesting-an-immediate-check) of the server. Unlike in the "network
 error" scenario above, a "not writable primary" or "node is recovering" error means the server is available but the
 client is wrong about its type, thus an immediate re-check is likely to provide useful information.
 
@@ -1218,24 +1230,24 @@ connection pool if the TopologyType is not LoadBalanced. (See
 ### Monitoring SDAM events
 
 The required driver specification for providing lifecycle hooks into server discovery and monitoring for applications to
-consume can be found in the [SDAM Monitoring Specification](server-discovery-and-monitoring-logging-and-monitoring.rst).
+consume can be found in the [SDAM Monitoring Specification](server-discovery-and-monitoring-logging-and-monitoring.md).
 
 ### Implementation notes
 
 This section intends to provide generous guidance to driver authors. It is complementary to the reference
 implementations. Words like "should", "may", and so on are used more casually here.
 
-See also, the implementation notes in the [Server Monitoring spec](server-monitoring.rst).
+See also, the implementation notes in the [Server Monitoring spec](server-monitoring.md).
 
 #### Multi-threaded or asynchronous server selection
 
 While no suitable server is available for an operation,
 [the client MUST re-check all servers every minHeartbeatFrequencyMS](#the-client-must-re-check-all-servers-every-minheartbeatfrequencyms).
-(See [requesting an immediate check](server-monitoring.rst#requesting-an-immediate-check).)
+(See [requesting an immediate check](server-monitoring.md#requesting-an-immediate-check).)
 
 #### Single-threaded server selection
 
-When a client that uses [single-threaded monitoring](server-monitoring.rst#single-threaded-monitoring) fails to select a
+When a client that uses [single-threaded monitoring](server-monitoring.md#single-threaded-monitoring) fails to select a
 suitable server for any operation, it [scans](#scan) the servers, then attempts selection again, to see if the scan
 discovered suitable servers. It repeats, waiting [minHeartbeatFrequencyMS](#minheartbeatfrequencyms) after each scan,
 until a timeout.
@@ -1888,6 +1900,10 @@ oversaw the specification process.
 
 ## Changelog
 
+- 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
+
+- 2024-08-09: Updated wire versions in tests to 4.0+.
+
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 
 - 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
@@ -1898,33 +1914,27 @@ oversaw the specification process.
 
 - 2016-05-04: Added link to SDAM monitoring.
 
-- 2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server\
-  Selection Spec", and
+- 2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server Selection Spec", and
   "secondaryAcceptableLatencyMS" with "localThresholdMS".
 
 - 2016-07-21: Updated for Max Staleness support.
 
 - 2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
 
-- 2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to\
-  update the topology when they
-  handshake application connections.
+- 2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to update the topology when they handshake
+  application connections.
 
-- 2016-10-06: In updateRSWithoutPrimary the hello or legacy hello response's\
-  "primary" field should be used to update
+- 2016-10-06: In updateRSWithoutPrimary the hello or legacy hello response's "primary" field should be used to update
   the topology description, even if address != me.
 
 - 2016-10-29: Allow for idleWritePeriodMS to change someday.
 
-- 2016-11-01: "Unknown" is no longer the default TopologyType, the default is now\
-  explicitly unspecified. Update
+- 2016-11-01: "Unknown" is no longer the default TopologyType, the default is now explicitly unspecified. Update
   instructions for setting the initial TopologyType when running the spec tests.
 
-- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the\
-  future.
+- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future.
 
-- 2017-02-28: Update "network error when reading or writing": timeout while\
-  connecting does mark a server Unknown,
+- 2017-02-28: Update "network error when reading or writing": timeout while connecting does mark a server Unknown,
   unlike a timeout while reading or writing. Justify the different behaviors, and also remove obsolete reference to
   auto-retry.
 
@@ -1940,32 +1950,27 @@ oversaw the specification process.
 
 - 2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
 
-- 2020-02-13: Drivers must run SDAM flow even when server description is equal to\
-  the last one.
+- 2020-02-13: Drivers must run SDAM flow even when server description is equal to the last one.
 
-- 2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring\
-  stale application errors.
+- 2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring stale application errors.
 
 - 2020-05-07: Include error field in ServerDescription equality comparison.
 
 - 2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.
 
-- 2020-12-17: Mark the pool for a server as "ready" after performing a successful\
-  check. Synchronize pool clearing with
+- 2020-12-17: Mark the pool for a server as "ready" after performing a successful check. Synchronize pool clearing with
   SDAM updates.
 
 - 2021-01-17: Require clients to compare (electionId, setVersion) tuples.
 
-- 2021-02-11: Errors encountered during auth are handled by SDAM. Auth errors\
-  mark the server Unknown and clear the
+- 2021-02-11: Errors encountered during auth are handled by SDAM. Auth errors mark the server Unknown and clear the
   pool.
 
 - 2021-04-12: Adding in behaviour for load balancer mode.
 
 - 2021-05-03: Require parsing "isWritablePrimary" field in responses.
 
-- 2021-06-09: Connection pools must be created and eventually marked ready for\
-  any server if a direct connection is
+- 2021-06-09: Connection pools must be created and eventually marked ready for any server if a direct connection is
   used.
 
 - 2021-06-29: Updated to use modern terminology.
