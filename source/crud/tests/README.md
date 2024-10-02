@@ -397,7 +397,8 @@ InsertOne: {
 
 Construct as list of write models (referred to as `models`) with the one `model`.
 
-Call `MongoClient.bulkWrite` with `models` and `BulkWriteOptions.writeConcern` set to an unacknowledged write concern.
+Call `MongoClient.bulkWrite` with `models`. Pass `BulkWriteOptions` with `ordered` set to `false` and `writeConcern` set
+to an unacknowledged write concern.
 
 Expect a client-side error due the size.
 
@@ -415,7 +416,8 @@ ReplaceOne: {
 
 Construct as list of write models (referred to as `models`) with the one `model`.
 
-Call `MongoClient.bulkWrite` with `models` and `BulkWriteOptions.writeConcern` set to an unacknowledged write concern.
+Call `MongoClient.bulkWrite` with `models`. Pass `BulkWriteOptions` with `ordered` set to `false` and `writeConcern` set
+to an unacknowledged write concern.
 
 Expect a client-side error due the size.
 
