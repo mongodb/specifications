@@ -695,3 +695,43 @@ maxTimeMS value of 2000ms for the `explain`.
 
 Obtain the command started event for the explain. Confirm that the top-level explain command should has a `maxTimeMS`
 value of `2000`.
+
+### 15. `MongoClient.bulkWrite` with unacknowledged write concern uses `w:0` for all batches
+
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
+
+If testing with a sharded cluster, only connect to one mongos. This is intended to ensure the `countDocuments` operation
+uses the same connection as the `bulkWrite` to get the correct connection count. (See
+[DRIVERS-2921](https://jira.mongodb.org/browse/DRIVERS-2921)).
+
+Construct a `MongoClient` (referred to as `client`) with
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
+response.
+
+Construct a `MongoCollection` (referred to as `coll`) for the collection "db.coll". Drop `coll`.
+
+Use the `create` command to create "db.coll" to workaround [SERVER-95537](https://jira.mongodb.org/browse/SERVER-95537).
+
+Construct the following write model (referred to as `model`):
+
+```javascript
+InsertOne: {
+  "namespace": "db.coll",
+  "document": { "a": "b" }
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times.
+
+Call `client.bulkWrite` with `models`. Pass `BulkWriteOptions` with `ordered` set to `false` and `writeConcern` set to
+an unacknowledged write concern. Assert no error occurred. Assert the result indicates the write was unacknowledged.
+
+Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed for the `bulkWrite`
+command. Assert that the length of `firstEvent.command.ops` is `maxWriteBatchSize`. Assert that the length of
+`secondEvent.command.ops` is 1. If the driver exposes `operationId`s in its CommandStartedEvents, assert that
+`firstEvent.operationId` is equal to `secondEvent.operationId`. Assert both commands include `writeConcern: {w: 0}`.
+
+To force completion of the `w:0` writes, execute `coll.countDocuments` and expect the returned count is
+`maxWriteBatchSize + 1`. This is intended to avoid incomplete writes interfering with other tests that may use this
+collection.
