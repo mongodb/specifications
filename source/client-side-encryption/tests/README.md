@@ -3319,10 +3319,15 @@ and the [C driver tests](TODO) for how to configure failpoints.
 4. Create a `ClientEncryption` object (referred to as `client_encryption`) with `keyVaultNamespace` set to
    `keyvault.datakeys`.
 
-#### createDataKey
+The failpoint server is configured using HTTP requests. Example request to simulate a network failure:
 
-1. Configure the mock server to simulate two HTTP failures and two TCP failures.
-2. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+`curl -X POST https://localhost:9003/set_failpoint/network -d '{"count": 1}' --cacert drivers-evergreen-tools/.evergreen/x509gen/ca.pem`
+
+To simulate an HTTP failure, replace `network` with `http`.
+
+When the following test cases request setting `masterKey`, use the following values based on the KMS provider:
+
+For "aws":
 
 ```javascript
 {
@@ -3332,12 +3337,7 @@ and the [C driver tests](TODO) for how to configure failpoints.
 }
 ```
 
-Expect this to succeed.
-
-Repeat this test with the following providers and masterKeys:
-
-#### "azure" provider
-
+For "azure":
 ```javascript
 {
    "keyVaultEndpoint": "127.0.0.1:9003",
@@ -3345,7 +3345,7 @@ Repeat this test with the following providers and masterKeys:
 }
 ```
 
-#### "gcp" provider
+For "gcp":
 ```javascript
 {
    "projectId": "foo",
@@ -3355,3 +3355,23 @@ Repeat this test with the following providers and masterKeys:
    "endpoint": "127.0.0.1:9003"
 }
 ```
+
+
+#### Case 1: createDataKey with TCP retry
+
+1. Configure the mock server to simulate one network failure.
+2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed.
+
+Repeat this test with the `azure` and `gcp` masterKeys.
+
+#### Case 2: createDataKey with HTTP retry
+1. Configure the mock server to simulate one HTTP failure.
+2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed.
+
+Repeat this test with the `azure` and `gcp` masterKeys.
+
+#### Case 3: createDataKey fails after too many retries
+1. Configure the mock server to simulate four network failures.
+2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to fail.
+
+Repeat this test with the `azure` and `gcp` masterKeys.
