@@ -1428,7 +1428,7 @@ evaluated consistently.
 These operations and their arguments may be documented in the following specifications:
 
 - [Change Streams](../change-streams/change-streams.md)
-- [Enumerating Databases](../enumerate-databases.md)
+- [Enumerating Databases](../enumerate-databases/enumerate-databases.md)
 
 Client operations that require special handling or are not documented by an existing specification are described below.
 
@@ -1542,7 +1542,7 @@ These operations and their arguments may be documented in the following specific
 
 - [Change Streams](../change-streams/change-streams.md)
 - [CRUD](../crud/crud.md)
-- [Enumerating Collections](../enumerate-collections.md)
+- [Enumerating Collections](../enumerate-collections/enumerate-collections.md)
 
 Database operations that require special handling or are not documented by an existing specification are described
 below.
@@ -2634,7 +2634,7 @@ Note: the test runner is not required to validate the type or value of a `$$plac
 ### Evaluating Matches
 
 Expected values in tests (e.g. [operation.expectResult](#operation_expectResult)) are expressed as either relaxed or
-canonical [Extended JSON](../extended-json.md).
+canonical [Extended JSON](../extended-json/extended-json.md).
 
 The algorithm for matching expected and actual values is specified with the following pseudo-code:
 
@@ -2680,7 +2680,7 @@ The rules for comparing documents and arrays are discussed in more detail in sub
 *other* than documents and arrays, test runners MAY adopt any of the following approaches to compare expected and actual
 values, as long as they are consistent:
 
-- Convert both values to relaxed or canonical [Extended JSON](../extended-json.md) and compare strings
+- Convert both values to relaxed or canonical [Extended JSON](../extended-json/extended-json.md) and compare strings
 - Convert both values to BSON, and compare bytes
 - Convert both values to native representations, and compare accordingly
 
@@ -3015,9 +3015,9 @@ tests.
 
 The instructions in this section apply for each test file loaded by the test runner.
 
-Test files, which may be YAML or JSON files, MUST be interpreted using an [Extended JSON](../extended-json.md) parser.
-The parser MUST accept relaxed and canonical Extended JSON (per [Extended JSON: Parsers](../extended-json.md#parsers)),
-as test files may use either.
+Test files, which may be YAML or JSON files, MUST be interpreted using an
+[Extended JSON](../extended-json/extended-json.md) parser. The parser MUST accept relaxed and canonical Extended JSON
+(per [Extended JSON: Parsers](../extended-json/extended-json.md#parsers)), as test files may use either.
 
 Upon loading a file, the test runner MUST read the [schemaVersion](#schemaVersion) field and determine if the test file
 can be processed further. Test runners MAY support multiple versions and MUST NOT process incompatible files (as
@@ -3365,7 +3365,7 @@ db.adminCommand({
   labels. An empty array may be used to suppress the server from adding error labels to the response. New in server
   4.3.1 ([SERVER-43941](https://jira.mongodb.org/browse/SERVER-43941)).
 - `appName`: Optional string, which is unset by default. If set, the fail point will only apply to connections for
-  MongoClients created with this `appname`. New in server 4.4.0-rc2
+  MongoClients created with this `appname`. New in server 4.4.0-rc2 and backported to 4.2.9
   ([SERVER-47195](https://jira.mongodb.org/browse/SERVER-47195)).
 - `blockConnection`: Optional boolean, which defaults to `false`. If `true`, the server should block the affected
   commands for `blockTimeMS`. New in server 4.3.4 and backported to 4.2.9
@@ -3488,6 +3488,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-09-18: Note that `failCommand` `appName` option was backported
 
 - 2024-05-08: **Schema version 1.21.**
 

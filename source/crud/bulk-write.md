@@ -309,19 +309,16 @@ class BulkWriteOptions {
 ```typescript
 class BulkWriteResult {
     /**
-     * Indicates whether this write result was acknowledged. If not, then all other members of this
-     * result will be undefined.
+     * Indicates whether this write result was acknowledged.
      *
-     * NOT REQUIRED TO IMPLEMENT. See below for more guidance on modeling unacknowledged results.
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling unacknowledged results.
      */
     acknowledged: Boolean;
 
     /**
-     * Indicates whether the results are verbose. If false, the insertResults, updateResults, and
-     * deleteResults fields in this result will be undefined.
+     * Indicates whether this result contains verbose results.
      *
-     * NOT REQUIRED TO IMPLEMENT. See below for other ways to differentiate summary results from
-     * verbose results.
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
     hasVerboseResults: Boolean;
 
@@ -352,18 +349,24 @@ class BulkWriteResult {
 
     /**
      * The results of each individual insert operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
-    insertResults: Map<Int64, InsertOneResult>;
+    insertResults: Map<Index, InsertOneResult>;
 
     /**
      * The results of each individual update operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
-    updateResults: Map<Int64, UpdateResult>;
+    updateResults: Map<Index, UpdateResult>;
 
     /**
      * The results of each individual delete operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
      */
-    deleteResults: Map<Int64, DeleteResult>;
+    deleteResults: Map<Index, DeleteResult>;
 }
 
 class InsertOneResult {
@@ -404,23 +407,58 @@ class DeleteResult {
 
 #### Unacknowledged results
 
-`BulkWriteResult` has an optional `acknowledged` field to indicate whether the result was acknowledged. This is not
-required to implement. Drivers should follow the guidance in the CRUD specification
+Users MUST be able to discern whether a `BulkWriteResult` contains acknowledged results without inspecting the
+configured write concern. Drivers should follow the guidance in the CRUD specification
 [here](../crud/crud.md#write-results) to determine how to model unacknowledged results.
+
+If drivers expose the `acknowledged` field, they MUST document what will happen if a user attempts to access a result
+value when `acknowledged` is `false` (e.g. an undefined value is returned or an error is thrown).
 
 #### Summary vs. verbose results
 
-Users MUST be able to discern whether a `BulkWriteResult` contains summary or verbose results without inspecting the
-value provided for `verboseResults` in `BulkWriteOptions`. Drivers MUST implement this in one of the following ways:
+When a user does not set the `verboseResults` option to `true`, drivers MUST NOT populate the `insertResults`,
+`updateResults`, and `deleteResults` fields. Users MUST be able to discern whether a `BulkWriteResult` contains these
+verbose results without inspecting the value provided for `verboseResults` in `BulkWriteOptions`. Drivers can implement
+this in a number of ways, including:
 
-- Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document that `insertResults`,
-  `updateResults`, and `deleteResults` will be undefined when `hasVerboseResults` is false. Raise an error if a user
-  tries to access one of these fields when `hasVerboseResults` is false.
-- Implement the `insertResults`, `updateResults`, and `deleteResults` fields as optional types and document that they
-  will be unset when `verboseResults` is false.
-- Introduce separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `VerboseBulkWriteResult` MUST have all
-  of the required fields defined on `BulkWriteResult` above. `SummaryBulkWriteResult` MUST have all of the required
-  fields defined on `BulkWriteResult` above except `insertResults`, `updateResults`, and `deleteResults`.
+- Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document what will happen if a user
+  attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is false.
+  Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is false.
+- Embed the verbose results in an optional type:
+
+```typescript
+class BulkWriteResult {
+    /**
+     * The results of each individual write operation that was successfully performed.
+     *
+     * This value will only be populated if the verboseResults option was set to true.
+     */ 
+    verboseResults: Optional<VerboseResults>;
+
+    /* rest of fields */
+}
+
+class VerboseResults {
+    /**
+     * The results of each individual insert operation that was successfully performed.
+     */
+    insertResults: Map<Index, InsertOneResult>;
+
+    /**
+     * The results of each individual update operation that was successfully performed.
+     */
+    updateResults: Map<Index, UpdateResult>;
+
+    /**
+     * The results of each individual delete operation that was successfully performed.
+     */
+    deleteResults: Map<Index, DeleteResult>;
+}
+```
+
+- Define separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `SummaryBulkWriteResult` MUST only
+  contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
+  fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult` otherwise.
 
 #### Individual results
 
@@ -451,7 +489,7 @@ class BulkWriteException {
      * Errors that occurred during the execution of individual write operations. This map will
      * contain at most one entry if the bulk write was ordered.
      */
-    writeErrors: Map<Int64, WriteError>;
+    writeErrors: Map<Index, WriteError>;
 
     /**
      * The results of any successful operations that were performed before the error was
@@ -460,6 +498,13 @@ class BulkWriteException {
     partialResult: Optional<BulkWriteResult>;
 }
 ```
+
+### Index Types
+
+The `insertResults`, `updateResults`, and `deleteResults` maps in `BulkWriteResult` and the `writeErrors` map in
+`BulkWriteException` specify `Index` as their key type. This value corresponds to the index of the operation in the
+`writeModels` list that was provided to `MongoClient.bulkWrite`. Drivers SHOULD use their language's standard numeric
+type for indexes for this type (e.g. `usize` in Rust). If no standard index type exists, drivers MUST use `Int64`.
 
 ## Building a `bulkWrite` Command
 
@@ -498,8 +543,8 @@ operation should be performed as its value. The documents have the following for
 }
 ```
 
-If the document to be inserted does not contain an `_id` field, drivers MUST generate a new [`ObjectId`](../objectid.md)
-and add it as the `_id` field at the beginning of the document.
+If the document to be inserted does not contain an `_id` field, drivers MUST generate a new
+[`ObjectId`](../bson-objectid/objectid.md) and add it as the `_id` field at the beginning of the document.
 
 #### Update
 
@@ -511,9 +556,14 @@ and add it as the `_id` field at the beginning of the document.
     "multi": Optional<Boolean>,
     "upsert": Optional<Boolean>,
     "arrayFilters": Optional<Array>,
-    "hint": Optional<Document | String>
+    "hint": Optional<Document | String>,
+    "collation": Optional<Document>
 }
 ```
+
+The `update` command document is used for update and replace operations. For update operations, the `updateMods` field
+corresponds to the `update` field in `UpdateOneModel` and `UpdateManyModel`. For replace operations, the `updateMods`
+field corresponds to the `replacement` field in `ReplaceOneModel`.
 
 #### Delete
 
@@ -676,9 +726,16 @@ The server's response to `bulkWrite` has the following format:
 }
 ```
 
-If any operations were successful (i.e. `nErrors` is less than the number of operations that were sent), drivers MUST
-record the summary count fields in a `BulkWriteResult` to be returned to the user or embedded in a `BulkWriteException`.
-Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if no operations were successful.
+Drivers MUST record the summary count fields in a `BulkWriteResult` to be returned to the user or embedded in a
+`BulkWriteException` if the response indicates that at least one write was successful:
+
+- For ordered bulk writes, at least one write was successful if `nErrors` is 0 or if the `idx` value for the write error
+  returned in the results cursor is greater than 0.
+- For unordered bulk writes, at least one write was successful if `nErrors` is less than the number of operations that
+  were included in the `bulkWrite` command.
+
+Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if it cannot be determined that at least one
+write was successfully performed.
 
 Drivers MUST attempt to consume the contents of the cursor returned in the server's `bulkWrite` response before
 returning to the user. This is required regardless of whether the user requested verbose or summary results, as the
@@ -851,6 +908,14 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-09-30: Define more options for modeling summary vs. verbose results.
+
+- 2024-09-25: Add `collation` field to `update` document and clarify usage of `updateMods`.
+
+- 2024-09-25: Update the `partialResult` population logic to account for ordered bulk writes.
+
+- 2024-09-18: Relax numeric type requirements for indexes.
 
 - 2024-05-17: Update specification status to "Accepted".
 

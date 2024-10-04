@@ -3,6 +3,51 @@
 This directory contains platform-independent tests that drivers can use to prove their conformance to the Initial DNS
 Seedlist Discovery spec.
 
+## Prose Tests
+
+For the following prose tests, it is assumed drivers are be able to stub DNS results to easily test invalid DNS
+resolution results.
+
+### 1. Allow SRVs with fewer than 3 `.` separated parts
+
+When running validation on an SRV string before DNS resolution, do not throw a error due to number of SRV parts.
+
+- `mongodb+srv://localhost`
+- `mongodb+srv://mongo.local`
+
+### 2. Throw when return address does not end with SRV domain
+
+When given a returned address that does NOT end with the original SRV's domain name, throw a runtime error.
+
+For this test, run each of the following cases:
+
+- the SRV `mongodb+srv://localhost` resolving to `localhost.mongodb`
+- the SRV `mongodb+srv://mongo.local` resolving to `test_1.evil.local`
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com`
+
+Remember, the domain of an SRV with one or two `.` separated parts is the SRVs entire hostname.
+
+### 3. Throw when return address is identical to SRV hostname
+
+When given a returned address that is identical to the SRV hostname and the SRV hostname has fewer than three `.`
+separated parts, throw a runtime error.
+
+For this test, run each of the following cases:
+
+- the SRV `mongodb+srv://localhost` resolving to `localhost`
+- the SRV `mongodb+srv://mongo.local` resolving to `mongo.local`
+
+### 4. Throw when return address does not contain `.` separating shared part of domain
+
+When given a returned address that does NOT share the domain name of the SRV record because it's missing a `.`, throw a
+runtime error.
+
+For this test, run each of the following cases:
+
+- the SRV `mongodb+srv://localhost` resolving to `test_1.cluster_1localhost`
+- the SRV `mongodb+srv://mongo.local` resolving to `test_1.my_hostmongo.local`
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
+
 ## Test Setup
 
 The tests in the `replica-set` directory MUST be executed against a three-node replica set on localhost ports 27017,

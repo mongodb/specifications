@@ -1,4 +1,4 @@
-# BSON Binary Subtype 6
+# BSON Binary Encrypted
 
 - Status: Accepted
 - Minimum Server Version: 4.2

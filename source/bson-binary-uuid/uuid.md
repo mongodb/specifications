@@ -1,4 +1,4 @@
-# Handling of Native UUID Types
+# BSON Binary UUID
 
 - Status: Accepted
 - Minimum Server Version: N/A
