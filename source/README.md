@@ -14,7 +14,7 @@ The _"drivers onion"_ is meant to represent how various concepts, components and
 
 At their lowest level all MongoDB drivers will need to know how to work with [BSON](https://bsonspec.org/). BSON (short for "Binary JSON") is a bin­ary-en­coded serialization of [JSON](https://www.json.org/json-en.html)-like documents, and like JSON, it sup­ports the nesting of arrays and documents. BSON also contains extensions that al­low representation of data types that are not part of the [JSON spec](https://datatracker.ietf.org/doc/html/rfc7159).
 
-> **Specifications:** [BSON](https://bsonspec.org/spec.html), [ObjectId](objectid.md), [Decimal128](bson-decimal128/decimal128.md), [UUID](uuid.md), [DBRef](dbref.md), [Extended JSON](extended-json.md)
+> **Specifications:** [BSON](https://bsonspec.org/spec.html), [ObjectId](bson-objectid/objectid.md), [Decimal128](bson-decimal128/decimal128.md), [UUID](bson-binary-uuid/uuid.md), [DBRef](dbref/dbref.md), [Extended JSON](extended-json/extended-json.md)
 
 ### Communication
 
@@ -73,7 +73,7 @@ To provide a cleaner and clearer developer experience, many specifications exist
 
 Advanced security features such as [client-side field level encryption](https://www.mongodb.com/docs/manual/core/csfle/) are also defined at this layer.
 
-> **Specifications:** Resource Management ([Databases](enumerate-databases.md), [Collections](enumerate-collections.md), [Indexes](index-management/index-management.md)), Data Management ([CRUD](crud/crud.md), [Collation](collation/collation.md), [Write Commands](server_write_commands.md), [Bulk API](driver-bulk-update.md), [Bulk Write](crud/bulk-write.md), [R/W Concern](read-write-concern/read-write-concern.md)), Cursors ([Change Streams](change-streams/change-streams.md), [`find`/`getMore`/`killCursors`](find_getmore_killcursors_commands.md)), [GridFS](gridfs/gridfs-spec.md), [Stable API](versioned-api/versioned-api.md), Security ([Client Side Encryption](client-side-encryption/client-side-encryption.md), [BSON Binary Subtype 6](client-side-encryption/subtype6.md))
+> **Specifications:** Resource Management ([Databases](enumerate-databases/enumerate-databases.md), [Collections](enumerate-collections/enumerate-collections.md), [Indexes](index-management/index-management.md)), Data Management ([CRUD](crud/crud.md), [Collation](collation/collation.md), [Write Commands](server_write_commands/server_write_commands.md), [Bulk API](driver-bulk-update.md), [Bulk Write](crud/bulk-write.md), [R/W Concern](read-write-concern/read-write-concern.md)), Cursors ([Change Streams](change-streams/change-streams.md), [`find`/`getMore`/`killCursors`](find_getmore_killcursors_commands/find_getmore_killcursors_commands.md)), [GridFS](gridfs/gridfs-spec.md), [Stable API](versioned-api/versioned-api.md), Security ([Client Side Encryption](client-side-encryption/client-side-encryption.md), [BSON Binary Subtype 6](bson-binary-encrypted/binary-encrypted.md))
 
 ### Observability
 

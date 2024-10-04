@@ -2,16 +2,17 @@
 
 [Introduction](README.md)
 [Mantras](driver-mantras.md)
+[Wire Version Feature List](wireversion-featurelist/wireversion-featurelist.md)
 
 # Specifications
 
 - [Serialization]()
   - [BSON](BSON.md)
-  - [ObjectId](objectid.md)
+  - [ObjectId](bson-objectid/objectid.md)
   - [Decimal128](bson-decimal128/decimal128.md)
-  - [UUID](uuid.md)
-  - [DBRef](dbref.md)
-  - [Extended JSON](extended-json.md)
+  - [UUID](bson-binary-uuid/uuid.md)
+  - [DBRef](dbref/dbref.md)
+  - [Extended JSON](extended-json/extended-json.md)
 
 ---
 
@@ -59,24 +60,24 @@
 
 - [Programmability]()
   - [Resource Management]()
-    - [Databases](enumerate-databases.md)
-    - [Collections](enumerate-collections.md)
+    - [Databases](enumerate-databases/enumerate-databases.md)
+    - [Collections](enumerate-collections/enumerate-collections.md)
     - [Indexes](index-management/index-management.md)
   - [Data Management]()
     - [CRUD](crud/crud.md)
     - [Collation](collation/collation.md)
-    - [Write Commands](server_write_commands.md)
+    - [Write Commands](server_write_commands/server_write_commands.md)
     - [Bulk API](driver-bulk-update.md)
     - [Bulk Write](crud/bulk-write.md)
     - [R/W Concern](read-write-concern/read-write-concern.md)
   - [Cursors]()
     - [Change Streams](change-streams/change-streams.md)
-    - [`find`/`getMore`/`killCursors`](find_getmore_killcursors_commands.md)
+    - [`find`/`getMore`/`killCursors`](find_getmore_killcursors_commands/find_getmore_killcursors_commands.md)
   - [GridFS](gridfs/gridfs-spec.md)
   - [Stable API](versioned-api/versioned-api.md)
   - [Security]()
     - [Client Side Encryption](client-side-encryption/client-side-encryption.md)
-    - [BSON Binary Subtype 6](client-side-encryption/subtype6.md))
+    - [BSON Binary Subtype 6](bson-binary-encrypted/binary-encrypted.md))
 
 ---
 
