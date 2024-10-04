@@ -1,0 +1,687 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Command Logging and Monitoring - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html" class="active"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="command-logging-and-monitoring"><a class="header" href="#command-logging-and-monitoring">Command Logging and Monitoring</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 2.4</li>
+</ul>
+<hr />
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<p>The command logging and monitoring specification defines a set of behaviour in the drivers for providing runtime
+information about commands in log messages as well as in events which users can consume programmatically, either
+directly or by integrating with third-party APM libraries.</p>
+<h3 id="definitions"><a class="header" href="#definitions">Definitions</a></h3>
+<h4 id="meta"><a class="header" href="#meta">META</a></h4>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h4 id="terms"><a class="header" href="#terms">Terms</a></h4>
+<p><strong>Document</strong></p>
+<p>The term <code>Document</code> refers to the implementation in the driver's language of a BSON document.</p>
+<h3 id="guidance"><a class="header" href="#guidance">Guidance</a></h3>
+<h4 id="documentation"><a class="header" href="#documentation">Documentation</a></h4>
+<p>The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation
+for the driver.</p>
+<h4 id="messages-and-events"><a class="header" href="#messages-and-events">Messages and Events</a></h4>
+<p>All drivers MUST implement the specified event types as well as log messages.</p>
+<p>Implementation details are noted in the comments when a specific implementation is required. Within each event and log
+message, all properties are REQUIRED unless noted otherwise.</p>
+<h4 id="naming"><a class="header" href="#naming">Naming</a></h4>
+<p>All drivers MUST name types, properties, and log message values as defined in the following sections. Exceptions to this
+rule are noted in the appropriate section. Class and interface names may vary according to the driver and language best
+practices.</p>
+<h4 id="publishing--subscribing"><a class="header" href="#publishing--subscribing">Publishing &amp; Subscribing</a></h4>
+<p>The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is
+not strictly mandated in this specification.</p>
+<p>Similarly, as described in the <a href="../logging/logging.html#implementation-requirements">logging specification</a> the driver
+SHOULD emit log messages in a manner that is standard for the language.</p>
+<h4 id="guarantees"><a class="header" href="#guarantees">Guarantees</a></h4>
+<p>The driver MUST guarantee that every <code>CommandStartedEvent</code> has either a correlating <code>CommandSucceededEvent</code> or
+<code>CommandFailedEvent</code>, and that every "command started" log message has either a correlating "command succeeded" log
+message or "command failed" log message.</p>
+<p>The driver MUST guarantee that the <code>requestId</code> of the <code>CommandStartedEvent</code> and the corresponding
+<code>CommandSucceededEvent</code> or <code>CommandFailedEvent</code> is the same, and that the <code>requestId</code> of the "command started" log
+message and the corresponding "command succeeded" or "command failed" log message is the same.</p>
+<h4 id="unacknowledgedacknowledged-writes"><a class="header" href="#unacknowledgedacknowledged-writes">Unacknowledged/Acknowledged Writes</a></h4>
+<p>Unacknowledged writes must provide a <code>CommandSucceededEvent</code> and a "command succeeded" log message with a <code>{ ok: 1 }</code>
+reply.</p>
+<p>A non-default write concern MUST be included in the published command. The default write concern is not required to be
+included.</p>
+<h4 id="succeeded-or-failed"><a class="header" href="#succeeded-or-failed">Succeeded or Failed</a></h4>
+<p>Commands that executed on the server and return a status of <code>{ ok: 1.0 }</code> are considered successful commands and MUST
+generate a <code>CommandSucceededEvent</code> and "command succeeded" log message. Commands that have write errors are included
+since the actual command did succeed, only writes failed.</p>
+<h4 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h4>
+<p>If an exception occurs while sending the operation to the server, the driver MUST generate a <code>CommandFailedEvent</code> and
+"command failed" log message with the exception or message, and re-raise the exception.</p>
+<h4 id="bulk-writes"><a class="header" href="#bulk-writes">Bulk Writes</a></h4>
+<p>This specification defines the monitoring and logging of individual commands and in that respect MUST generate events
+and log messages for each command a bulk write executes. Each of these commands, however, must be linked together via
+the same <code>operationId</code>.</p>
+<h4 id="implementation-notes"><a class="header" href="#implementation-notes">Implementation Notes</a></h4>
+<p>When a driver sends an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in
+<code>CommandStartedEvent.command</code>. The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver
+sends an <code>update</code> command using OP_MSG, and sends a document sequence as a separate section of payload type 1 with
+identifier <code>updates</code>, the driver MUST include the documents as a BSON array in <code>CommandStartedEvent.command</code> with field
+name <code>updates</code>.</p>
+<p>See "Why are document sequences included as BSON arrays?" in the <a href="#rationale">rationale</a>.</p>
+<h3 id="rationale"><a class="header" href="#rationale">Rationale</a></h3>
+<p><em>1. Why are commands with</em> <code>{ ok: 1 }</code> <em>treated as successful and</em> <code>{ ok: 0 }</code> <em>as failed?</em></p>
+<p>The specification is consistent with what the server deems as a successful or failed command and reports this as so.
+This also allows for server changes around this behaviour in the future to require no change in the drivers to continue
+to be compliant.</p>
+<p>The command listener API is responsible only for receiving and handling events sent from the lowest level of the driver,
+and is only about informing listeners about what commands are sent and what replies are received. As such, it would be
+innappropiate at this level for a driver to execute custom logic around particular commands to determine what failure or
+success means for a particular command. Implementers of the API are free to handle these events as they see fit, which
+may include code that further interprets replies to specific commands based on the presence or absence of other fields
+in the reply beyond the <code>ok</code> field.</p>
+<p><em>2. Why are document sequences included as BSON arrays?</em></p>
+<p>The OP_MSG wire protocol was introduced in MongoDB 3.6, with document sequences as an optimization for bulk writes. We
+have chosen to represent these OP_MSGs as single command documents for now, until a need for a more accurate (and
+perhaps better-performing) command monitoring API for document sequences has been demonstrated.</p>
+<p><em>3. Why is BSON serialization and deserialization optional to include in durations?</em></p>
+<p>Different drivers will serialize and deserialize BSON at different levels of the driver architecture. For example, some
+parts of a command (e.g. inserted document structs) could be pre-encoded early into a "raw" BSON form and the final
+command with late additions like a session ID could encoded just before putting it on the wire.</p>
+<p>Rather than specify a duration rule that would be hard to satisfy consistently, we allow duration to include BSON
+serialization/deserialization or not based on the architecture needs of each driver.</p>
+<h3 id="security"><a class="header" href="#security">Security</a></h3>
+<p>Some commands and replies will contain sensitive data relating to authentication.</p>
+<p>In order to not risk leaking this data to external sources or logs, for these commands:</p>
+<ul>
+<li>
+<p>The "command" field in <code>CommandStartedEvent</code> and "command started" log messages MUST be replaced with an empty BSON
+document.</p>
+</li>
+<li>
+<p>The "reply" field in <code>CommandSucceededEvent</code> and "command succeeded" log messages MUST be replaced with an empty BSON
+document.</p>
+</li>
+<li>
+<p>If the error is a server-side error, the "failure" field in <code>CommandFailedEvent</code> and "command failed" log messages
+MUST have all fields besides the following redacted:</p>
+<ul>
+<li><code>code</code></li>
+<li><code>codeName</code></li>
+<li><code>errorLabels</code></li>
+</ul>
+<p>The exact implementation of redaction is flexible depending on the type the driver uses to represent a failure in
+these events and log messages. For example, a driver could choose to set all properties besides these on an error
+object to null. Alternatively, a driver that uses strings to represent failures could replace relevant portions of the
+string with "REDACTED".</p>
+</li>
+</ul>
+<p>The list of sensitive commands is as follows:</p>
+<div class="table-wrapper"><table><thead><tr><th>Command</th></tr></thead><tbody>
+<tr><td><code>authenticate</code></td></tr>
+<tr><td><code>saslStart</code></td></tr>
+<tr><td><code>saslContinue</code></td></tr>
+<tr><td><code>getnonce</code></td></tr>
+<tr><td><code>createUser</code></td></tr>
+<tr><td><code>updateUser</code></td></tr>
+<tr><td><code>copydbgetnonce</code></td></tr>
+<tr><td><code>copydbsaslstart</code></td></tr>
+<tr><td><code>copydb</code></td></tr>
+<tr><td><code>hello</code> (or legacy hello) when <code>speculativeAuthenticate</code> is present</td></tr>
+</tbody></table>
+</div>
+<p>See the <a href="../mongodb-handshake/handshake.html">MongoDB Handshake spec</a> for more information on <code>hello</code> and legacy hello.
+Note that legacy hello has two different letter casings that must be taken into account. See the previously mentioned
+MongoDB Handshake spec for details.</p>
+<h3 id="events-api"><a class="header" href="#events-api">Events API</a></h3>
+<p>See the <a href="../load-balancers/load-balancers.html#events">Load Balancer Specification</a> for details on the <code>serviceId</code> field.</p>
+<pre><code class="language-typescript">interface CommandStartedEvent {
+
+  /**
+   * Returns the command.
+   */
+  command: Document;
+
+  /**
+   * Returns the database name.
+   */
+  databaseName: String;
+
+  /**
+   * Returns the command name.
+   */
+  commandName: String;
+
+  /**
+   * Returns the driver generated request id.
+   */
+  requestId: Int64;
+
+  /**
+   * Returns the driver generated operation id. This is used to link events together such
+   * as bulk write operations. OPTIONAL.
+   */
+  operationId: Int64;
+
+  /**
+   * Returns the connection id for the command. For languages that do not have this,
+   * this MUST return the driver equivalent which MUST include the server address and port.
+   * The name of this field is flexible to match the object that is returned from the driver.
+   */
+  connectionId: ConnectionId;
+
+  /**
+   * Returns the server connection id for the command. The server connection id is distinct from
+   * the connection id and is returned by the hello or legacy hello response as "connectionId"
+   * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
+   */
+  serverConnectionId: Optional&lt;Int64&gt;;
+
+  /**
+   * Returns the service id for the command when the driver is in load balancer mode.
+   * For drivers that wish to include this in their ConnectionId object, this field is
+   * optional.
+   */
+  serviceId: Optional&lt;ObjectId&gt;;
+}
+
+interface CommandSucceededEvent {
+
+  /**
+   * Returns the execution time of the event in the highest possible resolution for the platform.
+   * The calculated value MUST be the time to send the message and receive the reply from the server
+   * and MAY include BSON serialization and/or deserialization. The name can imply the units in which the
+   * value is returned, i.e. durationMS, durationNanos.
+   */
+  duration: Int64;
+
+  /**
+   * Returns the command reply.
+   */
+  reply: Document;
+
+  /**
+   * Returns the command name.
+   */
+  commandName: String;
+
+  /**
+   * Returns the database name.
+   */
+  databaseName: String;
+
+  /**
+   * Returns the driver generated request id.
+   */
+  requestId: Int64;
+
+  /**
+   * Returns the driver generated operation id. This is used to link events together such
+   * as bulk write operations. OPTIONAL.
+   */
+  operationId: Int64;
+
+  /**
+   * Returns the connection id for the command. For languages that do not have this,
+   * this MUST return the driver equivalent which MUST include the server address and port.
+   * The name of this field is flexible to match the object that is returned from the driver.
+   */
+  connectionId: ConnectionId;
+
+  /**
+   * Returns the server connection id for the command. The server connection id is distinct from
+   * the connection id and is returned by the hello or legacy hello response as "connectionId"
+   * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
+   */
+  serverConnectionId: Optional&lt;Int64&gt;;
+
+  /**
+   * Returns the service id for the command when the driver is in load balancer mode.
+   * For drivers that wish to include this in their ConnectionId object, this field is
+   * optional.
+   */
+  serviceId: Optional&lt;ObjectId&gt;;
+}
+
+interface CommandFailedEvent {
+
+  /**
+   * Returns the execution time of the event in the highest possible resolution for the platform.
+   * The calculated value MUST be the time to send the message and receive the reply from the server
+   * and MAY include BSON serialization and/or deserialization. The name can imply the units in which the
+   * value is returned, i.e. durationMS, durationNanos.
+   */
+  duration: Int64;
+
+  /**
+   * Returns the command name.
+   */
+  commandName: String;
+
+  /**
+   * Returns the database name.
+   */
+  databaseName: String;
+
+  /**
+   * Returns the failure. Based on the language, this SHOULD be a message string, exception
+   * object, or error document.
+   */
+  failure: String,Exception,Document;
+
+  /**
+   * Returns the client generated request id.
+   */
+  requestId: Int64;
+
+  /**
+   * Returns the driver generated operation id. This is used to link events together such
+   * as bulk write operations. OPTIONAL.
+   */
+  operationId: Int64;
+
+  /**
+   * Returns the connection id for the command. For languages that do not have this,
+   * this MUST return the driver equivalent which MUST include the server address and port.
+   * The name of this field is flexible to match the object that is returned from the driver.
+   */
+  connectionId: ConnectionId;
+
+  /**
+   * Returns the server connection id for the command. The server connection id is distinct from
+   * the connection id and is returned by the hello or legacy hello response as "connectionId"
+   * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
+   */
+  serverConnectionId: Optional&lt;Int64&gt;;
+
+  /**
+   * Returns the service id for the command when the driver is in load balancer mode.
+   * For drivers that wish to include this in their ConnectionId object, this field is
+   * optional.
+   */
+  serviceId: Optional&lt;ObjectId&gt;;
+}
+</code></pre>
+<h3 id="log-messages"><a class="header" href="#log-messages">Log Messages</a></h3>
+<p>Please refer to the <a href="../logging/logging.html">logging specification</a> for details on logging implementations in general,
+including log levels, log components, and structured versus unstructured logging.</p>
+<p>Drivers MUST support logging of command information via the following types of log messages. These messages MUST be
+logged at <code>Debug</code> level and use the <code>command</code> log component.</p>
+<p>The log messages are intended to match the information contained in the events above. Drivers MAY implement command
+logging support via an event subscriber if it is convenient to do so.</p>
+<p>The types used in the structured message definitions below are demonstrative, and drivers MAY use similar types instead
+so long as the information is present (e.g. a double instead of an integer, or a string instead of an integer if the
+structured logging framework does not support numeric types.)</p>
+<p>Drivers MUST not emit command log messages for commands issued as part of the handshake with the server, or heartbeat
+commands issued by server monitors.</p>
+<h4 id="common-fields"><a class="header" href="#common-fields">Common Fields</a></h4>
+<p>The following key-value pairs MUST be included in all command messages:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>commandName</td><td>String</td><td>The command name.</td></tr>
+<tr><td>databaseName</td><td>String</td><td>The database name.</td></tr>
+<tr><td>requestId</td><td>Int</td><td>The driver-generated request ID.</td></tr>
+<tr><td>operationId</td><td>Int</td><td>The driver-generated operation ID. Optional; only present if the driver generated operation IDs and this command has one.</td></tr>
+<tr><td>driverConnectionId</td><td>Int64</td><td>The driver's ID for the connection used for the command. Note this is NOT the same as <code>CommandStartedEvent.connectionId</code> defined above, but refers to the <code>connectionId</code> defined in the <a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html">connection monitoring and pooling specification</a>. Unlike <code>CommandStartedEvent.connectionId</code> this field MUST NOT contain the host/port; that information MUST be in the following fields, <code>serverHost</code> and <code>serverPort</code>. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of a connection ID.</td></tr>
+<tr><td>serverHost</td><td>String</td><td>The hostname or IP address for the server the command is being run on.</td></tr>
+<tr><td>serverPort</td><td>Int</td><td>The port for the server the command is being run on. Optional; not present for Unix domain sockets. When the user does not specify a port and the default (27017) is used, the driver SHOULD include it here.</td></tr>
+<tr><td>serverConnectionId</td><td>Int64</td><td>The server's ID for the connection used for the command. Optional; only present for server versions 4.2+. NOTE: Existing drivers may represent this as an Int32 already. For strongly-typed languages, you may have to introduce a new Int64 field and deprecate the old Int32 field. The next major version should remove the old Int32 field.</td></tr>
+<tr><td>serviceId</td><td>String</td><td>The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.</td></tr>
+</tbody></table>
+</div>
+<h4 id="command-started-message"><a class="header" href="#command-started-message">Command Started Message</a></h4>
+<p>In addition to the common fields, command started messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Command started"</td></tr>
+<tr><td>command</td><td>String</td><td>Relaxed extJSON representation of the command. This document MUST be truncated appropriately according to rules defined in the <a href="../logging/logging.html#configurable-max-document-length">logging specification</a>, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Command "{{commandName}}" started on database "{{databaseName}}" using a connection with driver-generated ID
+{{driverConnectionId}} and server-generated ID {{serverConnectionId}} to {{serverHost}}:{{serverPort}} with service ID
+{{serviceId}}. The requestID is {{requestId}} and the operation ID is {{operationId}}. Command: {{command}}</p>
+</blockquote>
+<h4 id="command-succeeded-message"><a class="header" href="#command-succeeded-message">Command Succeeded Message</a></h4>
+<p>In addition to the common fields, command succeeded messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Command succeeded"</td></tr>
+<tr><td>durationMS</td><td>Int</td><td>The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply from the server and MAY include BSON serialization and/or deserialization.</td></tr>
+<tr><td>reply</td><td>String</td><td>Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the <a href="../logging/logging.html#configurable-max-document-length">logging specification</a>, and MUST be replaced with an empty document "{ }" if the command is considered sensitive.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Command "{{commandName}}" succeeded on database "{{databaseName}}" in {{durationMS}} ms using a connection with
+driver-generated ID {{driverConnectionId}} and server-generated ID {{serverConnectionId}} to
+{{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID is
+{{operationId}}. Command reply: {{command}}</p>
+</blockquote>
+<h4 id="command-failed-message"><a class="header" href="#command-failed-message">Command Failed Message</a></h4>
+<p>In addition to the common fields, command failed messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Command failed"</td></tr>
+<tr><td>durationMS</td><td>Int</td><td>The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply from the server and MAY include BSON serialization and/or deserialization.</td></tr>
+<tr><td>failure</td><td>Flexible</td><td>The error. The type and format of this value is flexible; see the <a href="../logging/logging.html#representing-errors-in-log-messages">logging specification</a> for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Command "{{commandName}}" failed on database "{{databaseName}}" in {{durationMS}} ms using a connection with
+driver-generated ID {{driverConnectionId}} and server-generated ID {{serverConnectionId}} to
+{{serverHost}}:{{serverPort}} with service ID {{serviceId}}. The requestID is {{requestId}} and the operation ID is
+{{operationId}}. Error: {{error}}</p>
+</blockquote>
+<h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
+<p>See the README in the test directory for requirements and guidance.</p>
+<h2 id="qa"><a class="header" href="#qa">Q&amp;A</a></h2>
+<h3 id="why-is-the-command-document-only-available-in-the-commandstartevent"><a class="header" href="#why-is-the-command-document-only-available-in-the-commandstartevent">Why is the command document only available in the <code>CommandStartEvent</code>?</a></h3>
+<p>Some drivers may realize the command document as raw BSON, treating it as a component of the message transmitted to the
+server and stored in an internal buffer. By the time the server's response is received, this buffer may have been
+released. Requiring the retention of this buffer until command completion could result in unacceptable performance
+penalties, particularly when event listeners are introduced.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-09-11: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2015-09-16: Removed <code>limit</code> from find test with options to support 3.2.<br />
+Changed find test read preference to
+<code>primaryPreferred</code>.</p>
+</li>
+<li>
+<p>2015-10-01: Changed find test with a kill cursors to not run on server versions<br />
+greater than 3.0. Added a find test
+with no kill cursors command which only runs on 3.1 and higher. Added notes on which tests should run based on server
+versions.</p>
+</li>
+<li>
+<p>2015-10-19: Changed batchSize in the 3.2 find tests to expect the remaining value.</p>
+</li>
+<li>
+<p>2015-10-31: Changed find test on 3.1 and higher to ignore being run on sharded clusters.</p>
+</li>
+<li>
+<p>2015-11-22: Specify how to merge OP_MSG document sequences into command-started events.</p>
+</li>
+<li>
+<p>2016-03-29: Added note on guarantee of the request ids.</p>
+</li>
+<li>
+<p>2016-11-02: Added clause for not upconverting commands larger than maxBsonSize.</p>
+</li>
+<li>
+<p>2018-04-16: Made inclusion of BSON serialization/deserialization in command<br />
+durations to be optional.</p>
+</li>
+<li>
+<p>2020-02-12: Added legacy hello <code>speculativeAuthenticate</code> to the list of<br />
+values that should be redacted.</p>
+</li>
+<li>
+<p>2021-04-15: Added <code>serviceId</code> field to events.</p>
+</li>
+<li>
+<p>2021-05-05: Updated to use hello and legacy hello.</p>
+</li>
+<li>
+<p>2021-08-30: Added <code>serverConnectionId</code> field to <code>CommandStartedEvent</code>,<br />
+<code>CommandSucceededEvent</code> and
+<code>CommandFailedEvent</code>.</p>
+</li>
+<li>
+<p>2022-05-18: Converted legacy tests to the unified test format.</p>
+</li>
+<li>
+<p>2022-09-02: Remove material that only applies to MongoDB versions &lt; 3.6.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-10-11: Add command logging information and tests.</p>
+</li>
+<li>
+<p>2022-11-16: Update sensitive command tests to only run on server versions where the commands are supported.</p>
+</li>
+<li>
+<p>2022-12-13: Updated log message <code>serverPort</code> field description to clarify drivers should populate it with the<br />
+default
+port 27017 when relevant. Updated suggested unstructured forms of log messages to more clearly label connection IDs
+and use more readable server address representations.</p>
+</li>
+<li>
+<p>2023-03-23: Updated <code>serverConnectionId</code> field to be Int64 as long-running servers can return Int64.</p>
+</li>
+<li>
+<p>2023-06-13: Added <code>databaseName</code> field to <code>CommandFailedEvent</code> and <code>CommandSucceededEvent</code>.<br />
+Updated suggested
+unstructured forms of log messages reflecting the changes.</p>
+</li>
+<li>
+<p>2023-10-19: Add Q&amp;A section</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../bson-binary-encrypted/binary-encrypted.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../bson-binary-encrypted/binary-encrypted.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Connection String - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html" class="active"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="connection-string-spec"><a class="header" href="#connection-string-spec">Connection String Spec</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: N/A</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>The purpose of the Connection String is to provide a machine readable way of configuring a MongoClient, allowing users
+to configure and change the connection to their MongoDB system without requiring any application code changes.</p>
+<p>This specification defines how the connection string is constructed and parsed. The aim is not to list all of connection
+string options and their semantics. Rather it defines the syntax of the connection string, including rules for parsing,
+naming conventions for options, and standard data types.</p>
+<p>It should be noted that while the connection string specification is inspired by the URI specification as described in
+<a href="http://tools.ietf.org/html/rfc3986">RFC 3986</a> and uses similar terminology, it does not conform to that specification.</p>
+<h3 id="definitions"><a class="header" href="#definitions">Definitions</a></h3>
+<h4 id="meta"><a class="header" href="#meta">META</a></h4>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h3 id="general-syntax"><a class="header" href="#general-syntax">General Syntax</a></h3>
+<p>In general we follow URI style conventions, however unlike a URI the connection string supports multiple hosts.</p>
+<pre><code class="language-text">mongodb://username:password@example.com:27017,example2.com:27017,...,example.comN:27017/database?key=value&amp;keyN=valueN
+\_____/   \_______________/ \_________/ \__/  \_______________________________________/ \______/ \_/ \___/
+  |             |             |           |                    |                          |       |    |
+Scheme          |            Host        Port        Alternative host identifiers         |      Key Value
+             Userinfo       \_____________/                                               |      \_______/
+                                   |                                              Auth database      |
+                              Host Identifier                                                    Key Value Pair
+                             \_______________________________________________________/          \___________________/
+                                                      |                                                   |
+                                                 Host Information                                  Connection Options
+</code></pre>
+<h3 id="scheme"><a class="header" href="#scheme">Scheme</a></h3>
+<p>The scheme <code>mongodb</code> represents that this is a connection string for a MongoClient.</p>
+<p>Other schemes are also possible and are introduced through additional specifications. These additional schemes build on
+top of the connection string as documented in this specification.</p>
+<p>For example the <code>mongodb+srv</code> specification, introduced with
+<a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html">Initial DNS Seedlist Discovery</a>, obtains
+information from DNS in addition to just the connection string.</p>
+<h3 id="userinfo-optional"><a class="header" href="#userinfo-optional">Userinfo (optional)</a></h3>
+<p>The user information if present, is followed by a commercial at-sign ("@") that delimits it from the host.</p>
+<p>A password may be supplied as part of the user information and is anything after the first colon (":") up until the end
+of the user information.</p>
+<p>RFC 3986 has guidance for encoding user information in
+<a href="https://tools.ietf.org/html/rfc3986#section-2.1">Section 2.1 ("Percent-Encoding")</a>,
+<a href="https://tools.ietf.org/html/rfc3986#section-2.2">Section 2.2 ("Reserved Characters")</a>, and
+<a href="https://tools.ietf.org/html/rfc3986#section-3.2.1">Section 3.2.1 ("User Information")</a>.</p>
+<p>Specifically, Section 3.2.1 provides for the following allowed characters:</p>
+<pre><code>userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
+</code></pre>
+<p>If the user information contains an at-sign ("@"), more than one colon (":"), or a percent-sign ("%") that does not
+match the rules for "pct-encoded", then an exception MUST be thrown informing the user that the username and password
+must be URL encoded.</p>
+<p>Above and beyond that restriction, drivers SHOULD require connection string user information to follow the "userinfo"
+encoding rules of RFC 3986 and SHOULD throw an exception if disallowed characters are detected. However, for
+backwards-compatibility reasons, drivers MAY allow reserved characters other than "@" and ":" to be present in user
+information without percent-encoding.</p>
+<h3 id="host-information"><a class="header" href="#host-information">Host Information</a></h3>
+<p>Unlike a standard URI, the connection string allows for identifying multiple hosts. The host information section of the
+connection string MAY be delimited by the trailing slash ("/") or end of string.</p>
+<p>The host information must contain at least one host identifier but may contain more (see the alternative hosts / ports
+in the general syntax diagram above). Multiple host identifiers are delimited by a comma (",").</p>
+<h4 id="host-identifier"><a class="header" href="#host-identifier">Host Identifier</a></h4>
+<p>A host identifier consists of a host and an optional port.</p>
+<h5 id="host"><a class="header" href="#host">Host</a></h5>
+<p>Identifies a server address to connect to. It can identify either a hostname, IP address, IP Literal, or UNIX domain
+socket. For definitions of hostname, IP address and IP Literal formats see
+<a href="http://tools.ietf.org/html/rfc3986#section-3.2.2">RFC 3986 Section 3.2.2</a> .</p>
+<p>UNIX domain sockets MUST end in ".sock" and MUST be URL encoded, for example:</p>
+<pre><code>mongodb://user:pass@%2Ftmp%2Fmongodb-27017.sock/authDB?replicaSet=rs
+</code></pre>
+<p>The host information cannot contain an unescaped slash ("/"), if it does then an exception MUST be thrown informing
+users that paths must be URL encoded. For example:</p>
+<pre><code>Unsupported host '/tmp/mongodb-27017.sock', UNIX socket domain paths must be URL encoded.
+</code></pre>
+<p>Support for UNIX domain sockets and IP Literals is OPTIONAL.</p>
+<p>Unsupported host types MUST throw an exception informing the user they are not supported.</p>
+<p>This specification does not define how host types should be differentiated (e.g. determining if a parsed host string is
+a socket path or hostname). It is merely concerned with extracting the host identifiers from the URI.</p>
+<h5 id="port-optional"><a class="header" href="#port-optional">Port (optional)</a></h5>
+<p>The port is an integer between 1 and 65535 (inclusive) that identifies the port to connect to. See
+<a href="http://tools.ietf.org/html/rfc3986#section-3.2.3">RFC 3986 3.2.3</a>.</p>
+<h3 id="auth-database-optional"><a class="header" href="#auth-database-optional">Auth Database (optional)</a></h3>
+<p>The database to authenticate against. If provided it is everything after the Host Information (ending with "/") and up
+to the first question mark ("?") or end of string. The auth database MUST be URL decoded by the parser.</p>
+<p>The following characters MUST NOT appear in the database name, once it has been decoded: slash ("/"), backslash (""),
+space (" "), double-quote ("""), or dollar sign ("$"). The MongoDB Manual
+<a href="https://www.mongodb.com/docs/manual/reference/limits/#Restrictions-on-Field-Names">says that</a> period (".") is also
+prohibited, but drivers MAY allow periods in order to express a namespace (database and collection name, perhaps
+containing multiple periods) in this part of the URL.</p>
+<p>The presence of the auth database component without other credential data such as Userinfo or authentication parameters
+in connection options MUST NOT be interpreted as a request for authentication.</p>
+<h3 id="connection-options-optional"><a class="header" href="#connection-options-optional">Connection Options (optional)</a></h3>
+<p>Any extra options to configure the MongoClient connection can be specified in the connection options part of the
+connection string. If provided, it is everything after the Host Information (ending with "/"), optional auth database,
+and first question mark ("?") to the end of the string. Connection Options consist of an ordered list of Key Value Pairs
+that are delimited by an ampersand ("&amp;"). A delimiter of a semi colon (";") MAY also be supported for connection options
+for legacy reasons.</p>
+<h4 id="key-value-pair"><a class="header" href="#key-value-pair">Key Value Pair</a></h4>
+<p>A key value pair represents the option key and its associated value. The key is everything up to the first equals sign
+("=") and the value is everything afterwards. Key values contain the following information:</p>
+<ul>
+<li>Key:</li>
+</ul>
+<p>The connection option's key string. Keys should be normalised and character case should be ignored.</p>
+<ul>
+<li>Value: (optional)</li>
+</ul>
+<p>The value if provided otherwise it defaults to an empty string.</p>
+<h3 id="defining-connection-options"><a class="header" href="#defining-connection-options">Defining connection options</a></h3>
+<p>Connection option key values MUST be defined in the relevant specification that describes the usage of the key and
+value. The value data type MUST also be defined there. The value's default value SHOULD also be defined if it is
+relevant.</p>
+<h4 id="keys"><a class="header" href="#keys">Keys</a></h4>
+<p>Keys are strings and the character case must be normalized by lower casing the uppercase ASCII characters A through Z;
+other characters are left as-is.</p>
+<p>When defining and documenting keys, specifications should follow the camelCase naming convention with the first letter
+in lowercase, snake_case MUST not be used. Keys that aren't supported by a driver MUST be ignored.</p>
+<p>Keys that aren't supported by a driver MUST be ignored. A WARN level logging message MUST be issued for unsupported
+keys. For example:</p>
+<pre><code>Unsupported option 'connectMS'.
+</code></pre>
+<p>Keys should be descriptive and follow existing conventions:</p>
+<h5 id="time-based-keys"><a class="header" href="#time-based-keys">Time based keys</a></h5>
+<p>If a key represents a unit of time it MUST end with that unit of time.</p>
+<p>Key authors SHOULD follow the existing convention of defaulting to using milliseconds as the unit of time (e.g.
+<code>connectionTimeoutMS</code>).</p>
+<h4 id="values"><a class="header" href="#values">Values</a></h4>
+<p>The values in connection options MUST be URL decoded by the parser. The values can represent the following data types:</p>
+<ul>
+<li>
+<p>Strings: The value</p>
+</li>
+<li>
+<p>Integer: The value parsed as a integer. If the value is the empty string, the key MUST be ignored.</p>
+</li>
+<li>
+<p>Boolean: "true" and "false" strings MUST be supported. If the value is the empty string, the key MUST be ignored.</p>
+<ul>
+<li>For legacy reasons it is RECOMMENDED that alternative values for true and false be supported:
+<ul>
+<li>true: "1", "yes", "y" and "t"</li>
+<li>false: "0", "-1", "no", "n" and "f".</li>
+</ul>
+</li>
+</ul>
+<p>Alternative values are deprecated and MUST be removed from documentation and examples.</p>
+<p>If any of these alternative values are used, drivers MUST log a deprecation notice or issue a logging message at the
+WARNING level (as appropriate for your language). For example:</p>
+<pre><code>Deprecated boolean value for "journal" : "1", please update to "journal=true"
+</code></pre>
+</li>
+<li>
+<p>Lists: Repeated keys represent a list in the Connection String consisting of the corresponding values in the same
+order as they appear in the Connection String. For example:</p>
+<pre><code>?readPreferenceTags=dc:ny,rack:1&amp;readPreferenceTags=dc:ny&amp;readPreferenceTags=
+</code></pre>
+</li>
+<li>
+<p>Key value pairs: A value that represents one or more key and value pairs. Multiple key value pairs are delimited by a
+comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards.</p>
+<p>For example:</p>
+<pre><code>?readPreferenceTags=dc:ny,rack:1
+</code></pre>
+<p>Drivers MUST handle unencoded colon signs (":") within the value. For example, given the connection string option:</p>
+<pre><code>authMechanismProperties=TOKEN_RESOURCE:mongodb://foo
+</code></pre>
+<p>the driver MUST interpret the key as <code>TOKEN_RESOURCE</code> and the value as <code>mongodb://foo</code>.</p>
+<p>For any option key-value pair that may contain a comma (such as <code>TOKEN_RESOURCE</code>), drivers MUST document that: a value
+containing a comma (",") MUST NOT be provided as part of the connection string. This prevents use of values that would
+interfere with parsing.</p>
+</li>
+</ul>
+<p>Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:</p>
+<pre><code>Unsupported value for "fsync" : "ifPossible"
+</code></pre>
+<h3 id="repeated-keys"><a class="header" href="#repeated-keys">Repeated Keys</a></h3>
+<p>If a key is repeated and the corresponding data type is not a List then the precedence of which key value pair will be
+used is undefined except where defined otherwise by the <a href="../uri-options/uri-options.html">URI options spec</a>.</p>
+<p>Where possible, a warning SHOULD be raised to inform the user that multiple options were found for the same value.</p>
+<h3 id="deprecated-key-value-pairs"><a class="header" href="#deprecated-key-value-pairs">Deprecated Key Value Pairs</a></h3>
+<p>If a key name was deprecated due to renaming it MUST still be supported. Users aren't expected to be vigilant on changes
+to key names.</p>
+<p>If the renamed key is also defined in the connection string the deprecated key MUST NOT be applied and a WARN level
+message MUST be logged. For example:</p>
+<pre><code>Deprecated key "wtimeout" present and ignored as found replacement "wtimeoutms" value.
+</code></pre>
+<p>Deprecated keys MUST log a WARN level message informing the user that the option is deprecated and supply the
+alternative key name. For example:</p>
+<pre><code>Deprecated key "wtimeout" has been replaced with "wtimeoutms"
+</code></pre>
+<h3 id="legacy-support"><a class="header" href="#legacy-support">Legacy support</a></h3>
+<p>Semi colon (";") query parameter delimiters and alternative string representations of Boolean values MAY be supported
+only for legacy reasons.</p>
+<p>As these options are not standard they might not be supported across all drivers. As such, these alternatives MUST NOT
+be used as general examples or documentation.</p>
+<h3 id="language-specific-connection-options"><a class="header" href="#language-specific-connection-options">Language specific connection options</a></h3>
+<p>Connection strings are a mechanism to configure a MongoClient outside the user's application. As each driver may have
+language specific configuration options, those options SHOULD also be supported via the connection string. Where
+suitable, specifications MUST be updated to reflect new options.</p>
+<p>Keys MUST follow existing connection option naming conventions as defined above. Values MUST also follow the existing,
+specific data types.</p>
+<p>Any options that are not supported MUST raise a WARN log level as described in the keys section.</p>
+<h3 id="connection-options-precedence"><a class="header" href="#connection-options-precedence">Connection options precedence</a></h3>
+<p>If a driver allows URI options to be specified outside of the connection string (e.g. dictionary parameter to the
+MongoClient constructor) it MUST document the precedence rules between all such mechanisms. For instance, a driver MAY
+allow a value for option <code>foo</code> in a dictionary parameter to override the value of <code>foo</code> in the connection string (or
+vice versa) so long as that behavior is documented.</p>
+<h3 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h3>
+<p>See the <a href="tests/README.html">README</a> for tests.</p>
+<h3 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation for Change</a></h3>
+<p>The motivation for this specification is to publish how connection strings are formed and how they should be parsed.
+This is important because although the connection string follows the terminology of a standard URI format (as described
+in <a href="http://tools.ietf.org/html/rfc3986">RFC 3986</a>) it is not a standard URI and cannot be parsed by standard URI
+parsers.</p>
+<p>The specification also formalizes the standard practice for the definition of new connection options and where the
+responsibility for their definition should be.</p>
+<h3 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h3>
+<p>The rationale for the Connection String is to provide a consistent, driver independent way to define the connection to a
+MongoDB system outside of the application. The connection string is an existing standard and is already widely used.</p>
+<h3 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h3>
+<p>Connection Strings are already generally supported across languages and driver implementations. As the responsibility
+for the definitions of connections options relies on the specifications defining them, there should be no backwards
+compatibility breaks caused by this specification with regards to options.</p>
+<p>Connection options precedence may cause some backwards incompatibilities as existing driver behaviour differs here. As
+such, it is currently only a recommendation.</p>
+<h3 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h3>
+<p>The Java driver implements a <code>ConnectionString</code> class for the parsing of the connection string; however, it does not
+support UNIX domain sockets. The Python driver's <code>uri_parser</code> module implements connection string parsing for both hosts
+and UNIX domain sockets.</p>
+<p>The following example parses a connection string into its components and can be used as a guide.</p>
+<p>Given the string <code>mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock/admin?w=1</code>:</p>
+<ol>
+<li>Validate and remove the scheme prefix <code>mongodb://</code>, leaving:
+<code>foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock/admin?w=1</code></li>
+<li>Split the string by the first, unescaped <code>/</code> (if any), yielding:
+<ol>
+<li>User information and host identifiers: <code>foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock</code>.</li>
+<li>Auth database and connection options: <code>admin?w=1</code>.</li>
+</ol>
+</li>
+<li>Split the user information and host identifiers string by the last, unescaped <code>@</code>, yielding:
+<ol>
+<li>User information: <code>foo:bar%3A</code>.</li>
+<li>Host identifiers: <code>mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock</code>.</li>
+</ol>
+</li>
+<li>Validate, split (if applicable), and URL decode the user information. In this example, the username and password
+would be <code>foo</code> and <code>bar:</code>, respectively.</li>
+<li>Validate, split, and URL decode the host identifiers. In this example, the hosts would be
+<code>["mongodb.example.com", "/tmp/mongodb-27018.sock"]</code>.</li>
+<li>Split the auth database and connection options string by the first, unescaped <code>?</code>, yielding:
+<ol>
+<li>Auth database: <code>admin</code>.</li>
+<li>Connection options: <code>w=1</code>.</li>
+</ol>
+</li>
+<li>URL decode the auth database. In this example, the auth database is <code>admin</code>.</li>
+<li>Validate the database contains no prohibited characters.</li>
+<li>Validate, split, and URL decode the connection options. In this example, the connection options are <code>{w: 1}</code>.</li>
+</ol>
+<h3 id="qa"><a class="header" href="#qa">Q&amp;A</a></h3>
+<p>Q: What about existing Connection Options that aren't currently defined in a specification</p>
+<p>Ideally all MongoClient options would already belong in their relevant specifications. As we iterate and produce more
+specifications these options should be covered.</p>
+<p>Q: Why is it recommended that Connection Options take precedence over application set options</p>
+<p>This is only a recommendation but the reasoning is application code is much harder to change across deployments. By
+making the Connection String take precedence from outside the application it would be easier for the application to be
+portable across environments. The order of precedence of MongoClient hosts and options is recommended to be from low to
+high:</p>
+<ol>
+<li>Default values</li>
+<li>MongoClient hosts and options</li>
+<li>Connection String hosts and options</li>
+</ol>
+<p>Q: Why WARN level warning on unknown options rather than throwing an exception</p>
+<p>It is responsible to inform users of possible misconfigurations and both methods achieve that. However, there are
+conflicting requirements of a Connection String. One goal is that any given driver should be configurable by a
+connection string but different drivers and languages have different feature sets. Another goal is that Connection
+Strings should be portable and as such some options supported by language X might not be relevant to language Y. Any
+given driver does not know is an option is specific to a different driver or is misspelled or just not supported. So the
+only way to stay portable and support configuration of all options is to not throw an exception but rather log a
+warning.</p>
+<p>Q: How long should deprecation options be supported</p>
+<p>This is not declared in this specification. It's not deemed responsible to give a single timeline for how long
+deprecated options should be supported. As such any specifications that deprecate options that do have the context of
+the decision should provide the timeline.</p>
+<p>Q: Why can I not use a standard URI parser</p>
+<p>The connection string format does not follow the standard URI format (as described in
+<a href="http://tools.ietf.org/html/rfc3986">RFC 3986</a>) we differ in two key areas:</p>
+<ol>
+<li>
+<p>Hosts</p>
+<p>The connection string allows for multiple hosts for high availability reasons but standard URI's only ever define a
+single host.</p>
+</li>
+<li>
+<p>Query Parameters / Connection Options</p>
+<p>The connection string provides a concreted definition on how the Connection Options are parsed, including definitions
+of different data types. The <a href="http://tools.ietf.org/html/rfc3986">RFC 3986</a> only defines that they are <code>key=value</code>
+pairs and gives no instruction on parsing. In fact different languages handle the parsing of query parameters in
+different ways and as such there is no such thing as a standard URI parser.</p>
+</li>
+</ol>
+<p>Q: Can the connection string contain non-ASCII characters</p>
+<p>The connection string can contain non-ASCII characters. The connection string is text, which can be encoded in any way
+appropriate for the application (e.g. the C Driver requires you to pass it a UTF-8 encoded connection string).</p>
+<p>Q: Why does reference implementation check for a <code>.sock</code> suffix when parsing a socket path and possible auth database</p>
+<p>To simplify parsing of a socket path followed by an auth database, we rely on MongoDB's
+<a href="https://www.mongodb.com/docs/manual/reference/limits/#naming-restrictions">naming restrictions</a>), which do not allow
+database names to contain a dot character, and the fact that socket paths must end with <code>.sock</code>. This allows us to
+differentiate the last part of a socket path from a database name. While we could immediately rule out an auth database
+on the basis of the dot alone, this specification is primarily concerned with breaking down the components of a URI
+(e.g. hosts, auth database, options) in a deterministic manner, rather than applying strict validation to those parts
+(e.g. host types, database names, allowed values for an option). Additionally, some drivers might allow a namespace
+(e.g. <code>"db.collection"</code>) for the auth database part, so we do not want to be more strict than is necessary for parsing.</p>
+<p>Q: Why throw an exception if the userinfo contains a percent sign ("%"), at-sign ("@"), or more than one colon (":")</p>
+<p>This is done to help users format the connection string correctly. Although at-signs ("@") or colons (":") in the
+username must be URL encoded, users may not be aware of that requirement. Take the following example:</p>
+<pre><code>mongodb://anne:bob:pass@localhost:27017
+</code></pre>
+<p>Is the username <code>anne</code> and the password <code>bob:pass</code> or is the username <code>anne:bob</code> and the password <code>pass</code>? Accepting this
+as the userinfo could cause authentication to fail, causing confusion for the user as to why. Allowing unescaped at-sign
+and percent symbols would invite further ambiguity. By throwing an exception users are made aware and then update the
+connection string so to be explicit about what forms the username and password.</p>
+<p>Q: Why must UNIX domain sockets be URL encoded</p>
+<p>This has been done to reduce ambiguity between the socket name and the database name. Take the following example:</p>
+<pre><code>mongodb:///tmp/mongodb.sock/mongodb.sock
+</code></pre>
+<p>Is the host <code>/tmp/mongodb.sock</code> and the auth database <code>mongodb.sock</code> or does the connection string just contain the host
+<code>/tmp/mongodb.sock/mongodb.sock</code> and no auth database? By enforcing URL encoding on UNIX domain sockets it makes users
+be explicit about the host and the auth database. By requiring an exception to be thrown when the host contains a slash
+("/") users can be informed on how to migrate their connection strings.</p>
+<p>Q: Why must the auth database be URL decoded by the parser</p>
+<p>On Linux systems database names can contain a question mark ("?"), in these rare cases the auth database must be URL
+encoded. This disambiguates between the auth database and the connection options. Take the following example:</p>
+<pre><code>mongodb://localhost/admin%3F?w=1
+</code></pre>
+<p>In this case the auth database would be <code>admin?</code> and the connection options <code>w=1</code>.</p>
+<p>Q: How should the space character be encoded in a connection string</p>
+<p>Space characters SHOULD be encoded as <code>%20</code> rather than <code>+</code>, this will be portable across all implementations.
+Implementations MAY support decoding <code>+</code> into a space, as many languages treat strings as <code>x-www-form-urlencoded</code> data
+by default.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-05-29: Clarify handling of key-value pairs and add specification test.</p>
+</li>
+<li>
+<p>2024-02-15: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2016-07-22: In Port section, clarify that zero is not an acceptable port.</p>
+</li>
+<li>
+<p>2017-01-09: In Userinfo section, clarify that percent signs must be encoded.</p>
+</li>
+<li>
+<p>2017-06-10: In Userinfo section, require username and password to be fully URI encoded, not just "%", "@", and ":". In
+Auth Database, list the prohibited characters. In Reference Implementation, split at the first "/", not the last.</p>
+</li>
+<li>
+<p>2018-01-09: Clarified that space characters should be encoded to <code>%20</code>.</p>
+</li>
+<li>
+<p>2018-06-04: Revised Userinfo section to provide an explicit list of allowed characters and clarify rules for
+exceptions.</p>
+</li>
+<li>
+<p>2019-02-04: In Repeated Keys section, clarified that the URI options spec may override the repeated key behavior
+described here for certain options.</p>
+</li>
+<li>
+<p>2019-03-04: Require drivers to document option precedence rules</p>
+</li>
+<li>
+<p>2019-04-26: Database name in URI alone does not trigger authentication</p>
+</li>
+<li>
+<p>2020-01-21: Clarified how empty values in a connection string are parsed.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-12-27: Note that host information ends with a "/" character in connection options description.</p>
+</li>
+<li>
+<p>2023-08-02: Make delimiting slash between host information and connection options optional and update tests</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../run-command/run-command.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../uri-options/uri-options.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../run-command/run-command.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../uri-options/uri-options.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

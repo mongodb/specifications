@@ -1,0 +1,1118 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Transactions - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html" class="active"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="transactions-specification"><a class="header" href="#transactions-specification">Transactions Specification</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 4.0</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract"><strong>Abstract</strong></a></h2>
+<p>Version 4.0 of the server introduces multi-statement transactions. This spec builds upon the
+<a href="../sessions/driver-sessions.html">Driver Sessions Specification</a> to define how an application uses transactions and how a
+driver interacts with the server to implement transactions.</p>
+<p>The API for transactions must be specified to ensure that all drivers and the mongo shell are consistent with each
+other, and to provide a natural interface for application developers and DBAs who use multi-statement transactions.</p>
+<h2 id="meta"><a class="header" href="#meta"><strong>META</strong></a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification"><strong>Specification</strong></a></h2>
+<h3 id="terms"><a class="header" href="#terms"><strong>Terms</strong></a></h3>
+<p>This specification uses the terms defined in the <a href="../sessions/driver-sessions.html">Driver Sessions Specification</a> and
+<a href="../retryable-writes/retryable-writes.html">Retryable Writes Specification</a>. Additional terms are defined below.</p>
+<h4 id="resource-management-block"><a class="header" href="#resource-management-block">Resource Management Block</a></h4>
+<p>Some programming languages have a concept of a code block that automatically frees resources when control exits the
+block. Such a pattern is known as context managers, "using" statements, RAII, etc.. This spec refers to such a pattern
+as a resource management block, regardless of the programming language.</p>
+<h4 id="read-operation"><a class="header" href="#read-operation">Read operation</a></h4>
+<p>Any CRUD method that uses a read preference. The listIndexes, listCollections, and listDatabases, and RunCommand helpers
+are also considered read operations.</p>
+<h4 id="write-operation"><a class="header" href="#write-operation">Write operation</a></h4>
+<p>All operations that write and accept a ClientSession argument. All MongoClient, Database, Collection helpers that write
+including (but not limited to) creating, updating, or deleting databases, collections, indexes, and users. Aggregate
+(even with a write stage) is considered a read operation, see
+<a href="#aggregate-with-write-stage-is-a-read-operation">Aggregate with write stage is a read operation</a>.</p>
+<h4 id="retryable-error"><a class="header" href="#retryable-error">Retryable Error</a></h4>
+<p>An error considered retryable by the <a href="../retryable-writes/retryable-writes.html">Retryable Writes Specification</a>.</p>
+<h4 id="command-error"><a class="header" href="#command-error">Command Error</a></h4>
+<p>A server response with ok:0. A server response with ok:1 and writeConcernError or writeErrors is not considered a
+command error.</p>
+<h4 id="network-error"><a class="header" href="#network-error">Network Error</a></h4>
+<p>Any error or timeout that occurs while selecting a server or reading from or writing to a network socket.</p>
+<h4 id="error-label"><a class="header" href="#error-label">Error Label</a></h4>
+<p>Starting in MongoDB 4.0, any command error may include a top level "errorLabels" field. The field contains an array of
+string error labels. Drivers may also add error labels to errors that they return.</p>
+<h4 id="transient-transaction-error"><a class="header" href="#transient-transaction-error">Transient Transaction Error</a></h4>
+<p>Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
+error encountered running any command other than commitTransaction in a transaction. If a network error occurs while
+running the commitTransaction command then it is not known whether the transaction committed or not, and thus the
+"TransientTransactionError" label MUST NOT be added.</p>
+<h3 id="naming-variations"><a class="header" href="#naming-variations"><strong>Naming variations</strong></a></h3>
+<p>This specification defines names for new methods and types. To the extent possible you SHOULD use these names in your
+driver. However, where your driver's and/or language's naming conventions differ you SHOULD continue to use them
+instead. For example, you might use StartTransaction or start_transaction instead of startTransaction.</p>
+<p>A non-exhaustive list of acceptable naming deviations are as follows:</p>
+<ul>
+<li>Using "maxCommitTimeMS" as an example, .NET would use "MaxCommitTime" where it's type is a TimeSpan structure that
+includes units. However, calling it "MaximumCommitTime" would not be acceptable.</li>
+</ul>
+<h3 id="transaction-api"><a class="header" href="#transaction-api"><strong>Transaction API</strong></a></h3>
+<p>Transactions are built on top of Driver Session API. Applications can run a transaction like this:</p>
+<pre><code class="language-python">with client.start_session() as s:
+    s.start_transaction()
+    collection_one.insert_one(doc_one, session=s)
+    collection_two.insert_one(doc_two, session=s)
+    s.commit_transaction()
+</code></pre>
+<p>This section is an overview of the public API for transactions:</p>
+<pre><code class="language-typescript">class TransactionOptions {
+    /**
+     * The readConcern to use for this transaction.
+     */
+    Optional&lt;ReadConcern&gt; readConcern;
+
+    /**
+     * The writeConcern to use for this transaction.
+     */
+    Optional&lt;WriteConcern&gt; writeConcern;
+
+    /**
+     * The readPreference to use for this transaction.
+     */
+    Optional&lt;ReadPreference&gt; readPreference;
+
+    /**
+     * The maximum amount of time to allow a single commitTransaction
+     * command to run.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
+     */
+    Optional&lt;Int64&gt; maxCommitTimeMS;
+}
+
+class SessionOptions {
+    /**
+     * The default TransactionOptions to use for transactions started
+     * on this session.
+     */
+    Optional&lt;TransactionOptions&gt; defaultTransactionOptions;
+
+    // Options defined in other specifications...
+}
+
+interface ClientSession {
+    /**
+     * Starts a new transaction with the given options. This session's
+     * defaultTransactionOptions is used when options is omitted.
+     * Raises an error if this session is already in a transaction.
+     *
+     * The return type MAY be non-void if necessary to participate in
+     * the programming language's resource management block idiom. The
+     * type of the returned object, if any, MUST NOT be named
+     * Transaction, see "Why is there no Transaction object?"
+     */
+    void startTransaction(Optional&lt;TransactionOptions&gt; options);
+
+    /**
+     * Commits the currently active transaction in this session.
+     * Raises an error if this session has no transaction.
+     */
+    void commitTransaction();
+
+    /**
+     * Aborts the currently active transaction in this session.
+     * Raises an error if this session has no transaction.
+     */
+    void abortTransaction();
+
+    /**
+     * Aborts any currently active transaction and ends this session.
+     * MUST NOT raise an error.
+     */
+    void endSession();
+
+    // Methods defined in other specifications...
+}
+</code></pre>
+<p>Each new member is documented below.</p>
+<h3 id="transactionoptions"><a class="header" href="#transactionoptions"><strong>TransactionOptions</strong></a></h3>
+<p>It is expected that the set of TransactionOptions will grow over time, TransactionOptions MUST be designed such that
+future options can be added without breaking backward compatibility.</p>
+<h4 id="readconcern"><a class="header" href="#readconcern">readConcern</a></h4>
+<p>The readConcern to use for the first command, and only the first command, in a transaction. Server transactions are
+started lazily with the first command using this session. For supported values see
+<a href="#behavior-of-the-readconcern-field">Behavior of the readConcern field</a>.</p>
+<p>Note that the readConcern property is optional. The default value is NULL. If readConcern is NULL the value will be
+inherited from this session’s defaultTransactionOptions. If defaultTransactionOptions itself is NULL or the readConcern
+in defaultTransactionOptions is NULL, the readConcern is inherited from the MongoClient associated with this session.</p>
+<p>If the user supplies an explicit readConcern via a method option, the driver MUST raise an error with the message
+"Cannot set read concern after starting a transaction." See
+<a href="#users-cannot-pass-readconcern-or-writeconcern-to-operations-in-transactions">Users cannot pass readConcern or writeConcern to operations in transactions</a>.</p>
+<h4 id="writeconcern"><a class="header" href="#writeconcern">writeConcern</a></h4>
+<p>The writeConcern to use for the commitTransaction and abortTransaction commands. Note that the writeConcern property is
+optional. The default value is NULL. If writeConcern is NULL the value will be inherited from this session’s
+defaultTransactionOptions. If defaultTransactionOptions itself is NULL or the writeConcern in defaultTransactionOptions
+is NULL, the writeConcern is inherited from the MongoClient associated with this session.</p>
+<p>If the writeConcern is not the server default, then Drivers MUST add the writeConcern to the commitTransaction and
+abortTransaction commands. Drivers MUST NOT add the transaction’s writeConcern or any writeConcern inherited from the
+collection, database, or client to any preceding commands in the transaction.</p>
+<p>If the user supplies an explicit writeConcern via a method option, the driver MUST raise an error with the message
+"Cannot set write concern after starting a transaction." See
+<a href="#users-cannot-pass-readconcern-or-writeconcern-to-operations-in-transactions">Users cannot pass readConcern or writeConcern to operations in transactions</a>.</p>
+<p>Drivers MUST raise an error if the user provides or if defaults would result in an unacknowledged writeConcern. The
+Driver Sessions spec disallows using unacknowledged writes in a session. The error message MUST contain "transactions do
+not support unacknowledged write concerns".</p>
+<h4 id="readpreference"><a class="header" href="#readpreference">readPreference</a></h4>
+<p>The read preference to use for all read operations in this transaction.</p>
+<p>Note that the readPreference property is optional. The default value is NULL. If readPreference is NULL the value will
+be inherited from this session’s defaultTransactionOptions. If defaultTransactionOptions itself is NULL or the
+readPreference in defaultTransactionOptions is NULL, the readPreference is inherited from the MongoClient associated
+with this session.</p>
+<p>The transaction’s read preference MUST override all other user configurable read preferences, with the exception of
+drivers that allow an operation level read preference. In this case, the driver MUST respect the read preference
+specified by the user, allowing the server to report an error.</p>
+<p>In MongoDB 4.0, transactions may only read from the primary. If a read is attempted and the transaction’s read
+preference is not Primary drivers MUST raise an error containing the string "read preference in a transaction must be
+primary". Drivers MUST NOT validate the read preference during write operations or in startTransaction. See
+<a href="#why-is-readpreference-part-of-transactionoptions">Why is readPreference part of TransactionOptions?</a>.</p>
+<pre><code class="language-python">client = MongoClient("mongodb://host/?readPreference=nearest")
+coll = client.db.test
+with client.start_session() as s:
+    with s.start_transaction():
+        coll.insert_one({}, session=s)
+        coll.find_one(session=s)  # Error: "read preference in a transaction must be primary"
+</code></pre>
+<p>In the future, we might relax this restriction and allow any read preference on a transaction.</p>
+<h4 id="maxcommittimems"><a class="header" href="#maxcommittimems">maxCommitTimeMS</a></h4>
+<p>NOTE: This option is deprecated in favor of
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#timeoutms">timeoutMS</a>.</p>
+<p>The maximum amount of time to allow a single commitTransaction command to run.</p>
+<p>This option is only sent with the commitTransaction command(s) and only if the caller explicitly provides a value. The
+default is to not send a value.</p>
+<p>Note, this option is an alias for the <code>maxTimeMS</code> commitTransaction command option.</p>
+<h3 id="sessionoptions-changes"><a class="header" href="#sessionoptions-changes"><strong>SessionOptions changes</strong></a></h3>
+<h4 id="defaulttransactionoptions"><a class="header" href="#defaulttransactionoptions">defaultTransactionOptions</a></h4>
+<p>The default TransactionOptions to use for transactions started on this session.</p>
+<h3 id="clientsession-changes"><a class="header" href="#clientsession-changes"><strong>ClientSession changes</strong></a></h3>
+<p>ClientSession is in one of five states: "no transaction", "starting transaction", "transaction in progress",
+"transaction committed", and "transaction aborted". It transitions among these states according to the following
+diagram:</p>
+<p><img src="client-session-transaction-states.png"
+style="width:6.5in;height:3.68056in" alt="states" />
+(<a href="client-session-transaction-states.dot">GraphViz source</a>)</p>
+<p>When a ClientSession is created it starts in the "no transaction" state. Starting, committing, and aborting a
+transaction transitions the session between the "starting transaction", "transaction in progress", "transaction
+committed", and "transaction aborted" states. If the session is in the "transaction aborted" or "transaction committed"
+state, then any operation using the session (besides commitTransaction and abortTransaction) MUST reset the session
+state to "no transaction".</p>
+<p>Note that "error" is not a state, it represents throwing an error due to an invalid operation. When such errors are
+thrown the session state is unchanged.</p>
+<p>Client-side errors MUST NOT change transaction state. For example, if an invalid key or an excessively large document is
+provided by the application to an insert when the transaction state is "starting transaction", the transaction state
+MUST remain "starting transaction". If the same situation occurs when the transaction state is "transaction in
+progress", the state MUST remain "transaction in progress".</p>
+<h4 id="starttransaction"><a class="header" href="#starttransaction">startTransaction</a></h4>
+<p>This method starts a new transaction on this session with the given TransactionOptions. When options is omitted or if
+particular options are not specified, drivers will use the defaultTransactionOptions from ClientSession.options or
+inherit them from the session's client, as described in the text above for each option. This session is in the "starting
+transaction" state after this method returns.</p>
+<p>If this session is in the "starting transaction " or "transaction in progress" state, then Drivers MUST raise an error
+containing the message "Transaction already in progress" without modifying any session state.</p>
+<p>startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
+A deployment does not support transactions when the deployment does not support sessions, or maxWireVersion &lt; 7, or the
+maxWireVersion &lt; 8 and the topology type is Sharded, see
+<a href="../sessions/driver-sessions.html#how-to-tell-whether-a-connection-supports-sessions">How to Tell Whether a Connection Supports Sessions</a>.
+Note that checking the maxWireVersion does not guarantee that the deployment supports transactions, for example a
+MongoDB 4.0 replica set using MMAPv1 will report maxWireVersion 7 but does not support transactions. In this case,
+Drivers rely on the deployment to report an error when a transaction is started.</p>
+<p>Drivers MUST increment the <code>txnNumber</code> for the corresponding server session.</p>
+<p>In programming languages that support resource management blocks, startTransaction MAY be used to initiate such a block:</p>
+<pre><code class="language-python">with client.start_session() as s:
+    with s.start_transaction():
+        collection_one.insert_one(doc1, session=s)
+        s.commit_transaction()
+</code></pre>
+<p>The exact API SHOULD match the idioms of the programming language. Depending on the conventions of the programming
+language, exiting the block without calling commitTransaction MAY automatically abort the transaction, or MAY abort the
+transaction when exiting due to an exception and commit it when exiting normally. The driver MUST NOT automatically
+commit the transaction when exiting the block due to an exception. This means that for languages that use an RAII
+pattern for resource management blocks, if object destruction can't tell if the containing scope has exited normally or
+for an exception, object destruction MUST NOT automatically commit the transaction.</p>
+<p>If the driver returns a type to support resource management blocks, the type MUST NOT be named "Transaction". The type
+MAY be named "TransactionContext", "TransactionScopeGuard" or something similar for your language. See
+<a href="#why-is-there-no-transaction-object">Why is there no Transaction object?</a></p>
+<h4 id="committransaction"><a class="header" href="#committransaction">commitTransaction</a></h4>
+<p>This method commits the currently active transaction on this session. Drivers MUST run a commitTransaction command with
+the writeConcern and, if configured, the maxCommitTimeMS from TransactionOptions. Drivers MUST report an error when the
+command fails or the command succeeds but contains a writeConcernError. This session is in the "transaction committed"
+state after this method returns — even on error.</p>
+<p>If this session is in the "no transaction" state, then Drivers MUST raise an error containing the message "No
+transaction started".</p>
+<p>If this session is in the "transaction aborted" state, then Drivers MUST raise an error containing the message "Cannot
+call commitTransaction after calling abortTransaction".</p>
+<p>If this session is already in the "transaction committed" state, then Drivers MUST re-run the previous
+commitTransaction.</p>
+<p>It is valid to call commitTransaction when the session is in the "starting transaction" or "transaction in progress"
+state. When the session is in the "starting transaction" state, meaning no operations have been performed on this
+transaction, drivers MUST NOT run the commitTransaction command.</p>
+<p>commitTransaction is a retryable write command. Drivers MUST retry once after commitTransaction fails with a retryable
+error, including a handshake network error, according to the Retryable Writes Specification, regardless of whether
+retryWrites is set on the MongoClient or not.</p>
+<p>When commitTransaction is retried, either by the driver's internal retry logic or explicitly by the user calling
+commitTransaction again, drivers MUST apply <code>w: majority</code> to the write concern of the commitTransaction command. If the
+transaction is using a <a href="#writeconcern">writeConcern</a> that is not the server default (i.e. specified via
+TransactionOptions during the <code>startTransaction</code> call or otherwise inherited), any other write concern options (e.g.
+<code>wtimeout</code>) MUST be left as-is when applying <code>w: majority</code>. Finally, if the modified write concern does not include a
+<code>wtimeout</code> value, drivers MUST also apply <code>wtimeout: 10000</code> to the write concern in order to avoid waiting forever (or
+until a socket timeout) if the majority write concern cannot be satisfied. See
+<a href="#majority-write-concern-is-used-when-retrying-committransaction">Majority write concern is used when retrying commitTransaction</a>.</p>
+<p>Drivers MUST add error labels to certain errors when commitTransaction fails. See the
+<a href="#error-reporting-changes">Error reporting changes</a> and <a href="#error-labels">Error Labels</a> sections for a precise
+description.</p>
+<h4 id="aborttransaction"><a class="header" href="#aborttransaction">abortTransaction</a></h4>
+<p>This method aborts the currently active transaction on this session. Drivers MUST run an abortTransaction command with
+the transaction’s writeConcern. When this method completes the session moves to the "transaction aborted" state.</p>
+<p>It is only valid to call abortTransaction when the session is in the "starting transaction" or "transaction in progress"
+state, otherwise drivers MUST raise an error without modifying transaction state.</p>
+<p>If this session is in the "no transaction" state, then drivers MUST raise an error containing the message "No
+transaction started".</p>
+<p>If this session is in the "transaction committed" state, then drivers MUST raise an error containing the message "Cannot
+call abortTransaction after calling commitTransaction".</p>
+<p>If this session is already in the "transaction aborted" state, then drivers MUST raise an error containing the message
+"Cannot call abortTransaction twice".</p>
+<p>It is valid to call abortTransaction when the session is in the "starting transaction" or "transaction in progress"
+state. When the session is in the "starting transaction" state, meaning, no operations have been performed on this
+transaction, drivers MUST NOT run the abortTransaction command.</p>
+<p>abortTransaction is a retryable write command. Drivers MUST retry after abortTransaction fails with a retryable error
+according to the <a href="../retryable-writes/retryable-writes.html">Retryable Writes Specification</a>, including a handshake
+network error, regardless of whether retryWrites is set on the MongoClient or not.</p>
+<p>If the operation times out or fails with a non-retryable error, drivers MUST ignore all errors from the abortTransaction
+command. Errors from abortTransaction are meaningless to the application because they cannot do anything to recover from
+the error. The transaction will ultimately be aborted by the server anyway either upon reaching an age limit or when the
+application starts a new transaction on this session, see
+<a href="#drivers-ignore-all-aborttransaction-errors">Drivers ignore all abortTransaction errors</a>.</p>
+<h4 id="endsession-changes"><a class="header" href="#endsession-changes">endSession changes</a></h4>
+<p>This method ends a ClientSession. Drivers MUST call abortTransaction if this session is in the "transaction in progress"
+state in order to release resources on the server. Drivers MUST ignore any errors raised by abortTransaction while
+ending a session.</p>
+<h3 id="error-reporting-changes"><a class="header" href="#error-reporting-changes">Error reporting changes</a></h3>
+<p>This spec introduces the concept of an "error label". Which labels are applied to an error may be communicated from the
+server to the client, or determined client-side. Any error reported by the driver in response to a server error, server
+selection error, or network error MUST have an API for determining whether it has a given label. In programming
+languages that use class inheritance hierarchies for exceptions, the presence of an error label MUST NOT affect an
+exception's class. Error labels MUST be expressed as a collection of text strings, and it MUST be possible for
+applications to check if an error has a label that is not yet specified in MongoDB 4.0. Drivers MAY define constants for
+error label strings that are known at this time.</p>
+<p>Drivers MAY implement an error label API similar to the following:</p>
+<pre><code class="language-python">try:
+    session.commit_transaction()
+except (OperationFailure, ConnectionFailure) as exc:
+    if exc.has_error_label("UnknownTransactionCommitResult"):
+        print("tried to commit, don't know the outcome")
+</code></pre>
+<p>Drivers MAY expose the list of all error labels for an exception object.</p>
+<p>Drivers MUST add the error label "TransientTransactionError" to network errors thrown in a transaction except for
+network errors thrown during commitTransaction.</p>
+<h2 id="transactions-wire-protocol"><a class="header" href="#transactions-wire-protocol">Transactions Wire Protocol</a></h2>
+<p>The server requires each operation executed within a transaction to provide an <code>lsid</code> and <code>txnNumber</code> in its command
+document. Each field is obtained from the ClientSession object passed to the operation from the application. Drivers
+will be responsible for maintaining a monotonically increasing transaction number for each ServerSession used by a
+ClientSession object. The <code>txnNumber</code> is incremented by the call to startTransaction and remains the same for all
+commands in the transaction.</p>
+<p>Drivers that pool ServerSessions MUST preserve the transaction number when reusing a server session from the pool with a
+new ClientSession (this can be tracked as another property on the driver's object for the server session).</p>
+<p>Drivers MUST ensure that each transaction specifies a transaction number larger than any previously used transaction
+number for its session ID.</p>
+<h3 id="constructing-commands-within-a-transaction"><a class="header" href="#constructing-commands-within-a-transaction"><strong>Constructing commands within a transaction</strong></a></h3>
+<h4 id="behavior-of-the-starttransaction-field"><a class="header" href="#behavior-of-the-starttransaction-field">Behavior of the startTransaction field</a></h4>
+<p>The first command within a multi-statement transaction MUST include <code>startTransaction:true</code>. Subsequent commands MUST
+NOT include the <code>startTransaction</code> field.</p>
+<h4 id="behavior-of-the-autocommit-field"><a class="header" href="#behavior-of-the-autocommit-field">Behavior of the autocommit field</a></h4>
+<p>All operations within a multi-statement transaction (including commitTransaction and abortTransaction) MUST include
+<code>autocommit:false</code>, to distinguish them from single-statement retryable writes.</p>
+<h4 id="behavior-of-the-readconcern-field"><a class="header" href="#behavior-of-the-readconcern-field">Behavior of the readConcern field</a></h4>
+<p>Any command that marks the beginning of a transaction MAY include a <code>readConcern</code> argument with an optional <code>level</code> and
+<code>afterClusterTime</code> fields. Read concern level 'local', 'majority', and 'snapshot' are all supported, although they will
+all have the same behavior as "snapshot" in MongoDB 4.0. To support causal consistency, if <code>readConcern</code>
+<code>afterClusterTime</code> is specified, then the server will ensure that the transaction’s read timestamp is after the
+<code>afterClusterTime</code>.</p>
+<p>All commands of a multi-statement transaction subsequent to the initial command MUST NOT specify a <code>readConcern</code>, since
+the <code>readConcern</code> argument is only needed to establish the transaction’s read timestamp. If a <code>readConcern</code> argument is
+specified on a subsequent (non-initial) command, the server will return an error.</p>
+<p>Read concern level "snapshot" is new in MongoDB 4.0 and can only be used when starting a transaction. The server will
+return an error if read concern level "snapshot" is specified on a command that is not the start of a transaction.
+Drivers MUST rely on the server to report an error if read concern level snapshot is used incorrectly.</p>
+<h4 id="behavior-of-the-writeconcern-field"><a class="header" href="#behavior-of-the-writeconcern-field">Behavior of the writeConcern field</a></h4>
+<p>The commitTransaction and abortTransaction commands are the only commands of a multi-statement transaction that allow a
+<code>writeConcern</code> argument. If a <code>writeConcern</code> argument is given on any other command of a transaction, the server will
+return an error. The <code>writeConcern</code> argument of the commitTransaction and abortTransaction commands has semantics
+analogous to existing write commands.</p>
+<h4 id="behavior-of-the-recoverytoken-field"><a class="header" href="#behavior-of-the-recoverytoken-field">Behavior of the recoveryToken field</a></h4>
+<p>Only included for sharded transactions and only when running a commitTransaction or abortTransaction command. See the
+<a href="#recoverytoken-field">recoveryToken field</a> section for more info.</p>
+<h4 id="constructing-the-first-command-within-a-transaction"><a class="header" href="#constructing-the-first-command-within-a-transaction">Constructing the first command within a transaction</a></h4>
+<p>When constructing the first command within a transaction, drivers MUST add the <code>lsid</code>, <code>txnNumber</code>, <code>startTransaction</code>,
+and <code>autocommit</code> fields.</p>
+<p>Drivers MUST include the transaction's readConcern in the first command in a transaction if and only if the readConcern
+is supplied and not the server's default. The readConcern MUST NOT be inherited from the collection, database, or client
+associated with the driver method that invokes the first command.</p>
+<p>Drivers MUST NOT add to subsequent commands the readConcern from the transaction or any readConcern inherited from the
+collection, database, or client.</p>
+<p>This is an example of an insert command that begins a server transaction:</p>
+<pre><code class="language-typescript">{
+    insert : "test",
+    documents : [{}],
+    lsid : { id : &lt;UUID&gt; }
+    txnNumber: NumberLong(1),
+    // The "level" is optional, supported values are "local", "majority"
+    // and "snapshot". "afterClusterTime" is only present in causally
+    // consistent sessions.
+    readConcern : {
+        level : "snapshot",
+        afterClusterTime : Timestamp(42,1)
+    },
+    startTransaction : true,
+    autocommit : false
+}
+</code></pre>
+<p>This command uses the readConcern set on the transaction's TransactionOptions during the <code>startTransaction</code> call. It is
+not inherited from a client, database, or collection at the time of the first command.</p>
+<p>The session transitions to the "transaction in progress" state after completing the first command within a transaction —
+even on error.</p>
+<h4 id="constructing-any-other-command-within-a-transaction"><a class="header" href="#constructing-any-other-command-within-a-transaction">Constructing any other command within a transaction</a></h4>
+<p>When constructing any other command within a transaction, drivers MUST add the <code>lsid</code>, <code>txnNumber</code>, and <code>autocommit</code>
+fields. Drivers MUST NOT automatically add the <code>writeConcern</code>, <code>readConcern</code>, or <code>startTransaction</code> fields. This is an
+example of a find command within a transaction:</p>
+<pre><code class="language-typescript">{
+    find : "test",
+    filter : {},
+    lsid : { id : &lt;UUID&gt; }
+    txnNumber : NumberLong(1),
+    autocommit : false
+}
+</code></pre>
+<h4 id="generic-runcommand-helper-within-a-transaction"><a class="header" href="#generic-runcommand-helper-within-a-transaction">Generic RunCommand helper within a transaction</a></h4>
+<p>If your driver offers a generic RunCommand method on your database object, the driver MUST add the <code>lsid</code>, <code>autocommit</code>,
+and <code>txnNumber</code> fields. If the RunCommand operation is the first operation in a transaction then the driver MUST also
+add the <code>startTransaction</code> and <code>readConcern</code> fields. A driver MUST do this without modifying any data supplied by the
+application (e.g. the command document passed to RunCommand). If the user supplies an explicit readConcern as an
+argument to the runCommand method in a transaction, the client MUST raise an error with the message "Cannot set read
+concern after starting a transaction."</p>
+<p>The RunCommand method is considered a read operation and MUST use the transaction’s read preference.</p>
+<p>The behavior is not defined if the command document passed to RunCommand already contains some of the transaction
+fields.</p>
+<h3 id="interaction-with-causal-consistency"><a class="header" href="#interaction-with-causal-consistency"><strong>Interaction with Causal Consistency</strong></a></h3>
+<p>Drivers MUST add <code>readConcern.afterClusterTime</code> to the command that starts a transaction in a causally consistent
+session -- even if the command is a write. Drivers MUST NOT add <code>readConcern.afterClusterTime</code> to subsequent commands in
+a transaction.</p>
+<h3 id="interaction-with-retryable-writes"><a class="header" href="#interaction-with-retryable-writes"><strong>Interaction with Retryable Writes</strong></a></h3>
+<p>In MongoDB 4.0 the only supported retryable write commands within a transaction are commitTransaction and
+abortTransaction. Therefore drivers MUST NOT retry write commands within transactions even when retryWrites has been
+enabled on the MongoClient. In addition, drivers MUST NOT add the RetryableWriteError label to any error that occurs
+during a write command within a transaction (excepting commitTransation and abortTransaction), even when retryWrites has
+been enabled on the MongoClient.</p>
+<p>Drivers MUST retry the commitTransaction and abortTransaction commands even when retryWrites has been disabled on the
+MongoClient. commitTransaction and abortTransaction are retryable write commands and MUST be retried according to the
+<a href="../retryable-writes/retryable-writes.html">Retryable Writes Specification</a>.</p>
+<p>Retryable writes and transactions both use the <code>txnNumber</code> associated with a ServerSession. For retryable writes,
+<code>txnNumber</code> would normally increment before each retryable command, whereas in a transaction, the <code>txnNumber</code> is
+incremented at the start and then stays constant, even for retryable operations within the transaction. When executing
+the commitTransaction and abortTransaction commands within a transaction drivers MUST use the same <code>txnNumber</code> used for
+all preceding commands in the transaction.</p>
+<h3 id="server-commands"><a class="header" href="#server-commands"><strong>Server Commands</strong></a></h3>
+<h4 id="committransaction-1"><a class="header" href="#committransaction-1">commitTransaction</a></h4>
+<p>The commitTransaction server command has the following format:</p>
+<pre><code class="language-typescript">{
+    commitTransaction : 1,
+    lsid : { id : &lt;UUID&gt; },
+    txnNumber : &lt;Int64&gt;,
+    autocommit : false,
+    writeConcern : {...},
+    maxTimeMS: &lt;Int64&gt;,
+    recoveryToken : {...}
+}
+</code></pre>
+<h4 id="aborttransaction-1"><a class="header" href="#aborttransaction-1">abortTransaction</a></h4>
+<p>The abortTransaction server command has the following format:</p>
+<pre><code class="language-typescript">{
+    abortTransaction : 1,
+    lsid : { id : &lt;UUID&gt; },
+    txnNumber : &lt;Int64&gt;,
+    autocommit : false,
+    writeConcern : {...},
+    recoveryToken : {...}
+}
+</code></pre>
+<p>Both commands MUST be sent to the admin database.</p>
+<p>The server response has the following format:</p>
+<pre><code class="language-typescript">{ ok : 1 }
+</code></pre>
+<p>In case of an error, the server response has the following format:</p>
+<pre><code class="language-typescript">{ ok : 0, errmsg : "...", code : &lt;Number&gt;, errorLabels: ["Label"] }
+</code></pre>
+<p>In case of a write concern error, the server response has the following format:</p>
+<pre><code class="language-typescript">{ ok : 1, writeConcernError: {code: &lt;Number&gt;, errmsg : "..."} }
+</code></pre>
+<h2 id="sharded-transactions"><a class="header" href="#sharded-transactions">Sharded Transactions</a></h2>
+<p>MongoDB 4.2 (maxWireVersion 8) introduces support for sharded transactions. Sharded transactions support all of the same
+features as single replica set transaction but introduce two new driver concepts: mongos pinning and the <code>recoveryToken</code>
+field.</p>
+<h3 id="mongos-pinning"><a class="header" href="#mongos-pinning">Mongos Pinning</a></h3>
+<p>Drivers MUST send all commands for a single transaction to the same mongos (excluding retries of commitTransaction and
+abortTransaction).</p>
+<p>After the driver selects a mongos for the first command within a transaction, the driver MUST pin the ClientSession to
+the selected mongos. Drivers MUST send all subsequent commands that are part of the same transaction (excluding certain
+retries of commitTransaction and abortTransaction) to the same mongos.</p>
+<h4 id="when-to-unpin"><a class="header" href="#when-to-unpin">When to unpin</a></h4>
+<p>Drivers MUST unpin a ClientSession in the following situations:</p>
+<ol>
+<li>The transaction is aborted. The session MUST be unpinned regardless of whether or the <code>abortTransaction</code> command
+succeeds or fails, or was executed at all. If the operation fails with a retryable error, the session MUST be
+unpinned before performing server selection for the retry.</li>
+<li>Any operation in the transaction, including <code>commitTransaction</code> fails with a TransientTransactionError. Transient
+errors indicate that the transaction in question has already been aborted or that the pinnned mongos is
+down/unavailable. Unpinning the session ensures that a subsequent <code>abortTransaction</code> (or <code>commitTransaction</code>) does
+not block waiting on a server that is unreachable.</li>
+<li>Any <code>commitTransaction</code> attempt fails with an <code>UnknownTransactionCommitResult</code> error label. If the error is also
+considered retryable, the session MUST be unpinned before performing server selection for the retry.</li>
+<li>A new transaction is started on the ClientSession after the previous transaction has been committed. The session MUST
+be unpinned before performing server selection for the first operation of the new transaction.</li>
+<li>A non-transactional operation is performed using the ClientSession. The session MUST be unpinned before performing
+server selection for the operation.</li>
+</ol>
+<p>Note that committing a transaction on a pinned ClientSession MUST NOT unpin the session as <code>commitTransaction</code> may be
+called multiple times.</p>
+<h4 id="pinning-in-load-balancer-mode"><a class="header" href="#pinning-in-load-balancer-mode">Pinning in Load Balancer Mode</a></h4>
+<p>See the <a href="../load-balancers/load-balancers.html#connection-pooling">Load Balancer Specification</a> for details.</p>
+<h3 id="recoverytoken-field"><a class="header" href="#recoverytoken-field">recoveryToken field</a></h3>
+<p>The <code>recoveryToken</code> field enables the driver to recover a sharded transaction's outcome on a new mongos when the
+original mongos is no longer available.<sup class="footnote-reference"><a href="#1">1</a></sup></p>
+<p>Every successful (<code>ok:1</code>) command response in a sharded transaction includes a <code>recoveryToken</code> field. Drivers MUST track
+the most recently received <code>recoveryToken</code> field and MUST append this field to any subsequent commitTransaction or
+abortTransaction commands. Tracking the most recently returned <code>recoveryToken</code> allows the server to update the
+<code>recoveryToken</code> mid-transaction if needed.</p>
+<p>Drivers MUST clear a session's cached <code>recoveryToken</code> when transitioning to the "no transaction" or "starting
+transaction" state.</p>
+<p>Drivers can safely assume that the <code>recoveryToken</code> field is always a BSON document but drivers MUST NOT modify the
+contents of the document.</p>
+<h2 id="error-reporting-and-retrying-transactions"><a class="header" href="#error-reporting-and-retrying-transactions">Error Reporting and Retrying Transactions</a></h2>
+<h3 id="error-labels"><a class="header" href="#error-labels">Error Labels</a></h3>
+<p>Starting in MongoDB 4.0, any command error may include a top level "errorLabels" field. The field contains an array of
+string error labels.</p>
+<h3 id="transienttransactionerror"><a class="header" href="#transienttransactionerror">TransientTransactionError</a></h3>
+<p>Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
+error or server selection error encountered running any command besides commitTransaction in a transaction. In the case
+of command errors, the server adds the label; in the case of network errors or server selection errors where the client
+receives no server reply, the client adds the label.</p>
+<h4 id="retrying-transactions-that-fail-with-transienttransactionerror"><a class="header" href="#retrying-transactions-that-fail-with-transienttransactionerror">Retrying transactions that fail with TransientTransactionError</a></h4>
+<p>If an exception with the "TransientTransactionError" label is thrown, an application can retry the entire transaction
+from the beginning with a reasonable expectation that it will succeed. For example:</p>
+<pre><code class="language-python">def run_transaction(client):
+    with client.start_session() as s:
+        with s.start_transaction():
+            collection_one.insert_one(doc1, session=s)
+            collection_two.insert_one(doc2, session=s)
+
+while True:
+    try:
+        return run_transaction(client)
+    except (OperationFailure, ConnectionFailure) as exc:
+        if exc.has_error_label("TransientTransactionError"):
+            print("Transient transaction error, retrying...")
+            continue
+        raise
+</code></pre>
+<p>In the above example, a transaction will never be committed twice. The retry loop ends when the transaction commits
+successfully or the transaction fails with a non-transient error.</p>
+<p>An example of a non-transient transaction error is DuplicateKeyError, which causes the server to abort the transaction.
+Retrying a transaction that causes a DuplicateKeyError will again (likely) abort the transaction, therefore such an
+error is not labeled "transient."</p>
+<h3 id="unknowntransactioncommitresult"><a class="header" href="#unknowntransactioncommitresult">UnknownTransactionCommitResult</a></h3>
+<p>The commitTransaction command is considered a retryable write. The driver will automatically retry the commitTransaction
+after a retryable error. Although this adds a layer of protection, the driver’s retry attempt of a commitTransaction may
+again fail with a retryable error. In that case, both the driver and the application do not know the state of the
+transaction.</p>
+<p>The driver MUST add the "UnknownTransactionCommitResult" error label when commitTransaction fails with a server
+selection error, network error, retryable writes error, MaxTimeMSExpired error, or write concern failed / timeout. (See
+<a href="#a-server-selection-error-is-labeled-unknowntransactioncommitresult">A server selection error is labeled UnknownTransactionCommitResult</a>
+for justification.) The approximate meaning of the UnknownTransactionCommitResult label is, "We don't know if your
+commit has satisfied the provided write concern." The only write concern errors that are not labeled with
+"UnknownTransactionCommitResult" are CannotSatisfyWriteConcern (which will be renamed to the more precise
+UnsatisfiableWriteConcern in 4.2, while preserving the current error code) and UnknownReplWriteConcern. These errors
+codes mean that the provided write concern is not valid and therefore a retry attempt would fail with the same error.</p>
+<p>In the case that the commitTransaction fails with a retryable writes error, that error will have both an
+UnknownTransactionCommitResult label and a RetryableWriteError label. This is currently the only scenario in which an
+error can be assigned two error labels.</p>
+<h4 id="retrying-committransaction"><a class="header" href="#retrying-committransaction">Retrying commitTransaction</a></h4>
+<p>If an exception with this label is thrown, an application can safely call commitTransaction again. If this attempt
+succeeds it means the transaction has committed with the provided write concern. If this attempt fails it may also have
+the "UnknownTransactionCommitResult" error label. For example:</p>
+<pre><code class="language-python">def run_transaction_and_retry_commit(client):
+    with client.start_session() as s:
+        with s.start_transaction():
+            collection_one.insert_one(doc1, session=s)
+            collection_two.insert_one(doc2, session=s)
+            while True:
+                try:
+                    s.commit_transaction()
+                    break
+                except (OperationFailure, ConnectionFailure) as exc:
+                    if exc.has_error_label("UnknownTransactionCommitResult"):
+                        print("Unknown commit result, retrying...")
+                        continue
+                    raise
+
+while True:
+    try:
+        return run_transaction_and_retry_commit(client)
+    except (OperationFailure, ConnectionFailure) as exc:
+        if exc.has_error_label("TransientTransactionError"):
+            print("Transient transaction error, retrying...")
+            continue
+        raise
+</code></pre>
+<h2 id="handling-command-errors"><a class="header" href="#handling-command-errors">Handling command errors</a></h2>
+<p>Drivers MUST document that command errors inside a transaction may abort the transaction on the server. An attempt to
+commit such transaction will be rejected with <code>NoSuchTransaction</code> error.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan"><strong>Test Plan</strong></a></h2>
+<p>See the <a href="tests/README.html">README</a> for tests.</p>
+<p>The Python driver serves as a reference implementation.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale"><strong>Design Rationale</strong></a></h2>
+<p>The design of this specification builds on the <a href="../sessions/driver-sessions.html">Driver Sessions Specification</a> and
+modifies the driver API as little as possible.</p>
+<p>Drivers will rely on the server to yield an error if an unsupported command is executed within a transaction. This will
+free drivers from having to maintain a list of supported operations and also allow for forward compatibility when future
+server versions begin to support transactions for additional commands.</p>
+<h3 id="drivers-ignore-all-aborttransaction-errors"><a class="header" href="#drivers-ignore-all-aborttransaction-errors">Drivers ignore all abortTransaction errors</a></h3>
+<p>If the driver has cleared its client-side transaction state, then the next operation it performs will be in a new
+transaction or no transaction, which will cause any lingering transaction state on the server (associated with this
+session) to abort. Therefore abortTransaction can be considered fail-safe, and raising an exception from it only
+complicates application code. Applications would have to wrap abortTransaction in an exception-handling block, but have
+no useful action to perform in response to the error.</p>
+<p>abortTransaction does, however, raise an error if there is no transaction in progress. We had considered making this
+situation raise no error, as well. However, we want to raise an error from abortTransaction if there is no transaction,
+because it discourages an antipattern like this:</p>
+<pre><code class="language-python">s.start_transaction()
+try:
+    coll.insert_one({}, session=s)
+    s.commit_transaction()
+except:
+    # We don't know if it was the insert_one, the commit,
+    # or some other operation that failed, so we must not
+    # commit the transaction.
+    s.abort_transaction()  # Raises a client-side error
+</code></pre>
+<p>If a user puts "commit" in the same exception handling block as the other operations in the transaction, they don't know
+whether to retry the commit or the whole transaction on error. We want such code to raise an exception. One chance we
+have to do that is if a commit fails with a network error and enters the exception handling block, where
+abortTransaction throws "Cannot call abortTransaction after commitTransaction".</p>
+<h3 id="drivers-add-the-transienttransactionerror-label-to-network-errors"><a class="header" href="#drivers-add-the-transienttransactionerror-label-to-network-errors">Drivers add the "TransientTransactionError" label to network errors</a></h3>
+<p>When any non-commitTransaction command fails with a network error within a transaction Drivers add the
+"TransientTransactionError" label because the client doesn't know if it has modified data in the transaction or not.
+Therefore it must abort and retry the entire transaction to be certain it has executed each command in the transaction
+exactly once.</p>
+<p>Adding the "TransientTransactionError" label allows applications to use the the same error label API for both network
+errors and command errors. This also allows applications to distinguish between a network error that occurs within a
+transaction from a network error that occurs while committing a transaction.</p>
+<h3 id="transactions-in-gridfs"><a class="header" href="#transactions-in-gridfs">Transactions in GridFS</a></h3>
+<p>The GridFS spec has not been updated to support sessions, however some drivers have already implemented support for it
+on their own. When the GridFS spec has been updated to support sessions, then drivers that implement that spec MUST also
+support transactions in GridFS because all APIs that allow sessions MUST support transactions.</p>
+<p>Drivers that have already implemented session support in GridFS MUST also support transactions in GridFS. Drivers that
+have not implemented ClientSession support in GridFS are not required to support transactions (or sessions) in GridFS.</p>
+<p>This spec does not require all drivers to implement transaction support in GridFS because transactions in GridFS are not
+very useful: transactions in 4.0 are too limited in time and space to operate on large GridFS files. Additionally,
+GridFS as specified already has some basic guarantees that make transactions less necessary: files are immutable and
+they are created "atomically", from the primary's perspective, because the file entry is only saved after all chunks are
+uploaded.</p>
+<h3 id="causal-consistency-with-runcommand-helper"><a class="header" href="#causal-consistency-with-runcommand-helper">Causal Consistency with RunCommand helper</a></h3>
+<p>Causal Consistency alone only applies to commands that read, and we don't want to parse the document passed to
+runCommand to see if it's a command that reads. In a transaction, however, any command at all that starts a transaction
+must include <code>afterClusterTime</code>, so we can add <code>afterClusterTime</code> to the document passed to runCommand without adding
+per-command special logic to runCommand.</p>
+<h3 id="calling-committransaction-with-the-generic-runcommand-helper-is-undefined-behavior"><a class="header" href="#calling-committransaction-with-the-generic-runcommand-helper-is-undefined-behavior">Calling commitTransaction with the generic runCommand helper is undefined behavior</a></h3>
+<p>Applications should only use the ClientSession API to manage transactions. Applications should not use a generic
+runCommand helper to run the commitTransaction or abortTransaction commands directly. This spec does not define the
+behavior of calling such commands, consistent with other drivers specifications that do not define the behavior of
+calling directly commands for which helper methods are available The purpose of the generic runCommand method is to
+execute a command directly with minimum additional client-side logic.</p>
+<h2 id="dependencies"><a class="header" href="#dependencies"><strong>Dependencies</strong></a></h2>
+<p>This specification depends on:</p>
+<ol>
+<li><a href="../sessions/driver-sessions.html">Driver Sessions Specification</a></li>
+<li><a href="../retryable-writes/retryable-writes.html">Retryable Writes Specification</a></li>
+</ol>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility"><strong>Backwards Compatibility</strong></a></h2>
+<p>The API changes to support transactions extend the existing API but do not introduce any backward breaking changes.
+Existing programs that do not make use of transactions will continue to compile and run correctly.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation"><strong>Reference Implementation</strong></a></h2>
+<p>The <a href="https://github.com/mongodb/mongo-python-driver/">Python driver</a> serves as a reference implementation.</p>
+<h2 id="future-work"><a class="header" href="#future-work"><strong>Future work</strong></a></h2>
+<ul>
+<li>
+<p>Support retryable writes within a transaction.</p>
+</li>
+<li>
+<p>Support transactions on secondaries. In this case, drivers would be required to pin a transaction to the server
+selected for the initial operation. All subsequent operations in the transaction would go to the pinned server.</p>
+</li>
+<li>
+<p>Support for transactions that read from multiple nodes in a replica set. One interesting use case would be to run a
+single transaction that performs low-latency reads with readPreference "nearest" followed by some writes.</p>
+</li>
+<li>
+<p>Support for unacknowledged transaction commits. This might be useful when data consistency is paramount but durability
+is optional. Imagine a system that increments two counters in two different collections. The system may want to use
+transactions to guarantee that both counters are always incremented together or not at all.</p>
+</li>
+</ul>
+<h2 id="justifications"><a class="header" href="#justifications"><strong>Justifications</strong></a></h2>
+<h3 id="why-is-there-no-transaction-object"><a class="header" href="#why-is-there-no-transaction-object">Why is there no Transaction object?</a></h3>
+<p>In order to use transactions an application already has to create and manage a ClientSession object. Introducing a
+Transaction object would result in another object that the application needs to manage. Moreover, a server session can
+only have a single transaction in progress at a time. We chose not to introduce a public Transaction object so that
+applications only need to manage a single object and to more closely mirror how transactions work on the server.</p>
+<p>Some drivers' startTransaction methods will return an object as part of the language's resource management block
+protocol. The object returned by startTransaction MUST NOT be named Transaction, in order to reserve that name for some
+future API extension. Additionally, by avoiding the name Transaction, we prevent users from thinking they can run
+multiple transactions in a session. Finally, we avoid the temptation to diverge from this spec's API by adding a
+commit() or abort() method to the object returned by startTransaction. Committing and aborting a transaction is the
+responsibility of the ClientSession object in all drivers.</p>
+<h3 id="why-is-readpreference-part-of-transactionoptions"><a class="header" href="#why-is-readpreference-part-of-transactionoptions">Why is readPreference part of TransactionOptions?</a></h3>
+<p>Providing a read preference for the entire transaction makes it easier for applications that use one or more non-primary
+read preferences for non-transactional reads to run transactions under a single, primary read-preference. Applications
+only need to set primary read preference on the transaction instead of changing the read preference of all operations.</p>
+<p>Because primary is the only read preference allowed with transactions in MongoDB 4.0, this specification could have
+omitted TransactionOptions.readPreference, or at least defaulted the read preference to primary instead of inheriting
+the client's read preference. However, this would have required a breaking change circa MongoDB 4.2 when we introduce
+secondary reads in transactions: TransactionOptions will inherit the client's read preference in 4.2, so for the sake of
+future-compatibility, TransactionOptions inherits the client's read preference now.</p>
+<p>We considered defaulting TransactionOptions.readPreference to primary in 4.0, overriding the client's read preference by
+default for convenience. However, for consistency with other options-inheritance rules in our specifications,
+transactions MUST inherit the client's read preference.</p>
+<p>In MongoDB 4.0, the error "read preference in a transaction must be primary" is thrown whenever the application attempts
+a read operation in a transaction with a non-primary read preference. We considered throwing this error from
+startTransaction instead, to make the error more deterministic and reduce the performance burden of re-checking the
+TransactionOptions on each operation. However, this behavior will have to change when we introduce secondary reads in
+transactions. There will then be new error scenarios, such as a transaction with secondary reads followed by a write. It
+won't be possible in the future for startTransaction to check that the read preference is correct for all operations the
+application will perform in the transaction. Therefore, we specify now that the readPreference must be checked
+per-operation. (However, we have not completely planned how read preference validation will behave in MongoDB 4.2.)</p>
+<h3 id="users-cannot-pass-readconcern-or-writeconcern-to-operations-in-transactions"><a class="header" href="#users-cannot-pass-readconcern-or-writeconcern-to-operations-in-transactions">Users cannot pass readConcern or writeConcern to operations in transactions</a></h3>
+<p>For drivers that allow readConcern and/or writeConcern to be passed to a particular operation, If the driver did not
+prohibit the readConcern parameter to methods in a transaction, the following code would be ambiguous:</p>
+<pre><code class="language-python">client = MongoClient("mongodb://localhost/?readConcernLevel=majority")
+with client.start_session() as s:
+    # Transaction uses readConcern majority.
+    with s.start_transaction():
+        # The first command in a transaction. Which readConcern?
+        client.db.collection.distinct(
+            readConcern={'level': 'snapshot'},
+            session=s)
+</code></pre>
+<p>In this scenario, the driver must choose which of the two possible readConcerns to use for the <em>first</em> command in the
+transaction. The server will accept either without error, so the ambiguity MUST be resolved by raising a client-side
+error.</p>
+<p>We <em>could</em> specify that if a user passes an explicit writeConcern to an operation in a transaction, that the driver
+passes this writeConcern to the server. The server correctly returns an error in this scenario; there is not the same
+ambiguity with an explicit writeConcern as there is with an explicit readConcern passed to the first operation in a
+transaction. For consistency, however, we specify that an explicit writeConcern passed to an operation in a transaction
+provokes a client-side error, the same as for readConcern.</p>
+<p>Another alternative is to silently ignore the readConcern and/or writeConcern that the user has explicitly provided to a
+particular operation in a transaction. This would be a surprising and undetectable deviation from the user's explicit
+intent.</p>
+<p>On the other hand, if a user configures the write concern of a client, database, or collection, and then configures the
+same option on a transaction, the transaction's configuration overrides the inherited configuration:</p>
+<pre><code class="language-python">client = MongoClient("mongodb://localhost/?w=majority")
+with client.start_session() as s:
+    with s.start_transaction(writeConcern={'w': 1}):
+        # Uses w: 1.
+        client.db.collection.insert_one(
+           {'_id': 1},
+           session=s)
+</code></pre>
+<p>In this case the transaction options express a more immediate user intent than the client options, so it is not
+surprising to override the client options.</p>
+<h3 id="aggregate-with-write-stage-is-a-read-operation"><a class="header" href="#aggregate-with-write-stage-is-a-read-operation">Aggregate with write stage is a read operation</a></h3>
+<p>We intend to migrate away from designs that require drivers to inspect the contents of the aggregation pipeline and
+override user read preferences for aggregate with a write stage (e.g. <code>$out</code>, <code>$merge</code>). In general, our specifications
+should stop defining different behaviors based on the contents of commands.</p>
+<h3 id="a-server-selection-error-is-labeled-unknowntransactioncommitresult"><a class="header" href="#a-server-selection-error-is-labeled-unknowntransactioncommitresult">A server selection error is labeled UnknownTransactionCommitResult</a></h3>
+<p>Drivers add the "UnknownTransactionCommitResult" to a server selection error from commitTransaction, even if this is the
+first attempt to send commitTransaction. It is true in this case that the driver knows the result: the transaction is
+definitely not committed. However, the "UnknownTransactionCommitResult" label properly communicates to the application
+that calling commitTransaction again may succeed.</p>
+<h2 id="faq"><a class="header" href="#faq">FAQ</a></h2>
+<h3 id="what-commands-can-be-run-in-a-transaction"><a class="header" href="#what-commands-can-be-run-in-a-transaction">What commands can be run in a transaction?</a></h3>
+<p>The following commands are allowed inside transactions:</p>
+<ol>
+<li>find</li>
+<li>getMore
+<ul>
+<li>Note that it is not possible to start a transaction with a getMore command, the cursor must have been created
+within the transaction in order for the getMore to succeed.</li>
+</ul>
+</li>
+<li>killCursors</li>
+<li>insert, including into a non-existing collection that implicitly creates it</li>
+<li>update</li>
+<li>delete</li>
+<li>findAndModify</li>
+<li>aggregate (including <code>$lookup</code>)
+<ul>
+<li>The <code>$out</code> and <code>$merge</code> stages are prohibited.</li>
+</ul>
+</li>
+<li>distinct</li>
+<li>geoSearch</li>
+<li>create</li>
+<li>createIndexes on an empty collection created in the same transaction or on a non-existing collection</li>
+<li>bulkWrite</li>
+</ol>
+<h3 id="why-dont-drivers-automatically-retry-commit-after-a-write-concern-timeout-error"><a class="header" href="#why-dont-drivers-automatically-retry-commit-after-a-write-concern-timeout-error">Why don’t drivers automatically retry commit after a write concern timeout error?</a></h3>
+<p>A write concern timeout error indicates that the command succeeded but failed to meet the specified writeConcern within
+the given time limit. Attempting to retry would implicitly double the application’s wtimeout value so drivers do not
+automatically retry.</p>
+<p>Note: this applies only to the driver's internal retry-once behavior. Write concern timeout errors will be labeled with
+"UnknownTransactionCommitResult", which signals that higher-level code may retry.</p>
+<h3 id="what-happens-when-a-command-object-passed-to-runcommand-already-contains-a-transaction-field-eg-lsid-txnnumber-etc"><a class="header" href="#what-happens-when-a-command-object-passed-to-runcommand-already-contains-a-transaction-field-eg-lsid-txnnumber-etc">What happens when a command object passed to RunCommand already contains a transaction field (eg. lsid, txnNumber, etc...)?</a></h3>
+<p>The behavior of running such commands in a transaction are undefined. Applications should not run such commands inside a
+transaction.</p>
+<h3 id="majority-write-concern-is-used-when-retrying-committransaction"><a class="header" href="#majority-write-concern-is-used-when-retrying-committransaction">Majority write concern is used when retrying commitTransaction</a></h3>
+<p>Drivers should apply a majority write concern when retrying commitTransaction to guard against a transaction being
+applied twice.</p>
+<p>Consider the following scenario:</p>
+<ol>
+<li>The driver is connected to a replica set where node A is primary.</li>
+<li>The driver sends commitTransaction to A with <code>w:1</code>. A commits the transaction but dies before it can reply. This
+constitutes a retryable error, which means the driver can retry the commitTransaction command.</li>
+<li>Node B is briefly elected.</li>
+<li>The driver retries commitTransaction on B with <code>w:1</code>, and B replies with a NoSuchTransaction error code and
+TransientTransactionError error label. This implies that the driver may retry the entire transaction.</li>
+<li>Node A revives before B has done any <code>w:majority</code> writes and is reëlected as primary.</li>
+<li>The driver then retries the entire transaction on A where it commits successfully.</li>
+</ol>
+<p>The outcome of this scenario is that two complete executions of the transaction operations are permanently committed on
+node A.</p>
+<p>Drivers can avoid this scenario if they always use a majority write concern when retrying commitTransaction. Applying a
+majority write concern to step four in the above scenario would lead to one of the following possible outcomes:</p>
+<ul>
+<li>Node B replies with failed response, which does not include a TransientTransactionError error label. This does not
+constitute a retryable error. Control is returned to the user.</li>
+<li>Node B replies with a successful response (e.g. <code>ok:1</code>) indicating that the retried commitTransaction has succeeded
+durably and the driver can continue. Control is returned to the user.</li>
+<li>Node B replies with a wtimeout error. This does not constitute a retryable error. Control is returned to the user.</li>
+<li>Node B replies with a failure response that includes the TransientTransactionError label, which indicates it is safe
+to retry the entire transaction. Drivers can trust that a server response will not include both a write concern error
+and TransientTransactionError label (see: <a href="https://jira.mongodb.org/browse/SERVER-37179">SERVER-37179</a>).</li>
+</ul>
+<p>Adding a majority write concern only when retrying commitTransaction provides a good compromise of performance and
+durability. Applications can use <code>w:1</code> for the initial transaction attempt for a performance advantage in the happy
+path. In the event of retryable error, the driver can upgrade commitTransaction to use <code>w:majority</code> and provide
+additional guarantees to the user and avoid any risk of committing the transaction twice. Note that users may still be
+vulnerable to rollbacks by using <code>w:1</code> (as with any write operation).</p>
+<p>While it's possible that the original write concern may provide greater guarantees than majority (e.g. <code>w:3</code> in a
+three-node replica set,
+<a href="https://www.mongodb.com/docs/manual/tutorial/configure-replica-set-tag-sets/#tag-sets-and-custom-write-concern-behavior">custom write concern</a>),
+drivers are not in a position to make that comparison due to the possibility of hidden members or the opaque nature of
+custom write concerns. Excluding the edge case where
+<a href="https://www.mongodb.com/docs/manual/reference/replica-configuration/#rsconf.writeConcernMajorityJournalDefault">writeConcernMajorityJournalDefault</a>
+has been disabled, drivers can readily trust that a majority write concern is durable, which achieves the primary
+objective of avoiding duplicate commits.</p>
+<h2 id="changelog"><a class="header" href="#changelog"><strong>Changelog</strong></a></h2>
+<ul>
+<li>
+<p>2024-05-08: Add bulkWrite to the list of commands allowed in transactions.</p>
+</li>
+<li>
+<p>2024-02-15: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2023-11-22: Specify that non-transient transaction errors abort the transaction on the server.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog</p>
+</li>
+<li>
+<p>2022-01-25: Mention the additional case of a retryable handshake error</p>
+</li>
+<li>
+<p>2022-01-19: Deprecate maxCommitTimeMS in favor of timeoutMS.</p>
+</li>
+<li>
+<p>2021-04-12: Adding in behaviour for load balancer mode.</p>
+</li>
+<li>
+<p>2020-04-07: Clarify that all abortTransaction attempts should unpin the session, even if the command is not executed.</p>
+</li>
+<li>
+<p>2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.</p>
+</li>
+<li>
+<p>2019-10-21: Specify that a commit error can have two error labels</p>
+</li>
+<li>
+<p>2019-07-30: Clarify when the cached recoveryToken should be cleared.</p>
+</li>
+<li>
+<p>2019-06-10: Client-side errors must not change transaction state.</p>
+</li>
+<li>
+<p>2019-06-07: Mention <code>$merge</code> stage for aggregate alongside <code>$out</code></p>
+</li>
+<li>
+<p>2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired errors on commit are labelled
+UnknownTransactionCommitResult.</p>
+</li>
+<li>
+<p>2019-02-19: Add support for sharded transaction recoveryToken.</p>
+</li>
+<li>
+<p>2019-02-19: Clarify FAQ entry for not retrying commit on wtimeout</p>
+</li>
+<li>
+<p>2019-01-18: Apply majority write concern when retrying commitTransaction</p>
+</li>
+<li>
+<p>2018-11-13: Add mongos pinning to support sharded transaction.</p>
+</li>
+<li>
+<p>2018-06-18: Explicit readConcern and/or writeConcern are prohibited within transactions, with a client-side error.</p>
+</li>
+<li>
+<p>2018-06-07: The count command is not supported within transactions.</p>
+</li>
+<li>
+<p>2018-06-14: Any retryable writes error raised by commitTransaction must be labelled "UnknownTransactionCommitResult".</p>
+</li>
+</ul>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>In 4.2, a new mongos waits for the <em>outcome</em> of the transaction but will never itself cause the transaction to be
+committed. If the initial commit on the original mongos itself failed to initiate the transaction's commit sequence,
+then a retry attempt on a new mongos will block until the transaction is automatically timed out by the cluster. In
+this case, the new mongos will return a transient error indicating that the transaction was aborted.</p>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../sessions/snapshot-sessions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../transactions-convenient-api/transactions-convenient-api.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../sessions/snapshot-sessions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../transactions-convenient-api/transactions-convenient-api.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,34 @@
+digraph gc {
+    rankdir = LR
+
+    label = "ClientSession state transitions. 'insert' stands for any operation.
+    'error' isn't a permanent state, it just represents throwing an error.
+    "
+
+    labelloc = t
+
+    initial [shape="rectangle"]
+    in_progress [label="in progress"]
+
+    initial -> none
+    none -> starting [label="start"]
+    none -> none [label="insert"]
+    none -> error [label="commit/abort"]
+    starting -> in_progress [label="insert"]
+    starting -> committed [label="commit"]
+    starting -> aborted [label="abort"]
+    starting -> error [label="start"]
+    in_progress -> committed [label="commit"]
+    in_progress -> aborted [label="abort"]
+    in_progress -> in_progress [label="insert"]
+    in_progress -> error [label="start"]
+    aborted -> none [label="insert"]
+    aborted -> starting [label="start"]
+    aborted -> error [label="commit/abort"]
+    committed -> none [label="insert"]
+    committed -> starting [label="start"]
+    committed -> error [label="abort"]
+    committed -> committed [label="commit"]
+    error [shape="rectangle"]
+
+}

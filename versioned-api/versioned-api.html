@@ -1,0 +1,397 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Stable API - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html" class="active"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="stable-api-for-drivers"><a class="header" href="#stable-api-for-drivers">Stable API For Drivers</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: N/A</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>As MongoDB moves toward more frequent releases (a.k.a. continuous delivery), we want to enable users to take advantage
+of our rapidly released features, without exposing applications to incompatible server changes due to automatic server
+upgrades. A stable API will help accomplish that goal.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<p>This document tends to use "SHOULD" more frequently than other specifications, but mainly in the context of providing
+guidance on writing test files. This is discussed in more detail in <a href="#design-rationale">Design Rationale</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="background"><a class="header" href="#background">Background</a></h3>
+<p>When applications interact with MongoDB, both the driver and the server participate in executing operations. Therefore,
+when determining application compatibility with MongoDB, both the driver and the server behavior must be taken into
+account.</p>
+<p>An application can specify the server API version when creating MongoClient. When this is done:</p>
+<ul>
+<li>The client sends the specified API version to the server, causing the server to behave in a manner compatible with
+that API version.</li>
+<li>The driver will behave in a manner compatible with a server configured with that API version, regardless of the
+server's actual release version.</li>
+</ul>
+<p>Presently there is no specification for how a driver must behave when a particular server API version is requested, or
+what driver operations are subject to API compatibility guarantees. Such requirements may be stipulated in subsequent
+specifications.</p>
+<p>This specification requires MongoClient to validate that it supports the specified server API version, if any, but does
+not define what such support means.</p>
+<h3 id="mongoclient-changes"><a class="header" href="#mongoclient-changes"><code>MongoClient</code> changes</a></h3>
+<p><code>MongoClient</code> instances accept a new <code>serverApi</code> option to allow the user to declare an API version:</p>
+<pre><code class="language-typescript">class MongoClient {
+    MongoClient(... serverApi: ServerApi);
+}
+
+enum ServerApiVersion {
+    v1 = "1",
+}
+
+class ServerApi {
+    version: string|ServerApiVersion;
+    strict: Optional&lt;Boolean&gt;; // Default false
+    deprecationErrors: Optional&lt;Boolean&gt;; // Default false
+}
+</code></pre>
+<p>Drivers SHOULD group the <code>serverApi</code> option with other similar client options like <code>autoEncryptionOpts</code>. Drivers MUST
+NOT allow specification of any stable API options via the connection string. See the
+<a href="#design-rationale">Design Rationale</a> for more details.</p>
+<h4 id="serverapiversion-enumeration"><a class="header" href="#serverapiversion-enumeration">ServerApiVersion enumeration</a></h4>
+<p>This specification and subsequent specifications will define the known API versions. Drivers SHOULD define an
+enumeration containing the known API versions, using the version identifiers given. Drivers MAY deviate from the version
+identifiers used in this and subsequent specifications if doing so is necessary given the driver's programming
+language's constraints. Drivers MUST ensure that adding new API versions to this enumeration does not result in backward
+compatibility breaks in non-major releases. This can be the case in languages that allow exhaustive <code>switch</code> statements
+(e.g. Swift).</p>
+<p>Drivers for languages that don't have enums (e.g. PHP) MUST expose the version as a string, but SHOULD offer constants
+to allow for IDE features such as code completion. In these cases, the driver MUST validate (e.g. when the application
+provides a version string to the <code>ServerApi</code> class) that the version string is valid and trigger a client-side error if
+an unknown API version was used.</p>
+<h4 id="serverapi-class"><a class="header" href="#serverapi-class">ServerApi class</a></h4>
+<p>The <code>ServerApi</code> class stores an API version, along with flags that decide whether or not unknown or deprecated commands
+in the specified API version trigger a server-side error. A <code>version</code> MUST be specified when declaring an API version,
+while the <code>strict</code> and <code>deprecationErrors</code> options are both optional. The <code>ServerApi</code> class is considered immutable;
+changes to the declared API version MUST be prohibited.</p>
+<h4 id="declared-version-inheritance"><a class="header" href="#declared-version-inheritance">Declared Version Inheritance</a></h4>
+<p>Drivers MUST ensure that users cannot override the API version declared in the <code>MongoClient</code> instance. This includes the
+<code>MongoDatabase</code> and <code>MongoCollection</code> classes, as well as any operations in these classes. See the rationale for more
+details.</p>
+<h3 id="sending-declared-api-version-to-the-server"><a class="header" href="#sending-declared-api-version-to-the-server">Sending Declared API Version to the Server</a></h3>
+<p>The declared API version MUST be sent to the server as part of every command request, with the exception of the cases
+listed below. Drivers MUST NOT use a server's reported <code>maxWireVersion</code> to decide whether it supports the stable API.
+The server will reply with an error if the declared API version is not supported, or if the command does not support API
+versioning options. If the user does not declare an API version, the driver MUST NOT send any API versioning options to
+the server.</p>
+<p>If an API version is declared then the driver MUST use <code>OP_MSG</code> for all messages, including the initial handshake.</p>
+<h4 id="command-syntax"><a class="header" href="#command-syntax">Command Syntax</a></h4>
+<p>The options from the declared API version are mapped to the following command options:</p>
+<div class="table-wrapper"><table><thead><tr><th><strong>ServerApi field</strong></th><th><strong>Command option</strong></th></tr></thead><tbody>
+<tr><td><code>version</code></td><td><code>apiVersion</code></td></tr>
+<tr><td><code>strict</code></td><td><code>apiStrict</code></td></tr>
+<tr><td><code>deprecationErrors</code></td><td><code>apiDeprecationErrors</code></td></tr>
+</tbody></table>
+</div>
+<p>If an API version was declared, drivers MUST add the <code>apiVersion</code> option to every command that is sent to a server.
+Drivers MUST add the <code>apiStrict</code> and <code>apiDeprecationErrors</code> options if they were specified by the user, even when the
+specified value is equal to the server default. Drivers MUST NOT add any API versioning options if the user did not
+specify them. This includes the <code>getMore</code> command as well as all commands that are part of a transaction. A previous
+version of this specification excluded those commands, but that has since changed in the server.</p>
+<h4 id="handshake-behavior"><a class="header" href="#handshake-behavior">Handshake behavior</a></h4>
+<p>If an API version was declared, drivers MUST NOT use the legacy hello command during the initial handshake or
+afterwards. Instead, drivers MUST use the <code>hello</code> command exclusively and use the <code>OP_MSG</code> protocol. If the server does
+not support <code>hello</code>, the server description MUST reflect this with an <code>Unknown</code> server type.</p>
+<h4 id="cursors"><a class="header" href="#cursors">Cursors</a></h4>
+<p>For <code>getMore</code>, drivers MUST submit API parameters. If the values given do not match the API parameters given in the
+cursor-initiating command, the server will reply with an error.</p>
+<h4 id="transactions"><a class="header" href="#transactions">Transactions</a></h4>
+<p>When running commands as part of a transaction, drivers MUST send API parameters with all commands that are part of a
+transaction, including <code>commitTransaction</code> and <code>abortTransaction</code>. If the API parameters for a command in a transaction
+do not match those of the transaction-starting command, the server will reply with an error.</p>
+<h4 id="generic-command-helper"><a class="header" href="#generic-command-helper">Generic command helper</a></h4>
+<p>Drivers that offer a generic command helper (e.g. <code>command()</code> or <code>runCommand()</code>) MUST NOT inspect the command document
+to detect API versioning options. As with all other commands, drivers MUST inherit the API version from the client.
+Specifying API versioning options in the command document and declaring an API version on the client is not supported.
+Drivers MUST document that the behaviour of the command helper is undefined in this case.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<h3 id="no-uri-options"><a class="header" href="#no-uri-options">No URI Options</a></h3>
+<p>Since changing the API version can cause the application to behave differently, drivers MUST NOT allow users to change
+the declared API version without deploying code changes. This ensures that users don't copy a connection string with a
+declared API version that may be different from what their application expects. A URI option can be added later if we
+realise our users need it, while the opposite is not easily accomplished.</p>
+<h3 id="dont-allow-overriding-the-declared-api-version"><a class="header" href="#dont-allow-overriding-the-declared-api-version">Don't Allow Overriding the Declared API Version</a></h3>
+<p>While users are used to overriding options like read preference, read concern, and write concern in <code>MongoDatabase</code> and
+<code>MongoCollection</code> objects, or on an operation level, we explicitly decided against this for the declared API version.
+With a single API version available to start, we can't anticipate what use cases users may have to override the API
+version. Not including this feature at the beginning allows us to gather feedback on use cases and add the features
+users are looking for. On the other hand, adding the ability to override the declared API version can't be undone until
+a future major release, which is almost impossible to accomplish across all drivers.</p>
+<h3 id="generic-command-helper-behaviour"><a class="header" href="#generic-command-helper-behaviour">Generic Command Helper Behaviour</a></h3>
+<p>The runCommand helper is a way for the user to run a native command with the driver doing little to no inspection in the
+command. This allows users to run arbitrary commands that may not have helpers in the driver, or to pass options that
+are not supported by the driver version they are currently using. Commands run using this helper do not inherit any
+<code>readConcern</code> or <code>writeConcern</code> options that may have been set on the <code>MongoClient</code> or <code>MongoDatabase</code> objects.</p>
+<p>However, the declared API version is a different case. We are introducing this feature to give users a certain peace of
+mind when upgrading driver or server versions, by ensuring that their code will continue to show the same behaviour
+they've gotten used to. This includes all commands run using the generic command helper. Thus, the helper will inherit
+the API version declared on the client.</p>
+<h3 id="hardcode-supported-versions-in-drivers"><a class="header" href="#hardcode-supported-versions-in-drivers">Hardcode supported versions in drivers</a></h3>
+<p>Since a new API version might require driver changes (e.g. to account for removed commands), we don't yet know what
+changes drivers must make for a future version. Until we do, we must prevent users from choosing any unknown API
+version.</p>
+<h2 id="backward-compatibility"><a class="header" href="#backward-compatibility">Backward Compatibility</a></h2>
+<p>Driver changes are fully backward compatible. Not declaring an API version when creating a client may cause an error if
+the server was started with the <code>requireApiVersion</code> option enabled, but this is outside of driver control.</p>
+<h2 id="future-work"><a class="header" href="#future-work">Future Work</a></h2>
+<h3 id="overriding-the-declared-api-version"><a class="header" href="#overriding-the-declared-api-version">Overriding the Declared API Version</a></h3>
+<p>In the future, we may want to allow users to override the declared API version on a <code>MongoDatabase</code>, <code>MongoCollection</code>,
+or individual operation level. However, this is not necessary until there is a different API version and we have data on
+why and how users would want to override the declared API version.</p>
+<h3 id="stable-crud-api"><a class="header" href="#stable-crud-api">Stable CRUD API</a></h3>
+<p>Drivers may also want to provide specialized <code>MongoClient</code>, <code>MongoDatabase</code>, and <code>MongoCollection</code> classes to only
+include features that are part of the stable API. This is not covered in this specification.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-09-10: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-02-24: Rename Versioned API to Stable API</p>
+</li>
+<li>
+<p>2022-01-14: Require <code>OP_MSG</code> for all messages including the initial step of<br />
+the handshake when using stable API.</p>
+</li>
+<li>
+<p>2021-05-05: Require sending stable API parameters with <code>getMore</code> and<br />
+transaction-continuing commands.</p>
+</li>
+<li>
+<p>2021-04-20: Require using <code>hello</code> when using the stable API.</p>
+</li>
+<li>
+<p>2021-04-10: Replaced usages of <code>acceptAPIVersion2</code> with <code>acceptApiVersion2</code>.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../gridfs/gridfs-spec.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../client-side-encryption/client-side-encryption.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../gridfs/gridfs-spec.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../client-side-encryption/client-side-encryption.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

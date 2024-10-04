@@ -1,0 +1,1241 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Indexes - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html" class="active"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="index-management"><a class="header" href="#index-management">Index Management</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 3.6</li>
+</ul>
+<hr />
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<p>The index management spec defines a set of behaviour in the drivers for creating, removing and viewing indexes in a
+collection. It defines implementation details when required but also provides flexibility in the driver in that one or
+both of 2 unique APIs can be chosen to be implemented.</p>
+<h3 id="definitions"><a class="header" href="#definitions">Definitions</a></h3>
+<h4 id="meta"><a class="header" href="#meta">META</a></h4>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h4 id="terms"><a class="header" href="#terms">Terms</a></h4>
+<p><strong>Collection</strong></p>
+<p>The term <code>Collection</code> references the object in the driver that represents a collection on the server.</p>
+<p><strong>Cursor</strong></p>
+<p>The term <code>Cursor</code> references the driver's cursor object.</p>
+<p><strong>Iterable</strong></p>
+<p>The term <code>Iterable</code> is to describe an object that is a sequence of elements that can be iterated over.</p>
+<p><strong>Document</strong></p>
+<p>The term <code>Document</code> refers to the implementation in the driver's language of a BSON document.</p>
+<p><strong>Result</strong></p>
+<p>The term <code>Result</code> references the object that is normally returned by the driver as the result of a command execution. In
+the case of situations where an actual command is not executed, rather an insert or a query, an object that adheres to
+the same interface must be returned with as much information as possible that could be obtained from the operation.</p>
+<h3 id="guidance"><a class="header" href="#guidance">Guidance</a></h3>
+<h4 id="documentation"><a class="header" href="#documentation">Documentation</a></h4>
+<p>The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation
+for the driver.</p>
+<h4 id="operations"><a class="header" href="#operations">Operations</a></h4>
+<p>All drivers MUST offer at least one of the sections of operations, the Standard API or the Index View API. The driver
+MAY elect to have both. Implementation details are noted in the comments when a specific implementation is required.
+Within each API, all methods are REQUIRED unless noted otherwise in the comments.</p>
+<h4 id="operation-parameters"><a class="header" href="#operation-parameters">Operation Parameters</a></h4>
+<p>All drivers MUST include the specified parameters in each operation. This does not preclude a driver from offering more.
+A driver SHOULD NOT require a user to specify the options parameter if they wish to use the server defaults.</p>
+<p>As of 3.4 (see <a href="https://jira.mongodb.org/browse/SERVER-769">https://jira.mongodb.org/browse/SERVER-769</a>) the server validates options passed to the <code>createIndexes</code>
+command -- drivers should be aware when testing that passing arbitrary options when the driver does not validate them
+could fail on the server.</p>
+<h4 id="deviations"><a class="header" href="#deviations">Deviations</a></h4>
+<p>A non-exhaustive list of acceptable deviations are as follows:</p>
+<ul>
+<li>Using named parameters in place of an options hash or class. For instance,
+<code>collection.create_index({x: 1}, commit_quorum="majority")</code>.</li>
+<li>When using an <code>Options</code> class, if multiple <code>Options</code> classes are structurally equatable, it is permissible to
+consolidate them into one with a clear name. For instance, it would be permissible to use the name
+<code>CreateIndexOptions</code> as the options for <code>createIndex</code> and <code>createIndexes</code>.</li>
+</ul>
+<h4 id="naming"><a class="header" href="#naming">Naming</a></h4>
+<p>All drivers MUST name operations and parameters as defined in the following sections. Exceptions to this rule are noted
+in the appropriate section. Class and interface names may vary according to the driver and language best practices.</p>
+<h4 id="naming-deviations"><a class="header" href="#naming-deviations">Naming Deviations</a></h4>
+<p>When deviating from a defined name, an author should consider if the altered name is recognizable and discoverable to
+the user of another driver.</p>
+<p>A non-exhaustive list of acceptable naming deviations are as follows:</p>
+<ul>
+<li>Using "maxTimeMS" as an example, .NET would use "MaxTime" where it's type is a TimeSpan structure that includes units.
+However, calling it "MaximumTime" would not be acceptable.</li>
+<li>Using "CreateIndexOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to call
+it "CreateIndexArgs" or "CreateIndexParams".</li>
+<li>Acceptable naming deviations should fall within the basic style of the language. For example, <code>createIndex</code> would be a
+required name in Java, where camel-case method names are used, but in Ruby <code>create_index</code> would be acceptable.</li>
+</ul>
+<h4 id="index-name-generation"><a class="header" href="#index-name-generation">Index Name Generation</a></h4>
+<p>When the client generates a name for an index based on the keys, the driver MUST generate the name as key-direction
+pairs, separated by underscores. For example, the key <code>{ name: 1, dob: -1 }</code> MUST generate an index name of
+<code>name_1_dob_-1</code>.</p>
+<p>Note there is one exception to this rule on the <code>_id</code> field. The server uses an index name with no direction, <code>_id_</code>,
+which cannot be overridden.</p>
+<h4 id="timeouts"><a class="header" href="#timeouts">Timeouts</a></h4>
+<p>Drivers MUST enforce timeouts for all operations per the
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html">Client Side Operations Timeout</a> specification. All
+operations that return cursors MUST support the timeout options documented in the
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#cursors">Cursors</a> section of that specification.</p>
+<h3 id="standard-api"><a class="header" href="#standard-api">Standard API</a></h3>
+<pre><code class="language-typescript">interface Collection {
+
+  /**
+   * This is a convenience method for creating a single index. This MUST call the
+   * createIndexes method and pass the provided specification document in a
+   * sequence to that method with the same options.
+   *
+   * @return The name of the created index.
+   *
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an IndexModel as a parameter, or for those languages with method
+   *   overloading MAY decide to implement both.
+   *
+   * @note Drivers MAY combine the two options types into a single one. If the options are
+   *   explicitly typed, the combined options type MUST be named CreateIndexOptions or an acceptable
+   *   variation.
+   */
+  createIndex(keys: Document, indexOptions: Optional&lt;IndexOptions&gt;, options: Optional&lt;CreateIndexOptions&gt;): String;
+
+  /**
+   * @see Comments above.
+   */
+  createIndex(model: IndexModel, options: Optional&lt;CreateIndexOptions&gt;): String
+
+  /**
+   * Creates multiple indexes in the collection.
+   * 
+   * In all server versions, this MUST execute a createIndexes command.
+   *
+   * @return The names of all the indexes that were created.
+   */
+  createIndexes(models: Iterable&lt;IndexModel&gt;, options: Optional&lt;CreateIndexesOptions&gt;): Iterable&lt;String&gt;;
+
+  /**
+   * Drops a single index from the collection by the index name.
+   *
+   * In all server versions this MUST execute a dropIndexes command.
+   *
+   * @note If the string passed is '*', the driver MUST raise an error since
+   *   more than one index would be dropped.
+   */
+  dropIndex(name: String, options: Optional&lt;DropIndexOptions&gt;): Result;
+
+  /**
+   * Attempts to drop a single index from the collection given the keys and options.
+   *
+   * In all server versions this MUST execute a dropIndexes command.
+   *
+   * This is OPTIONAL until partial indexes are implemented.
+   *
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an IndexModel as a parameter, or for those languages with method
+   *   overloading MAY decide to implement both.
+   *
+   * @note Drivers MAY combine the two options types into a single one. If the options are
+   *   explicitly typed, the combined options type MUST be named DropIndexOptions or an acceptable
+   *   variation.
+   */
+  dropIndex(keys: Document, indexOptions: IndexOptions, options: Optional&lt;DropIndexOptions&gt;): Result;
+
+  /**
+   * @see Comments above.
+   */
+  dropIndex(model: IndexModel, options: Optional&lt;DropIndexOptions&gt;): Result;
+
+  /**
+   * Drops all indexes in the collection.
+   */
+  dropIndexes(options: Optional&lt;DropIndexesOptions&gt;): Result;
+
+  /**
+   * Gets index information for all indexes in the collection. The behavior for 
+   * enumerating indexes is described in the :ref:`Enumerating Indexes` section.
+   *
+   */
+  listIndexes(options: Optional&lt;ListIndexesOptions&gt;): Cursor;
+}
+
+interface CreateIndexOptions {
+  /**
+   * Specifies how many data-bearing members of a replica set, including the primary, must
+   * complete the index builds successfully before the primary marks the indexes as ready.
+   *
+   * This option accepts the same values for the "w" field in a write concern plus "votingMembers",
+   * which indicates all voting data-bearing nodes.
+   *
+   * This option is only supported by servers &gt;= 4.4. Drivers MUST manually raise an error if this option
+   * is specified when creating an index on a pre 4.4 server. See the Q&amp;A section for the rationale behind this.
+   *
+   * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @since MongoDB 4.4
+   */
+  commitQuorum: Optional&lt;Int32 | String&gt;;
+
+  /**
+   * The maximum amount of time to allow the index build to take before returning an error.
+   *
+   * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   */
+  maxTimeMS: Optional&lt;Int64&gt;;
+
+  /**
+   * Enables users to specify an arbitrary comment to help trace the operation through
+   * the database profiler, currentOp and logs. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/createIndexes/
+   *
+   * @since MongoDB 4.4
+   */
+  comment: Optional&lt;any&gt;;
+}
+
+interface CreateIndexesOptions {
+  // same as CreateIndexOptions
+}
+
+interface DropIndexOptions {
+ /**
+   * The maximum amount of time to allow the index drop to take before returning an error.
+   *
+   * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   */
+  maxTimeMS: Optional&lt;Int64&gt;;
+
+  /**
+   * Enables users to specify an arbitrary comment to help trace the operation through
+   * the database profiler, currentOp and logs. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/dropIndexes/
+   *
+   * @since MongoDB 4.4
+   */
+  comment: Optional&lt;any&gt;;
+}
+
+interface DropIndexesOptions {
+  // same as DropIndexOptions
+}
+</code></pre>
+<h4 id="examples"><a class="header" href="#examples">Examples</a></h4>
+<p>Create an index in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.create_index({ name: 1 }, { unique: true })
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.createIndex(new Document("name", 1), new IndexOptions().unique(true));
+</code></pre>
+<p>Produces the shell equivalent (&gt;= 2.6.0) of:</p>
+<pre><code class="language-javascript">db.runCommand({
+  createIndexes: "users",
+  indexes: [
+    { key: { name: 1 }, name: "name_1", unique: true }
+  ]
+});
+</code></pre>
+<p>Create multiple indexes in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.create_indexes([
+  { key: { name: 1 }, unique: true },
+  { key: { age: -1 }, name: "age" }
+])
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.createIndexes(asList(
+  new IndexModel(new Document("name", 1), new IndexOptions().unique(true)),
+  new IndexModel(new Document("age", -1), new IndexOptions().name("age"))
+));
+</code></pre>
+<p>Produces the shell equivalent (&gt;= 2.6.0) of:</p>
+<pre><code class="language-javascript">db.runCommand({
+  createIndexes: "users",
+  indexes: [
+    { key: { name: 1 }, name: "name_1", unique: true },
+    { key: { age: -1 }, name: "age" }
+  ]
+});
+</code></pre>
+<p>Drop an index in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.drop_index("age")
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.dropIndex("age");
+</code></pre>
+<p>Produces the shell equivalent of:</p>
+<pre><code class="language-javascript">db.runCommand({ dropIndexes: "users", index: "age" });
+</code></pre>
+<p>Drop all indexes in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.drop_indexes
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.dropIndexes();
+</code></pre>
+<p>Produces the shell equivalent of:</p>
+<pre><code class="language-javascript">db.runCommand({ dropIndexes: "users", index: "*" });
+</code></pre>
+<p>List all indexes in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.list_indexes
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.listIndexes();
+</code></pre>
+<p>Produces the shell equivalent (&gt;= 3.0.0) of:</p>
+<pre><code class="language-javascript">db.runCommand({ listIndexes: "users" });
+</code></pre>
+<h3 id="index-view-api"><a class="header" href="#index-view-api">Index View API</a></h3>
+<pre><code class="language-typescript">interface Collection {
+
+  /**
+   * Returns the index view for this collection.
+   */
+  indexes(options: Optional&lt;ListIndexesOptions&gt;): IndexView;
+}
+
+interface IndexView extends Iterable&lt;Document&gt; {
+
+  /**
+   * Enumerates the index information for all indexes in the collection. This should be
+   * implemented as described in the :ref:`Enumerate Indexes` section, although the naming
+   * requirement is dropped in favor of the driver language standard for handling iteration
+   * over a sequence of objects.
+   *
+   * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.md
+   *
+   * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
+   *   method. See below.
+   */
+  iterator(): Iterator&lt;Document&gt;;
+
+  /**
+   * For drivers that cannot make IndexView iterable, they MUST implement this method to
+   * return a list of indexes. In the case of async drivers, this MAY return a Future&lt;Cursor&gt;
+   *  or language/implementation equivalent.
+   * 
+   *  If drivers are unable to make the IndexView iterable, they MAY opt to provide the options for 
+   *  listing search indexes via the `list` method instead of the `Collection.indexes` method.
+
+   */
+  list(): Cursor;
+
+  /**
+   * This is a convenience method for creating a single index. This MUST call the
+   * createMany method and pass the provided specification document in a
+   * sequence to that method with the same options.
+   *
+   * @return The name of the created index.
+   *
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an IndexModel as a parameter, or for those languages with method
+   *   overloading MAY decide to implement both.
+   *
+   * @note Drivers MAY combine the two options types into a single one. If the options are
+   *   explicitly typed, the combined options type MUST be named CreateOneIndexOptions or an acceptable
+   *   variation.
+   */
+  createOne(keys: Document, indexOptions: IndexOptions, options: Optional&lt;CreateOneIndexOptions&gt;): String;
+
+  /**
+   * @see Comments above.
+   */
+  createOne(model: IndexModel, options: Optional&lt;CreateOneIndexOptions&gt;): String
+
+  /**
+   * Creates multiple indexes in the collection.
+   *
+   * For all server versions this method MUST execute a createIndexes command.
+   *
+   * @return The names of the created indexes.
+   *
+   * @note Each specification document becomes the "key" field in the document that
+   *   is inserted or the command.
+   *   
+   */
+  createMany(models: Iterable&lt;IndexModel&gt;, options: Optional&lt;CreateManyIndexesOptions&gt;): Iterable&lt;String&gt;;
+
+  /**
+   * Drops a single index from the collection by the index name.
+   *
+   * In all server versions this MUST execute a dropIndexes command.
+   *
+   * @note If the string passed is '*', the driver MUST raise an error since
+   *   more than one index would be dropped.
+   */
+  dropOne(name: String, options: Optional&lt;DropOneIndexOptions&gt;): Result;
+
+  /**
+   * Attempts to drop a single index from the collection given the keys and options.
+   * This is OPTIONAL until partial indexes are implemented.
+   *
+   * In all server versions this MUST execute a dropIndexes command.
+   *
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an IndexModel as a parameter, or for those languages with method
+   *   overloading MAY decide to implement both.
+   *
+   * @note Drivers MAY combine the two options types into a single one. If the options are
+   *   explicitly typed, the combined options type MUST be named DropOneIndexOptions or an acceptable
+   *   variation.
+   */
+  dropOne(keys: Document, indexOptions: IndexOptions, options: Optional&lt;DropOneIndexOptions&gt;): Result;
+
+  /**
+   * @see Comments above.
+   */
+  dropOne(model: IndexModel, options: Optional&lt;DropOneIndexOptions&gt;): Result;
+
+  /**
+   * Drops all indexes in the collection.
+   */
+  dropAll(options: Optional&lt;DropAllIndexesOptions&gt;): Result;
+}
+
+interface CreateOneIndexOptions {
+  // same as CreateIndexOptions in the Standard API
+}
+
+interface CreateManyIndexesOptions {
+  // same as CreateIndexesOptions in the Standard API
+}
+
+interface DropOneIndexOptions {
+  // same as DropIndexOptions in the Standard API
+}
+
+interface DropAllIndexesOptions {
+  // same as DropIndexesOptions in the Standard API
+}
+</code></pre>
+<h4 id="examples-1"><a class="header" href="#examples-1">Examples</a></h4>
+<p>Create an index in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.indexes.create_one({ name: 1 }, { unique: true })
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.indexes().createOne(new Document("name", 1), new IndexOptions().unique(true));
+</code></pre>
+<p>Produces the shell equivalent (&gt;= 2.6.0) of:</p>
+<pre><code class="language-javascript">db.runCommand({
+  createIndexes: "users",
+  indexes: [
+    { key: { name: 1 }, name: "name_1", unique: true }
+  ]
+});
+</code></pre>
+<p>Create multiple indexes in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.indexes.create_many([
+  { key: { name: 1 }, unique: true },
+  { key: { age: -1 }, name: "age" }
+])
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.indexes().createMany(asList(
+  new IndexModel(new Document("name", 1), new IndexOptions().unique(true),
+  new IndexModel(new Document("age", -1), new IndexOptions().name("age")
+));
+</code></pre>
+<p>Produces the shell equivalent (&gt;= 2.6.0) of:</p>
+<pre><code class="language-javascript">db.runCommand({
+  createIndexes: "users",
+  indexes: [
+    { key: { name: 1 }, name: "name_1", unique: true },
+    { key: { age: -1 }, name: "age" }
+  ]
+});
+</code></pre>
+<p>Drop an index in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.indexes.drop_one("age")
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.indexes().dropOne("age");
+</code></pre>
+<p>Produces the shell equivalent of:</p>
+<pre><code class="language-javascript">db.runCommand({ dropIndexes: "users", index: "age" });
+</code></pre>
+<p>Drop all indexes in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.indexes.drop_all
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">collection.indexes().dropAll();
+</code></pre>
+<p>Produces the shell equivalent of:</p>
+<pre><code class="language-javascript">db.runCommand({ dropIndexes: "users", index: "*" });
+</code></pre>
+<p>List all indexes in a collection.</p>
+<p>Ruby:</p>
+<pre><code class="language-ruby">collection.indexes.each do |document|
+  p document
+end
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-java">for (BsonDocument document: collection.indexes()) {
+  /* ... */
+}
+</code></pre>
+<p>Produces the shell equivalent (&gt;= 3.0.0) of:</p>
+<pre><code class="language-javascript">var indexes = db.runCommand({ listIndexes: "users" });
+for (index in indexes) {
+  console.log(index);
+}
+</code></pre>
+<h3 id="common-api-components"><a class="header" href="#common-api-components">Common API Components</a></h3>
+<pre><code class="language-typescript">interface IndexModel {
+
+  /**
+   * Contains the required keys for the index.
+   */
+  keys: Document;
+
+  /**
+   * Contains the options for the index.
+   */
+  options: IndexOptions;
+}
+
+interface IndexOptions {
+
+  /**
+   * Optionally tells the server to build the index in the background and not block
+   * other tasks.
+   *
+   * @note Starting in MongoDB 4.2, this option is ignored by the server.
+   * @see https://www.mongodb.com/docs/manual/reference/command/createIndexes/
+   * @deprecated 4.2
+   */
+  background: Boolean;
+
+  /**
+   * Optionally specifies the length in time, in seconds, for documents to remain in
+   * a collection.
+   */
+  expireAfterSeconds: Int32;
+
+  /**
+   * Optionally specify a specific name for the index outside of the default generated
+   * name. If none is provided then the name is generated in the format "[field]_[direction]".
+   *
+   * Note that if an index is created for the same key pattern with different collations,
+   * a name must be provided by the user to avoid ambiguity.
+   *
+   * @example For an index of name: 1, age: -1, the generated name would be "name_1_age_-1".
+   */
+  name: String;
+  
+  /**
+   * Optionally tells the index to only reference documents with the specified field in
+   * the index.
+   */
+  sparse: Boolean;
+
+  /**
+   * Optionally used only in MongoDB 3.0.0 and higher. Allows users to configure the storage
+   * engine on a per-index basis when creating an index.
+   */
+  storageEngine: Document;
+
+  /**
+   * Optionally forces the index to be unique.
+   */
+  unique: Boolean;
+
+  /**
+   * Optionally specifies the index version number, either 0 or 1.
+   */
+  version: Int32;
+
+  /**
+   * Optionally specifies the default language for text indexes.
+   * Is 'english' if none is provided.
+   */
+  defaultLanguage: String;
+
+  /**
+   * Optionally Specifies the field in the document to override the language.
+   */
+  languageOverride: String;
+
+  /**
+   * Optionally provides the text index version number.
+   *
+   * MongoDB 2.4 can only support version 1.
+   *
+   * MongoDB 2.6 and higher may support version 1 or 2.
+   */
+  textIndexVersion: Int32;
+
+  /**
+   * Optionally specifies fields in the index and their corresponding weight values.
+   */
+  weights: Document;
+
+  /**
+   * Optionally specifies the 2dsphere index version number.
+   *
+   * MongoDB 2.4 can only support version 1.
+   *
+   * MongoDB 2.6 and higher may support version 1 or 2.
+   */
+  2dsphereIndexVersion: Int32;
+
+  /**
+   * Optionally specifies the precision of the stored geo hash in the 2d index, from 1 to 32.
+   */
+  bits: Int32;
+
+  /**
+   * Optionally sets the maximum boundary for latitude and longitude in the 2d index.
+   */
+  max: Double;
+
+  /**
+   * Optionally sets the minimum boundary for latitude and longitude in the index in a
+   * 2d index.
+   */
+  min: Double;
+
+  /**
+   * Optionally specifies the number of units within which to group the location values
+   * in a geo haystack index.
+   */
+  bucketSize: Int32;
+
+  /**
+   * Optionally specifies a filter for use in a partial index. Only documents that match the
+   * filter expression are included in the index. New in MongoDB 3.2.
+   */
+  partialFilterExpression: Document;
+
+  /**
+   * Optionally specifies a collation to use for the index in MongoDB 3.4 and higher.
+   * If not specified, no collation is sent and the default collation of the collection
+   * server-side is used.
+   */
+  collation: Document;
+
+  /**
+   * Optionally specifies the wildcard projection of a wildcard index.
+   */
+  wildcardProjection: Document;
+
+  /**
+   * Optionally specifies that the index should exist on the target collection but should not be used by the query
+   * planner when executing operations.
+   *
+   * This option is only supported by servers &gt;= 4.4.
+   */
+  hidden: Boolean;
+
+  /**
+   * Optionally specifies that this index is clustered.  This is not a valid option to provide to
+   * 'createIndexes', but can appear in the options returned for an index via 'listIndexes'.  To
+   * create a clustered index, create a new collection using the 'clusteredIndex' option.
+   *
+   * This options is only supported by servers &gt;= 6.0.
+   */
+   clustered: Boolean;
+}
+
+interface ListIndexesOptions {
+  /**
+   * Enables users to specify an arbitrary comment to help trace the operation through
+   * the database profiler, currentOp and logs. The default is to not send a value.
+   *
+   * If a comment is provided, drivers MUST attach this comment to all
+   * subsequent getMore commands run on the same cursor.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/listIndexes/
+   *
+   * @since MongoDB 4.4
+   */
+  comment: Optional&lt;any&gt;;
+
+  /**
+   * Configures the batch size of the cursor returned from the ``listIndexes`` command.
+   * 
+   * @note drivers MAY chose to support batchSize on the ListIndexesOptions.
+   */
+  batchSize: Optional&lt;Int32&gt;;
+}
+</code></pre>
+<h3 id="enumerating-indexes"><a class="header" href="#enumerating-indexes">Enumerating Indexes</a></h3>
+<p>For all server versions, drivers MUST run a <code>listIndexes</code> command when enumerating indexes.</p>
+<p>Drivers SHOULD use the method name <code>listIndexes</code> for a method that returns all indexes with a cursor return type.
+Drivers MAY use an idiomatic variant that fits the language the driver is for. An exception is made for drivers
+implementing the index view API.</p>
+<p>In MongoDB 4.4, the <code>ns</code> field was removed from the index specifications returned from the <code>listIndexes</code> command.</p>
+<ul>
+<li>For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
+necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the <code>ns</code> field will
+no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no special
+mention of the <code>ns</code> field is necessary.</li>
+<li>For drivers that report those index specifications in the form of statically defined models, the driver MUST manually
+populate the <code>ns</code> field of the models with the appropriate namespace if the server does not report it in the
+<code>listIndexes</code> command response. The <code>ns</code> field is not required to be a part of the models, however.</li>
+</ul>
+<p><span id="enumerate-indexes"></span></p>
+<h4 id="getting-index-names"><a class="header" href="#getting-index-names">Getting Index Names</a></h4>
+<p>Drivers MAY implement a method to enumerate all indexes, and return only the index names. The helper operates the same
+as the following example:</p>
+<p>Example:</p>
+<pre><code>&gt; a = [];
+[ ]
+&gt; db.runCommand( { listIndexes: 'poiConcat' } ).indexes.forEach(function(i) { a.push(i.name); } );
+&gt; a
+[ "_id_", "ty_1", "l_2dsphere", "ts_1" ]
+</code></pre>
+<h3 id="search-indexes"><a class="header" href="#search-indexes">Search Indexes</a></h3>
+<p>Server 7.0 introduced three new server commands and a new aggregation stage to facilitate management of search indexes.
+Drivers MUST provide an API similar to the existing index management API specifically for search indexes. Drivers MAY
+choose to implement either the standard API or the index view API.</p>
+<h4 id="search-index-management-helper-options"><a class="header" href="#search-index-management-helper-options">Search Index Management Helper Options</a></h4>
+<p>There are currently no supported options for any of the search index management commands. To future proof drivers
+implementations so that any options added in the future do not constitute a breaking change to drivers, empty options
+structs have been added as placeholders. If a driver's language has a mechanism to add options in a non-breaking manner
+(i.e., method overloading) drivers MAY omit the empty options structs from their search index management helpers.</p>
+<p><code>listSearchIndexes</code> is implemented using an aggregation pipeline. The list helper MUST support a driver's aggregation
+options as outline in the <a href="../crud/crud.html#read">CRUD specification</a>. Drivers MAY combine the aggregation options with
+any future <code>listSearchIndexes</code> stage options, if that is idiomatic for a driver's language.</p>
+<h4 id="asynchronicity"><a class="header" href="#asynchronicity">Asynchronicity</a></h4>
+<p>The search index commands are asynchronous and return from the server before the index is successfully updated, created
+or dropped. In order to determine when an index has been created / updated, users are expected to run the
+<code>listSearchIndexes</code> repeatedly until index changes appear.</p>
+<p>An example, from Javascript:</p>
+<pre><code class="language-typescript">const name = await collection.createSearchIndex({ definition: { ... fill out definition } })
+while (!(await collection.listSearchIndexes({ name }).hasNext())) {
+  await setTimeout(1000);
+}
+</code></pre>
+<h4 id="where-are-read-concern-and-write-concern"><a class="header" href="#where-are-read-concern-and-write-concern">Where are read concern and write concern?</a></h4>
+<p>These commands internally proxy the search index management commands to a separate process that runs alongside an Atlas
+cluster. As such, read concern and write concern are not relevant for the search index management commands.</p>
+<p>Drivers MUST NOT apply a read concern or write concern to the commands. Atlas search index management commands return an
+error if a <code>readConcern</code> or <code>writeConcern</code> field is present in the command.</p>
+<h4 id="consistency-with-existing-apis"><a class="header" href="#consistency-with-existing-apis">Consistency with Existing APIs</a></h4>
+<p>Drivers SHOULD strive for a search index management API that is as consistent as possible with their existing index
+management API.</p>
+<h4 id="namespacenotfound-errors"><a class="header" href="#namespacenotfound-errors">NamespaceNotFound Errors</a></h4>
+<p>Some drivers suppress NamespaceNotFound errors for CRUD helpers. Drivers MAY suppress NamespaceNotFound errors from the
+search index management helpers.</p>
+<p>Drivers MUST suppress NamespaceNotFound errors for the <code>dropSearchIndex</code> helper. Drop operations should be idempotent:</p>
+<pre><code class="language-typescript">await collection.dropSearchIndex('my-test-index');
+// subsequent calls should behave the same for the user as the first call
+await collection.dropSearchIndex('my-test-index');
+await collection.dropSearchIndex('my-test-index');
+</code></pre>
+<h4 id="common-interfaces"><a class="header" href="#common-interfaces">Common Interfaces</a></h4>
+<pre><code class="language-typescript">interface SearchIndexModel {
+  /**
+   * Document describing the index to create.
+   *
+   * The definition syntax depends on whether you create a standard search index
+   * or a vector search index.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/createSearchIndexes/
+   */
+  definition: Document;
+
+  /**
+   * Contains the options for the index.
+   */
+  options: SearchIndexOptions;
+}
+
+interface SearchIndexOptions {
+  /**
+   * Name of the search index to create.
+   *
+   * The server will use "default" if this option is not specified.
+   */
+  name: Optional&lt;string&gt;;
+
+  /**
+   * Type of search index to create. Defaults to "search" if not provided.
+   *
+   * Specify "search" for a standard search index or "vectorSearch" for a vector
+   * search index.
+   *
+   * The server will use "search" if this option is not specified.
+   */
+  type: Optional&lt;string&gt;;
+}
+
+/**
+ * The following interfaces are empty but are provided as placeholders for drivers that cannot 
+ * add options in a non-breaking manner, if options are added in the future.
+ */
+interface CreateSearchIndexOptions {} 
+interface UpdateSearchIndexOptions {}
+interface ListSearchIndexOptions {}
+interface DropSearchIndexOptions {}
+</code></pre>
+<h4 id="standard-api-for-search-indexes"><a class="header" href="#standard-api-for-search-indexes">Standard API for Search Indexes</a></h4>
+<pre><code class="language-typescript">interface Collection {
+  /**
+   * Convenience method for creating a single search index.
+   * 
+   * @return The name of the created search index
+   * 
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an SearchIndexModel as a parameter, or for those languages with method
+   *   overloading MAY decide to implement both.
+   *   
+   * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
+   */
+  createSearchIndex(definition: Document, indexOptions: Optional&lt;SearchIndexOptions&gt;, createSearchIndexOptions: Optional&lt;CreateSearchIndexOptions&gt;): String;
+
+  /**
+   * Convenience method for creating a single index.
+   * 
+   * @return The name of the created search index
+   * 
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an name and a definition as parameters, or for those languages with method
+   *   overloading MAY decide to implement both.
+   */
+  createSearchIndex(model: SearchIndexModel, options: Optional&lt;CreateSearchIndexOptions&gt;): String;
+
+  /**
+   * Creates multiple search indexes on the collection.
+   * 
+   * @return An iterable of the newly created index names.
+   */
+  createSearchIndexes(models: Iterable&lt;SearchIndexModel&gt;, options: CreateSearchIndexOptions): Iterable&lt;String&gt;;
+
+  /**
+   * Updates the search index with the given name to use the provided 
+   * definition.
+   */
+  updateSearchIndex(name: String, definition: Document, options: Optional&lt;UpdateSearchIndexOptions&gt;): void;
+
+  /**
+   * Drops the search index with the given name.
+   */
+  dropSearchIndex(name: String, options: Optional&lt;DropSearchIndexOptions&gt;): void;
+
+  /**
+   * Gets index information for one or more search indexes in the collection.
+   *
+   * If name is not specified, information for all indexes on the specified collection will be returned.
+   */
+  listSearchIndexes(name: Optional&lt;String&gt;, aggregationOptions: Optional&lt;AggregationOptions&gt;, listIndexOptions: Optional&lt;ListSearchIndexOptions&gt;): Cursor&lt;Document&gt;;
+}
+</code></pre>
+<h4 id="index-view-api-for-search-indexes"><a class="header" href="#index-view-api-for-search-indexes">Index View API for Search Indexes</a></h4>
+<pre><code class="language-typescript">interface Collection {
+  /**
+   * Returns the search index view for this collection.
+   */
+  searchIndexes(name: Optional&lt;String&gt;, aggregateOptions: Optional&lt;AggregationOptions&gt;, options: Optional&lt;ListSearchIndexOptions&gt;): SearchIndexView;
+}
+
+interface SearchIndexView extends Iterable&lt;Document&gt; {
+  /**
+   * Enumerates the index information for all search indexes in the collection. 
+   *
+   * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
+   *   method. See below.
+   */
+  iterator(): Iterator&lt;Document&gt;;
+
+  /**
+   * For drivers that cannot make SearchIndexView iterable, they MUST implement this method to
+   * return a list of indexes. In the case of async drivers, this MAY return a Future&lt;Cursor&gt;
+   *  or language/implementation equivalent.
+   *  
+   *  If drivers are unable to make the SearchIndexView iterable, they MAY opt to provide the options for 
+   *  listing search indexes via the `list` method instead of the `Collection.searchIndexes` method.
+   */
+  list(): Cursor&lt;Document&gt;;
+
+
+  /**
+   * This is a convenience method for creating a single index.
+   *
+   * @return The name of the created index.
+   *
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an SearchIndexModel as a parameter, or for those languages with method
+   *   overloading MAY decide to implement both.
+   *   
+   * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
+   */
+  createOne(definition: Document, indexOptions: Optional&lt;SearchIndexOptions&gt;, createSearchIndexOptions: Optional&lt;CreateSearchIndexOptions&gt;): String;
+
+  /**
+   * This is a convenience method for creating a single index.
+   *
+   * @return The name of the created index.
+   *
+   * @note Drivers MAY opt to implement this method signature, the signature that
+   *   takes an name and a definition as parameters, or for those languages with method
+   *   overloading MAY decide to implement both.
+   */
+  createOne(model: SearchIndexModel, options: Optional&lt;CreateSearchIndexOptions&gt;): String;
+
+  /**
+   * Creates multiple search indexes in the collection.
+   *
+   * @return The names of the created indexes.
+   */
+  createMany(models: Iterable&lt;SearchIndexModel&gt;, options: Optional&lt;CreateSearchIndexOptions&gt;): Iterable&lt;String&gt;;
+
+  /**
+   * Drops a single search index from the collection by the index name.
+   */
+  dropOne(name: String, options: Optional&lt;DropSearchIndexOptions&gt;): Result;
+
+  /**
+   * Updates a single search index from the collection by the index name.
+   */
+  updateOne(name: String, definition: Document, options: Optional&lt;UpdateSearchIndexOptions&gt;): Result;
+}
+</code></pre>
+<h3 id="q--a"><a class="header" href="#q--a">Q &amp; A</a></h3>
+<p>Q: Where is write concern?</p>
+<p>The <code>createIndexes</code> and <code>dropIndexes</code> commands take a write concern that indicates how the write is acknowledged. Since
+all operations defined in this specification are performed on a collection, it's uncommon that two different index
+operations on the same collection would use a different write concern. As such, the most natural place to indicate write
+concern is on the client, the database, or the collection itself and not the operations within it.</p>
+<p>However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is
+permitted to allow a write concern option, but since writeConcern is a top-level command option, it MUST NOT be
+specified as part of an <code>IndexModel</code> passed into the helper. It SHOULD be specified via the options parameter of the
+helper. For example, it would be ambiguous to specify write concern for one or more models passed to <code>createIndexes()</code>,
+but it would not be to specify it via the <code>CreateIndexesOptions</code>.</p>
+<p>Q: What does the commitQuorum option do?</p>
+<p>Prior to MongoDB 4.4, secondaries would simply replicate index builds once they were completed on the primary. Building
+indexes requires an exclusive lock on the collection being indexed, so the secondaries would be blocked from replicating
+all other operations while the index build took place. This would introduce replication lag correlated to however long
+the index build took.</p>
+<p>Starting in MongoDB 4.4, secondaries build indexes simultaneously with the primary, and after starting an index build,
+the primary will wait for a certain number of data-bearing nodes, including itself, to have completed the build before
+it commits the index. <code>commitQuorum</code> configures this node requirement. Once the index is committed, all the secondaries
+replicate the commit too. If a secondary had already completed the index build, the commit will be quick, and no new
+replication lag would be introduced. If a secondary had not finished building the index before the primary committed it
+(e.g. if <code>commitQuorum: 0</code> was used), then that secondary may lag behind the primary while it finishes building and
+committing the index.</p>
+<p>The server-default value for <code>commitQuorum</code> is "votingMembers", which means the primary will wait for all voting
+data-bearing nodes to complete building the index before it commits it.</p>
+<p>Q: Why would a user want to specify a non-default <code>commitQuorum</code></p>
+<p>Like <code>w: "majority"</code>, <code>commitQuorum: "votingMembers"</code> doesn't consider non-voting data-bearing nodes such as analytics
+nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify
+<code>commitQuorum: &lt;total number of data-bearing nodes, including non-voting nodes&gt;</code>. Alternatively, if they wanted to
+ensure only specific non-voting nodes didn't lag behind, they could specify a
+<a href="https://www.mongodb.com/docs/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes">custom getLastErrorMode based on the nodes' tag sets</a>
+(e.g. <code>commitQuorum: &lt;custom getLastErrorMode name&gt;</code>).</p>
+<p>Additionally, if a user has a high tolerance for replication lag, they can set a lower value for <code>commitQuorum</code>. This is
+useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't
+care if they lag behind.</p>
+<p>Q: What is the difference between write concern and <code>commitQuorum</code>?</p>
+<p>While these two options share a lot in terms of how they are specified, they configure entirely different things.
+<code>commitQuorum</code> determines how much new replication lag an index build can tolerably introduce, but it says nothing of
+durability. Write concern specifies the durability requirements of an index build, but it makes no guarantees about
+introducing replication lag.</p>
+<p>For instance, an index built with <code>writeConcern: { w: 1 }, commitQuorum: "votingMembers"</code> could possibly be rolled back,
+but it will not introduce any new replication lag. Likewise, an index built with
+<code>writeConcern: { w: "majority", j: true }, commitQuorum: 0</code> will not be rolled back, but it may cause the secondaries to
+lag. To ensure the index is both durable and will not introduce replication lag on any data-bearing voting secondary,
+<code>writeConcern: { w: "majority", j: true }, commitQuorum: "votingMembers"</code> must be used.</p>
+<p>Also note that, since indexes are built simultaneously, higher values of <code>commitQuorum</code> are not as expensive as higher
+values of <code>writeConcern</code>.</p>
+<p>Q: Why does the driver manually throw errors if the <code>commitQuorum</code> option is specified against a pre 4.4 server?<br>
+Starting in 3.4, the server validates all options passed to the <code>createIndexes</code> command, but due to a bug in versions
+4.2.0-4.2.5 of the server (SERVER-47193), specifying <code>commitQuorum</code> does not result in an error. The option is used
+internally by the server on those versions, and its value could have adverse effects on index builds. To prevent users
+from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.</p>
+<h4 id="changelog"><a class="header" href="#changelog">Changelog</a></h4>
+<ul>
+<li>
+<p>2024-09-05: Moved options in SearchIndexModel to SearchIndexOptions for consistency with IndexModel and IndexOptions.</p>
+</li>
+<li>
+<p>2024-03-06: Added <code>type</code> option to SearchIndexOptions.</p>
+</li>
+<li>
+<p>2024-03-05: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2023-11-08: Clarify that <code>readConcern</code> and <code>writeConcern</code> must not be applied to search index management commands.</p>
+</li>
+<li>
+<p>2023-07-27: Add search index management clarifications.</p>
+</li>
+<li>
+<p>2023-05-18: Add the search index management API.</p>
+</li>
+<li>
+<p>2023-05-10: Merge index enumeration and index management specs and get rid of references to legacy server versions.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-04-18: Added the <code>clustered</code> attribute to <code>IndexOptions</code> in order to support clustered collections.</p>
+</li>
+<li>
+<p>2022-02-10: Specified that <code>getMore</code> command must explicitly send inherited comment.</p>
+</li>
+<li>
+<p>2022-02-01: Added comment field to helper methods.</p>
+</li>
+<li>
+<p>2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.</p>
+</li>
+<li>
+<p>2020-03-30: Added options types to various helpers. Introduced <code>commitQuorum</code> option. Added deprecation message for
+<code>background</code> option.</p>
+</li>
+<li>
+<p>2019-04-24: Added <code>wildcardProjection</code> attribute to <code>IndexOptions</code> in order to support setting a wildcard projection
+on a wildcard index.</p>
+</li>
+<li>
+<p>2017-06-07: Include listIndexes() in Q&amp;A about maxTimeMS.</p>
+</li>
+<li>
+<p>2017-05-31: Add Q &amp; A addressing write concern and maxTimeMS option.</p>
+</li>
+<li>
+<p>2016-10-11: Added note on 3.4 servers validation options passed to <code>createIndexes</code>. Add note on server generated name
+for the <code>_id</code> index.</p>
+</li>
+<li>
+<p>2016-08-08: Fixed <code>collation</code> language to not mention a collection default.</p>
+</li>
+<li>
+<p>2016-05-19: Added <code>collation</code> attribute to <code>IndexOptions</code> in order to support setting a collation on an index.</p>
+</li>
+<li>
+<p>2015-09-17: Added <code>partialFilterExpression</code> attribute to <code>IndexOptions</code> in order to support partial indexes. Fixed
+"provides" typo.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../enumerate-collections/enumerate-collections.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../crud/crud.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../enumerate-collections/enumerate-collections.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../crud/crud.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Sessions - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html" class="active"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="sessions-specification"><a class="header" href="#sessions-specification">Sessions Specification</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 3.6</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>Version 3.6 of the server introduces the concept of logical sessions for clients. A session is an abstract concept that
+represents a set of sequential operations executed by an application that are related in some way. This specification is
+limited to how applications start and end sessions. Other specifications define various ways in which sessions are used
+(e.g. causally consistent reads, retryable writes, or transactions).</p>
+<p>This specification also discusses how drivers participate in distributing the cluster time throughout a deployment, a
+process known as "gossipping the cluster time". While gossipping the cluster time is somewhat orthogonal to sessions,
+any driver that implements sessions MUST also implement gossipping the cluster time, so it is included in this
+specification.</p>
+<h2 id="definitions"><a class="header" href="#definitions">Definitions</a></h2>
+<h3 id="meta"><a class="header" href="#meta">META</a></h3>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<p><strong>ClientSession</strong></p>
+<p>The driver object representing a client session and the operations that can be performed on it. Depending on the
+language a driver is written in this might be an interface or a class. See also <code>ServerSession</code>.</p>
+<p><strong>Deployment</strong></p>
+<p>A set of servers that are all part of a single MongoDB cluster. We avoid the word "cluster" because some people
+interpret "cluster" to mean "sharded cluster".</p>
+<p><strong>Explicit session</strong></p>
+<p>A session that was started explicitly by the application by calling <code>startSession</code> and passed as an argument to an
+operation.</p>
+<p><strong>MongoClient</strong></p>
+<p>The root object of a driver's API. MAY be named differently in some drivers.</p>
+<p><strong>Implicit session</strong></p>
+<p>A session that was started implicitly by the driver because the application called an operation without providing an
+explicit session.</p>
+<p><strong>MongoCollection</strong></p>
+<p>The driver object representing a collection and the operations that can be performed on it. MAY be named differently in
+some drivers.</p>
+<p><strong>MongoDatabase</strong></p>
+<p>The driver object representing a database and the operations that can be performed on it. MAY be named differently in
+some drivers.</p>
+<p><strong>ServerSession</strong></p>
+<p>The driver object representing a server session. This type is an implementation detail and does not need to be public.
+See also <code>ClientSession</code>.</p>
+<p><strong>Server session ID</strong></p>
+<p>A server session ID is a token used to identify a particular server session. A driver can ask the server for a session
+ID using the <code>startSession</code> command or it can generate one locally (see Generating a Session ID locally).</p>
+<p><strong>Session</strong></p>
+<p>A session is an abstract concept that represents a set of sequential operations executed by an application that are
+related in some way. Other specifications define the various ways in which operations can be related, but examples
+include causally consistent reads and retryable writes.</p>
+<p><strong>Topology</strong></p>
+<p>The current configuration and state of a deployment.</p>
+<p><strong>Unacknowledged writes</strong></p>
+<p>Unacknowledged writes are write operations that are sent to the server without waiting for a reply acknowledging the
+write. See the "When using unacknowledged writes" section below for information on how unacknowledged writes interact
+with sessions.</p>
+<p><strong>Network error</strong></p>
+<p>Any network exception writing to or reading from a socket (e.g. a socket timeout or error).</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<p>Drivers currently have no concept of a session. The driver API will be expanded to provide a way for applications to
+start and end sessions and to execute operations in the context of a session. The goal is to expand the API in a way
+that introduces no backward breaking changes. Existing applications that don't use sessions don't need to be changed,
+and new applications that don't need sessions can continue to be written using the existing API.</p>
+<p>To use sessions an application will call new (or overloaded) methods that take a session parameter.</p>
+<h2 id="naming-variations"><a class="header" href="#naming-variations">Naming variations</a></h2>
+<p>This specification defines names for new methods and types. To the extent possible, these names SHOULD be used by
+drivers. However, where a driver and/or language's naming conventions differ, those naming conventions SHOULD be used.
+For example, a driver might name a method <code>StartSession</code> or <code>start_session</code> instead of <code>startSession</code>, or might name a
+type <code>client_session</code> instead of <code>ClientSession</code>.</p>
+<h2 id="high-level-summary-of-the-api-changes-for-sessions"><a class="header" href="#high-level-summary-of-the-api-changes-for-sessions">High level summary of the API changes for sessions</a></h2>
+<p>This section is just a high level summary of the new API. Details are provided further on.</p>
+<p>Applications start a new session like this:</p>
+<pre><code class="language-typescript">options = new SessionOptions(/* various settings */);
+session = client.startSession(options);
+</code></pre>
+<p>The <code>SessionOptions</code> will be individually defined in several other specifications. It is expected that the set of
+<code>SessionOptions</code> will grow over time as sessions are used for new purposes.</p>
+<p>Applications use a session by passing it as an argument to operation methods. For example:</p>
+<pre><code class="language-typescript">collection.InsertOne(session /* etc. */)
+collection.UpdateOne(session /* etc. */)
+</code></pre>
+<p>Applications end a session like this:</p>
+<pre><code class="language-typescript">session.endSession()
+</code></pre>
+<p>This specification does not deal with multi-document transactions, which are covered in
+<a href="../transactions/transactions.html">their own specification</a>.</p>
+<h2 id="mongoclient-changes"><a class="header" href="#mongoclient-changes">MongoClient changes</a></h2>
+<p><code>MongoClient</code> interface summary</p>
+<pre><code class="language-java">class SessionOptions {
+  // various other options as defined in other specifications
+}
+
+interface MongoClient {
+  ClientSession startSession(SessionOptions options);
+  // other existing members of MongoClient
+}
+</code></pre>
+<p>Each new member is documented below.</p>
+<p>While it is not part of the public API, <code>MongoClient</code> also needs a private (or internal) <code>clusterTime</code> member
+(containing either a BSON document or null) to record the highest <code>clusterTime</code> observed in a deployment (as described
+below in <a href="#gossipping-the-cluster-time">Gossipping the cluster time</a>).</p>
+<h3 id="startsession"><a class="header" href="#startsession">startSession</a></h3>
+<p>The <code>startSession</code> method starts a new <code>ClientSession</code> with the provided options.</p>
+<p>It MUST NOT be possible to change the options provided to <code>startSession</code> after <code>startSession</code> has been called. This can
+be accomplished by making the <code>SessionOptions</code> class immutable or using some equivalent mechanism that is idiomatic for
+your language.</p>
+<p>It is valid to call <code>startSession</code> with no options set. This will result in a <code>ClientSession</code> that has no effect on the
+operations performed in the context of that session, other than to include a session ID in commands sent to the server.</p>
+<p>The <code>SessionOptions</code> MAY be a strongly typed class in some drivers, or MAY be a loosely typed dictionary in other
+drivers. Drivers MUST define <code>SessionOptions</code> in such a way that new options can be added in a backward compatible way
+(it is acceptable for backward compatibility to be at the source level).</p>
+<p>A <code>ClientSession</code> MUST be associated with a <code>ServerSession</code> at the time <code>startSession</code> is called. As an implementation
+optimization drivers MUST reuse <code>ServerSession</code> instances across multiple <code>ClientSession</code> instances subject to the rule
+that a server session MUST NOT be used by two <code>ClientSession</code> instances at the same time (see the Server Session Pool
+section). Additionally, a <code>ClientSession</code> may only ever be associated with one <code>ServerSession</code> for its lifetime.</p>
+<p>Drivers MUST NOT check for session support in <code>startSession</code>. Instead, if sessions are not supported, the error MUST be
+reported the first time the session is used for an operation (See
+<a href="#how-to-tell-whether-a-connection-supports-sessions">How to Tell Whether a Connection Supports Sessions</a>).</p>
+<h3 id="explicit-vs-implicit-sessions"><a class="header" href="#explicit-vs-implicit-sessions">Explicit vs implicit sessions</a></h3>
+<p>An explicit session is one started explicitly by the application by calling <code>startSession</code>. An implicit session is one
+started implicitly by the driver because the application called an operation without providing an explicit session.
+Internally, a driver must be able to distinguish between explicit and implicit sessions, but no public API for this is
+necessary because an application will never see an implicit session.</p>
+<p>The motivation for starting an implicit session for all methods that don't take an explicit session parameter is to make
+sure that all commands that are sent to the server are tagged with a session ID. This improves the ability of an
+operations team to monitor (and kill if necessary) long running operations. Tagging an operation with a session ID is
+specially useful if a deployment wide operation needs to be killed.</p>
+<h3 id="authentication"><a class="header" href="#authentication">Authentication</a></h3>
+<p>When using authentication, using a session requires that only a single user be authenticated. Drivers that still support
+authenticating multiple users at once MAY continue to do so, but MUST NOT allow sessions to be used under such
+circumstances.</p>
+<p>If <code>startSession</code> is called when multiple users are authenticated drivers MUST raise an error with the error message
+"Cannot call startSession when multiple users are authenticated."</p>
+<p>If a driver allows authentication to be changed on the fly (presumably few still do) the driver MUST either prevent
+<code>ClientSession</code> instances from being used with a connection that doesn't have matching authentication or MUST return an
+error if such use is attempted.</p>
+<h2 id="clientsession"><a class="header" href="#clientsession">ClientSession</a></h2>
+<p><code>ClientSession</code> instances are not thread safe or fork safe. They can only be used by one thread or process at a time.</p>
+<p>Drivers MUST document the thread-safety and fork-safety limitations of sessions. Drivers MUST NOT attempt to detect
+simultaneous use by multiple threads or processes (see Q&amp;A for the rationale).</p>
+<p>ClientSession interface summary:</p>
+<pre><code class="language-java">interface ClientSession {
+    MongoClient client;
+    Optional&lt;BsonDocument&gt; clusterTime;
+    SessionOptions options;
+    BsonDocument sessionId;
+
+    void advanceClusterTime(BsonDocument clusterTime);
+    void endSession();
+}
+</code></pre>
+<p>While it is not part of the public API, a <code>ClientSession</code> also has a private (or internal) reference to a
+<code>ServerSession</code>.</p>
+<p>Each member is documented below.</p>
+<h3 id="client"><a class="header" href="#client">client</a></h3>
+<p>This property returns the <code>MongoClient</code> that was used to start this <code>ClientSession</code>.</p>
+<h3 id="clustertime"><a class="header" href="#clustertime">clusterTime</a></h3>
+<p>This property returns the most recent cluster time seen by this session. If no operations have been executed using this
+session this value will be null unless <code>advanceClusterTime</code> has been called. This value will also be null when a cluster
+does not report cluster times.</p>
+<p>When a driver is gossiping the cluster time it should send the more recent <code>clusterTime</code> of the <code>ClientSession</code> and the
+<code>MongoClient</code>.</p>
+<h3 id="options"><a class="header" href="#options">options</a></h3>
+<p>This property returns the <code>SessionOptions</code> that were used to start this <code>ClientSession</code>.</p>
+<h3 id="sessionid"><a class="header" href="#sessionid">sessionId</a></h3>
+<p>This property returns the session ID of this session. Note that since <code>ServerSessions</code> are pooled, different
+<code>ClientSession</code> instances can have the same session ID, but never at the same time.</p>
+<h3 id="advanceclustertime"><a class="header" href="#advanceclustertime">advanceClusterTime</a></h3>
+<p>This method advances the <code>clusterTime</code> for a session. If the new <code>clusterTime</code> is greater than the session's current
+<code>clusterTime</code> then the session's <code>clusterTime</code> MUST be advanced to the new <code>clusterTime</code>. If the new <code>clusterTime</code> is
+less than or equal to the session's current <code>clusterTime</code> then the session's <code>clusterTime</code> MUST NOT be changed.</p>
+<p>This method MUST NOT advance the <code>clusterTime</code> in <code>MongoClient</code> because we have no way of verifying that the supplied
+<code>clusterTime</code> is valid. If the <code>clusterTime</code> in <code>MongoClient</code> were set to an invalid value all future operations with
+this <code>MongoClient</code> would result in the server returning an error. The <code>clusterTime</code> in <code>MongoClient</code> should only be
+advanced with a <code>$clusterTime</code> received directly from a server.</p>
+<h3 id="endsession"><a class="header" href="#endsession">endSession</a></h3>
+<p>This method ends a <code>ClientSession</code>.</p>
+<p>In languages that have idiomatic ways of disposing of resources, drivers SHOULD support that in addition to or instead
+of <code>endSession</code>. For example, in the .NET driver <code>ClientSession</code> would implement <code>IDisposable</code> and the application could
+choose to call <code>session.Dispose</code> or put the session in a using statement instead of calling <code>session.endSession</code>. If
+your language has an idiomatic way of disposing resources you MAY choose to implement that in addition to or instead of
+<code>endSession</code>, whichever is more idiomatic for your language.</p>
+<p>A driver MUST allow multiple calls to <code>endSession</code> (or <code>Dispose</code>). All calls after the first one are ignored.</p>
+<p>Conceptually, calling <code>endSession</code> implies ending the corresponding server session (by calling the <code>endSessions</code>
+command). As an implementation detail drivers SHOULD cache server sessions for reuse (see Server Session Pool).</p>
+<p>Once a <code>ClientSession</code> has ended, drivers MUST report an error if any operations are attempted with that
+<code>ClientSession</code>.</p>
+<h2 id="serversession"><a class="header" href="#serversession">ServerSession</a></h2>
+<p>A <code>ServerSession</code> is the driver object that tracks a server session. This object is an implementation detail and does
+not need to be public. Drivers may store this information however they choose; this data structure is defined here
+merely to describe the operation of the server session pool.</p>
+<p>ServerSession interface summary</p>
+<pre><code class="language-java">interface ServerSession {
+  BsonDocument sessionId;
+  DateTime lastUse;
+}
+</code></pre>
+<h3 id="sessionid-1"><a class="header" href="#sessionid-1">sessionId</a></h3>
+<p>This property returns the server session ID.</p>
+<h3 id="lastuse"><a class="header" href="#lastuse">lastUse</a></h3>
+<p>The driver MUST update the value of this property with the current DateTime every time the server session ID is sent to
+the server. This allows the driver to track with reasonable accuracy the server's view of when a server session was last
+used.</p>
+<h3 id="creating-a-serversession"><a class="header" href="#creating-a-serversession">Creating a ServerSession</a></h3>
+<p>When a driver needs to create a new <code>ServerSession</code> instance the only information it needs is the session ID to use for
+the new session. It can either get the session ID from the server by running the <code>startSession</code> command, or it can
+generate it locally.</p>
+<p>In either case, the lastUse field of the <code>ServerSession</code> MUST be set to the current time when the <code>ServerSession</code> is
+created.</p>
+<h3 id="generating-a-session-id-locally"><a class="header" href="#generating-a-session-id-locally">Generating a session ID locally</a></h3>
+<p>Running the <code>startSession</code> command to get a session ID for a new session requires a round trip to the server. As an
+optimization the server allows drivers to generate new session IDs locally and to just start using them. When a server
+sees a new session ID that it has never seen before it simply assumes that it is a new session.</p>
+<p>A session ID is a <code>BsonDocument</code> that has the following form:</p>
+<pre><code class="language-typescript">interface SessionId {
+  id: UUID
+}
+</code></pre>
+<p>Where the UUID is encoded as a BSON binary value of subtype 4.</p>
+<p>The id field of the session ID is a version 4 UUID that must comply with the format described in RFC 4122. Section 4.4
+describes an algorithm for generating correctly-versioned UUIDs from a pseudo-random number generator.</p>
+<p>If a driver is unable to generate a version 4 UUID it MAY instead run the <code>startSession</code> command and let the server
+generate the session ID.</p>
+<h2 id="mongodatabase-changes"><a class="header" href="#mongodatabase-changes">MongoDatabase changes</a></h2>
+<p>All <code>MongoDatabase</code> methods that talk to the server MUST send a session ID with the command when connected to a
+deployment that supports sessions so that the server can associate the operation with a session ID.</p>
+<h3 id="new-database-methods-that-take-an-explicit-session"><a class="header" href="#new-database-methods-that-take-an-explicit-session">New database methods that take an explicit session</a></h3>
+<p>All <code>MongoDatabase</code> methods that talk to the server SHOULD be overloaded to take an explicit session parameter. (See
+<a href="#why-is-session-an-explicit-parameter">why is session an explicit parameter?</a>.)</p>
+<p>When overloading methods to take a session parameter, the session parameter SHOULD be the first parameter. If
+overloading is not possible for your language, it MAY be in a different position or MAY be embedded in an options
+structure.</p>
+<p>Methods that have a session parameter MUST check that the session argument is not null and was created by the same
+<code>MongoClient</code> that this <code>MongoDatabase</code> came from and report an error if they do not match.</p>
+<h3 id="existing-database-methods-that-start-an-implicit-session"><a class="header" href="#existing-database-methods-that-start-an-implicit-session">Existing database methods that start an implicit session</a></h3>
+<p>When an existing <code>MongoDatabase</code> method that does not take a session is called, the driver MUST behave as if a new
+<code>ClientSession</code> was started just for this one operation and ended immediately after this operation completes. The actual
+implementation will likely involve calling <code>client.startSession</code>, but that is not required by this spec. Regardless,
+please consult the startSession section to replicate the required steps for creating a session. The driver MUST NOT use
+the session if the checked out connection does not support sessions (see
+<a href="#how-to-tell-whether-a-connection-supports-sessions">How to Tell Whether a Connection Supports Sessions</a>) and, in all
+cases, MUST NOT consume a server session id until after the connection is checked out and session support is confirmed.</p>
+<h2 id="mongocollection-changes"><a class="header" href="#mongocollection-changes">MongoCollection changes</a></h2>
+<p>All <code>MongoCollection</code> methods that talk to the server MUST send a session ID with the command when connected to a
+deployment that supports sessions so that the server can associate the operation with a session ID.</p>
+<h3 id="new-collection-methods-that-take-an-explicit-session"><a class="header" href="#new-collection-methods-that-take-an-explicit-session">New collection methods that take an explicit session</a></h3>
+<p>All <code>MongoCollection</code> methods that talk to the server, with the exception of <code>estimatedDocumentCount</code>, SHOULD be
+overloaded to take an explicit session parameter. (See
+<a href="#why-is-session-an-explicit-parameter">why is session an explicit parameter?</a>.)</p>
+<p>When overloading methods to take a session parameter, the session parameter SHOULD be the first parameter. If
+overloading is not possible for your language, it MAY be in a different position or MAY be embedded in an options
+structure.</p>
+<p>Methods that have a session parameter MUST check that the session argument is not null and was created by the same
+<code>MongoClient</code> that this <code>MongoCollection</code> came from and report an error if they do not match.</p>
+<p>The <code>estimatedDocumentCount</code> helper does not support an explicit session parameter. The underlying command, <code>count</code>, is
+not supported in a transaction, so supporting an explicit session would likely confuse application developers. The
+helper returns an estimate of the documents in a collection and causal consistency is unlikely to improve the accuracy
+of the estimate.</p>
+<h3 id="existing-collection-methods-that-start-an-implicit-session"><a class="header" href="#existing-collection-methods-that-start-an-implicit-session">Existing collection methods that start an implicit session</a></h3>
+<p>When an existing <code>MongoCollection</code> method that does not take a session is called, the driver MUST behave as if a new
+<code>ClientSession</code> was started just for this one operation and ended immediately after this operation completes. The actual
+implementation will likely involve calling <code>client.startSession</code>, but that is not required by this spec. Regardless,
+please consult the startSession section to replicate the required steps for creating a session. The driver MUST NOT use
+the session if the checked out connection does not support sessions (see
+<a href="#how-to-tell-whether-a-connection-supports-sessions">How to Tell Whether a Connection Supports Sessions</a>) and, in all
+cases, MUST NOT consume a server session id until after the connection is checked out and session support is confirmed.</p>
+<h2 id="sessions-and-cursors"><a class="header" href="#sessions-and-cursors">Sessions and Cursors</a></h2>
+<p>When an operation using a session returns a cursor, all subsequent <code>GETMORE</code> commands for that cursor MUST be run using
+the same session ID.</p>
+<p>If a driver decides to run a <code>KILLCURSORS</code> command on the cursor, it also MAY be run using the same session ID. See the
+Exceptions below for when it is permissible to not include a session ID in a <code>KILLCURSORS</code> command.</p>
+<h2 id="sessions-and-connections"><a class="header" href="#sessions-and-connections">Sessions and Connections</a></h2>
+<p>To reduce the number of <code>ServerSessions</code> created, the driver MUST only obtain an implicit session's <code>ServerSession</code>
+after it successfully checks out a connection. A driver SHOULD NOT attempt to release the acquired session before
+connection check in.</p>
+<p>Explicit sessions MAY be changed to allocate a server session similarly.</p>
+<h2 id="how-to-tell-whether-a-connection-supports-sessions"><a class="header" href="#how-to-tell-whether-a-connection-supports-sessions">How to Tell Whether a Connection Supports Sessions</a></h2>
+<p>A driver can determine whether a connection supports sessions by checking whether the <code>logicalSessionTimeoutMinutes</code>
+property of the establishing handshake response has a value or not. If it has a value, sessions are supported.</p>
+<p>In the case of an explicit session, if sessions are not supported, the driver MUST raise an error. In the case of an
+implicit session, if sessions are not supported, the driver MUST ignore the session.</p>
+<h3 id="possible-race-condition-when-checking-for-session-support"><a class="header" href="#possible-race-condition-when-checking-for-session-support">Possible race condition when checking for session support</a></h3>
+<p>There is a possible race condition that can happen between the time the driver checks whether sessions are supported and
+subsequently sends a command to the server:</p>
+<ul>
+<li>The server might have supported sessions at the time the connection was first opened (and reported a value for
+logicalSessionTimeoutMinutes in the initial response to the <a href="../mongodb-handshake/handshake.html">handshake</a>), but have
+subsequently been downgraded to not support sessions. The server does not close the socket in this scenario, so the
+driver will conclude that the server at the other end of this connection supports sessions.</li>
+</ul>
+<p>There is nothing that the driver can do about this race condition, and the server will just return an error in this
+scenario.</p>
+<h2 id="sending-the-session-id-to-the-server-on-all-commands"><a class="header" href="#sending-the-session-id-to-the-server-on-all-commands">Sending the session ID to the server on all commands</a></h2>
+<p>When connected to a server that supports sessions a driver MUST append the session ID to every command it sends to the
+server (with the exceptions noted in the following section). It does this by adding a top level <code>lsid</code> field to the
+command sent to the server. A driver MUST do this without modifying any data supplied by the application (e.g. the
+command document passed to runCommand).:</p>
+<pre><code class="language-typescript">interface ExampleCommandWithLSID {
+  foo: 1;
+  lsid: SessionId;
+}
+</code></pre>
+<h2 id="exceptions-to-sending-the-session-id-to-the-server-on-all-commands"><a class="header" href="#exceptions-to-sending-the-session-id-to-the-server-on-all-commands">Exceptions to sending the session ID to the server on all commands</a></h2>
+<p>There are some exceptions to the rule that a driver MUST append the session ID to every command it sends to the server.</p>
+<h3 id="when-opening-and-authenticating-a-connection"><a class="header" href="#when-opening-and-authenticating-a-connection">When opening and authenticating a connection</a></h3>
+<p>A driver MUST NOT append a session ID to any command sent during the process of opening and authenticating a connection.</p>
+<h3 id="when-monitoring-the-state-of-a-deployment"><a class="header" href="#when-monitoring-the-state-of-a-deployment">When monitoring the state of a deployment</a></h3>
+<p>A driver MAY omit a session ID in hello and legacy hello commands sent solely for the purposes of monitoring the state
+of a deployment.</p>
+<h3 id="when-sending-a-parallelcollectionscan-command"><a class="header" href="#when-sending-a-parallelcollectionscan-command">When sending a parallelCollectionScan command</a></h3>
+<p>Sessions are designed for sequential operations and <code>parallelCollectionScan</code> is designed for parallel operation. Because
+these are fundamentally incompatible goals, drivers MUST NOT append session ID to the <code>parallelCollectionScan</code> command
+so that the resulting cursors have no associated session ID and thus can be used in parallel.</p>
+<h3 id="when-sending-a-killcursors-command"><a class="header" href="#when-sending-a-killcursors-command">When sending a killCursors command</a></h3>
+<p>A driver MAY omit a session ID in <code>killCursors</code> commands for two reasons. First, <code>killCursors</code> is only ever sent to a
+particular server, so operation teams wouldn't need the <code>lsid</code> for cluster-wide killOp. An admin can manually kill the
+op with its operation id in the case that it is slow. Secondly, some drivers have a background cursor reaper to kill
+cursors that aren't exhausted and closed. Due to GC semantics, it can't use the same <code>lsid</code> for <code>killCursors</code> as was
+used for a cursor's <code>find</code> and <code>getMore</code>, so there's no point in using any <code>lsid</code> at all.</p>
+<h3 id="when-multiple-users-are-authenticated-and-the-session-is-implicit"><a class="header" href="#when-multiple-users-are-authenticated-and-the-session-is-implicit">When multiple users are authenticated and the session is implicit</a></h3>
+<p>The driver MUST NOT send a session ID from an implicit session when multiple users are authenticated. If possible the
+driver MUST NOT start an implicit session when multiple users are authenticated. Alternatively, if the driver cannot
+determine whether multiple users are authenticated at the point in time that an implicit session is started, then the
+driver MUST ignore any implicit sessions that subsequently end up being used on a connection that has multiple users
+authenticated.</p>
+<h3 id="when-using-unacknowledged-writes"><a class="header" href="#when-using-unacknowledged-writes">When using unacknowledged writes</a></h3>
+<p>A session ID MUST NOT be used simultaneously by more than one operation. Since drivers don't wait for a response for an
+unacknowledged write a driver would not know when the session ID could be reused. In theory a driver could use a new
+session ID for each unacknowledged write, but that would result in many orphaned sessions building up at the server.</p>
+<p>Therefore drivers MUST NOT send a session ID with unacknowledged writes under any circumstances:</p>
+<ul>
+<li>For unacknowledged writes with an explicit session, drivers SHOULD raise an error. If a driver allows users to provide
+an explicit session with an unacknowledged write (e.g. for backwards compatibility), the driver MUST NOT send the
+session ID.</li>
+<li>For unacknowledged writes without an explicit session, drivers SHOULD NOT use an implicit session. If a driver creates
+an implicit session for unacknowledged writes without an explicit session, the driver MUST NOT send the session ID.</li>
+</ul>
+<p>Drivers MUST document the behavior of unacknowledged writes for both explicit and implicit sessions.</p>
+<h3 id="when-wrapping-commands-in-a-query-field"><a class="header" href="#when-wrapping-commands-in-a-query-field">When wrapping commands in a <code>$query</code> field</a></h3>
+<p>If the driver is wrapping the command in a <code>$query</code> field for non-OP_MSG messages in order to pass a readPreference to a
+mongos (see
+<a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html#readpreference-and-mongos">ReadPreference and Mongos</a>),
+the driver SHOULD NOT add the <code>lsid</code> as a top-level field, and MUST add the <code>lsid</code> as a field of the <code>$query</code></p>
+<pre><code class="language-typescript">// Wrapped command:
+interface WrappedCommandExample {
+  $query: {
+    find: { foo: 1 }
+  },
+  $readPreference: {}
+}
+
+// Correct application of lsid
+interface CorrectLSIDUsageExample {
+  $query: {
+    find: { foo: 1 },
+    lsid: SessionId
+  },
+  $readPreference: {}
+}
+
+// Incorrect application of lsid
+interface IncorrectLSIDUsageExample {
+  $query: {
+    find: { foo: 1 }
+  },
+  $readPreference: {},
+  lsid: SessionId
+}
+</code></pre>
+<h2 id="server-commands"><a class="header" href="#server-commands">Server Commands</a></h2>
+<h3 id="startsession-1"><a class="header" href="#startsession-1">startSession</a></h3>
+<p>The <code>startSession</code> server command has the following format:</p>
+<pre><code class="language-typescript">interface StartSessionCommand {
+  startSession: 1;
+  $clusterTime?: ClusterTime;
+}
+</code></pre>
+<p>The <code>$clusterTime</code> field should only be sent when gossipping the cluster time. See the section "Gossipping the cluster
+time" for information on <code>$clusterTime</code>.</p>
+<p>The <code>startSession</code> command MUST be sent to the <code>admin</code> database.</p>
+<p>The server response has the following format:</p>
+<pre><code class="language-typescript">interface StartSessionResponse {
+  ok: 1;
+  id: BsonDocument;
+}
+</code></pre>
+<p>In case of an error, the server response has the following format:</p>
+<pre><code class="language-typescript">interface StartSessionError {
+  ok: 0;
+  errmsg: string;
+  code: number;
+}
+</code></pre>
+<p>When connected to a replica set the <code>startSession</code> command MUST be sent to the primary if the primary is available. The
+<code>startSession</code> command MAY be sent to a secondary if there is no primary available at the time the <code>startSession</code>
+command needs to be run.</p>
+<p>Drivers SHOULD generate session IDs locally if possible instead of running the <code>startSession</code> command, since running the
+command requires a network round trip.</p>
+<h3 id="endsessions"><a class="header" href="#endsessions">endSessions</a></h3>
+<p>The <code>endSessions</code> server command has the following format:</p>
+<pre><code class="language-typescript">interface EndSessionCommand {
+  endSessions: Array&lt;SessionId&gt;;
+  $clusterTime?: ClusterTime;
+}
+</code></pre>
+<p>The <code>$clusterTime</code> field should only be sent when gossipping the cluster time. See the section of "Gossipping the
+cluster time" for information on <code>$clusterTime</code>.</p>
+<p>The <code>endSessions</code> command MUST be sent to the <code>admin</code> database.</p>
+<p>The server response has the following format:</p>
+<pre><code class="language-typescript">interface EndSessionResponse {
+  ok: 1;
+}
+</code></pre>
+<p>In case of an error, the server response has the following format:</p>
+<pre><code class="language-typescript">interface EndSessionError {
+  ok: 0;
+  errmsg: string;
+  code: number;
+}
+</code></pre>
+<p>Drivers MUST ignore any errors returned by the <code>endSessions</code> command.</p>
+<p>The <code>endSessions</code> command MUST be run once when the <code>MongoClient</code> instance is shut down. If the number of sessions is
+very large the <code>endSessions</code> command SHOULD be run multiple times to end 10,000 sessions at a time (in order to avoid
+creating excessively large commands).</p>
+<p>When connected to a sharded cluster the <code>endSessions</code> command can be sent to any mongos. When connected to a replica set
+the <code>endSessions</code> command MUST be sent to the primary if the primary is available, otherwise it MUST be sent to any
+available secondary.</p>
+<h2 id="server-session-pool"><a class="header" href="#server-session-pool">Server Session Pool</a></h2>
+<p>Conceptually, each <code>ClientSession</code> can be thought of as having a new corresponding <code>ServerSession</code>. However, starting a
+server session might require a round trip to the server (which can be avoided by generating the session ID locally) and
+ending a session requires a separate round trip to the server. Drivers can operate more efficiently and put less load on
+the server if they cache <code>ServerSession</code> instances for reuse. To this end drivers MUST implement a server session pool
+containing <code>ServerSession</code> instances available for reuse. A <code>ServerSession</code> pool MUST belong to a <code>MongoClient</code> instance
+and have the same lifetime as the <code>MongoClient</code> instance.</p>
+<p>When a new implicit <code>ClientSession</code> is started it MUST NOT attempt to acquire a server session from the server session
+pool immediately. When a new explicit <code>ClientSession</code> is started it MAY attempt to acquire a server session from the
+server session pool immediately. See the algorithm below for the steps to follow when attempting to acquire a
+<code>ServerSession</code> from the server session pool.</p>
+<p>Note that <code>ServerSession</code> instances acquired from the server session pool might have as little as one minute left before
+becoming stale and being discarded server side. Drivers MUST document that if an application waits more than one minute
+after calling <code>startSession</code> to perform operations with that session it risks getting errors due to the server session
+going stale before it was used.</p>
+<p>A server session is considered stale by the server when it has not been used for a certain amount of time. The default
+amount of time is 30 minutes, but this value is configurable on the server. Servers that support sessions will report
+this value in the <code>logicalSessionTimeoutMinutes</code> field of the reply to the hello and legacy hello commands. The smallest
+reported timeout is recorded in the <code>logicalSessionTimeoutMinutes</code> property of the <code>TopologyDescription</code>. See the Server
+Discovery And Monitoring specification for details.</p>
+<p>When a <code>ClientSession</code> is ended it MUST return the server session to the server session pool. See the algorithm below
+for the steps to follow when returning a <code>ServerSession</code> instance to the server session pool.</p>
+<p>The server session pool has no maximum size. The pool only shrinks when a server session is acquired for use or
+discarded.</p>
+<p>When a <code>MongoClient</code> instance is closed the driver MUST proactively inform the server that the pooled server sessions
+will no longer be used by sending one or more <code>endSessions</code> commands to the server.</p>
+<p>The server session pool is modeled as a double ended queue. The algorithms below require the ability to add and remove
+<code>ServerSession</code> instances from the front of the queue and to inspect and possibly remove <code>ServerSession</code> instances from
+the back of the queue. The front of the queue holds <code>ServerSession</code> instances that have been released recently and
+should be the first to be reused. The back of the queue holds <code>ServerSession</code> instances that have not been used recently
+and that potentially will be discarded if they are not used again before they expire.</p>
+<p>An implicit session MUST be returned to the pool immediately following the completion of an operation. When an implicit
+session is associated with a cursor for use with <code>getMore</code> operations, the session MUST be returned to the pool
+immediately following a <code>getMore</code> operation that indicates that the cursor has been exhausted. In particular, it MUST
+not wait until all documents have been iterated by the application or until the application disposes of the cursor. For
+language runtimes that provide the ability to attach finalizers to objects that are run prior to garbage collection, the
+cursor class SHOULD return an implicit session to the pool in the finalizer if the cursor has not already been
+exhausted.</p>
+<p>If a driver supports process forking, the session pool needs to be cleared on one side of the forked processes (just
+like sockets need to reconnect). Drivers MUST provide a way to clear the session pool without sending <code>endSessions</code>.
+Drivers MAY make this automatic when the process ID changes. If they do not, they MUST document how to clear the session
+pool wherever they document fork support. After clearing the session pool in this way, drivers MUST ensure that sessions
+already checked out are not returned to the new pool.</p>
+<p>If a driver has a server session pool and a network error is encountered when executing any command with a
+<code>ClientSession</code>, the driver MUST mark the associated <code>ServerSession</code> as dirty. Dirty server sessions are discarded when
+returned to the server session pool. It is valid for a dirty session to be used for subsequent commands (e.g. an
+implicit retry attempt, a later command in a bulk write, or a later operation on an explicit session), however, it MUST
+remain dirty for the remainder of its lifetime regardless if later commands succeed.</p>
+<h3 id="algorithm-to-acquire-a-serversession-instance-from-the-server-session-pool"><a class="header" href="#algorithm-to-acquire-a-serversession-instance-from-the-server-session-pool">Algorithm to acquire a ServerSession instance from the server session pool</a></h3>
+<ol>
+<li>If the server session pool is empty create a new <code>ServerSession</code> and use it</li>
+<li>Otherwise remove a <code>ServerSession</code> from the front of the queue and examine it:
+<ul>
+<li>If the driver is in load balancer mode, use this <code>ServerSession</code>.</li>
+<li>If it has at least one minute left before becoming stale use this <code>ServerSession</code></li>
+<li>If it has less than one minute left before becoming stale discard it (let it be garbage collected) and return to
+step 1.</li>
+</ul>
+</li>
+</ol>
+<p>See the <a href="../load-balancers/load-balancers.html#session-expiration">Load Balancer Specification</a> for details on session
+expiration.</p>
+<h3 id="algorithm-to-return-a-serversession-instance-to-the-server-session-pool"><a class="header" href="#algorithm-to-return-a-serversession-instance-to-the-server-session-pool">Algorithm to return a ServerSession instance to the server session pool</a></h3>
+<ol>
+<li>Before returning a server session to the pool a driver MUST first check the server session pool for server sessions
+at the back of the queue that are about to expire (meaning they will expire in less than one minute). A driver MUST
+stop checking server sessions once it encounters a server session that is not about to expire. Any server sessions
+found that are about to expire are removed from the end of the queue and discarded (or allowed to be garbage
+collected)</li>
+<li>Then examine the server session that is being returned to the pool and:
+<ul>
+<li>If this session is marked dirty (i.e. it was involved in a network error) discard it (let it be garbage collected)</li>
+<li>If it will expire in less than one minute discard it (let it be garbage collected)</li>
+<li>If it won't expire for at least one minute add it to the front of the queue</li>
+</ul>
+</li>
+</ol>
+<h2 id="gossipping-the-cluster-time"><a class="header" href="#gossipping-the-cluster-time">Gossipping the cluster time</a></h2>
+<p>Drivers MUST gossip the cluster time when connected to a deployment that uses cluster times.</p>
+<p>Gossipping the cluster time is a process in which the driver participates in distributing the logical cluster time in a
+deployment. Drivers learn the current cluster time (from a particular server's perspective) in responses they receive
+from servers. Drivers in turn forward the highest cluster time they have seen so far to any server they subsequently
+send commands to.</p>
+<p>A driver detects that it MUST participate in gossipping the cluster time when it sees a <code>$clusterTime</code> in a response
+received from a server.</p>
+<h3 id="receiving-the-current-cluster-time"><a class="header" href="#receiving-the-current-cluster-time">Receiving the current cluster time</a></h3>
+<p>Drivers MUST examine all responses from the server commands to see if they contain a top level field named
+<code>$clusterTime</code> formatted as follows:</p>
+<pre><code class="language-typescript">interface ClusterTime {
+  clusterTime: Timestamp;
+  signature: {
+    hash: Binary;
+    keyId: Int64;
+  };
+}
+
+interface AnyServerResponse {
+  // ... other properties ...
+  $clusterTime: ClusterTime;
+}
+</code></pre>
+<p>Whenever a driver receives a cluster time from a server it MUST compare it to the current highest seen cluster time for
+the deployment. If the new cluster time is higher than the highest seen cluster time it MUST become the new highest seen
+cluster time. Two cluster times are compared using only the BsonTimestamp value of the <code>clusterTime</code> embedded field (be
+sure to include both the timestamp and the increment of the BsonTimestamp in the comparison). The signature field does
+not participate in the comparison.</p>
+<h3 id="sending-the-highest-seen-cluster-time"><a class="header" href="#sending-the-highest-seen-cluster-time">Sending the highest seen cluster time</a></h3>
+<p>Whenever a driver sends a command to a server it MUST include the highest seen cluster time in a top level field called
+<code>$clusterTime</code>, in the same format as it was received in (but see Gossipping with mixed server versions below).</p>
+<h3 id="how-to-compute-the-clustertime-to-send-to-a-server"><a class="header" href="#how-to-compute-the-clustertime-to-send-to-a-server">How to compute the <code>$clusterTime</code> to send to a server</a></h3>
+<p>When sending <code>$clusterTime</code> to the server the driver MUST send the greater of the <code>clusterTime</code> values from
+<code>MongoClient</code> and <code>ClientSession</code>. Normally a session's <code>clusterTime</code> will be less than or equal to the <code>clusterTime</code> in
+<code>MongoClient</code>, but it could be greater than the <code>clusterTime</code> in <code>MongoClient</code> if <code>advanceClusterTime</code> was called with a
+<code>clusterTime</code> that came from somewhere else.</p>
+<p>A driver MUST NOT use the <code>clusterTime</code> of a <code>ClientSession</code> anywhere else except when executing an operation with this
+session. This rule protects the driver from the scenario where <code>advanceClusterTime</code> was called with an invalid
+<code>clusterTime</code> by limiting the resulting server errors to the one session. The <code>clusterTime</code> of a <code>MongoClient</code> MUST NOT
+be advanced by any <code>clusterTime</code> other than a <code>$clusterTime</code> received directly from a server.</p>
+<p>The safe way to compute the <code>$clusterTime</code> to send to a server is:</p>
+<ol>
+<li>
+<p>When the <code>ClientSession</code> is first started its <code>clusterTime</code> is set to null.</p>
+</li>
+<li>
+<p>When the driver sends <code>$clusterTime</code> to the server it should send the greater of the <code>ClientSession</code> <code>clusterTime</code>
+and the <code>MongoClient</code> <code>clusterTime</code> (either one could be null).</p>
+</li>
+<li>
+<p>When the driver receives a <code>$clusterTime</code> from the server it should advance both the <code>ClientSession</code> and the
+<code>MongoClient</code> <code>clusterTime</code>. The <code>clusterTime</code> of a <code>ClientSession</code> can also be advanced by calling
+<code>advanceClusterTime</code>.</p>
+</li>
+</ol>
+<p>This sequence ensures that if the <code>clusterTime</code> of a <code>ClientSession</code> is invalid only that one session will be affected.
+The <code>MongoClient</code> <code>clusterTime</code> is only updated with <code>$clusterTime</code> values known to be valid because they were received
+directly from a server.</p>
+<h3 id="tracking-the-highest-seen-cluster-time-does-not-require-checking-the-deployment-topology-or-the-server-version"><a class="header" href="#tracking-the-highest-seen-cluster-time-does-not-require-checking-the-deployment-topology-or-the-server-version">Tracking the highest seen cluster time does not require checking the deployment topology or the server version</a></h3>
+<p>Drivers do not need to check the deployment topology or the server version they are connected to in order to track the
+highest seen <code>$clusterTime</code>. They simply need to check for the presence of the <code>$clusterTime</code> field in responses
+received from servers.</p>
+<h3 id="gossipping-with-mixed-server-versions"><a class="header" href="#gossipping-with-mixed-server-versions">Gossipping with mixed server versions</a></h3>
+<p>Drivers MUST check that the server they are sending a command to supports <code>$clusterTime</code> before adding <code>$clusterTime</code> to
+the command. A server supports <code>$clusterTime</code> when the <code>maxWireVersion</code> &gt;= 6.</p>
+<p>This supports the (presumably short lived) scenario where not all servers have been upgraded to 3.6.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>See the <a href="tests/README.html">README</a> for tests.</p>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
+<p>Drivers currently have no concept of a session. The driver API needs to be extended to support sessions.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<p>The goal is to modify the driver API in such a way that existing programs that don't use sessions continue to compile
+and run correctly. This goal is met by defining new methods (or overloads) that take a session parameter. An application
+does not need to be modified unless it wants to take advantage of the new features supported by sessions.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>The API changes to support sessions extend the existing API but do not introduce any backward breaking changes. Existing
+programs that don't use sessions continue to compile and run correctly.</p>
+<h2 id="reference-implementation-always-required"><a class="header" href="#reference-implementation-always-required">Reference Implementation (always required)</a></h2>
+<p>A reference implementation must be completed before any spec is given status "Final", but it need not be completed
+before the spec is "Accepted". While there is merit to the approach of reaching consensus on the specification and
+rationale before writing code, the principle of "rough consensus and running code" is still useful when it comes to
+resolving many discussions of spec details. A final reference implementation must include test code and documentation.</p>
+<p>The C and C# drivers will do initial POC implementations.</p>
+<h2 id="future-work-optional"><a class="header" href="#future-work-optional">Future work (optional)</a></h2>
+<p>Use this section to discuss any possible work for a future spec. This could cover issues where no consensus could be
+reached but that don't block this spec, changes that were rejected due to unclear use cases, etc.</p>
+<h2 id="open-questions"><a class="header" href="#open-questions">Open questions</a></h2>
+<h2 id="qa"><a class="header" href="#qa">Q&amp;A</a></h2>
+<h3 id="why-do-we-say-drivers-must-not-attempt-to-detect-unsafe-multi-threaded-or-multi-process-use-of-clientsession"><a class="header" href="#why-do-we-say-drivers-must-not-attempt-to-detect-unsafe-multi-threaded-or-multi-process-use-of-clientsession">Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded or multi-process use of <code>ClientSession</code>?</a></h3>
+<p>Because doing so would provide an illusion of safety. It doesn't make these instances thread safe. And even if when
+testing an application no such exceptions are encountered, that doesn't prove anything. The application might still be
+using the instances in a thread-unsafe way and just didn't happen to do so during a test run. The final argument is that
+checking this would require overhead that doesn't provide any clear benefit.</p>
+<h3 id="why-is-session-an-explicit-parameter"><a class="header" href="#why-is-session-an-explicit-parameter">Why is session an explicit parameter?</a></h3>
+<p>A previous draft proposed that ClientSession would be a MongoClient-like object added to the object hierarchy:</p>
+<pre><code class="language-javascript">session = client.startSession(...)
+database = session.getDatabase(...) // database is associated with session
+collection = database.getCollection(...) // collection is associated with session
+// operations on collection implicitly use session
+collection.insertOne({})
+session.endSession()
+</code></pre>
+<p>The central feature of this design is that a MongoCollection (or database, or perhaps a GridFS object) is associated
+with a session, which is then an implied parameter to any operations executed using that MongoCollection.</p>
+<p>This API was rejected, with the justification that a ClientSession does not naturally belong to the state of a
+MongoCollection. MongoCollection has up to now been a stable long-lived object that could be widely shared, and in most
+drivers it is thread safe. Once we associate a ClientSession with it, the MongoCollection object becomes short-lived and
+is no longer thread safe. It is a bad sign that MongoCollection's thread safety and lifetime vary depending on how its
+parent MongoDatabase is created.</p>
+<p>Instead, we require users to pass session as a parameter to each function:</p>
+<pre><code class="language-javascript">session = client.startSession(...)
+database = client.getDatabase(...)
+collection = database.getCollection(...)
+// users must explicitly pass session to operations
+collection.insertOne(session, {})
+session.endSession()
+</code></pre>
+<h3 id="why-does-a-network-error-cause-the-serversession-to-be-discarded-from-the-pool"><a class="header" href="#why-does-a-network-error-cause-the-serversession-to-be-discarded-from-the-pool">Why does a network error cause the <code>ServerSession</code> to be discarded from the pool?</a></h3>
+<p>When a network error is encountered when executing an operation with a <code>ClientSession</code>, the operation may be left
+running on the server. Re-using this <code>ServerSession</code> can lead to parallel operations which violates the rule that a
+session must be used sequentially. This results in multiple problems:</p>
+<ol>
+<li>killSessions to end an earlier operation would surprisingly also end a later operation.</li>
+<li>An otherwise unrelated operation that just happens to use that same server session will potentially block waiting for
+the previous operation to complete. For example, a transactional write will block a subsequent transactional write.</li>
+</ol>
+<h3 id="why-do-automatic-retry-attempts-re-use-a-dirty-implicit-session"><a class="header" href="#why-do-automatic-retry-attempts-re-use-a-dirty-implicit-session">Why do automatic retry attempts re-use a dirty implicit session?</a></h3>
+<p>The retryable writes spec requires that both the original and retry attempt use the same server session. The server will
+block the retry attempt until the initial attempt completes at which point the retry attempt will continue executing.</p>
+<p>For retryable reads that use an implicit session, drivers could choose to use a new server session for the retry attempt
+however this would lose the information that these two reads are related.</p>
+<h3 id="why-dont-drivers-run-the-endsessions-command-to-cleanup-dirty-server-sessions"><a class="header" href="#why-dont-drivers-run-the-endsessions-command-to-cleanup-dirty-server-sessions">Why don't drivers run the endSessions command to cleanup dirty server sessions?</a></h3>
+<p>Drivers do not run the endSessions command when discarding a dirty server session because disconnects should be
+relatively rare and the server won't normally accumulate a large number of abandoned dirty sessions. Any abandoned
+sessions will be automatically cleaned up by the server after the configured <code>logicalSessionTimeoutMinutes</code>.</p>
+<h3 id="why-must-drivers-wait-to-consume-a-server-session-until-after-a-connection-is-checked-out"><a class="header" href="#why-must-drivers-wait-to-consume-a-server-session-until-after-a-connection-is-checked-out">Why must drivers wait to consume a server session until after a connection is checked out?</a></h3>
+<p>The problem that may occur is when the number of concurrent application requests are larger than the number of available
+connections, the driver may generate many more implicit sessions than connections. For example with maxPoolSize=1 and
+100 threads, 100 implicit sessions may be created. This increases the load on the server since session state is cached
+in memory. In the worst case this kind of workload can hit the session limit and trigger TooManyLogicalSessions.</p>
+<p>In order to address this, drivers MUST NOT consume a server session id until after the connection is checked out. This
+change will limit the number of "in use" server sessions to no greater than an application's maxPoolSize.</p>
+<p>The language here is specific about obtaining a server session as opposed to creating the implicit session to permit
+drivers to take an implementation approach where the implicit session creation logic largely remains unchanged. Implicit
+session creation can be left as is, as long as the underlying server resource isn't allocated until it is needed and,
+known it will be used, after connection checkout succeeds.</p>
+<p>It is still possible that via explicit sessions or cursors, which hold on to the session they started with, a driver
+could over allocate sessions. But those scenarios are extenuating and outside the scope of solving in this spec.</p>
+<h3 id="why-should-drivers-not-attempt-to-release-a-serversession-before-checking-back-in-the-operations-connection"><a class="header" href="#why-should-drivers-not-attempt-to-release-a-serversession-before-checking-back-in-the-operations-connection">Why should drivers NOT attempt to release a serverSession before checking back in the operation's connection?</a></h3>
+<p>There are a variety of cases, such as retryable operations or cursor creating operations, where a <code>serverSession</code> must
+remain acquired by the <code>ClientSession</code> after an operation is attempted. Attempting to account for all these scenarios
+has risks that do not justify the potential guaranteed <code>ServerSession</code> allocation limiting.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>2024-05-08: Migrated from reStructuredText to Markdown.</li>
+<li>2017-09-13: If causalConsistency option is omitted assume true</li>
+<li>2017-09-16: Omit session ID when opening and authenticating a connection</li>
+<li>2017-09-18: Drivers MUST gossip the cluster time when they see a <code>$clusterTime</code>.</li>
+<li>2017-09-19: How to safely use initialClusterTime</li>
+<li>2017-09-29: Add an exception to the rule that <code>KILLCURSORS</code> commands always require a session id</li>
+<li>2017-10-03: startSession and endSessions commands MUST be sent to the admin database</li>
+<li>2017-10-03: Fix format of endSessions command</li>
+<li>2017-10-04: Added advanceClusterTime</li>
+<li>2017-10-06: Added descriptions of explicit and implicit sessions</li>
+<li>2017-10-17: Implicit sessions MUST NOT be used when multiple users authenticated</li>
+<li>2017-10-19: Possible race conditions when checking whether a deployment supports sessions</li>
+<li>2017-11-21: Drivers MUST NOT send a session ID for unacknowledged writes</li>
+<li>2018-01-10: Note that MongoClient must retain highest clusterTime</li>
+<li>2018-01-10: Update test plan for drivers without APM</li>
+<li>2018-01-11: Clarify that sessions require replica sets or sharded clusters</li>
+<li>2018-02-20: Add implicit/explicit session tests</li>
+<li>2018-02-20: Drivers SHOULD error if unacknowledged writes are used with sessions</li>
+<li>2018-05-23: Drivers MUST not use session ID with parallelCollectionScan</li>
+<li>2018-06-07: Document that estimatedDocumentCount does not support explicit sessions</li>
+<li>2018-07-19: Justify why session must be an explicit parameter to each function</li>
+<li>2018-10-11: Session pools must be cleared in child process after fork</li>
+<li>2019-05-15: A ServerSession that is involved in a network error MUST be discarded</li>
+<li>2019-10-22: Drivers may defer checking if a deployment supports sessions until the first</li>
+<li>2021-04-08: Updated to use hello and legacy hello</li>
+<li>2021-04-08: Adding in behaviour for load balancer mode.</li>
+<li>2020-05-26: Simplify logic for determining sessions support</li>
+<li>2022-01-28: Implicit sessions MUST obtain server session after connection checkout succeeds</li>
+<li>2022-03-24: ServerSession Pooling is required and clarifies session acquisition bounding</li>
+<li>2022-06-13: Move prose tests to test README and apply new ordering</li>
+<li>2022-10-05: Remove spec front matter</li>
+<li>2023-02-24: Defer checking for session support until after connection checkout</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../client-side-operations-timeout/client-side-operations-timeout.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../causal-consistency/causal-consistency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../client-side-operations-timeout/client-side-operations-timeout.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../causal-consistency/causal-consistency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

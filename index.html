@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html" class="active">Introduction</a></li><li class="chapter-item expanded affix "><a href="driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="mongodb-driver-specifications"><a class="header" href="#mongodb-driver-specifications">MongoDB Driver Specifications</a></h1>
+<p>The modern MongoDB driver consists of a number of components, each of which are thoroughly documented in <a href="https://github.com/mongodb/specifications">this repository</a>. Though this information is readily available and extremely helpful, what it lacks is a high level overview to tie the specs together into a cohesive picture of what a MongoDB driver is.</p>
+<p>Architecturally an implicit hierarchy exists within the drivers, so expressing drivers in terms of an <a href="https://en.wikipedia.org/wiki/Onion_model">onion model</a> feels appropriate.</p>
+<h2 id="layers-of-the-onion"><a class="header" href="#layers-of-the-onion">Layers of the Onion</a></h2>
+<p><img src="drivers-onion.png" alt="" /></p>
+<p>The <em>"drivers onion"</em> is meant to represent how various concepts, components and APIs can be layered atop each other to build a MongoDB driver from the ground up, or to help understand how existing drivers have been structured. Hopefully this representation of MongoDB’s drivers helps provide some clarity, as the complexity of these libraries - like the onion above - could otherwise bring you to tears.</p>
+<h3 id="serialization"><a class="header" href="#serialization">Serialization</a></h3>
+<p>At their lowest level all MongoDB drivers will need to know how to work with <a href="https://bsonspec.org/">BSON</a>. BSON (short for "Binary JSON") is a bin­ary-en­coded serialization of <a href="https://www.json.org/json-en.html">JSON</a>-like documents, and like JSON, it sup­ports the nesting of arrays and documents. BSON also contains extensions that al­low representation of data types that are not part of the <a href="https://datatracker.ietf.org/doc/html/rfc7159">JSON spec</a>.</p>
+<blockquote>
+<p><strong>Specifications:</strong> <a href="https://bsonspec.org/spec.html">BSON</a>, <a href="bson-objectid/objectid.html">ObjectId</a>, <a href="bson-decimal128/decimal128.html">Decimal128</a>, <a href="bson-binary-uuid/uuid.html">UUID</a>, <a href="dbref/dbref.html">DBRef</a>, <a href="extended-json/extended-json.html">Extended JSON</a></p>
+</blockquote>
+<h3 id="communication"><a class="header" href="#communication">Communication</a></h3>
+<p>Once BSON documents can be created and manipulated, the foundation for interacting with a MongoDB host process has been laid. Drivers communicate by sending <a href="https://www.mongodb.com/docs/manual/reference/command/">database commands</a> as serialized BSON documents using MongoDB’s <a href="https://www.mongodb.com/docs/manual/reference/mongodb-wire-protocol/">wire protocol</a>.</p>
+<p>From the provided connection string and options a socket connection is established to a host, which an initial handshake verifies is in fact a valid MongoDB connection by sending a simple <a href="https://www.mongodb.com/docs/manual/reference/command/hello/"><code>hello</code></a>. Based on the response to this first command a driver can continue to establish and authenticate connections.</p>
+<blockquote>
+<p><strong>Specifications:</strong> <a href="message/OP_MSG.html"><code>OP_MSG</code></a>, <a href="run-command/run-command.html">Command Execution</a>, <a href="connection-string/connection-string-spec.html">Connection String</a>, <a href="uri-options/uri-options.html">URI Options</a>, <a href="ocsp-support/ocsp-support.html">OCSP</a>, <a href="mongodb-handshake/handshake.html">Initial Handshake</a>, <a href="compression/OP_COMPRESSED.html">Wire Compression</a>, <a href="socks5-support/socks5.html">SOCKS5</a>, <a href="initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html">Initial DNS Seedlist Discovery</a></p>
+</blockquote>
+<h3 id="connectivity"><a class="header" href="#connectivity">Connectivity</a></h3>
+<p>Now that a valid host has been found, the cluster’s topology can be discovered and monitoring connections can be established. Connection pools can then be created and populated with connections. The monitoring connections will subsequently be used for ensuring operations are routed to available hosts, or hosts that meet certain criteria (such as a configured <a href="https://www.mongodb.com/docs/upcoming/core/read-preference/">read preference</a> or acceptable latency window).</p>
+<blockquote>
+<p><strong>Specifications:</strong> <a href="server-discovery-and-monitoring/server-discovery-and-monitoring.html">SDAM</a>, <a href="connection-monitoring-and-pooling/connection-monitoring-and-pooling.html">CMAP</a>, <a href="load-balancers/load-balancers.html">Load Balancer Support</a></p>
+</blockquote>
+<h3 id="authentication"><a class="header" href="#authentication">Authentication</a></h3>
+<p>Establishing and monitoring connections to MongoDB ensures they’re available, but MongoDB server processes typically will require the connection to be <a href="https://www.mongodb.com/docs/manual/core/authentication/">authenticated</a> before commands will be accepted. MongoDB offers many authentication mechanisms such as <a href="https://www.mongodb.com/docs/manual/core/security-scram">SCRAM</a>, <a href="https://www.mongodb.com/docs/manual/core/security-x.509/">x.509</a>, <a href="https://www.mongodb.com/docs/manual/core/kerberos/">Kerberos</a>, <a href="https://www.mongodb.com/docs/manual/core/security-ldap/">LDAP</a>, <a href="https://www.mongodb.com/docs/manual/core/security-oidc/">OpenID Connect</a> and <a href="https://www.mongodb.com/docs/atlas/security/passwordless-authentication/">AWS IAM</a>, which MongoDB drivers support using the <em><a href="https://www.ietf.org/rfc/rfc4422.txt">Simple Authentication and Security Layer</a></em> (SASL) framework.</p>
+<blockquote>
+<p><strong>Specifications:</strong> <a href="auth/auth.html">Authentication</a></p>
+</blockquote>
+<h3 id="availability"><a class="header" href="#availability">Availability</a></h3>
+<p>All client operations will be serialized as BSON and sent to MongoDB over a connection that will first be checked out of a connection pool. Various monitoring processes exist to ensure a driver’s internal state machine contains an accurate view of the cluster’s topology so that read and write requests can always be appropriately routed according to MongoDB’s <a href="https://www.mongodb.com/docs/manual/core/read-preference-mechanics/">server selection algorithm</a>.</p>
+<blockquote>
+<p><strong>Specifications:</strong> <a href="server-discovery-and-monitoring/server-monitoring.html">Server Monitoring</a>, <a href="polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><code>SRV</code> Polling for mongos Discovery</a>, <a href="server-selection/server-selection.html">Server Selection</a>, <a href="max-staleness/max-staleness.html">Max Staleness</a></p>
+</blockquote>
+<h3 id="resilience"><a class="header" href="#resilience">Resilience</a></h3>
+<p>At their core, database drivers are client libraries meant to facilitate interactions between an application and the database. MongoDB’s drivers are no different in that regard, as they abstract away the underlying serialization, communication, connectivity, and availability functions required to programmatically interact with your data.</p>
+<p>To further enhance the developer experience while working with MongoDB, various resilience features can be added based on <a href="https://www.mongodb.com/docs/manual/reference/server-sessions/">logical sessions</a> such as <a href="https://www.mongodb.com/docs/manual/core/retryable-writes">retryable writes</a>, <a href="https://www.mongodb.com/docs/manual/core/read-isolation-consistency-recency/#std-label-causal-consistency">causal consistency</a>, and <a href="https://www.mongodb.com/docs/manual/core/transactions/">transactions</a>.</p>
+<blockquote>
+<p><strong>Specifications:</strong> Retryability (<a href="retryable-reads/retryable-reads.html">Reads</a>, <a href="retryable-writes/retryable-writes.html">Writes</a>), <a href="client-side-operations-timeout/client-side-operations-timeout.html">CSOT</a>, Consistency (<a href="sessions/driver-sessions.html">Sessions</a>, <a href="causal-consistency/causal-consistency.html">Causal Consistency</a>, <a href="sessions/snapshot-sessions.html">Snapshot Reads</a>, <a href="transactions/transactions.html">Transactions</a>, <a href="transactions-convenient-api/transactions-convenient-api.html">Convenient Transactions API</a>)</p>
+</blockquote>
+<h3 id="programmability"><a class="header" href="#programmability">Programmability</a></h3>
+<p>Now that we can serialize commands and send them over the wire through an authenticated connection we can begin actually manipulating data. Since all database interactions are in the form of commands, if we wanted to remove a single document we might issue a <a href="https://www.mongodb.com/docs/manual/reference/command/delete"><code>delete</code> command</a> such as the following:</p>
+<pre><code class="language-js">db.runCommand(
+  {
+     delete: "orders",
+     deletes: [ { q: { status: "D" }, limit: 0 } ]
+  }
+)
+</code></pre>
+<p>Though not exceedingly complex, a better developer experience can be achieved through more single-purpose APIs. This would allow the above example to be expressed as:</p>
+<pre><code class="language-js">db.orders.deleteMany({ status: "D" })
+</code></pre>
+<p>To provide a cleaner and clearer developer experience, many specifications exist to describe how these APIs should be consistently presented across driver implementations, while still providing the flexibility to make APIs more idiomatic for each language.</p>
+<p>Advanced security features such as <a href="https://www.mongodb.com/docs/manual/core/csfle/">client-side field level encryption</a> are also defined at this layer.</p>
+<blockquote>
+<p><strong>Specifications:</strong> Resource Management (<a href="enumerate-databases/enumerate-databases.html">Databases</a>, <a href="enumerate-collections/enumerate-collections.html">Collections</a>, <a href="index-management/index-management.html">Indexes</a>), Data Management (<a href="crud/crud.html">CRUD</a>, <a href="collation/collation.html">Collation</a>, <a href="server_write_commands/server_write_commands.html">Write Commands</a>, <a href="driver-bulk-update.html">Bulk API</a>, <a href="crud/bulk-write.html">Bulk Write</a>, <a href="read-write-concern/read-write-concern.html">R/W Concern</a>), Cursors (<a href="change-streams/change-streams.html">Change Streams</a>, <a href="find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><code>find</code>/<code>getMore</code>/<code>killCursors</code></a>), <a href="gridfs/gridfs-spec.html">GridFS</a>, <a href="versioned-api/versioned-api.html">Stable API</a>, Security (<a href="client-side-encryption/client-side-encryption.html">Client Side Encryption</a>, <a href="bson-binary-encrypted/binary-encrypted.html">BSON Binary Subtype 6</a>)</p>
+</blockquote>
+<h3 id="observability"><a class="header" href="#observability">Observability</a></h3>
+<p>With database commands being serialized and sent to MongoDB servers and responses being received and deserialized, our driver can be considered fully functional for most read and write operations. As MongoDB drivers abstract away most of the complexity involved with creating and maintaining the connections these commands will be sent over, providing mechanisms for introspection into a driver’s functionality can provide developers with added confidence that things are working as expected.</p>
+<p>The inner workings of connection pools, connection lifecycle, server monitoring, topology changes, command execution and other driver components are exposed by means of events developers can register listeners to capture. This can be an invaluable troubleshooting tool and can help facilitate monitoring the health of an application.</p>
+<pre><code class="language-js">const { MongoClient, BSON: { EJSON } } = require('mongodb');
+
+function debugPrint(label, event) {
+ console.log(`${label}: ${EJSON.stringify(event)}`);
+}
+
+async function main() {
+ const client = new MongoClient("mongodb://localhost:27017", { monitorCommands: true });
+ client.on('commandStarted', (event) =&gt; debugPrint('commandStarted', event));
+ client.on('connectionCheckedOut', (event) =&gt; debugPrint('connectionCheckedOut', event));
+ await client.connect();
+ const coll = client.db("test").collection("foo");
+ const result = await coll.findOne();
+ client.close();
+}
+main();
+</code></pre>
+<p>Given the example above (using the <a href="https://www.mongodb.com/docs/drivers/node/current/">Node.js driver</a>) the specified connection events and command events would be logged as they’re emitted by the driver:</p>
+<p><code>connectionCheckedOut: {"time":{"$date":"2024-05-17T15:18:18.589Z"},"address":"localhost:27018","name":"connectionCheckedOut","connectionId":1}</code><br/>
+<code>commandStarted: {"name":"commandStarted","address":"127.0.0.1:27018","connectionId":1,"serviceId":null,"requestId":5,"databaseName":"test","commandName":"find","command":{"find":"foo","filter":{},"limit":1,"singleBatch":true,"batchSize":1,"lsid":{"id":{"$binary":{"base64":"4B1kOPCGRUe/641MKhGT4Q==","subType":"04"}}},"$clusterTime":{"clusterTime":{"$timestamp":{"t":1715959097,"i":1}},"signature":{"hash":{"$binary":"base64":"AAAAAAAAAAAAAAAAAAAAAAAAAAA=","subType":"00"}},"keyId":0}},"$db":"test"},"serverConnectionId":140}</code></p>
+<p>The preferred method of observing internal behavior would be through <a href="logging/logging.html">standardized logging</a> once it is available in all drivers (<a href="https://jira.mongodb.org/browse/DRIVERS-1204">DRIVERS-1204</a>), however until that time only event logging is consistently available. In the future additional observability tooling such as <a href="https://opentelemetry.io/">Open Telemetry</a> support may also be introduced.</p>
+<blockquote>
+<p><strong>Specifications:</strong> <a href="command-logging-and-monitoring/command-logging-and-monitoring.html">Command Logging and Monitoring</a>, <a href="server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html">SDAM Logging and Monitoring</a>, <a href="logging/logging.html">Standardized Logging</a>, <a href="connection-monitoring-and-pooling/connection-monitoring-and-pooling.html#connection-pool-logging">Connection Pool Logging</a></p>
+</blockquote>
+<h3 id="testability"><a class="header" href="#testability">Testability</a></h3>
+<p>Ensuring existing as well as net-new drivers can be effectively tested for correctness and performance, most specifications define a standard set of tests using <a href="https://web.archive.org/web/20230930061614/https://www.mongodb.com/blog/post/cat-herds-crook-yaml-test-specs-improve-driver-conformance">YAML tests to improve driver conformance</a>. This allows specification authors and maintainers to describe functionality once with the confidence that the tests can be executed alike by language-specific test runners across all drivers.</p>
+<p>Though the unified test format greatly simplifies language-specific implementations, not all tests can be represented in this fashion. In those cases the specifications may describe tests to be manually implemented as prose. By limiting the number of prose tests that each driver must implement, engineers can deliver functionality with greater confidence while also minimizing the burden of upstream verification.</p>
+<blockquote>
+<p><strong>Specifications:</strong> <a href="unified-test-format/unified-test-format.html">Unified Test Format</a>, <a href="https://github.com/mongodb/specifications/tree/master/atlas-data-lake-testing/tests">Atlas Data Federation Testing</a>, <a href="benchmarking/benchmarking.html">Performance Benchmarking</a>, <a href="bson-corpus/bson-corpus.html">BSON Corpus</a>, <a href="https://github.com/mongodb/specifications/tree/master/connections-survive-step-down/tests">Replication Event Resilience</a>, <a href="faas-automated-testing/faas-automated-testing.html">FAAS Automated Testing</a>, <a href="serverless-testing/README.html">Atlas Serverless Testing</a></p>
+</blockquote>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
+<p>Most (if not all) the information required to build a new driver or maintain existing drivers technically exists within the specifications, however without a mental mode of their composition and architecture it can be extremely challenging to know where to look.</p>
+<p>Peeling the <em>"drivers onion"</em> should hopefully make reasoning about them a little easier, especially with the understanding that everything can be tested to validate individual implementations are "up to spec".</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="driver-mantras.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="driver-mantras.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

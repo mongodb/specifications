@@ -1,0 +1,534 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Convenient Transactions API - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html" class="active"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="convenient-api-for-transactions"><a class="header" href="#convenient-api-for-transactions">Convenient API for Transactions</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 4.0</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>Reliably committing a transaction in the face of errors can be a complicated endeavor using the MongoDB 4.0 drivers API.
+This specification introduces a <code>withTransaction</code> method on the ClientSession object that allows application logic to be
+executed within a transaction. This method is capable of retrying either the commit operation or entire transaction as
+needed (and when the error permits) to better ensure that the transaction can complete successfully.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<div id="callback">
+<p><strong>Callback</strong></p>
+<p>A user-defined function that will be passed to the helper method defined in this specification. Depending on the
+implementing language, this may be a closure, function pointer, or other callable type.</p>
+<p><strong>ClientSession</strong></p>
+<p>Driver object representing a client session, as defined in the <a href="../sessions/driver-sessions.html">Driver Session</a>
+specification. The name of this object MAY vary across drivers.</p>
+<p><strong>MongoClient</strong></p>
+<p>The root object of a driver's API. The name of this object MAY vary across drivers.</p>
+<div id="TransactionOptions">
+<p><strong>TransactionOptions</strong></p>
+<p>Options for <code>ClientSession.startTransaction</code>, as defined in the <a href="../transactions/transactions.html">Transactions</a>
+specification. The structure of these options MAY vary across drivers (e.g. dictionary, typed class).</p>
+<h3 id="naming-deviations"><a class="header" href="#naming-deviations">Naming Deviations</a></h3>
+<p>This specification defines the name for a new ClientSession method, <code>withTransaction</code>. Drivers SHOULD use the defined
+name but MAY deviate to comply with their existing conventions. For example, a driver may use <code>with_transaction</code> instead
+of <code>withTransaction</code>.</p>
+<h3 id="callback-semantics"><a class="header" href="#callback-semantics">Callback Semantics</a></h3>
+<p>The purpose of the callback is to allow the application to specify some sequence of operations to be executed within the
+body of a transaction. In an ideal scenario, <code>withTransaction</code> will start a transaction, execute the callback, and
+commit the transaction. In the event of error, the commit or entire transaction may need to be retried and thusly the
+callback could be invoked multiple times.</p>
+<p>Drivers MUST ensure that the application can access the ClientSession within the callback, since the ClientSession will
+be needed to associate operations with the transaction. Drivers may elect an idiomatic approach to satisfy this
+requirement (e.g. require the callback to receive the ClientSession as its first argument, expect the callback to access
+the ClientSession from its lexical scope). Drivers MAY allow the callback to support additional parameters as needed
+(e.g. user data parameter, error output parameter). Drivers MAY allow the callback to return a value to be propagated as
+the return value of <code>withTransaction</code>.</p>
+<h3 id="clientsession-changes"><a class="header" href="#clientsession-changes">ClientSession Changes</a></h3>
+<p>This specification introduces a <code>withTransaction</code> method on the ClientSession class:</p>
+<pre><code class="language-typescript">interface ClientSession {
+    withTransaction(function&lt;any(...)&gt; callback,
+                    Optional&lt;TransactionOptions&gt; options,
+                    ... /* other arguments as needed */): any
+
+    // other existing members of ClientSession
+}
+</code></pre>
+<h4 id="clientsessionwithtransaction"><a class="header" href="#clientsessionwithtransaction">ClientSession.withTransaction</a></h4>
+<p>This method is responsible for starting a transaction, invoking a callback, and committing a transaction. The callback
+is expected to execute one or more operations with the transaction; however, that is not enforced. The callback is
+allowed to execute other operations not associated with the transaction.</p>
+<p>Since <code>withTransaction</code> includes logic to retry transactions and commits, drivers MUST apply timeouts per
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#convenient-transactions-api">Client Side Operations Timeout: Convenient Transactions API</a>.
+If <code>timeoutMS</code> is unset for a <code>withTransaction</code> call, drivers MUST enforce a 120-second timeout to limit retry behavior
+and safeguard applications from long-running (or infinite) retry loops. Drivers SHOULD use a monotonic clock to
+determine elapsed time.</p>
+<p>If an UnknownTransactionCommitResult error is encountered for a commit, the driver MUST retry the commit if and only if
+the error is not MaxTimeMSExpired and the retry timeout has not been exceeded. Otherwise, the driver MUST NOT retry the
+commit and allow <code>withTransaction</code> to propagate the error to its caller.</p>
+<p>If a TransientTransactionError is encountered at any point, the entire transaction may be retried. If the retry timeout
+has not been exceeded, the driver MUST retry a transaction that fails with an error bearing the
+"TransientTransactionError" label. Since retrying the entire transaction will entail invoking the callback again,
+drivers MUST document that the callback may be invoked multiple times (i.e. one additional time per retry attempt) and
+MUST document the risk of side effects from using a non-idempotent callback. If the retry timeout has been exceeded,
+drivers MUST NOT retry the transaction and allow <code>withTransaction</code> to propagate the error to its caller.</p>
+<p>If an error bearing neither the UnknownTransactionCommitResult nor the TransientTransactionError label is encountered at
+any point, the driver MUST NOT retry and MUST allow <code>withTransaction</code> to propagate the error to its caller.</p>
+<p>This method MUST receive a <a href="#callback">callback</a> as its first parameter. An optional
+<a href="#TransactionOptions">TransactionOptions</a> MUST be provided as its second parameter (with deviations permitted as
+outlined in the <a href="../crud/crud.html#deviations">CRUD</a> specification). Drivers MAY support other parameters or options as
+needed (e.g. user data to pass as a parameter to the callback).</p>
+<h5 id="sequence-of-actions"><a class="header" href="#sequence-of-actions">Sequence of Actions</a></h5>
+<p>This method should perform the following sequence of actions:</p>
+<ol>
+<li>Record the current monotonic time, which will be used to enforce the 120-second timeout before later retry attempts.</li>
+<li>Invoke <a href="../transactions/transactions.html#starttransaction">startTransaction</a> on the session. If TransactionOptions
+were specified in the call to <code>withTransaction</code>, those MUST be used for <code>startTransaction</code>. Note that
+<code>ClientSession.defaultTransactionOptions</code> will be used in the absence of any explicit TransactionOptions.</li>
+<li>If <code>startTransaction</code> reported an error, propagate that error to the caller of <code>withTransaction</code> and return
+immediately.</li>
+<li>Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
+ClientSession as the first parameter, rely on lexical scoping). Drivers MAY pass additional parameters as needed
+(e.g. user data solicited by withTransaction).</li>
+<li>Control returns to <code>withTransaction</code>. Determine the current
+<a href="../transactions/transactions.html#clientsession-changes">state</a> of the ClientSession and whether the callback
+reported an error (e.g. thrown exception, error output parameter).</li>
+<li>If the callback reported an error:
+<ol>
+<li>If the ClientSession is in the "starting transaction" or "transaction in progress" state, invoke
+<a href="../transactions/transactions.html#aborttransaction">abortTransaction</a> on the session.</li>
+<li>If the callback's error includes a "TransientTransactionError" label and the elapsed time of <code>withTransaction</code> is
+less than 120 seconds, jump back to step two.</li>
+<li>If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
+committed a transaction, propagate the callback's error to the caller of <code>withTransaction</code> and return
+immediately.</li>
+<li>Otherwise, propagate the callback's error to the caller of <code>withTransaction</code> and return immediately.</li>
+</ol>
+</li>
+<li>If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
+callback intentionally aborted or committed the transaction and return immediately.</li>
+<li>Invoke <a href="../transactions/transactions.html#committransaction">commitTransaction</a> on the session.</li>
+<li>If <code>commitTransaction</code> reported an error:
+<ol>
+<li>If the <code>commitTransaction</code> error includes a "UnknownTransactionCommitResult" label and the error is not
+MaxTimeMSExpired and the elapsed time of <code>withTransaction</code> is less than 120 seconds, jump back to step eight. We
+will trust <code>commitTransaction</code> to apply a majority write concern on retry attempts (see:
+<a href="#majority-write-concern-is-used-when-retrying-committransaction">Majority write concern is used when retrying commitTransaction</a>).</li>
+<li>If the <code>commitTransaction</code> error includes a "TransientTransactionError" label and the elapsed time of
+<code>withTransaction</code> is less than 120 seconds, jump back to step two.</li>
+<li>Otherwise, propagate the <code>commitTransaction</code> error to the caller of <code>withTransaction</code> and return immediately.</li>
+</ol>
+</li>
+<li>The transaction was committed successfully. Return immediately.</li>
+</ol>
+<h5 id="pseudo-code"><a class="header" href="#pseudo-code">Pseudo-code</a></h5>
+<p>This method can be expressed by the following pseudo-code:</p>
+<pre><code class="language-typescript">withTransaction(callback, options) {
+    // Note: drivers SHOULD use a monotonic clock to determine elapsed time
+    var startTime = Date.now(); // milliseconds since Unix epoch
+
+    retryTransaction: while (true) {
+        this.startTransaction(options); // may throw on error
+
+        try {
+            callback(this);
+        } catch (error) {
+            if (this.transactionState == STARTING ||
+                this.transactionState == IN_PROGRESS) {
+                this.abortTransaction();
+            }
+
+            if (error.hasErrorLabel("TransientTransactionError") &amp;&amp;
+                Date.now() - startTime &lt; 120000) {
+                continue retryTransaction;
+            }
+
+            throw error;
+        }
+
+        if (this.transactionState == NO_TXN ||
+            this.transactionState == COMMITTED ||
+            this.transactionState == ABORTED) {
+            return; // Assume callback intentionally ended the transaction
+        }
+
+        retryCommit: while (true) {
+            try {
+                /* We will rely on ClientSession.commitTransaction() to
+                 * apply a majority write concern if commitTransaction is
+                 * being retried (see: DRIVERS-601) */
+                this.commitTransaction();
+            } catch (error) {
+                /* Note: a maxTimeMS error will have the MaxTimeMSExpired
+                 * code (50) and can be reported as a top-level error or
+                 * inside writeConcernError, ie:
+                 * {ok:0, code: 50, codeName: "MaxTimeMSExpired"}
+                 * {ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}
+                 */
+                if (!isMaxTimeMSExpiredError(error) &amp;&amp;
+                    error.hasErrorLabel("UnknownTransactionCommitResult") &amp;&amp;
+                    Date.now() - startTime &lt; 120000) {
+                    continue retryCommit;
+                }
+
+                if (error.hasErrorLabel("TransientTransactionError") &amp;&amp;
+                    Date.now() - startTime &lt; 120000) {
+                    continue retryTransaction;
+                }
+
+                throw error;
+            }
+            break; // Commit was successful
+        }
+        break; // Transaction was successful
+    }
+}
+</code></pre>
+<h3 id="clientsession-must-provide-access-to-a-mongoclient"><a class="header" href="#clientsession-must-provide-access-to-a-mongoclient">ClientSession must provide access to a MongoClient</a></h3>
+<p>The callback invoked by <code>withTransaction</code> is only guaranteed to receive a ClientSession parameter. Drivers MUST ensure
+that it is possible to obtain a MongoClient within the callback in order to execute operations within the transaction.
+Per the <a href="../sessions/driver-sessions.html">Driver Session</a> specification, ClientSessions should already provide access to
+a client object.</p>
+<h3 id="handling-errors-inside-the-callback"><a class="header" href="#handling-errors-inside-the-callback">Handling errors inside the callback</a></h3>
+<p>Drivers MUST document that the callback MUST NOT silently handle command errors without allowing such errors to
+propagate. Command errors may abort the transaction on the server, and an attempt to commit the transaction will be
+rejected with <code>NoSuchTransaction</code> error.</p>
+<p>For example, <code>DuplicateKeyError</code> is an error that aborts a transaction on the server. If the callback catches
+<code>DuplicateKeyError</code> and does not re-throw it, the driver will attempt to commit the transaction. The server will reject
+the commit attempt with <code>NoSuchTransaction</code> error. This error has the "TransientTransactionError" label and the driver
+will retry the commit. This will result in an infinite loop.</p>
+<p>Drivers MUST recommend that the callback re-throw command errors if they need to be handled inside the callback. Drivers
+SHOULD also recommend using Core Transaction API if a user wants to handle errors in a custom way.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>See the <a href="tests/README.html">README</a> for tests.</p>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation for Change</a></h2>
+<p>Reliably committing a transaction in the face of errors can be a complicated endeavor using the MongoDB 4.0 drivers API.
+Providing helper method in the driver to execute a transaction (and retry when possible) will enable our users to make
+better use of transactions in their applications.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<p>This specification introduces a helper method on the ClientSession object that applications may optionally employ to
+execute a user-defined function within a transaction. An application does not need to be modified unless it wants to
+take advantage of this helper method.</p>
+<h3 id="majority-write-concern-is-used-when-retrying-committransaction"><a class="header" href="#majority-write-concern-is-used-when-retrying-committransaction">Majority write concern is used when retrying commitTransaction</a></h3>
+<p>Drivers should apply a majority write concern when retrying commitTransaction to guard against a transaction being
+applied twice. This requirement was originally enforced in the implementation of <code>withTransaction</code>, but will now be
+handled by the transaction spec itself in order to benefit applications irrespective of whether they use
+<code>withTransaction</code> (see the corresponding section in the
+<a href="../transactions/transactions.html#majority-write-concern-is-used-when-retrying-committransaction">Transactions spec Design Rationale</a>).</p>
+<h3 id="the-callback-function-has-a-flexible-signature"><a class="header" href="#the-callback-function-has-a-flexible-signature">The callback function has a flexible signature</a></h3>
+<p>An original design considered requiring the callback to accept a ClientSession as its first parameter. That could be
+superfluous for languages where the callback might already have access to ClientSession through its lexical scope.
+Instead, the spec simply requires that drivers ensure the callback will be able to access the ClientSession.</p>
+<p>Similarly, the specification does not concern itself with the return type of the callback function. If drivers allow the
+callback to return a value, they may also choose to propagate that value as the return value of withTransaction.</p>
+<p>An earlier design also considered using the callback's return value to indicate whether control should break out of
+<code>withTransaction</code> (and its retry loop) and return to the application. The design allows this to be accomplished in one
+of two ways:</p>
+<ul>
+<li>The callback aborts the transaction directly and returns to <code>withTransaction</code>, which will then return to its caller.</li>
+<li>The callback raises an error without the "TransientTransactionError" label, in which case <code>withTransaction</code> will abort
+the transaction and return to its caller.</li>
+</ul>
+<h3 id="applications-are-responsible-for-passing-clientsession-for-operations-within-a-transaction"><a class="header" href="#applications-are-responsible-for-passing-clientsession-for-operations-within-a-transaction">Applications are responsible for passing ClientSession for operations within a transaction</a></h3>
+<p>It remains the responsibility of the application to pass a ClientSession to all operations that should be included in a
+transaction. With regard to <code>withTransaction</code>, applications are free to execute any operations within the callback,
+irrespective of whether those operations are associated with the transaction.</p>
+<h3 id="it-is-assumed-that-the-callback-will-not-start-a-new-transaction-on-the-clientsession"><a class="header" href="#it-is-assumed-that-the-callback-will-not-start-a-new-transaction-on-the-clientsession">It is assumed that the callback will not start a new transaction on the ClientSession</a></h3>
+<p>Under normal circumstances, the callback should not commit the transaction nor should it start a new transaction. The
+<code>withTransaction</code> method will inspect the ClientSession's transaction state after the callback returns and take the most
+sensible course of action; however, it will not detect whether the callback has started a new transaction.</p>
+<h3 id="the-callback-function-may-be-executed-multiple-times"><a class="header" href="#the-callback-function-may-be-executed-multiple-times">The callback function may be executed multiple times</a></h3>
+<p>The callback may be executed any number of times. Drivers are free to encourage their users to design idempotent
+callbacks.</p>
+<h3 id="the-commit-is-retried-after-a-write-concern-timeout-ie-wtimeout-error"><a class="header" href="#the-commit-is-retried-after-a-write-concern-timeout-ie-wtimeout-error">The commit is retried after a write concern timeout (i.e. wtimeout) error</a></h3>
+<p>Per the Transactions specification, drivers internally retry <code>commitTransaction</code> once if it fails due to a retryable
+error (as defined in the <a href="../retryable-writes/retryable-writes.html#terms">Retryable Writes</a> specification). Beyond that,
+applications may manually retry <code>commitTransaction</code> if it fails with any error bearing the
+<a href="../transactions/transactions.html#unknowntransactioncommitresult">UnknownTransactionCommitResult</a> error label. This label
+is applied for the the following errors:</p>
+<ul>
+<li>Server selection failure</li>
+<li>Retryable error (as defined in the <a href="../retryable-writes/retryable-writes.html#terms">Retryable Writes</a> specification)</li>
+<li>Write concern failure or timeout (excluding UnsatisfiableWriteConcern and UnknownReplWriteConcern)</li>
+<li>MaxTimeMSExpired errors, ie <code>{ok:0, code: 50, codeName: "MaxTimeMSExpired"}</code> and
+<code>{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}</code>.</li>
+</ul>
+<p>A previous design for <code>withTransaction</code> retried for all of these errors <em>except</em> for write concern timeouts, so as not
+to exceed the user's original intention for <code>wtimeout</code>. The current design of this specification no longer excludes
+write concern timeouts, and simply retries <code>commitTransaction</code> within its timeout period for all errors bearing the
+"UnknownTransactionCommitResult" label.</p>
+<h3 id="the-commit-is-not-retried-after-a-maxtimemsexpired-error"><a class="header" href="#the-commit-is-not-retried-after-a-maxtimemsexpired-error">The commit is not retried after a MaxTimeMSExpired error</a></h3>
+<p>This specification intentionally chooses not to retry commit operations after a MaxTimeMSExpired error as doing so would
+exceed the user's original intention for <code>maxTimeMS</code>.</p>
+<h3 id="the-transaction-and-commit-may-be-retried-any-number-of-times-within-a-timeout-period"><a class="header" href="#the-transaction-and-commit-may-be-retried-any-number-of-times-within-a-timeout-period">The transaction and commit may be retried any number of times within a timeout period</a></h3>
+<p>The callback may be executed any number of times. Drivers are free to encourage their users to design idempotent
+callbacks.</p>
+<p>A previous design had no limits for retrying commits or entire transactions. The callback is always able indicate that
+<code>withTransaction</code> should return to its caller (without future retry attempts) by aborting the transaction directly;
+however, that puts the onus on avoiding very long (or infinite) retry loops on the application. We expect the most
+common cause of retry loops will be due to TransientTransactionErrors caused by write conflicts, as those can occur
+regularly in a healthy application, as opposed to UnknownTransactionCommitResult, which would typically be caused by an
+election.</p>
+<p>In order to avoid blocking the application with infinite retry loops, <code>withTransaction</code> will cease retrying invocations
+of the callback or commitTransaction if it has exceeded a fixed timeout period of 120 seconds. This limit is a
+non-configurable default and is intentionally twice the value of MongoDB 4.0's default for the
+<a href="https://www.mongodb.com/docs/manual/reference/parameters/#param.transactionLifetimeLimitSeconds">transactionLifetimeLimitSeconds</a>
+parameter (60 seconds). Applications that desire longer retry periods may call <code>withTransaction</code> additional times as
+needed. Applications that desire shorter retry periods should not use this method.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>The specification introduces a new method on the ClientSession class and does not introduce any backward breaking
+changes. Existing programs that do not make use of this new method will continue to compile and run correctly.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p>The C, Java, and Ruby drivers will provide reference implementations. The corresponding tickets for those
+implementations may be found via <a href="https://jira.mongodb.org/browse/DRIVERS-556">DRIVERS-556</a>.</p>
+<h2 id="security-implication"><a class="header" href="#security-implication">Security Implication</a></h2>
+<p>Applications that use transaction guarantees to enforce security rules will benefit from a less error-prone API. Adding
+a helper method to execute a user-defined function within a transaction has few security implications, as it only
+provides an implementation of a technique already described in the MongoDB 4.0 documentation
+(<a href="https://jira.mongodb.org/browse/DRIVERS-488">DRIVERS-488</a>).</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-09-06: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2023-11-22: Document error handling inside the callback.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-01-19: withTransaction applies timeouts per the client-side operations timeout specification.</p>
+</li>
+<li>
+<p>2019-04-24: withTransaction does not retry when commit fails with MaxTimeMSExpired.</p>
+</li>
+<li>
+<p>2018-02-13: withTransaction should retry commits after a wtimeout</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../transactions/transactions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../enumerate-databases/enumerate-databases.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../transactions/transactions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../enumerate-databases/enumerate-databases.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

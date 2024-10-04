@@ -1,0 +1,605 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>find/getMore/killCursors - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html" class="active"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="find-getmore-and-killcursors-commands"><a class="header" href="#find-getmore-and-killcursors-commands">Find, getMore and killCursors commands</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 3.2</li>
+</ul>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>The Find, GetMore and KillCursors commands in MongoDB 3.2 or later replace the use of the legacy OP_QUERY, OP_GET_MORE
+and OP_KILL_CURSORS wire protocol messages. This specification lays out how drivers should interact with the new
+commands when compared to the legacy wire protocol level messages.</p>
+<h2 id="definitions"><a class="header" href="#definitions">Definitions</a></h2>
+<h3 id="meta"><a class="header" href="#meta">Meta</a></h3>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<h4 id="document"><a class="header" href="#document">Document</a></h4>
+<p>The term Document refers to the implementation in the driver's language of a BSON document.</p>
+<h4 id="command"><a class="header" href="#command">Command</a></h4>
+<p>A BSON document containing the fields making up a MongoDB server command.</p>
+<h4 id="wire-protocol"><a class="header" href="#wire-protocol">Wire Protocol</a></h4>
+<p>The binary protocol used to talk with MongoDB over a socket. It's made up by the OP_QUERY, OP_GET_MORE, OP_KILL_CURSORS,
+OP_INSERT, OP_UPDATE and OP_DELETE.</p>
+<h2 id="guidance"><a class="header" href="#guidance">Guidance</a></h2>
+<h3 id="documentation"><a class="header" href="#documentation">Documentation</a></h3>
+<p>The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation
+for the driver.</p>
+<h3 id="implementation"><a class="header" href="#implementation">Implementation</a></h3>
+<p>If the <strong>hello</strong> command returns <strong>maxWireVersion &gt;= 4</strong>, drivers:</p>
+<ul>
+<li>MUST implement queries with the <code>find</code> command instead of <code>OP_QUERY</code>.</li>
+<li>MUST implement cursor operations with the <code>getMore</code> and <code>killCursors</code> commands instead of <code>OP_GET_MORE</code> and
+<code>OP_KILL_CURSORS</code>, respectively.</li>
+<li>MUST NOT use OP_QUERY except to execute commands.</li>
+</ul>
+<h2 id="commands"><a class="header" href="#commands">Commands</a></h2>
+<h3 id="find"><a class="header" href="#find">find</a></h3>
+<p>The <a href="https://www.mongodb.com/docs/manual/reference/command/find/">find</a> command replaces the query functionality of the
+OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire
+protocol message, the <strong>find</strong> command cannot be used to execute other commands.</p>
+<p>For a successful command, the document returned from the server has the following format:</p>
+<pre><code class="language-javascript">{
+  "cursor": {
+    "id": &lt;int64&gt;,
+    "ns": &lt;string&gt;,
+    "firstBatch": [
+      ...
+    ]
+  },
+  "ok": 1
+}
+</code></pre>
+<h4 id="special-collection-names"><a class="header" href="#special-collection-names">Special Collection names</a></h4>
+<p>The find command <strong>does not support querying on system collections</strong>, so if drivers are using any system collections
+instead of the inprog, killop, unlock, etc. commands they SHOULD default to using the old-style OP_QUERY.</p>
+<p>Any driver that provides helpers for any of the special collections below SHOULD use the replacement commands if
+<strong>hello.maxWireVersion &gt;=4</strong> or higher.</p>
+<div class="table-wrapper"><table><thead><tr><th>Special collection name</th><th>Replacement Command</th></tr></thead><tbody>
+<tr><td><code>$cmd.sys.inprog</code></td><td>currentOp</td></tr>
+<tr><td><code>$cmd.sys.unlock</code></td><td>fsyncUnlock</td></tr>
+<tr><td><code>&lt;database&gt;.system.indexes</code></td><td>listIndexes</td></tr>
+<tr><td><code>&lt;database&gt;.system.namespaces</code></td><td>listCollections</td></tr>
+</tbody></table>
+</div>
+<p>Special Collection Names</p>
+<h4 id="exhaust"><a class="header" href="#exhaust">Exhaust</a></h4>
+<p>This section only applies to drivers that support exhaust cursors.</p>
+<p>The exhaust protocol differs based on the server version:</p>
+<div class="table-wrapper"><table><thead><tr><th>Server version</th><th>Server behavior</th></tr></thead><tbody>
+<tr><td>4.0 and earlier</td><td>Only supports exhaust over legacy <strong>OP_QUERY</strong>. The <strong>find</strong> command does not support the exhaust flag from <strong>OP_QUERY</strong>.</td></tr>
+<tr><td>4.2 to 5.0</td><td>Supports exhaust both over legacy <strong>OP_QUERY</strong> and <strong>OP_MSG</strong>.</td></tr>
+<tr><td>5.1 and later</td><td>Supports exhaust over <strong>OP_MSG</strong>.</td></tr>
+</tbody></table>
+</div>
+<p>Therefore drivers that implement exhaust cursors:</p>
+<div class="table-wrapper"><table><thead><tr><th>Server version</th><th>Driver behavior</th></tr></thead><tbody>
+<tr><td>4.0 and earlier</td><td>Drivers MUST use legacy <strong>OP_QUERY</strong>.</td></tr>
+<tr><td>4.2 to 5.0</td><td>Drivers SHOULD use <strong>OP_MSG</strong> but MAY use legacy <strong>OP_QUERY</strong>.</td></tr>
+<tr><td>5.1 and later</td><td>Drivers MUST only use <strong>OP_MSG</strong>. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested.</td></tr>
+</tbody></table>
+</div>
+<h4 id="interactions-with-op_query"><a class="header" href="#interactions-with-op_query">Interactions with OP_QUERY</a></h4>
+<p>When sending a find operation as a find command rather than a legacy <strong>OP_QUERY</strong> find only the <strong>secondaryOk</strong> flag is
+honored of the flags available in the <strong>flag</strong> field on the wire protocol.</p>
+<p>For the <strong>find</strong>, <strong>getMore</strong> and <strong>killCursors</strong> commands the <strong>numberToReturn</strong> field SHOULD be -1. To execute
+<strong>find</strong> commands against a secondary the driver MUST set the <strong>secondaryOk</strong> bit for the <strong>find</strong> command to
+successfully execute.</p>
+<p>The <strong>secondaryOk</strong> flag SHOULD not be set for all follow-up <strong>getMore</strong> and <strong>killCursors</strong> commands. The cursor on the
+server keeps the original <strong>secondaryOk</strong> value first set on the <strong>find</strong> command.</p>
+<p>More detailed information about the interaction of the <strong>secondaryOk</strong> with <strong>OP_QUERY</strong> can be found in the Server
+Selection Spec <a href="../server-selection/server-selection.html#passing-read-preference-to-mongos">Passing a Read Preference</a>.</p>
+<h4 id="behavior-of-limit-skip-and-batchsize"><a class="header" href="#behavior-of-limit-skip-and-batchsize">Behavior of Limit, skip and batchSize</a></h4>
+<p>The <strong>find</strong> command has different semantics to the existing 3.0 and earlier <strong>OP_QUERY</strong> wire protocol message. The
+<strong>limit</strong> field is a hard limit on the total number of documents returned by the cursor no matter what <strong>batchSize</strong> is
+provided. This includes other limiting operations, such as the <strong>$limit</strong> aggregation pipeline stage. This differs from
+existing <strong>OP_QUERY</strong> behavior where there is no server-side concept of limit and where the driver <strong>MUST</strong> keep track
+of the limit on the client side and <strong>MUST</strong> send a <strong>OP_KILL_CURSORS</strong> wire protocol message when the limit is reached.</p>
+<p>When setting the <strong>batchSize</strong> on the <strong>find</strong> and <strong>getMore</strong> commands the value of <strong>batchSize</strong> <strong>MUST</strong> be based on
+the cursor limit calculations specified in the <a href="../crud/crud.html#find">CRUD</a> specification.</p>
+<p>Note that with 5.0, the server-side handling of cursors with a limit has changed. Before 5.0, some cursors were
+automatically closed when the limit was reached (e.g. when running <strong>find</strong> with <strong>limit</strong>), and the reply document did
+not include a cursor ID (i.e. <code>cursor.id</code> was <code>0</code>). Starting with 5.0, all cursor-producing operations will return a
+cursor ID if the end of the batch being returned lines up with the limit on the cursor. In this case, drivers <strong>MUST</strong>
+ensure the cursor is closed on the server, either by exhausting the cursor or by using <strong>killCursors</strong> to kill it.</p>
+<p>In the following example the <strong>limit</strong> is set to <strong>4</strong> and the <strong>batchSize</strong> is set to <strong>3</strong> the following commands are
+executed. The last command is either <strong>killCursors</strong> or <strong>getMore</strong>, depending on how a driver ensures the cursor is
+closed on 5.0:</p>
+<pre><code class="language-javascript">{find: ..., batchSize:3, limit:4}
+{getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0+
+{...}          // Kills server-side cursor. Necessary on 5.0+
+</code></pre>
+<p>If there are not enough documents in the cursor to fulfill the <strong>limit</strong> defined, the cursor runs to exhaustion and is
+closed, returning a cursorId of 0 to the client.</p>
+<p>Below are are some examples of using <strong>limit</strong>, <strong>skip</strong> and <strong>batchSize</strong>.</p>
+<p>We have 100 documents in the collection <strong>t</strong>. We execute the following <strong>find</strong> command in the shell.</p>
+<pre><code class="language-javascript">var b = db.runCommand({find:"t", limit:20, batchSize:10});
+db.runCommand({getMore:b.cursor.id, collection:"t", batchSize:20});
+</code></pre>
+<p>The <strong>find</strong> command executes and returns the first 10 results. The <strong>getMore</strong> command returns the final 10 results
+reaching the <strong>limit</strong> of 20 documents.</p>
+<p>The <strong>skip</strong> option works in the same way as the current <strong>OP_QUERY</strong> starting the cursor after skipping <strong>n</strong> number of
+documents of the query.</p>
+<pre><code class="language-javascript">var b = db.runCommand({find:"t", limit:20, batchSize:10, skip:85});
+db.runCommand({getMore:b.cursor.id, collection:"t", batchSize:20});
+</code></pre>
+<p>The <strong>find</strong> command returns the documents 86-95 and the <strong>getMore</strong> returns the last 5 documents.</p>
+<h4 id="mapping-op_query-behavior-to-the-find-command-limit-and-batchsize-fields"><a class="header" href="#mapping-op_query-behavior-to-the-find-command-limit-and-batchsize-fields">Mapping OP_QUERY behavior to the find command limit and batchSize fields</a></h4>
+<p>The way that limit, batchSize and singleBatch are defined for the find command differs from how these were specified in
+OP_QUERY and the CRUD spec.</p>
+<p>Specifically, <em>negative</em> values for <strong>limit</strong> and <strong>batchSize</strong> are no longer allowed and the <strong>singleBatch</strong> option is
+used instead of negative values.</p>
+<p>In order to have consistency between old and new applications, the following transformations MUST be performed before
+adding options to the <strong>find</strong> command:</p>
+<pre><code>singleBatch = (limit &lt; 0) || (batchSize &lt; 0)
+limit       = abs(limit)
+if singleBatch:
+    batchSize = (limit == 0) ? abs(batchSize) : limit
+else:
+    batchSize = abs(batchSize)
+</code></pre>
+<p>Further, after these transformation:</p>
+<ul>
+<li>If <strong>limit</strong> is zero, it MUST be omitted from <strong>find</strong> options</li>
+<li>If <strong>batchSize</strong> is zero, it MUST be omitted from <strong>find</strong> options</li>
+<li>If <strong>singleBatch</strong> is false, it MUST be omitted from <strong>find</strong> options</li>
+</ul>
+<h4 id="batchsize-of-1"><a class="header" href="#batchsize-of-1">BatchSize of 1</a></h4>
+<p>In 3.2 a batchSize of 1 means return a single document for the find command and it will not destroy the cursor after the
+first batch of documents are returned. Given a query returning 4 documents the number of commands issues will be.</p>
+<ol>
+<li><strong>find</strong> command with batchSize=1</li>
+<li><strong>getMore</strong> command with batchSize=1</li>
+<li><strong>getMore</strong> command with batchSize=1</li>
+<li><strong>getMore</strong> command with batchSize=1</li>
+</ol>
+<p>The driver <strong>SHOULD NOT attempt to emulate the behavior seen in 3.0 or earlier</strong> as the new find command enables the
+user expected behavior of allowing the first result to contain a single document when specifying batchSize=1.</p>
+<h4 id="tailable-cursors"><a class="header" href="#tailable-cursors">Tailable cursors</a></h4>
+<p>By default, most cursors are non-tailable. For example, a typical <code>find</code> cursor is exhausted when all results for the
+filter have been returned. MongoDB also supports creating cursors that "tail" or follow the target namespace for new
+data. This is done via the <code>find</code> command's <code>tailable</code> option. Querying a capped collection is one use case for a
+tailable cursor. A tailable cursor can receive <code>getMore</code> responses with an empty <code>nextBatch</code> array, which does not
+indicate that the cursor has been exhausted.</p>
+<p>Additionally, tailable cursors may "await data" from the server, which means that the server will wait to respond to the
+client's <code>getMore</code> command until new data is available or some period of time has elapsed, whichever comes first. A
+tailable <code>find</code> cursor can be configured using the <code>awaitData</code> option. The amount of time the server will wait for new
+data is based on the <code>maxTimeMS</code> field of the <code>getMore</code> (or server default if unspecified). If the time does expire an
+empty batch will be returned. A <code>maxTimeMS</code> field cannot be sent if the cursor was not configured with <code>awaitData=true</code>.</p>
+<p>To create a tailable <code>find</code> cursor you execute the following command:</p>
+<pre><code class="language-typescript">interface FindCommand {
+  /** The namespace to run the find command on */
+  find: string;
+  /** The filter to control what documents are returned */
+  filter: BSONDocument;
+  /** Informs the server whether to keep the cursor open even when there are no results to satisfy the query */
+  tailable?: boolean;
+  /**
+   * Informs the server whether to block on a `getMore`'s `maxTimeMS` before returning an empty `nextBatch`.
+   * This must be set if getMores are to include `maxTimeMS` values.
+   */
+  awaitData?: boolean;
+  /** Controls the amount of milliseconds the server will allow the operations to run for */
+  maxTimeMS?: PositiveIntegerNumber;
+  // ... Note: additional options unrelated to tailable cursors omitted
+}
+</code></pre>
+<p>If <strong>maxTimeMS</strong> is not set in FindOptions, the driver SHOULD refrain from setting <strong>maxTimeMS</strong> on the <strong>find</strong> or
+<strong>getMore</strong> commands issued by the driver and allow the server to use its internal default value for <strong>maxTimeMS</strong>.</p>
+<h4 id="semantics-of-maxtimems-for-a-driver"><a class="header" href="#semantics-of-maxtimems-for-a-driver">Semantics of maxTimeMS for a Driver</a></h4>
+<p>In the case of a <strong>non-tailable cursor query</strong> OR <strong>a tailable cursor query with awaitData == false</strong>, the driver MUST
+set maxTimeMS on the <strong>find</strong> command and MUST NOT set maxTimeMS on the <strong>getMore</strong> command.</p>
+<p>In the case of <strong>a tailable cursor with awaitData == true</strong> the driver MUST provide a Cursor level option named
+<strong>maxAwaitTimeMS</strong> (See CRUD specification for details). The <strong>maxTimeMS</strong> option on the <strong>getMore</strong> command MUST be set
+to the value of the option <strong>maxAwaitTimeMS</strong>. If no <strong>maxAwaitTimeMS</strong> is specified, the driver SHOULD not set
+<strong>maxTimeMS</strong> on the <strong>getMore</strong> command.</p>
+<h3 id="getmore"><a class="header" href="#getmore">getMore</a></h3>
+<p>The <a href="https://www.mongodb.com/docs/manual/reference/command/getMore/">getMore</a> command replaces the <strong>OP_GET_MORE</strong> wire
+protocol message. The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true when sent to a
+secondary. The OP_QUERY namespace MUST be the same as for the <strong>find</strong> and <strong>killCursors</strong> commands.</p>
+<pre><code class="language-typescript">interface GetMoreCommand {
+  /** Set to the nonzero cursor id */
+  getMore: int64;
+  /** Set to the namespace returned by the initial command response */
+  collection: string;
+  /**
+   * User configurable document count for the batch returned for this getMore.
+   * Only attached to command document if nonzero.
+   */
+  batchSize?: PositiveIntegerNumber;
+  /**
+   * User configurable time limit enforced by the server.
+   */
+  maxTimeMS?: PositiveIntegerNumber;
+  /**
+   * User configurable comment that can be used to identify the operation in logs.
+   * This can be any BSON value.
+   */
+  comment?: BSONValue;
+}
+</code></pre>
+<p>On success, the getMore command will return the following:</p>
+<pre><code class="language-typescript">interface GetMoreResponse {
+  ok: 1;
+  cursor: {
+    /** The cursor id, this may be equal to zero indicating the cursor is exhausted or closed */
+    id: int64;
+    /**
+     * The namespace the cursor is running on.
+     * This value may be different than the namespace the driver started the cursor on, for example, database level aggregations.
+     */
+    ns: string;
+    /**
+     * The next batch of documents.
+     * This array may be empty, in the case of a tailable cursor, which DOES NOT indicate the cursor is exhausted.
+     */
+    nextBatch: BSONArray&lt;BSONDocument&gt;;
+  }
+  // ... Note: additional non-relevant fields omitted
+}
+</code></pre>
+<p>The driver's local cursor MUST update its <code>id</code> and <code>ns</code>, as well as store the <code>nextBatch</code> from every <code>getMore</code> response.</p>
+<h3 id="killcursors"><a class="header" href="#killcursors">killCursors</a></h3>
+<p>The <a href="https://www.mongodb.com/docs/manual/reference/command/killCursors/">killCursors</a> command replaces the
+<strong>OP_KILL_CURSORS</strong> wire protocol message. The OP_QUERY namespace MUST be the same as for the <strong>find</strong> and <strong>getMore</strong>
+commands. The <strong>killCursors</strong> command is optional to implement in <strong>MongoDB 3.2</strong>.</p>
+<p>The command response will be as follows:</p>
+<pre><code class="language-javascript">{
+  "cursorsKilled": [
+    &lt;cursor id 1&gt;
+    &lt;cursor id 2&gt;,
+    ...
+    &lt;cursor id n&gt;
+  ],
+  "cursorsNotFound": [
+    &lt;cursor id 1&gt;
+    &lt;cursor id 2&gt;,
+    ...
+    &lt;cursor id n&gt;
+  ],
+  "cursorsAlive": [
+    &lt;cursor id 1&gt;
+    &lt;cursor id 2&gt;,
+    ...
+    &lt;cursor id n&gt;
+  ],
+  ok: 1
+}
+</code></pre>
+<p>The <strong>cursorsAlive</strong> array contain cursors that were not possible to kill. The information SHOULD be ignored by the
+driver.</p>
+<h4 id="difference-from-30-op_kill_cursors"><a class="header" href="#difference-from-30-op_kill_cursors">Difference from 3.0 OP_KILL_CURSORS</a></h4>
+<p>One of the differences with the new <strong>killCursors</strong> command compared to the <strong>OP_KILL_CURSORS</strong> wire protocol message is
+that the <strong>killCursors</strong> command returns a response while the <strong>OP_KILL_CURSORS</strong> wire protocol does not.</p>
+<p>The <strong>OP_REPLY</strong> message has the following general structure.</p>
+<pre><code class="language-javascript">struct {
+    int32     messageLength;  // total message size, including
+                              // this
+
+    int32     requestID;      // identifier for this message
+
+    int32     responseTo;     // requestID from the original
+                              // request(used in responses from db)
+
+    int32     opCode;         // request type - see table below
+
+    int32     responseFlags;  // bit vector - see details below
+
+    int64     cursorID;       // cursor id if client needs to do
+                              // get more's
+
+    int32     startingFrom;   // where in the cursor this reply is
+                              // starting
+
+    int32     numberReturned; // number of documents in the reply
+
+    document* documents;      // documents
+}
+</code></pre>
+<p>For the <strong>find</strong>, <strong>getMore</strong> and <strong>killCursors</strong> MongoDB returns a single document meaning <strong>numberReturned</strong> is set to
+<strong>1</strong>. This is in contrast to MongoDB 3.0 and earlier where a <strong>OP_QUERY</strong> query will set <strong>numberReturned</strong> to &gt;= 0.</p>
+<p>A driver MUST deserialize the command result and extract the <strong>firstBatch</strong> and <strong>nextBatch</strong> arrays for the <strong>find</strong>
+and <strong>getMore</strong> commands to access the returned documents.</p>
+<p>The result from the <strong>killCursors</strong> command MAY be safely ignored.</p>
+<p>If the driver supports returning <strong>raw</strong> BSON buffers instead of deserialized documents there might be a need to be able
+to partially deserialize documents to be able to efficiently provide the behavior in comparison to existing <strong>OP_QUERY</strong>
+queryresults.</p>
+<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
+<p>The <strong>find</strong> and <strong>getMore</strong> commands will report errors using the standard mechanism: an "ok: 0" field paired with
+"errmsg" and "code" fields. See below for example error responses:</p>
+<pre><code class="language-javascript">db.runCommand({find: "t", sort: {padding: -1}})
+</code></pre>
+<pre><code class="language-javascript">{
+  "errmsg" : "exception: Executor error: Overflow sort stage buffered data usage of 41630570 bytes exceeds internal limit of 33554432 bytes",
+  "code" : 28616,
+  "ok" : 0
+}
+</code></pre>
+<pre><code class="language-javascript">db.runCommand({find: "t", foo: "bar"})
+</code></pre>
+<pre><code class="language-javascript">{
+  "ok" : 0,
+  "errmsg" : "Failed to parse: { find: \"t\", foo: \"bar\" }. Unrecognized field 'foo'.",
+  "code" : 2
+}
+</code></pre>
+<p>Like other commands, the find and getMore commands will not use the OP_REPLY response flags.
+<a href="https://www.mongodb.com/docs/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply">OP_REPLY Documentation</a></p>
+<h2 id="faq"><a class="header" href="#faq">FAQ</a></h2>
+<h3 id="changes-in-error-handling-for-32-tailable-cursor"><a class="header" href="#changes-in-error-handling-for-32-tailable-cursor">Changes in error handling for 3.2 tailable cursor</a></h3>
+<p>Tailable cursors pointing to documents in a capped collection that get overwritten will return a zero document result in
+MongoDB 3.0 or earlier but will return an error in MongoDB 3.2</p>
+<h3 id="explain-command"><a class="header" href="#explain-command">Explain command</a></h3>
+<p>There is no equivalent of the <code>$explain</code> modifier in the find command. The driver SHOULD use the <strong>explain</strong> command.
+Information about the command can be found in the
+<a href="https://www.mongodb.com/docs/manual/reference/command/explain/">Explain command reference</a>.</p>
+<h3 id="readpreference-and-mongos"><a class="header" href="#readpreference-and-mongos">ReadPreference and Mongos</a></h3>
+<p>The <strong>find</strong> command does not include a readPreference field. To pass a readPreference to a <strong>mongos</strong> use the
+<strong>$readPreference</strong> field and format your command as.</p>
+<pre><code class="language-javascript">{$query: {find: ...}, $readPreference: {}}
+</code></pre>
+<p>This format is general for all commands when executing against a Mongos proxy.</p>
+<p>More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification
+<a href="../server-selection/server-selection.html#passing-read-preference-to-mongos">Server Selection Specification</a>.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-07-30: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2023-05-10: Improve tailable cursor description and update the <code>getMore</code> section code blocks.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-02-01: Replace examples/tables for find, getMore, and killCursors with server manual links.</p>
+</li>
+<li>
+<p>2021-12-14: Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for
+exhaust cursors.</p>
+</li>
+<li>
+<p>2021-08-27: Exhaust cursors must use OP_MSG on 3.6+ servers.</p>
+</li>
+<li>
+<p>2021-04-06: Updated to use hello and secondaryOk.</p>
+</li>
+<li>
+<p>2015-10-21: If no <strong>maxAwaitTimeMS</strong> is specified, the driver SHOULD not set <strong>maxTimeMS</strong> on the <strong>getMore</strong> command.</p>
+</li>
+<li>
+<p>2015-10-13: Added guidance on batchSize values as related to the <strong>getMore</strong> command. Legacy secondaryOk flag SHOULD
+not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore
+commands when the cursor is a tailable cursor with awaitData set.</p>
+</li>
+<li>
+<p>2015-09-30: Legacy secondaryOk flag must be set to true on <strong>getMore</strong> and <strong>killCursors</strong> commands to make drivers
+have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../change-streams/change-streams.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../gridfs/gridfs-spec.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../change-streams/change-streams.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../gridfs/gridfs-spec.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

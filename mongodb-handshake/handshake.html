@@ -1,0 +1,740 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Initial Handshake - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html" class="active"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="mongodb-handshake"><a class="header" href="#mongodb-handshake">MongoDB Handshake</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 3.4</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>MongoDB 3.4 has the ability to annotate connections with metadata provided by the connecting client. The intent of this
+metadata is to be able to identify client level information about the connection, such as application name, driver name
+and version. The provided information will be logged through the <code>mongo[d|s].log</code> and the profile logs; this should
+enable sysadmins to easily backtrack log entries the offending application. The active connection data will also be
+queryable through aggregation pipeline, to enable collecting and analyzing driver trends.</p>
+<p>After connecting to a MongoDB node a hello command (if Stable API is requested) or a legacy hello command is issued,
+followed by authentication, if appropriate. This specification augments this handshake and defines certain arguments
+that clients provide as part of the handshake.</p>
+<p>This spec furthermore adds a new connection string argument for applications to declare its application name to the
+server.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="terms"><a class="header" href="#terms">Terms</a></h2>
+<p><strong>hello command</strong></p>
+<p>The command named <code>hello</code>. It is the preferred and modern command for handshakes and topology monitoring.</p>
+<p><strong>legacy hello command</strong></p>
+<p>The command named <code>isMaster</code>. It is the deprecated equivalent of the <code>hello</code> command. It was deprecated in MongoDB 5.0.</p>
+<p><strong>isMaster / ismaster</strong></p>
+<p>The correct casing is <code>isMaster</code>, but servers will accept the alternate casing <code>ismaster</code>. Other case variations result
+in <code>CommandNotFound</code>. Drivers MUST take this case variation into account when determining which commands to encrypt,
+redact, or otherwise treat specially.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="connection-handshake"><a class="header" href="#connection-handshake">Connection handshake</a></h3>
+<p>MongoDB uses the <code>hello</code> or <code>isMaster</code> commands for handshakes and topology monitoring. <code>hello</code> is the modern and
+preferred command. <code>hello</code> must always be sent using the <code>OP_MSG</code> protocol. <code>isMaster</code> is referred to as "legacy hello"
+and is maintained for backwards compatibility with servers that do not support the <code>hello</code> command.</p>
+<p>If a <a href="../versioned-api/versioned-api.html">server API version</a> is requested or <code>loadBalanced: True</code>, drivers MUST use the
+<code>hello</code> command for the initial handshake and use the <code>OP_MSG</code> protocol. If server API version is not requested and
+<code>loadBalanced: False</code>, drivers MUST use legacy hello for the first message of the initial handshake with the <code>OP_QUERY</code>
+protocol (before switching to <code>OP_MSG</code> if the <code>maxWireVersion</code> indicates compatibility), and include <code>helloOk:true</code> in
+the handshake request.</p>
+<p>ASIDE: If the legacy handshake response includes <code>helloOk: true</code>, then subsequent topology monitoring commands MUST use
+the <code>hello</code> command. If the legacy handshake response does not include <code>helloOk: true</code>, then subsequent topology
+monitoring commands MUST use the legacy hello command. See the
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.html">Server Discovery and Monitoring spec</a>
+for further information.</p>
+<p>The initial handshake MUST be performed on every socket to any and all servers upon establishing the connection to
+MongoDB, including reconnects of dropped connections and newly discovered members of a cluster. It MUST be the first
+command sent over the respective socket. If the command fails the client MUST disconnect. Timeouts MUST be applied to
+this command per the
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html">Client Side Operations Timeout</a> specification.</p>
+<p><code>hello</code> and legacy hello commands issued after the initial connection handshake MUST NOT contain handshake arguments.
+Any subsequent <code>hello</code> or legacy hello calls, such as the ones for topology monitoring purposes, MUST NOT include this
+argument.</p>
+<h4 id="example-implementation"><a class="header" href="#example-implementation">Example Implementation</a></h4>
+<p>Consider the following pseudo-code for establishing a new connection:</p>
+<pre><code class="language-python">conn = Connection()
+conn.connect()  # Connect via TCP / TLS
+if stable_api_configured or client_options.load_balanced:
+    cmd = {"hello": 1}
+    conn.supports_op_msg = True  # Send the initial command via OP_MSG.
+else:
+    cmd = {"legacy hello": 1, "helloOk": 1}
+    conn.supports_op_msg = False  # Send the initial command via OP_QUERY.
+cmd["client"] = client_metadata
+if client_options.compressors:
+    cmd["compression"] = client_options.compressors
+if client_options.load_balanced:
+    cmd["loadBalanced"] = True
+creds = client_options.credentials
+if creds:
+    # Negotiate auth mechanism and perform speculative auth. See Auth spec for details.
+    if not creds.has_mechanism_configured():
+        cmd["saslSupportedMechs"] = ...
+    cmd["speculativeAuthenticate"] = ...
+
+reply = conn.send_command("admin", cmd)
+
+if reply["maxWireVersion"] &gt;= 6:
+    # Use OP_MSG for all future commands, including authentication.
+    conn.supports_op_msg = True
+
+# Store the negotiated compressor, see OP_COMPRESSED spec.
+if reply.get("compression"):
+    conn.compressor = reply["compression"][0]
+
+# Perform connection authentication. See Auth spec for details.
+negotiated_mechs = reply.get("saslSupportedMechs")
+speculative_auth = reply.get("speculativeAuthenticate")
+conn.authenticate(creds, negotiated_mechs, speculative_auth)
+</code></pre>
+<h4 id="hello-command"><a class="header" href="#hello-command">Hello Command</a></h4>
+<p>The initial handshake, as of MongoDB 3.4, supports a new argument, <code>client</code>, provided as a BSON object. This object has
+the following structure:</p>
+<pre><code class="language-javascript">    {
+        hello: 1,
+        helloOk: true,
+        client: {
+            /* OPTIONAL. If present, the "name" is REQUIRED */
+            application: {
+                name: "&lt;string&gt;"
+            },
+            /* REQUIRED, including all sub fields */
+            driver: {
+                name: "&lt;string&gt;",
+                version: "&lt;string&gt;"
+            },
+            /* REQUIRED */
+            os: {
+                type: "&lt;string&gt;",         /* REQUIRED */
+                name: "&lt;string&gt;",         /* OPTIONAL */
+                architecture: "&lt;string&gt;", /* OPTIONAL */
+                version: "&lt;string&gt;"       /* OPTIONAL */
+            },
+            /* OPTIONAL */
+            platform: "&lt;string&gt;",
+            /* OPTIONAL */
+            env: {
+                name: "&lt;string&gt;",         /* OPTIONAL */
+                timeout_sec: 42,          /* OPTIONAL */
+                memory_mb: 1024,          /* OPTIONAL */
+                region: "&lt;string&gt;",       /* OPTIONAL */
+                /* OPTIONAL */
+                container: {
+                    runtime: "&lt;string&gt;",  /* OPTIONAL */
+                    orchestrator: "&lt;string&gt;"  /* OPTIONAL */
+                }
+            }
+        }
+    }
+</code></pre>
+<p><span id="client-application-name"></span></p>
+<h4 id="clientapplicationname"><a class="header" href="#clientapplicationname">client.application.name</a></h4>
+<p>This value is application configurable.</p>
+<p>The application name is printed to the mongod logs upon establishing the connection. It is also recorded in the slow
+query logs and profile collections.</p>
+<p>The recommended way for applications to provide this value is through the connection URI. The connection string key is
+<code>appname</code>.</p>
+<p>Example connection string:</p>
+<pre><code>    mongodb://server:27017/db?appname=mongodump
+</code></pre>
+<p>This option MAY also be provided on the MongoClient itself, if normal for the driver. It is only valid to set this
+attribute before any connection has been made to a server. Any attempt to set <code>client.application.name</code> MUST result in
+an failure when doing so will either change the existing value, or have any connection to MongoDB reporting inconsistent
+values.</p>
+<p>Drivers MUST NOT provide a default value for this key.</p>
+<h4 id="clientdrivername"><a class="header" href="#clientdrivername">client.driver.name</a></h4>
+<p>This value is required and is not application configurable.</p>
+<p>The internal driver name. For drivers written on-top of other core drivers, the underlying driver will typically expose
+a function to append additional name to this field.</p>
+<p>Example:</p>
+<pre><code>- "pymongo"
+- "mongoc / phongo"
+</code></pre>
+<h4 id="clientdriverversion"><a class="header" href="#clientdriverversion">client.driver.version</a></h4>
+<p>This value is required and is not application configurable.</p>
+<p>The internal driver version. The version formatting is not defined. For drivers written on-top of other core drivers,
+the underlying driver will typically expose a function to append additional name to this field.</p>
+<p>Example:</p>
+<pre><code>- "1.1.2-beta0"
+- "1.4.1 / 1.2.0"
+</code></pre>
+<h4 id="clientostype"><a class="header" href="#clientostype">client.os.type</a></h4>
+<p>This value is required and is not application configurable.</p>
+<p>The Operating System primary identification type the client is running on. Equivalent to <code>uname -s</code> on POSIX systems.
+This field is REQUIRED and clients must default to <code>unknown</code> when an appropriate value cannot be determined.</p>
+<p>Example:</p>
+<pre><code>- "Linux"
+- "Darwin"
+- "Windows"
+- "BSD"
+- "Unix"
+</code></pre>
+<h4 id="clientosname"><a class="header" href="#clientosname">client.os.name</a></h4>
+<p>This value is optional, but RECOMMENDED, it is not application configurable.</p>
+<p>Detailed name of the Operating System's, such as fully qualified distribution name. On systemd systems, this is
+typically <code>PRETTY_NAME</code> of <code>os-release(5)</code> (<code>/etc/os-release</code>) or the <code>DISTRIB_DESCRIPTION</code> (<code>/etc/lsb-release</code>,
+<code>lsb_release(1) --description</code>) on LSB systems. The exact value and method to determine this value is undefined.</p>
+<p>Example:</p>
+<pre><code>- "Ubuntu 16.04 LTS"
+- "macOS"
+- "CygWin"
+- "FreeBSD"
+- "AIX"
+</code></pre>
+<h4 id="clientosarchitecture"><a class="header" href="#clientosarchitecture">client.os.architecture</a></h4>
+<p>This value is optional, but RECOMMENDED, it is not application configurable. The machine hardware name. Equivalent to
+<code>uname -m</code> on POSIX systems.</p>
+<p>Example:</p>
+<pre><code>- "x86_64"
+- "ppc64le"
+</code></pre>
+<h4 id="clientosversion"><a class="header" href="#clientosversion">client.os.version</a></h4>
+<p>This value is optional and is not application configurable.</p>
+<p>The Operating System version.</p>
+<p>Example:</p>
+<pre><code>- "10"
+- "8.1"
+- "16.04.1"
+</code></pre>
+<h4 id="clientplatform"><a class="header" href="#clientplatform">client.platform</a></h4>
+<p>This value is optional and is not application configurable.</p>
+<p>Driver specific platform details.</p>
+<p>Example:</p>
+<pre><code>- clang 3.8.0 CFLAGS="-mcpu=power8 -mtune=power8 -mcmodel=medium"
+- "Oracle JVM EE 9.1.1"
+</code></pre>
+<p><span id="client-env"></span></p>
+<h4 id="clientenv"><a class="header" href="#clientenv">client.env</a></h4>
+<p>This value is optional and is not application configurable.</p>
+<p>Information about the execution environment, including Function-as-a-Service (FaaS) identification and container
+runtime.</p>
+<p>The contents of <code>client.env</code> MUST be adjusted to keep the handshake below the size limit; see
+<a href="#limitations">Limitations</a> for specifics.</p>
+<p>If no fields of <code>client.env</code> would be populated, <code>client.env</code> MUST be entirely omitted.</p>
+<h5 id="faas"><a class="header" href="#faas">FaaS</a></h5>
+<p>FaaS details are captured in the <code>name</code>, <code>timeout_sec</code>, <code>memory_mb</code>, and <code>region</code> fields of <code>client.env</code>. The <code>name</code>
+field is determined by which of the following environment variables are populated:</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Environment Variable</th></tr></thead><tbody>
+<tr><td><code>aws.lambda</code></td><td><code>AWS_EXECUTION_ENV</code><sup class="footnote-reference"><a href="#1">1</a></sup> or <code>AWS_LAMBDA_RUNTIME_API</code></td></tr>
+<tr><td><code>azure.func</code></td><td><code>FUNCTIONS_WORKER_RUNTIME</code></td></tr>
+<tr><td><code>gcp.func</code></td><td><code>K_SERVICE</code> or <code>FUNCTION_NAME</code></td></tr>
+<tr><td><code>vercel</code></td><td><code>VERCEL</code></td></tr>
+</tbody></table>
+</div>
+<p>If none of those variables are populated the other FaaS values MUST be entirely omitted. When variables for multiple
+<code>client.env.name</code> values are present, <code>vercel</code> takes precedence over <code>aws.lambda</code>; any other combination MUST cause the
+other FaaS values to be entirely omitted.</p>
+<p>Depending on which <code>client.env.name</code> has been selected, other FaaS fields in <code>client.env</code> SHOULD be populated:</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Field</th><th>Environment Variable</th><th>Expected Type</th></tr></thead><tbody>
+<tr><td><code>aws.lambda</code></td><td><code>client.env.region</code></td><td><code>AWS_REGION</code></td><td>string</td></tr>
+<tr><td></td><td><code>client.env.memory_mb</code></td><td><code>AWS_LAMBDA_FUNCTION_MEMORY_SIZE</code></td><td>int32</td></tr>
+<tr><td><code>gcp.func</code></td><td><code>client.env.memory_mb</code></td><td><code>FUNCTION_MEMORY_MB</code></td><td>int32</td></tr>
+<tr><td></td><td><code>client.env.timeout_sec</code></td><td><code>FUNCTION_TIMEOUT_SEC</code></td><td>int32</td></tr>
+<tr><td></td><td><code>client.env.region</code></td><td><code>FUNCTION_REGION</code></td><td>string</td></tr>
+<tr><td><code>vercel</code></td><td><code>client.env.region</code></td><td><code>VERCEL_REGION</code></td><td>string</td></tr>
+</tbody></table>
+</div>
+<p>Missing variables or variables with values not matching the expected type MUST cause the corresponding <code>client.env</code>
+field to be omitted and MUST NOT cause a user-visible error.</p>
+<h5 id="container"><a class="header" href="#container">Container</a></h5>
+<p>Container runtime information is captured in <code>client.env.container</code>.</p>
+<p><code>client.env.container.runtime</code> MUST be set to <code>"docker"</code> if the file <code>.dockerenv</code> exists in the root directory.</p>
+<p><code>client.env.container.orchestrator</code> MUST be set to <code>"kubernetes"</code> if the environment variable <code>KUBERNETES_SERVICE_HOST</code>
+is populated.</p>
+<p>If no fields of <code>client.env.container</code> would be populated, <code>client.env.container</code> MUST be entirely omitted.</p>
+<h3 id="speculative-authentication"><a class="header" href="#speculative-authentication">Speculative Authentication</a></h3>
+<ul>
+<li>Since: 4.4</li>
+</ul>
+<p>The initial handshake supports a new argument, <code>speculativeAuthenticate</code>, provided as a BSON document. Clients
+specifying this argument to <code>hello</code> or legacy hello will speculatively include the first command of an authentication
+handshake. This command may be provided to the server in parallel with any standard request for supported authentication
+mechanisms (i.e. <code>saslSupportedMechs</code>). This would permit clients to merge the contents of their first authentication
+command with their initial handshake request, and receive the first authentication reply along with the initial
+handshake reply.</p>
+<p>When the mechanism is <code>MONGODB-X509</code>, <code>speculativeAuthenticate</code> has the same structure as seen in the MONGODB-X509
+conversation section in the <a href="../auth/auth.html#supported-authentication-methods">Driver Authentication spec</a>.</p>
+<p>When the mechanism is <code>SCRAM-SHA-1</code> or <code>SCRAM-SHA-256</code>, <code>speculativeAuthenticate</code> has the same fields as seen in the
+conversation subsection of the SCRAM-SHA-1 and SCRAM-SHA-256 sections in the
+<a href="../auth/auth.html#supported-authentication-methods">Driver Authentication spec</a> with an additional <code>db</code> field to specify
+the name of the authentication database.</p>
+<p>When the mechanism is <code>MONGODB-OIDC</code>, <code>speculativeAuthenticate</code> has the same structure as seen in the MONGODB-OIDC
+conversation section in the <a href="../auth/auth.html#supported-authentication-methods">Driver Authentication spec</a>.</p>
+<p>If the initial handshake command with a <code>speculativeAuthenticate</code> argument succeeds, the client should proceed with the
+next step of the exchange. If the initial handshake response does not include a <code>speculativeAuthenticate</code> reply and the
+<code>ok</code> field in the initial handshake response is set to 1, drivers MUST authenticate using the standard authentication
+handshake.</p>
+<p>The <code>speculativeAuthenticate</code> reply has the same fields, except for the <code>ok</code> field, as seen in the conversation sections
+for MONGODB-X509, SCRAM-SHA-1 and SCRAM-SHA-256 in the
+<a href="../auth/auth.html#supported-authentication-methods">Driver Authentication spec</a>.</p>
+<p>Drivers MUST NOT validate the contents of the <code>saslSupportedMechs</code> attribute of the initial handshake reply. Drivers
+MUST NOT raise an error if the <code>saslSupportedMechs</code> attribute of the reply includes an unknown mechanism.</p>
+<p>If an authentication mechanism is not provided either via connection string or code, but a credential is provided,
+drivers MUST use the SCRAM-SHA-256 mechanism for speculative authentication and drivers MUST send <code>saslSupportedMechs</code>.</p>
+<p>Older servers will ignore the <code>speculativeAuthenticate</code> argument. New servers will participate in the standard
+authentication conversation if this argument is missing.</p>
+<h2 id="supporting-wrapping-libraries"><a class="header" href="#supporting-wrapping-libraries">Supporting Wrapping Libraries</a></h2>
+<p>Drivers MUST allow libraries which wrap the driver to append to the client metadata generated by the driver. The
+following class definition defines the options which MUST be supported:</p>
+<pre><code class="language-typescript">class DriverInfoOptions {
+    /**
+    * The name of the library wrapping the driver.
+    */
+    name: String;
+
+    /**
+    * The version of the library wrapping the driver.
+    */
+    version: Optional&lt;String&gt;;
+
+    /**
+    * Optional platform information for the wrapping driver.
+    */
+    platform: Optional&lt;String&gt;;
+}
+</code></pre>
+<p>Note that how these options are provided to a driver is left up to the implementer.</p>
+<p>If provided, these options MUST NOT replace the values used for metadata generation. The provided options MUST be
+appended to their respective fields, and be delimited by a <code>|</code> character. For example, when
+<a href="https://www.mongodb.com/docs/drivers/motor/">Motor</a> wraps PyMongo, the following fields are updated to include Motor's
+"driver info":</p>
+<pre><code class="language-typescript">{
+    client: {
+        driver: {
+            name: "PyMongo|Motor",
+            version: "3.6.0|2.0.0"
+        }
+    }
+}
+</code></pre>
+<p><strong>NOTE:</strong> All strings provided as part of the driver info MUST NOT contain the delimiter used for metadata concatention.
+Drivers MUST throw an error if any of these strings contains that character.</p>
+<h3 id="deviations"><a class="header" href="#deviations">Deviations</a></h3>
+<p>Some drivers have already implemented such functionality, and should not be required to make breaking changes to comply
+with the requirements set forth here. A non-exhaustive list of acceptable deviations are as follows:</p>
+<ul>
+<li>The name of <code>DriverInfoOptions</code> is non-normative, implementers may feel free to name this whatever they like.</li>
+<li>The choice of delimiter is not fixed, <code>|</code> is the recommended value, but some drivers currently use <code>/</code>.</li>
+<li>For cases where we own a particular stack of drivers (more than two), it may be preferable to accept a <em>list</em> of
+strings for each field.</li>
+</ul>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
+<p>The entire <code>client</code> metadata BSON document MUST NOT exceed 512 bytes. This includes all BSON overhead. The
+<code>client.application.name</code> cannot exceed 128 bytes. MongoDB will return an error if these limits are not adhered to,
+which will result in handshake failure. Drivers MUST validate these values and truncate or omit driver provided values
+if necessary. Implementers SHOULD cumulatively update fields in the following order until the document is under the size
+limit:</p>
+<ol>
+<li>Omit fields from <code>env</code> except <code>env.name</code>.</li>
+<li>Omit fields from <code>os</code> except <code>os.type</code>.</li>
+<li>Omit the <code>env</code> document entirely.</li>
+<li>Truncate <code>platform</code>.</li>
+</ol>
+<p>Additionally, implementers are encouraged to place high priority information about the platform earlier in the string,
+in order to avoid possible truncating of those details.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>Drivers that capture values for <code>client.env</code> should test that a connection and hello command succeeds in the presence of
+the following sets of environment variables:</p>
+<ol>
+<li>Valid AWS</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>AWS_EXECUTION_ENV</code></td><td><code>AWS_Lambda_java8</code></td></tr>
+<tr><td><code>AWS_REGION</code></td><td><code>us-east-2</code></td></tr>
+<tr><td><code>AWS_LAMBDA_FUNCTION_MEMORY_SIZE</code></td><td><code>1024</code></td></tr>
+</tbody></table>
+</div>
+<ol start="2">
+<li>Valid Azure</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>FUNCTIONS_WORKER_RUNTIME</code></td><td><code>node</code></td></tr>
+</tbody></table>
+</div>
+<ol start="3">
+<li>Valid GCP</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>K_SERVICE</code></td><td><code>servicename</code></td></tr>
+<tr><td><code>FUNCTION_MEMORY_MB</code></td><td><code>1024</code></td></tr>
+<tr><td><code>FUNCTION_TIMEOUT_SEC</code></td><td><code>60</code></td></tr>
+<tr><td><code>FUNCTION_REGION</code></td><td><code>us-central1</code></td></tr>
+</tbody></table>
+</div>
+<ol start="4">
+<li>Valid Vercel</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>VERCEL</code></td><td><code>1</code></td></tr>
+<tr><td><code>VERCEL_REGION</code></td><td><code>cdg1</code></td></tr>
+</tbody></table>
+</div>
+<ol start="5">
+<li>Invalid - multiple providers</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>AWS_EXECUTION_ENV</code></td><td><code>AWS_Lambda_java8</code></td></tr>
+<tr><td><code>FUNCTIONS_WORKER_RUNTIME</code></td><td><code>node</code></td></tr>
+</tbody></table>
+</div>
+<ol start="6">
+<li>Invalid - long string</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>AWS_EXECUTION_ENV</code></td><td><code>AWS_Lambda_java8</code></td></tr>
+<tr><td><code>AWS_REGION</code></td><td><code>a</code> repeated 512 times</td></tr>
+</tbody></table>
+</div>
+<ol start="7">
+<li>Invalid - wrong types</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>AWS_EXECUTION_ENV</code></td><td><code>AWS_Lambda_java8</code></td></tr>
+<tr><td><code>AWS_LAMBDA_FUNCTION_MEMORY_SIZE</code></td><td><code>big</code></td></tr>
+</tbody></table>
+</div>
+<ol start="8">
+<li>Invalid - <code>AWS_EXECUTION_ENV</code> does not start with <code>"AWS_Lambda_"</code></li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>Environment Variable</th><th>Value</th></tr></thead><tbody>
+<tr><td><code>AWS_EXECUTION_ENV</code></td><td><code>EC2</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation For Change</a></h2>
+<p>Being able to annotate individual connections with custom data will allow users and sysadmins to easily correlate events
+happening on their MongoDB deployment to a specific application. For support engineers, it furthermore helps identify
+potential problems in drivers or client platforms, and paves the way for providing proactive support via Cloud Manager
+and/or Atlas to advise customers about out of date driver versions.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<p>Drivers run on a multitude of platforms, languages, environments and systems. There is no defined list of data points
+that may or may not be valuable to every system. Rather than specifying such a list it was decided we would report the
+basics; something that everyone can discover and consider valuable. The obvious requirement here being the driver itself
+and its version. Any additional information is generally very system specific. Scala may care to know the Java runtime,
+while Python would like to know if it was built with C extensions - and C would like to know the compiler.</p>
+<p>Having to define dozens of arguments that may or may not be useful to one or two drivers isn't a good idea. Instead, we
+define a <code>platform</code> argument that is driver dependent. This value will not have defined value across drivers and is
+therefore not generically queryable -- however, it will gain defined schema for that particular driver, and will
+therefore over time gain defined structure that can be formatted and value extracted from.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>The legacy hello command currently ignores arguments. (i.e. If arguments are provided the legacy hello command discards
+them without erroring out). Adding client metadata functionality has therefore no backwards compatibility concerns.</p>
+<p>This also allows a driver to determine if the <code>hello</code> command is supported. On server versions that support the <code>hello</code>
+command, the legacy hello command with <code>helloOk: true</code> will respond with <code>helloOk: true</code>. On server versions that do not
+support the <code>hello</code> command, the <code>helloOk: true</code> argument is ignored and the legacy hello response will not contain
+<code>helloOk: true</code>.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p><a href="https://github.com/mongodb/mongo-c-driver/blob/master/src/libmongoc/src/mongoc/mongoc-handshake.c">C Driver</a>.</p>
+<h2 id="qa"><a class="header" href="#qa">Q&amp;A</a></h2>
+<ul>
+<li>
+<p>The 128 bytes application.name limit, does that include BSON overhead</p>
+<ul>
+<li>No, just the string itself</li>
+</ul>
+</li>
+<li>
+<p>The 512 bytes limit, does that include BSON overhead?</p>
+<ul>
+<li>Yes</li>
+</ul>
+</li>
+<li>
+<p>The 512 bytes limit, does it apply to the full initial handshake document or just the <code>client</code> subdocument</p>
+<ul>
+<li>Just the subdocument</li>
+</ul>
+</li>
+<li>
+<p>Should I really try to fill the 512 bytes with data?</p>
+<ul>
+<li>Not really. The server does not attempt to normalize or compress this data in anyway, so it will hold it in memory
+as-is per connection. 512 bytes for 20,000 connections is ~ 10mb of memory the server will need.</li>
+</ul>
+</li>
+<li>
+<p>What happens if I pass new arguments in the legacy hello command to previous MongoDB versions?</p>
+<ul>
+<li>Nothing. Arguments passed to the legacy hello command to prior versions of MongoDB are not treated in any special
+way and have no effect one way or another.</li>
+</ul>
+</li>
+<li>
+<p>Are there wire version bumps or anything accompanying this specification?</p>
+<ul>
+<li>No</li>
+</ul>
+</li>
+<li>
+<p>Is establishing the handshake required for connecting to MongoDB 3.4?</p>
+<ul>
+<li>No, it only augments the connection. MongoDB will not reject connections without it</li>
+</ul>
+</li>
+<li>
+<p>Does this affect SDAM implementations?</p>
+<ul>
+<li>Possibly. There are a couple of gotchas. If the application.name is not in the URI...
+<ul>
+<li>The SDAM monitoring cannot be launched until the user has had the ability to set the application name because the
+application name has to be sent in the initial handshake. This means that the connection pool cannot be
+established until the first user initiated command, or else some connections will have the application name while
+other won't</li>
+<li>The initial handshake must be called on all sockets, including administrative background sockets to MongoDB</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>My language doesn't have <code>uname</code>, but does instead provide its own variation of these values, is that OK?</p>
+<ul>
+<li>Absolutely. As long as the value is identifiable it is fine. The exact method and values are undefined by this
+specification</li>
+</ul>
+</li>
+</ul>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>2024-08-16: Migrated from reStructuredText to Markdown.</li>
+<li>2019-11-13: Added section about supporting wrapping libraries</li>
+<li>2020-02-12: Added section about speculative authentication</li>
+<li>2021-04-27: Updated to define <code>hello</code> and legacy hello</li>
+<li>2022-01-13: Updated to disallow <code>hello</code> using <code>OP_QUERY</code></li>
+<li>2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.</li>
+<li>2022-02-24: Rename Versioned API to Stable API</li>
+<li>2022-10-05: Remove spec front matter and reformat changelog.</li>
+<li>2023-03-13: Add <code>env</code> to <code>client</code> document</li>
+<li>2023-04-03: Simplify truncation for metadata</li>
+<li>2023-05-04: <code>AWS_EXECUTION_ENV</code> must start with <code>"AWS_Lambda_"</code></li>
+<li>2023-08-24: Added container awareness</li>
+<li>2024-04-22: Clarify that driver should not validate <code>saslSupportedMechs</code> content.</li>
+</ul>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p><code>AWS_EXECUTION_ENV</code> must start with the string <code>"AWS_Lambda_"</code>.</p>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../ocsp-support/ocsp-support.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../compression/OP_COMPRESSED.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../ocsp-support/ocsp-support.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../compression/OP_COMPRESSED.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

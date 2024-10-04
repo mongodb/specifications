@@ -1,0 +1,2346 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Client Side Encryption - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html" class="active"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="client-side-encryption"><a class="header" href="#client-side-encryption">Client Side Encryption</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)</li>
+<li>Version: 1.14.0</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>MongoDB 4.2 introduced support for client side encryption, guaranteeing that sensitive data can only be encrypted and
+decrypted with access to both MongoDB and a separate key management provider (supporting AWS, Azure, GCP, a local
+provider, and KMIP). Once enabled, data can be seamlessly encrypted and decrypted with minimal application code changes.
+6.0 introduced the next generation of client side encryption based on a Structured Encryption framework which allows
+expressive encrypted search operations. This spec covers both capabilities - 1st generation, "Client Side Field Level
+Encryption" and generation 2, "Queryable Encryption" - as the associated core cryptographic library and supporting
+drivers share a common codebase.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="terms"><a class="header" href="#terms">Terms</a></h2>
+<p><strong>encrypted MongoClient</strong></p>
+<p>A MongoClient with client side encryption enabled.</p>
+<p><strong>data key</strong></p>
+<p>A key used to encrypt and decrypt BSON values. Data keys are encrypted with a key management service (e.g. AWS KMS) and
+stored within a document in the MongoDB key vault collection (see
+<a href="#key-vault-collection-schema-for-data-keys">Key vault collection schema for data keys</a> for a description of the data
+key document). Therefore, a client needs access to both MongoDB and the external KMS service to utilize a data key.</p>
+<p><strong>MongoDB key vault collection</strong></p>
+<p>A MongoDB collection designated to contain data keys. This can either be co-located with the data-bearing cluster, or in
+a separate external MongoDB cluster.</p>
+<p><strong>Key Management Service (KMS)</strong></p>
+<p>An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS.</p>
+<p><strong>KMS providers</strong></p>
+<blockquote>
+<p>A map of KMS providers to credentials. Configured client-side. Example:</p>
+<pre><code class="language-python">kms_providers = {
+   "aws": {
+      "accessKeyId": AWS_KEYID,
+      "secretAccessKey": AWS_SECRET,
+   },
+   "local": {
+      "key": LOCAL_KEK
+   },
+}
+</code></pre>
+</blockquote>
+<p><strong>KMS provider</strong></p>
+<p>A configured KMS. Identified by a key in the KMS providers map. The key has the form "<KMS provider type>" or
+"<KMS provider type>:<KMS
+provider name>". Examples: "aws" or "aws:myname". In <a href="#libmongocrypt">libmongocrypt</a>, the key
+is referred to as the KMS ID.</p>
+<p><strong>KMS provider type</strong></p>
+<p>The type of backing KMS. Identified by the string: "aws", "azure", "gcp", "kmip", or "local".</p>
+<p><strong>KMS provider name</strong></p>
+<p>An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the same KMS provider type
+(e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).</p>
+<p><strong>Customer Master Key (CMK)</strong></p>
+<p>The underlying key AWS KMS uses to encrypt and decrypt. See
+<a href="https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys">AWS Key Management Service Concepts</a>.</p>
+<p><strong>schema</strong></p>
+<p>A MongoDB JSON Schema (either supplied by the server or client-side) which may include metadata about encrypted fields.
+This is a JSON Schema based on draft 4 of the JSON Schema specification,
+<a href="https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/">as documented in the MongoDB manual.</a>.</p>
+<p><strong><a href="#libmongocrypt">libmongocrypt</a></strong></p>
+<p>A library, written in C, that coordinates communication, does encryption/decryption, caches key and schemas.
+<a href="https://github.com/mongodb/libmongocrypt">Located here</a>.</p>
+<p><strong><a href="#mongocryptd">mongocryptd</a></strong></p>
+<p>A local process the driver communicates with to determine how to encrypt values in a command.</p>
+<p><strong><a href="#crypt_shared">crypt_shared</a></strong></p>
+<p>This term, spelled in all-lowercase with an underscore, refers to the client-side field-level-encryption dynamic library
+provided as part of a MongoDB Enterprise distribution. It replaces <a href="#mongocryptd">mongocryptd</a> as the method of
+<a href="../bson-binary-encrypted/binary-encrypted.html#intent-to-encrypt">marking-up a database command for encryption</a>.</p>
+<p>See also:</p>
+<blockquote>
+<ul>
+<li><a href="#crypt_shared">Introduction on crypt_shared</a></li>
+<li><a href="#enabling-crypt_shared">Enabling crypt_shared</a></li>
+</ul>
+</blockquote>
+<p><strong>ciphertext</strong></p>
+<p>One of the data formats of <a href="../bson-binary-encrypted/binary-encrypted.html">BSON binary encrypted</a>, representing an
+encoded BSON document containing encrypted ciphertext and metadata.</p>
+<p><strong>FLE</strong></p>
+<p>FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the exception of
+server-side JSON schema.</p>
+<p><strong>Queryable Encryption</strong></p>
+<p>Queryable Encryption the second version of Client-Side Field Level Encryption. Data is encrypted client-side. Queryable
+Encryption supports indexed encrypted fields, which are further processed server-side.</p>
+<p><strong>In-Use Encryption</strong></p>
+<p>Is an umbrella term describing the both FLE and Queryable Encryption.</p>
+<p><strong>encryptedFields</strong></p>
+<p>A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON Schema in FLE. The
+following is an example encryptedFields in extended canonical JSON:</p>
+<pre><code class="language-javascript">{
+    "escCollection": "enxcol_.CollectionName.esc",
+    "ecocCollection": "enxcol_.CollectionName.ecoc",
+    "fields": [
+        {
+            "path": "firstName",
+            "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }},
+            "bsonType": "string",
+            "queries": {"queryType": "equality"}
+        },
+        {
+            "path": "ssn",
+            "keyId": { "$binary": { "subType": "04", "base64": "BBBBBBBBBBBBBBBBBBBBBB==" }},
+            "bsonType": "string"
+        }
+    ]
+}
+</code></pre>
+<p>The acronyms within <code>encryptedFields</code> are defined as follows:</p>
+<ul>
+<li>ECOC: Encrypted Compaction Collection</li>
+<li>ESC: Encrypted State Collection</li>
+</ul>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>Client side encryption enables users to specify what fields in a collection must be encrypted, and the driver
+automatically encrypts commands and decrypts results. Automatic encryption is enterprise only. But users can manually
+encrypt and decrypt with a new ClientEncryption object.</p>
+<p>Client side encryption requires MongoDB 4.2 compatible drivers, and is only supported against 4.2 or higher servers. See
+<a href="#why-is-a-42-server-required">Why is a 4.2 server required?</a>.</p>
+<p>The following shows basic usage of the new API.</p>
+<pre><code class="language-python"># The schema map identifies fields on collections that must undergo encryption.
+
+schema_map = open("./schemas.json", "r").read()
+
+# AWS KMS is used to decrypt data keys stored in the key vault collection.
+
+aws_creds = open("./aws_credentials.json", "r").read()
+
+# A client is configured for automatic encryption and decryption by passing
+# AutoEncryptionOpts. Automatic encryption is an enterprise only feature.
+
+opts = AutoEncryptionOpts(
+    kms_providers={"aws": aws_creds},
+    key_vault_namespace="db.datakeys",
+    schema_map=schema_map)
+
+db = MongoClient(auto_encryption_opts=opts).db
+
+# Commands are encrypted, as determined by the JSON Schema from the schema_map.
+db.coll.insert_one({"ssn": "457-55-5462"})
+
+# Replies are decrypted.
+print(db.coll.find_one()) # { "ssn": "457-55-5462" } but stored and transported as ciphertext.
+
+# A ClientEncryption object is used for explicit encryption, decryption, and creating data keys.
+opts = ClientEncryptionOpts(kms_providers=kms, key_vault_namespace="db.datakeys")
+clientencryption = ClientEncryption(client, opts)
+
+# Use a ClientEncryption to create new data keys.
+# The master key identifies the CMK on AWS KMS to use for encrypting the data key.
+master_key = open("./aws_masterkey.json", "r").read()
+opts = DataKeyOpts (master_key=master_key)
+created_key_id = clientencryption.create_data_key("aws", opts)
+
+# Use a ClientEncryption to explicitly encrypt and decrypt.
+opts = EncryptOpts(key_id=created_key_id,
+    algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Random")
+encrypted = clientencryption.encrypt("secret text", opts)
+decrypted = clientencryption.decrypt(encrypted)
+</code></pre>
+<p>There are many moving parts to client side encryption with lots of similar sounding terms. Before proceeding to
+implement the specification, the following background should provide some context.</p>
+<p>The driver interacts with multiple components to implement client side encryption.</p>
+<p><img src="includes/components.png" alt="image" /></p>
+<p>The driver communicates with…</p>
+<ul>
+<li><strong>MongoDB cluster</strong> to get remote JSON Schemas.</li>
+<li><strong>MongoDB key vault collection</strong> to get encrypted data keys and create new data keys.</li>
+<li><strong>A KMS Provider</strong> to decrypt fetched data keys and encrypt new data keys.</li>
+<li><strong>mongocryptd</strong> to ask what values in BSON commands must be encrypted (unless <a href="#crypt_shared">crypt_shared</a> is in
+use).</li>
+</ul>
+<p>The MongoDB key vault may be the same as the MongoDB cluster. Users may choose to have data key stored on a separate
+MongoDB cluster, or co-locate with their data.</p>
+<h3 id="mongodb-key-vault-collection"><a class="header" href="#mongodb-key-vault-collection">MongoDB Key Vault collection</a></h3>
+<p>The key vault collection is a special MongoDB collection containing key documents. See the appendix section
+<a href="#key-vault-collection-schema-for-data-keys">Key vault collection schema for data keys</a> for a description of the
+documents.</p>
+<p>The key material in the key vault collection is encrypted with a separate KMS service. Therefore, encryption and
+decryption requires access to a MongoDB cluster and the KMS service.</p>
+<h3 id="kms-provider"><a class="header" href="#kms-provider">KMS Provider</a></h3>
+<p>A KMS provider (AWS KMS, Azure Key Vault, GCP KMS, the local provider, or KMIP) is used to decrypt data keys after
+fetching from the MongoDB Key Vault, and encrypt newly created data keys. Refer to <a href="#kmsproviders">KMSProviders</a> for the
+shape of the KMS provider options.</p>
+<h3 id="mongocryptd"><a class="header" href="#mongocryptd">mongocryptd</a></h3>
+<p><code>mongocryptd</code> is a singleton local process needed for auto-encryption when no <a href="#crypt_shared">crypt_shared</a> library is
+used. It speaks the MongoDB wire protocol and the driver uses <a href="#mongocryptd">mongocryptd</a> by connecting with a
+MongoClient. By default, if <a href="#crypt_shared">crypt_shared</a> is unavailable, the driver should attempt to automatically
+spawn <a href="#mongocryptd">mongocryptd</a>. If the MongoClient is configured with <code>extraOptions.mongocryptdBypassSpawn</code> set to
+<code>true</code>, OR <code>bypassAutoEncryption</code> is set to <code>true</code>, OR <code>bypassQueryAnalysis</code> is set to <code>true</code> then the driver will not
+attempt to spawn <a href="#mongocryptd">mongocryptd</a>.</p>
+<p>The <a href="#mongocryptd">mongocryptd</a> process is responsible for self terminating after idling for a time period. If
+<a href="#extraoptions.cryptsharedlibrequired">extraOptions.cryptSharedLibRequired</a> is set to <code>true</code>, the driver will not
+connect to <a href="#mongocryptd">mongocryptd</a> and instead rely on <a href="#crypt_shared">crypt_shared</a> being available.</p>
+<h3 id="crypt_shared"><a class="header" href="#crypt_shared">crypt_shared</a></h3>
+<p><a href="#crypt_shared">crypt_shared</a> is a dynamically-loaded C++ library providing query analysis for auto-encryption. It
+replaces <a href="#mongocryptd">mongocryptd</a> for performing query analysis to -
+<a href="../bson-binary-encrypted/binary-encrypted.html#intent-to-encrypt">mark-up sensitive fields within a command</a>.</p>
+<p>Drivers are not required to load and interact with <a href="#crypt_shared">crypt_shared</a> directly. Instead, they inform
+<a href="#libmongocrypt">libmongocrypt</a> where to find <a href="#crypt_shared">crypt_shared</a> and <a href="#libmongocrypt">libmongocrypt</a> will
+handle <a href="#crypt_shared">crypt_shared</a> communication automatically.</p>
+<p>See also: <a href="#enabling-crypt_shared">Enabling crypt_shared</a> for information on using enabling the
+<a href="#crypt_shared">crypt_shared</a> library.</p>
+<h3 id="libmongocrypt"><a class="header" href="#libmongocrypt">libmongocrypt</a></h3>
+<p>libmongocrypt is a C library providing crypto and coordination with external components.
+<a href="https://github.com/mongodb/libmongocrypt">Located here</a>.</p>
+<p><strong>libmongocrypt is responsible for…</strong></p>
+<ul>
+<li>orchestrating an internal state machine.</li>
+<li>asking the driver to perform I/O, then handling the responses.
+<ul>
+<li>includes constructing KMS HTTP requests and parsing KMS responses.</li>
+</ul>
+</li>
+<li>doing encryption and decryption.</li>
+<li>caching data keys.</li>
+<li>caching results of listCollections.</li>
+<li>creating key material.</li>
+</ul>
+<p><strong>The driver is responsible for…</strong></p>
+<ul>
+<li>performing all I/O needed at every state:
+<ul>
+<li>speaking to <a href="#mongocryptd">mongocryptd</a> to mark commands (unless <a href="#crypt_shared">crypt_shared</a> is used).</li>
+<li>fetching encrypted data keys from key vault collection (mongod).</li>
+<li>running listCollections on mongod.</li>
+<li>decrypting encrypted data keys with KMS over TLS.</li>
+</ul>
+</li>
+<li>doing I/O asynchronously as needed.</li>
+</ul>
+<p>See <a href="#why-require-including-a-c-library">Why require including a C library?</a></p>
+<h2 id="user-facing-api"><a class="header" href="#user-facing-api">User facing API</a></h2>
+<p>Drivers MUST NOT preclude future options from being added to any of the new interfaces.</p>
+<p>Drivers MAY represent the options types in a way that is idiomatic to the driver or language. E.g. options MAY be a BSON
+document or dictionary type. The driver MAY forego validating options and instead defer validation to the underlying
+implementation.</p>
+<p>Drivers MAY deviate the spelling of option names to conform to their language's naming conventions and implement options
+in an idiomatic way (e.g. keyword arguments, builder classes, etc.).</p>
+<p>Drivers MAY use a native UUID type in place of a parameter or return type specified as a BSON binary with subtype 0x04
+as described in <a href="../bson-binary-uuid/uuid.html">Handling of Native UUID Types</a>.</p>
+<h3 id="mongoclient-changes"><a class="header" href="#mongoclient-changes">MongoClient Changes</a></h3>
+<p><span id="MongoClient"></span></p>
+<pre><code class="language-typescript">class MongoClient {
+   MongoClient(... autoEncryptionOpts: AutoEncryptionOpts);
+
+   // Implementation details.
+   private mongocrypt_t libmongocrypt_handle; // Handle to libmongocrypt.
+   private Optional&lt;MongoClient&gt; mongocryptd_client; // Client to mongocryptd.
+   private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient, the parent MongoClient, or internal_client.
+   private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
+   private Optional&lt;MongoClient&gt; internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
+
+   // Exposition-only, used for caching automatic Azure credentials. The cached credentials may be globally cached.
+   private cachedAzureAccessToken?: AzureAccessToken;
+   private azureAccessTokenExpireTime?: PointInTime;
+}
+</code></pre>
+<p><span id="AutoEncryptionOpts"></span></p>
+<pre><code class="language-typescript">class AutoEncryptionOpts {
+   keyVaultClient: Optional&lt;MongoClient&gt;;
+   keyVaultNamespace: String;
+   kmsProviders: KMSProviders;
+   schemaMap: Optional&lt;Map&lt;String, Document&gt;&gt;; // Maps namespace to a local schema
+   bypassAutoEncryption: Optional&lt;Boolean&gt;; // Default false.
+   extraOptions: Optional&lt;Map&lt;String, Value&gt;&gt;;
+   tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
+   encryptedFieldsMap: Optional&lt;Map&lt;String, Document&gt;&gt;; // Maps namespace to encryptedFields.
+   // bypassQueryAnalysis disables automatic analysis of outgoing commands.
+   // Set bypassQueryAnalysis to true to use explicit encryption on indexed fields
+   // without the MongoDB Enterprise Advanced licensed crypt_shared library.
+   bypassQueryAnalysis: Optional&lt;Boolean&gt;; // Default false.
+}
+</code></pre>
+<p>A MongoClient can be configured to automatically encrypt collection commands and decrypt results.</p>
+<p>Drivers MUST document that auto encryption is an enterprise-only feature and that auto encryption only occurs on
+collection level operations by including the following in the driver documentation for AutoEncryptionOpts:</p>
+<blockquote>
+<p>Automatic encryption is an enterprise only feature that only applies to operations on a collection. Automatic
+encryption is not supported for operations on a database or view, and operations that are not bypassed will result in
+error (see <a href="#libmongocrypt-auto-encryption-allow-list">libmongocrypt: Auto Encryption Allow-List</a>). To bypass
+automatic encryption for all operations, set bypassAutoEncryption=true in AutoEncryptionOpts.</p>
+</blockquote>
+<p>Explicit encryption/decryption and automatic decryption is a community feature. A MongoClient configured with
+bypassAutoEncryption=true will still automatically decrypt.</p>
+<p>Drivers MUST document that auto encryption requires the authenticated user to have the listCollections privilege action
+by including the following in the driver documentation for MongoClient:</p>
+<blockquote>
+<p>Automatic encryption requires the authenticated user to have the
+<a href="https://www.mongodb.com/docs/manual/reference/command/listCollections/#dbcmd.listCollections">listCollections privilege action</a>.</p>
+</blockquote>
+<p>See
+<a href="#why-is-client-side-encryption-configured-on-a-mongoclient">Why is client side encryption configured on a MongoClient?</a></p>
+<h4 id="keyvaultnamespace"><a class="header" href="#keyvaultnamespace">keyVaultNamespace</a></h4>
+<p>The key vault collection namespace refers to a collection that contains all data keys used for encryption and decryption
+(aka the key vault collection). Data keys are stored as documents in a special MongoDB collection. Data keys are
+protected with encryption by a KMS provider (AWS KMS, Azure key vault, GCP KMS, a local master key, or KMIP).</p>
+<h4 id="keyvaultclient"><a class="header" href="#keyvaultclient">keyVaultClient</a></h4>
+<p>The key vault collection is assumed to reside on the same MongoDB cluster as indicated by the connecting URI. But the
+optional keyVaultClient can be used to route data key queries to a separate MongoDB cluster.</p>
+<p>If a <code>keyVaultClient</code> is not passed, and the parent <code>MongoClient</code> is configured with a limited <code>maxPoolSize</code>, the
+<code>keyVaultClient</code> is set to an internal <code>MongoClient</code>. See
+<a href="#keyvaultclient-metadataclient-and-the-internal-mongoclient">keyVaultClient, metadataClient, and the internal MongoClient</a>
+for configuration behavior.</p>
+<p>See
+<a href="#whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client">What's the deal with metadataClient, keyVaultClient, and the internal client?</a></p>
+<h4 id="keyvaultclient-metadataclient-and-the-internal-mongoclient"><a class="header" href="#keyvaultclient-metadataclient-and-the-internal-mongoclient">keyVaultClient, metadataClient, and the internal MongoClient</a></h4>
+<p>The following pseudo-code describes the configuration behavior for the three <code>MongoClient</code> objects:</p>
+<pre><code>def getOrCreateInternalClient (client, clientOpts):
+   if client.internalClient != None:
+      return client.internalClient
+   internalClientOpts = copy(clientOpts)
+   internalClientOpts.autoEncryptionOpts = None
+   internalClientOpts.minPoolSize = 0
+   client.internalClient = MongoClient (internalClientOpts)
+   return client.internalClient
+
+def configureAutoEncryptionClients (client, clientOpts):
+   if clientOpts.autoEncryptionOpts.keyVaultClient != None:
+      client.keyVaultClient = clientOpts.autoEncryptionOpts.keyVaultClient
+   elif clientOpts.maxPoolSize == 0:
+      client.keyVaultClient = client
+   else:
+      client.keyVaultClient = getOrCreateInternalClient (client, clientOpts)
+
+   if clientOpts.autoEncryptionOpts.bypassAutomaticEncryption:
+      client.metadataClient = None
+   elif clientOpts.maxPoolSize == 0:
+      client.metadataClient = client
+   else:
+      client.metadataClient = getOrCreateInternalClient (client, clientOpts)
+</code></pre>
+<p>Configuring the internal <code>MongoClient</code> MUST match the parent <code>MongoClient</code>, except <code>minPoolSize</code> is set to <code>0</code> and
+<code>AutoEncryptionOpts</code> is omitted. This includes copying the options and host information from the URI, and other non-URI
+configuration (monitoring callbacks, stable API, etc.).</p>
+<p>Drivers MUST document that an additional <code>MongoClient</code> may be created, using the following as a template:</p>
+<blockquote>
+<p>If a <code>MongoClient</code> with a limited connection pool size (i.e a non-zero <code>maxPoolSize</code>) is configured with
+<code>AutoEncryptionOpts</code>, a separate internal <code>MongoClient</code> is created if any of the following are true:</p>
+<ul>
+<li><code>AutoEncryptionOpts.keyVaultClient</code> is not passed.</li>
+<li><code>AutoEncryptionOpts.bypassAutomaticEncryption</code> is <code>false</code>.</li>
+</ul>
+<p>If an internal <code>MongoClient</code> is created, it is configured with the same options as the parent <code>MongoClient</code> except
+<code>minPoolSize</code> is set to <code>0</code> and <code>AutoEncryptionOpts</code> is omitted.</p>
+</blockquote>
+<p>See
+<a href="#whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client">What's the deal with metadataClient, keyVaultClient, and the internal client?</a></p>
+<p><span id="GCPKMSOptions"></span> <span id="AWSKMSOptions"></span> <span id="KMSProvider"></span>
+<span id="KMSProviders"></span> <span id="AzureAccessToken"></span> <span id="kmsproviders"></span></p>
+<h4 id="kmsproviders"><a class="header" href="#kmsproviders">kmsProviders</a></h4>
+<p>The <code>kmsProviders</code> property may be specified on <a href="#ClientEncryptionOpts">ClientEncryptionOpts</a> or
+<a href="#AutoEncryptionOpts">AutoEncryptionOpts</a>. Multiple KMS providers may be specified, each using a specific property on
+the <a href="#kmsproviders">KMSProviders</a> object. The options differ for each KMS provider type. The "local" KMS provider type
+is configured with master key material. The external providers are configured with credentials to authenticate.</p>
+<p>Throughout this document, the KMS provider is annotated as - <code>KMSProvider</code>, but this name is for <em>exposition only</em>:
+drivers MUST accept arbitrary strings at runtime for forward-compatibility.</p>
+<pre><code class="language-typescript">interface KMSProviders {
+   aws?: AWSKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+   azure?: AzureKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+   gcp?: GCPKMSOptions | { /* Empty (See "Automatic Credentials") */ };
+   local?: LocalKMSOptions;
+   kmip?: KMIPKMSOptions;
+
+   // KMS providers may be specified with an optional name suffix separated by a colon.
+   // Named KMS providers do not support "Automatic Credentials".
+   // Note: the named KMS providers strings below are not valid Typescript regexes. They are intended for exposition only.
+   "^aws:[a-zA-Z0-9_]+$"?: AWSKMSOptions;
+   "^azure:[a-zA-Z0-9_]+$"?: AzureKMSOptions;
+   "^gcp:[a-zA-Z0-9_]+$"?: GCPKMSOptions;
+   "^local:[a-zA-Z0-9_]+$"?: LocalKMSOptions;
+   "^kmip:[a-zA-Z0-9_]+$"?: KMIPKMSOptions;
+};
+
+// KMSProvider is a string identifying a KMS provider. Note: For forward
+// compatibility, any string should be accepted.
+type KMSProvider = string;
+
+interface AWSKMSOptions {
+   accessKeyId: string;
+   secretAccessKey: string;
+   sessionToken?: string; // Required for temporary AWS credentials.
+};
+
+type AzureKMSOptions = AzureKMSCredentials | AzureAccessToken;
+
+interface AzureKMSCredentials {
+   tenantId: string;
+   clientId: string;
+   clientSecret: string;
+   identityPlatformEndpoint?: string; // Defaults to login.microsoftonline.com
+};
+
+interface AzureAccessToken {
+   accessToken: string;
+};
+
+type GCPKMSOptions = GCPKMSCredentials | GCPKMSAccessToken
+
+interface GCPKMSCredentials {
+   email: string;
+   privateKey: byte[] | string; // May be passed as a base64 encoded string.
+   endpoint?: string; // Defaults to oauth2.googleapis.com
+};
+
+interface GCPKMSAccessToken {
+   accessToken: string;
+}
+
+interface LocalKMSOptions {
+   key: byte[96] | string; // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
+};
+
+interface KMIPKMSOptions {
+   endpoint: string;
+};
+</code></pre>
+<p>The following shows an example object of <code>KMSProviders</code>:</p>
+<pre><code class="language-yaml">{
+   # Pass credentials for AWS:
+   "aws": { "accessKeyId": "foo", "secretAccessKey": "bar" },
+   # Use an empty document to enable "Automatic Credentials" for Azure:
+   "azure": {},
+   # Pass an access token for GCP:
+   "gcp": { "accessToken": "foo" },
+   # Pass a 96 byte base64 encoded string for the local KMS provider.
+   "local": { "key": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk" }
+   # Pass the endpoint for KMIP:
+   "kmip": { "endpoint": "localhost:5698" }
+   # Pass credentials for a different AWS account by appending a name.
+   # Note: credentials with a name do not support "Automatic Credentials".
+   "aws:name2": { "accessKeyId": "foo2", "secretAccessKey": "bar2" }
+}
+</code></pre>
+<p><span id="automatic-credentials"></span></p>
+<h5 id="automatic-credentials"><a class="header" href="#automatic-credentials">Automatic Credentials</a></h5>
+<p>Certain values of <a href="#kmsproviders">KMSProviders</a> indicate a request by the user that the associated KMS providers should
+be populated lazily on-demand. The driver MUST be able to populate the respective options object on-demand
+if-and-only-if such respective credentials are needed. The request for KMS credentials will be indicated by
+<a href="#libmongocrypt">libmongocrypt</a> only once they are needed.</p>
+<p>When such a state is detected, <a href="#libmongocrypt">libmongocrypt</a> will call back to the driver by entering the
+<code>MONGOCRYPT_CTX_NEED_KMS_CREDENTIALS</code> state, upon which the driver should fill in the KMS options automatically.</p>
+<p>Automatic credentials are only supported for the KMS provider types <code>aws</code>, <code>gcp</code>, and <code>azure</code>. KMS providers containing
+a name (e.g. <code>aws:myname</code>) do not support automatic credentials. Attempting to configure a KMS provider with a name for
+automatic credentials results in a runtime error from <a href="#libmongocrypt">libmongocrypt</a>. See
+<a href="#why-do-on-demand-kms-credentials-not-support-named-kms-providers">Why do on-demand KMS credentials not support named KMS providers?</a></p>
+<blockquote>
+<p>[!NOTE]
+Drivers MUST NOT eagerly fill an empty KMS options property.</p>
+</blockquote>
+<p>Once requested, drivers MUST create a new <a href="#kmsproviders">KMSProviders</a> $P$ according to the following process:</p>
+<ol>
+<li>Let $K$ be the <a href="#kmsproviders">kmsProviders</a> value provided by the user as part of the original
+<a href="#ClientEncryptionOpts">ClientEncryptionOpts</a> or <a href="#AutoEncryptionOpts">AutoEncryptionOpts</a>.</li>
+<li>Initialize $P$ to an empty <a href="#kmsproviders">KMSProviders</a> object.</li>
+<li>If $K$ contains an <code>aws</code> property, and that property is an empty map:
+<ol>
+<li>Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
+<a href="../auth/auth.html#obtaining-credentials">the obtaining-AWS-credentials section from the Driver Authentication specification</a>,
+but ignoring the case of loading the credentials from a URI</li>
+<li>If credentials $C$ were successfully loaded, create a new <a href="#AWSKMSOptions">AWSKMSOptions</a> map from $C$ and insert
+that map onto $P$ as the <code>aws</code> property.</li>
+</ol>
+</li>
+<li>If $K$ contains an <code>gcp</code> property, and that property is an empty map:
+<ol>
+<li>Attempt to obtain credentials $C$ from the environment logic as is detailed in
+<a href="#obtaining-gcp-credentials">Obtaining GCP Credentials</a>.</li>
+<li>If credentials $C$ were successfully loaded, create a new <a href="#GCPKMSOptions">GCPKMSOptions</a> map from $C$ and insert
+that map onto $P$ as the <code>gcp</code> property.</li>
+</ol>
+</li>
+<li>If $K$ contains an <code>azure</code> property, and that property is an empty map:
+<ol>
+<li>If there is a <code>cachedAzureAccessToken</code> AND the duration until <code>azureAccessTokenExpireTime</code> is greater than one
+minute, insert <code>cachedAzureAccessToken</code> as the <code>azure</code> property on $P$.</li>
+<li>Otherwise:
+<ol>
+<li>Let $t_0$ be the current time.</li>
+<li>Attempt to obtain an Azure VM Managed Identity Access Token $T$ as detailed in
+<a href="#obtaining-an-access-token-for-azure-key-vault">Obtaining an Access Token for Azure Key Vault</a>.</li>
+<li>If a token $T$ with expire duration $d_{exp}$ were obtained successfully, create a new
+<a href="#AzureAccessToken">AzureAccessToken</a> object with $T$ as the <code>accessToken</code> property. Insert that
+<a href="#AzureAccessToken">AzureAccessToken</a> object into $P$ as the <code>azure</code> property. Record the generated
+<a href="#AzureAccessToken">AzureAccessToken</a> in <code>cachedAzureAccessToken</code>. Record the <code>azureAccessTokenExpireTime</code> as
+$t_0 + d_{exp}$.</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Return $P$ as the additional KMS providers to <a href="#libmongocrypt">libmongocrypt</a>.</li>
+</ol>
+<p><span id="obtaining-gcp-credentials"></span></p>
+<h5 id="obtaining-gcp-credentials"><a class="header" href="#obtaining-gcp-credentials">Obtaining GCP Credentials</a></h5>
+<p>Set <code>HOST</code> to <code>metadata.google.internal</code>.</p>
+<p>Send an HTTP request to the URL <code>http://&lt;HOST&gt;/computeMetadata/v1/instance/service-accounts/default/token</code> with the
+header <code>Metadata-Flavor: Google</code>.</p>
+<p>If the HTTP response code is not 200, return an error including the body of the HTTP response in the error message.</p>
+<p>Parse the HTTP response body as JSON. If parsing fails, return an error including the body of the HTTP response in the
+error message.</p>
+<p>Check the parsed JSON for the field "access_token". If "access_token" is not present, return an error including the body
+of the HTTP response in the error message.</p>
+<p>Return "access_token" as the credential.</p>
+<h5 id="obtaining-an-access-token-for-azure-key-vault"><a class="header" href="#obtaining-an-access-token-for-azure-key-vault">Obtaining an Access Token for Azure Key Vault</a></h5>
+<p>Virtual machines running on the Azure platform have one or more <em>Managed Identities</em> associated with them. From within
+the VM, an identity can be used by obtaining an access token via HTTP from the <em>Azure Instance Metadata Service</em> (IMDS).
+<a href="https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http">See this documentation for more information</a></p>
+<blockquote>
+<p>[!NOTE]
+To optimize for testability, it is recommended to implement an isolated abstraction for communication with IMDS. This
+will aide in the implementation of the prose tests of the communication with an IMDS server.</p>
+</blockquote>
+<p>The below steps should be taken:</p>
+<ol>
+<li>
+<p>Let $U$ be a new URL, initialized from the URL string <code>"http://169.254.169.254/metadata/identity/oauth2/token"</code></p>
+</li>
+<li>
+<p>Add a query parameter <code>api-version=2018-02-01</code> to $U$.</p>
+</li>
+<li>
+<p>Add a query parameter <code>resource=https://vault.azure.net/</code> to $U$.</p>
+</li>
+<li>
+<p>Prepare an HTTP GET request $Req$ based on $U$.</p>
+<blockquote>
+<p>[!NOTE]
+All query parameters on $U$ should be appropriately percent-encoded</p>
+</blockquote>
+</li>
+<li>
+<p>Add HTTP headers <code>Metadata: true</code> and <code>Accept: application/json</code> to $Req$.</p>
+</li>
+<li>
+<p>Issue $Req$ to the Azure IMDS server <code>169.254.169.254:80</code>. Let $Resp$ be the response from the server. If the HTTP
+response is not completely received within ten seconds, consider the request to have timed out, and return an error
+instead of an access token.</p>
+</li>
+<li>
+<p>If $Resp_{status} ≠ 200$, obtaining the access token has failed, and the HTTP response body of $Resp$ encodes
+information about the error that occurred. Return an error including the HTTP response body instead of an access
+token.</p>
+</li>
+<li>
+<p>Otherwise, let $J$ be the JSON document encoded in the HTTP response body of $Resp$.</p>
+</li>
+<li>
+<p>The result access token $T$ is given as the <code>access_token</code> string property of $J$. Return $T$ as the resulting
+access token.</p>
+</li>
+<li>
+<p>The resulting "expires in" duration $d_{exp}$ is a count of seconds given as an ASCII-encoded integer string
+<code>expires_in</code> property of $J$.</p>
+</li>
+</ol>
+<blockquote>
+<p>[!NOTE]
+If JSON decoding of $Resp$ fails, or the <code>access_token</code> property is absent from $J$, this is a protocol error from
+IMDS. Indicate this error to the requester of the access token.</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE]
+If an Azure VM has more than one managed identity, requesting an access token requires additional query parameters to
+disambiguate the request. For simplicity, these parameters are omitted, and only VMs that have a single managed
+identity are supported.</p>
+</blockquote>
+<h5 id="kms-provider-tls-options"><a class="header" href="#kms-provider-tls-options">KMS provider TLS options</a></h5>
+<p>Drivers MUST provide TLS options to configure TLS connections KMS providers.</p>
+<p>The TLS options SHOULD be consistent with the existing TLS options for MongoDB server TLS connections. The TLS options
+MUST enable setting a custom client certificate, equivalent to the <code>tlsCertificateKeyFile</code> URI option.</p>
+<p>Drivers SHOULD provide API that is consistent with configuring TLS options for MongoDB server TLS connections. New API
+to support the TLS options MUST support future addition of KMS providers without requiring a driver API change. The
+following is an example:</p>
+<pre><code class="language-typescript">class AutoEncryptionOpts {
+   // setTLSOptions accepts a map of KMS providers to TLSOptions.
+   // The TLSOptions apply to any TLS socket required to communicate
+   // with the KMS provider.
+   setTLSOptions (opts: KMSProvidersTLSOptions)
+}
+
+class ClientEncryptionOpts {
+   // setTLSOptions accepts a map of KMS providers to TLSOptions.
+   // The TLSOptions apply to any TLS socket required to communicate
+   // with the KMS provider.
+   setTLSOptions (opts: KMSProvidersTLSOptions)
+}
+</code></pre>
+<p>Drivers MUST raise an error if the TLS options are set to disable TLS. The error MUST contain the message "TLS is
+required".</p>
+<p>Drivers SHOULD raise an error if insecure TLS options are set. The error MUST contain the message "Insecure TLS options
+prohibited". This includes options equivalent to the following URI options:</p>
+<ul>
+<li><code>tlsInsecure</code></li>
+<li><code>tlsAllowInvalidCertificates</code></li>
+<li><code>tlsAllowInvalidHostnames</code></li>
+<li><code>tlsDisableCertificateRevocationCheck</code></li>
+</ul>
+<p>Drivers MUST NOT raise an error if <code>tlsDisableOCSPEndpointCheck</code> is set. Setting <code>tlsDisableOCSPEndpointCheck</code> may
+prevent operation errors when OCSP responders are unresponsive.</p>
+<p>See the OCSP specification for a description of the default values of
+<a href="../ocsp-support/ocsp-support.html#tlsdisableocspendpointcheck">tlsDisableOCSPEndpointCheck</a> and
+<a href="../ocsp-support/ocsp-support.html#tlsdisablecertificaterevocationcheck">tlsDisableCertificateRevocationCheck</a> Drivers
+MUST NOT modify the default value of <code>tlsDisableOCSPEndpointCheck</code> and <code>tlsDisableCertificateRevocationCheck</code> for KMS
+TLS connections.</p>
+<p>See <a href="#why-do-kms-providers-require-tls-options">Why do KMS providers require TLS options?</a></p>
+<h4 id="schemamap"><a class="header" href="#schemamap">schemaMap</a></h4>
+<p>Automatic encryption is configured with an "encrypt" field in a collection's JSONSchema. By default, a collection's
+JSONSchema is periodically polled with the listCollections command. But a JSONSchema may be specified locally with the
+schemaMap option. Drivers MUST document that a local schema is more secure and MUST include the following in the driver
+documentation for MongoClient:</p>
+<blockquote>
+<p>Supplying a schemaMap provides more security than relying on JSON Schemas obtained from the server. It protects
+against a malicious server advertising a false JSON Schema, which could trick the client into sending unencrypted data
+that should be encrypted.</p>
+</blockquote>
+<p>Drivers MUST document that a local schema only applies to client side encryption, and specifying JSON Schema features
+unrelated to encryption will result in error. Drivers MUST include the following in the driver documentation for
+MongoClient:</p>
+<blockquote>
+<p>Schemas supplied in the schemaMap only apply to configuring automatic encryption for client side encryption. Other
+validation rules in the JSON schema will not be enforced by the driver and will result in an error.</p>
+</blockquote>
+<h4 id="bypassautoencryption"><a class="header" href="#bypassautoencryption">bypassAutoEncryption</a></h4>
+<p>Drivers MUST disable auto encryption when the 'bypassAutoEncryption' option is true and not try to spawn mongocryptd.
+Automatic encryption may be disabled with the bypassAutoEncryption option. See
+<a href="#why-is-there-a-bypassautoencryption">Why is there a bypassAutoEncryption?</a>.</p>
+<h4 id="extraoptions"><a class="header" href="#extraoptions">extraOptions</a></h4>
+<p>The extraOptions relate to the mongocryptd process, an implementation detail described in the
+<a href="#implementation">Implementation</a> section:</p>
+<pre><code class="language-typescript">{
+   // Defaults to "mongodb://localhost:27020".
+   mongocryptdURI: Optional&lt;String&gt;,
+
+   // Defaults to false.
+   mongocryptdBypassSpawn: Optional&lt;Boolean&gt;,
+
+   // Used for spawning. Defaults to empty string and spawns mongocryptd from system path.
+   mongocryptdSpawnPath: Optional&lt;String&gt;,
+
+   // Passed when spawning mongocryptd. If omitted, this defaults to ["--idleShutdownTimeoutSecs=60"]
+   mongocryptdSpawnArgs: Optional&lt;Array[String]&gt;
+
+   // Override the path used to load the crypt_shared library
+   cryptSharedLibPath: Optional&lt;string&gt;;
+
+   // If 'true', refuse to continue encryption without a crypt_shared library
+   cryptSharedLibRequired: boolean;
+}
+</code></pre>
+<p>Drivers MUST implement extraOptions in a way that allows deprecating/removing options in the future without an API
+break, such as with a BSON document or map type instead of a struct type with fixed fields. See
+<a href="#why-are-extraoptions-and-kmsproviders-maps">Why are extraOptions and kmsProviders maps?</a>.</p>
+<p><span id="extraoptions.cryptsharedlibpath"></span></p>
+<h5 id="extraoptionscryptsharedlibpath"><a class="header" href="#extraoptionscryptsharedlibpath"><code>extraOptions.cryptSharedLibPath</code></a></h5>
+<ul>
+<li>Type: <code>undefined | string</code></li>
+<li>Default: <code>undefined</code></li>
+</ul>
+<p>Allow the user to specify an absolute path to a <a href="#crypt_shared">crypt_shared</a> dynamic library to load. Refer:</p>
+<ul>
+<li><a href="#overriding-the-crypt_shared-library-path">Overriding the crypt_shared Library Path</a></li>
+<li><a href="#path-resolution-behavior">Path Resolution Behavior</a></li>
+<li><a href="#enabling-crypt_shared">Enabling crypt_shared</a></li>
+</ul>
+<p><span id="extraoptions.cryptsharedlibrequired"></span></p>
+<h5 id="extraoptionscryptsharedlibrequired"><a class="header" href="#extraoptionscryptsharedlibrequired"><code>extraOptions.cryptSharedLibRequired</code></a></h5>
+<ul>
+<li>Type: <code>boolean</code></li>
+<li>Default: <code>false</code></li>
+</ul>
+<p>If <code>true</code>, the driver MUST refuse to continue unless <a href="#crypt_shared">crypt_shared</a> was loaded successfully.</p>
+<p>If, after initializing a <code>libmongocrypt_handle</code>, <a href="#crypt_shared">crypt_shared</a> is detected to be unavailable AND
+<a href="#extraoptions.cryptsharedlibrequired">extraOptions.cryptSharedLibRequired</a> is <code>true</code>, the driver MUST consider the
+<code>libmongocrypt_handle</code> to be invalid and return an error to the user. Refer:</p>
+<p><span id="managing-mongocryptd"></span> <span id="detecting-crypt_shared-availability"></span></p>
+<h4 id="encryptedfieldsmap"><a class="header" href="#encryptedfieldsmap">encryptedFieldsMap</a></h4>
+<p><code>encryptedFieldsMap</code> maps a collection namespace to an <code>encryptedFields</code>.</p>
+<p><code>encryptedFieldsMap</code> only applies to Queryable Encryption.</p>
+<p>If a collection is present on both the <code>encryptedFieldsMap</code> and <code>schemaMap</code>, <a href="#libmongocrypt">libmongocrypt</a> will error
+on initialization. See <code>fle2-and-fle1-error</code>.</p>
+<p>If a collection has a set of encrypted fields, the behavior of <code>CreateCollection()</code> and <code>Collection.Drop()</code> is altered.
+An additional helper, <code>CreateEncryptedCollection()</code> has been defined as a convenience wrapper around
+<code>CreateCollection()</code>. See <code>fle2-createcollection-drop</code>.</p>
+<p>Automatic encryption in Queryable Encryption is configured with the <code>encryptedFields</code>.</p>
+<p>If a collection is not present on the <code>encryptedFields</code> a server-side collection <code>encryptedFields</code> may be used by
+<a href="#libmongocrypt">libmongocrypt</a>. Drivers MUST include the following in the documentation for MongoClient:</p>
+<blockquote>
+<p>Supplying an <code>encryptedFieldsMap</code> provides more security than relying on an <code>encryptedFields</code> obtained from the
+server. It protects against a malicious server advertising a false <code>encryptedFields</code>.</p>
+</blockquote>
+<h4 id="bypassqueryanalysis"><a class="header" href="#bypassqueryanalysis">bypassQueryAnalysis</a></h4>
+<p>See <a href="#why-is-bypassqueryanalysis-needed">Why is bypassQueryAnalysis needed?</a>.</p>
+<h3 id="queryable-encryption-create-and-drop-collection-helpers"><a class="header" href="#queryable-encryption-create-and-drop-collection-helpers">Queryable Encryption Create and Drop Collection Helpers</a></h3>
+<p>A collection supporting Queryable Encryption requires an index and three additional collections.</p>
+<p><span id="GetEncryptedFields"></span></p>
+<h4 id="collection-encryptedfields-lookup-getencryptedfields"><a class="header" href="#collection-encryptedfields-lookup-getencryptedfields">Collection <code>encryptedFields</code> Lookup (GetEncryptedFields)</a></h4>
+<p>The convenience methods support the following lookup process for finding the <code>encryptedFields</code> associated with a
+collection.</p>
+<p>Assume an exposition-only function $GetEncryptedFields(opts, collName, dbName, askDb)$, where $opts$ is a set of
+options, $collName$ is the name of the collection, $dbName$ is the name of the database associated with that collection,
+and $askDb$ is a boolean value. The resulting <code>encryptedFields</code> $EF$ is found by:</p>
+<ol>
+<li>Let $QualName$ be the string formed by joining$dbName$ and $collName$ with an ASCII dot <code>"."</code>.</li>
+<li>If $opts$ contains an <code>"encryptedFields"</code> property, then $EF$ is the value of that property.</li>
+<li>Otherwise, if <code>AutoEncryptionOptions.encryptedFieldsMap</code> contains an element named by $QualName$, then $EF$ is the
+value of that element.</li>
+<li>Otherwise, if $askDb$ is <code>true</code>:
+<ol>
+<li>Issue a <code>listCollections</code> command against the database named by $dbName$, filtered by <code>{name: &lt;collName&gt;}</code>. Let
+the result be the document $L$.</li>
+<li>If $L$ contains an <code>options</code> document element, and that element contains an <code>encryptedFields</code> document element,
+$EF$ is $L$ <code>["options"]["encryptedFields"]</code>.</li>
+<li>Otherwise, $EF$ is <em>not-found</em></li>
+</ol>
+</li>
+<li>Otherwise, $EF$ is considered <em>not-found</em>.</li>
+</ol>
+<p><span id="create-collection-helper"></span></p>
+<h4 id="create-collection-helper"><a class="header" href="#create-collection-helper">Create Collection Helper</a></h4>
+<p>Drivers MUST support a BSON document option named <code>encryptedFields</code> for any
+<a href="https://www.mongodb.com/docs/manual/reference/command/create">create</a> command helpers (e.g.
+<code>Database.createCollection()</code>). This option will be interpreted by the helper method and MUST be passed to the
+<a href="https://www.mongodb.com/docs/manual/reference/command/create">create</a> command.</p>
+<blockquote>
+<p>[!NOTE]
+Users are not expected to set the <code>escCollection</code> and <code>ecocCollection</code> options in <code>encryptedFields</code>.
+<a href="https://jira.mongodb.org/browse/SERVER-74069">SERVER-74069</a> added server-side validation for those fields and no
+longer allows names to deviate from the following:</p>
+<ul>
+<li><code>enxcol_.&lt;collectionName&gt;.esc</code></li>
+<li><code>enxcol_.&lt;collectionName&gt;.ecoc</code></li>
+</ul>
+<p>Drivers MUST NOT document the <code>escCollection</code> and <code>ecocCollection</code> options.</p>
+</blockquote>
+<p>For a helper function, <code>CreateCollection(collectionName, collectionOptions)</code> with the name of the database associated as
+$dbName$, look up the encrypted fields <code>encryptedFields</code> for the collection as $GetEncryptedFields(collectionOptions,
+collectionName, dbName, false)$ (<a href="#GetEncryptedFields">See here</a>).</p>
+<p>If a set of <code>encryptedFields</code> was found, then do the following operations. If any of the following operations error, the
+remaining operations are not attempted:</p>
+<ul>
+<li>Check the wire version of the writable server. If the wire version is less than 21 (for server 7.0.0), return an error
+containing the error message: "Driver support of Queryable Encryption is incompatible with server. Upgrade server to
+use Queryable Encryption."</li>
+<li>Create the collection with name <code>encryptedFields["escCollection"]</code> as a clustered collection using the options
+<code>{clusteredIndex: {key: {_id: 1}, unique: true}}</code>. If <code>encryptedFields["escCollection"]</code> is not set, use the
+collection name <code>enxcol_.&lt;collectionName&gt;.esc</code>. Creating this collection MUST NOT check if the collection namespace is
+in the <code>AutoEncryptionOpts.encryptedFieldsMap</code>. the collection namespace is in the
+<code>AutoEncryptionOpts.encryptedFieldsMap</code>.</li>
+<li>Create the collection with name <code>encryptedFields["ecocCollection"]</code> as a clustered collection using the options
+<code>{clusteredIndex: {key: {_id: 1}, unique: true}}</code>. If <code>encryptedFields["ecocCollection"]</code> is not set, use the
+collection name <code>enxcol_.&lt;collectionName&gt;.ecoc</code>. Creating this collection MUST NOT check if the collection namespace
+is in the <code>AutoEncryptionOpts.encryptedFieldsMap</code>.</li>
+<li>Create the collection <code>collectionName</code> with <code>collectionOptions</code> and the option <code>encryptedFields</code> set to the
+<code>encryptedFields</code>.</li>
+<li>Create the the index <code>{"__safeContent__": 1}</code> on collection <code>collectionName</code>.</li>
+</ul>
+<h4 id="create-encrypted-collection-helper"><a class="header" href="#create-encrypted-collection-helper">Create Encrypted Collection Helper</a></h4>
+<p>To support automatic generation of encryption data keys, a helper $CreateEncryptedCollection(CE, database, collName,
+collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a <a href="#clientencryption">ClientEncryption</a> object,
+$kmsProvider$ is a <a href="#KMSProvider">KMSProvider</a> and $masterKey$ is equivalent to the $masterKey$ defined in
+<a href="#datakeyopts">DataKeyOpts</a>. It has the following behavior:</p>
+<ul>
+<li>If $collOpts$ contains an <code>"encryptedFields"</code> property, then $EF$ is the value of that property. Otherwise, report an
+error that there are no <code>encryptedFields</code> defined for the collection.</li>
+<li>Let $EF'$ be a copy of $EF$. Update $EF'$ in the following manner:
+<ul>
+<li>Let $Fields$ be the <code>"fields"</code> element within $EF'$.</li>
+<li>If $Fields$ is present and is an array value, then for each element $F$ of <code>Fields</code>:
+<ul>
+<li>If $F$ is not a document element, skip it.</li>
+<li>Otherwise, if $F$ has a <code>"keyId"</code> named element $K$ and $K$ is a <code>null</code> value:
+<ul>
+<li>Create a <a href="#datakeyopts">DataKeyOpts</a> named $dkOpts$ with the $masterKey$ argument.</li>
+<li>Let $D$ be the result of <code>CE.createDataKey(kmsProvider, dkOpts)</code>.</li>
+<li>If generating $D$ resulted in an error $E$, the entire $CreateEncryptedCollection$ must now fail with error $E$.
+Return the partially-formed $EF'$ with the error so that the caller may know what datakeys have already been
+created by the helper.</li>
+<li>Replace $K$ in $F$ with $D$.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Create a new set of options $collOpts'$ duplicating $collOpts$. Set the <code>"encryptedFields"</code> named element of
+$collOpts'$ to $EF'$.</li>
+<li>Invoke the <code>CreateCollection</code> helper as $CreateCollection(database, collName, collOpts')$. Return the resulting
+collection and the generated $EF'$. If an error occurred, return the resulting $EF$ with the error so that the caller
+may know what datakeys have already been created by the helper.</li>
+</ul>
+<p>Drivers MUST document that $createEncryptedCollection$ does not affect any auto encryption settings on existing
+MongoClients that are already configured with auto encryption. Users must configure auto encryption after creating the
+encrypted collection with the $createEncryptedCollection$ helper.</p>
+<h4 id="drop-collection-helper"><a class="header" href="#drop-collection-helper">Drop Collection Helper</a></h4>
+<p>Drivers MUST support a BSON document option named <code>encryptedFields</code> for any
+<a href="https://www.mongodb.com/docs/manual/reference/command/drop">drop</a> command helpers (e.g. <code>Database.dropCollection()</code>,
+<code>Collection.drop()</code>). This option will only be interpreted by the helper method and MUST NOT be passed to the
+<a href="https://www.mongodb.com/docs/manual/reference/command/drop">drop</a> command.</p>
+<blockquote>
+<p>[!NOTE]
+Users are not expected to set the <code>escCollection</code> and <code>ecocCollection</code> options in <code>encryptedFields</code>.
+<a href="https://jira.mongodb.org/browse/SERVER-74069">SERVER-74069</a> added server-side validation for those fields and no
+longer allows names to deviate from the following:</p>
+<ul>
+<li><code>enxcol_.&lt;collectionName&gt;.esc</code></li>
+<li><code>enxcol_.&lt;collectionName&gt;.ecoc</code></li>
+</ul>
+<p>Drivers SHOULD NOT document the <code>escCollection</code> and <code>ecocCollection</code> options.</p>
+</blockquote>
+<p>For a helper function <code>DropCollection(dropOptions)</code> with associated collection named $collName$ and database named
+$dbName$, look up the encrypted fields <code>encryptedFields</code> as $GetEncryptedFields(dropOptions, collName, dbname, true)$
+(<a href="#GetEncryptedFields">See here</a>).</p>
+<p>If a set of <code>encryptedFields</code> was found, then perform the following operations. If any of the following operations
+error, the remaining operations are not attempted. A <code>namespace not found</code> error returned from the server (server error
+code 26) MUST be ignored:</p>
+<ul>
+<li>Drop the collection with name <code>encryptedFields["escCollection"]</code>. If <code>encryptedFields["escCollection"]</code> is not set,
+use the collection name <code>enxcol_.&lt;collectionName&gt;.esc</code>.</li>
+<li>Drop the collection with name <code>encryptedFields["ecocCollection"]</code>. If <code>encryptedFields["ecocCollection"]</code> is not set,
+use the collection name <code>enxcol_.&lt;collectionName&gt;.ecoc</code>.</li>
+<li>Drop the collection <code>collectionName</code>.</li>
+</ul>
+<h3 id="clientencryption"><a class="header" href="#clientencryption">ClientEncryption</a></h3>
+<pre><code class="language-typescript">class ClientEncryption {
+   ClientEncryption(opts: ClientEncryptionOpts);
+
+   // The "Create Encrypted Collection" helper is a convenience function wrapping CreateCollection. It will
+   // create a collection with encrypted fields, automatically allocating and assigning new data encryption
+   // keys. It returns a handle to the new collection, as well as a document consisting of the generated
+   // "encryptedFields" options. Refer to "Create Encrypted Collection Helper"
+   createEncryptedCollection(database: Database, collName: string, collOpts, kmsProvider: KMSProvider, masterKey: Optional&lt;Document&gt;): [Collection, Document];
+
+   // Creates a new key document and inserts into the key vault collection.
+   // Returns the _id of the created document as a UUID (BSON binary subtype 0x04).
+   createDataKey(kmsProvider: KMSProvider, opts: DataKeyOpts | null): Binary;
+
+   // Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or with their current masterKey if a new one is not given.
+   // The updated fields of each rewrapped data key is updated in the key vault collection as part of a single bulk write operation.
+   // If no data key matches the given filter, no bulk write operation is executed.
+   // Returns a RewrapManyDataKeyResult.
+   rewrapManyDataKey(filter: Document, opts: RewrapManyDataKeyOpts | null): RewrapManyDataKeyResult;
+
+   // Removes the key document with the given UUID (BSON binary subtype 0x04) from the key vault collection.
+   // Returns the result of the internal deleteOne() operation on the key vault collection.
+   deleteKey(id: Binary): DeleteResult;
+
+   // Finds a single key document with the given UUID (BSON binary subtype 0x04).
+   // Returns the result of the internal find() operation on the key vault collection.
+   getKey(id: Binary): Optional&lt;Document&gt;;
+
+   // Finds all documents in the key vault collection.
+   // Returns the result of the internal find() operation on the key vault collection.
+   getKeys(): Iterable&lt;Document&gt;;
+
+   // Adds a keyAltName to the keyAltNames array of the key document in the key vault collection with the given UUID (BSON binary subtype 0x04).
+   // Returns the previous version of the key document.
+   addKeyAltName(id: Binary, keyAltName: String): Optional&lt;Document&gt;;
+
+   // Removes a keyAltName from the keyAltNames array of the key document in the key vault collection with the given UUID (BSON binary subtype 0x04).
+   // Returns the previous version of the key document.
+   removeKeyAltName(id: Binary, keyAltName: String): Optional&lt;Document&gt;;
+
+   // Returns a key document in the key vault collection with the given keyAltName.
+   getKeyByAltName(keyAltName: String): Optional&lt;Document&gt;;
+
+   // Encrypts a BsonValue with a given key and algorithm.
+   // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation MAY return an error for prohibited BSON values.
+   encrypt(value: BsonValue, opts: EncryptOpts): Binary;
+
+   // encryptExpression encrypts a Match Expression or Aggregate Expression to query a range index.
+   // `expr` is expected to be a BSON document of one of the following forms:
+   // 1. A Match Expression of this form:
+   //   {$and: [{&lt;field&gt;: {$gt: &lt;value1&gt;}}, {&lt;field&gt;: {$lt: &lt;value2&gt; }}]}
+   // 2. An Aggregate Expression of this form:
+   //   {$and: [{$gt: [&lt;fieldpath&gt;, &lt;value1&gt;]}, {$lt: [&lt;fieldpath&gt;, &lt;value2&gt;]}]
+   // $gt may also be $gte. $lt may also be $lte.
+   // Only supported when queryType is "range" and algorithm is "Range".
+   encryptExpression(expr: Document, opts: EncryptOpts): Document;
+
+   // Decrypts an encrypted value (BSON binary of subtype 6).
+   // Returns the original BSON value.
+   decrypt(value: Binary): BsonValue;
+
+   // Implementation details.
+   private mongocrypt_t libmongocrypt_handle;
+   private MongoClient keyvault_client;
+}
+</code></pre>
+<p><span id="ClientEncryptionOpts"></span></p>
+<p><span id="KMSProvidersTLSOptions"></span></p>
+<pre><code class="language-typescript">interface ClientEncryptionOpts {
+   keyVaultClient: MongoClient;
+   keyVaultNamespace: String;
+   kmsProviders: KMSProviders;
+   tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
+};
+
+interface KMSProvidersTLSOptions {
+   // Map the KMS providers to a set of TLS options
+   [provider: KMSProvider]: TLSOptionsMap;
+};
+</code></pre>
+<p>The ClientEncryption encapsulates explicit operations on a key vault collection that cannot be done directly on a
+MongoClient. Similar to configuring auto encryption on a MongoClient, it is constructed with a MongoClient (to a MongoDB
+cluster containing the key vault collection), KMS provider configuration, keyVaultNamespace, and tlsOptions. It provides
+an API for explicitly encrypting and decrypting values, and managing data keys in the key vault collection.</p>
+<p>See
+<a href="#why-do-we-have-a-separate-top-level-type-for-clientencryption">Why do we have a separate top level type for ClientEncryption?</a>
+and
+<a href="#why-do-we-need-to-pass-a-client-to-create-a-clientencryption">Why do we need to pass a client to create a ClientEncryption?</a></p>
+<p>When implementing behavior and error handling for key vault functions, Drivers SHOULD assume the presence of a unique
+index in the key vault collection on the <code>keyAltNames</code> field with a partial index filter for only documents where
+<code>keyAltNames</code> exists when implementing behavior of key management functions. Drivers MAY choose to not validate or
+enforce the existence of the unique index, but MUST still be capable of handling errors that such a unique index may
+yield.</p>
+<p>See
+<a href="#why-arent-we-creating-a-unique-index-in-the-key-vault-collection">Why aren't we creating a unique index in the key vault collection?</a></p>
+<h3 id="datakeyopts"><a class="header" href="#datakeyopts">DataKeyOpts</a></h3>
+<pre><code class="language-typescript">class DataKeyOpts {
+   masterKey: Optional&lt;Document&gt;
+   keyAltNames: Optional&lt;Array[String]&gt; // An alternative to _id to reference a key.
+   keyMaterial: Optional&lt;BinData&gt;
+}
+</code></pre>
+<h4 id="masterkey"><a class="header" href="#masterkey">masterKey</a></h4>
+<p>The masterKey document identifies a KMS-specific key used to encrypt the new data key. If kmsProvider has KMS provider
+type "aws", the masterKey is required and has the following fields:</p>
+<pre><code class="language-typescript">{
+   region: String,
+   key: String, // The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+   endpoint: Optional&lt;String&gt; // An alternate host identifier to send KMS requests to. May include port number. Defaults to "kms.&lt;region&gt;.amazonaws.com"
+}
+</code></pre>
+<p>If the kmsProvider has KMS provider type "azure", the masterKey is required and has the following fields:</p>
+<pre><code class="language-typescript">{
+   keyVaultEndpoint: String, // Host with optional port. Example: "example.vault.azure.net".
+   keyName: String,
+   keyVersion: Optional&lt;String&gt; // A specific version of the named key, defaults to using the key's primary version.
+}
+</code></pre>
+<p>If the kmsProvider has KMS provider type "gcp", the masterKey is required and has the following fields:</p>
+<pre><code class="language-typescript">{
+   projectId: String,
+   location: String,
+   keyRing: String,
+   keyName: String,
+   keyVersion: Optional&lt;String&gt;, // A specific version of the named key, defaults to using the key's primary version.
+   endpoint: Optional&lt;String&gt; // Host with optional port. Defaults to "cloudkms.googleapis.com".
+}
+</code></pre>
+<p>If the kmsProvider has KMS provider type "local", the masterKey is not applicable.</p>
+<p>If the kmsProvider has KMS provider type "kmip", the masterKey is required and has the following fields:</p>
+<pre><code class="language-javascript">{
+   keyId: Optional&lt;String&gt;, // keyId is the KMIP Unique Identifier to a 96 byte KMIP Secret Data managed object.
+                            // If keyId is omitted, the driver creates a random 96 byte KMIP Secret Data managed object.
+   endpoint: Optional&lt;String&gt;, // Host with optional port.
+   delegated: Optional&lt;Boolean&gt; // If true, this key should be decrypted by the KMIP server.
+}
+</code></pre>
+<p>Drivers MUST document the expected fields in the masterKey document for the "aws", "azure", "gcp", and "kmip" KMS
+provider types. Additionally, they MUST document that masterKey is <strong>required</strong> for these KMS provider types and is not
+optional.</p>
+<p>The value of <code>endpoint</code> or <code>keyVaultEndpoint</code> is a host name with optional port number separated by a colon. E.g.
+"kms.us-east-1.amazonaws.com" or "kms.us-east-1.amazonaws.com:443". It is assumed that the host name is not an IP
+address or IP literal. Though drivers MUST NOT inspect the value of "endpoint" that a user sets when creating a data
+key, a driver will inspect it when connecting to KMS to determine a port number if present.</p>
+<h4 id="keyaltnames"><a class="header" href="#keyaltnames">keyAltNames</a></h4>
+<p>An optional list of string alternate names used to reference a key. If a key is created with alternate names, then
+encryption may refer to the key by the unique alternate name instead of by <code>_id</code>. The following example shows creating
+and referring to a data key by alternate name:</p>
+<pre><code class="language-python">opts = DataKeyOpts(keyAltNames=["name1"])
+clientencryption.create_data_key ("local", opts)
+# reference the key with the alternate name
+opts = EncryptOpts(keyAltName="name1", algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Random")
+clientencryption.encrypt("457-55-5462", opts)
+</code></pre>
+<h4 id="keymaterial"><a class="header" href="#keymaterial">keyMaterial</a></h4>
+<p>An optional BinData of 96 bytes to use as custom key material for the data key being created. If <code>keyMaterial</code> is given,
+the custom key material is used for encrypting and decrypting data. Otherwise, the key material for the new data key is
+generated from a cryptographically secure random device.</p>
+<h3 id="rewrapmanydatakey"><a class="header" href="#rewrapmanydatakey">rewrapManyDataKey</a></h3>
+<p>If applicable, drivers MUST document that users must upgrade dependencies if necessary to avoid being impacted by
+<a href="https://jira.mongodb.org/browse/MONGOCRYPT-464">MONGOCRYPT-464</a>.</p>
+<p>If applicable, drivers MUST return an error if rewrapManyDataKey is called with libmongocrypt 1.5.1 or 1.5.0.</p>
+<h3 id="rewrapmanydatakeyopts"><a class="header" href="#rewrapmanydatakeyopts">RewrapManyDataKeyOpts</a></h3>
+<pre><code class="language-typescript">class RewrapManyDataKeyOpts {
+   provider: String
+   masterKey: Optional&lt;Document&gt;
+}
+</code></pre>
+<p>The <code>masterKey</code> document MUST have the fields corresponding to the given <code>provider</code> as specified in
+<a href="#masterkey">masterKey</a>. <code>masterKey</code> MUST NOT be given if it is not applicable for the given <code>provider</code>.</p>
+<h3 id="rewrapmanydatakeyresult"><a class="header" href="#rewrapmanydatakeyresult">RewrapManyDataKeyResult</a></h3>
+<pre><code class="language-typescript">class RewrapManyDataKeyResult {
+   bulkWriteResult: Optional&lt;BulkWriteResult&gt;;
+}
+</code></pre>
+<p><code>bulkWriteResult</code> is the <a href="../crud/crud.html#write-results">result of the bulk write operation</a> used to update the key
+vault collection with one or more rewrapped data keys. If <code>rewrapManyDataKey()</code> does not find any matching keys to
+rewrap, no bulk write operation will be executed and this field will be unset. This field may also be unset if the bulk
+write operation is unacknowledged as permitted by the <a href="../crud/crud.html#write-results">CRUD API Spec</a>.</p>
+<p>See
+<a href="#why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult">Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?</a></p>
+<h3 id="encryptopts"><a class="header" href="#encryptopts">EncryptOpts</a></h3>
+<pre><code class="language-typescript">class EncryptOpts {
+   keyId : Optional&lt;Binary&gt;
+   keyAltName: Optional&lt;String&gt;
+   algorithm: String,
+   contentionFactor: Optional&lt;Int64&gt;,
+   queryType: Optional&lt;String&gt;
+   rangeOpts: Optional&lt;RangeOpts&gt;
+}
+
+// RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
+// min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
+// For double and decimal128, min/max/precision must all be set, or all be unset.
+class RangeOpts {
+   // min is the minimum value for the encrypted index. Required if precision is set.
+   min: Optional&lt;BSONValue&gt;,
+   // max is the maximum value for the encrypted index. Required if precision is set.
+   max: Optional&lt;BSONValue&gt;,
+   // trimFactor may be used to tune performance. When omitted, a default value is used.
+   trimFactor: Optional&lt;Int32&gt;,
+   // sparsity may be used to tune performance. When omitted, a default value is used.
+   sparsity: Optional&lt;Int64&gt;,
+   // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
+   precision: Optional&lt;Int32&gt;
+}
+</code></pre>
+<p>Explicit encryption requires a key and algorithm. Keys are either identified by <code>_id</code> or by alternate name. Exactly one
+is required.</p>
+<h4 id="keyid"><a class="header" href="#keyid">keyId</a></h4>
+<p>Identifies a data key by <code>_id</code>. The value is a UUID (binary subtype 4).</p>
+<h4 id="keyaltname"><a class="header" href="#keyaltname">keyAltName</a></h4>
+<p>Identifies a key vault collection document by 'keyAltName'.</p>
+<h4 id="algorithm"><a class="header" href="#algorithm">algorithm</a></h4>
+<p>One of the strings:</p>
+<ul>
+<li>"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"</li>
+<li>"AEAD_AES_256_CBC_HMAC_SHA_512-Random"</li>
+<li>"Indexed"</li>
+<li>"Unindexed"</li>
+<li>"Range"</li>
+</ul>
+<p>The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
+query. Drivers MUST document the following behavior:</p>
+<blockquote>
+<p>To insert or query with an "Indexed" or "Range" encrypted payload, use a <code>MongoClient</code> configured with
+<code>AutoEncryptionOpts</code>. <code>AutoEncryptionOpts.bypassQueryAnalysis</code> may be true. <code>AutoEncryptionOpts.bypassAutoEncryption</code>
+must be false.</p>
+</blockquote>
+<h4 id="contentionfactor"><a class="header" href="#contentionfactor">contentionFactor</a></h4>
+<p>contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". libmongocrypt
+returns an error if contentionFactor is set for a non-applicable algorithm.</p>
+<h4 id="querytype"><a class="header" href="#querytype">queryType</a></h4>
+<p>One of the strings:</p>
+<ul>
+<li>"equality"</li>
+<li>"range"</li>
+</ul>
+<p>queryType only applies when algorithm is "Indexed" or "Range". libmongocrypt returns an error if queryType is set for a
+non-applicable queryType.</p>
+<h4 id="rangeopts"><a class="header" href="#rangeopts">rangeOpts</a></h4>
+<p>rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
+non-applicable algorithm.</p>
+<h2 id="user-facing-api-when-auto-encryption-fails"><a class="header" href="#user-facing-api-when-auto-encryption-fails">User facing API: When Auto Encryption Fails</a></h2>
+<p>Auto encryption requires parsing the MongoDB query language client side (with the <a href="#mongocryptd">mongocryptd</a> process or
+<a href="#crypt_shared">crypt_shared</a> library). For unsupported operations, an exception will propagate to prevent the
+possibility of the client sending unencrypted data that should be encrypted. Drivers MUST include the following in the
+documentation for MongoClient:</p>
+<blockquote>
+<p>If automatic encryption fails on an operation, use a MongoClient configured with bypassAutoEncryption=true and use
+ClientEncryption.encrypt() to manually encrypt values.</p>
+</blockquote>
+<p>For example, currently an aggregate with <code>$lookup</code> into a foreign collection is unsupported (<a href="#mongocryptd">mongocryptd</a>
+and <a href="#crypt_shared">crypt_shared</a> return errors):</p>
+<pre><code class="language-python">opts = AutoEncryptionOpts (
+   key_vault_namespace="keyvault.datakeys",
+   kms_providers=kms)
+client = MongoClient(auto_encryption_opts=opts)
+accounts = client.db.accounts
+results = accounts.aggregate([
+   {
+      "$lookup": {
+      "from": "people",
+      "pipeline": [
+         {
+            "$match": {
+               "ssn": "457-55-5462"
+            }
+         }
+      ],
+      "as": "person"
+   }
+]) # Raises an error
+
+print (next(results)["person"]["ssn"])
+</code></pre>
+<p>In this case, the user should use explicit encryption on a client configured to bypass auto encryption. (Note, automatic
+decryption still occurs).</p>
+<pre><code class="language-python">opts = AutoEncryptionOpts (
+   key_vault_namespace="keyvault.datakeys",
+   kms_providers=kms,
+   bypass_auto_encryption=True)
+client = MongoClient(auto_encryption_opts=opts)
+
+opts = ClientEncryptionOpts (
+   key_vault_client=client,
+   key_vault_namespace="keyvault.datakeys",
+   kms_providers=kms,
+   bypass_auto_encryption=True)
+client_encryption = ClientEncryption(opts)
+
+accounts = client.db.accounts
+results = accounts.aggregate([
+   {
+      "$lookup": {
+      "from": "people",
+      "pipeline": [
+         {
+            "$match": {
+               "ssn": client_encryption.encrypt("457-55-5462", EncryptOpts(key_alt_name="ssn", algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"))
+            }
+         }
+      ],
+      "as": "person"
+   }
+]) # Throws an exception
+
+print (next(results)["person"]["ssn"])
+</code></pre>
+<h2 id="user-facing-api-view-limitations"><a class="header" href="#user-facing-api-view-limitations">User facing API: View limitations</a></h2>
+<p>Users cannot use auto encryption with views. Attempting to do so results in an exception. Drivers do not need to
+validate when the user is attempting to enable auto encryption on a view, but may defer to the underlying
+implementation.</p>
+<p>Although auto encryption does not work on views, users may still use explicit encrypt and decrypt functions on views on
+a MongoClient without auto encryption enabled.</p>
+<p>See <a href="#why-do-operations-on-views-fail">Why do operations on views fail?</a></p>
+<h2 id="implementation"><a class="header" href="#implementation">Implementation</a></h2>
+<p>Drivers MUST integrate with libmongocrypt. libmongocrypt exposes a simple state machine to perform operations. Follow
+<a href="https://github.com/mongodb/libmongocrypt/blob/master/integrating.md">the guide to integrating libmongocrypt</a>.</p>
+<p>Drivers SHOULD take a best-effort approach to store sensitive data securely when interacting with KMS since responses
+may include decrypted data key material (e.g. use secure malloc if available).</p>
+<p>All errors from the MongoClient to <a href="#mongocryptd">mongocryptd</a> or the <a href="#crypt_shared">crypt_shared</a> error category MUST
+be distinguished in some way (e.g. exception type) to make it easier for users to distinguish when a command fails due
+to auto encryption limitations.</p>
+<p>All errors from the MongoClient interacting with the key vault collection MUST be distinguished in some way (e.g.
+exception type) to make it easier for users to distinguish when a command fails due to behind-the-scenes operations
+required for encryption, decryption, or key management.</p>
+<p>Drivers MUST apply timeouts to operations executed as part of client-side encryption per
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#client-side-encryption">Client Side Operations Timeout: Client Side Encryption</a>.</p>
+<h2 id="integrating-with-libmongocrypt"><a class="header" href="#integrating-with-libmongocrypt">Integrating with libmongocrypt</a></h2>
+<p>Each ClientEncryption instance MUST have one <code>libmongocrypt_handle</code>.</p>
+<p><a href="https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h">The libmongocrypt C API documentation</a> For
+information on how to initialize, encrypt, decrypt with libmongocrypt.</p>
+<p><a href="https://github.com/mongodb/libmongocrypt/blob/master/integrating.md">The Guide to Integrating libmongocrypt</a> For
+information about integrating the libmongocrypt library in a driver.</p>
+<p>libmongocrypt exposes logging capabilities. If a driver provides a logging mechanism, it MUST enable this logging and
+integrate. E.g. if your driver exposes a logging callback that a user can set, it SHOULD be possible to get log messages
+from libmongocrypt.</p>
+<p>Drivers MUST propagate errors from libmongocrypt in whatever way is idiomatic to the driver (exception, error object,
+etc.). These errors MUST be distinguished in some way (e.g. exception type) to make it easier for users to distinguish
+when a command fails due to client side encryption.</p>
+<p><span id="enabling-crypt_shared"></span></p>
+<h2 id="enabling-command-marking-with-the-crypt_shared-library"><a class="header" href="#enabling-command-marking-with-the-crypt_shared-library">Enabling Command Marking with the <code>crypt_shared</code> Library</a></h2>
+<p>The MongoDB Enterprise distribution includes a dynamic library named <code>mongo_crypt_v1</code> (with the appropriate file
+extension or filename suffix for the host platform). This library will be loaded by <a href="#libmongocrypt">libmongocrypt</a> when
+the <code>mongocrypt_init</code> function is invoked
+<a href="https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h">(from the libmongocrypt C API)</a> based on the
+search criteria that are provided by the driver.</p>
+<p><a href="#libmongocrypt">libmongocrypt</a> allows the driver to specify an arbitrary list of directory
+<a href="#search-paths">search paths</a> in which to search for the <a href="#crypt_shared">crypt_shared</a> dynamic library. The user-facing
+API does not expose this full search path functionality. This extended search path customization is intended to
+facilitate driver testing with <a href="#crypt_shared">crypt_shared</a> (Refer:
+<a href="#search-paths-for-testing">Search Paths for Testing</a> and <a href="#path-resolution-behavior">Path Resolution Behavior</a>).</p>
+<blockquote>
+<p>[!NOTE]
+The driver MUST NOT manipulate or do any validation on the <a href="#crypt_shared">crypt_shared</a> path options provided in
+<a href="#extraoptions">extraOptions</a>. They should be passed through to <a href="#libmongocrypt">libmongocrypt</a> unchanged.</p>
+</blockquote>
+<p><span id="search-path"></span> <span id="search-paths"></span></p>
+<h3 id="setting-search-paths"><a class="header" href="#setting-search-paths">Setting Search Paths</a></h3>
+<p>For the user-facing API the driver MUST append the literal string - <code>"$SYSTEM"</code> to the search paths for the
+<code>libmongocrypt_handle</code> if <code>bypassAutoEncryption</code> is not set to <code>true</code>, and MUST NOT append to the search path if it is
+set to <code>true</code> or if the <a href="#libmongocrypt">libmongocrypt</a> instance is used for explicit encryption only (i.e. on the
+ClientEncryption class). For purposes of testing, a driver may use a different set of search paths.</p>
+<p><strong>Explanation</strong></p>
+<p>The <a href="#search-paths">search paths</a> array in <a href="#libmongocrypt">libmongocrypt</a> allows the driver to customize the way that
+<a href="#libmongocrypt">libmongocrypt</a> searches and loads the <a href="#crypt_shared">crypt_shared</a> library. For testing purposes, the
+driver may change the paths that it appends for <a href="#crypt_shared">crypt_shared</a> searching to better isolate the test
+execution from the ambient state of the host system.</p>
+<p>Refer to: <a href="#path-resolution-behavior">Path Resolution Behavior</a> and
+<a href="#search-paths-for-testing">Search Paths for Testing</a></p>
+<p><span id="override-path"></span></p>
+<h3 id="overriding-the-crypt_shared-library-path"><a class="header" href="#overriding-the-crypt_shared-library-path">Overriding the <code>crypt_shared</code> Library Path</a></h3>
+<p>If <a href="#extraoptions.cryptsharedlibpath">extraOptions.cryptSharedLibPath</a> was specified by the user, the driver MUST set
+the <a href="#crypt_shared">crypt_shared</a> path override on the <code>libmongocrypt_handle</code>.</p>
+<blockquote>
+<p>[!NOTE]
+If a path override is set on a <code>libmongocrypt_handle</code> and <a href="#libmongocrypt">libmongocrypt</a> fails to load
+<a href="#crypt_shared">crypt_shared</a> from that filepath, then that will result in a hard-error when initializing
+<a href="#libmongocrypt">libmongocrypt</a>.</p>
+</blockquote>
+<h3 id="path-resolution-behavior"><a class="header" href="#path-resolution-behavior">Path Resolution Behavior</a></h3>
+<p>Drivers should include and note the following information regarding the behavior of <a href="#crypt_shared">crypt_shared</a> path
+options in <a href="#extraoptions">extraOptions</a>:</p>
+<ul>
+<li>
+<p>If used, the <a href="#override-path">override path</a> must be given as a path to the <a href="#crypt_shared">crypt_shared</a> dynamic
+library file <em>itself</em>, and not simply the directory that contains it.</p>
+</li>
+<li>
+<p>If the given <a href="#override-path">override path</a> is a relative path and the first path component is the literal string
+<code>"$ORIGIN"</code>, the <code>"$ORIGIN"</code> component will be replaced by the absolute path to the directory containing the
+<a href="#libmongocrypt">libmongocrypt</a> library that is performing the <a href="#crypt_shared">crypt_shared</a> search. This behavior
+mimics the <code>$ORIGIN</code> behavior of the <code>RUNPATH</code>/<code>RPATH</code> properties of ELF executable files. This permits bundling the
+<a href="#crypt_shared">crypt_shared</a> library along with <a href="#libmongocrypt">libmongocrypt</a> for creating portable application
+distributions without relying on a externally/globally available <a href="#crypt_shared">crypt_shared</a> library.</p>
+<blockquote>
+<p>[!NOTE]
+No other <code>RPATH</code>/<code>RUNPATH</code>-style substitutions are available.</p>
+</blockquote>
+</li>
+<li>
+<p>If the <a href="#override-path">override path</a> is given as a relative path, that path will be resolved relative to the working
+directory of the operating system process.</p>
+</li>
+<li>
+<p>If an <a href="#override-path">override path</a> was specified and <a href="#libmongocrypt">libmongocrypt</a> fails to load
+<a href="#crypt_shared">crypt_shared</a> from that filepath, <a href="#libmongocrypt">libmongocrypt</a> will fail to initialize with a
+hard-error. <a href="#libmongocrypt">libmongocrypt</a> will not attempt to search for <a href="#crypt_shared">crypt_shared</a> in any other
+locations.</p>
+</li>
+<li>
+<p>If <a href="#libmongocrypt">libmongocrypt</a> fails to load the <a href="#crypt_shared">crypt_shared</a> library after searching the system
+(and no <a href="#override-path">override path</a> is specified), <a href="#libmongocrypt">libmongocrypt</a> will proceed without error and
+presume that <a href="#crypt_shared">crypt_shared</a> is unavailable.</p>
+</li>
+</ul>
+<h4 id="search-paths-for-testing"><a class="header" href="#search-paths-for-testing">Search Paths for Testing</a></h4>
+<p>Drivers can make use of different <a href="#search-paths">search paths</a> settings for testing purposes. These search paths use
+the following behavior:</p>
+<ul>
+<li>
+<p>For <a href="#crypt_shared">crypt_shared</a> <a href="#search-paths">search paths</a>, if a search path string is <code>"$SYSTEM"</code>, then —
+instead of <a href="#libmongocrypt">libmongocrypt</a> searching for <a href="#crypt_shared">crypt_shared</a> in a directory named
+"<code>$SYSTEM</code>" — <a href="#libmongocrypt">libmongocrypt</a> will defer to the operating system's own dynamic-library resolution
+mechanism when processing that search-path. For this reason, <code>"$SYSTEM"</code> is the only search path appended when the
+driver is used via the user-facing API.</p>
+</li>
+<li>
+<p>The <a href="#search-paths">search paths</a> also support the <code>$ORIGIN</code> substitution string.</p>
+</li>
+<li>
+<p>Like with the <a href="#override-path">override path</a>, if a <a href="#search-path">search path</a> is given as a relative path, that path
+will be resolved relative to the working directory of the operating system process.</p>
+</li>
+<li>
+<p>If no <a href="#search-paths">search paths</a> are appended to the <code>libmongocrypt_handle</code>, the resulting search paths will be an
+empty array, effectively <a href="#disabling-crypt_shared">disabling crypt_shared</a> searching.</p>
+<p>In this case, unless an <a href="#override-path">override path</a> is specified, <a href="#libmongocrypt">libmongocrypt</a> is guaranteed
+not to load <a href="#crypt_shared">crypt_shared</a>.</p>
+</li>
+</ul>
+<h3 id="detecting-crypt_shared-availability"><a class="header" href="#detecting-crypt_shared-availability">Detecting <a href="#crypt_shared">crypt_shared</a> Availability</a></h3>
+<p><a href="#crypt_shared">crypt_shared</a> availability can only be reliably detected <em>after</em> initializing the
+<code>libmongocrypt_handle</code>.</p>
+<p>After initializing the <code>libmongocrypt_handle</code>, the driver can detect whether <a href="#crypt_shared">crypt_shared</a> was
+successfully loaded by asking <a href="#libmongocrypt">libmongocrypt</a> for the <a href="#crypt_shared">crypt_shared</a> version string. If
+the result is an empty string, <a href="#libmongocrypt">libmongocrypt</a> did not load <a href="#crypt_shared">crypt_shared</a> and the driver
+must rely on <a href="#mongocryptd">mongocryptd</a> to mark command documents for encryption.</p>
+<p><span id="disabling-crypt_shared"></span></p>
+<h3 id="disabling-crypt_shared"><a class="header" href="#disabling-crypt_shared">"Disabling" <code>crypt_shared</code></a></h3>
+<p>For purposes of testing, a driver can "disable" <a href="#crypt_shared">crypt_shared</a> searching to ensure that
+<a href="#mongocryptd">mongocryptd</a> is used instead, even if a <a href="#crypt_shared">crypt_shared</a> library would be available.</p>
+<p>As noted in <a href="#path-resolution-behavior">Path Resolution Behavior</a>, <a href="#crypt_shared">crypt_shared</a> can be "disabled" on a
+<code>libmongocrypt_handle</code> by omission:</p>
+<ol>
+<li>Do not specify any <a href="#search-paths">search paths</a>,</li>
+<li>AND do not specify a <a href="#crypt_shared">crypt_shared</a> library <a href="#override-path">override path</a>
+(<a href="#extraoptions.cryptsharedlibpath">extraOptions.cryptSharedLibPath</a>).</li>
+</ol>
+<p>This will have the effect that <a href="#libmongocrypt">libmongocrypt</a> will not attempt to search or load
+<a href="#crypt_shared">crypt_shared</a> during initialization.</p>
+<p>At the current time, no user-facing API is exposed that allows users to opt-out of <a href="#crypt_shared">crypt_shared</a>.</p>
+<h3 id="loading-crypt_shared-multiple-times"><a class="header" href="#loading-crypt_shared-multiple-times">Loading <a href="#crypt_shared">crypt_shared</a> Multiple Times</a></h3>
+<p>Due to implementation restrictions, there must not be more than one <a href="#crypt_shared">crypt_shared</a> dynamic library loaded
+simultaneously in a single operating system process. <code>libmongocrypt</code> will do its best to enforce this at the time that
+it loads <a href="#crypt_shared">crypt_shared</a> while initializing a <code>libmongocrypt_handle</code>. <code>libmongocrypt</code> will keep track of
+the open <a href="#crypt_shared">crypt_shared</a> library globally, and any subsequent attempt to use a
+<a href="#crypt_shared">crypt_shared</a> library that does not exactly match the filepath of the already-loaded
+<a href="#crypt_shared">crypt_shared</a> will result in an error.</p>
+<p>If at least one <code>libmongocrypt_handle</code> exists in an operating system process that has an open handle to a
+<a href="#crypt_shared">crypt_shared</a> library, subsequent attempts to initialize an additional <code>libmongocrypt_handle</code> will fail
+if:</p>
+<ol>
+<li>The new <code>libmongocrypt_handle</code> wants <a href="#crypt_shared">crypt_shared</a> (i.e. at least one <a href="#search-path">search path</a> was
+specified or an <a href="#override-path">override path</a> was specified).</li>
+<li>AND the initialization of that <code>libmongocrypt_handle</code> does not successfully find and load the same
+<a href="#crypt_shared">crypt_shared</a> library that was loaded by the existing <code>libmongocrypt_handle</code> that is already using
+<a href="#crypt_shared">crypt_shared</a>.</li>
+</ol>
+<p>Drivers MUST document this limitation for users along with the documentation on the <code>cryptShared*</code> options in
+<a href="#extraoptions">extraOptions</a> by including the following:</p>
+<blockquote>
+<p>All <code>MongoClient</code> objects in the same process should use the same setting for
+<a href="#extraoptions.cryptsharedlibpath">extraOptions.cryptSharedLibPath</a>, as it is an error to load more that one
+<a href="#crypt_shared">crypt_shared</a> dynamic library simultaneously in a single operating system process.</p>
+</blockquote>
+<p>Once all open handles to a <a href="#crypt_shared">crypt_shared</a> library are closed, it is possible to load a different
+<a href="#crypt_shared">crypt_shared</a> library than was previously loaded. The restriction only applies to simultaneous open
+handles within a single process.</p>
+<h2 id="managing-mongocryptd"><a class="header" href="#managing-mongocryptd">Managing mongocryptd</a></h2>
+<p>If the following conditions are met:</p>
+<ul>
+<li>The user's <code>MongoClient</code> is configured for client-side encryption (i.e. <code>bypassAutoEncryption</code> is not <code>false</code>)</li>
+<li><strong>AND</strong> the user has not disabled <code>mongocryptd</code> spawning (i.e. by setting <code>extraOptions.mongocryptdBypassSpawn</code> to
+<code>true</code>),</li>
+<li><strong>AND</strong> the <a href="#crypt_shared">crypt_shared</a> library is unavailable (Refer:
+<a href="#detecting-crypt_shared-availability">Detecting crypt_shared Availability</a>),</li>
+<li><strong>AND</strong> the <a href="#extraoptions.cryptsharedlibrequired">extraOptions.cryptSharedLibRequired</a> option is <code>false</code>.</li>
+</ul>
+<p><strong>then</strong> <code>mongocryptd</code> MUST be spawned by the driver.</p>
+<p>If the <a href="#extraoptions.cryptsharedlibrequired">extraOptions.cryptSharedLibRequired</a> option is <code>true</code> then the driver MUST
+NOT attempt to spawn or connect to <code>mongocryptd</code>.</p>
+<blockquote>
+<p>[!NOTE]
+Since spawning <a href="#mongocryptd">mongocryptd</a> requires checking whether <a href="#crypt_shared">crypt_shared</a> is loaded, and
+checking whether <a href="#crypt_shared">crypt_shared</a> is available can only be done <em>after</em> having initialized the
+<code>libmongocrypt_handle</code>, drivers will need to defer spawning <a href="#mongocryptd">mongocryptd</a> until <em>after</em> initializing
+<a href="#libmongocrypt">libmongocrypt</a> and checking for <a href="#crypt_shared">crypt_shared</a>.</p>
+</blockquote>
+<h3 id="spawning-mongocryptd"><a class="header" href="#spawning-mongocryptd">Spawning <a href="#mongocryptd">mongocryptd</a></a></h3>
+<p>If a MongoClient is configured for Client Side Encryption (eg. <code>bypassAutoEncryption=false</code>), then by default (unless
+<code>mongocryptdBypassSpawn=true</code>), mongocryptd MUST be spawned by the driver. Spawning MUST include the command line
+argument <code>--idleShutdownTimeoutSecs</code>. If the user does not supply one through <code>extraOptions.mongocryptdSpawnArgs</code> (which
+may be either in the form <code>--idleShutdownTimeoutSecs=60</code> or as two consecutive arguments
+<code>["--idleShutdownTimeoutSecs", 60]</code>, then the driver MUST append <code>--idleShutdownTimeoutSecs=60</code> to the arguments. This
+tells mongocryptd to automatically terminate after 60 seconds of non-use. The stdout and stderr of the spawned process
+MUST not be exposed in the driver (e.g. redirect to <code>/dev/null</code>). Users can pass the argument <code>--logpath</code> to
+<code>extraOptions.mongocryptdSpawnArgs</code> if they need to inspect mongocryptd logs.</p>
+<p>Upon construction, the MongoClient MUST create a MongoClient to mongocryptd configured with
+<code>serverSelectionTimeoutMS=10000</code>.</p>
+<p>If spawning is necessary, the driver MUST spawn mongocryptd whenever server selection on the MongoClient to mongocryptd
+fails. If the MongoClient fails to connect after spawning, the server selection error is propagated to the user.</p>
+<h3 id="connecting-to-mongocryptd"><a class="header" href="#connecting-to-mongocryptd">Connecting to <a href="#mongocryptd">mongocryptd</a></a></h3>
+<p>If the <a href="#crypt_shared">crypt_shared</a> library is loaded, the driver MUST NOT attempt to connect to
+<a href="#mongocryptd">mongocryptd</a>. (Refer: <a href="#detecting-crypt_shared-availability">Detecting crypt_shared Availability</a>).</p>
+<p>Single-threaded drivers MUST connect with
+<a href="../server-selection/server-selection.html#serverselectiontryonce">serverSelectionTryOnce=false</a>,
+<code>connectTimeoutMS=10000</code>, and MUST bypass
+<a href="../server-discovery-and-monitoring/server-monitoring.html#cooldownms">cooldownMS</a> when connecting to mongocryptd. See
+<a href="#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd">Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?</a></p>
+<p>If the ClientEncryption is configured with <code>mongocryptdBypassSpawn=true</code>, then the driver is not responsible for
+spawning mongocryptd. If server selection ever fails when connecting to mongocryptd, the server selection error is
+propagated to the user.</p>
+<blockquote>
+<p>[!NOTE]
+A correctly-behaving driver will never attempt to connect to <a href="#mongocryptd">mongocryptd</a> when
+<a href="#extraoptions.cryptsharedlibrequired">extraOptions.cryptSharedLibRequired</a> is set to <code>true</code> or
+<a href="#crypt_shared">crypt_shared</a> is loaded.</p>
+</blockquote>
+<h2 id="clientencryption-1"><a class="header" href="#clientencryption-1">ClientEncryption</a></h2>
+<p>The new ClientEncryption type interacts uses libmongocrypt to perform ClientEncryption operations. See the
+<a href="https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h">libmongocrypt API documentation</a> for more
+information.</p>
+<p>The ClientEncryption contains a MongoClient connected to the MongoDB cluster containing the key vault collection. It
+does not contain a MongoClient to mongocryptd.</p>
+<p>See
+<a href="#why-does-clientencryption-have-key-management-functions-when-drivers-can-use-existing-crud-operations-instead">Why does ClientEncryption have key management functions when Drivers can use existing CRUD operations instead?</a>.</p>
+<h2 id="key-vault-collection"><a class="header" href="#key-vault-collection">Key Vault collection</a></h2>
+<p>The key vault collection is the specially designated collection containing encrypted data keys. There is no default
+collection (user must specify). The key vault collection is used for automatic and explicit encryption/decryption as
+well as key management functions.</p>
+<p>For key management functions that require creating, updating, or deleting key documents in the key vault collection, the
+corresponding operations MUST be done with write concern majority.</p>
+<p>For encryption/decryption and key management functions that require reading key documents from the key vault collection,
+the corresponding operations MUST be done with read concern majority.</p>
+<p>Some key management functions may require multiple commands to complete their operation. Key management functions
+currently assume there is no concurrent access of the key vault collection being operated on. Concurrent access to a key
+vault collection being operated on may result in unexpected or undefined behavior. Support for concurrent key management
+may be considered for future work.</p>
+<p>See <a href="#support-sessions-in-key-management-functions">Support sessions in key management functions</a>.</p>
+<h2 id="auto-encrypt-and-decrypt"><a class="header" href="#auto-encrypt-and-decrypt">Auto encrypt and decrypt</a></h2>
+<p>An encrypted MongoClient automatically encrypts values for filtering and decrypts results.</p>
+<p>The driver MUST use libmongocrypt to initiate auto encryption and decryption. Create the BSON command meant to be sent
+over the wire, then pass that through the libmongocrypt state machine and use the returned BSON command in its place.
+The state machine is created with the libmongocrypt function <code>mongocrypt_ctx_new</code> and initialized with a
+<code>mongocrypt_ctx_encrypt_init</code> or <code>mongocrypt_ctx_decrypt_init</code>. See the
+<a href="https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h">libmongocrypt API documentation</a> for more
+information.</p>
+<p>An encrypted MongoClient configured with bypassAutoEncryption MUST NOT attempt automatic encryption for any command.</p>
+<p>Otherwise, an encrypted MongoClient MUST attempt to auto encrypt all commands. Note, the underlying implementation may
+determine no encryption is necessary, or bypass many checks if the command is deemed to not possibly contain any
+encrypted data (e.g. ping). See the appendix section:
+<a href="#libmongocrypt-auto-encryption-allow-list">libmongocrypt: Auto Encryption Allow-List</a>.</p>
+<p>An encrypted MongoClient MUST attempt to auto decrypt the results of all commands.</p>
+<p>Drivers MUST raise an error when attempting to auto encrypt a command if the maxWireVersion is less than 8. The error
+message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2".</p>
+<p>Note, all client side features (including all of <code>ClientEncryption</code>) are only supported against 4.2 or higher servers.
+However, errors are only raised for automatic encryption/decryption against older servers. See
+<a href="#why-is-a-42-server-required">Why is a 4.2 server required?</a></p>
+<h2 id="interaction-with-command-monitoring"><a class="header" href="#interaction-with-command-monitoring">Interaction with Command Monitoring</a></h2>
+<p>Unencrypted data MUST NOT appear in the data of any command monitoring events. Encryption MUST occur before generating a
+CommandStartedEvent, and decryption MUST occur after generating a CommandSucceededEvent.</p>
+<h2 id="size-limits-for-write-commands"><a class="header" href="#size-limits-for-write-commands">Size limits for Write Commands</a></h2>
+<p>Automatic encryption requires the driver to serialize write commands as a single BSON document before automatically
+encrypting with libmongocrypt (analogous to constructing <a href="../message/OP_MSG.html#sections">OP_MSG payload type 0</a>, not a
+document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to send.</p>
+<p>Because automatic encryption increases the size of commands, the driver MUST split bulk writes at a reduced size limit
+before undergoing automatic encryption. The write payload MUST be split at 2MiB (2097152). Where batch splitting occurs
+relative to automatic encryption is implementation-dependent.</p>
+<p>Drivers MUST not reduce the size limits for a single write before automatic encryption. I.e. if a single document has
+size larger than 2MiB (but less than <code>maxBsonObjectSize</code>) proceed with automatic encryption.</p>
+<p>Drivers MUST document the performance limitation of enabling client side encryption by including the following
+documentation in MongoClient:</p>
+<blockquote>
+<p>Enabling Client Side Encryption reduces the maximum write batch size and may have a negative performance impact.</p>
+</blockquote>
+<h2 id="appendix"><a class="header" href="#appendix">Appendix</a></h2>
+<h3 id="appendix-terms"><a class="header" href="#appendix-terms">Appendix terms</a></h3>
+<p><strong>intent-to-encrypt marking</strong></p>
+<p>One of the data formats of BSON binary subtype 6, representing an encoded BSON document containing plaintext and
+metadata.</p>
+<h3 id="key-vault-collection-schema-for-data-keys"><a class="header" href="#key-vault-collection-schema-for-data-keys">Key vault collection schema for data keys</a></h3>
+<p>Data keys are stored in the MongoDB key vault collection with the following schema:</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Description</strong></td></tr>
+<tr><td>_id</td><td>UUID</td><td>A unique identifier for the key.</td></tr>
+<tr><td>version</td><td>Int64</td><td>A numeric identifier for the schema version of this document. Implicitly 0 if unset.</td></tr>
+<tr><td>keyAltNames</td><td>Array of strings</td><td>Alternate names to search for keys by. Used for a per-document key scenario in support of GDPR scenarios.</td></tr>
+<tr><td>keyMaterial</td><td>BinData</td><td>Encrypted data key material, BinData type General</td></tr>
+<tr><td>creationDate</td><td>Date</td><td>The datetime the wrapped data key material was imported into the Key Database.</td></tr>
+<tr><td>updateDate</td><td>Date</td><td>The datetime the wrapped data key material was last modified. On initial import, this value will be set to creationDate.</td></tr>
+<tr><td>status</td><td>Int</td><td>0 = enabled, 1 = disabled</td></tr>
+<tr><td>masterKey</td><td>Document</td><td>Per provider master key definition, see below</td></tr>
+</tbody></table>
+</div>
+<h4 id="masterkey-contents"><a class="header" href="#masterkey-contents">masterKey contents</a></h4>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Description</strong></td></tr>
+<tr><td>provider</td><td>"aws"</td><td></td></tr>
+<tr><td>key</td><td>String</td><td>AWS ARN. Only applicable for "aws" provider.</td></tr>
+<tr><td>region</td><td>String</td><td>AWS Region that contains AWS ARN. Only applicable for "aws" provider.</td></tr>
+<tr><td>endpoint</td><td>String</td><td>Alternate AWS endpoint (needed for FIPS endpoints)</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Description</strong></td></tr>
+<tr><td>provider</td><td>"azure"</td><td></td></tr>
+<tr><td>keyVaultEndpoint</td><td>String</td><td>Required key vault endpoint. (e.g. "example.vault.azure.net")</td></tr>
+<tr><td>keyName</td><td>String</td><td>Required key name.</td></tr>
+<tr><td>keyVersion</td><td>String</td><td>Optional key version.</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Description</strong></td></tr>
+<tr><td>provider</td><td>"gcp"</td><td></td></tr>
+<tr><td>projectId</td><td>String</td><td>Required project ID.</td></tr>
+<tr><td>location</td><td>String</td><td>Required location name (e.g. "global")</td></tr>
+<tr><td>keyRing</td><td>String</td><td>Required key ring name.</td></tr>
+<tr><td>keyName</td><td>String</td><td>Required key name.</td></tr>
+<tr><td>keyVersion</td><td>String</td><td>Optional key version.</td></tr>
+<tr><td>endpoint</td><td>String</td><td>Optional, KMS URL, defaults to <a href="https://cloudkms.googleapis.com">https://cloudkms.googleapis.com</a></td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Description</strong></td></tr>
+<tr><td>provider</td><td>"local"</td><td></td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>Name</strong></td><td><strong>Type</strong></td><td><strong>Description</strong></td></tr>
+<tr><td>provider</td><td>"kmip"</td><td></td></tr>
+<tr><td>endpoint</td><td>String</td><td>Optional. Defaults to kmip.endpoint from KMS providers.</td></tr>
+<tr><td>delegated</td><td>Boolean</td><td>Optional. Defaults to false.</td></tr>
+<tr><td>keyId</td><td>String</td><td>Required. keyId is the Unique Identifier to a 96 byte KMIP Secret Data managed object.</td></tr>
+</tbody></table>
+</div>
+<p>Data keys are needed for encryption and decryption. They are identified in the intent-to-encrypt marking and ciphertext.
+Data keys may be retrieved by querying the "_id" with a UUID or by querying the "keyAltName" with a string.</p>
+<p>Note, "status" is unused and is purely informational.</p>
+<h4 id="example-data-key-document"><a class="header" href="#example-data-key-document">Example data key document</a></h4>
+<pre><code>{
+   "_id" : UUID("00000000-0000-0000-0000-000000000000"),
+   "status" : 1,
+   "masterKey" : {
+      "provider" : "aws",
+      "key" : "arn:aws...",
+      "region" : "us-east-1"
+   },
+   "updateDate" : ISODate("2019-03-18T22:53:50.483Z"),
+   "keyMaterial" : BinData(0,"AQICAH..."),
+   "creationDate" : ISODate("2019-03-18T22:53:50.483Z"),
+   "keyAltNames" : [
+      "altname",
+      "another_altname"
+   ]
+}
+</code></pre>
+<h3 id="bson-binary-subtype-6"><a class="header" href="#bson-binary-subtype-6">BSON binary subtype 6</a></h3>
+<p>BSON Binary Subtype 6 has a one byte leading identifier. The following is a quick reference.</p>
+<pre><code class="language-typescript">struct {
+   uint8 subtype;
+   [more data - see individual type definitions]
+}
+</code></pre>
+<h4 id="type-0-intent-to-encrypt-marking"><a class="header" href="#type-0-intent-to-encrypt-marking">Type 0: Intent-to-encrypt marking</a></h4>
+<pre><code class="language-typescript">struct {
+   uint8 subtype = 0;
+   [ bson ];
+}
+</code></pre>
+<h4 id="types-1-and-2-ciphertext"><a class="header" href="#types-1-and-2-ciphertext">Types 1 and 2: Ciphertext</a></h4>
+<pre><code class="language-typescript">struct {
+   uint8 subtype = (1 or 2);
+   uint8 key_uuid[16];
+   uint8 original_bson_type;
+   uint32 ciphertext_length;
+   uint8 ciphertext[ciphertext_length];
+}
+</code></pre>
+<p>See <a href="../bson-binary-encrypted/binary-encrypted.html">Driver Spec: BSON Binary Encrypted</a> for more information.</p>
+<h3 id="jsonschema-encrypt"><a class="header" href="#jsonschema-encrypt">JSONSchema "encrypt"</a></h3>
+<p>The additional support for encryption in JSONSchema will be documented in the MongoDB manual. But the following is an
+example:</p>
+<pre><code class="language-typescript">encrypt : {
+   bsonType: "int"
+   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+   keyId: [UUID(...)]
+}
+</code></pre>
+<p>Each field is briefly described as follows:</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td>bsonType</td><td>string</td><td>The bsonType of the underlying encrypted field.</td></tr>
+<tr><td>algorithm</td><td>string</td><td>"AEAD_AES_256_CBC_HMAC_SHA_512-Random" or <br>"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"</td></tr>
+<tr><td>keyId</td><td>string or array of UUID</td><td>If string, it is a JSON pointer to a field with a scalar value <br>identifying a key by keyAltName.<br>If array, an array of eligible keys.</td></tr>
+</tbody></table>
+</div>
+<h3 id="libmongocrypt-prohibitions-and-warnings"><a class="header" href="#libmongocrypt-prohibitions-and-warnings">libmongocrypt: Prohibitions and warnings</a></h3>
+<p>libmongocrypt MUST validate options. The following noteworthy cases are prohibited:</p>
+<ul>
+<li>Explicit encryption using the deterministic algorithm on any of the following types:
+<ul>
+<li>array</li>
+<li>document</li>
+<li>code with scope</li>
+<li>single value types: undefined, MinKey, MaxKey, Null</li>
+<li>decimal128</li>
+<li>double</li>
+<li>bool</li>
+</ul>
+</li>
+<li>Explicit encryption on a BSON binary subtype 6.</li>
+</ul>
+<p>The following cases MUST warn:</p>
+<ul>
+<li>A local schema that does not include encrypted fields.</li>
+</ul>
+<h3 id="libmongocrypt-collection-info-caching"><a class="header" href="#libmongocrypt-collection-info-caching">libmongocrypt: Collection info caching</a></h3>
+<p>libmongocrypt will cache the collection infos so encryption with remote schemas need not run listCollections every time.
+Collection infos (or lack thereof) are cached for one minute. This is not configurable. After expiration, subsequent
+attempts to encrypt will result in libmongocrypt requesting a new collection info.</p>
+<p>A collection info result indicates if the collection is really a view. If it is, libmongocrypt returns an error since it
+does not know the schema of the underlying collection.</p>
+<p>A collection info with validators that aside from one top level <code>$jsonSchema</code> are considered an error.</p>
+<h3 id="libmongocrypt-data-key-caching"><a class="header" href="#libmongocrypt-data-key-caching">libmongocrypt: Data key caching</a></h3>
+<p>Data keys are cached in libmongocrypt for one minute. This is not configurable, and there is no maximum number of keys
+in the cache. The data key material is stored securely. It will not be paged to disk and the memory will be properly
+zero'ed out after freeing.</p>
+<h3 id="libmongocrypt-crypto-implementation"><a class="header" href="#libmongocrypt-crypto-implementation">libmongocrypt: Crypto implementation</a></h3>
+<p>libmongocrypt uses AEAD_SHA256_CBC_HMAC512 for both "randomized" and "deterministic" encryption algorithms. It is
+described in this <a href="https://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-05">IETF document draft</a>. For
+"randomized", libmongocrypt securely creates a random IV. For "deterministic", libmongocrypt securely creates a random
+IV key and any given encryption operation will derive the IV from the IV key and the field plaintext data.</p>
+<h3 id="libmongocrypt-auto-encryption-allow-list"><a class="header" href="#libmongocrypt-auto-encryption-allow-list">libmongocrypt: Auto Encryption Allow-List</a></h3>
+<p>libmongocrypt determines whether or not the command requires encryption (i.e. is sent to mongocryptd) based on the table
+below. Commands not listed in this table will result in an error returned by libmongocrypt.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td><strong>Command</strong></td><td><strong>Action</strong></td></tr>
+<tr><td>aggregate (collection)</td><td>AUTOENCRYPT</td></tr>
+<tr><td>count</td><td>AUTOENCRYPT</td></tr>
+<tr><td>distinct</td><td>AUTOENCRYPT</td></tr>
+<tr><td>delete</td><td>AUTOENCRYPT</td></tr>
+<tr><td>find</td><td>AUTOENCRYPT</td></tr>
+<tr><td>findAndModify</td><td>AUTOENCRYPT</td></tr>
+<tr><td>getMore</td><td>BYPASS</td></tr>
+<tr><td>insert</td><td>AUTOENCRYPT</td></tr>
+<tr><td>update</td><td>AUTOENCRYPT</td></tr>
+<tr><td>authenticate</td><td>BYPASS</td></tr>
+<tr><td>getnonce</td><td>BYPASS</td></tr>
+<tr><td>logout</td><td>BYPASS</td></tr>
+<tr><td>hello</td><td>BYPASS</td></tr>
+<tr><td>legacy hello</td><td>BYPASS</td></tr>
+<tr><td>abortTransaction</td><td>BYPASS</td></tr>
+<tr><td>commitTransaction</td><td>BYPASS</td></tr>
+<tr><td>endSessions</td><td>BYPASS</td></tr>
+<tr><td>startSession</td><td>BYPASS</td></tr>
+<tr><td>create</td><td>BYPASS</td></tr>
+<tr><td>createIndexes</td><td>BYPASS</td></tr>
+<tr><td>createSearchIndexes</td><td>BYPASS</td></tr>
+<tr><td>drop</td><td>BYPASS</td></tr>
+<tr><td>dropDatabase</td><td>BYPASS</td></tr>
+<tr><td>dropIndexes</td><td>BYPASS</td></tr>
+<tr><td>dropSearchIndex</td><td>BYPASS</td></tr>
+<tr><td>killCursors</td><td>BYPASS</td></tr>
+<tr><td>listCollections</td><td>BYPASS</td></tr>
+<tr><td>listDatabases</td><td>BYPASS</td></tr>
+<tr><td>listIndexes</td><td>BYPASS</td></tr>
+<tr><td>renameCollection</td><td>BYPASS</td></tr>
+<tr><td>explain</td><td>AUTOENCRYPT</td></tr>
+<tr><td>ping</td><td>BYPASS</td></tr>
+<tr><td>killAllSessions</td><td>BYPASS</td></tr>
+<tr><td>killSessions</td><td>BYPASS</td></tr>
+<tr><td>killAllSessionsByPattern</td><td>BYPASS</td></tr>
+<tr><td>refreshSessions</td><td>BYPASS</td></tr>
+<tr><td>updateSearchIndex</td><td>BYPASS</td></tr>
+</tbody></table>
+</div>
+<p>All AUTOENCRYPT commands are sent to mongocryptd, even if there is no JSONSchema. This is to ensure that commands that
+reference other collections (e.g. aggregate with <code>$lookup</code>) are handled properly.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>See the <a href="tests/README.html">README.md</a> in the test directory.</p>
+<h2 id="rationale"><a class="header" href="#rationale">Rationale</a></h2>
+<h3 id="design-principles"><a class="header" href="#design-principles">Design Principles</a></h3>
+<p>In addition to the <a href="https://github.com/mongodb/specifications#driver-mantras">Driver Mantras</a> there are design
+principles specific to this project.</p>
+<h3 id="1-make-encryption-easy-to-enable"><a class="header" href="#1-make-encryption-easy-to-enable">1. Make encryption easy to enable</a></h3>
+<p>Users should be able to enable encryption with minimal application change.</p>
+<h3 id="2-minimize-risk-of-exposing-sensitive-data"><a class="header" href="#2-minimize-risk-of-exposing-sensitive-data">2. Minimize risk of exposing sensitive data</a></h3>
+<p>Storing or querying with unencrypted data can have dire consequences, because users may not be made aware immediately.
+When in doubt, we should error. It should be clear to the user when an operation gets encrypted and when one doesn't.</p>
+<h3 id="3-minimize-api"><a class="header" href="#3-minimize-api">3. Minimize API</a></h3>
+<p>The first version of Client Side Encryption is to get signal. If it becomes popular, further improvements will be made
+(removing mongocryptd process, support for more queries, better performance). But the public API we provide now will
+stick around for the long-term. So let's keep it minimal to accomplish our goals.</p>
+<h3 id="how-did-we-arrive-at-this-api"><a class="header" href="#how-did-we-arrive-at-this-api">How did we arrive at this API?</a></h3>
+<p>The API for client side encryption underwent multiple iterations during the design process.</p>
+<h4 id="why-is-client-side-encryption-configured-on-a-mongoclient"><a class="header" href="#why-is-client-side-encryption-configured-on-a-mongoclient">Why is client side encryption configured on a MongoClient?</a></h4>
+<p>There is state that must be shared among all auto encrypted collections: the MongoClient to mongocryptd and the handle
+to libmongocrypt (because key caching + JSONSchema caching occurs in libmongocrypt).</p>
+<h4 id="why-not-make-auto-encryption-opt-in"><a class="header" href="#why-not-make-auto-encryption-opt-in">Why not make auto encryption "opt-in"?</a></h4>
+<p>Because auto encryption is specified with a collection JSONSchema, we cannot auto encrypt database or client operations.
+So we cannot know if the user is passing sensitive data as a filter to a database/client change stream or a currentOp
+command for example. We also must always fail on view operations. We considered making auto encryption opt-in for
+collections. But we decided against this. It is much simpler for users to enable auto encryption without enumerating all
+collections with encryption in the common case of using remote JSONSchemas.</p>
+<p>Note, this takes the trade-off of a better user experience over less safety. If a user mistakenly assumes that auto
+encryption occurs on a database, or on a collection doing a <code>$(graph)lookup</code> on a collection with auto encryption, they
+may end up sending unencrypted data.</p>
+<h4 id="why-are-auto-encrypted-collections-configured-at-level-of-mongoclient"><a class="header" href="#why-are-auto-encrypted-collections-configured-at-level-of-mongoclient">Why are auto encrypted collections configured at level of MongoClient?</a></h4>
+<p>In a previous iteration of the design, we proposed enabling auto encryption only in db.getCollection() for better
+usability. But this better aligns with our design principles.</p>
+<ul>
+<li>Safer. Users won't forget to enable auto encryption on one call to db.getCollection()</li>
+<li>Easier. It only requires changing MongoClient code instead of every db.getCollection()</li>
+</ul>
+<h4 id="why-do-we-have-a-separate-top-level-type-for-clientencryption"><a class="header" href="#why-do-we-have-a-separate-top-level-type-for-clientencryption">Why do we have a separate top level type for ClientEncryption?</a></h4>
+<p>The encrypt/decrypt and createDataKey functions were originally placed on MongoClient. But, then we'd have API that
+depends on optional configuration. A new top level type seemed warranted.</p>
+<h4 id="why-not-pass-the-clientencryption-into-dbgetcollection-to-enable-auto-encryption"><a class="header" href="#why-not-pass-the-clientencryption-into-dbgetcollection-to-enable-auto-encryption">Why not pass the ClientEncryption into db.getCollection() to enable auto encryption?</a></h4>
+<p>As it is now, a ClientEncryption and a MongoClient cannot share state (libmongocrypt handle or MongoClient to
+mongocryptd). Foreseeably, they could share state if auto encryption was enabled by passing a ClientEncryption object
+like:</p>
+<pre><code class="language-javascript">db.getCollection("coll", { autoEncrypt: { clientEncryption: clientEncryption } })
+</code></pre>
+<p>But this would require a MongoCollection to peek into the internals of a ClientEncryption object. This is messy and
+language dependent to implement and makes mocking out the ClientEncryption difficult for tests.</p>
+<h4 id="why-do-we-need-to-pass-a-client-to-create-a-clientencryption"><a class="header" href="#why-do-we-need-to-pass-a-client-to-create-a-clientencryption">Why do we need to pass a client to create a ClientEncryption?</a></h4>
+<p>We need to support an external key vault collection (i.e. on another MongoDB cluster).</p>
+<h4 id="why-are-extraoptions-and-kmsproviders-maps"><a class="header" href="#why-are-extraoptions-and-kmsproviders-maps">Why are extraOptions and kmsProviders maps?</a></h4>
+<p>Because we don't want AWS as part of the public types and we don't want to put <a href="#mongocryptd">mongocryptd</a> and
+<a href="#crypt_shared">crypt_shared</a> options as types since mongocryptd is an implementation detail we'd like to hide as much
+as possible.</p>
+<h4 id="why-is-there-a-bypassautoencryption"><a class="header" href="#why-is-there-a-bypassautoencryption">Why is there a bypassAutoEncryption?</a></h4>
+<p>bypassAutoEncryption still supports auto decryption. In cases where <a href="#mongocryptd">mongocryptd</a> or
+<a href="#crypt_shared">crypt_shared</a> cannot analyze a query, it's still useful to provide auto decryption. Just like static
+program analysis cannot always prove that a runtime invariant holds,
+<a href="#mongocryptd">mongocryptd</a>/<a href="#crypt_shared">crypt_shared</a> cannot always prove that a query will be safe with respect to
+encryption at runtime.</p>
+<h3 id="why-not-require-compatibility-between-mongocryptd-and-the-server"><a class="header" href="#why-not-require-compatibility-between-mongocryptd-and-the-server">Why not require compatibility between mongocryptd and the server?</a></h3>
+<p>It isn't necessary or unsafe if mongocryptd parses an old version of MQL. Consider what happens when we add a new
+operator, <code>$newOperator</code>. If it properly encrypts a value in the <code>$newOperator</code> expression and sends it to an old server
+that doesn't have <code>$newOperator</code>, that's a mistake but not a security hole. Also if the app passes a query with
+<code>$newOperator</code> to mongocryptd, and mongocryptd doesn't know about <code>$newOperator</code>, then it will error,
+<code>"Unrecognized operator $newOperator"</code> or something. Also a mistake, not a security hole.</p>
+<p>So long as mongocryptd errors on unrecognized expressions, we don't need version compatibility between the mongocryptd
+and server for the sake of security.</p>
+<h3 id="why-cache-keys"><a class="header" href="#why-cache-keys">Why cache keys?</a></h3>
+<p>We can't re-fetch the key on each operation, the performance goal for this project requires us to cache. We do need a
+revocation mechanism, based upon periodic checking from the client. Initially this window will not be configurable.</p>
+<h3 id="why-require-including-a-c-library"><a class="header" href="#why-require-including-a-c-library">Why require including a C library?</a></h3>
+<ul>
+<li>libmongocrypt deduplicates a lot of the work: JSONSchema cache, KMS message construction/parsing, key caching, and
+encryption/decryption.</li>
+<li>Our "best-effort" of storing decrypted key material securely is best accomplished with a C library.</li>
+<li>Having crypto done in one centralized C library makes it much easier to audit the crypto code.</li>
+</ul>
+<h3 id="why-warn-if-a-local-schema-does-not-have-encrypted-fields"><a class="header" href="#why-warn-if-a-local-schema-does-not-have-encrypted-fields">Why warn if a local schema does not have encrypted fields?</a></h3>
+<p>Because that is the only use of local schemas. No other JSONSchema validators have any function. It's likely the user
+misconfigured encryption.</p>
+<h3 id="why-limit-to-one-top-level-jsonschema"><a class="header" href="#why-limit-to-one-top-level-jsonschema">Why limit to one top-level <code>$jsonSchema</code>?</a></h3>
+<ul>
+<li>If we allow siblings, we can run into cases where the user specifies a top-level <code>$and/$or</code> or any arbitrary
+match-expression that could have nested <code>$jsonSchema</code>'s.</li>
+<li>Furthermore, the initial versions of <a href="#mongocryptd">mongocryptd</a> and <a href="#crypt_shared">crypt_shared</a> are only
+implementing query analysis when the validator consists of a single <code>$jsonSchema</code> predicate. This helps to simplify
+the <a href="#mongocryptd">mongocryptd</a> and <a href="#crypt_shared">crypt_shared</a> logic, and unifies it with the case where users
+configure their schemas directly in the driver.</li>
+</ul>
+<h3 id="why-not-allow-schemas-to-be-configured-at-runtime"><a class="header" href="#why-not-allow-schemas-to-be-configured-at-runtime">Why not allow schemas to be configured at runtime?</a></h3>
+<p>We could have something like Collection::setEncryptionSchema(), but users can simply recreate the client to set new
+local schemas.</p>
+<h3 id="why-not-support-other-aws-auth-mechanisms"><a class="header" href="#why-not-support-other-aws-auth-mechanisms">Why not support other AWS auth mechanisms?</a></h3>
+<p>We could potentially authenticate against AWS in a more sophisticated way, like read credentials from ~/.aws/credentials
+or assuming a role with EC2 instance metadata. But we've decided to implement the simplest authentication mechanism for
+v1, and defer more sophisticated ones as future work.</p>
+<h3 id="why-not-pass-a-uri-for-external-key-vault-collections-instead-of-a-mongoclient"><a class="header" href="#why-not-pass-a-uri-for-external-key-vault-collections-instead-of-a-mongoclient">Why not pass a URI for external key vault collections instead of a MongoClient?</a></h3>
+<p>Some configuration on a MongoClient can only be done programmatically. E.g. in Java TLS configuration can only be done
+at runtime since it is abstracted in an SSLContext which cannot be accessed or altered by the driver.</p>
+<h3 id="what-happened-to-multiple-key-vault-collections"><a class="header" href="#what-happened-to-multiple-key-vault-collections">What happened to multiple key vault collections?</a></h3>
+<p>An earlier revision of this specification supported multiple active key vaults with the notion of a "key vault
+collection alias". The key vault collection alias identified one of possibly many key vault collections that stored the
+key to decrypt the ciphertext. However, enforcing one key vault collection is a reasonable restriction for users. There
+isn't clear value in having multiple key vault collections. And having active multiple key vault collections is not
+necessary to migrate key vault collections.</p>
+<h3 id="why-auto-encrypt-a-command-instead-of-a-wire-protocol-message"><a class="header" href="#why-auto-encrypt-a-command-instead-of-a-wire-protocol-message">Why auto encrypt a command instead of a wire protocol message?</a></h3>
+<ul>
+<li>It is significantly easier to implement communication in drivers if libmongocrypt gives back BSON object that can be
+passed to run command.</li>
+<li>mongocryptd cannot return document sequences, so it will return an array of documents anyway.</li>
+<li>Though it is foreseeable that a driver can take the final result of encryption and turn it into an OP_MSG document
+sequence, it does not seem worthwhile to impose extra complexity in this case.</li>
+</ul>
+<h3 id="why-is-a-failure-to-decrypt-always-an-error"><a class="header" href="#why-is-a-failure-to-decrypt-always-an-error">Why is a failure to decrypt always an error?</a></h3>
+<p>In the original design we proposed <em>not</em> to error if decryption failed due to a missing key. But, it's not clear this is
+a needed functionality, it goes against our principle of "Minimize API", and there's a simple recourse for users: bypass
+mongocryptd and explicitly decrypt instead.</p>
+<h3 id="why-are-there-no-apm-events-for-mongocryptd"><a class="header" href="#why-are-there-no-apm-events-for-mongocryptd">Why are there no APM events for mongocryptd?</a></h3>
+<p>Though it may be helpful for debugging to expose APM events for mongocryptd, mongocryptd is an implementation detail
+we'd like to have the freedom to remove in the future. So we want to expose mongocryptd as little as possible.</p>
+<h3 id="why-arent-we-creating-a-unique-index-in-the-key-vault-collection"><a class="header" href="#why-arent-we-creating-a-unique-index-in-the-key-vault-collection">Why aren't we creating a unique index in the key vault collection?</a></h3>
+<p>There should be a unique index on the <code>keyAltNames</code> field with a partial index filter for only documents where
+<code>keyAltNames</code> exists. Although GridFS automatically creates indexes as a convenience upon first write, it has been
+problematic before due to requiring the <code>createIndex</code> privilege, which a user might not have if they are just querying
+the key vault collection with find and adding keys with insert.</p>
+<p>See also <a href="https://www.mongodb.com/docs/manual/reference/privilege-actions/#mongodb-authaction-createIndex">https://www.mongodb.com/docs/manual/reference/privilege-actions/#mongodb-authaction-createIndex</a>.</p>
+<h3 id="why-do-operations-on-views-fail"><a class="header" href="#why-do-operations-on-views-fail">Why do operations on views fail?</a></h3>
+<p>Currently, the driver does not resolve the entire view pipeline, which would be necessary to know the schema of the
+underlying collection. But, the driver does know whether or not a namespace is a view based on the response to
+listCollections. And the driver will run listCollections on all namespaces omitted from the schemaMap.</p>
+<h3 id="why-is-a-42-server-required"><a class="header" href="#why-is-a-42-server-required">Why is a 4.2 server required?</a></h3>
+<p>Limiting to 4.2 reduces testing complexity. Additionally The <code>encrypt</code> subdocument in JSON schema is only supported on
+4.2 or higher servers. Although not technically necessary for client side encryption, it does provide a fallback against
+accidentally sending unencrypted data from misconfigured clients.</p>
+<h3 id="why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd"><a class="header" href="#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd">Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?</a></h3>
+<p>By default, single threaded clients set serverSelectionTryOnce to true, which means server selection fails if a topology
+scan fails the first time (i.e. it will not make repeat attempts until serverSelectionTimeoutMS expires). This behavior
+is overridden since there may be a small delay between spawning mongocryptd (which the driver may be responsible for)
+and for mongocryptd to listen on sockets. See the Server Selection spec description of
+<a href="../server-selection/server-selection.html#serverselectiontryonce">serverSelectionTryOnce</a>.</p>
+<p>Similarly, single threaded clients will by default wait for 5 second cooldown period after failing to connect to a
+server before making another attempt. Meaning if the first attempt to mongocryptd fails to connect, then the user would
+observe a 5 second delay. This is not configurable in the URI, so this must be overridden internally. Since mongocryptd
+is a local process, there should only be a very short delay after spawning mongocryptd for it to start listening on
+sockets. See the SDAM spec description of
+<a href="../server-discovery-and-monitoring/server-monitoring.html#cooldownms">cooldownMS</a>.</p>
+<p>Because single threaded drivers may exceed <code>serverSelectionTimeoutMS</code> by the duration of the topology scan,
+<code>connectTimeoutMS</code> is also reduced.</p>
+<h3 id="whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client"><a class="header" href="#whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client">What's the deal with metadataClient, keyVaultClient, and the internal client?</a></h3>
+<p>When automatically encrypting a command, the driver runs:</p>
+<ul>
+<li>a <code>listCollections</code> command to determine if the target collection has a remote schema. This uses the <code>metadataClient</code>.</li>
+<li>a <code>find</code> against the key vault collection to fetch keys. This uses the <code>keyVaultClient</code>.</li>
+</ul>
+<h4 id="why-not-reuse-the-parent-mongoclient-when-maxpoolsize-is-limited"><a class="header" href="#why-not-reuse-the-parent-mongoclient-when-maxpoolsize-is-limited">Why not reuse the parent MongoClient when maxPoolSize is limited?</a></h4>
+<p>These operations MUST NOT reuse the same connection pool as the parent <code>MongoClient</code> configured with automatic
+encryption to avoid possible deadlock situations.</p>
+<p>Drivers supporting a connection pool (see
+<a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html">CMAP specification</a>) support an option for
+limiting the connection pool size: <code>maxPoolSize</code>.</p>
+<p>Drivers need to check out a connection before serializing the command. If the <code>listCollections</code> or <code>find</code> command during
+automatic encryption uses the same connection pool as the parent MongoClient, the application is susceptible to
+deadlocks.</p>
+<p>Using the same connection pool causes automatic encryption to check out multiple connections from the pool when
+processing a single command. If maxPoolSize=1, this is an immediate deadlock. If maxPoolSize=2, and two threads check
+out the first connection, they will deadlock attempting to check out the second.</p>
+<h4 id="why-is-keyvaultclient-an-exposed-option-but-metadataclient-private"><a class="header" href="#why-is-keyvaultclient-an-exposed-option-but-metadataclient-private">Why is keyVaultClient an exposed option, but metadataClient private?</a></h4>
+<p>The <code>keyVaultClient</code> supports the use case where the key vault collection is stored on a MongoDB cluster separate from
+the data-bearing cluster.</p>
+<p>The <code>metadataClient</code> is only used for <code>listCollections</code> against the data-bearing cluster.</p>
+<p><code>listCollections</code> responses are cached by libmongocrypt for one minute.</p>
+<p>The use pattern of the <code>metadataClient</code> will likely greatly differ from the parent <code>MongoClient</code>. So it is configured
+with <code>minPoolSize=0</code>.</p>
+<p>The <code>metadataClient</code> is not an exposed option because a user could misconfigure it to point to another MongoDB cluster,
+which could be a security risk.</p>
+<h4 id="why-is-the-metadataclient-not-needed-if-bypassautoencryptiontrue"><a class="header" href="#why-is-the-metadataclient-not-needed-if-bypassautoencryptiontrue">Why is the metadataClient not needed if bypassAutoEncryption=true</a></h4>
+<p>JSON schema data is only needed for automatic encryption but not for automatic decryption. <code>listCollections</code> is not run
+when <code>bypassAutoEncryption</code> is <code>true</code>, making a metadataClient unnecessary.</p>
+<h3 id="why-are-commands-sent-to-mongocryptd-on-collections-without-encrypted-fields"><a class="header" href="#why-are-commands-sent-to-mongocryptd-on-collections-without-encrypted-fields">Why are commands sent to mongocryptd on collections without encrypted fields?</a></h3>
+<p>If a <code>MongoClient</code> is configured with automatic encryption, all commands on collections listed as <code>AUTOENCRYPT</code> in
+<a href="#libmongocrypt-auto-encryption-allow-list">libmongocrypt: Auto Encryption Allow-List</a> undergo the automatic encryption
+process. Even if the collection does not have an associated schema, the command is sent to mongocryptd as a safeguard. A
+collection may not have encrypted fields, but a command on the collection may could have sensitive data as part of the
+command arguments. For example:</p>
+<pre><code class="language-javascript">db.publicData.aggregate([
+   {$lookup: {from: "privateData", localField: "_id", foreignField: "_id", as: "privateData"}},
+   {$match: {"privateData.ssn": "123-45-6789"}},
+])
+</code></pre>
+<p>The <code>publicData</code> collection does not have encrypted fields, but the <code>privateData</code> collection does. mongocryptd rejects
+an aggregate with <code>$lookup</code> since there is no mechanism to determine encrypted fields of joined collections.</p>
+<h3 id="why-do-kms-providers-require-tls-options"><a class="header" href="#why-do-kms-providers-require-tls-options">Why do KMS providers require TLS options?</a></h3>
+<p>Drivers authenticate to KMIP servers with the client certificate presented in TLS connections.</p>
+<p>This specification assumes that TLS connections to KMIP servers may require different TLS options than TLS connections
+to MongoDB servers.</p>
+<p>KMIP support in the MongoDB server is a precedent. The server supports <code>--kmipServerCAFile</code> and
+<code>--kmipClientCertificateFile</code> to configure the encrypted storage engine KMIP. See
+<a href="https://www.mongodb.com/docs/manual/tutorial/configure-encryption/">https://www.mongodb.com/docs/manual/tutorial/configure-encryption/</a>.</p>
+<p>TLS options may be useful for the AWS, Azure, and GCP KMS providers in a case where the default trust store does not
+include the needed CA certificates.</p>
+<h3 id="why-is-it-an-error-to-have-an-fle-1-and-queryable-encryption-field-in-the-same-collection"><a class="header" href="#why-is-it-an-error-to-have-an-fle-1-and-queryable-encryption-field-in-the-same-collection">Why is it an error to have an FLE 1 and Queryable Encryption field in the same collection?</a></h3>
+<p>There is no technical limitation to having a separate FLE field and Queryable Encryption field in the same collection.
+Prohibiting FLE and Queryable Encryption in the same collection reduces complexity. From the product perspective, a
+random FLE field and a non-queryable Queryable Encryption field have the same behavior and similar security guarantees.
+A deterministic FLE field leaks more information then a deterministic Queryable Encryption field. There is not a
+compelling use case to use both FLE and Queryable Encryption in the same collection.</p>
+<h3 id="is-it-an-error-to-set-schemamap-and-encryptedfieldsmap"><a class="header" href="#is-it-an-error-to-set-schemamap-and-encryptedfieldsmap">Is it an error to set schemaMap and encryptedFieldsMap?</a></h3>
+<p>No. FLE and Queryable Encryption fields can coexist in different collections. The same collection cannot be in the
+<code>encryptedFieldsMap</code> and <code>schemaMap</code>. <a href="#libmongocrypt">libmongocrypt</a> will error if the same collection is specified in
+a <code>schemaMap</code> and <code>encryptedFieldsMap</code>.</p>
+<h3 id="why-is-bypassqueryanalysis-needed"><a class="header" href="#why-is-bypassqueryanalysis-needed">Why is bypassQueryAnalysis needed?</a></h3>
+<p>Commands containing payloads for encrypted indexed fields require a top-level "encryptionInformation" field for the
+server processing. <code>bypassQueryAnalysis</code> enables the use case of Explicit Encryption without the MongoDB Enterprise
+Advanced licensed <a href="#crypt_shared">crypt_shared</a> library or mongocryptd process.</p>
+<p>Here is an example:</p>
+<pre><code class="language-go">// No MongoDB Enterprise Advanced licensed 'crypt_shared' shared library.
+aeo := options.AutoEncryption().
+   SetKeyVaultNamespace("keyvault.datakeys").
+   SetEncryptedFieldsMap(efcMap).
+   SetKmsProviders(kmsProviders).
+   SetBypassQueryAnalysis(true)
+
+co := options.Client().
+   ApplyURI(uri).
+   SetAutoEncryptionOptions(aeo)
+
+encryptedClient, err := mongo.Connect(ctx, co)
+defer encryptedClient.Disconnect(ctx)
+if err != nil {
+   log.Fatalf("error in Connect: %v", err)
+}
+
+coll := encryptedClient.Database("foo").Collection("bar")
+// Explicit Encrypt an Queryable Encryption Indexed Field.
+eo := options.Encrypt().
+   SetEncryptIndexType(options.EncryptIndexEquality)
+ciphertext, err := ce.Encrypt(ctx, val, eo)
+// In InsertOne, libmongocrypt appends "encryptionInformation" to the insert command.
+_, err = coll.InsertOne(ctx, bson.D{{"encryptedIndexed", ciphertext}})
+if err != nil {
+   log.Fatalf("error in InsertOne: %v", err)
+}
+</code></pre>
+<p>A rejected alternative to adding <code>bypassQueryAnalysis</code> is to change the behavior of <code>bypassAutoEncryption</code>.
+<code>bypassQueryAnalysis</code> is distinct from <code>bypassAutoEncryption</code>. <code>bypassAutoEncryption</code> bypasses all of libmongocrypt for
+commands. Changing the behavior of <code>bypassAutoEncryption</code> could harm performance (e.g. by serializing as smaller
+documents).</p>
+<h3 id="why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult"><a class="header" href="#why-does-rewrapmanydatakey-return-rewrapmanydatakeyresult-instead-of-bulkwriteresult">Why does rewrapManyDataKey return RewrapManyDataKeyResult instead of BulkWriteResult?</a></h3>
+<p><code>rewrapManyDataKey</code> is risky as it performs both a find and an update on the key vault collection. Using
+<code>RewrapManyDataKeyResult</code> allows new fields to be added in the future and more easily deprecate the wrapped
+<code>BulkWriteResult</code> if necessary.</p>
+<h3 id="why-does-clientencryption-have-key-management-functions-when-drivers-can-use-existing-crud-operations-instead"><a class="header" href="#why-does-clientencryption-have-key-management-functions-when-drivers-can-use-existing-crud-operations-instead">Why does ClientEncryption have key management functions when Drivers can use existing CRUD operations instead?</a></h3>
+<p>The key management functions are added for parity with mongosh to reduce friction between conducting operations using
+mongosh and a Driver. Their inclusion assumes their value for users outweighs their cost of implementation and
+maintenance.</p>
+<h3 id="why-are-the-querytype-and-algorithm-options-a-string"><a class="header" href="#why-are-the-querytype-and-algorithm-options-a-string">Why are the QueryType and Algorithm options a String?</a></h3>
+<p>Using an enum to represent QueryType was considered and rejected in
+<a href="https://jira.mongodb.org/browse/DRIVERS-2352">DRIVERS-2352</a>.</p>
+<p>A string value helps with future compatibility. When new values of QueryType and IndexType are added in libmongocrypt,
+users would only need to upgrade libmongocrypt, and not the driver, to use the new values.</p>
+<h3 id="why-is-there-an-encryptexpression-helper"><a class="header" href="#why-is-there-an-encryptexpression-helper">Why is there an encryptExpression helper?</a></h3>
+<p>Querying a range index requires encrypting a lower bound (value for <code>$gt</code> or <code>$gte</code>) and upper bound (value for <code>$lt</code> or
+<code>$lte</code>) payload. A rejected alternative API is to encrypt the lower and upper bound payloads separately. The lower and
+upper bound payloads must have a unique matching UUID. The lower and upper bound payloads are unique. This API requires
+handling the UUID and distinguishing the upper and lower bounds. Here are examples showing possible errors:</p>
+<pre><code class="language-javascript">uuid = UUID()
+lOpts = EncryptOpts(
+   keyId=keyId, algorithm="range", queryType="range", uuid=uuid, bound="lower")
+lower = clientEncryption.encrypt (value=30, lOpts)
+uOpts = EncryptOpts(
+   keyId=keyId, algorithm="range", queryType="range", uuid=uuid, bound="upper")
+upper = clientEncryption.encrypt (value=40, uOpts)
+
+# Both bounds match UUID ... OK
+db.coll.find_one ({"age": {"$gt": lower, "$lt": upper }})
+
+# Upper bound is used as a lower bound ... ERROR!
+db.coll.find_one ({"age": {"$gt": upper }})
+
+lower2 = clientEncryption.encrypt (value=35, lOpts)
+
+# UUID is re-used ... ERROR!
+db.coll.find_one ({ "$or": [
+   {"age": {"$gt": lower, "$lt": upper }},
+   {"age": {"$gt": lower2 }}
+]})
+
+# UUID does not match between lower and upper bound ... ERROR!
+db.coll.find_one ({ "age": {"$gt": lower2, "$lt": upper }})
+</code></pre>
+<p>Requiring an Aggregate Expression or Match Expression hides the UUID and handles both bounds.</p>
+<p>Returning an Aggregate Expression or Match Expression as a BSON document motivated adding a new
+<code>ClientEncryption.encryptExpression()</code> helper. <code>ClientEncryption.encrypt()</code> cannot be reused since it returns a Binary.</p>
+<p>To limit scope, only <code>$and</code> is supported. Support for other operators <code>($eq, $in)</code> can be added in the future if
+desired.</p>
+<h3 id="why-do-on-demand-kms-credentials-not-support-named-kms-providers"><a class="header" href="#why-do-on-demand-kms-credentials-not-support-named-kms-providers">Why do on-demand KMS credentials not support named KMS providers?</a></h3>
+<p>libmongocrypt supports supplying KMS providers credentials on-demand. This enables obtaining credentials from the host
+machine. Supporting on-demand credentials was added as part of these projects:
+<a href="https://jira.mongodb.org/browse/DRIVERS-2280">DRIVERS-2280</a> ("aws"),
+<a href="https://jira.mongodb.org/browse/DRIVERS-2377">DRIVERS-2377</a> ("gcp"),
+<a href="https://jira.mongodb.org/browse/DRIVERS-2411">DRIVERS-2411</a> ("azure").</p>
+<p>On-demand credentials are primarily intended to support passing credentials assigned in an environment. Supporting
+on-demand credentials for more than one KMS provider of the same type is not expected to be useful. Supporting on-demand
+KMS credentials would require added work in drivers inspecting the KMS providers when obtaining credentials, as well as
+additional test coverage. Supporting on-demand KMS credentials for named KMS providers can be considered as future work
+if needed.</p>
+<h3 id="what-is-the-kmip-delegated-option"><a class="header" href="#what-is-the-kmip-delegated-option">What is the KMIP <code>delegated</code> option?</a></h3>
+<p>By default, the KMS will retrieve the key encryption key from the KMIP server and use it to encrypt the data key. If the
+<code>delegated</code> option is set to true (recommended), the KMIP server will instead perform encryption and decryption locally,
+ensuring that the key encryption key never leaves the server.</p>
+<h2 id="future-work"><a class="header" href="#future-work">Future work</a></h2>
+<h3 id="make-libmonogocrypt-cache-window-configurable"><a class="header" href="#make-libmonogocrypt-cache-window-configurable">Make libmonogocrypt cache window configurable</a></h3>
+<p>There's a principle at MongoDB, "no knobs", that we should honor wherever possible. Configurability is bad, mandating
+one well-chosen value is good. But if our default caching behavior is discovered unsuitable for some use cases we may
+add configuration as part of future work.</p>
+<h3 id="apm-events-for-encryption-or-key-service-interaction"><a class="header" href="#apm-events-for-encryption-or-key-service-interaction">APM events for encryption or key service interaction</a></h3>
+<p>APM events include the encrypted data before it is sent to the server, or before it is decrypted in a reply. Therefore,
+app developers can determine whether or not encryption occurred by inspecting the values in their command monitoring
+events. However, it might be useful to offer separate "encryption" and "decryption" events, as well as interactions with
+the key service.</p>
+<h3 id="remove-mongocryptd"><a class="header" href="#remove-mongocryptd">Remove mongocryptd</a></h3>
+<p>A future version plans to remove the <a href="#mongocryptd">mongocryptd</a> process and fold the logic into <code>libmongocrypt</code> using
+the <a href="#crypt_shared">crypt_shared</a> library. Therefore, this spec mandates that drivers use <code>libmongocrypt</code> to abstract
+encryption logic, deduplicate work, and to provide a simpler future path to removing <a href="#mongocryptd">mongocryptd</a>.</p>
+<h3 id="support-external-key-vault-collection-discovery"><a class="header" href="#support-external-key-vault-collection-discovery">Support external key vault collection discovery</a></h3>
+<p>The only way to configure an external key vault collection is by passing a MongoClient.</p>
+<p>For apps like Compass, where it may not be possible for users to configure this app side, there should ideally be enough
+information in the database to decrypt data. (Excluding KMS credentials, which are still passed as MongoClient options).</p>
+<p>We may want to store a URI to the external key vault collection somewhere in the data bearing cluster, so clients can
+connect to the external key vault collection without additional user supplied configuration.</p>
+<h3 id="batch-listcollections-requests-on-expired-schema-cache-entries"><a class="header" href="#batch-listcollections-requests-on-expired-schema-cache-entries">Batch listCollections requests on expired schema cache entries</a></h3>
+<p>Currently libmongocrypt will refresh schemas one at a time.</p>
+<h3 id="add-a-maximum-size-for-the-jsonschemakey-cache"><a class="header" href="#add-a-maximum-size-for-the-jsonschemakey-cache">Add a maximum size for the JSONSchema/key cache.</a></h3>
+<p>They're unbounded currently.</p>
+<h3 id="recalculate-message-size-bounds-dynamically"><a class="header" href="#recalculate-message-size-bounds-dynamically">Recalculate message size bounds dynamically</a></h3>
+<p>Instead of using one reduced maxMessageSizeBytes, libmongocrypt could hide the complexity of properly resplitting bulk
+writes after encryption. It could use a simple back-off algorithm: try marking a command with maxMessageSizeBytes=24MB.
+If after marking we determine that's too large, try again with maxMessageSizeBytes=12MB and so on. And in the end
+libmongocrypt would create multiple OP_MSGs to send.</p>
+<h3 id="support-sessions-in-key-management-functions"><a class="header" href="#support-sessions-in-key-management-functions">Support sessions in key management functions</a></h3>
+<p>Key management functions currently assume there are no concurrent accesses of the key vault collection being operated
+on. To support concurrent access of the key vault collection, the key management functions may be overloaded to take an
+explicit session parameter as described in the <a href="../sessions/driver-sessions.html">Drivers Sessions Specification</a>.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-07-29: Document range as stable.</p>
+</li>
+<li>
+<p>2024-07-22: Make <code>trimFactor</code> and <code>sparsity</code> optional.</p>
+</li>
+<li>
+<p>2024-06-13: Document range as unstable.</p>
+</li>
+<li>
+<p>2024-05-31: Replace rangePreview with range.</p>
+</li>
+<li>
+<p>2024-03-20: Add <code>delegated</code> option to "kmip" KMS provider</p>
+</li>
+<li>
+<p>2024-02-27: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2024-01-10: Add named KMS providers</p>
+</li>
+<li>
+<p>2023-03-30: Remove ECC collection</p>
+</li>
+<li>
+<p>2023-02-01: Replace <code>DataKeyOpts</code> with <code>masterKey</code> in <code>createEncryptedCollection</code>.</p>
+</li>
+<li>
+<p>2023-01-31: <code>createEncryptedCollection</code> does not check AutoEncryptionOptions for the encryptedFieldsMap.</p>
+</li>
+<li>
+<p>2023-01-30: Return <code>encryptedFields</code> on <code>CreateCollection</code> error.</p>
+</li>
+<li>
+<p>2023-01-26: Use <a href="#GetEncryptedFields">GetEncryptedFields</a> in more helpers.</p>
+</li>
+<li>
+<p>2022-11-30: Add <code>Range</code>.</p>
+</li>
+<li>
+<p>2022-11-28: Permit <code>tlsDisableOCSPEndpointCheck</code> in KMS TLS options.</p>
+</li>
+<li>
+<p>2022-11-27: Fix typo for references to <code>cryptSharedLibRequired</code> option.</p>
+</li>
+<li>
+<p>2022-11-10: Defined a <code>CreateEncryptedCollection</code> helper for creating new encryption keys automatically for the
+queryable encrypted fields in a new collection.</p>
+</li>
+<li>
+<p>2022-11-07: Reformat changelog.</p>
+</li>
+<li>
+<p>2022-11-04: Permit global cache for Azure credentials.</p>
+</li>
+<li>
+<p>2022-10-26: Do not connect to <code>mongocryptd</code> if shared library is loaded.</p>
+</li>
+<li>
+<p>2022-10-11: Specify a timeout on Azure IMDS HTTP requests and fix the resource URL</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and <code>versionadded</code> RST macros (since spec version was removed)</p>
+</li>
+<li>
+<p>2022-09-26: Add behavior for automatic Azure KeyVault credentials for <code>kmsProviders</code>.</p>
+</li>
+<li>
+<p>2022-09-09: Prohibit <code>rewrapManyDataKey</code> with libmongocrypt &lt;= 1.5.1.</p>
+</li>
+<li>
+<p>2022-07-20: Add behavior for automatic GCP credential loading in <code>kmsProviders</code>.</p>
+</li>
+<li>
+<p>2022-06-30: Add behavior for automatic AWS credential loading in <code>kmsProviders</code>.</p>
+</li>
+<li>
+<p>2022-06-29: Clarify bulk write operation expectations for <code>rewrapManyDataKey()</code>.</p>
+</li>
+<li>
+<p>2022-06-27: Remove <code>createKey</code>.</p>
+</li>
+<li>
+<p>2022-06-24: Clean up kmsProviders to use more TypeScript-like type definitions.</p>
+</li>
+<li>
+<p>2022-06-23: Make <code>RewrapManyDataKeyResult.bulkWriteResult</code> optional.</p>
+</li>
+<li>
+<p>2022-06-16: Change <code>QueryType</code> to a string.</p>
+</li>
+<li>
+<p>2022-06-15: Clarify description of date fields in key documents.</p>
+</li>
+<li>
+<p>2022-06-08: Add <code>Queryable Encryption</code> to abstract.</p>
+</li>
+<li>
+<p>2022-06-02: Rename <code>FLE 2</code> to <code>Queryable Encryption</code></p>
+</li>
+<li>
+<p>2022-05-31: Rename <code>csfle</code> to <code>crypt_shared</code></p>
+</li>
+<li>
+<p>2022-05-27: Define ECC, ECOC, and ESC acronyms within encryptedFields</p>
+</li>
+<li>
+<p>2022-05-26: Clarify how <code>encryptedFields</code> interacts with <code>create</code> and <code>drop</code> commands</p>
+</li>
+<li>
+<p>2022-05-24: Add key management API functions</p>
+</li>
+<li>
+<p>2022-05-18: Add createKey and rewrapManyDataKey</p>
+</li>
+<li>
+<p>2022-05-11: Update create state collections to use clustered collections. Drop data collection after state collection.</p>
+</li>
+<li>
+<p>2022-05-03: Add queryType, contentionFactor, and "Indexed" and "Unindexed" to algorithm.</p>
+</li>
+<li>
+<p>2022-04-29: Add bypassQueryAnalysis option</p>
+</li>
+<li>
+<p>2022-04-11: Document the usage of the new <code>csfle</code> library (Note: Later renamed to <code>crypt_shared</code>)</p>
+</li>
+<li>
+<p>2022-02-24: Rename Versioned API to Stable API</p>
+</li>
+<li>
+<p>2022-01-19: Require that timeouts be applied per the CSOT spec</p>
+</li>
+<li>
+<p>2021-11-04: Add "kmip" KMS provider</p>
+</li>
+<li>
+<p>2021-04-08: Updated to use hello and legacy hello</p>
+</li>
+<li>
+<p>2021-01-22: Add sessionToken option to "aws" KMS provider</p>
+</li>
+<li>
+<p>2020-12-12: Add metadataClient option and internal client</p>
+</li>
+<li>
+<p>2020-10-19: Add "azure" and "gcp" KMS providers</p>
+</li>
+<li>
+<p>2019-10-11: Add "endpoint" to AWS masterkey</p>
+</li>
+<li>
+<p>2019-12-17: Clarified <code>bypassAutoEncryption</code> and managing <code>mongocryptd</code></p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../versioned-api/versioned-api.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../bson-binary-encrypted/binary-encrypted.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../versioned-api/versioned-api.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../bson-binary-encrypted/binary-encrypted.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

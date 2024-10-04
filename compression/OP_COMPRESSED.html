@@ -1,0 +1,605 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Wire Compression - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html" class="active"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="wire-compression-in-drivers"><a class="header" href="#wire-compression-in-drivers">Wire Compression in Drivers</a></h1>
+<ul>
+<li>
+<p>Status: Accepted</p>
+</li>
+<li>
+<p>Minimum Server Version: 3.4</p>
+</li>
+</ul>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>This specification describes how to implement Wire Protocol Compression between MongoDB drivers and mongo[d|s].</p>
+<p>Compression is achieved through a new bi-directional wire protocol opcode, referred to as OP_COMPRESSED.</p>
+<p>Server side compressor support is checked during the initial MongoDB Handshake, and is compatible with all historical
+versions of MongoDB. If a client detects a compatible compressor it will use the compressor for all valid requests.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="terms"><a class="header" href="#terms">Terms</a></h2>
+<p><em>Compressor</em> - A compression algorithm. There are currently three supported algorithms: snappy, zlib, and zstd.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="mongodb-handshake-amendment"><a class="header" href="#mongodb-handshake-amendment">MongoDB Handshake Amendment</a></h3>
+<p>The <a href="../mongodb-handshake/handshake.html">MongoDB Handshake Protocol</a> describes an argument passed to the handshake
+command, <code>client</code>. This specification adds an additional argument, <code>compression</code>, that SHOULD be provided to the
+handshake command if a driver supports wire compression.</p>
+<p>The value of this argument is an array of supported compressors.</p>
+<p>Example:</p>
+<pre><code class="language-javascript">    {
+        hello: 1,
+        client: {}, /* See MongoDB Handshake */
+        compression: ["snappy", "zlib", "zstd"]
+    }
+</code></pre>
+<p>When no compression is enabled on the client, drivers SHOULD send an empty compression argument.</p>
+<p>Example:</p>
+<pre><code class="language-javascript">    {
+        hello: 1,
+        client: {}, /* See MongoDB Handshake */
+        compression: []
+    }
+</code></pre>
+<p>Clients that want to compress their messages need to send a list of the algorithms - in the order they are specified in
+the client configuration - that they are willing to support to the server during the initial handshake call. For
+example, a client wishing to compress with the snappy algorithm, should send:</p>
+<pre><code class="language-javascript">    { hello: 1, ... , compression: [ "snappy" ] }
+</code></pre>
+<p>The server will respond with the intersection of its list of supported compressors and the client's. For example, if the
+server had both snappy and zlib enabled and the client requested snappy, it would respond with:</p>
+<pre><code class="language-javascript">    { ... , compression: [ "snappy" ], ok: 1 }
+</code></pre>
+<p>If the client included both snappy and zlib, the server would respond with something like:</p>
+<pre><code class="language-javascript">    { ... , compression: [ "snappy", "zlib" ], ok: 1 }
+</code></pre>
+<p>If the server has no compression algorithms in common with the client, it sends back a handshake response without a
+compression field. Clients MAY issue a log level event to inform the user, but MUST NOT error.</p>
+<p>When MongoDB server receives a compressor it can support it MAY reply to any and all requests using the selected
+compressor, including the reply of the initial MongoDB Handshake. As each OP_COMPRESSED message contains the compressor
+ID, clients MUST NOT assume which compressor each message uses, but MUST decompress the message using the compressor
+identified in the OP_COMPRESSED opcode header.</p>
+<p>When compressing, clients MUST use the first compressor in the client's configured compressors list that is also in the
+servers list.</p>
+<h3 id="connection-string-options"><a class="header" href="#connection-string-options">Connection String Options</a></h3>
+<p>Two new connection string options:</p>
+<h4 id="compressors"><a class="header" href="#compressors">compressors</a></h4>
+<p>Comma separated list of compressors the client should present to the server. Unknown compressors MUST yield a warning,
+as per the Connection String specification, and MUST NOT be included in the handshake. By default, no compressor is
+configured and thus compression will not be used. When multiple compressors are provided, the list should be treated as
+a priority ordered list of compressors to use, with highest priority given to the first compressor in the list, and
+lowest priority to the last compressor in the list.</p>
+<p>Example:</p>
+<pre><code>    mongodb://localhost/?compressors=zstd,snappy,zlib
+</code></pre>
+<h4 id="zlibcompressionlevel"><a class="header" href="#zlibcompressionlevel">zlibCompressionLevel</a></h4>
+<p>Integer value from <code>-1</code> - <code>9</code>. This configuration option only applies to the zlib compressor. When zlib is not one of
+the compressors enumerated by the <code>compressors</code> configuration option then providing this option has no meaning, but
+clients SHOULD NOT issue a warning.</p>
+<div class="table-wrapper"><table><thead><tr><th>Level</th><th>Description</th></tr></thead><tbody>
+<tr><td>-1</td><td>Default Compression (usually 6)</td></tr>
+<tr><td>0</td><td>No compression</td></tr>
+<tr><td>1</td><td>Best Speed</td></tr>
+<tr><td>9</td><td>Best Compression</td></tr>
+</tbody></table>
+</div>
+<p>Note that this value only applies to the client side compression level, not the response.</p>
+<h3 id="op_compressed"><a class="header" href="#op_compressed">OP_COMPRESSED</a></h3>
+<p>The new opcode, called OP_COMPRESSED, has the following structure:</p>
+<pre><code class="language-c">    struct OP_COMPRESSED {
+        struct MsgHeader {
+            int32  messageLength;
+            int32  requestID;
+            int32  responseTo;
+            int32  opCode = 2012;
+        };
+        int32_t  originalOpcode;
+        int32_t  uncompressedSize;
+        uint8_t  compressorId;
+        char    *compressedMessage;
+    };
+</code></pre>
+<div class="table-wrapper"><table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody>
+<tr><td>originalOpcode</td><td>Contains the value of the wrapped opcode.</td></tr>
+<tr><td>uncompressedSize</td><td>The size of the deflated compressedMessage, which excludes the MsgHeader</td></tr>
+<tr><td>compressorId</td><td>The ID of the compressor that compressed the message</td></tr>
+<tr><td>compressedMessage</td><td>The opcode itself, excluding the MsgHeader</td></tr>
+</tbody></table>
+</div>
+<h3 id="compressor-ids"><a class="header" href="#compressor-ids">Compressor IDs</a></h3>
+<p>Each compressor is assigned a predefined compressor ID.</p>
+<div class="table-wrapper"><table><thead><tr><th>compressorId</th><th>Handshake Value</th><th>Description</th></tr></thead><tbody>
+<tr><td>0</td><td>noop</td><td>The content of the message is uncompressed.<br>This is realistically only used for testing</td></tr>
+<tr><td>1</td><td>snappy</td><td>The content of the message is compressed using snappy.</td></tr>
+<tr><td>2</td><td>zlib</td><td>The content of the message is compressed using zlib.</td></tr>
+<tr><td>3</td><td>zstd</td><td>The content of the message is compressed using zstd.</td></tr>
+<tr><td>4-255</td><td>reserved</td><td>Reserved for future use.</td></tr>
+</tbody></table>
+</div>
+<h3 id="compressible-messages"><a class="header" href="#compressible-messages">Compressible messages</a></h3>
+<p>Any opcode can be compressed and wrapped in an <code>OP_COMPRESSED</code> header. The <code>OP_COMPRESSED</code> is strictly a wire protocol
+without regards to what opcode it wraps, be it <code>OP_QUERY</code>, <code>OP_REPLY</code>, <code>OP_MSG</code> or any other future or past opcode. The
+<code>compressedMessage</code> contains the original opcode, excluding the standard <code>MsgHeader</code>. The <code>originalOpcode</code> value
+therefore effectively replaces the standard <code>MsgHeader</code> of the compressed opcode.</p>
+<p>There is no guarantee that a response will be compressed even though compression was negotiated for in the handshake.
+Clients MUST be able to parse both compressed and uncompressed responses to both compressed and uncompressed requests.</p>
+<p>MongoDB 3.4 will always reply with a compressed response when compression has been negotiated, but future versions may
+not.</p>
+<p>A client MAY choose to implement compression for only <code>OP_QUERY</code>, <code>OP_REPLY</code>, and <code>OP_MSG</code>, and perhaps for future
+opcodes, but not to implement it for <code>OP_INSERT</code>, <code>OP_UPDATE</code>, <code>OP_DELETE</code>, <code>OP_GETMORE</code>, and <code>OP_KILLCURSORS</code>.</p>
+<p>Note that certain messages, such as authentication commands, MUST NOT be compressed. All other messages MUST be
+compressed, when compression has been negotiated and the driver has implemented compression for the opcode in use.</p>
+<h3 id="messages-not-allowed-to-be-compressed"><a class="header" href="#messages-not-allowed-to-be-compressed">Messages not allowed to be compressed</a></h3>
+<p>In efforts to mitigate against current and previous attacks, certain messages MUST NOT be compressed, such as
+authentication requests.</p>
+<p>Messages using the following commands MUST NOT be compressed:</p>
+<ul>
+<li>hello</li>
+<li>legacy hello (see <a href="../mongodb-handshake/handshake.html">MongoDB Handshake Protocol</a> for details)</li>
+<li>saslStart</li>
+<li>saslContinue</li>
+<li>getnonce</li>
+<li>authenticate</li>
+<li>createUser</li>
+<li>updateUser</li>
+<li>copydbSaslStart</li>
+<li>copydbgetnonce</li>
+<li>copydb</li>
+</ul>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>There are no automated tests accompanying this specification, instead the following is a description of test scenarios
+clients should implement.</p>
+<p>In general, after implementing this functionality and the test cases, running the traditional client test suite against
+a server with compression enabled, and ensuring the test suite is configured to provide a valid compressor as part of
+the connection string, is a good idea. MongoDB-supported drivers MUST add such variant to their CI environment.</p>
+<p>The following cases assume a standalone MongoDB 3.4 (or later) node configured with:</p>
+<pre><code>    mongod --networkMessageCompressors "snappy" -vvv
+</code></pre>
+<p>Create an example application which connects to a provided connection string, runs <code>ping: 1</code>, and then quits the program
+normally.</p>
+<h3 id="connection-strings-and-results"><a class="header" href="#connection-strings-and-results">Connection strings, and results</a></h3>
+<ul>
+<li>
+<p><a href="mongodb://localhost:27017/?compressors=snappy">mongodb://localhost:27017/?compressors=snappy</a></p>
+<p>mongod should have logged the following (the exact log output may differ depending on server version):</p>
+</li>
+</ul>
+<pre><code>      {"t":{"$date":"2021-04-08T13:28:38.885-06:00"},"s":"I",  "c":"NETWORK",  "id":22943,   "ctx":"listener","msg":"Connection accepted","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":1}}
+      {"t":{"$date":"2021-04-08T13:28:38.886-06:00"},"s":"D3", "c":"EXECUTOR", "id":22983,   "ctx":"listener","msg":"Starting new executor thread in passthrough mode"}
+      {"t":{"$date":"2021-04-08T13:28:38.887-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"thread27","msg":"Setting the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.887-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"hello":1,"client":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}},"compression":["snappy"],"apiVersion":"1","apiStrict":true,"$db":"admin"}}}
+      {"t":{"$date":"2021-04-08T13:28:38.888-06:00"},"s":"I",  "c":"NETWORK",  "id":51800,   "ctx":"conn2","msg":"client metadata","attr":{"remote":"127.0.0.1:50635","client":"conn2","doc":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}}}}
+      {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"D3", "c":"NETWORK",  "id":22934,   "ctx":"conn2","msg":"Starting server-side compression negotiation"}
+      {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"D3", "c":"NETWORK",  "id":22937,   "ctx":"conn2","msg":"supported compressor","attr":{"compressor":"snappy"}}
+      {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"hello":1,"client":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}},"compression":["snappy"],"apiVersion":"1","apiStrict":true,"$db":"admin"},"numYields":0,"reslen":351,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_query","durationMillis":1}}
+      {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":596,"knownOps":[]}}
+      {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.891-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+      {"t":{"$date":"2021-04-08T13:28:38.891-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"whatsmyuri":1,"apiStrict":false,"$db":"admin","apiVersion":"1"}}}
+      {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"whatsmyuri":1,"apiStrict":false,"$db":"admin","apiVersion":"1"},"numYields":0,"reslen":63,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+      {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":597,"knownOps":[]}}
+      {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+      {"t":{"$date":"2021-04-08T13:28:38.893-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.893-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.895-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+      {"t":{"$date":"2021-04-08T13:28:38.895-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"buildinfo":1.0,"apiStrict":false,"$db":"admin","apiVersion":"1"}}}
+      {"t":{"$date":"2021-04-08T13:28:38.896-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"buildinfo":1.0,"apiStrict":false,"$db":"admin","apiVersion":"1"},"numYields":0,"reslen":2606,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+      {"t":{"$date":"2021-04-08T13:28:38.896-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":598,"knownOps":[]}}
+      {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+      {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+      {"t":{"$date":"2021-04-08T13:28:38.899-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"endSessions":[{"id":{"$uuid":"c4866af5-ed6b-4f01-808b-51a3f8aaaa08"}}],"$db":"admin","apiVersion":"1","apiStrict":true}}}
+      {"t":{"$date":"2021-04-08T13:28:38.899-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"endSessions":[{"id":{"$uuid":"c4866af5-ed6b-4f01-808b-51a3f8aaaa08"}}],"$db":"admin","apiVersion":"1","apiStrict":true},"numYields":0,"reslen":38,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+      {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":599,"knownOps":[]}}
+      {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+      {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.901-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+      {"t":{"$date":"2021-04-08T13:28:38.901-06:00"},"s":"D2", "c":"NETWORK",  "id":22986,   "ctx":"conn2","msg":"Session from remote encountered a network error during SourceMessage","attr":{"remote":"127.0.0.1:50635","error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+      {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"D1", "c":"-",        "id":23074,   "ctx":"conn2","msg":"User assertion","attr":{"error":"HostUnreachable: Connection closed by peer","file":"src/mongo/transport/service_state_machine.cpp","line":410}}
+      {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"W",  "c":"EXECUTOR", "id":4910400, "ctx":"conn2","msg":"Terminating session due to error","attr":{"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+      {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"I",  "c":"NETWORK",  "id":5127900, "ctx":"conn2","msg":"Ending session","attr":{"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+      {"t":{"$date":"2021-04-08T13:28:38.903-06:00"},"s":"I",  "c":"NETWORK",  "id":22944,   "ctx":"conn2","msg":"Connection ended","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":0}}
+      {"t":{"$date":"2021-04-08T13:28:38.903-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+</code></pre>
+<p>The result of the program should have been:</p>
+<pre><code>      { "ok" : 1 }
+</code></pre>
+<ul>
+<li>
+<p><a href="mongodb://localhost:27017/?compressors=snoopy">mongodb://localhost:27017/?compressors=snoopy</a></p>
+<p>mongod should have logged the following:</p>
+</li>
+</ul>
+<pre><code>      {"t":{"$date":"2021-04-20T09:57:26.823-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn5","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"}}}
+      {"t":{"$date":"2021-04-20T09:57:26.823-06:00"},"s":"I",  "c":"NETWORK",  "id":51800,   "ctx":"conn5","msg":"client metadata","attr":{"remote":"127.0.0.1:54372","client":"conn5","doc":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"}}}
+      {"t":{"$date":"2021-04-20T09:57:26.824-06:00"},"s":"D3", "c":"NETWORK",  "id":22934,   "ctx":"conn5","msg":"Starting server-side compression negotiation"}
+      {"t":{"$date":"2021-04-20T09:57:26.824-06:00"},"s":"D3", "c":"NETWORK",  "id":22936,   "ctx":"conn5","msg":"No compressors provided"}
+      {"t":{"$date":"2021-04-20T09:57:26.825-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn5","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","command":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"},"numYields":0,"reslen":319,"locks":{},"remote":"127.0.0.1:54372","protocol":"op_query","durationMillis":1}}
+</code></pre>
+<p>e.g., empty compression: [] array. No operations should have been compressed.</p>
+<p>The results of the program should have been:</p>
+<pre><code>      WARNING: Unsupported compressor: 'snoopy'
+      { "ok" : 1 }
+</code></pre>
+<ul>
+<li>
+<p><a href="mongodb://localhost:27017/?compressors=snappy,zlib">mongodb://localhost:27017/?compressors=snappy,zlib</a></p>
+<p>mongod should have logged the following:</p>
+</li>
+</ul>
+<pre><code>      {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+</code></pre>
+<p>The results of the program should have been:</p>
+<pre><code>      { "ok" : 1 }
+</code></pre>
+<ul>
+<li>
+<p><a href="mongodb://localhost:27017/?compressors=zlib,snappy">mongodb://localhost:27017/?compressors=zlib,snappy</a></p>
+<p>mongod should have logged the following:</p>
+</li>
+</ul>
+<pre><code>      {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"zlib"}}
+</code></pre>
+<p>The results of the program should have been:</p>
+<pre><code>      { "ok" : 1 }
+</code></pre>
+<ul>
+<li>
+<p>Create example program that authenticates to the server using SCRAM-SHA-1, then creates another user (MONGODB-CR),
+then runs hello followed with serverStatus.</p>
+</li>
+<li>
+<p>Reconnect to the same server using the created MONGODB-CR credentials. Observe that the only command that was
+decompressed on the server was <code>serverStatus</code>, while the server replied with OP_COMPRESSED for at least the
+serverStatus command.</p>
+</li>
+</ul>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation For Change</a></h2>
+<p>Drivers provide the canonical interface to MongoDB. Most tools for MongoDB are written with the aid of MongoDB drivers.
+There exist a lot of tools for MongoDB that import massive datasets which could stand to gain a lot from compression.
+Even day-to-day applications stand to gain from reduced bandwidth utilization at low cpu costs, especially when doing
+large reads off the network.</p>
+<p>Not all use cases fit compression, but we will allow users to decide if wire compression is right for them.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design rationale</a></h2>
+<p>Snappy has minimal cost and provides a reasonable compression ratio, but it is not expected to be available for all
+languages MongoDB Drivers support. Supporting zlib is therefore important to the ecosystem, but for languages that do
+support snappy we expected it to be the default choice. While snappy has no knobs to tune, zlib does have support for
+specifying the compression level (tuned from speed to compression). As we don’t anticipate adding support for
+compression libraries with complex knobs to tune this specification has opted not to define a complex configuration
+structure and only define the currently relevant <code>zlibCompressionLevel</code>. When other compression libraries are supported,
+adding support for configuring that library (if any is needed) should be handled on a case by case basis.</p>
+<p>More recently, the MongoDB server added Zstandard (zstd) support for another modern alternative to zlib.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>The new argument provided to the MongoDB Handshake has no backwards compatible implications as servers that do not
+expect it will simply ignore it. This means a server will therefore never reply with a list of acceptable compressors
+which in turns means a client CANNOT use the OP_COMPRESSED opcode.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<ul>
+<li><a href="https://jira.mongodb.org/browse/CDRIVER-2116">mongoc</a></li>
+</ul>
+<h2 id="future-work"><a class="header" href="#future-work">Future Work</a></h2>
+<p>Possible future improvements include defining an API to determine compressor and configuration per operation, rather
+than needing to create two different client pools, one for compression and one without, when the user is expecting only
+needing to (not) compress very few operations.</p>
+<h2 id="q--a"><a class="header" href="#q--a">Q &amp; A</a></h2>
+<ul>
+<li>
+<p>Statistics?</p>
+<ul>
+<li>See <a href="https://www.mongodb.com/docs/manual/reference/command/serverStatus/">serverStatus</a> in the server</li>
+</ul>
+</li>
+<li>
+<p>How to try this/enable it?</p>
+<ul>
+<li><code>mongod --networkMessageCompressors "snappy"</code></li>
+</ul>
+</li>
+<li>
+<p>The server MAY reply with compressed data even if the request was not compressed?</p>
+<ul>
+<li>Yes, and this is in fact the behaviour of MongoDB 3.4</li>
+</ul>
+</li>
+<li>
+<p>Can drivers compress the initial MongoDB Handshake/hello request?</p>
+<ul>
+<li>No.</li>
+</ul>
+</li>
+<li>
+<p>Can the server reply to the MongoDB Handshake/hello compressed?</p>
+<ul>
+<li>Yes, yes it can. Be aware it is completely acceptable for the server to use compression for any and all replies,
+using any supported compressor, when the client announced support for compression - this includes the reply to the
+actual MongoDB Handshake/hello where the support was announced.</li>
+</ul>
+</li>
+<li>
+<p>This is billed a MongoDB 3.6 feature -- but I hear it works with MongoDB3.4?</p>
+<ul>
+<li>Yes, it does. All MongoDB versions support the <code>compression</code> argument to the initial handshake and all MongoDB
+versions will reply with an intersection of compressors it supports. This works even with MongoDB 3.0, as it will
+not reply with any compressors. It also works with MongoDB 3.4 which will reply with <code>snappy</code> if it was part of the
+driver's list. MongoDB 3.6 will likely include zlib support.</li>
+</ul>
+</li>
+<li>
+<p>Which compressors are currently supported?</p>
+<ul>
+<li>MongoDB 3.4 supports <code>snappy</code></li>
+<li>MongoDB 3.6 supports <code>snappy</code> and <code>zlib</code></li>
+<li>MongoDB 4.2 supports <code>snappy</code>, <code>zlib</code>, and <code>zstd</code></li>
+</ul>
+</li>
+<li>
+<p>My language supports xyz compressor, should I announce them all in the handshake?</p>
+<ul>
+<li>No. But you are allowed to if you really want to make sure you can use that compressor with MongoDB 42 and your
+current driver versions.</li>
+</ul>
+</li>
+<li>
+<p>My language does not support xzy compressor. What do I do?</p>
+<ul>
+<li>That is OK. You don’t have to support xyz.</li>
+</ul>
+</li>
+<li>
+<p>No MongoDB supported compressors are available for my language</p>
+<ul>
+<li>That is OK. You don’t have to support compressors you can’t support. All it means is you can’t compress the request,
+and since you never declared support for any compressor, you won’t be served with compressed responses either.</li>
+</ul>
+</li>
+<li>
+<p>Why did the server not support zlib in MongoDB 3.4?</p>
+<ul>
+<li>Snappy was selected for its very low performance hit, while giving reasonable compression, resulting in quite
+significant bandwidth reduction. Zlib characteristics are slightly different out-of-the-box and did not make sense
+for the initial goal of reducing bandwidth between replica set nodes.</li>
+</ul>
+</li>
+<li>
+<p>If snappy is preferable to zlib, why add support for zlib in MongoDB 3.6?</p>
+<ul>
+<li>Zlib is available on every platform known to man. Snappy is not. Having zlib support makes sense for client traffic,
+which could originate on any type of platform, which may or may not support snappy.</li>
+</ul>
+</li>
+</ul>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>2024-02-16: Migrated from reStructuredText to Markdown.</li>
+<li>2022-10-05: Remove spec front matter and reformat changelog.</li>
+<li>2021-04-06: Use 'hello' command</li>
+<li>2019-05-13: Add zstd as supported compression algorithm</li>
+<li>2017-06-13: Don't require clients to implement legacy opcodes</li>
+<li>2017-05-10: Initial commit.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../mongodb-handshake/handshake.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../socks5-support/socks5.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../mongodb-handshake/handshake.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../socks5-support/socks5.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

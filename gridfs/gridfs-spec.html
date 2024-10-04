@@ -1,0 +1,1049 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>GridFS - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html" class="active"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="gridfs-spec"><a class="header" href="#gridfs-spec">GridFS Spec</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 2.2</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>GridFS is a convention drivers use to store and retrieve BSON binary data (type "x05") that exceeds MongoDB"s
+BSON-document size limit of 16 MiB. When this data, called a <strong>user file</strong>, is written to the system, GridFS divides the
+file into <strong>chunks</strong> that are stored as distinct documents in a <strong>chunks collection</strong>. To retrieve a stored file, GridFS
+locates and returns all of its component chunks. Internally, GridFS creates a <strong>files collection document</strong> for each
+stored file. Files collection documents hold information about stored files, and they are stored in a <strong>files
+collection</strong>.</p>
+<p>This spec defines a basic API for GridFS. This spec also outlines advanced GridFS features that drivers can choose to
+support in their implementations. Additionally, this document attempts to clarify the meaning and purpose of all fields
+in the GridFS data model, disambiguate GridFS terminology, and document configuration options that were previously
+unspecified.</p>
+<h2 id="definitions"><a class="header" href="#definitions">Definitions</a></h2>
+<h3 id="meta"><a class="header" href="#meta">META</a></h3>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<p><strong>Bucket name</strong></p>
+<p>A prefix under which a GridFS system"s collections are stored. Collection names for the files and chunks collections are
+prefixed with the bucket name. The bucket name MUST be configurable by the user. Multiple buckets may exist within a
+single database. The default bucket name is "fs".</p>
+<p><strong>Chunk</strong></p>
+<p>A section of a user file, stored as a single document in the "chunks" collection of a GridFS bucket. The default size
+for the data field in chunks is 255 KiB. Chunk documents have the following form:</p>
+<pre><code class="language-javascript">{
+  "_id" : &lt;ObjectId&gt;,
+  "files_id" : &lt;TFileId&gt;,
+  "n" : &lt;Int32&gt;,
+  "data" : &lt;binary data&gt;
+}
+</code></pre>
+<p><strong>_id</strong></p>
+<p>a unique ID for this document of type BSON ObjectId</p>
+<p><strong>files_id</strong></p>
+<p>the id for this file (the <code>_id</code> from the files collection document). This field takes the type of the corresponding
+<code>_id</code> in the files collection.</p>
+<p><strong>_id</strong></p>
+<p>the index number of this chunk, zero-based.</p>
+<p><strong>data</strong></p>
+<p>a chunk of data from the user file</p>
+<p><strong>Chunks collection</strong></p>
+<p>A collection in which chunks of a user file are stored. The name for this collection is the word 'chunks' prefixed by
+the bucket name. The default is "fs.chunks".</p>
+<p><strong>Empty chunk</strong></p>
+<p>A chunk with a zero length "data" field.</p>
+<p><strong>Files collection</strong></p>
+<p>A collection in which information about stored files is stored. There will be one files collection document per stored
+file. The name for this collection is the word "files" prefixed by the bucket name. The default is "fs.files".</p>
+<p><strong>Files collection document</strong></p>
+<p>A document stored in the files collection that contains information about a single stored file. Files collection
+documents have the following form:</p>
+<pre><code class="language-javascript">{
+  "_id" : &lt;TFileId&gt;,
+  "length" : &lt;Int64&gt;,
+  "chunkSize" : &lt;Int32&gt;,
+  "uploadDate" : &lt;BSON datetime, ms since Unix epoch in UTC&gt;,
+  "md5" : &lt;hex string&gt;,
+  "filename" : &lt;string&gt;,
+  "contentType" : &lt;string&gt;,
+  "aliases" : &lt;string array&gt;,
+  "metadata" : &lt;Document&gt;
+}
+</code></pre>
+<p><strong>_id</strong></p>
+<p>a unique ID for this document. Usually this will be of type ObjectId, but a custom <code>_id</code> value provided by the
+application may be of any type.</p>
+<p><strong>length</strong></p>
+<p>the length of this stored file, in bytes</p>
+<p><strong>chunkSize</strong></p>
+<p>the size, in bytes, of each data chunk of this file. This value is configurable by file. The default is 255 KiB.</p>
+<p><strong>uploadDate</strong></p>
+<p>the date and time this file was added to GridFS, stored as a BSON datetime value. The value of this field MUST be the
+datetime when the upload completed, not the datetime when it was begun.</p>
+<p><strong>md5</strong></p>
+<p>DEPRECATED, a hash of the contents of the stored file</p>
+<p><strong>filename</strong></p>
+<p>the name of this stored file; this does not need to be unique</p>
+<p><strong>contentType</strong></p>
+<p>DEPRECATED, any MIME type, for application use only</p>
+<p><strong>aliases</strong></p>
+<p>DEPRECATED, for application use only</p>
+<p><strong>metadata</strong></p>
+<p>any additional application data the user wishes to store</p>
+<p>Note: some older versions of GridFS implementations allowed applications to add arbitrary fields to the files collection
+document at the root level. New implementations of GridFS will not allow this, but must be prepared to handle existing
+files collection documents that might have additional fields.</p>
+<p>Note: drivers SHOULD store length as Int64 and chunkSize as Int32 when creating new GridFS files. However, drivers MUST
+be able to handle existing GridFS files where the length and chunkSize fields might have been stored using a different
+numeric data type.</p>
+<p><strong>Orphaned chunk</strong></p>
+<p>A document in the chunks collections for which the "files_id" does not match any <code>_id</code> in the files collection. Orphaned
+chunks may be created if write or delete operations on GridFS fail part-way through.</p>
+<p><strong>Stored File</strong></p>
+<p>A user file that has been stored in GridFS, consisting of a files collection document in the files collection and zero
+or more documents in the chunks collection.</p>
+<p><strong>Stream</strong></p>
+<p>An abstraction that represents streamed I/O. In some languages a different word is used to represent this abstraction.</p>
+<p><strong>TFileId</strong></p>
+<p>While GridFS file id values are ObjectIds by default, an application may choose to use custom file id values, which may
+be of any type. In this spec the term TFileId refers to whatever data type is appropriate in the driver's programming
+language to represent a file id. This would be something like object, BsonValue or a generic <code>&lt;TFileId&gt;</code> type parameter.</p>
+<p><strong>User File</strong></p>
+<p>A data added by a user to GridFS. This data may map to an actual file on disk, a stream of input, a large data object,
+or any other large amount of consecutive data.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="guidance"><a class="header" href="#guidance">Guidance</a></h3>
+<h4 id="documentation"><a class="header" href="#documentation">Documentation</a></h4>
+<p>The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation
+for the driver.</p>
+<h4 id="operations"><a class="header" href="#operations">Operations</a></h4>
+<p>All drivers MUST offer the Basic API operations defined in the following sections and MAY offer the Advanced API
+operations. This does not preclude a driver from offering more.</p>
+<h4 id="operation-parameters"><a class="header" href="#operation-parameters">Operation Parameters</a></h4>
+<p>All drivers MUST offer the same options for each operation as defined in the following sections. This does not preclude
+a driver from offering more. The options parameter is optional. A driver SHOULD NOT require a user to specify optional
+parameters.</p>
+<h4 id="deviations"><a class="header" href="#deviations">Deviations</a></h4>
+<p>A non-exhaustive list of acceptable deviations are as follows:</p>
+<ul>
+<li>
+<p>Using named parameters instead of an options hash. For instance,</p>
+<pre><code class="language-javascript">id = bucket.upload_from_stream(filename, source, chunkSizeBytes: 16 * 1024);
+</code></pre>
+</li>
+<li>
+<p>Using a fluent style for constructing a GridFSBucket instance:</p>
+<pre><code class="language-javascript">bucket = new GridFSBucket(database)
+  .withReadPreference(ReadPreference.Secondary);
+</code></pre>
+</li>
+</ul>
+<p>When using a fluent-style builder, all options should be named rather than inventing a new word to include in the
+pipeline (like options). Required parameters are still required to be on the initiating constructor.</p>
+<h4 id="timeouts"><a class="header" href="#timeouts">Timeouts</a></h4>
+<p>Drivers MUST enforce timeouts for all operations per
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#gridfs-api">Client Side Operations Timeout: GridFS API</a>.</p>
+<h3 id="naming"><a class="header" href="#naming">Naming</a></h3>
+<p>All drivers MUST name operations, objects, and parameters as defined in the following sections.</p>
+<p>Deviations are permitted as outlined below.</p>
+<h4 id="deviations-1"><a class="header" href="#deviations-1">Deviations</a></h4>
+<p>When deviating from a defined name, an author should consider if the altered name is recognizable and discoverable to
+the user of another driver.</p>
+<p>A non-exhaustive list of acceptable naming deviations are as follows:</p>
+<ul>
+<li>Using "bucketName" as an example, Java would use "bucketName" while Python would use "bucket_name". However, calling
+it "bucketPrefix" would not be acceptable.</li>
+<li>Using "maxTimeMS" as an example, .NET would use "MaxTime" where its type is a TimeSpan structure that includes units.
+However, calling it "MaximumTime" would not be acceptable.</li>
+<li>Using "GridFSUploadOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to
+call it "GridFSUploadArgs" or "GridFSUploadParams". However, calling it "UploadOptions" would not be acceptable.</li>
+<li>Languages that use a different word than "Stream" to represent a streamed I/O abstraction may replace the word
+"Stream" with their language's equivalent word. For example, open_upload_stream might be called open_upload_file or
+open_upload_writer if appropriate.</li>
+<li>Languages that support overloading MAY shorten the name of some methods as appropriate. For example,
+download_to_stream and download_to_stream_by_name MAY be overloaded download_to_stream methods with different
+parameter types. Implementers are encouraged not to shorten method names unnecessarily, because even if the shorter
+names are not ambiguous today they might become ambiguous in the future as new features are added.</li>
+</ul>
+<h2 id="api"><a class="header" href="#api">API</a></h2>
+<p>This section presents two groups of features, a basic API that a driver MUST implement, and a more advanced API that
+drivers MAY choose to implement additionally.</p>
+<h2 id="basic-api"><a class="header" href="#basic-api">Basic API</a></h2>
+<h3 id="configurable-gridfsbucket-class"><a class="header" href="#configurable-gridfsbucket-class">Configurable GridFSBucket class</a></h3>
+<pre><code class="language-javascript">class GridFSBucketOptions {
+
+  /**
+   * The bucket name. Defaults to 'fs'.
+   */
+  bucketName : String optional;
+
+  /**
+   * The chunk size in bytes. Defaults to 255 KiB.
+   */
+  chunkSizeBytes : Int32 optional;
+
+  /**
+   * The write concern. Defaults to the write concern of the database.
+   */
+  writeConcern : WriteConcern optional;
+
+  /**
+   * The read concern. Defaults to the read concern of the database.
+   */
+  readConcern : ReadConcern optional;
+
+  /**
+   * The read preference. Defaults to the read preference of the database.
+   */
+  readPreference : ReadPreference optional;
+
+  /**
+   * TRANSITIONAL: This option is provided for backwards compatibility.
+   * It MUST be supported while a driver supports MD5 and MUST be removed
+   * (or made into a no-op) when a driver removes MD5 support entirely.
+   * When true, the GridFS implementation will not compute MD5 checksums
+   * of uploaded files. Defaults to false.
+   */
+  disableMD5: Boolean
+}
+
+class GridFSBucket {
+
+  /**
+   * Create a new GridFSBucket object on @db with the given @options.
+   */
+  GridFSBucket new(Database db, GridFSBucketOptions options=null);
+
+}
+</code></pre>
+<p>Creates a new GridFSBucket object, managing a GridFS bucket within the given database.</p>
+<p>GridFSBucket objects MUST allow the following options to be configurable:</p>
+<ul>
+<li><strong>bucketName:</strong> the name of this GridFS bucket. The files and chunks collection for this GridFS bucket are prefixed by
+this name followed by a dot. Defaults to "fs". This allows multiple GridFS buckets, each with a unique name, to exist
+within the same database.</li>
+<li><strong>chunkSizeBytes:</strong> the number of bytes stored in chunks for new user files added through this GridFSBucket object.
+This will not reformat existing files in the system that use a different chunk size. Defaults to 255 KiB.</li>
+</ul>
+<p>IF a driver supports configuring readConcern, readPreference or writeConcern at the database or collection level, then
+GridFSBucket objects MUST also allow the following options to be configurable:</p>
+<ul>
+<li><strong>readConcern:</strong> defaults to the read concern on the parent database (or client object if the parent database has no
+read concern).</li>
+<li><strong>readPreference:</strong> defaults to the read preference on the parent database (or client object if the parent database
+has no read preference).</li>
+<li><strong>writeConcern:</strong> defaults to the write concern on the parent database (or client object if the parent database has no
+write concern).</li>
+</ul>
+<p>The following option is transitional:</p>
+<ul>
+<li><strong>disableMD5:</strong> this allows users to disable MD5 when operating under FIPS restrictions. It is provided to allow a
+transition period as drivers remove MD5 support. Until a driver removes MD5 support, drivers MUST support this option.
+Following a driver's normal feature removal cycle, when MD5 support is removed, this option MUST be removed or
+otherwise made into a no-op option.</li>
+</ul>
+<p>GridFSBucket instances are immutable. Their properties MUST NOT be changed after the instance has been created. If your
+driver provides a fluent way to provide new values for properties, these fluent methods MUST return new instances of
+GridFSBucket.</p>
+<h3 id="indexes"><a class="header" href="#indexes">Indexes</a></h3>
+<p>For efficient execution of various GridFS operations the following indexes MUST exist:</p>
+<ul>
+<li>an index on { filename : 1, uploadDate : 1 } on the files collection</li>
+<li>a unique index on { files_id : 1, n : 1 } on the chunks collection</li>
+</ul>
+<p>Normally we leave it up to the user to create whatever indexes they see fit, but because GridFS is likely to be looked
+at as a black box we should create these indexes automatically in a way that involves the least amount of overhead
+possible.</p>
+<h4 id="before-read-operations"><a class="header" href="#before-read-operations">Before read operations</a></h4>
+<p>For read operations, drivers MUST assume that the proper indexes exist.</p>
+<h4 id="before-write-operations"><a class="header" href="#before-write-operations">Before write operations</a></h4>
+<p>Immediately before the <strong>first</strong> write operation on an instance of a GridFSBucket class is attempted (and not earlier),
+drivers MUST:</p>
+<ul>
+<li>determine if the files collection is empty using the primary read preference mode.</li>
+<li>and if so, create the indexes described above if they do not already exist</li>
+</ul>
+<p>To determine whether the files collection is empty drivers SHOULD execute the equivalent of the following shell command:</p>
+<blockquote>
+<blockquote>
+<p>db.fs.files.findOne({}, { _id : 1 })</p>
+</blockquote>
+</blockquote>
+<p>If no document is returned the files collection is empty.</p>
+<p>This method of determining whether the files collection is empty should perform better than checking the count in the
+case where the files collection is sharded.</p>
+<p>Drivers MUST check whether the indexes already exist before attempting to create them. This supports the scenario where
+an application is running with read-only authorizations.</p>
+<p>When checking whether an index exists drivers MUST compare numeric values by value even when they are of different
+types, because the actual type will depend on how the index was created (for example, indexes created using the shell
+will have double as the type for numeric values).</p>
+<p>For example, the following index specifications should all be treated as equivalent:</p>
+<ul>
+<li>{ filename : 1, uploadDate : 1 } // where 1 is either a 32-bit or 64-bit integer</li>
+<li>{ filename : 1, uploadDate : 1.0 }</li>
+<li>{ filename : 1.0, uploadDate : 1 }</li>
+<li>{ filename : 1.0, uploadDate : 1.0 }</li>
+</ul>
+<p>If a driver determines that it should create the indexes, it MUST raise an error if the attempt to create the indexes
+fails.</p>
+<p>Drivers MUST create the indexes in foreground mode.</p>
+<h3 id="file-upload"><a class="header" href="#file-upload">File Upload</a></h3>
+<pre><code class="language-javascript">class GridFSUploadOptions {
+
+  /**
+   * The number of bytes per chunk of this file. Defaults to the
+   * chunkSizeBytes in the GridFSBucketOptions.
+   */
+  chunkSizeBytes : Int32 optional;
+
+  /**
+   * User data for the 'metadata' field of the files collection document.
+   * If not provided the driver MUST omit the metadata field from the
+   * files collection document.
+   */
+  metadata : Document optional;
+
+  /**
+   * DEPRECATED: A valid MIME type. If not provided the driver MUST omit the
+   * contentType field from the files collection document.
+   *
+   * Applications wishing to store a contentType should add a contentType field
+   * to the metadata document instead.
+   */
+  contentType : String optional;
+
+  /**
+   * DEPRECATED: An array of aliases. If not provided the driver MUST omit the
+   * aliases field from the files collection document.
+   *
+   * Applications wishing to store aliases should add an aliases field to the
+   * metadata document instead.
+   */
+  aliases: String[] optional;
+
+}
+
+class GridFSBucket {
+
+  /**
+   * Opens a Stream that the application can write the contents of the file to.
+   * The driver generates the file id.
+   *
+   * Returns a Stream to which the application will write the contents.
+   *
+   * Note: this method is provided for backward compatibility. In languages
+   * that use generic type parameters, this method may be omitted since
+   * the TFileId type might not be an ObjectId.
+   */
+  Stream open_upload_stream(string filename, GridFSUploadOptions options=null);
+
+  /**
+   * Opens a Stream that the application can write the contents of the file to.
+   * The application provides a custom file id.
+   *
+   * Returns a Stream to which the application will write the contents.
+   */
+  Stream open_upload_stream_with_id(TFileId id, string filename, GridFSUploadOptions options=null);
+
+  /**
+   * Uploads a user file to a GridFS bucket. The driver generates the file id.
+   *
+   * Reads the contents of the user file from the @source Stream and uploads it
+   * as chunks in the chunks collection. After all the chunks have been uploaded,
+   * it creates a files collection document for @filename in the files collection.
+   *
+   * Returns the id of the uploaded file.
+   *
+   * Note: this method is provided for backward compatibility. In languages
+   * that use generic type parameters, this method may be omitted since
+   * the TFileId type might not be an ObjectId.
+   */
+  ObjectId upload_from_stream(string filename, Stream source, GridFSUploadOptions options=null);
+
+  /**
+   * Uploads a user file to a GridFS bucket. The application supplies a custom file id.
+   *
+   * Reads the contents of the user file from the @source Stream and uploads it
+   * as chunks in the chunks collection. After all the chunks have been uploaded,
+   * it creates a files collection document for @filename in the files collection.
+   *
+   * Note: there is no need to return the id of the uploaded file because the application
+   * already supplied it as a parameter.
+   */
+  void upload_from_stream_with_id(TFileId id, string filename, Stream source, GridFSUploadOptions options=null);
+}
+</code></pre>
+<p>Uploads a user file to a GridFS bucket. For languages that have a Stream abstraction, drivers SHOULD use that Stream
+abstraction. For languages that do not have a Stream abstraction, drivers MUST create an abstraction that supports
+streaming.</p>
+<p>In the case of open_upload_stream, the driver returns a Stream to which the application will write the contents of the
+file. As the application writes the contents to the returned Stream, the contents are uploaded as chunks in the chunks
+collection. When the application signals it is done writing the contents of the file by calling close (or its
+equivalent) on the returned Stream, a files collection document is created in the files collection. Once the Stream has
+been closed (and the files collection document has been created) a driver MUST NOT allow further writes to the upload
+Stream.</p>
+<p>The driver MUST make the Id of the new file available to the caller. Typically a driver SHOULD make the Id available as
+a property named Id on the Stream that is returned. In languages where that is not idiomatic, a driver MUST make the Id
+available in a way that is appropriate for that language.</p>
+<p>In the case of upload_from_stream, the driver reads the contents of the user file by consuming the the source Stream
+until end of file is reached. The driver does NOT close the source Stream.</p>
+<p>Drivers MUST take an "options" document with configurable parameters. Drivers for dynamic languages MUST ignore any
+unrecognized fields in the options for this method (this does not apply to drivers for static languages which define an
+Options class that by definition only contains valid fields).</p>
+<p>Note that in GridFS, "filename" is not a unique identifier. There may be many stored files with the same filename stored
+in a GridFS bucket under different ids. Multiple stored files with the same filename are called 'revisions', and the
+'uploadDate' is used to distinguish newer revisions from older ones.</p>
+<p><strong>Implementation details:</strong></p>
+<p>If "chunkSizeBytes" is set through the options, that value MUST be used as the chunk size for this stored file. If this
+parameter is not specified, the default chunkSizeBytes setting for this GridFSBucket object MUST be used instead.</p>
+<p>To store a user file, the file must have a unique id. In some cases the driver can generate a unique ObjectId to serve
+as the id for the file being uploaded. Otherwise the application provides the value. Drivers store the contents of the
+user file in the chunks collection by breaking up the contents into chunks of size "chunkSizeBytes". For a non-empty
+user file, for each n<sup>th</sup> section of the file, drivers create a chunk document and set its fields as follows:</p>
+<ul>
+<li>Files_id: the id generated for this stored file.</li>
+<li>N: this is the n<sup>th</sup> section of the stored file, zero based.</li>
+<li>Data: a section of file data, stored as BSON binary data with subtype 0x00. All chunks except the last one must be
+exactly 'chunkSizeBytes' long. The last chunk can be smaller, and should only be as large as necessary.</li>
+</ul>
+<p>Historically, while streaming the user file, drivers computed an MD5 digest for the (now deprecated) 'md5' field of the
+files collection document. If drivers preserve this behavior for backwards compatibility, they MUST provide the
+'disableMD5' member of GridFSBucketOptions. When 'disableMD5' is true, drivers MUST NOT compute an MD5 digest or include
+it in the files collection document. If drivers no longer support the deprecated 'md5' field, they MUST NOT provide the
+'disableMD5' member (or it MUST be a no-op) and MUST NOT compute MD5.</p>
+<p>After storing all chunk documents generated for the user file in the "chunks" collection, drivers create a files
+collection document for the file and store it in the files collection. The fields in the files collection document are
+set as follows:</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Description</th></tr></thead><tbody>
+<tr><td>length</td><td>the length of this stored file, in bytes.</td></tr>
+<tr><td>chunksize</td><td>the chunk size in bytes used to break the user file into chunks. While the configuration option is named "chunkSizeBytes" for clarity, for legacy reasons, the files collection document uses only "chunkSize".</td></tr>
+<tr><td>uploaddate</td><td>a BSON datetime object for the current time, in UTC, when the files collection document was created.</td></tr>
+<tr><td>md5</td><td>MD5 checksum for this user file, computed from the file's data, stored as a hex string, if computed, otherwise omitted.</td></tr>
+<tr><td>filename</td><td>the filename passed to this function, UTF-8 encoded.</td></tr>
+<tr><td>contenttype</td><td>the "contentType" passed in the options, if provided; otherwise omitted.</td></tr>
+<tr><td>aliases</td><td>the array passed in the options, if provided; otherwise omitted.</td></tr>
+<tr><td>metadata</td><td>the "metadata" document passed in the options, if provided; otherwise omitted.</td></tr>
+</tbody></table>
+</div>
+<p>If a user file contains no data, drivers MUST still create a files collection document for it with length set to zero.
+Drivers MUST NOT create any empty chunks for this file.</p>
+<p>Drivers MUST NOT run the 'filemd5' database command to confirm that all chunks were successfully uploaded. We assume
+that if none of the inserts failed then the chunks must have been successfully inserted, and running the 'filemd5'
+command would just be unnecessary overhead and doesn't work for sharded chunk keys anyway.</p>
+<p><strong>Operation Failure</strong></p>
+<p>If any of the above operations fail against the server, drivers MUST raise an error. If some inserts succeeded before
+the failed operation, these become orphaned chunks. Drivers MUST NOT attempt to clean up these orphaned chunks. The
+rationale is that whatever failure caused the orphan chunks will most likely also prevent cleaning up the orphaned
+chunks, and any attempts to clean up the orphaned chunks will simply cause long delays before reporting the original
+failure to the application.</p>
+<p><strong>Aborting an upload</strong></p>
+<p>Drivers SHOULD provide a mechanism to abort an upload. When using open_upload_stream, the returned Stream SHOULD have an
+Abort method. When using upload_from_stream, the upload will be aborted if the source stream raises an error.</p>
+<p>When an upload is aborted any chunks already uploaded MUST be deleted. Note that this differs from the case where an
+attempt to insert a chunk fails, in which case drivers immediately report the failure without attempting to delete any
+chunks already uploaded.</p>
+<p>Abort MUST raise an error if it is unable to successfully abort the upload (for example, if an error occurs while
+deleting any chunks already uploaded). However, if the upload is being aborted because the source stream provided to
+upload_from_stream raised an error then the original error should be re-raised.</p>
+<p>Abort MUST also close the Stream, or at least place it in an aborted state, so any further attempts to write additional
+content to the Stream after Abort has been called fail immediately.</p>
+<h3 id="file-download"><a class="header" href="#file-download">File Download</a></h3>
+<pre><code class="language-javascript">class GridFSBucket {
+
+  /** Opens a Stream from which the application can read the contents of the stored file
+   * specified by @id.
+   *
+   * Returns a Stream.
+   */
+  Stream open_download_stream(TFileId id);
+
+  /**
+   * Downloads the contents of the stored file specified by @id and writes
+   * the contents to the @destination Stream.
+   */
+  void download_to_stream(TFileId id, Stream destination);
+
+}
+</code></pre>
+<p>Downloads a stored file from a GridFS bucket. For languages that have a Stream abstraction, drivers SHOULD use that
+Stream abstraction. For languages that do not have a Stream abstraction, drivers MUST create an abstraction that
+supports streaming.</p>
+<p>In the case of open_download_stream, the application reads the contents of the stored file by reading from the returned
+Stream until end of file is reached. The application MUST call close (or its equivalent) on the returned Stream when it
+is done reading the contents.</p>
+<p>In the case of download_to_stream the driver writes the contents of the stored file to the provided Stream. The driver
+does NOT call close (or its equivalent) on the Stream.</p>
+<p>Note: By default a file id is of type ObjectId. If an application uses custom file ids it may be of any type.</p>
+<p><strong>Implementation details:</strong></p>
+<p>Drivers must first retrieve the files collection document for this file. If there is no files collection document, the
+file either never existed, is in the process of being deleted, or has been corrupted, and the driver MUST raise an
+error.</p>
+<p>Then, implementers retrieve all chunks with files_id equal to id, sorted in ascending order on "n".</p>
+<p>However, when downloading a zero length stored file the driver MUST NOT issue a query against the chunks collection,
+since that query is not necessary. For a zero length file, drivers return either an empty stream or send nothing to the
+provided stream (depending on the download method).</p>
+<p>If a networking error or server error occurs, drivers MUST raise an error.</p>
+<p>As drivers stream the stored file they MUST check that each chunk received is the next expected chunk (i.e. it has the
+expected "n" value) and that the data field is of the expected length. In the case of open_download_stream, if the
+application stops reading from the stream before reaching the end of the stored file, any errors that might exist beyond
+the point at which the application stopped reading won't be detected by the driver.</p>
+<h3 id="file-deletion"><a class="header" href="#file-deletion">File Deletion</a></h3>
+<pre><code class="language-javascript">class GridFSBucket {
+
+  /**
+   * Given a @id, delete this stored file"s files collection document and
+   * associated chunks from a GridFS bucket.
+   */
+  void delete(TFileId id);
+
+}
+</code></pre>
+<p>Deletes the stored file"s files collection document and associated chunks from the underlying database.</p>
+<p>As noted for download(), drivers that previously used id"s of a different type MAY implement a delete() method that
+accepts that type, but MUST mark that method as deprecated.</p>
+<p><strong>Implementation details:</strong></p>
+<p>There is an inherent race condition between the chunks and files collections. Without some transaction-like behavior
+between these two collections, it is always possible for one client to delete a stored file while another client is
+attempting a read of the stored file. For example, imagine client A retrieves a stored file"s files collection document,
+client B deletes the stored file, then client A attempts to read the stored file"s chunks. Client A wouldn"t find any
+chunks for the given stored file. To minimize the window of vulnerability of reading a stored file that is the process
+of being deleted, drivers MUST first delete the files collection document for a stored file, then delete its associated
+chunks.</p>
+<p>If there is no such file listed in the files collection, drivers MUST raise an error. Drivers MAY attempt to delete any
+orphaned chunks with files_id equal to id before raising the error.</p>
+<p>If a networking or server error occurs, drivers MUST raise an error.</p>
+<h3 id="generic-find-on-files-collection"><a class="header" href="#generic-find-on-files-collection">Generic Find on Files Collection</a></h3>
+<pre><code class="language-javascript">class GridFSFindOptions {
+
+  /**
+   * Enables writing to temporary files on the server. When set to true, the server
+   * can write temporary data to disk while executing the find operation on the files collection.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default
+   * is to not send a value. For servers &lt; 3.2, this option is ignored and not sent
+   * as allowDiskUse does not exist in the OP_QUERY wire protocol.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  allowDiskUse: Optional&lt;Boolean&gt;;
+
+  /**
+   * The number of documents to return per batch.
+   */
+  batchSize : Int32 optional;
+
+  /**
+   * The maximum number of documents to return.
+   */
+  limit : Int32 optional;
+
+  /**
+   * The maximum amount of time to allow the query to run.
+   */
+  maxTimeMS: Int64 optional;
+
+  /**
+   * The server normally times out idle cursors after an inactivity period
+   * to prevent excess memory use. Set this option to prevent that.
+   */
+  noCursorTimeout : Boolean optional;
+
+  /**
+   * The number of documents to skip before returning.
+   */
+  skip : Int32 optional;
+
+  /**
+   * The order by which to sort results. Defaults to not sorting.
+   */
+  sort : Document optional;
+
+}
+
+class GridFSBucket {
+
+  /**
+   * Find and return the files collection documents that match @filter.
+   */
+  Iterable find(Document filter, GridFSFindOptions options=null);
+
+}
+</code></pre>
+<p>This call will trigger a find() operation on the files collection using the given filter. Drivers returns a sequence of
+documents that can be iterated over. Drivers return an empty or null set when there are no matching files collection
+documents. As the number of files could be large, drivers SHOULD return a cursor-like iterable type and SHOULD NOT
+return a fixed-size array type.</p>
+<p><strong>Implementation details:</strong></p>
+<p>Drivers SHOULD NOT perform any validation on the filter. If the filter contains fields that do not exist within files
+collection documents, then an empty result set will be returned.</p>
+<p>Drivers MUST propagate the GridFSFindOptions to the FindOptions passed to the underlying Find operation.</p>
+<p>Drivers MUST document how users query files collection documents, including how to query metadata, e.g. using a filter
+like { metadata.fieldname : "some_criteria" }.</p>
+<h2 id="advanced-api"><a class="header" href="#advanced-api">Advanced API</a></h2>
+<h3 id="file-download-by-filename"><a class="header" href="#file-download-by-filename">File Download by Filename</a></h3>
+<pre><code class="language-javascript">class GridFSDownloadByNameOptions {
+
+  /**
+   * Which revision (documents with the same filename and different uploadDate)
+   * of the file to retrieve. Defaults to -1 (the most recent revision).
+   *
+   * Revision numbers are defined as follows:
+   * 0 = the original stored file
+   * 1 = the first revision
+   * 2 = the second revision
+   * etc…
+   * -2 = the second most recent revision
+   * -1 = the most recent revision
+   */
+  revision : Int32 optional;
+
+}
+
+class GridFSBucket {
+
+  /** Opens a Stream from which the application can read the contents of the stored file
+   * specified by @filename and the revision in @options.
+   *
+   * Returns a Stream.
+   */
+  Stream open_download_stream_by_name(string filename, GridFSDownloadByNameOptions options=null);
+
+  /**
+   * Downloads the contents of the stored file specified by @filename and by the
+   * revision in @options and writes the contents to the @destination Stream.
+   */
+  void download_to_stream_by_name(string filename, Stream destination,
+    GridFSDownloadByNameOptions options=null);
+
+}
+</code></pre>
+<p>Retrieves a stored file from a GridFS bucket. For languages that have a Stream abstraction, drivers SHOULD use that
+Stream abstraction. For languages that do not have a Stream abstraction, drivers MUST create an abstraction that
+supports streaming.</p>
+<p><strong>Implementation details:</strong></p>
+<p>If there is no file with the given filename, or if the requested revision does not exist, drivers MUST raise an error
+with a distinct message for each case.</p>
+<p>Drivers MUST select the files collection document of the file to-be-returned by running a query on the files collection
+for the given filename, sorted by uploadDate (either ascending or descending, depending on the revision requested) and
+skipping the appropriate number of documents. For negative revision numbers, the sort is descending and the number of
+documents to skip equals (-revision - 1). For non-negative revision numbers, the sort is ascending and the number of
+documents to skip equals the revision number.</p>
+<p>If a networking error or server error occurs, drivers MUST raise an error.</p>
+<h3 id="partial-file-retrieval"><a class="header" href="#partial-file-retrieval">Partial File Retrieval</a></h3>
+<p>In the case of open_download_stream, drivers SHOULD support partial file retrieval by allowing the application to read
+only part of the stream. If a driver does support reading only part of the stream, it MUST do so using the standard
+stream methods of its language for seeking to a position in a stream and reading the desired amount of data from that
+position. This is the preferred method of supporting partial file retrieval.</p>
+<p>In the case of download_to_stream, drivers are not required to support partial file retrieval. If they choose to do so,
+drivers can support this operation by adding "start" and "end" to their supported options for download_to_stream. These
+values represent non-negative byte offsets from the beginning of the file. When "start" and "end" are specified, drivers
+return the bytes of the file in <code>[start, end)</code>. If "start" and "end" are equal no data is returned.</p>
+<p>If either "start" or "end" is invalid, drivers MUST raise an error. These values are considered invalid if they are
+negative, greater than the file length, or if "start" is greater than "end".</p>
+<p>When performing partial reads, drivers SHOULD use the file"s "chunkSize" to calculate which chunks contain the desired
+section and avoid reading unneeded documents from the "chunks" collection.</p>
+<h3 id="renaming-stored-files"><a class="header" href="#renaming-stored-files">Renaming stored files</a></h3>
+<pre><code class="language-javascript">class GridFSBucket {
+
+  /**
+   * Renames the stored file with the specified @id.
+   */
+  void rename(TFileId id, string new_filename);
+
+}
+</code></pre>
+<p>Sets the filename field in the stored file"s files collection document to the new filename.</p>
+<p><strong>Implementation details:</strong></p>
+<p>Drivers construct and execute an update_one command on the files collection using <code>{ _id: @id }</code> as the filter and
+<code>{ $set : { filename : "new_filename" } }</code> as the update parameter.</p>
+<p>To rename multiple revisions of the same filename, users must retrieve the full list of files collection documents for a
+given filename and execute "rename" on each corresponding <code>_id</code>.</p>
+<p>If there is no file with the given id, drivers MUST raise an error.</p>
+<h3 id="dropping-an-entire-gridfs-bucket"><a class="header" href="#dropping-an-entire-gridfs-bucket">Dropping an entire GridFS bucket</a></h3>
+<pre><code class="language-javascript">class GridFSBucket {
+
+  /**
+   * Drops the files and chunks collections associated with
+   * this bucket.
+   */
+  void drop();
+
+}
+</code></pre>
+<p>This method drops the files and chunks collections associated with this GridFS bucket.</p>
+<p>Drivers should drop the files collection first, and then the chunks collection.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>TBD</p>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation for Change</a></h2>
+<p>The <a href="https://www.mongodb.com/docs/manual/core/gridfs/">existing GridFS documentation</a> is only concerned with the
+underlying data model for this feature, and does not specify what basic set of features an implementation of GridFS
+should or should not provide. As a result, GridFS is currently implemented across drivers, but with varying APIs,
+features, and behavior guarantees. Current implementations also may not conform to the existing documentation.</p>
+<p>This spec documents minimal operations required by all drivers offering GridFS support, along with optional features
+that drivers may choose to support. This spec is also explicit about what features/behaviors of GridFS are not specified
+and should not be supported. Additionally, this spec validates and clarifies the existing data model, deprecating fields
+that are undesirable or incorrect.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<p>Why is the default chunk size 255 KiB?</p>
+<p>On MMAPv1, the server provides documents with extra padding to allow for in-place updates. When the "data" field of a
+chunk is limited to 255 KiB, it ensures that the whole chunk document (the chunk data along with an <code>_id</code> and other
+information) will fit into a 256 KiB section of memory, making the best use of the provided padding. Users setting
+custom chunk sizes are advised not to use round power-of-two values, as the whole chunk document is likely to exceed
+that space and demand extra padding from the system. WiredTiger handles its memory differently, and this optimization
+does not apply. However, because application code generally won"t know what storage engine will be used in the database,
+always avoiding round power-of-two chunk sizes is recommended.</p>
+<p>Why can"t I alter documents once they are in the system?</p>
+<p>GridFS works with documents stored in multiple collections within MongoDB. Because there is currently no way to
+atomically perform operations across collections in MongoDB, there is no way to alter stored files in a way that
+prevents race conditions between GridFS clients. Updating GridFS stored files without that server functionality would
+involve a data model that could support this type of concurrency, and changing the GridFS data model is outside of the
+scope of this spec.</p>
+<p>Why provide a "rename" method?</p>
+<p>By providing users with a reasonable alternative for renaming a file, we can discourage users from writing directly to
+the files collections under GridFS. With this approach we can prevent critical files collection documents fields from
+being mistakenly altered.</p>
+<p>Why is there no way to perform arbitrary updates on the files collection?</p>
+<p>The rename helper defined in this spec allows users to easily rename a stored file. While updating files collection
+documents in other, more granular ways might be helpful for some users, validating such updates to ensure that other
+files collection document fields remain protected is a complicated task. We leave the decision of how best to provide
+this functionality to a future spec.</p>
+<p>What is the "md5" field of a files collection document and how was it used?</p>
+<p>"md5" holds an MD5 checksum that is computed from the original contents of a user file. Historically, GridFS did not use
+acknowledged writes, so this checksum was necessary to ensure that writes went through properly. With acknowledged
+writes, the MD5 checksum is still useful to ensure that files in GridFS have not been corrupted. A third party directly
+accessing the 'files' and "chunks" collections under GridFS could, inadvertently or maliciously, make changes to
+documents that would make them unusable by GridFS. Comparing the MD5 in the files collection document to a re-computed
+MD5 allows detecting such errors and corruption. However, drivers now assume that the stored file is not corrupted, and
+applications that want to use the MD5 value to check for corruption must do so themselves.</p>
+<p>Why store the MD5 checksum instead of creating the hash as-needed?</p>
+<p>The MD5 checksum must be computed when a file is initially uploaded to GridFS, as this is the only time we are
+guaranteed to have the entire uncorrupted file. Computing it on-the-fly as a file is read from GridFS would ensure that
+our reads were successful, but guarantees nothing about the state of the file in the system. A successful check against
+the stored MD5 checksum guarantees that the stored file matches the original and no corruption has occurred.</p>
+<p>Why are MD5 checksums now deprecated? What should users do instead?</p>
+<p>MD5 is prohibited by FIPS 140-2. Operating systems and libraries operating in FIPS mode do not provide the MD5
+algorithm. To avoid a broken GridFS feature on such systems, the use of MD5 with GridFS is deprecated, should not be
+added to new implementations, and should be removed from existing implementations according to the deprecation policy of
+individual drivers. Applications that desire a file digest should implement it outside of GridFS and store it with other
+file metadata.</p>
+<p>Why do drivers no longer need to call the filemd5 command on upload?</p>
+<p>When a chunk is inserted and no error occurs the application can assume that the chunk was correctly inserted. No other
+operations that insert or modify data require the driver to double check that the operation succeeded. It can be assumed
+that any errors would have been detected by use of the appropriate write concern. Using filemd5 also prevents users from
+sharding chunk keys.</p>
+<p>What about write concern?</p>
+<p>This spec leaves the choice of how to set write concern to driver authors. Implementers may choose to accept write
+concern through options on the given methods, to set a configurable write concern on the GridFS object, to enforce a
+single write concern for all GridFS operations, or to do something different.</p>
+<p>If a user has given GridFS a write concern of 0, should we perform MD5 calculations? (If supported for backwards
+compatibility)</p>
+<p>Yes, because the checksum is used for detecting future corruption or misuse of GridFS collections.</p>
+<p>Is GridFS limited by sharded systems?</p>
+<p>For best performance, clients using GridFS on a sharded system should use a shard key that ensures all chunks for a
+given stored file are routed to the same shard. Therefore, if the chunks collection is sharded, you should shard on the
+files_id. Normally only the chunks collection benefits from sharding, since the files collection is usually small.
+Otherwise, there are no limitations to GridFS on sharded systems.</p>
+<p>Why is contentType deprecated?</p>
+<p>Most fields in the files collection document are directly used by the driver, with the exception of: metadata,
+contentType and aliases. All information that is purely for use of the application should be embedded in the 'metadata'
+document. Users of GridFS who would like to store a contentType for use in their applications are encouraged to add a
+'contentType' field to the "metadata" document instead of using the deprecated top-level "contentType" field.</p>
+<p>Why are aliases deprecated?</p>
+<p>The "aliases" field of the files collection documents was misleading. It implies that a file in GridFS could be accessed
+by alternate names when, in fact, none of the existing implementations offer this functionality. For GridFS
+implementations that retrieve stored files by filename or support specifying specific revisions of a stored file, it is
+unclear how "aliases" should be interpreted. Users of GridFS who would like to store alternate filenames for use in
+their applications are encouraged to add an "aliases" field to the "metadata" document instead of using the deprecated
+top-level "aliases" field.</p>
+<p>What happened to the put and get methods from earlier drafts?</p>
+<p>Upload and download are more idiomatic names that more clearly indicate their purpose. Get and put are often associated
+with getting and setting properties of a class, and using them instead of download and upload was confusing.</p>
+<p>Why aren't there methods to upload and download byte arrays?</p>
+<p>We assume that GridFS files are usually quite large and therefore that the GridFS API must support streaming. Most
+languages have easy ways to wrap a stream around a byte array. Drivers are free to add helper methods that directly
+support uploading and downloading GridFS files as byte arrays.</p>
+<p>Should drivers report an error if a stored file has extra chunks?</p>
+<p>The length and the chunkSize fields of the files collection document together imply exactly how many chunks a stored
+file should have. If the chunks collection has any extra chunks the stored file is in an inconsistent state. Ideally we
+would like to report that as an error, but this is an extremely unlikely state and we don't want to pay a performance
+penalty checking for an error that is almost never there. Therefore, drivers MAY ignore extra chunks.</p>
+<p>Why have we changed our mind about requiring the file id to be an ObjectId?</p>
+<p>This spec originally required the file id for all new GridFS files to be an ObjectId and specified that the driver
+itself would be the one to generate the ObjectId when a new file was uploaded. While this sounded like a good idea, it
+has since become evident that there are valid use cases for an application to want to generate its own file id, and that
+an application wouldn't necessarily want to use ObjectId as the type of the file id. The most common case where an
+application would want to use a custom file id is when the chunks collection is to be sharded and the application wants
+to use a custom file id that is suitable for sharding. Accordingly, we have relaxed this spec to allow an application to
+supply a custom file id (of any type) when uploading a new file.</p>
+<p>How can we maintain backward compatibility while supporting custom file ids?</p>
+<p>For most methods supporting custom file ids is as simple as relaxing the type of the id parameter from ObjectId to
+something more general like object or BSON value (or to a type parameter like <code>&lt;TFileId&gt;</code> in languages that support
+generic methods). In a few cases new methods were added to support custom file ids. The original upload_from_stream
+method returned an ObjectId, and support for custom file ids is implemented by adding a new method that takes the custom
+file id as an additional parameter. Drivers should continue to support the original method if possible to maintain
+backward compatibility. This spec does not attempt to completely mandate how each driver should maintain backward
+compatibility, as different languages have different approaches and capabilities for maintaining backward compatibility.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>This spec presents a new API for GridFS systems, which may break existing functionality for some drivers. The following
+are suggestions for ways to mitigate these incompatibilities.</p>
+<p>File revisions</p>
+<p>This document presents a basic API that does not support specifying specific revisions of a stored file, and an advanced
+API that does. Drivers MAY choose to implement whichever API is closest to the functionality they now support. Note that
+the methods for file insertion are the same whether specifying specific revisions is supported or not.</p>
+<p>Method names</p>
+<p>If drivers provide methods that conform to the functionality outlined in this document, drivers MAY continue to provide
+those methods under their existing names. In this case, drivers SHOULD make it clear in their documentation that these
+methods have equivalents defined in the spec under a different name.</p>
+<p>ContentType field</p>
+<p>Drivers MAY continue to create a "contentType'" field within files collection documents, so that applications depending
+on this field continue to work. However, drivers SHOULD make it clear in their documentation that this field is
+deprecated, and is not used at all in driver code. Documentation SHOULD encourage users to store contentType in the
+"metadata" document instead.</p>
+<p>Aliases field</p>
+<p>Drivers MAY continue to create an "aliases" field within files collection documents, so that applications depending on
+this field continue to work. However, drivers SHOULD make it clear in their documentation that this field is deprecated,
+and is not used at all in driver code. Documentation SHOULD encourage users to store aliases in the "metadata" document
+instead.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p>TBD</p>
+<h2 id="future-work"><a class="header" href="#future-work">Future work</a></h2>
+<p>Changes to the GridFS data model are out-of-scope for this spec, but may be considered for the future.</p>
+<p>The ability to alter or append to existing GridFS files has been cited as something that would greatly improve the
+system. While this functionality is not in-scope for this spec (see "Why can"t I alter documents once they are in the
+system?") it is a potential area of growth for the future.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>2024-02-27: Migrated from reStructuredText to Markdown.</li>
+<li>2016-05-10: Support custom file ids</li>
+<li>2016-10-07: Drivers SHOULD handle any numeric type of length and chunkSize</li>
+<li>2016-10-07: Added ReadConcern to the GridFS spec</li>
+<li>2016-10-07: Modified a JSON test that was testing optional behavior</li>
+<li>2018-01-31: Deprecated MD5, and specified an option to disable MD5 until removed</li>
+<li>2018-07-05: Must not use 'filemd5'</li>
+<li>2020-01-17: Added allowDiskUse to GridFSFindOptions</li>
+<li>2022-01-19: Require that timeouts be applied per the client-side operations timeout spec</li>
+<li>2022-10-05: Remove spec front matter and reformat changelog.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../versioned-api/versioned-api.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../versioned-api/versioned-api.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

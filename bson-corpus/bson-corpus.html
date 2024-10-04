@@ -1,0 +1,553 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>BSON Corpus - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html" class="active"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="bson-corpus"><a class="header" href="#bson-corpus">BSON Corpus</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: N/A</li>
+</ul>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>The official BSON specification does not include test data, so this pseudo-specification describes tests for BSON
+encoding and decoding. It also includes tests for MongoDB's "Extended JSON" specification (hereafter abbreviated as
+<code>extjson</code>).</p>
+<h2 id="meta"><a class="header" href="#meta">Meta</a></h2>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation for Change</a></h2>
+<p>To ensure correct operation, we want drivers to implement identical tests for important features. BSON (and <code>extjson</code>)
+are critical for correct operation and data exchange, but historically had no common test corpus. This
+pseudo-specification provides such tests.</p>
+<h3 id="goals"><a class="header" href="#goals">Goals</a></h3>
+<ul>
+<li>Provide machine-readable test data files for BSON and <code>extjson</code> encoding and decoding.</li>
+<li>Cover all current and historical BSON types.</li>
+<li>Define test data patterns for three cases:
+<ul>
+<li>conversion/roundtrip,</li>
+<li>decode errors, and</li>
+<li>parse errors.</li>
+</ul>
+</li>
+</ul>
+<h3 id="non-goals"><a class="header" href="#non-goals">Non-Goals</a></h3>
+<ul>
+<li>Replace or extend the official BSON spec at <a href="http://bsonspec.org">http://bsonspec.org</a>.</li>
+<li>Provide a formal specification for <code>extjson</code>.</li>
+</ul>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<p>The specification for BSON lives at <a href="http://bsonspec.org">http://bsonspec.org</a>. The <code>extjson</code> format specification is
+<a href="../extended-json/extended-json.html">here</a>.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>This test plan describes a general approach for BSON testing. Future BSON specifications (such as for new types like
+Decimal128) may specialize or alter the approach described below.</p>
+<h3 id="description-of-the-bson-corpus"><a class="header" href="#description-of-the-bson-corpus">Description of the BSON Corpus</a></h3>
+<p>This BSON test data corpus consists of a JSON file for each BSON type, plus a <code>top.json</code> file for testing the overall,
+enclosing document and a <code>multi-type.json</code> file for testing a document with all BSON types. There is also a
+<code>multi-type-deprecated.json</code> that includes deprecated keys.</p>
+<h4 id="top-level-keys"><a class="header" href="#top-level-keys">Top level keys</a></h4>
+<ul>
+<li><code>description</code>: human-readable description of what is in the file</li>
+<li><code>bson_type</code>: hex string of the first byte of a BSON element (e.g. "0x01" for type "double"); this will be the
+synthetic value "0x00" for "whole document" tests like <code>top.json</code>.</li>
+<li><code>test_key</code>: (optional) name of a field in a single-BSON-type <code>valid</code> test case that contains the data type being
+tested.</li>
+<li><code>valid</code> (optional): an array of validity test cases (see below).</li>
+<li><code>decodeErrors</code> (optional): an array of decode error cases (see below).</li>
+<li><code>parseErrors</code> (optional): an array of type-specific parse error case (see below).</li>
+<li><code>deprecated</code> (optional): this field will be present (and true) if the BSON type has been deprecated (i.e. Symbol,
+Undefined and DBPointer)</li>
+</ul>
+<h4 id="validity-test-case-keys"><a class="header" href="#validity-test-case-keys">Validity test case keys</a></h4>
+<p>Validity test cases include 'canonical' forms of BSON and Extended JSON that are deemed equivalent and may provide
+additional cases or metadata for additional assertions. For each case, keys include:</p>
+<ul>
+<li><code>description</code>: human-readable test case label.</li>
+<li><code>canonical_bson</code>: an (uppercase) big-endian hex representation of a BSON byte string. Be sure to mangle the case as
+appropriate in any roundtrip tests.</li>
+<li><code>canonical_extjson</code>: a string containing a Canonical Extended JSON document. Because this is itself embedded as a
+<em>string</em> inside a JSON document, characters like quote and backslash are escaped.</li>
+<li><code>relaxed_extjson</code>: (optional) a string containing a Relaxed Extended JSON document. Because this is itself embedded as
+a <em>string</em> inside a JSON document, characters like quote and backslash are escaped.</li>
+<li><code>degenerate_bson</code>: (optional) an (uppercase) big-endian hex representation of a BSON byte string that is technically
+parseable, but not in compliance with the BSON spec. Be sure to mangle the case as appropriate in any roundtrip tests.</li>
+<li><code>degenerate_extjson</code>: (optional) a string containing an invalid form of Canonical Extended JSON that is still
+parseable according to type-specific rules. (For example, "1e100" instead of "1E+100".)</li>
+<li><code>converted_bson</code>: (optional) an (uppercase) big-endian hex representation of a BSON byte string. It may be present for
+deprecated types. It represents a possible conversion of the deprecated type to a non-deprecated type, e.g. symbol to
+string.</li>
+<li><code>converted_extjson</code>: (optional) a string containing a Canonical Extended JSON document. Because this is itself
+embedded as a <em>string</em> inside a JSON document, characters like quote and backslash are escaped. It may be present for
+deprecated types and is the Canonical Extended JSON representation of <code>converted_bson</code>.</li>
+<li><code>lossy</code> (optional) -- boolean; present (and true) iff <code>canonical_bson</code> can't be represented exactly with extended JSON
+(e.g. NaN with a payload).</li>
+</ul>
+<h4 id="decode-error-case-keys"><a class="header" href="#decode-error-case-keys">Decode error case keys</a></h4>
+<p>Decode error cases provide an invalid BSON document or field that should result in an error. For each case, keys
+include:</p>
+<ul>
+<li><code>description</code>: human-readable test case label.</li>
+<li><code>bson</code>: an (uppercase) big-endian hex representation of an invalid BSON string that should fail to decode correctly.</li>
+</ul>
+<h4 id="parse-error-case-keys"><a class="header" href="#parse-error-case-keys">Parse error case keys</a></h4>
+<p>Parse error cases are type-specific and represent some input that can not be encoded to the <code>bson_type</code> under test. For
+each case, keys include:</p>
+<ul>
+<li><code>description</code>: human-readable test case label.</li>
+<li><code>string</code>: a text or numeric representation of an input that can't be parsed to a valid value of the given type.</li>
+</ul>
+<h3 id="extended-json-encoding-escaping-and-ordering"><a class="header" href="#extended-json-encoding-escaping-and-ordering">Extended JSON encoding, escaping and ordering</a></h3>
+<p>Because the <code>canonical_extjson</code> and other Extended JSON fields are embedded in a JSON document, all their JSON
+metacharacters are escaped. Control characters and non-ASCII codepoints are represented with <code>\uXXXX</code>. Note that this
+means that the corpus JSON will appear to have double-escaped characters <code>\\uXXXX</code>. This is by design to ensure that the
+Extended JSON fields remain printable ASCII without embedded null characters to ensure maximum portability to different
+language JSON or extended JSON decoders.</p>
+<p>There are legal differences in JSON representation that may complicate testing for particular codecs. The JSON in the
+corpus may not resemble the JSON generated by a codec, even though they represent the same data. Some known differences
+include:</p>
+<ul>
+<li>JSON only requires certain characters to be escaped but allows any character to be escaped.</li>
+<li>The JSON format is <em>unordered</em> and whitespace (outside of strings) is not significant.</li>
+</ul>
+<p>Implementations using these tests MUST normalize JSON comparisons however necessary for effective comparison.</p>
+<h3 id="language-specific-differences"><a class="header" href="#language-specific-differences">Language-specific differences</a></h3>
+<p>Some programming languages may not be able to represent or transmit all types accurately. In such cases, implementations
+SHOULD ignore (or modify) any tests which are not supported on that platform.</p>
+<h3 id="testing-validity"><a class="header" href="#testing-validity">Testing validity</a></h3>
+<p>To test validity of a case in the <code>valid</code> array, we consider up to five possible representations:</p>
+<ul>
+<li>Canonical BSON (denoted herein as "cB") -- fully valid, spec-compliant BSON</li>
+<li>Degenerate BSON (denoted herein as "dB") -- invalid but still parseable BSON (bad array keys, regex options out of
+order)</li>
+<li>Canonical Extended JSON (denoted herein as "cEJ") -- A string format based on the JSON standard that emphasizes type
+preservation at the expense of readability and interoperability.</li>
+<li>Degenerate Extended JSON (denoted herin as "dEJ") -- An invalid form of Canonical Extended JSON that is still
+parseable. (For example, "1e100" instead of "1E+100".)</li>
+<li>Relaxed Extended JSON (denoted herein as "rEJ") -- A string format based on the JSON standard that emphasizes
+readability and interoperability at the expense of type preservation.</li>
+</ul>
+<p>Not all input types will exist for a given test case.</p>
+<p>There are two forms of BSON/Extended JSON codecs: ones that have a language-native "intermediate" representation and
+ones that do not.</p>
+<p>For a codec <em>without</em> an intermediate representation (i.e. one that translates directly from BSON to JSON or back), the
+following assertions MUST hold (function names are for clarity of illustration only):</p>
+<ul>
+<li>for cB input:
+<ul>
+<li>bson_to_canonical_extended_json(cB) = cEJ</li>
+<li>bson_to_relaxed_extended_json(cB) = rEJ (if rEJ exists)</li>
+</ul>
+</li>
+<li>for cEJ input:
+<ul>
+<li>json_to_bson(cEJ) = cB (unless lossy)</li>
+</ul>
+</li>
+<li>for dB input (if it exists):
+<ul>
+<li>bson_to_canonical_extended_json(dB) = cEJ</li>
+<li>bson_to_relaxed_extended_json(dB) = rEJ (if rEJ exists)</li>
+</ul>
+</li>
+<li>for dEJ input (if it exists):
+<ul>
+<li>json_to_bson(dEJ) = cB (unless lossy)</li>
+</ul>
+</li>
+<li>for rEJ input (if it exists):
+<ul>
+<li>bson_to_relaxed_extended_json( json_to_bson(rEJ) ) = rEJ</li>
+</ul>
+</li>
+</ul>
+<p>For a codec that has a language-native representation, we want to test both conversion and round-tripping. For these
+codecs, the following assertions MUST hold (function names are for clarity of illustration only):</p>
+<ul>
+<li>for cB input:
+<ul>
+<li>native_to_bson( bson_to_native(cB) ) = cB</li>
+<li>native_to_canonical_extended_json( bson_to_native(cB) ) = cEJ</li>
+<li>native_to_relaxed_extended_json( bson_to_native(cB) ) = rEJ (if rEJ exists)</li>
+</ul>
+</li>
+<li>for cEJ input:
+<ul>
+<li>native_to_canonical_extended_json( json_to_native(cEJ) ) = cEJ</li>
+<li>native_to_bson( json_to_native(cEJ) ) = cB (unless lossy)</li>
+</ul>
+</li>
+<li>for dB input (if it exists):
+<ul>
+<li>native_to_bson( bson_to_native(dB) ) = cB</li>
+</ul>
+</li>
+<li>for dEJ input (if it exists):
+<ul>
+<li>native_to_canonical_extended_json( json_to_native(dEJ) ) = cEJ</li>
+<li>native_to_bson( json_to_native(dEJ) ) = cB (unless lossy)</li>
+</ul>
+</li>
+<li>for rEJ input (if it exists):
+<ul>
+<li>native_to_relaxed_extended_json( json_to_native(rEJ) ) = rEJ</li>
+</ul>
+</li>
+</ul>
+<p>Implementations MAY test assertions in an implementation-specific manner.</p>
+<h3 id="testing-decode-errors"><a class="header" href="#testing-decode-errors">Testing decode errors</a></h3>
+<p>The <code>decodeErrors</code> cases represent BSON documents that are sufficiently incorrect that they can't be parsed even with
+liberal interpretation of the BSON schema (e.g. reading arrays with invalid keys is possible, even though technically
+invalid, so they are <em>not</em> <code>decodeErrors</code>).</p>
+<p>Drivers SHOULD test that each case results in a decoding error. Implementations MAY test assertions in an
+implementation-specific manner.</p>
+<h3 id="testing-parsing-errors"><a class="header" href="#testing-parsing-errors">Testing parsing errors</a></h3>
+<p>The interpretation of <code>parseErrors</code> is type-specific. The structure of test cases within <code>parseErrors</code> is described in
+<a href="#parse-error-case-keys">Parse error case keys</a>.</p>
+<p>Drivers SHOULD test that each case results in a parsing error (e.g. parsing Extended JSON, constructing a language
+type). Implementations MAY test assertions in an implementation-specific manner.</p>
+<h4 id="top-level-document-type-0x00"><a class="header" href="#top-level-document-type-0x00">Top-level Document (type 0x00)</a></h4>
+<p>For type "0x00" (i.e. top-level documents), the <code>string</code> field contains input for an Extended JSON parser. Drivers MUST
+parse the Extended JSON input using an Extended JSON parser and verify that doing so yields an error. Drivers that parse
+Extended JSON into language types instead of directly to BSON MAY need to additionally convert the resulting language
+type(s) to BSON to expect an error.</p>
+<p>Drivers SHOULD also parse the Extended JSON input using a regular JSON parser (not an Extended JSON one) and verify the
+input is parsed successfully. This serves to verify that the <code>parseErrors</code> test cases are testing Extended JSON-specific
+error conditions and that they do not have, for example, unintended syntax errors.</p>
+<p>Note: due to the generic nature of these tests, they may also be used to test Extended JSON parsing errors for various
+BSON types appearing within a document.</p>
+<h4 id="binary-type-0x05"><a class="header" href="#binary-type-0x05">Binary (type 0x05)</a></h4>
+<p>For type "0x05" (i.e. binary), the rules for handling <code>parseErrors</code> are the same as those for
+<a href="#top-level-document-type-0x00">Top-level Document (type 0x00)</a>.</p>
+<h4 id="decimal128-type-0x13"><a class="header" href="#decimal128-type-0x13">Decimal128 (type 0x13)</a></h4>
+<p>For type "0x13" (i.e. Decimal128), the <code>string</code> field contains input for a Decimal128 parser that converts string input
+to a binary Decimal128 value (e.g. Decimal128 constructor). Drivers MUST assert that these strings cannot be
+successfully converted to a binary Decimal128 value and that parsing the string produces an error.</p>
+<h3 id="deprecated-types"><a class="header" href="#deprecated-types">Deprecated types</a></h3>
+<p>The corpus files for deprecated types are provided for informational purposes. Implementations MAY ignore or modify them
+to match legacy treatment of deprecated types. The <code>converted_bson</code> and <code>converted_extjson</code> fields MAY be used to test
+conversion to a standard type or MAY be ignored.</p>
+<h2 id="prose-tests"><a class="header" href="#prose-tests">Prose Tests</a></h2>
+<p>The following tests have not yet been automated, but MUST still be tested.</p>
+<h3 id="1-prohibit-null-bytes-in-null-terminated-strings-when-encoding-bson"><a class="header" href="#1-prohibit-null-bytes-in-null-terminated-strings-when-encoding-bson">1. Prohibit null bytes in null-terminated strings when encoding BSON</a></h3>
+<p>The BSON spec uses null-terminated strings to represent document field names and regex components (i.e. pattern and
+flags/options). Drivers MUST assert that null bytes are prohibited in the following contexts when encoding BSON (i.e.
+creating raw BSON bytes or constructing BSON-specific type classes):</p>
+<ul>
+<li>Field name within a root document</li>
+<li>Field name within a sub-document</li>
+<li>Pattern for a regular expression</li>
+<li>Flags/options for a regular expression</li>
+</ul>
+<p>Depending on how drivers implement BSON encoding, they MAY expect an error when constructing a type class (e.g. BSON
+Document or Regex class) or when encoding a language representation to BSON (e.g. converting a dictionary, which might
+allow null bytes in its keys, to raw BSON bytes).</p>
+<h2 id="implementation-notes"><a class="header" href="#implementation-notes">Implementation Notes</a></h2>
+<h3 id="a-tool-for-visualizing-bson"><a class="header" href="#a-tool-for-visualizing-bson">A tool for visualizing BSON</a></h3>
+<p>The test directory includes a Perl script <code>bsonview</code>, which will decompose and highlight elements of a BSON document. It
+may be used like this:</p>
+<pre><code class="language-bash">echo "0900000010610005000000" | perl bsonview -x
+</code></pre>
+<h3 id="notes-for-certain-types"><a class="header" href="#notes-for-certain-types">Notes for certain types</a></h3>
+<h4 id="array"><a class="header" href="#array">Array</a></h4>
+<p>Arrays can have degenerate BSON if the array indexes are not set as "0", "1", etc.</p>
+<h4 id="boolean"><a class="header" href="#boolean">Boolean</a></h4>
+<p>The only valid values are 0 and 1. Other non-zero numbers MUST be interpreted as errors rather than "true" values.</p>
+<h4 id="binary"><a class="header" href="#binary">Binary</a></h4>
+<p>The Base64 encoded text in the extended JSON representation MUST be padded.</p>
+<h4 id="code"><a class="header" href="#code">Code</a></h4>
+<p>There are multiple ways to encode Unicode characters as a JSON document. Individual implementers may need to normalize
+provided and generated extended JSON before comparison.</p>
+<h4 id="decimal"><a class="header" href="#decimal">Decimal</a></h4>
+<p>NaN with payload can't be represented in extended JSON, so such conversions are lossy.</p>
+<h4 id="double"><a class="header" href="#double">Double</a></h4>
+<p>There is not yet a way to represent Inf, -Inf or NaN in extended JSON. Even if a <code>$numberDouble</code> is added, it is
+unlikely to support special values with payloads, so such doubles would be lossy when converted to extended JSON.</p>
+<p>String representation of doubles is fairly unportable so it's hard to provide a single string that all
+platforms/languages will generate. Testers may need to normalize/modify the test cases.</p>
+<h4 id="string"><a class="header" href="#string">String</a></h4>
+<p>There are multiple ways to encode Unicode characters as a JSON document. Individual implementers may need to normalize
+provided and generated extended JSON before comparison.</p>
+<h4 id="dbpointer"><a class="header" href="#dbpointer">DBPointer</a></h4>
+<p>This type is deprecated. The provided converted form (<code>converted_bson</code>) represents them as DBRef documents, but such
+conversion is outside the scope of this spec.</p>
+<h4 id="symbol"><a class="header" href="#symbol">Symbol</a></h4>
+<p>This type is deprecated. The provided converted form converts these to strings, but such conversion is outside the scope
+of this spec.</p>
+<h4 id="undefined"><a class="header" href="#undefined">Undefined</a></h4>
+<p>This type is deprecated. The provided converted form converts these to Null, but such conversion is outside the scope of
+this spec.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p>The Java, C# and Perl drivers.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<h3 id="use-of-extjson"><a class="header" href="#use-of-extjson">Use of extjson</a></h3>
+<p>Testing conversion requires an "input" and an "output". With a BSON string as both input and output, we can only test
+that it roundtrips correctly --we can't test that the decoded value visible to the language is correct.</p>
+<p>For example, a pathological encoder/decoder could invert Boolean true and false during decoding and encoding. The BSON
+would roundtrip but the program would see the wrong values.</p>
+<p>Therefore, we need a separate, semantic description of the contents of a BSON string in a machine readable format.
+Fortunately, we already have extjson as a means of doing so. The extended JSON strings contained within the tests adhere
+to the Extended JSON Specification.</p>
+<h3 id="repetition-across-cases"><a class="header" href="#repetition-across-cases">Repetition across cases</a></h3>
+<p>Some validity cases may result in duplicate assertions across cases, particularly if the <code>degenerate_bson</code> field is
+different in different cases, but the <code>canonical_bson</code> field is the same. This is by design so that each case stands
+alone and can be confirmed to be internally consistent via the assertions. This makes for easier and safer test case
+development.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-01-22: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2023-06-14: Add decimal128 Extended JSON parse tests for clamped zeros with very large exponents.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2021-09-09: Clarify error expectation rules for <code>parseErrors</code>.</p>
+</li>
+<li>
+<p>2021-09-02: Add spec and prose tests for prohibiting null bytes in null-terminated strings within document field names
+and regular expressions. Clarify type-specific rules for <code>parseErrors</code>.</p>
+</li>
+<li>
+<p>2017-05-26: Revised to be consistent with Extended JSON spec 2.0: valid case fields have changed, as have the test
+assertions.</p>
+</li>
+<li>
+<p>2017-01-23: Added <code>multi-type.json</code> to test encoding and decoding all BSON types within the same document. Amended all
+extended JSON strings to adhere to the Extended JSON Specification. Modified the "Use of extjson" section of this
+specification to note that canonical extended JSON is now used.</p>
+</li>
+<li>
+<p>2016-11-14: Removed "invalid flags" BSON Regexp case.</p>
+</li>
+<li>
+<p>2016-10-25: Added a "non-alphabetized flags" case to the BSON Regexp corpus file; decoders must be able to read
+non-alphabetized flags, but encoders must emit alphabetized flags. Added an "invalid flags" case to the BSON Regexp
+corpus file.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../benchmarking/benchmarking.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../connections-survive-step-down/tests/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../benchmarking/benchmarking.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../connections-survive-step-down/tests/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,772 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Reads - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html" class="active"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="retryable-reads"><a class="header" href="#retryable-reads">Retryable Reads</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 3.6</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>This specification is about the ability for drivers to automatically retry any read operation that has not yet received
+any results—due to a transient network error, a "not writable primary" error after a replica set failover, etc.</p>
+<p>This specification will</p>
+<ul>
+<li>outline how an API for retryable read operations will be implemented in drivers</li>
+<li>define an option to enable retryable reads for an application.</li>
+</ul>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<h4 id="retryable-error"><a class="header" href="#retryable-error">Retryable Error</a></h4>
+<p>An error is considered retryable if it meets any of the criteria defined under
+<a href="../retryable-writes/retryable-writes.html#terms">Retryable Writes: Terms: Retryable Error</a>, minus the final criterion
+about write concern errors. For convenience, the relevant criteria have been adapted to retryable reads and reproduced
+below.</p>
+<p>An error is considered retryable if it meets any of the following criteria:</p>
+<ul>
+<li>any network exception (e.g. socket timeout or error)</li>
+<li>a server error response with any the following codes:</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th><strong>Error Name</strong></th><th><strong>Error Code</strong></th></tr></thead><tbody>
+<tr><td>ExceededTimeLimit</td><td>262</td></tr>
+<tr><td>InterruptedAtShutdown</td><td>11600</td></tr>
+<tr><td>InterruptedDueToReplStateChange</td><td>11602</td></tr>
+<tr><td>NotWritablePrimary</td><td>10107</td></tr>
+<tr><td>NotPrimaryNoSecondaryOk</td><td>13435</td></tr>
+<tr><td>NotPrimaryOrSecondary</td><td>13436</td></tr>
+<tr><td>PrimarySteppedDown</td><td>189</td></tr>
+<tr><td>ReadConcernMajorityNotAvailableYet</td><td>134</td></tr>
+<tr><td>ShutdownInProgress</td><td>91</td></tr>
+<tr><td>HostNotFound</td><td>7</td></tr>
+<tr><td>HostUnreachable</td><td>6</td></tr>
+<tr><td>NetworkTimeout</td><td>89</td></tr>
+<tr><td>SocketException</td><td>9001</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>a <a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html#connection-pool-errors">PoolClearedError</a></li>
+<li>Any of the above retryable errors that occur during a connection handshake (including the authentication step). For
+example, a network error or ShutdownInProgress error encountered when running the hello or saslContinue commands.</li>
+</ul>
+<h3 id="mongoclient-configuration"><a class="header" href="#mongoclient-configuration">MongoClient Configuration</a></h3>
+<p>This specification introduces the following client-level configuration option.</p>
+<h4 id="retryreads"><a class="header" href="#retryreads">retryReads</a></h4>
+<p>This boolean option determines whether retryable behavior will be applied to all read operations executed within the
+MongoClient. This option MUST default to true.
+<a href="../retryable-writes/retryable-writes.html#retrywrites">As with retryable writes</a>, this option MUST NOT be configurable at
+the level of an individual read operation, collection object, or database object. Drivers that expose a "high" and
+"core" API (e.g. Java and C# driver) MUST NOT expose a configurable option at the level of an individual read operation,
+collection object, or database object in "high", but MAY expose the option in "core."</p>
+<h5 id="naming-deviations"><a class="header" href="#naming-deviations">Naming Deviations</a></h5>
+<p><a href="../retryable-writes/retryable-writes.html#retrywrites">As with retryable writes</a>, drivers MUST use the defined name of
+<code>retryReads</code> for the connection string parameter to ensure portability of connection strings across applications and
+drivers. If drivers solicit MongoClient options through another mechanism (e.g. an options dictionary provided to the
+MongoClient constructor), drivers SHOULD use the defined name but MAY deviate to comply with their existing conventions.
+For example, a driver may use <code>retry_reads</code> instead of <code>retryReads</code>. For any other names in the spec, drivers SHOULD use
+the defined name but MAY deviate to comply with their existing conventions.</p>
+<h3 id="requirements-for-retryable-reads"><a class="header" href="#requirements-for-retryable-reads">Requirements for Retryable Reads</a></h3>
+<h4 id="supported-server-versions"><a class="header" href="#supported-server-versions">Supported Server Versions</a></h4>
+<p>Drivers MUST verify server eligibility by ensuring that <code>maxWireVersion</code> is at least 6 because retryable reads require a
+MongoDB 3.6 standalone, replica set or shard cluster, MongoDB 3.6 server wire version is 6 as defined in the
+<a href="../wireversion-featurelist/wireversion-featurelist.html">Server Wire version and Feature List specification</a>.</p>
+<p>The minimum server version is 3.6 because</p>
+<ol>
+<li>It gives us version parity with retryable writes.</li>
+<li>It forces the retry attempt(s) to use the same implicit session, which would make it it easier to track operations
+and kill any errant longer running operation.</li>
+<li>It limits the scope of the implementation (<code>OP_QUERY</code> will not need to be supported).</li>
+</ol>
+<h4 id="supported-read-operations"><a class="header" href="#supported-read-operations">Supported Read Operations</a></h4>
+<p>Drivers MUST support retryability for the following operations:</p>
+<ul>
+<li>
+<p>All read operations defined in the CRUD specification i.e.</p>
+<ul>
+<li>
+<p><code>Collection.find()</code></p>
+<ul>
+<li>This includes the <code>find</code> operations backing the GridFS API.</li>
+</ul>
+</li>
+<li>
+<p><code>Collection.aggregate()</code></p>
+<ul>
+<li>Only if the pipeline does not include a write stage (e.g. <code>$out</code>, <code>$merge</code>)</li>
+</ul>
+</li>
+<li>
+<p><code>Collection.distinct()</code></p>
+</li>
+<li>
+<p><code>Collection.count()</code></p>
+<ul>
+<li>Only required if the driver already provides <code>count()</code></li>
+</ul>
+</li>
+<li>
+<p><code>Collection.estimatedDocumentCount()</code></p>
+</li>
+<li>
+<p><code>Collection.countDocuments()</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>All read operation helpers in the change streams specification i.e.</p>
+<ul>
+<li><code>Collection.watch()</code></li>
+<li><code>Database.watch()</code></li>
+<li><code>MongoClient.watch()</code></li>
+</ul>
+</li>
+<li>
+<p>All enumeration commands e.g.</p>
+<ul>
+<li><code>MongoClient.listDatabases()</code></li>
+<li><code>Database.listCollections()</code></li>
+<li><code>Collection.listIndexes()</code></li>
+</ul>
+</li>
+<li>
+<p>Any read operations not defined in the aforementioned specifications:</p>
+<ul>
+<li>Any read operation helpers e.g. <code>Collection.findOne()</code></li>
+</ul>
+</li>
+</ul>
+<p>Drivers SHOULD support retryability for the following operations:</p>
+<ul>
+<li>Any driver that provides generic command runners for read commands (with logic to inherit a client-level read
+concerns) SHOULD implement retryability for the read-only command runner.</li>
+</ul>
+<p>Most of the above methods are defined in the following specifications:</p>
+<ul>
+<li><a href="../change-streams/change-streams.html">Change Streams</a></li>
+<li><a href="../crud/crud.html">CRUD</a></li>
+<li><a href="../enumerate-collections/enumerate-collections.html">Enumerating Collections</a></li>
+<li><a href="../index-management/index-management.html#enumerate-indexes">Enumerating Indexes</a></li>
+<li><a href="../enumerate-databases/enumerate-databases.html">Enumerating Databases</a></li>
+<li><a href="../gridfs/gridfs-spec.html">GridFS Spec</a></li>
+</ul>
+<h4 id="unsupported-read-operations"><a class="header" href="#unsupported-read-operations">Unsupported Read Operations</a></h4>
+<p>Drivers MUST NOT retry the following operations:</p>
+<ul>
+<li><code>Collection.mapReduce()</code>
+<ul>
+<li>This is due to the "Early Failure on Socket Disconnect" feature not supporting <code>mapReduce</code>.</li>
+<li>N.B. If <code>mapReduce</code> is executed via a generic command runner for read commands, drivers SHOULD NOT inspect the
+command to prevent <code>mapReduce</code> from retrying.</li>
+</ul>
+</li>
+<li>Cursor.getMore()
+<ul>
+<li>See <a href="#why-is-retrying-cursorgetmore-not-supported">Why is retrying Cursor.getMore() not supported?</a></li>
+</ul>
+</li>
+<li>The generic runCommand helper, even if it is passed a read command.
+<ul>
+<li>N.B.: This applies only to a generic command runner, which is agnostic about the read/write nature of the command.</li>
+</ul>
+</li>
+</ul>
+<h3 id="implementing-retryable-reads"><a class="header" href="#implementing-retryable-reads">Implementing Retryable Reads</a></h3>
+<h4 id="executing-retryable-read-commands"><a class="header" href="#executing-retryable-read-commands">Executing Retryable Read Commands</a></h4>
+<p>Executing retryable read commands is extremely similar to
+<a href="../retryable-writes/retryable-writes.html#executing-retryable-write-commands">executing retryable write commands</a>. The
+following explanation for executing retryable read commands has been adapted from the explanation for executing
+retryable write commands.</p>
+<h5 id="1-selecting-the-initial-server"><a class="header" href="#1-selecting-the-initial-server">1. Selecting the initial server</a></h5>
+<p>The driver selects the initial server for the command as usual. When selecting a server for the first attempt of a
+retryable read command, drivers MUST allow a server selection error to propagate. In this case, the caller is able to
+infer that no attempt was made.</p>
+<h5 id="2-determining-whether-retry-should-be-allowed"><a class="header" href="#2-determining-whether-retry-should-be-allowed">2. Determining whether retry should be allowed</a></h5>
+<p>A driver then determines if it should attempt to retry next.</p>
+<h6 id="2a-when-not-to-allow-retry"><a class="header" href="#2a-when-not-to-allow-retry">2a. When not to allow retry</a></h6>
+<p>Drivers MUST attempt to execute the read command exactly once and allow any errors to propagate under any of the the
+following conditions:</p>
+<ul>
+<li>if retryable reads is not enabled <strong>or</strong></li>
+<li>if the selected server does not support retryable reads <strong>or</strong></li>
+<li>if the session in a transaction</li>
+</ul>
+<p>By allowing the error to propagate, the caller is able to infer that one attempt was made.</p>
+<h6 id="2b-when-to-allow-retry"><a class="header" href="#2b-when-to-allow-retry">2b. When to allow retry</a></h6>
+<p>Drivers MUST only attempt to retry a read command if</p>
+<ul>
+<li>retryable reads are enabled <strong>and</strong></li>
+<li>the selected server supports retryable reads <strong>and</strong></li>
+<li>the previous attempt yields a retryable error</li>
+</ul>
+<h5 id="3-deciding-to-allow-retry-encountering-the-initial-retryable-error-and-selecting-a-server"><a class="header" href="#3-deciding-to-allow-retry-encountering-the-initial-retryable-error-and-selecting-a-server">3. Deciding to allow retry, encountering the initial retryable error, and selecting a server</a></h5>
+<p>If the driver decides to allow retry and the previous attempt of a retryable read command encounters a retryable error,
+the driver MUST update its topology according to the Server Discovery and Monitoring spec (see
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#error-handling">SDAM: Error Handling</a>) and
+capture this original retryable error. Drivers should then proceed with selecting a server for a retry attempt.</p>
+<h6 id="3a-selecting-the-server-for-retry"><a class="header" href="#3a-selecting-the-server-for-retry">3a. Selecting the server for retry</a></h6>
+<p>In a sharded cluster, the server on which the operation failed MUST be provided to the server selection mechanism as a
+deprioritized server.</p>
+<p>If the driver cannot select a server for a retry attempt or the newly selected server does not support retryable reads,
+retrying is not possible and drivers MUST raise the previous retryable error. In both cases, the caller is able to infer
+that an attempt was made.</p>
+<h6 id="3b-sending-an-equivalent-command-for-a-retry-attempt"><a class="header" href="#3b-sending-an-equivalent-command-for-a-retry-attempt">3b. Sending an equivalent command for a retry attempt</a></h6>
+<p>After server selection, a driver MUST send a valid command to the newly selected server that is equivalent<sup class="footnote-reference"><a href="#1">1</a></sup> to the
+initial command sent to the first server. If the driver determines that the newly selected server may not be able to
+support a command equivalent to the initial command, drivers MUST NOT retry and MUST raise the previous retryable error</p>
+<p>The above requirement can be fulfilled in one of two ways:</p>
+<ol>
+<li>
+<p>During a retry attempt, the driver SHOULD recreate the command while adhering to that operation's specification's
+server/wire version requirements. If an error occurs while recreating the command, then the driver MUST raise the
+original retryable error.</p>
+<p>For example, if the wire version dips from <em>W</em><sub>0</sub> to <em>W</em><sub>1</sub> after server selection, and the spec
+for operation <em>O</em> notes that for wire version <em>W</em><sub>1</sub>, that field <em>F</em> should be omitted, then field <em>F</em>
+should be omitted. If the spec for operation <em>O</em> requires the driver to error out if field <em>F</em> is defined when
+talking to a server with wire version <em>W</em><sub>1</sub>, then the driver must error out and raise the original
+retryable error.</p>
+</li>
+<li>
+<p>Alternatively, if a driver chooses not to recreate the command as described above, then a driver MUST NOT retry if
+the server/wire version dips after server selection and MUST raise the original retryable error.</p>
+<p>For example, if the wire version dips after server selection, the driver can choose to not retry and simply raise the
+original retryable error because there is no guarantee that the lower versioned server can support the original
+command.</p>
+</li>
+</ol>
+<h6 id="3c-if-a-retry-attempt-fails"><a class="header" href="#3c-if-a-retry-attempt-fails">3c. If a retry attempt fails</a></h6>
+<p>If a retry attempt also fails and
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html">Client Side Operations Timeout</a> (CSOT) is enabled
+and the timeout has not yet expired, then the Driver MUST jump back to step 2b above in order to allow multiple retry
+attempts.</p>
+<p>Otherwise, drivers MUST update their topology according to the SDAM spec (see
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#error-handling">SDAM: Error Handling</a>). If an
+error would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
+driver), the previous error should be raised. If a retry failed due to another retryable error or some other error
+originating from the server, that error should be raised instead as the caller can infer that an attempt was made and
+the second error is likely more relevant (with respect to the current topology state).</p>
+<p>If a driver associates server information (e.g. the server address or description) with an error, the driver MUST ensure
+that the reported server information corresponds to the server that originated the error.</p>
+<h5 id="4-implementation-constraints"><a class="header" href="#4-implementation-constraints">4. Implementation constraints</a></h5>
+<p>When retrying a read command, drivers MUST NOT resend the original wire protocol message (see:
+<a href="#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts">Can drivers resend the same wire protocol message on retry attempts?</a>).</p>
+<h4 id="pseudocode"><a class="header" href="#pseudocode">Pseudocode</a></h4>
+<p>The following pseudocode for executing retryable read commands has been adapted from
+<a href="../retryable-writes/retryable-writes.html#executing-retryable-write-commands">the pseudocode for executing retryable write commands</a>
+and reflects the flow described above.</p>
+<pre><code class="language-typescript">/**
+ * Checks if a connection supports retryable reads.
+ */
+function isRetryableReadsSupported(connection) {
+  return connection.MaxWireVersion &gt;= RETRYABLE_READS_MIN_WIRE_VERSION);
+}
+
+/**
+ * Executes a read command in the context of a MongoClient where a retryable
+ * read have been enabled. The session parameter may be an implicit or
+ * explicit client session (depending on how the CRUD method was invoked).
+ */
+function executeRetryableRead(command, session) {
+  Exception previousError = null;
+  retrying = false;
+  Server previousServer = null;
+  while true {
+    if (previousError != null) {
+      retrying = true;
+    }
+    try {
+      if (previousServer == null) {
+        server = selectServer();
+      } else {
+        // If a previous attempt was made, deprioritize the previous server
+        // where the command failed.
+        deprioritizedServers = [ previousServer ];
+        server = selectServer(deprioritizedServers);
+      }
+    } catch (ServerSelectionException exception) {
+      if (previousError == null) {
+        // If this is the first attempt, propagate the exception.
+        throw exception;
+      }
+      // For retries, propagate the previous error.
+      throw previousError;
+    }
+
+    try {
+      connection = server.getConnection();
+    } catch (PoolClearedException poolClearedError) {
+      /* PoolClearedException indicates the operation did not even attempt to
+       * create a connection, let alone execute the operation. This means we
+       * are always safe to attempt a retry. We do not need to update SDAM,
+       * since whatever error caused the pool to be cleared will do so itself. */
+      if (previousError == null) {
+        previousError = poolClearedError;
+      }
+      /* CSOT is enabled and the operation has timed out. */
+      if (timeoutMS != null &amp;&amp; isExpired(timeoutMS) {
+        throw previousError;
+      }
+      continue;
+    }
+
+    if ( !isRetryableReadsSupported(connection) || session.inTransaction()) {
+      /* If this is the first loop iteration and we determine that retryable
+       * reads are not supported, execute the command once and allow any
+       * errors to propagate */
+
+      if (previousError == null) {
+        return executeCommand(connection, command);
+      }
+
+      /* If the server selected for retrying is too old, throw the previous error.
+       * The caller can then infer that an attempt was made and failed. This case
+       * is very rare, and likely means that the cluster is in the midst of a
+       * downgrade. */
+      throw previousError;
+    }
+
+    /* NetworkException and NotWritablePrimaryException are both retryable errors. If
+     * caught, remember the exception, update SDAM accordingly, and proceed with
+     * retrying the operation.
+     *
+     * Exceptions that originate from the driver (e.g. no socket available
+     * from the connection pool) are treated as fatal. Any such exception
+     * that occurs on the previous attempt is propagated as-is. On retries,
+     * the error from the previous attempt is raised as it will be more
+     * relevant for the user. */
+    try {
+      return executeCommand(connection, retryableCommand);
+    } catch (NetworkException networkError) {
+      updateTopologyDescriptionForNetworkError(server, networkError);
+      previousError = networkError;
+      previousServer = server;
+    } catch (NotWritablePrimaryException notPrimaryError) {
+      updateTopologyDescriptionForNotWritablePrimaryError(server, notPrimaryError);
+      previousError = notPrimaryError;
+      previousServer = server;
+    } catch (DriverException error) {
+      if ( previousError != null ) {
+        throw previousError;
+      }
+      throw error;
+    }
+
+    if (timeoutMS == null) {
+      /* If CSOT is not enabled, allow any retryable error from the second
+       * attempt to propagate to our caller, as it will be just as relevant
+       * (if not more relevant) than the original error. */
+      if (retrying) {
+        throw previousError;
+      }
+    } else if (isExpired(timeoutMS)) {
+      /* CSOT is enabled and the operation has timed out. */
+      throw previousError;
+    }
+  }
+}
+</code></pre>
+<h3 id="logging-retry-attempts"><a class="header" href="#logging-retry-attempts">Logging Retry Attempts</a></h3>
+<p><a href="../retryable-writes/retryable-writes.html#logging-retry-attempts">As with retryable writes</a>, drivers MAY choose to log
+retry attempts for read operations. This specification does not define a format for such log messages.</p>
+<h3 id="command-monitoring"><a class="header" href="#command-monitoring">Command Monitoring</a></h3>
+<p><a href="../retryable-writes/retryable-writes.html#command-monitoring">As with retryable writes</a>, in accordance with the
+<a href="../command-logging-and-monitoring/command-logging-and-monitoring.html">Command Logging and Monitoring</a> specification,
+drivers MUST guarantee that each <code>CommandStartedEvent</code> has either a correlating <code>CommandSucceededEvent</code> or
+<code>CommandFailedEvent</code> and that every "command started" log message has either a correlating "command succeeded" log
+message or "command failed" log message. If the first attempt of a retryable read operation encounters a retryable
+error, drivers MUST fire a <code>CommandFailedEvent</code> and emit a "command failed" log message for the retryable error and fire
+a separate <code>CommandStartedEvent</code> and emit a separate "command started" log message when executing the subsequent retry
+attempt. Note that the second <code>CommandStartedEvent</code> and "command started" log message may have a different
+<code>connectionId</code>, since a server is reselected for a retry attempt.</p>
+<h3 id="documentation"><a class="header" href="#documentation">Documentation</a></h3>
+<ol>
+<li>Drivers MUST document all read operations that support retryable behavior.</li>
+<li>Drivers MUST document that the operations in <a href="#unsupported-read-operations">Unsupported Read Operations</a> do not
+support retryable behavior.</li>
+<li>Driver release notes MUST make it clear to users that they may need to adjust custom retry logic to prevent an
+application from inadvertently retrying for too long (see <a href="#backwards-compatibility">Backwards Compatibility</a> for
+details).</li>
+<li>Drivers implementing retryability for their generic command runner for read commands MUST document that <code>mapReduce</code>
+will be retried if it is passed as a command to the command runner. These drivers also MUST document the potential
+for degraded performance given that "Early Failure on Socket Disconnect" feature does not support <code>mapReduce</code>.</li>
+</ol>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>See the <a href="./tests/README.html">README</a> for tests.</p>
+<p>At a high level, the test plan will cover executing supported read operations within a MongoClient where retryable reads
+have been enabled, ensuring that reads are retried.</p>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation for Change</a></h2>
+<p>Drivers currently have an API for the retryability of write operations but not for read operations. The driver API needs
+to be extended to include support for retryable behavior for read operations.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<p>The design of this specification is based off the
+<a href="../retryable-writes/retryable-writes.html#design-rationale">Retryable Writes specification</a>. It modifies the driver API
+as little as possible to introduce the concept retryable behavior for read operations.</p>
+<p>Alternative retry strategies (e.g. exponential back-off, incremental intervals, regular intervals, immediate retry,
+randomization) were considered, but the behavior of a single, immediate retry attempt was chosen in the interests of
+simplicity as well as consistency with the design for retryable writes.</p>
+<p>See the <a href="#future-work">future work</a> section for potential upcoming changes to retry mechanics.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>The API changes to support retryable reads extend the existing API but do not introduce any backward breaking changes.
+Existing programs that do not make use of retryable reads will continue to compile and run correctly.</p>
+<p>N.B.: Applications with custom retry logic that choose to enable retryable reads may need to redo their custom retry
+logic to ensure that the reads are retried as desired. e.g. if an application has custom logic that retries reads n
+times and enables retryable reads, then the application could end up retrying reads up to 2n times.</p>
+<p>The note above will also apply if an application upgrades to a version of the driver where that defaults to enabling
+retryable reads.</p>
+<h3 id="rejected-designs"><a class="header" href="#rejected-designs">Rejected Designs</a></h3>
+<ol>
+<li>To improve performance on servers without "Early Failure on Socket Disconnect", we considered using <code>killSessions</code> to
+automatically kill the previous attempt before running a retry. We decided against this because after killing the
+session, parts of it still may be running if there are any errors. Additionally, killing sessions takes time because
+a kill has to talk to every non-config <code>mongod</code> in the cluster (i.e. all the primaries and secondaries of each
+shard). In addition, in order to protect the system against getting overloaded with these requests, every server
+allows no more than one killsession operation at a time. Operations that attempt to <code>killsessions</code> while a
+killsession is running are batched together and run simultaneously after the current one finishes.</li>
+</ol>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p>The C# and Python drivers will provide the reference implementations. See
+<a href="https://jira.mongodb.org/browse/CSHARP-2429">CSHARP-2429</a> and
+<a href="https://jira.mongodb.org/browse/PYTHON-1674">PYTHON-1674</a>.</p>
+<h2 id="security-implications"><a class="header" href="#security-implications">Security Implications</a></h2>
+<p>None.</p>
+<h2 id="future-work"><a class="header" href="#future-work">Future work</a></h2>
+<ol>
+<li>A later specification may allow operations (including read) to be retried any number of times during a singular
+timeout period.</li>
+<li>Any future changes to the the applicable parts of
+<a href="../retryable-writes/retryable-writes.html">retryable writes specification</a> may also need to be reflected in the
+retryable reads specification, and vice versa.</li>
+<li>We may revisit the decision not retry <code>Cursor.getMore()</code> (see <a href="#qa">Q&amp;A</a>).</li>
+<li>Once <a href="https://jira.mongodb.org/browse/DRIVERS-560">DRIVERS-560</a> is resolved, tests will be added to allow testing
+Retryable Reads on MongoDB 3.6. See the <a href="./tests/README.html">test plan</a> for additional information.</li>
+</ol>
+<h2 id="qa"><a class="header" href="#qa">Q&amp;A</a></h2>
+<h3 id="why-is-retrying-cursorgetmore-not-supported"><a class="header" href="#why-is-retrying-cursorgetmore-not-supported">Why is retrying <code>Cursor.getMore()</code> not supported?</a></h3>
+<p><code>Cursor.getMore()</code> cannot be retried because of the inability for the client to discern if the cursor was advanced. In
+other words, since the driver does not know if the original <code>getMore()</code> succeeded or not, the driver cannot reliably
+know if results might be inadvertently skipped.</p>
+<p>For example, if a transient network error occurs as a driver requests the second batch of results via a getMore() and
+the driver were to silently retry the <code>getMore()</code>, it is possible that the server had actually received the initial
+<code>getMore()</code>. In such a case, the server will advance the cursor once more and return the third batch instead of the
+desired second batch.</p>
+<p>Furthermore, even if the driver could detect such a scenario, it is impossible to return previously iterated data from a
+cursor because the server currently only allows forward iteration.</p>
+<p>It is worth noting that the "Cursors survive primary stepdown" feature avoids this issue in certain common
+circumstances, so that we may revisit this decision to disallow trying <code>getMore()</code> in the future.</p>
+<h3 id="why-are-read-operations-only-retried-once-by-default"><a class="header" href="#why-are-read-operations-only-retried-once-by-default">Why are read operations only retried once by default?</a></h3>
+<p><a href="../retryable-writes/retryable-writes.html#why-are-write-operations-only-retried-once-by-default">Read operations are only retried once for the same reasons that writes are also only retried once.</a>
+For convenience's sake, that reasoning has been adapted for reads and reproduced below:</p>
+<p>The spec concerns itself with retrying read operations that encounter a retryable error (i.e. no response due to network
+error or a response indicating that the node is no longer a primary). A retryable error may be classified as either a
+transient error (e.g. dropped connection, replica set failover) or persistent outage. If a transient error results in
+the server being marked as "unknown", a subsequent retry attempt will allow the driver to rediscover the primary within
+the designated server selection timeout period (30 seconds by default). If server selection times out during this retry
+attempt, we can reasonably assume that there is a persistent outage. In the case of a persistent outage, multiple retry
+attempts are fruitless and would waste time. See
+<a href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">How To Write Resilient MongoDB Applications</a>
+for additional discussion on this strategy.</p>
+<p>However when <a href="../client-side-operations-timeout/client-side-operations-timeout.html">Client Side Operations Timeout</a> is
+enabled, the driver will retry multiple times until the operation succeeds, a non-retryable error is encountered, or the
+timeout expires. Retrying multiple times provides greater resilience to cascading failures such as rolling server
+restarts during planned maintenance events.</p>
+<h3 id="can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts"><a class="header" href="#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts">Can drivers resend the same wire protocol message on retry attempts?</a></h3>
+<p>No.
+<a href="../retryable-writes/retryable-writes.html#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts">This is in contrast to the answer supplied in in the retryable writes specification.</a>
+However, when retryable writes were implemented, no driver actually chose to resend the same wire protocol message.
+Today, if a driver attempted to resend the same wire protocol message, this could violate
+<a href="../sessions/driver-sessions.html#gossipping-the-cluster-time">the rules for gossiping $clusterTime</a>: specifically
+<a href="../sessions/driver-sessions.html#sending-the-highest-seen-cluster-time">the rule that a driver must send the highest seen $clusterTime</a>.</p>
+<p>Additionally, there would be a behavioral difference between a driver resending the same wire protocol message and one
+that does not. For example, a driver that creates a new wire protocol message could exhibit the following
+characteristics:</p>
+<ol>
+<li>The second attempt to send the read command could have a higher <code>$clusterTime</code>.</li>
+<li>If the initial attempt failed with a server error, then the session's <code>operationTime</code> would be advanced and the next
+read would include a larger <code>readConcern.afterClusterTime</code>.</li>
+</ol>
+<p>A driver that resends the same wire protocol message would not exhibit the above characteristics. Thus, in order to
+avoid this behavioral difference and not violate the rules about gossiping <code>$clusterTime</code>, drivers MUST not resend the
+same wire protocol message.</p>
+<h3 id="why-isnt-mongodb-42-required"><a class="header" href="#why-isnt-mongodb-42-required">Why isn't MongoDB 4.2 required?</a></h3>
+<p>MongoDB 4.2 was initially considered as a requirement for retryable reads because MongoDB 4.2 implements support for
+"Early Failure on Socket Disconnect," changing the the semantics of socket disconnect to prevent ops from doing work
+that no client is interested in. This prevents applications from seeing degraded performance when an expensive read is
+retried. Upon further discussion, we decided that "Early Failure on Socket Disconnect" should not be required to retry
+reads because the resilience benefit of retryable reads outweighs the minor risk of degraded performance. Additionally,
+any customers experiencing degraded performance can simply disable <code>retryableReads</code>.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-04-30: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2023-12-05: Add that any server information associated with retryable exceptions MUST reflect the originating server,
+even in the presence of retries.</p>
+</li>
+<li>
+<p>2023-11-30: Add ReadConcernMajorityNotAvailableYet to the list of error codes that should be retried.</p>
+</li>
+<li>
+<p>2023-11-28: Add ExceededTimeLimit to the list of error codes that should be retried.</p>
+</li>
+<li>
+<p>2023-08-26: Require that in a sharded cluster the server on which the operation failed MUST be provided to the server
+selection mechanism as a deprioritized server.</p>
+</li>
+<li>
+<p>2023-08-21: Update Q&amp;A that contradicts SDAM transient error logic</p>
+</li>
+<li>
+<p>2022-11-09: CLAM must apply both events and log messages.</p>
+</li>
+<li>
+<p>2022-10-18: When CSOT is enabled multiple retry attempts may occur.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter, move footnote, and reformat changelog.</p>
+</li>
+<li>
+<p>2022-01-25: Note that drivers should retry handshake network failures.</p>
+</li>
+<li>
+<p>2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers
+will always return an error code</p>
+</li>
+<li>
+<p>2021-03-23: Require that PoolClearedErrors are retried</p>
+</li>
+<li>
+<p>2019-06-07: Mention $merge stage for aggregate alongside $out</p>
+</li>
+<li>
+<p>2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange</p>
+</li>
+</ul>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>The first and second commands will be identical unless variations in parameters exist between wire/server versions.</p>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../max-staleness/max-staleness.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../retryable-writes/retryable-writes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../max-staleness/max-staleness.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../retryable-writes/retryable-writes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

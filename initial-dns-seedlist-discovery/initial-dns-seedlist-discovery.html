@@ -1,0 +1,507 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Initial DNS Seedlist Discovery - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html" class="active"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="initial-dns-seedlist-discovery"><a class="header" href="#initial-dns-seedlist-discovery">Initial DNS Seedlist Discovery</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: N/A</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>Presently, seeding a driver with an initial list of ReplicaSet or MongoS addresses is somewhat cumbersome, requiring a
+comma-delimited list of host names to attempt connections to. A standardized answer to this problem exists in the form
+of SRV records, which allow administrators to configure a single SRV record to return a list of host names. Supporting
+this feature would assist our users by decreasing maintenance load, primarily by removing the need to maintain seed
+lists at an application level.</p>
+<p>This specification builds on the <a href="../connection-string/connection-string-spec.html">Connection String</a> specification. It
+adds a new protocol scheme and modifies how the
+<a href="../connection-string/connection-string-spec.html#host-information">Host Information</a> is interpreted.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="connection-string-format"><a class="header" href="#connection-string-format">Connection String Format</a></h3>
+<p>The connection string parser in the driver is extended with a new protocol <code>mongodb+srv</code> as a logical pre-processing
+step before it considers the connection string and SDAM specifications. In this protocol, the comma separated list of
+host names is replaced with a single host name. The format is:</p>
+<pre><code>mongodb+srv://{hostname}/{options} 
+</code></pre>
+<p><code>{options}</code> refers to the optional elements from the <a href="../connection-string/connection-string-spec.html">Connection String</a>
+specification following the <code>Host Information</code>. This includes the <code>Auth database</code> and <code>Connection Options</code>.</p>
+<p>For the purposes of this document, <code>{hostname}</code> will be divided using the following terminology. If an SRV <code>{hostname}</code>
+has:</p>
+<ol>
+<li>
+<p>Three or more <code>.</code> separated parts, then the left-most part is the <code>{subdomain}</code> and the remaining portion is the
+<code>{domainname}</code>.</p>
+<ul>
+<li>Examples:
+<ul>
+<li>
+<p><code>{hostname}</code> = <code>cluster_1.tests.mongodb.co.uk</code></p>
+<ul>
+<li><code>{subdomain}</code> = <code>cluster_1</code></li>
+<li><code>{domainname}</code> = <code>tests.mongodb.co.uk</code></li>
+</ul>
+</li>
+<li>
+<p><code>{hostname}</code> = <code>hosts_34.example.com</code></p>
+<ul>
+<li><code>{subdomain}</code> = <code>hosts_34</code></li>
+<li><code>{domainname}</code> = <code>example.com</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>One or two <code>.</code> separated part(s), then the <code>{hostname}</code> is equivalent to the <code>{domainname}</code>, and there is no
+subdomain.</p>
+<ul>
+<li>Examples:
+<ul>
+<li><code>{hostname}</code> = <code>{domainname}</code> = <code>localhost</code></li>
+<li><code>{hostname}</code> = <code>{domainname}</code> = <code>mongodb.local</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>Only <code>{domainname}</code> is used during SRV record verification and <code>{subdomain}</code> is ignored.</p>
+<h3 id="mongoclient-configuration"><a class="header" href="#mongoclient-configuration">MongoClient Configuration</a></h3>
+<h4 id="srvmaxhosts"><a class="header" href="#srvmaxhosts">srvMaxHosts</a></h4>
+<p>This option is used to limit the number of mongos connections that may be created for sharded topologies. This option
+limits the number of SRV records used to populate the seedlist during initial discovery, as well as the number of
+additional hosts that may be added during
+<a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html">SRV polling</a>. This option
+requires a non-negative integer and defaults to zero (i.e. no limit). This option MUST only be configurable at the level
+of a <code>MongoClient</code>.</p>
+<h4 id="srvservicename"><a class="header" href="#srvservicename">srvServiceName</a></h4>
+<p>This option specifies a valid SRV service name according to
+<a href="https://datatracker.ietf.org/doc/html/rfc6335#section-5.1">RFC 6335</a>, with the exception that it may exceed 15
+characters as long as the 63rd (62nd with prepended underscore) character DNS query limit is not surpassed. This option
+requires a string value and defaults to "mongodb". This option MUST only be configurable at the level of a
+<code>MongoClient</code>.</p>
+<h4 id="uri-validation"><a class="header" href="#uri-validation">URI Validation</a></h4>
+<p>The driver MUST report an error if either the <code>srvServiceName</code> or <code>srvMaxHosts</code> URI options are specified with a non-SRV
+URI (i.e. scheme other than <code>mongodb+srv</code>). The driver MUST allow specifying the <code>srvServiceName</code> and <code>srvMaxHosts</code> URI
+options with an SRV URI (i.e. <code>mongodb+srv</code> scheme).</p>
+<p>If <code>srvMaxHosts</code> is a positive integer, the driver MUST throw an error in the following cases:</p>
+<ul>
+<li>The connection string contains a <code>replicaSet</code> option.</li>
+<li>The connection string contains a <code>loadBalanced</code> option with a value of <code>true</code>.</li>
+</ul>
+<p>When validating URI options, the driver MUST first do the SRV and TXT lookup and then perform the validation. For
+drivers that do SRV lookup asynchronously this may result in a <code>MongoClient</code> being instantiated but erroring later
+during operation execution.</p>
+<h3 id="seedlist-discovery"><a class="header" href="#seedlist-discovery">Seedlist Discovery</a></h3>
+<h4 id="validation-before-querying-dns"><a class="header" href="#validation-before-querying-dns">Validation Before Querying DNS</a></h4>
+<p>It is an error to specify a port in a connection string with the <code>mongodb+srv</code> protocol, and the driver MUST raise a
+parse error and MUST NOT do DNS resolution or contact hosts.</p>
+<p>It is an error to specify more than one host name in a connection string with the <code>mongodb+srv</code> protocol, and the driver
+MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.</p>
+<p>If <code>mongodb+srv</code> is used, a driver MUST implicitly also enable TLS. Clients can turn this off by passing <code>tls=false</code> in
+either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
+API for each driver), but not through a TXT record (discussed in a later section).</p>
+<h4 id="querying-dns"><a class="header" href="#querying-dns">Querying DNS</a></h4>
+<p>In this preprocessing step, the driver will query the DNS server for SRV records on the hostname, prefixed with the SRV
+service name and protocol. The SRV service name is provided in the <code>srvServiceName</code> URI option and defaults to
+<code>mongodb</code>. The protocol is always <code>tcp</code>. After prefixing, the URI should look like: <code>_{srvServiceName}._tcp.{hostname}</code>.
+This DNS query is expected to respond with one or more SRV records.</p>
+<p>The priority and weight fields in returned SRV records MUST be ignored.</p>
+<p>If the DNS result returns no SRV records, or no records at all, or a DNS error happens, an error MUST be raised
+indicating that the URI could not be used to find hostnames. The error SHALL include the reason why they could not be
+found.</p>
+<p>A driver MUST verify that the host names returned through SRV records share the original SRV's <code>{domainname}</code>. In
+addition, SRV records with fewer than three <code>.</code> separated parts, the returned hostname MUST have at least one more
+domain level than the SRV record hostname. Drivers MUST raise an error and MUST NOT initiate a connection to any
+returned hostname which does not fulfill these requirements.</p>
+<p>The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.</p>
+<p>If <code>srvMaxHosts</code> is zero or greater than or equal to the number of hosts in the DNS result, the driver MUST populate the
+seedlist with all hosts.</p>
+<p>If <code>srvMaxHosts</code> is greater than zero and less than the number of hosts in the DNS result, the driver MUST randomly
+select that many hosts and use them to populate the seedlist. Drivers SHOULD use the
+<a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm">Fisher-Yates shuffle</a> for
+randomization.</p>
+<h3 id="default-connection-string-options"><a class="header" href="#default-connection-string-options">Default Connection String Options</a></h3>
+<p>As a second preprocessing step, a Client MUST also query the DNS server for TXT records on <code>{hostname}</code>. If available, a
+TXT record provides default connection string options. The maximum length of a TXT record string is 255 characters, but
+there can be multiple strings per TXT record. A Client MUST support multiple TXT record strings and concatenate them as
+if they were one single string in the order they are defined in each TXT record. The order of multiple character strings
+in each TXT record is guaranteed. A Client MUST NOT allow multiple TXT records for the same host name and MUST raise an
+error when multiple TXT records are encountered.</p>
+<p>Information returned within a TXT record is a simple URI string, just like the <code>{options}</code> in a connection string.</p>
+<p>A Client MUST only support the <code>authSource</code>, <code>replicaSet</code>, and <code>loadBalanced</code> options through a TXT record, and MUST
+raise an error if any other option is encountered. Although using <code>mongodb+srv://</code> implicitly enables TLS, a Client MUST
+NOT allow the <code>ssl</code> option to be set through a TXT record option.</p>
+<p>TXT records MAY be queried either before, in parallel, or after SRV records. Clients MUST query both the SRV and the TXT
+records before attempting any connection to MongoDB.</p>
+<p>A Client MUST use options specified in the Connection String, and options passed in as parameters in code to the
+MongoClient constructor (or equivalent API for each driver), to override options provided through TXT records.</p>
+<p>If any connection string option in a TXT record is incorrectly formatted, a Client MUST throw a parse exception.</p>
+<p>This specification does not change the behaviour of handling unknown keys or incorrect values as is set out in the
+<a href="../connection-string/connection-string-spec.html#defining-connection-options">Connection String spec</a>. Unknown keys or
+incorrect values in default options specified through TXT records MUST be handled in the same way as unknown keys or
+incorrect values directly specified through a Connection String. For example, if a driver that does not support the
+<code>authSource</code> option finds <code>authSource=db</code> in a TXT record, it MUST handle the unknown option according to the rules in
+the Connection String spec.</p>
+<h3 id="cname-not-supported"><a class="header" href="#cname-not-supported">CNAME not supported</a></h3>
+<p>The use of DNS CNAME records is not supported. Clients MUST NOT check for a CNAME record on <code>{hostname}</code>. A system's DNS
+resolver could transparently handle CNAME, but because of how clients validate records returned from SRV queries, use of
+CNAME could break validation. Seedlist discovery therefore does not recommend or support the use of CNAME records in
+concert with SRV or TXT records.</p>
+<h2 id="example"><a class="header" href="#example">Example</a></h2>
+<p>If we provide the following URI:</p>
+<pre><code>mongodb+srv://server.mongodb.com/
+</code></pre>
+<p>The driver needs to request the DNS server for the SRV record <code>_mongodb._tcp.server.mongodb.com</code>. This could return:</p>
+<pre><code>Record                            TTL   Class    Priority Weight Port  Target
+_mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27317 mongodb1.mongodb.com.
+_mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27017 mongodb2.mongodb.com.
+</code></pre>
+<p>The returned host names (<code>mongodb1.mongodb.com</code> and <code>mongodb2.mongodb.com</code>) must share the same domainname
+(<code>mongodb.com</code>) as the provided host name (<code>server.mongodb.com</code>).</p>
+<p>The driver also needs to request the DNS server for the TXT records on <code>server.mongodb.com</code>. This could return:</p>
+<pre><code>Record              TTL   Class    Text
+server.mongodb.com. 86400 IN TXT   "replicaSet=replProduction&amp;authSource=authDB"
+</code></pre>
+<p>From the DNS results, the driver now MUST treat the host information as if the following URI was used instead:</p>
+<pre><code>mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&amp;replicaSet=replProduction&amp;authSource=authDB
+</code></pre>
+<p>If we provide the following URI with the same DNS (SRV and TXT) records:</p>
+<pre><code>mongodb+srv://server.mongodb.com/?authSource=otherDB
+</code></pre>
+<p>Then the default in the TXT record for <code>authSource</code> is not used as the value in the connection string overrides it. The
+Client MUST treat the host information as if the following URI was used instead:</p>
+<pre><code>mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&amp;replicaSet=replProduction&amp;authSource=otherDB
+</code></pre>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<h3 id="prose-tests"><a class="header" href="#prose-tests">Prose Tests</a></h3>
+<p>See README.md in the accompanying <a href="tests/README.html">test directory</a>.</p>
+<h3 id="spec-tests"><a class="header" href="#spec-tests">Spec Tests</a></h3>
+<p>See README.md in the accompanying <a href="tests/README.html">test directory</a>.</p>
+<p>Additionally, see the <code>mongodb+srv</code> test <code>invalid-uris.yml</code> in the
+<a href="../connection-string/tests/README.html">Connection String Spec tests</a>.</p>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
+<p>Several of our users have asked for this through tickets:</p>
+<ul>
+<li><a href="https://jira.mongodb.org/browse/DRIVERS-201">https://jira.mongodb.org/browse/DRIVERS-201</a></li>
+<li><a href="https://jira.mongodb.org/browse/NODE-865">https://jira.mongodb.org/browse/NODE-865</a></li>
+<li><a href="https://jira.mongodb.org/browse/CSHARP-536">https://jira.mongodb.org/browse/CSHARP-536</a></li>
+</ul>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<p>The design specifically calls for a pre-processing stage of the processing of connection URLs to minimize the impact on
+existing functionality.</p>
+<h2 id="justifications"><a class="header" href="#justifications">Justifications</a></h2>
+<h3 id="why-are-multiple-key-value-pairs-allowed-in-one-txt-record"><a class="header" href="#why-are-multiple-key-value-pairs-allowed-in-one-txt-record">Why Are Multiple Key-Value Pairs Allowed in One TXT Record?</a></h3>
+<p>One could imagine an alternative design in which each TXT record would allow only one URI option. No <code>&amp;</code> character would
+be allowed as a delimiter within TXT records.</p>
+<p>In this spec we allow multiple key-value pairs within one TXT record, delimited by <code>&amp;</code>, because it will be common for
+all options to fit in a single 255-character TXT record, and it is much more convenient to configure one record in this
+case than to configure several.</p>
+<p>Secondly, in some cases the order in which options occur is important. For example, readPreferenceTags can appear both
+multiple times, and the order in which they appear is significant. Because DNS servers may return TXT records in any
+order, it is only possible to guarantee the order in which readPreferenceTags keys appear by having them in the same TXT
+record.</p>
+<h3 id="why-is-there-no-mention-of-utf-8-characters"><a class="header" href="#why-is-there-no-mention-of-utf-8-characters">Why Is There No Mention of UTF-8 Characters?</a></h3>
+<p>Although DNS TXT records allow any octet to exist in its value, many DNS providers do not allow non-ASCII characters to
+be configured. As it is unlikely that any option names or values in the connection string have non-ASCII characters, we
+left the behaviour of supporting UTF-8 characters as unspecified.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p>None yet.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>There are no backwards compatibility concerns.</p>
+<h2 id="future-work"><a class="header" href="#future-work">Future Work</a></h2>
+<p>In the future we could consider using the priority and weight fields of the SRV records.</p>
+<h2 id="changelog"><a class="header" href="#changelog">ChangeLog</a></h2>
+<ul>
+<li>
+<p>2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
+matching requirements for security. Create terminology section. Remove usage of term <code>{TLD}</code>. The <code>{hostname}</code> now
+refers to the entire hostname, not just the <code>{subdomain}</code>.</p>
+</li>
+<li>
+<p>2024-03-06: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2022-10-05: Revise spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2021-10-14: Add <code>srvMaxHosts</code> MongoClient option and restructure Seedlist Discovery section. Improve documentation for
+the <code>srvServiceName</code> MongoClient option and add a new URI Validation section.</p>
+</li>
+<li>
+<p>2021-09-15: Clarify that service name only defaults to <code>mongodb</code>, and should be defined by the <code>srvServiceName</code> URI
+option.</p>
+</li>
+<li>
+<p>2021-04-15: Adding in behaviour for load balancer mode.</p>
+</li>
+<li>
+<p>2019-03-07: Clarify that CNAME is not supported</p>
+</li>
+<li>
+<p>2018-02-08: Clarify that <code>{options}}</code> in the <a href="#specification">Specification</a> section includes all the optional
+elements from the Connection String specification.</p>
+</li>
+<li>
+<p>2017-11-21: Add clause that using <code>mongodb+srv://</code> implies enabling TLS. Add restriction that only <code>authSource</code> and
+<code>replicaSet</code> are allows in TXT records. Add restriction that only one TXT record is supported share the same parent
+domain name as the given host name.</p>
+</li>
+<li>
+<p>2017-11-17: Add new rule that indicates that host names in returned SRV records MUST share the same parent domain name
+as the given host name. Remove language and tests for non-ASCII characters.</p>
+</li>
+<li>
+<p>2017-11-07: Clarified that all parts of listable options such as readPreferenceTags are ignored if they are also
+present in options to the MongoClient constructor. Clarified which host names to use for SRV and TXT DNS queries.</p>
+</li>
+<li>
+<p>2017-11-01: Clarified that individual TXT records can have multiple strings.</p>
+</li>
+<li>
+<p>2017-10-31: Added a clause that specifying two host names with a <code>mongodb+srv://</code> URI is not allowed. Added a few more
+test cases.</p>
+</li>
+<li>
+<p>2017-10-18: Removed prohibition of raising DNS related errors when parsing the URI.</p>
+</li>
+<li>
+<p>2017-10-04: Removed from <a href="#future-work">Future Work</a> the line about multiple MongoS discovery. The current
+specification already allows for it, as multiple host names which are all MongoS servers is already allowed under
+SDAM. And this specification does not modify SDAM. Added support for connection string options through TXT records.</p>
+</li>
+<li>
+<p>2017-09-19: Clarify that host names in <code>mongodb+srv://</code> URLs work like normal host specifications.</p>
+</li>
+<li>
+<p>2017-09-01: Updated test plan with YAML tests, and moved prose tests for URI parsing into invalid-uris.yml in the
+Connection String Spec tests.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../socks5-support/socks5.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../socks5-support/socks5.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

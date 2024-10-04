@@ -1,0 +1,851 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Extended JSON - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html" class="active"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="extended-json"><a class="header" href="#extended-json">Extended JSON</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: N/A</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>MongoDB Extended JSON is a string format for representing BSON documents. This specification defines the canonical
+format for representing each BSON type in the Extended JSON format. Thus, a tool that implements Extended JSON will be
+able to parse the output of any tool that emits Canonical Extended JSON. It also defines a Relaxed Extended JSON format
+that improves readability at the expense of type information preservation.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h3 id="naming"><a class="header" href="#naming">Naming</a></h3>
+<p>Acceptable naming deviations should fall within the basic style of the language. For example, <code>CanonicalExtendedJSON</code>
+would be a name in Java, where camel-case method names are used, but in Ruby <code>canonical_extended_json</code> would be
+acceptable.</p>
+<h2 id="terms"><a class="header" href="#terms">Terms</a></h2>
+<p><em>Type wrapper object</em> - a JSON value consisting of an object with one or more <code>$</code>-prefixed keys that collectively encode
+a BSON type and its corresponding value using only JSON value primitives.</p>
+<p><em>Extended JSON</em> - A general term for one of many string formats based on the JSON standard that describes how to
+represent BSON documents in JSON using standard JSON types and/or type wrapper objects. This specification gives a
+formal definition to variations of such a format.</p>
+<p><em>Relaxed Extended JSON</em> - A string format based on the JSON standard that describes BSON documents. Relaxed Extended
+JSON emphasizes readability and interoperability at the expense of type preservation.</p>
+<p><em>Canonical Extended JSON</em> - A string format based on the JSON standard that describes BSON documents. Canonical Extended
+JSON emphasizes type preservation at the expense of readability and interoperability.</p>
+<p><em>Legacy Extended JSON</em> - A string format based on the JSON standard that describes a BSON document. The Legacy Extended
+JSON format does not describe a specific, standardized format, and many tools, drivers, and libraries implement Extended
+JSON in conflicting ways.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="extended-json-format"><a class="header" href="#extended-json-format">Extended JSON Format</a></h3>
+<p>The Extended JSON grammar extends the JSON grammar as defined in
+<a href="https://tools.ietf.org/html/rfc7159#section-2">section 2</a> of the
+<a href="https://tools.ietf.org/html/rfc7159">JSON specification</a> by augmenting the possible JSON values as defined in
+<a href="https://tools.ietf.org/html/rfc7159#section-3">Section 3</a>. This specification defines two formats for Extended JSON:</p>
+<ul>
+<li>Canonical Extended JSON</li>
+<li>Relaxed Extended JSON</li>
+</ul>
+<p>An Extended JSON value MUST conform to one of these two formats as described in the table below.</p>
+<h4 id="notes-on-grammar"><a class="header" href="#notes-on-grammar">Notes on grammar</a></h4>
+<ul>
+<li>Key order:
+<ul>
+<li>Keys within Canonical Extended JSON type wrapper objects SHOULD be emitted in the order described.</li>
+<li>Keys within Relaxed Extended JSON type wrapper objects are unordered.</li>
+</ul>
+</li>
+<li>Terms in <em>italics</em> represent types defined elsewhere in the table or in the
+<a href="https://tools.ietf.org/html/rfc7159">JSON specification</a>.</li>
+<li>JSON <em>numbers</em> (as defined in <a href="https://tools.ietf.org/html/rfc7159#section-6">Section 6</a> of the JSON specification)
+include both integer and floating point types. For the purpose of this document, we define the following subtypes:
+<ul>
+<li>Type <em>integer</em> means a JSON <em>number</em> without <em>frac</em> or <em>exp</em> components; this is expressed in the JSON spec grammar
+as <code>[minus] int</code>.</li>
+<li>Type <em>non-integer</em> means a JSON <em>number</em> that is not an <em>integer</em>; it must include either a <em>frac</em> or <em>exp</em>
+component or both.</li>
+<li>Type <em>pos-integer</em> means a non-negative JSON <em>number</em> without <em>frac</em> or <em>exp</em> components; this is expressed in the
+JSON spec grammar as <code>int</code>.</li>
+</ul>
+</li>
+<li>A <em>hex string</em> is a JSON <em>string</em> that contains only hexadecimal digits <code>[0-9a-f]</code>. It SHOULD be emitted lower-case,
+but MUST be read in a case-insensitive fashion.</li>
+<li><code>&lt;Angle brackets&gt;</code> detail the contents of a value, including type information.</li>
+<li><code>[Square brackets]</code> specify a type constraint that restricts the specification to a particular range or set of values.</li>
+</ul>
+<h4 id="conversion-table"><a class="header" href="#conversion-table">Conversion table</a></h4>
+<div class="table-wrapper"><table><thead><tr><th><strong>BSON 1.1 Type or Convention</strong></th><th><strong>Canonical Extended JSON Format</strong></th><th><strong>Relaxed Extended JSON Format</strong></th></tr></thead><tbody>
+<tr><td>ObjectId</td><td>{"$oid": &lt;ObjectId bytes as 24-character, big-endian <em>hex string</em>&gt;}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Symbol</td><td>{"$symbol": <em>string</em>}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>String</td><td><em>string</em></td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Int32</td><td>{"$numberInt": &lt;32-bit signed integer as a <em>string</em>&gt;}</td><td><em>integer</em></td></tr>
+<tr><td>Int64</td><td>{"$numberLong": &lt;64-bit signed integer as a <em>string</em>&gt;}</td><td><em>integer</em></td></tr>
+<tr><td>Double [finite]</td><td>{"$numberDouble": &lt;64-bit signed floating point as a decimal <em>string</em>&gt;}</td><td><em>non-integer</em></td></tr>
+<tr><td>Double [non-finite]</td><td>{"$numberDouble": &lt;One of the <em>strings</em>: "Infinity", "-Infinity", or "NaN"&gt;}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Decimal128</td><td>{"$numberDecimal": <decimal as a _string_>}<sup class="footnote-reference"><a href="#1">1</a></sup></td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Binary</td><td>{"$binary": {"base64": &lt;base64-encoded (with padding as <code>=</code>) payload as a <em>string</em>&gt;, "subType": <BSON binary type as a one- or two-character _hex string_>}}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Code</td><td>{"$code": <em>string</em>}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>CodeWScope</td><td>{"$code": <em>string</em>, "$scope": <em>Document</em>}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Document</td><td><em>object</em> (with Extended JSON extensions)</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Timestamp</td><td>{"$timestamp": {"t": <em>pos-integer</em>, "i": <em>pos-integer</em>}}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Regular Expression</td><td>{"$regularExpression": {pattern: <em>string</em>, "options": &lt;BSON regular expression options as a <em>string</em> or ""<sup class="footnote-reference"><a href="#2">2</a></sup>&gt;}}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>DBPointer</td><td>{"$dbPointer": {"$ref": &lt;namespace<sup class="footnote-reference"><a href="#3">3</a></sup> as a <em>string</em>&gt;, "$id": <em>ObjectId</em>}}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Datetime [year from 1970 to 9999 inclusive]</td><td>{"$date": {"$numberLong": &lt;64-bit signed integer giving millisecs relative to the epoch, as a <em>string</em>&gt;}}</td><td>{"$date": &lt;ISO-8601 Internet Date/Time Format as described in RFC-3339<sup class="footnote-reference"><a href="#4">4</a></sup> with maximum time precision of milliseconds<sup class="footnote-reference"><a href="#5">5</a></sup> as a <em>string</em>&gt;}</td></tr>
+<tr><td>Datetime [year before 1970 or after 9999]</td><td>{"$date": {"$numberLong": &lt;64-bit signed integer giving millisecs relative to the epoch, as a <em>string</em>&gt;}}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>DBRef<sup class="footnote-reference"><a href="#6">6</a></sup><br><br>Note: this is not technically a BSON type, but it is a common convention.</td><td>{"$ref": <collection name as a _string_>, "$id": <Extended JSON for the id>}<br><br>If the generator supports DBRefs with a database component, and the database component is nonempty:<br><br>{"$ref": <collection name as a _string_>,<br><br>"$id": <Extended JSON for the id>, "$db": <database name as a _string_>}<br><br>DBRefs may also have other fields, which MUST appear after <code>$id</code> and <code>$db</code> (if supported).</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>MinKey</td><td>{"$minKey": 1}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>MaxKey</td><td>{"$maxKey": 1}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Undefined</td><td>{"$undefined": <em>true</em>}</td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Array</td><td><em>array</em></td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Boolean</td><td><em>true</em> or <em>false</em></td><td><Same as Canonical Extended JSON></td></tr>
+<tr><td>Null</td><td><em>null</em></td><td><Same as Canonical Extended JSON></td></tr>
+</tbody></table>
+</div>
+<hr />
+<h4 id="representation-of-non-finite-numeric-values"><a class="header" href="#representation-of-non-finite-numeric-values">Representation of Non-finite Numeric Values</a></h4>
+<p>Following the <a href="../bson-decimal128/decimal128.html#to-string-representation">Extended JSON format for the Decimal128 type</a>,
+non-finite numeric values are encoded as follows:</p>
+<div class="table-wrapper"><table><thead><tr><th><strong>Value</strong></th><th><strong>String</strong></th></tr></thead><tbody>
+<tr><td>Positive Infinity</td><td><code>Infinity</code></td></tr>
+<tr><td>Negative Infinity</td><td><code>-Infinity</code></td></tr>
+<tr><td>NaN (all variants)</td><td><code>NaN</code></td></tr>
+</tbody></table>
+</div>
+<p>For example, a BSON floating-point number with a value of negative infinity would be encoded as Extended JSON as
+follows:</p>
+<pre><code>{"$numberDouble": "-Infinity"}
+</code></pre>
+<h3 id="parsers"><a class="header" href="#parsers">Parsers</a></h3>
+<p>An Extended JSON parser (hereafter just "parser") is a tool that transforms an Extended JSON string into another
+representation, such as BSON or a language-native data structure.</p>
+<p>By default, a parser MUST accept values in either Canonical Extended JSON format or Relaxed Extended JSON format as
+described in this specification. A parser MAY allow users to restrict parsing to only Canonical Extended JSON format or
+only Relaxed Extended JSON format.</p>
+<p>A parser MAY also accept strings that adhere to other formats, such as Legacy Extended JSON formats emitted by old
+versions of mongoexport or other tools, but only if explicitly configured to do so.</p>
+<p>A parser that accepts Legacy Extended JSON MUST be configurable such that a JSON text of a MongoDB query filter
+containing the <a href="https://www.mongodb.com/docs/manual/reference/operator/query/regex/">regex</a> query operator can be
+parsed, e.g.:</p>
+<pre><code class="language-javascript">{ "$regex": {
+    "$regularExpression" : { "pattern": "foo*", "options": "" }
+    },
+    "$options" : "ix"
+}
+</code></pre>
+<p>or:</p>
+<pre><code class="language-javascript">{ "$regex": {
+    "$regularExpression" : { "pattern": "foo*", "options": "" }
+    }
+}
+</code></pre>
+<p>A parser that accepts Legacy Extended JSON MUST be configurable such that a JSON text of a MongoDB query filter
+containing the <a href="https://www.mongodb.com/docs/manual/reference/operator/query/type/">type</a> query operator can be parsed,
+e.g.:</p>
+<pre><code class="language-javascript">{ "zipCode" : { $type : 2 } }
+</code></pre>
+<p>or:</p>
+<pre><code class="language-javascript">{ "zipCode" : { $type : "string" } }
+</code></pre>
+<p>A parser SHOULD support at least 200 levels of nesting in an Extended JSON document but MAY set other limits on strings
+it can accept as defined in <a href="https://tools.ietf.org/html/rfc7159#section-9">section 9</a> of the
+<a href="https://tools.ietf.org/html/rfc7159">JSON specification</a>.</p>
+<p>When parsing a JSON object other than the top-level object, the presence of a <code>$</code>-prefixed key indicates the object
+could be a type wrapper object as described in the Extended JSON <a href="#conversion-table">Conversion table</a>. In such a case,
+the parser MUST follow these rules, unless configured to allow Legacy Extended JSON, in which case it SHOULD follow
+these rules:</p>
+<ul>
+<li>
+<p>Parsers MUST NOT consider key order as having significance. For example, the document
+<code>{"$code": "function(){}", "$scope": {}}</code> must be considered identical to <code>{"$scope": {}, "$code": "function(){}"}</code>.</p>
+</li>
+<li>
+<p>If the parsed object contains any of the special <strong>keys</strong> for a type in the <a href="#conversion-table">Conversion table</a>
+(e.g. <code>"$binary"</code>, <code>"$timestamp"</code>) then it must contain exactly the keys of the type wrapper. Any missing or extra
+keys constitute an error.</p>
+<p>DBRef is the lone exception to this rule, as it is only a common convention and not a proper type. An object that
+resembles a DBRef but fails to fully comply with its structure (e.g. has <code>$ref</code> but missing <code>$id</code>) MUST be left as-is
+and MUST NOT constitute an error.</p>
+</li>
+<li>
+<p>If the <strong>keys</strong> of the parsed object exactly match the <strong>keys</strong> of a type wrapper in the Conversion table, and the
+<strong>values</strong> of the parsed object have the correct type for the type wrapper as described in the Conversion table, then
+the parser MUST interpret the parsed object as a type wrapper object of the corresponding type.</p>
+</li>
+<li>
+<p>If the <strong>keys</strong> of the parsed object exactly match the <strong>keys</strong> of a type wrapper in the Conversion table, but any of
+the <strong>values</strong> are of an incorrect type, then the parser MUST report an error.</p>
+</li>
+<li>
+<p>If the <code>$</code>-prefixed key does not match a known type wrapper in the Conversion table, the parser MUST NOT raise an
+error and MUST leave the value as-is. See <a href="#restrictions-and-limitations">Restrictions and limitations</a> for additional
+information.</p>
+</li>
+</ul>
+<h4 id="special-rules-for-parsing-json-numbers"><a class="header" href="#special-rules-for-parsing-json-numbers">Special rules for parsing JSON numbers</a></h4>
+<p>The Relaxed Extended JSON format uses JSON numbers for several different BSON types. In order to allow parsers to use
+language-native JSON decoders (which may not distinguish numeric type when parsing), the following rules apply to
+parsing JSON numbers:</p>
+<ul>
+<li>If the number is a <em>non-integer</em>, parsers SHOULD interpret it as BSON Double.</li>
+<li>If the number is an <em>integer</em>, parsers SHOULD interpret it as being of the smallest BSON integer type that can
+represent the number exactly. If a parser is unable to represent the number exactly as an integer (e.g. a large 64-bit
+number on a 32-bit platform), it MUST interpret it as a BSON Double even if this results in a loss of precision. The
+parser MUST NOT interpret it as a BSON String containing a decimal representation of the number.</li>
+</ul>
+<h4 id="special-rules-for-parsing-uuid-fields"><a class="header" href="#special-rules-for-parsing-uuid-fields">Special rules for parsing <code>$uuid</code> fields</a></h4>
+<p>As per the <a href="../bson-binary-uuid/uuid.html">UUID specification</a>, Binary subtype 3 or 4 are used to represent UUIDs in BSON.
+Consequently, UUIDs are handled as per the convention described for the <code>Binary</code> type in the
+<a href="#conversion-table">Conversion table</a>, e.g. the following document written with the MongoDB Python Driver:</p>
+<pre><code class="language-javascript">{"Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
+</code></pre>
+<p>is transformed into the following (newlines and spaces added for readability):</p>
+<pre><code class="language-javascript">{"Binary": {
+    "$binary": {
+        "base64": "yO2rw/c4TKO2jauSqRR4ow==",
+        "subType": "04"}
+    }
+}
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+The above described type conversion assumes that UUID representation is set to <code>STANDARD</code>. See the
+<a href="../bson-binary-uuid/uuid.html">UUID specification</a> for more information about UUID representations.</p>
+</blockquote>
+<p>While this transformation preserves BSON subtype information (since UUIDs can be represented as BSON subtype 3 <em>or</em> 4),
+base64-encoding is not the standard way of representing UUIDs and using it makes comparing these values against textual
+representations coming from platform libraries difficult. Consequently, we also allow UUIDs to be represented in
+extended JSON as:</p>
+<pre><code class="language-javascript">{"$uuid": &lt;canonical textual representation of a UUID&gt;}
+</code></pre>
+<p>The rules for generating the canonical string representation of a UUID are defined in
+<a href="https://tools.ietf.org/html/rfc4122#section-3">RFC 4122 Section 3</a>. Use of this format result in a more readable
+extended JSON representation of the UUID from the previous example:</p>
+<pre><code class="language-javascript">{"Binary": {
+    "$uuid": "c8edabc3-f738-4ca3-b68d-ab92a91478a3"
+    }
+}
+</code></pre>
+<p>Parsers MUST interpret the <code>$uuid</code> key as BSON Binary subtype 4. Parsers MUST accept textual representations of UUIDs
+that omit the URN prefix (usually <code>urn:uuid:</code>). Parsers MAY also accept textual representations of UUIDs that omit the
+hyphens between hex character groups (e.g. <code>c8edabc3f7384ca3b68dab92a91478a3</code>).</p>
+<h3 id="generators"><a class="header" href="#generators">Generators</a></h3>
+<p>An Extended JSON generator (hereafter just "generator") produces strings in an Extended JSON format.</p>
+<p>A generator MUST allow users to produce strings in either the Canonical Extended JSON format or the Relaxed Extended
+JSON format. If generators provide a default format, the default SHOULD be the Relaxed Extended JSON format.</p>
+<p>A generator MAY be capable of exporting strings that adhere to other formats, such as Legacy Extended JSON formats.</p>
+<p>A generator SHOULD support at least 100 levels of nesting in a BSON document.</p>
+<h4 id="transforming-bson"><a class="header" href="#transforming-bson">Transforming BSON</a></h4>
+<p>Given a BSON document (e.g. a buffer of bytes meeting the requirements of the BSON specification), a generator MUST use
+the corresponding JSON values or Extended JSON type wrapper objects for the BSON type given in the Extended JSON
+<a href="#conversion-table">Conversion table</a> for the desired format. When transforming a BSON document into Extended JSON text,
+a generator SHOULD emit the JSON keys and values in the same order as given in the BSON document.</p>
+<h4 id="transforming-language-native-data"><a class="header" href="#transforming-language-native-data">Transforming Language-Native data</a></h4>
+<p>Given language-native data (e.g. type primitives, container types, classes, etc.), if there is a semantically-equivalent
+BSON type for a given language-native type, a generator MUST use the corresponding JSON values or Extended JSON type
+wrapper objects for the BSON type given in the Extended JSON <a href="#conversion-table">Conversion table</a> for the desired
+format. For example, a Python <code>datetime</code> object must be represented the same as a BSON datetime type. A generator SHOULD
+error if a language-native type has no semantically-equivalent BSON type.</p>
+<h4 id="format-and-method-names"><a class="header" href="#format-and-method-names">Format and Method Names</a></h4>
+<p>The following format names SHOULD be used for selecting formats for generator output:</p>
+<ul>
+<li><code>canonicalExtendedJSON</code> (references Canonical Extended JSON as described in this specification)</li>
+<li><code>relaxedExtendedJSON</code> (references Relaxed Extended JSON as described in this specification)</li>
+<li><code>legacyExtendedJSON</code> (if supported: references Legacy Extended JSON, with implementation-defined behavior)</li>
+</ul>
+<p>Generators MAY use these format names as part of function/method names or MAY use them as arguments or constants, as
+needed.</p>
+<p>If a generator provides a generic <code>to_json</code> or <code>to_extended_json</code> method, it MUST default to producing Relaxed Extended
+JSON or MUST be deprecated in favor of a spec-compliant method.</p>
+<h3 id="restrictions-and-limitations"><a class="header" href="#restrictions-and-limitations">Restrictions and limitations</a></h3>
+<p>Extended JSON is designed primarily for testing and human inspection of BSON documents. It is not designed to reliably
+round-trip BSON documents. One fundamental limitation is that JSON objects are inherently unordered and BSON objects are
+ordered.</p>
+<p>Further, Extended JSON uses <code>$</code>-prefixed keys in type wrappers and has no provision for escaping a leading <code>$</code> used
+elsewhere in a document. This means that the Extended JSON representation of a document with <code>$</code>-prefixed keys could be
+indistinguishable from another document with a type wrapper with the same keys.</p>
+<p>Extended JSON formats SHOULD NOT be used in contexts where <code>$</code>-prefixed keys could exist in BSON documents (with the
+exception of the DBRef convention, which is accounted for in this spec).</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>Drivers, tools, and libraries can test their compliance to this specification by running the tests in version 2.0 and
+above of the <a href="../bson-corpus/bson-corpus.html">BSON Corpus Test Suite</a>.</p>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<h3 id="canonical-extended-json-example"><a class="header" href="#canonical-extended-json-example">Canonical Extended JSON Example</a></h3>
+<p>Consider the following document, written with the MongoDB Python Driver:</p>
+<pre><code class="language-javascript">{
+    "_id": bson.ObjectId("57e193d7a9cc81b4027498b5"),
+    "String": "string",
+    "Int32": 42,
+    "Int64": bson.Int64(42),
+    "Double": 42.42,
+    "Decimal": bson.Decimal128("1234.5"),
+    "Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3"),
+    "BinaryUserDefined": bson.Binary(b'123', 80),
+    "Code": bson.Code("function() {}"),
+    "CodeWithScope": bson.Code("function() {}", scope={}),
+    "Subdocument": {"foo": "bar"},
+    "Array": [1, 2, 3, 4, 5],
+    "Timestamp": bson.Timestamp(42, 1),
+    "RegularExpression": bson.Regex("foo*", "xi"),
+    "DatetimeEpoch": datetime.datetime.utcfromtimestamp(0),
+    "DatetimePositive": datetime.datetime.max,
+    "DatetimeNegative": datetime.datetime.min,
+    "True": True,
+    "False": False,
+    "DBRef": bson.DBRef(
+        "collection", bson.ObjectId("57e193d7a9cc81b4027498b1"), database="database"),
+    "DBRefNoDB": bson.DBRef(
+        "collection", bson.ObjectId("57fd71e96e32ab4225b723fb")),
+    "Minkey": bson.MinKey(),
+    "Maxkey": bson.MaxKey(),
+    "Null": None
+}
+</code></pre>
+<p>The above document is transformed into the following (newlines and spaces added for readability):</p>
+<pre><code class="language-javascript">{
+    "_id": {
+        "$oid": "57e193d7a9cc81b4027498b5"
+    },
+    "String": "string",
+    "Int32": {
+        "$numberInt": "42"
+    },
+    "Int64": {
+        "$numberLong": "42"
+    },
+    "Double": {
+        "$numberDouble": "42.42"
+    },
+    "Decimal": {
+        "$numberDecimal": "1234.5"
+    },
+    "Binary": {
+        "$binary": {
+            "base64": "yO2rw/c4TKO2jauSqRR4ow==",
+            "subType": "04"
+        }
+    },
+    "BinaryUserDefined": {
+        "$binary": {
+            "base64": "MTIz",
+            "subType": "80"
+        }
+    },
+    "Code": {
+        "$code": "function() {}"
+    },
+    "CodeWithScope": {
+        "$code": "function() {}",
+        "$scope": {}
+    },
+    "Subdocument": {
+        "foo": "bar"
+    },
+    "Array": [
+        {"$numberInt": "1"},
+        {"$numberInt": "2"},
+        {"$numberInt": "3"},
+        {"$numberInt": "4"},
+        {"$numberInt": "5"}
+    ],
+    "Timestamp": {
+        "$timestamp": { "t": 42, "i": 1 }
+    },
+    "RegularExpression": {
+        "$regularExpression": {
+            "pattern": "foo*",
+            "options": "ix"
+        }
+    },
+    "DatetimeEpoch": {
+        "$date": {
+            "$numberLong": "0"
+        }
+    },
+    "DatetimePositive": {
+        "$date": {
+            "$numberLong": "253402300799999"
+        }
+    },
+    "DatetimeNegative": {
+        "$date": {
+            "$numberLong": "-62135596800000"
+        }
+    },
+    "True": true,
+    "False": false,
+    "DBRef": {
+        "$ref": "collection",
+        "$id": {
+            "$oid": "57e193d7a9cc81b4027498b1"
+        },
+        "$db": "database"
+    },
+    "DBRefNoDB": {
+        "$ref": "collection",
+        "$id": {
+            "$oid": "57fd71e96e32ab4225b723fb"
+        }
+    },
+    "Minkey": {
+        "$minKey": 1
+    },
+    "Maxkey": {
+        "$maxKey": 1
+    },
+    "Null": null
+}
+</code></pre>
+<h3 id="relaxed-extended-json-example"><a class="header" href="#relaxed-extended-json-example">Relaxed Extended JSON Example</a></h3>
+<p>In Relaxed Extended JSON, the example document is transformed similarly to Canonical Extended JSON, with the exception
+of the following keys (newlines and spaces added for readability):</p>
+<pre><code class="language-javascript">{
+    ...
+    "Int32": 42,
+    "Int64": 42,
+    "Double": 42.42,
+    ...
+    "DatetimeEpoch": {
+        "$date": "1970-01-01T00:00:00.000Z"
+    },
+    ...
+}
+</code></pre>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation for Change</a></h2>
+<p>There existed many Extended JSON parser and generator implementations prior to this specification that used conflicting
+formats, since there was no agreement on the precise format of Extended JSON. This resulted in problems where the output
+of some generators could not be consumed by some parsers.</p>
+<p>MongoDB drivers needed a single, standard Extended JSON format for testing that covers all BSON types. However, there
+were BSON types that had no defined Extended JSON representation. This spec primarily addresses that need, but provides
+for slightly broader use as well.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<h3 id="of-relaxed-and-canonical-formats"><a class="header" href="#of-relaxed-and-canonical-formats">Of Relaxed and Canonical Formats</a></h3>
+<p>There are various use cases for expressing BSON documents in a text rather that binary format. They broadly fall into
+two categories:</p>
+<ul>
+<li>Type preserving: for things like testing, where one has to describe the expected form of a BSON document, it's helpful
+to be able to precisely specify expected types. In particular, numeric types need to differentiate between Int32,
+Int64 and Double forms.</li>
+<li>JSON-like: for things like a web API, where one is sending a document (or a projection of a document) that only uses
+ordinary JSON type primitives, it's desirable to represent numbers in the native JSON format. This output is also the
+most human readable and is useful for debugging and documentation.</li>
+</ul>
+<p>The two formats in this specification address these two categories of use cases.</p>
+<h3 id="of-parsers-and-generators"><a class="header" href="#of-parsers-and-generators">Of Parsers and Generators</a></h3>
+<p>Parsers need to accept any valid Extended JSON string that a generator can produce. Parsers and generators are permitted
+to accept and output strings in other formats as well for backwards compatibility.</p>
+<p><span id="levels of nesting"></span></p>
+<p>Acceptable nesting depth has implications for resource usage so unlimited nesting is not permitted.</p>
+<p>Generators support at least 100 levels of nesting in a BSON document being transformed to Extended JSON. This aligns
+with MongoDB's own limitation of 100 levels of nesting.</p>
+<p>Parsers support at least 200 levels of nesting in Extended JSON text, since the Extended JSON language can double the
+level of apparent nesting of a BSON document by wrapping certain types in their own documents.</p>
+<h3 id="of-canonical-type-wrapper-formats"><a class="header" href="#of-canonical-type-wrapper-formats">Of Canonical Type Wrapper Formats</a></h3>
+<p>Prior to this specification, BSON types fell into three categories with respect to Legacy Extended JSON:</p>
+<ol>
+<li>A single, portable representation for the type already existed.</li>
+<li>Multiple representations for the type existed among various Extended JSON generators, and those representations were
+in conflict with each other or with current portability goals.</li>
+<li>No Legacy Extended JSON representation existed.</li>
+</ol>
+<p>If a BSON type fell into category (1), this specification just declares that form to be canonical, since all drivers,
+tools, and libraries already know how to parse or output this form. There are two exceptions:</p>
+<h4 id="regularexpression"><a class="header" href="#regularexpression">RegularExpression</a></h4>
+<p>The form <code>{"$regex: &lt;string&gt;, $options: &lt;string&gt;"}</code> has until this specification been canonical. The change to
+<code>{"$regularExpression": {pattern: &lt;string&gt;, "options": &lt;string&gt;"}}</code> is motivated by a conflict between the previous
+canonical form and the <code>$regex</code> MongoDB query operator. The form specified here disambiguates between the two, such that
+a parser can accept any MongoDB query filter, even one containing the <code>$regex</code> operator.</p>
+<h4 id="binary"><a class="header" href="#binary">Binary</a></h4>
+<p>The form <code>{"$binary": "AQIDBAU=", "$type": "80"}</code> has until this specification been canonical. The change to
+<code>{"$binary": {"base64": "AQIDBAU=", "subType": "80"}}</code> is motivated by a conflict between the previous canonical form
+and the <code>$type</code> MongoDB query operator. The form specified here disambiguates between the two, such that a parser can
+accept any MongoDB query filter, even one containing the <code>$type</code> operator.</p>
+<h4 id="reconciled-type-wrappers"><a class="header" href="#reconciled-type-wrappers">Reconciled type wrappers</a></h4>
+<p>If a BSON type fell into category (2), this specification selects a new common representation for the type to be
+canonical. Conflicting formats were gathered by surveying a number of Extended JSON generators, including the MongoDB
+Java Driver (version 3.3.0), the MongoDB Python Driver (version 3.4.0.dev0), the MongoDB Extended JSON module on NPM
+(version 1.7.1), and each minor version of mongoexport from 2.4.14 through 3.3.12. When possible, we set the "strict"
+option on the JSON codec. The following BSON types had conflicting Extended JSON representations:</p>
+<h5 id="binary-1"><a class="header" href="#binary-1">Binary</a></h5>
+<p>Some implementations write the Extended JSON form of a Binary object with a strict two-hexadecimal digit subtype (e.g.
+they output a leading <code>0</code> for subtypes &lt; 16). However, the NPM mongodb-extended-json module and Java driver use a
+single hexadecimal digit to represent subtypes less than 16. This specification makes both one- and two-digit
+representations acceptable.</p>
+<h5 id="code"><a class="header" href="#code">Code</a></h5>
+<p>Mongoexport 2.4 does not quote the <code>Code</code> value when writing out the extended JSON form of a BSON Code object. All other
+implementations do so. This spec canonicalises the form where the Javascript code is quoted, since the latter form
+adheres to the JSON specification and the former does not. As an additional note, the NPM mongodb-extended-json module
+uses the form <code>{"code": "&lt;javascript code&gt;"}</code>, omitting the dollar sign (<code>$</code>) from the key. This specification does not
+accommodate the eccentricity of a single library.</p>
+<h5 id="codewithscope"><a class="header" href="#codewithscope">CodeWithScope</a></h5>
+<p>In addition to the same variants as BSON Code types, there are other variations when turning CodeWithScope objects into
+Extended JSON. Mongoexport 2.4 and 2.6 omit the scope portion of CodeWithScope if it is empty, making the output
+indistinguishable from a Code type. All other implementations include the empty scope. This specification therefore
+canonicalises the form where the scope is always included. The presence of <code>$scope</code> is what differentiates Code from
+CodeWithScope.</p>
+<h5 id="datetime"><a class="header" href="#datetime">Datetime</a></h5>
+<p>Mongoexport 2.4 and the Java driver always transform a Datetime object into an Extended JSON string of the form
+<code>{"$date": &lt;ms since epoch&gt;}</code>. This form has the problem of a potential loss of precision or range on the Datetimes that
+can be represented. Mongoexport 2.6 transforms Datetime objects into an extended JSON string of the form
+<code>{"$date": &lt;ISO-8601 date string in local time&gt;}</code>for dates starting at or after the Unix epoch (UTC). Dates prior to the
+epoch take the form <code>{"$date": {"$numberLong": "&lt;ms since epoch&gt;"}}</code>. Starting in version 3.0, mongoexport always turns
+Datetime objects into strings of the form <code>{"$date": &lt;ISO-8601 date string in UTC&gt;}</code>. The NPM mongodb-extended-json
+module does the same. The Python driver can also transform Datetime objects into strings like
+<code>{"$date": {"$numberLong": "&lt;ms since epoch&gt;"}}</code>. This specification canonicalises this form, since this form is the
+most portable. In Relaxed Extended JSON format, this specification provides for ISO-8601 representation for better
+readability, but limits it to a portable subset, from the epoch to the end of the largest year that can be represented
+with four digits. This should encompass most typical use of dates in applications.</p>
+<h5 id="dbpointer"><a class="header" href="#dbpointer">DBPointer</a></h5>
+<p>Mongoexport 2.4 and 2.6 use the form<code>{"$ref": &lt;namespace&gt;, "$id": &lt;hex string&gt;}</code>. All other implementations studied
+include the canonical <code>ObjectId</code> form:<code>{"$ref": &lt;namespace&gt;, "$id": {"$oid": &lt;hex string&gt;}}</code>. Neither of these forms are
+distinguishable from that of DBRef, so this specification creates a new format:
+<code>{"$dbPointer": {"$ref": &lt;namespace&gt;, "$id": {"$oid": &lt;hex string&gt;}}}</code>.</p>
+<h5 id="newly-added-type-wrappers-"><a class="header" href="#newly-added-type-wrappers-">Newly-added type wrappers .</a></h5>
+<p>If a BSON type fell into category (3), above, this specification creates a type wrapper format for the type. The
+following new Extended JSON type wrappers are introduced by this spec:</p>
+<ul>
+<li>
+<p><code>$dbPointer</code>- See above.</p>
+</li>
+<li>
+<p><code>$numberInt</code> - This is used to preserve the "int32" BSON type in Canonical Extended JSON. Without using <code>$numberInt</code>,
+this type will be indistinguishable from a double in certain languages where the distinction does not exist, such as
+Javascript.</p>
+</li>
+<li>
+<p><code>$numberDouble</code> - This is used to preserve the <code>double</code>type in Canonical Extended JSON, as some JSON generators might
+omit a trailing ".0" for integral types.</p>
+<p>It also supports representing non-finite values like NaN or Infinity which are prohibited in the JSON specification
+for numbers.</p>
+</li>
+<li>
+<p><code>$symbol</code> - The use of the <code>$symbol</code> key preserves the symbol type in Canonical Extended JSON, distinguishing it from
+JSON strings.</p>
+</li>
+</ul>
+<h3 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h3>
+<p>[<em>Canonical Extended JSON format reference implementation needs to be updated</em>] PyMongo implements the Canonical
+Extended JSON format, which must be chosen by selecting the right option on the <code>JSONOptions</code> object::</p>
+<pre><code class="language-python">from bson.json_util import dumps, DatetimeRepresentation, CANONICAL_JSON_OPTIONS    
+dumps(document, json_options=CANONICAL_JSON_OPTIONS)  
+</code></pre>
+<p>[<em>Relaxed Extended JSON format reference implementation is TBD</em>]</p>
+<h3 id="implementation-notes"><a class="header" href="#implementation-notes">Implementation Notes</a></h3>
+<h4 id="json-file-format"><a class="header" href="#json-file-format">JSON File Format</a></h4>
+<p>Some applications like mongoexport may wish to write multiple Extended JSON documents to a single file. One way to do
+this is to list each JSON document one-per-line. When doing this, it is important to ensure that special characters like
+newlines are encoded properly (e.g.<code>n</code>).</p>
+<h4 id="duplicate-keys"><a class="header" href="#duplicate-keys">Duplicate Keys</a></h4>
+<p>The BSON specification does not prohibit duplicate key names within the same BSON document, but provides no semantics
+for the interpretation of duplicate keys. The JSON specification says that names within an object should be unique, and
+many JSON libraries are incapable of handling this scenario. This specification is silent on the matter, so as not to
+conflict with a future change by either specification.</p>
+<h3 id="future-work"><a class="header" href="#future-work">Future Work</a></h3>
+<p>This specification will need to be amended if future BSON types are added to the BSON specification.</p>
+<h2 id="qa"><a class="header" href="#qa">Q&amp;A</a></h2>
+<p><strong>Q</strong>. Why was version 2 of the spec necessary?</p>
+<p><strong>A</strong>. After Version 1 was released, several stakeholders raised concerns that not providing an option to output BSON
+numbers as ordinary JSON numbers limited the utility of Extended JSON for common historical uses. We decided to provide
+a second format option and more clearly distinguish the use cases (and limitations) inherent in each format.</p>
+<p><strong>Q</strong>. My BSON parser doesn't distinguish every BSON type. Does my Extended JSON generator need to distinguish these
+types?</p>
+<p><strong>A</strong>. No. Some BSON parsers do not emit a unique type for each BSON type, making round-tripping BSON through such
+libraries impossible without changing the document. For example, a <code>DBPointer</code> will be parsed into a <code>DBRef</code> by PyMongo.
+In such cases, a generator must emit the Extended JSON form for whatever type the BSON parser emitted. It does not need
+to preserve type information when that information has been lost by the BSON parser.</p>
+<p><strong>Q</strong>. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON regular
+expressions were represented with <code>$regex</code>, handle parsing of extended JSON test representing a MongoDB query filter
+containing the <code>$regex</code> operator?</p>
+<p><strong>A</strong>. An implementation can handle this in a number of ways: - Introduce an enumeration that determines the behavior of
+the parser. If the value is LEGACY, it will parse <code>$regex</code>and not treat <code>$regularExpression</code> specially, and if the value
+is CANONICAL, it will parse <code>$regularExpression</code> and not treat <code>$regex</code> specially. - Support both legacy and canonical
+forms in the parser without requiring the application to specify one or the other. Making that work for the <code>$regex</code>
+query operator use case will require that the rules set forth in the 1.0.0 version of this specification are followed
+for <code>$regex</code>; specifically, that a document with a <code>$regex</code> key whose value is a JSON object should be parsed as a
+normal document and not reported as an error.</p>
+<h2 id="q-how-can-implementations-which-require-backwards-compatibility-with-legacy-extended-json-in-which-bson-binary-values-were-represented-like-binary-aqidbau-type-80-handle-parsing-of-extended-json-test-representing-a-mongodb-query-filter-containing-the-typeoperator"><a class="header" href="#q-how-can-implementations-which-require-backwards-compatibility-with-legacy-extended-json-in-which-bson-binary-values-were-represented-like-binary-aqidbau-type-80-handle-parsing-of-extended-json-test-representing-a-mongodb-query-filter-containing-the-typeoperator"><strong>Q</strong>. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON binary values were represented like <code>{"$binary": "AQIDBAU=", "$type": "80"}</code>, handle parsing of extended JSON test representing a MongoDB query filter containing the <code>$type</code>operator?</a></h2>
+<p><strong>A</strong>. An implementation can handle this in a number of ways:</p>
+<p>Introduce an enumeration that determines the behavior of the parser. If the value is LEGACY, it will parse the new
+binary form and not treat the legacy one specially, and if the value is CANONICAL, it will parse the new form and not
+treat the legacy form specially. - Support both legacy and canonical forms in the parser without requiring the
+application to specify one or the other. Making that work for the <code>$type</code> query operator use case will require that the
+rules set forth in the 1.0.0 version of this specification are followed for <code>$type</code>; specifically, that a document with
+a <code>$type</code> key whose value is an integral type, or a document with a <code>$type</code> key but without a <code>$binary</code> key, should be
+parsed as a normal document and not reported as an error.</p>
+<p><strong>Q</strong>. Sometimes I see the term "extjson" used in other specifications. Is "extjson" related to this specification?</p>
+<p><strong>A</strong>. Yes, "extjson" is short for "Extended JSON".</p>
+<h3 id="changelog"><a class="header" href="#changelog">Changelog</a></h3>
+<ul>
+<li>2024-05-29: Migrated from reStructuredText to Markdown.</li>
+<li>2022-10-05: Remove spec front matter and reformat changelog.</li>
+<li>2021-05-26:
+<ul>
+<li>Remove any mention of extra dollar-prefixed keys being prohibited in a DBRef. MongoDB 5.0 and compatible drivers no
+longer enforce such restrictions.</li>
+<li>Objects that resemble a DBRef without fully complying to its structure should be left as-is during parsing. -
+2020-09-01: Note that <code>$</code>-prefixed keys not matching a known type MUST be left as-is when parsing. This is
+patch-level change as this behavior was already required in the BSON corpus tests ("Document with keys that start
+with $").</li>
+</ul>
+</li>
+<li>2020-09-08:
+<ul>
+<li>Added support for parsing <code>$uuid</code> fields as BSON Binary subtype 4.</li>
+<li>Changed the example to using the MongoDB Python Driver. It previously used the MongoDB Java Driver. The new example
+excludes the following BSON types that are unsupported in Python - <code>Symbol</code>,<code>SpecialFloat</code>,<code>DBPointer</code>, and
+<code>Undefined</code>. Transformations for these types are now only documented in the <a href="#conversion-table">Conversion table</a></li>
+</ul>
+</li>
+<li>2017-07-20:
+<ul>
+<li>Bumped specification to version 2.0.</li>
+<li>Added "Relaxed" format.</li>
+<li>Changed BSON timestamp type wrapper back to <code>{"t": *int*, "i": *int*}</code> for backwards compatibility. (The change in
+v1 to unsigned 64-bit string was premature optimization)</li>
+<li>Changed BSON regular expression type wrapper to <code>{"$regularExpression": {pattern: *string*, "options": *string*"}}</code>.</li>
+<li>Changed BSON binary type wrapper to
+<code>{"$binary": {"base64": &lt;base64-encoded payload as a *string*&gt;, "subType": &lt;BSON binary type as a one- or two-character *hex string*&gt;}}</code></li>
+<li>Added "Restrictions and limitations" section.</li>
+<li>Clarified parser and generator rules.</li>
+</ul>
+</li>
+<li>2017-02-01: Initial specification version 1.0.</li>
+</ul>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>This MUST conform to the <a href="../bson-decimal128/decimal128.html#writing-to-extended-json">Decimal128 specification</a></p>
+</div>
+<div class="footnote-definition" id="2"><sup class="footnote-definition-label">2</sup>
+<p>BSON Regular Expression options MUST be in alphabetical order.</p>
+</div>
+<div class="footnote-definition" id="3"><sup class="footnote-definition-label">3</sup>
+<p>See <a href="https://www.mongodb.com/docs/manual/reference/glossary/#term-namespace">the docs manual</a></p>
+</div>
+<div class="footnote-definition" id="4"><sup class="footnote-definition-label">4</sup>
+<p>See <a href="https://tools.ietf.org/html/rfc3339#section-5.6">https://tools.ietf.org/html/rfc3339#section-5.6</a></p>
+</div>
+<div class="footnote-definition" id="5"><sup class="footnote-definition-label">5</sup>
+<p>Fractional seconds SHOULD have exactly 3 decimal places if the fractional part is non-zero. Otherwise, fractional
+seconds SHOULD be omitted if zero.</p>
+</div>
+<div class="footnote-definition" id="6"><sup class="footnote-definition-label">6</sup>
+<p>See <a href="https://www.mongodb.com/docs/manual/reference/database-references/#dbrefs">the docs manual</a></p>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../dbref/dbref.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../message/OP_MSG.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../dbref/dbref.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../message/OP_MSG.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

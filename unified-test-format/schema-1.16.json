@@ -1,0 +1,691 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+  
+    "title": "Unified Test Format",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["description", "schemaVersion", "tests"],
+    "properties": {
+      "description": { "type": "string" },
+      "schemaVersion": { "$ref": "#/definitions/version" },
+      "runOnRequirements": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "$ref": "#/definitions/runOnRequirement" }
+      },
+      "createEntities": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "$ref": "#/definitions/entity" }
+      },
+      "initialData": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "$ref": "#/definitions/collectionData" }
+      },
+      "tests": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "$ref": "#/definitions/test" }
+      },
+      "_yamlAnchors": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+  
+    "definitions": {
+      "version": {
+        "type": "string",
+        "pattern": "^[0-9]+(\\.[0-9]+){1,2}$"
+      },
+  
+      "runOnRequirement": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "maxServerVersion": { "$ref": "#/definitions/version" },
+          "minServerVersion": { "$ref": "#/definitions/version" },
+          "topologies": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": ["single", "replicaset", "sharded", "sharded-replicaset", "load-balanced"]
+            }
+          },
+          "serverless": {
+            "type": "string",
+            "enum": ["require", "forbid", "allow"]
+          },
+          "serverParameters": {
+            "type": "object",
+            "minProperties": 1
+          },
+          "auth": { "type": "boolean" },
+          "csfle": { "type": "boolean" }
+        }
+      },
+  
+      "entity": {
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 1,
+        "minProperties": 1,
+        "properties": {
+          "client": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id"],
+            "properties": {
+              "id": { "type": "string" },
+              "uriOptions": { "type": "object" },
+              "useMultipleMongoses": { "type": "boolean" },
+              "observeEvents": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "commandStartedEvent",
+                    "commandSucceededEvent",
+                    "commandFailedEvent",
+                    "poolCreatedEvent",
+                    "poolReadyEvent",
+                    "poolClearedEvent",
+                    "poolClosedEvent",
+                    "connectionCreatedEvent",
+                    "connectionReadyEvent",
+                    "connectionClosedEvent",
+                    "connectionCheckOutStartedEvent",
+                    "connectionCheckOutFailedEvent",
+                    "connectionCheckedOutEvent",
+                    "connectionCheckedInEvent",
+                    "serverDescriptionChangedEvent",
+                    "topologyDescriptionChangedEvent"
+                  ]
+                }
+              },
+              "ignoreCommandMonitoringEvents": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "type": "string" }
+              },
+              "storeEventsAsEntities": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/definitions/storeEventsAsEntity" }
+              },
+              "observeLogMessages": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": false,
+                "properties": {
+                    "command": { "$ref": "#/definitions/logSeverityLevel" },
+                    "topology": { "$ref": "#/definitions/logSeverityLevel" },
+                    "serverSelection": { "$ref": "#/definitions/logSeverityLevel" },
+                    "connection": { "$ref": "#/definitions/logSeverityLevel" }
+                }
+              },
+              "serverApi": { "$ref":  "#/definitions/serverApi" },
+              "observeSensitiveCommands": { "type": "boolean" }
+            }
+          },
+          "clientEncryption": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "clientEncryptionOpts"],
+            "properties": {
+              "id": { "type": "string" },
+              "clientEncryptionOpts": { "$ref": "#/definitions/clientEncryptionOpts" }
+            }
+          },
+          "database": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "client", "databaseName"],
+            "properties": {
+              "id": { "type": "string" },
+              "client": { "type": "string" },
+              "databaseName": { "type": "string" },
+              "databaseOptions": { "$ref": "#/definitions/collectionOrDatabaseOptions" }
+            }
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "database", "collectionName"],
+            "properties": {
+              "id": { "type": "string" },
+              "database": { "type": "string" },
+              "collectionName": { "type": "string" },
+              "collectionOptions": { "$ref": "#/definitions/collectionOrDatabaseOptions" }
+            }
+          },
+          "session": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "client"],
+            "properties": {
+              "id": { "type": "string" },
+              "client": { "type": "string" },
+              "sessionOptions": { "type": "object" }
+            }
+          },
+          "bucket": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "database"],
+            "properties": {
+              "id": { "type": "string" },
+              "database": { "type": "string" },
+              "bucketOptions": { "type": "object" }
+            }
+          },
+          "thread": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id"],
+            "properties": {
+              "id": { "type": "string" }
+            }
+          }
+        }
+      },
+  
+      "logComponent": {
+        "type": "string",
+        "enum": ["command", "topology", "serverSelection", "connection"]
+      },
+
+      "logSeverityLevel": {
+        "type": "string",
+        "enum": ["emergency", "alert", "critical", "error", "warning", "notice", "info", "debug", "trace"]
+      },
+
+      "clientEncryptionOpts": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["keyVaultClient", "keyVaultNamespace", "kmsProviders"],
+        "properties": {
+          "keyVaultClient": { "type": "string" },
+          "keyVaultNamespace": { "type": "string" },
+          "kmsProviders": { "$ref": "#/definitions/kmsProviders" }
+        }
+      },
+  
+      "kmsProviders": {
+        "$defs": {
+          "stringOrPlaceholder": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["$$placeholder"],
+                "properties": {
+                  "$$placeholder": {}
+                }
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "aws": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "accessKeyId": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+              "secretAccessKey": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+              "sessionToken": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
+            }
+          },
+          "azure": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tenantId": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+              "clientId": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+              "clientSecret": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+              "identityPlatformEndpoint": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
+            }
+          },
+          "gcp": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "email": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+              "privateKey": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" },
+              "endpoint": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
+            }
+          },
+          "kmip": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "endpoint": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
+            }
+          },
+          "local": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "key": { "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder" }
+            }
+          }
+        }
+      },
+  
+      "storeEventsAsEntity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "events"],
+        "properties": {
+          "id": { "type": "string" },
+          "events": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "PoolCreatedEvent",
+                "PoolReadyEvent",
+                "PoolClearedEvent",
+                "PoolClosedEvent",
+                "ConnectionCreatedEvent",
+                "ConnectionReadyEvent",
+                "ConnectionClosedEvent",
+                "ConnectionCheckOutStartedEvent",
+                "ConnectionCheckOutFailedEvent",
+                "ConnectionCheckedOutEvent",
+                "ConnectionCheckedInEvent",
+                "CommandStartedEvent",
+                "CommandSucceededEvent",
+                "CommandFailedEvent",
+                "ServerDescriptionChangedEvent",
+                "TopologyDescriptionChangedEvent"
+              ]
+            }
+          }
+        }
+      },
+  
+      "collectionData": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["collectionName", "databaseName", "documents"],
+        "properties": {
+          "collectionName": { "type": "string" },
+          "databaseName": { "type": "string" },
+          "createOptions": {
+            "type": "object",
+            "properties": {
+              "writeConcern": false
+            }
+          },
+          "documents": {
+            "type": "array",
+            "items": { "type": "object" }
+          }
+        }
+      },
+  
+      "expectedEventsForClient": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["client", "events"],
+        "properties": {
+          "client": { "type": "string" },
+          "eventType": {
+            "type": "string",
+            "enum": ["command", "cmap", "sdam"]
+          },
+          "events": { "type": "array" },
+          "ignoreExtraEvents": { "type": "boolean" }
+        },
+        "oneOf": [
+          {
+            "required": ["eventType"],
+            "properties": {
+              "eventType": { "const": "command" },
+              "events": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/expectedCommandEvent" }
+              }
+            }
+          },
+          {
+            "required": ["eventType"],
+            "properties": {
+              "eventType": { "const": "cmap" },
+              "events": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/expectedCmapEvent" }
+              }
+            }
+          },
+          {
+            "required": ["eventType"],
+            "properties": {
+              "eventType": { "const": "sdam" },
+              "events": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/expectedSdamEvent" }
+              }
+            }
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "client": { "type": "string" },
+              "events": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/expectedCommandEvent" }
+              },
+              "ignoreExtraEvents": { "type": "boolean" }
+            }
+          }
+        ]
+      },
+  
+      "expectedCommandEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 1,
+        "minProperties": 1,
+        "properties": {
+          "commandStartedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "command": { "type": "object" },
+              "commandName": { "type": "string" },
+              "databaseName": { "type": "string" },
+              "hasServiceId": { "type": "boolean" },
+              "hasServerConnectionId": { "type": "boolean" }
+            }
+          },
+          "commandSucceededEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "reply": { "type": "object" },
+              "commandName": { "type": "string" },
+              "databaseName": { "type": "string" },
+              "hasServiceId": { "type": "boolean" },
+              "hasServerConnectionId": { "type": "boolean" }
+            }
+          },
+          "commandFailedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "commandName": { "type": "string" },
+              "databaseName": { "type": "string" },
+              "hasServiceId": { "type": "boolean" },
+              "hasServerConnectionId": { "type": "boolean" }
+            }
+          }
+        }
+      },
+  
+      "expectedCmapEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 1,
+        "minProperties": 1,
+        "properties": {
+          "poolCreatedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "poolReadyEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "poolClearedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "hasServiceId": { "type": "boolean" },
+              "interruptInUseConnections": { "type": "boolean" }
+            }
+          },
+          "poolClosedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "connectionCreatedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "connectionReadyEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "connectionClosedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "reason": { "type": "string" }
+            }
+          },
+          "connectionCheckOutStartedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "connectionCheckOutFailedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "reason": { "type": "string" }
+            }
+          },
+          "connectionCheckedOutEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "connectionCheckedInEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          }
+        }
+      },
+  
+      "expectedSdamEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 1,
+        "minProperties": 1,
+        "properties": {
+          "serverDescriptionChangedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "previousDescription": { "$ref": "#/definitions/serverDescription" },
+              "newDescription": { "$ref": "#/definitions/serverDescription" }
+            }
+          },
+          "topologyDescriptionChangedEvent": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          }
+        }
+      },
+  
+      "serverDescription": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": { 
+            "type": "string",
+            "enum": [
+              "Standalone",
+              "Mongos",
+              "PossiblePrimary",
+              "RSPrimary",
+              "RSSecondary",
+              "RSOther",
+              "RSArbiter",
+              "RSGhost",
+              "LoadBalancer",
+              "Unknown"
+            ]
+          }
+        }
+      },
+
+      "expectedLogMessagesForClient": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["client", "messages"],
+        "properties": {
+          "client": { "type": "string" },
+          "messages": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/expectedLogMessage" }
+            },
+          "ignoreExtraMessages": { "type": "boolean" },
+          "ignoreMessages": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/expectedLogMessage" }
+            }
+        }
+      },
+
+      "expectedLogMessage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["level", "component", "data"],
+        "properties": {
+            "level": { "$ref": "#/definitions/logSeverityLevel" },
+            "component": { "$ref": "#/definitions/logComponent" },
+            "data": { "type": "object" },
+            "failureIsRedacted": { "type": "boolean" }
+        }
+      },
+
+      "collectionOrDatabaseOptions": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "readConcern": { "type": "object" },
+          "readPreference": { "type": "object" },
+          "writeConcern": { "type": "object" },
+          "timeoutMS": { "type": "integer" }
+        }
+      },
+  
+      "serverApi": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version"],
+        "properties": {
+          "version": { "type": "string" },
+          "strict": { "type":  "boolean" },
+          "deprecationErrors": { "type":  "boolean" }
+        }
+      },
+  
+      "operation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "object"],
+        "properties": {
+          "name": { "type": "string" },
+          "object": { "type": "string" },
+          "arguments": { "type": "object" },
+          "ignoreResultAndError": { "type": "boolean" },
+          "expectError":  { "$ref": "#/definitions/expectedError" },
+          "expectResult": {},
+          "saveResultAsEntity": { "type": "string" }
+        },
+        "allOf": [
+          { "not": { "required": ["expectError", "expectResult"] } },
+          { "not": { "required": ["expectError", "saveResultAsEntity"] } },
+          { "not": { "required": ["ignoreResultAndError", "expectResult"] } },
+          { "not": { "required": ["ignoreResultAndError", "expectError"] } },
+          { "not": { "required": ["ignoreResultAndError", "saveResultAsEntity"] } }
+        ]
+      },
+  
+      "expectedError": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "isError": {
+            "type": "boolean",
+            "const": true
+          },
+          "isClientError": { "type": "boolean" },
+          "isTimeoutError": { "type": "boolean" },
+          "errorContains": { "type": "string" },
+          "errorCode": { "type": "integer" },
+          "errorCodeName": { "type": "string" },
+          "errorLabelsContain": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "errorLabelsOmit": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "errorResponse": {
+            "type": "object"
+          },
+          "expectResult": {}
+        }
+      },
+  
+      "test": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["description", "operations"],
+        "properties": {
+          "description": { "type": "string" },
+          "runOnRequirements": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/definitions/runOnRequirement" }
+          },
+          "skipReason": { "type": "string" },
+          "operations": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/operation" }
+          },
+          "expectEvents": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/definitions/expectedEventsForClient" }
+          },
+          "expectLogMessages": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/definitions/expectedLogMessagesForClient" }
+          },
+          "outcome": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/definitions/collectionData" }
+          }
+        }
+      }
+    }
+  }

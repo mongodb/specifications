@@ -1,0 +1,1474 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Connection Pool Logging - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html" class="active"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html" class="active"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="connection-monitoring-and-pooling"><a class="header" href="#connection-monitoring-and-pooling">Connection Monitoring and Pooling</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: N/A</li>
+</ul>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>Drivers currently support a variety of options that allow users to configure connection pooling behavior. Users are
+confused by drivers supporting different subsets of these options. Additionally, drivers implement their connection
+pools differently, making it difficult to design cross-driver pool functionality. By unifying and codifying pooling
+options and behavior across all drivers, we will increase user comprehension and code base maintainability.</p>
+<p>This specification does not apply to drivers that do not support multitasking.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="definitions"><a class="header" href="#definitions">Definitions</a></h2>
+<h3 id="connection"><a class="header" href="#connection">Connection</a></h3>
+<p>A Connection (when linked) refers to the <code>Connection</code> type defined in the
+<a href="#connection-pool-members">Connection Pool Members</a> section of this specification. It does not refer to an actual TCP
+connection to an Endpoint. A <code>Connection</code> will attempt to create and wrap such a TCP connection over the course of its
+existence, but it is not equivalent to one nor does it wrap an active one at all times.</p>
+<p>For the purposes of testing, a mocked <code>Connection</code> type could be used with the pool that never actually creates a TCP
+connection or performs any I/O.</p>
+<h3 id="endpoint"><a class="header" href="#endpoint">Endpoint</a></h3>
+<p>For convenience, an Endpoint refers to either a <strong>mongod</strong> or <strong>mongos</strong> instance.</p>
+<h3 id="thread"><a class="header" href="#thread">Thread</a></h3>
+<p>For convenience, a Thread refers to:</p>
+<ul>
+<li>A shared-address-space process (a.k.a. a thread) in multi-threaded drivers</li>
+<li>An Execution Frame / Continuation in asynchronous drivers</li>
+<li>A goroutine in Go</li>
+</ul>
+<h2 id="behavioral-description"><a class="header" href="#behavioral-description">Behavioral Description</a></h2>
+<h3 id="which-drivers-this-applies-to"><a class="header" href="#which-drivers-this-applies-to">Which Drivers this applies to</a></h3>
+<p>This specification is solely concerned with drivers that implement a connection pool. A driver SHOULD implement a
+connection pool, but is not required to.</p>
+<h3 id="connection-pool-options"><a class="header" href="#connection-pool-options">Connection Pool Options</a></h3>
+<p>All drivers that implement a connection pool MUST implement and conform to the same MongoClient options. There can be
+slight deviation in naming to make the options idiomatic to the driver language.</p>
+<h3 id="connection-pool-behaviors"><a class="header" href="#connection-pool-behaviors">Connection Pool Behaviors</a></h3>
+<p>All driver connection pools MUST provide an API that allows the driver to check out a connection, check in a connection
+back to the pool, and clear all connections in the pool. This API is for internal use only, and SHOULD NOT be documented
+as a public API.</p>
+<h3 id="connection-pool-monitoring"><a class="header" href="#connection-pool-monitoring">Connection Pool Monitoring</a></h3>
+<p>All drivers that implement a connection pool MUST provide an API that allows users to subscribe to events emitted from
+the pool. Conceptually, event emission is instantaneous, i.e., one may talk about the instant an event is emitted, and
+represents the start of an activity of delivering the event to a subscribed user.</p>
+<h2 id="detailed-design"><a class="header" href="#detailed-design">Detailed Design</a></h2>
+<h3 id="connection-pool-options-1"><a class="header" href="#connection-pool-options-1">Connection Pool Options</a></h3>
+<p>Drivers that implement a Connection Pool MUST support the following ConnectionPoolOptions:</p>
+<pre><code class="language-typescript">interface ConnectionPoolOptions {
+  /**
+   *  The maximum number of Connections that may be associated
+   *  with a pool at a given time. This includes in use and
+   *  available connections.
+   *  If specified, MUST be an integer &gt;= 0.
+   *  A value of 0 means there is no limit.
+   *  Defaults to 100.
+   */
+  maxPoolSize?: number;
+
+  /**
+   *  The minimum number of Connections that MUST exist at any moment
+   *  in a single connection pool.
+   *  If specified, MUST be an integer &gt;= 0. If maxPoolSize is &gt; 0
+   *  then minPoolSize must be &lt;= maxPoolSize
+   *  Defaults to 0.
+   */
+  minPoolSize?: number;
+
+  /**
+   *  The maximum amount of time a Connection should remain idle
+   *  in the connection pool before being marked idle.
+   *  If specified, MUST be a number &gt;= 0.
+   *  A value of 0 means there is no limit.
+   *  Defaults to 0.
+   */
+  maxIdleTimeMS?: number;
+
+  /**
+   *  The maximum number of Connections a Pool may be establishing concurrently.
+   *  Establishment of a Connection is a part of its life cycle
+   *  starting after a ConnectionCreatedEvent and ending before a ConnectionReadyEvent.
+   *  If specified, MUST be a number &gt; 0.
+   *  Defaults to 2.
+   */
+  maxConnecting?: number;
+}
+</code></pre>
+<p>Additionally, Drivers that implement a Connection Pool MUST support the following ConnectionPoolOptions UNLESS that
+driver meets ALL of the following conditions:</p>
+<ul>
+<li>The driver/language currently has an idiomatic timeout mechanism implemented</li>
+<li>The timeout mechanism conforms to <a href="#waitqueue">the aggressive requirement of timing out a thread in the WaitQueue</a></li>
+</ul>
+<pre><code class="language-typescript">interface ConnectionPoolOptions {
+  /**
+   *  NOTE: This option has been deprecated in favor of timeoutMS.
+   *
+   *  The maximum amount of time a thread can wait for
+   *  either an available non-perished connection (limited by `maxPoolSize`),
+   *  or a pending connection (limited by `maxConnecting`).
+   *  If specified, MUST be a number &gt;= 0.
+   *  A value of 0 means there is no limit.
+   *  Defaults to 0.
+   */
+  waitQueueTimeoutMS?: number;
+}
+</code></pre>
+<p>These options MUST be specified at the MongoClient level, and SHOULD be named in a manner idiomatic to the driver's
+language. All connection pools created by a MongoClient MUST use the same ConnectionPoolOptions.</p>
+<p>When parsing a mongodb connection string, a user MUST be able to specify these options using the default names specified
+above.</p>
+<h4 id="deprecated-options"><a class="header" href="#deprecated-options">Deprecated Options</a></h4>
+<p>The following ConnectionPoolOptions are considered deprecated. They MUST NOT be implemented if they do not already exist
+in a driver, and they SHOULD be deprecated and removed from drivers that implement them as early as possible:</p>
+<pre><code class="language-typescript">interface ConnectionPoolOptions {
+  /**
+   *  The maximum number of threads that can simultaneously wait
+   *  for a Connection to become available.
+   */
+  waitQueueSize?: number;
+
+  /**
+   *  An alternative way of setting waitQueueSize, it specifies
+   *  the maximum number of threads that can wait per connection.
+   *  waitQueueSize === waitQueueMultiple * maxPoolSize
+   */
+  waitQueueMultiple?: number
+}
+</code></pre>
+<h3 id="connection-pool-members"><a class="header" href="#connection-pool-members">Connection Pool Members</a></h3>
+<h4 id="connection-1"><a class="header" href="#connection-1">Connection</a></h4>
+<p>A driver-defined wrapper around a single TCP connection to an Endpoint. A <a href="#connection">Connection</a> has the following
+properties:</p>
+<ul>
+<li><strong>Single Endpoint:</strong> A <a href="#connection">Connection</a> MUST be associated with a single Endpoint. A
+<a href="#connection">Connection</a> MUST NOT be associated with multiple Endpoints.</li>
+<li><strong>Single Lifetime:</strong> A <a href="#connection">Connection</a> MUST NOT be used after it is closed.</li>
+<li><strong>Single Owner:</strong> A <a href="#connection">Connection</a> MUST belong to exactly one Pool, and MUST NOT be shared across multiple
+pools</li>
+<li><strong>Single Track:</strong> A <a href="#connection">Connection</a> MUST limit itself to one request / response at a time. A
+<a href="#connection">Connection</a> MUST NOT multiplex/pipeline requests to an Endpoint.</li>
+<li><strong>Monotonically Increasing ID:</strong> A <a href="#connection">Connection</a> MUST have an ID number associated with it.
+<a href="#connection">Connection</a> IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
+for each new Connection.</li>
+<li><strong>Valid Connection:</strong> A connection MUST NOT be checked out of the pool until it has successfully and fully completed a
+MongoDB Handshake and Authentication as specified in the <a href="../mongodb-handshake/handshake.html">Handshake</a>,
+<a href="../compression/OP_COMPRESSED.html">OP_COMPRESSED</a>, and <a href="../auth/auth.html">Authentication</a> specifications.</li>
+<li><strong>Perishable</strong>: it is possible for a <a href="#connection">Connection</a> to become <strong>Perished</strong>. A <a href="#connection">Connection</a> is
+considered perished if any of the following are true:
+<ul>
+<li><strong>Stale:</strong> The <a href="#connection">Connection</a> 's generation does not match the generation of the parent pool</li>
+<li><strong>Idle:</strong> The <a href="#connection">Connection</a> is currently "available" (as defined below) and has been for longer than
+<strong>maxIdleTimeMS</strong>.</li>
+<li><strong>Errored:</strong> The <a href="#connection">Connection</a> has experienced an error that indicates it is no longer recommended for
+use. Examples include, but are not limited to:
+<ul>
+<li>Network Error</li>
+<li>Network Timeout</li>
+<li>Endpoint closing the connection</li>
+<li>Driver-Side Timeout</li>
+<li>Wire-Protocol Error</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-typescript">interface Connection {
+  /**
+   *  An id number associated with the Connection
+   */
+  id: number;
+
+  /**
+   *  The address of the pool that owns this Connection
+   */
+  address: string;
+
+  /**
+   *  An integer representing the "generation" of the pool
+   *  when this Connection was created.
+   */
+  generation: number;
+
+  /**
+   * The current state of the Connection.
+   *
+   * Possible values are the following:
+   *   - "pending":       The Connection has been created but has not yet been established. Contributes to
+   *                      totalConnectionCount and pendingConnectionCount.
+   *
+   *   - "available":     The Connection has been established and is waiting in the pool to be checked
+   *                      out. Contributes to both totalConnectionCount and availableConnectionCount.
+   *
+   *   - "in use":        The Connection has been established, checked out from the pool, and has yet
+   *                      to be checked back in. Contributes to totalConnectionCount.
+   *
+   *   - "closed":        The Connection has had its socket closed and cannot be used for any future
+   *                      operations. Does not contribute to any connection counts.
+   *
+   * Note: this field is mainly used for the purposes of describing state
+   * in this specification. It is not required that drivers
+   * actually include this field in their implementations of Connection.
+   */
+  state: "pending" | "available" | "in use" | "closed";
+}
+</code></pre>
+<h4 id="waitqueue"><a class="header" href="#waitqueue">WaitQueue</a></h4>
+<p>A concept that represents pending requests for <a href="#connection">Connections</a>. When a thread requests a
+<a href="#connection">Connection</a> from a Pool, the thread enters the Pool's WaitQueue. A thread stays in the WaitQueue until it
+either receives a <a href="#connection">Connection</a> or times out. A WaitQueue has the following traits:</p>
+<ul>
+<li><strong>Thread-Safe</strong>: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.</li>
+<li><strong>Ordered/Fair</strong>: When <a href="#connection">Connections</a> are made available, they are issued out to threads in the order that
+the threads entered the WaitQueue.</li>
+<li><strong>Timeout aggressively:</strong> Members of a WaitQueue MUST timeout if they are enqueued for longer than the computed
+timeout and MUST leave the WaitQueue immediately in this case.</li>
+</ul>
+<p>The implementation details of a WaitQueue are left to the driver. Example implementations include:</p>
+<ul>
+<li>A fair Semaphore</li>
+<li>A Queue of callbacks</li>
+</ul>
+<h4 id="connection-pool"><a class="header" href="#connection-pool">Connection Pool</a></h4>
+<p>A driver-defined entity that encapsulates all non-monitoring <a href="#connection">Connections</a> associated with a single
+Endpoint. The pool has the following properties:</p>
+<ul>
+<li><strong>Thread Safe:</strong> All Pool behaviors MUST be thread safe.</li>
+<li><strong>Not Fork-Safe:</strong> A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it
+MUST immediately clear itself and update its pid</li>
+<li><strong>Single Owner:</strong> A Pool MUST be associated with exactly one Endpoint, and MUST NOT be shared between Endpoints.</li>
+<li><strong>Emit Events and Log Messages:</strong> A Pool MUST emit pool events and log messages when dictated by this spec (see
+<a href="#connection-pool-monitoring">Connection Pool Monitoring</a>). Users MUST be able to subscribe to emitted events and log
+messages in a manner idiomatic to their language and driver.</li>
+<li><strong>Closeable:</strong> A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
+<ul>
+<li>Checking in a <a href="#connection">Connection</a> to the Pool automatically closes the <a href="#connection">Connection</a></li>
+<li>Attempting to check out a <a href="#connection">Connection</a> from the Pool results in an Error</li>
+</ul>
+</li>
+<li><strong>Clearable:</strong> A Pool MUST be able to be cleared. Clearing the pool marks all pooled and checked out
+<a href="#connection">Connections</a> as stale and lazily closes them as they are checkedIn or encountered in checkOut.
+Additionally, all requests are evicted from the WaitQueue and return errors that are considered non-timeout network
+errors.</li>
+<li><strong>Pausable:</strong> A Pool MUST be able to be paused and resumed. A Pool is paused automatically when it is cleared, and it
+can be resumed by being marked as "ready". While the Pool is paused, it exhibits the following behaviors:
+<ul>
+<li>Attempting to check out a <a href="#connection">Connection</a> from the Pool results in a non-timeout network error</li>
+<li>Connections are not created in the background to satisfy minPoolSize</li>
+</ul>
+</li>
+<li><strong>Capped:</strong> a pool is capped if <strong>maxPoolSize</strong> is set to a non-zero value. If a pool is capped, then its total number
+of <a href="#connection">Connections</a> (including available and in use) MUST NOT exceed <strong>maxPoolSize</strong></li>
+<li><strong>Rate-limited:</strong> A Pool MUST limit the number of <a href="#connection">Connections</a> being
+<a href="#establishing-a-connection-internal-implementation">established</a> concurrently via the <strong>maxConnecting</strong>
+<a href="#connection-pool-options">pool option</a>.</li>
+</ul>
+<pre><code class="language-typescript">interface ConnectionPool {
+  /**
+   *  The Queue of threads waiting for a Connection to be available
+   */
+  waitQueue: WaitQueue;
+
+  /**
+   *  A generation number representing the SDAM generation of the pool.
+   */
+  generation: number;
+
+  /**
+   * A map representing the various generation numbers for various services
+   * when in load balancer mode.
+   */
+  serviceGenerations: Map&lt;ObjectId, [number, number]&gt;;
+
+  /**
+   * The state of the pool.
+   *
+   * Possible values are the following:
+   *   - "paused":        The initial state of the pool. Connections may not be checked out nor can they
+   *                      be established in the background to satisfy minPoolSize. Clearing a pool
+   *                      transitions it to this state.
+   *
+   *   - "ready":         The healthy state of the pool. It can service checkOut requests and create
+   *                      connections in the background. The pool can be set to this state via the
+   *                      ready() method.
+   *
+   *   - "closed":        The pool is destroyed. No more Connections may ever be checked out nor any
+   *                      created in the background. The pool can be set to this state via the close()
+   *                      method. The pool cannot transition to any other state after being closed.
+   */
+  state: "paused" | "ready" | "closed";
+
+  // Any of the following connection counts may be computed rather than
+  // actually stored on the pool.
+
+  /**
+   *  An integer expressing how many total Connections
+   *  ("pending" + "available" + "in use") the pool currently has
+   */
+  totalConnectionCount: number;
+
+  /**
+   *  An integer expressing how many Connections are currently
+   *  available in the pool.
+   */
+  availableConnectionCount: number;
+
+  /**
+   *  An integer expressing how many Connections are currently
+   *  being established.
+   */
+  pendingConnectionCount: number;
+
+  /**
+   *  Returns a Connection for use
+   */
+  checkOut(): Connection;
+
+  /**
+   *  Check in a Connection back to the Connection pool
+   */
+  checkIn(connection: Connection): void;
+
+  /**
+   *  Mark all current Connections as stale, clear the WaitQueue, and mark the pool as "paused".
+   *  No connections may be checked out or created in this pool until ready() is called again.
+   *  interruptInUseConnections specifies whether the pool will force interrupt "in use" connections as part of the clear. 
+   *  Default false.
+   */
+  clear(interruptInUseConnections: Optional&lt;Boolean&gt;): void;
+
+  /**
+   *  Mark the pool as "ready", allowing checkOuts to resume and connections to be created in the background.
+   *  A pool can only transition from "paused" to "ready". A "closed" pool
+   *  cannot be marked as "ready" via this method.
+   */
+  ready(): void;
+
+  /**
+   *  Marks the pool as "closed", preventing the pool from creating and returning new Connections
+   */
+  close(): void;
+}
+</code></pre>
+<h3 id="connection-pool-behaviors-1"><a class="header" href="#connection-pool-behaviors-1">Connection Pool Behaviors</a></h3>
+<h4 id="creating-a-connection-pool"><a class="header" href="#creating-a-connection-pool">Creating a Connection Pool</a></h4>
+<p>This specification does not define how a pool is to be created, leaving it up to the driver. Creation of a connection
+pool is generally an implementation detail of the driver, i.e., is not a part of the public API of the driver. The SDAM
+specification defines
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#connection-pool-management">when</a> the driver
+should create connection pools.</p>
+<p>When a pool is created, its state MUST initially be set to "paused". Even if minPoolSize is set, the pool MUST NOT begin
+being <a href="#populating-the-pool-with-a-connection-internal-implementation">populated</a> with <a href="#connection">Connections</a> until
+it has been marked as "ready". SDAM will mark the pool as "ready" on each successful check. See
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#connection-pool-management">Connection Pool Management</a>
+section in the SDAM specification for more information.</p>
+<pre><code>set generation to 0
+set state to "paused"
+emit PoolCreatedEvent and equivalent log message
+</code></pre>
+<h4 id="closing-a-connection-pool"><a class="header" href="#closing-a-connection-pool">Closing a Connection Pool</a></h4>
+<p>When a pool is closed, it MUST first close all available <a href="#connection">Connections</a> in that pool. This results in the
+following behavior changes:</p>
+<ul>
+<li>In use <a href="#connection">Connections</a> MUST be closed when they are checked in to the closed pool.</li>
+<li>Attempting to check out a <a href="#connection">Connection</a> MUST result in an error.</li>
+</ul>
+<pre><code>mark pool as "closed"
+for connection in availableConnections:
+  close connection
+emit PoolClosedEvent and equivalent log message
+</code></pre>
+<h4 id="marking-a-connection-pool-as-ready"><a class="header" href="#marking-a-connection-pool-as-ready">Marking a Connection Pool as Ready</a></h4>
+<p>Connection Pools start off as "paused", and they are marked as "ready" by monitors after they perform successful server
+checks. Once a pool is "ready", it can start checking out <a href="#connection">Connections</a> and populating them in the
+background.</p>
+<p>If the pool is already "ready" when this method is invoked, then this method MUST immediately return and MUST NOT emit a
+PoolReadyEvent.</p>
+<pre><code>mark pool as "ready"
+emit PoolReadyEvent and equivalent log message
+allow background thread to create connections
+</code></pre>
+<p>Note that the PoolReadyEvent MUST be emitted before the background thread is allowed to resume creating new connections,
+and it must be the case that no observer is able to observe actions of the background thread related to creating new
+connections before observing the PoolReadyEvent event.</p>
+<h4 id="creating-a-connection-internal-implementation"><a class="header" href="#creating-a-connection-internal-implementation">Creating a Connection (Internal Implementation)</a></h4>
+<p>When creating a <a href="#connection">Connection</a>, the initial <a href="#connection">Connection</a> is in a "pending" state. This only
+creates a "virtual" <a href="#connection">Connection</a>, and performs no I/O.</p>
+<pre><code>connection = new Connection()
+increment totalConnectionCount
+increment pendingConnectionCount
+set connection state to "pending"
+tConnectionCreated = current instant (use a monotonic clock if possible)
+emit ConnectionCreatedEvent and equivalent log message
+return connection
+</code></pre>
+<h4 id="establishing-a-connection-internal-implementation"><a class="header" href="#establishing-a-connection-internal-implementation">Establishing a Connection (Internal Implementation)</a></h4>
+<p>Before a <a href="#connection">Connection</a> can be marked as either "available" or "in use", it must be established. This process
+involves performing the initial handshake, handling OP_COMPRESSED, and performing authentication.</p>
+<pre><code>try:
+  connect connection via TCP / TLS
+  perform connection handshake
+  handle OP_COMPRESSED
+  perform connection authentication
+  tConnectionReady = current instant (use a monotonic clock if possible)
+  emit ConnectionReadyEvent(duration = tConnectionReady - tConnectionCreated) and equivalent log message
+  return connection
+except error:
+  close connection
+  throw error # Propagate error in manner idiomatic to language.
+</code></pre>
+<h4 id="closing-a-connection-internal-implementation"><a class="header" href="#closing-a-connection-internal-implementation">Closing a Connection (Internal Implementation)</a></h4>
+<p>When a <a href="#connection">Connection</a> is closed, it MUST first be marked as "closed", removing it from being counted as
+"available" or "in use". Once that is complete, the <a href="#connection">Connection</a> can perform whatever teardown is necessary
+to close its underlying socket. The Driver SHOULD perform this teardown in a non-blocking manner, such as via the use of
+a background thread or async I/O.</p>
+<pre><code>original state = connection state
+set connection state to "closed"
+
+if original state is "available":
+  decrement availableConnectionCount
+else if original state is "pending":
+  decrement pendingConnectionCount
+
+decrement totalConnectionCount
+emit ConnectionClosedEvent and equivalent log message
+
+# The following can happen at a later time (i.e. in background
+# thread) or via non-blocking I/O.
+connection.socket.close()
+</code></pre>
+<h4 id="marking-a-connection-as-available-internal-implementation"><a class="header" href="#marking-a-connection-as-available-internal-implementation">Marking a Connection as Available (Internal Implementation)</a></h4>
+<p>A <a href="#connection">Connection</a> is "available" if it is able to be checked out. A <a href="#connection">Connection</a> MUST NOT be
+marked as "available" until it has been established. The pool MUST keep track of the number of currently available
+<a href="#connection">Connections</a>.</p>
+<pre><code>increment availableConnectionCount
+set connection state to "available"
+add connection to availableConnections
+</code></pre>
+<h4 id="populating-the-pool-with-a-connection-internal-implementation"><a class="header" href="#populating-the-pool-with-a-connection-internal-implementation">Populating the Pool with a Connection (Internal Implementation)</a></h4>
+<p>"Populating" the pool involves preemptively creating and establishing a <a href="#connection">Connection</a> which is marked as
+"available" for use in future operations.</p>
+<p>Populating the pool MUST NOT block any application threads. For example, it could be performed on a background thread or
+via the use of non-blocking/async I/O. Populating the pool MUST NOT be performed unless the pool is "ready".</p>
+<p>If an error is encountered while populating a connection, it MUST be handled via the SDAM machinery according to the
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#application-errors">Application Errors</a> section
+in the SDAM specification.</p>
+<p>If minPoolSize is set, the <a href="#connection">Connection</a> Pool MUST be populated until it has at least minPoolSize total
+<a href="#connection">Connections</a>. This MUST occur only while the pool is "ready". If the pool implements a background thread,
+it can be used for this. If the pool does not implement a background thread, the checkOut method is responsible for
+ensuring this requirement is met.</p>
+<p>When populating the Pool, pendingConnectionCount has to be decremented after establishing a <a href="#connection">Connection</a>
+similarly to how it is done in <a href="#checking-out-a-connection">Checking Out a Connection</a> to signal that another
+<a href="#connection">Connection</a> is allowed to be established. Such a signal MUST become observable to any <a href="#thread">Thread</a>
+after the action that
+<a href="#marking-a-connection-as-available-internal-implementation">marks the established Connection as "available"</a> becomes
+observable to the <a href="#thread">Thread</a>. Informally, this order guarantees that no <a href="#thread">Thread</a> tries to start
+establishing a <a href="#connection">Connection</a> when there is an "available" <a href="#connection">Connection</a> established as a result
+of populating the Pool.</p>
+<pre><code>wait until pendingConnectionCount &lt; maxConnecting and pool is "ready"
+create connection
+try:
+  establish connection
+  mark connection as available
+except error:
+  # Defer error handling to SDAM.
+  topology.handle_pre_handshake_error(error)
+</code></pre>
+<h4 id="checking-out-a-connection"><a class="header" href="#checking-out-a-connection">Checking Out a Connection</a></h4>
+<p>A Pool MUST have a method that allows the driver to check out a <a href="#connection">Connection</a>. Checking out a
+<a href="#connection">Connection</a> involves submitting a request to the WaitQueue and, once that request reaches the front of the
+queue, having the Pool find or create a <a href="#connection">Connection</a> to fulfill that request. Requests MUST be subject to a
+timeout which is computed per the rules in
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#server-selection">Client Side Operations Timeout: Server Selection</a>.</p>
+<p>To service a request for a <a href="#connection">Connection</a>, the Pool MUST first iterate over the list of available
+<a href="#connection">Connections</a>, searching for a non-perished one to be returned. If a perished <a href="#connection">Connection</a> is
+encountered, such a <a href="#connection">Connection</a> MUST be closed (as described in
+<a href="#closing-a-connection-internal-implementation">Closing a Connection</a>) and the iteration of available
+<a href="#connection">Connections</a> MUST continue until either a non-perished available <a href="#connection">Connection</a> is found or the
+list of available <a href="#connection">Connections</a> is exhausted.</p>
+<p>If the list is exhausted, the total number of <a href="#connection">Connections</a> is less than maxPoolSize, and
+pendingConnectionCount &lt; maxConnecting, the pool MUST create a <a href="#connection">Connection</a>, establish it, mark it as "in
+use" and return it. If totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting, then the pool
+MUST wait to service the request until neither of those two conditions are met or until a <a href="#connection">Connection</a>
+becomes available, re-entering the checkOut loop in either case. This waiting MUST NOT prevent
+<a href="#connection">Connections</a> from being checked into the pool. Additionally, the Pool MUST NOT service any newer checkOut
+requests before fulfilling the original one which could not be fulfilled. For drivers that implement the WaitQueue via a
+fair semaphore, a condition variable may also be needed to to meet this requirement. Waiting on the condition variable
+SHOULD also be limited by the WaitQueueTimeout, if the driver supports one and it was specified by the user.</p>
+<p>If the pool is "closed" or "paused", any attempt to check out a <a href="#connection">Connection</a> MUST throw an Error. The error
+thrown as a result of the pool being "paused" MUST be considered a retryable error and MUST NOT be an error that marks
+the SDAM state unknown.</p>
+<p>If the pool does not implement a background thread, the checkOut method is responsible for ensuring that the pool is
+<a href="#populating-the-pool-with-a-connection-internal-implementation">populated</a> with at least minPoolSize
+<a href="#connection">Connections</a>.</p>
+<p>A <a href="#connection">Connection</a> MUST NOT be checked out until it is established. In addition, the Pool MUST NOT prevent
+other threads from checking out <a href="#connection">Connections</a> while establishing a <a href="#connection">Connection</a>.</p>
+<p>Before a given <a href="#connection">Connection</a> is returned from checkOut, it must be marked as "in use", and the pool's
+availableConnectionCount MUST be decremented.</p>
+<pre><code class="language-python">connection = Null
+tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
+emit ConnectionCheckOutStartedEvent and equivalent log message
+try:
+  enter WaitQueue
+  wait until at top of wait queue
+  # Note that in a lock-based implementation of the wait queue would
+  # only allow one thread in the following block at a time
+  while connection is Null:
+    if a connection is available:
+      while connection is Null and a connection is available:
+        connection = next available connection
+        if connection is perished:
+          close connection
+          connection = Null
+    else if totalConnectionCount &lt; maxPoolSize:
+      if pendingConnectionCount &lt; maxConnecting:
+        connection = create connection
+      else:
+        # this waiting MUST NOT prevent other threads from checking Connections
+        # back in to the pool.
+        wait until pendingConnectionCount &lt; maxConnecting or a connection is available
+        continue
+
+except pool is "closed":
+  tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+  emit ConnectionCheckOutFailedEvent(reason="poolClosed", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
+  throw PoolClosedError
+except pool is "paused":
+  tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+  emit ConnectionCheckOutFailedEvent(reason="connectionError", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
+  throw PoolClearedError
+except timeout:
+  tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+  emit ConnectionCheckOutFailedEvent(reason="timeout", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
+  throw WaitQueueTimeoutError
+finally:
+  # This must be done in all drivers
+  leave wait queue
+
+# If the Connection has not been established yet (TCP, TLS,
+# handshake, compression, and auth), it must be established
+# before it is returned.
+# This MUST NOT block other threads from acquiring connections.
+if connection state is "pending":
+  try:
+    establish connection
+  except connection establishment error:
+    tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
+    emit ConnectionCheckOutFailedEvent(reason="connectionError", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
+    decrement totalConnectionCount
+    throw
+  finally:
+    decrement pendingConnectionCount
+else:
+    decrement availableConnectionCount
+set connection state to "in use"
+
+# If there is no background thread, the pool MUST ensure that
+# there are at least minPoolSize total connections.
+do asynchronously:
+  while totalConnectionCount &lt; minPoolSize:
+    populate the pool with a connection
+
+tConnectionCheckedOut = current instant (use a monotonic clock if possible)
+emit ConnectionCheckedOutEvent(duration = tConnectionCheckedOut - tConnectionCheckOutStarted) and equivalent log message
+return connection
+</code></pre>
+<h4 id="checking-in-a-connection"><a class="header" href="#checking-in-a-connection">Checking In a Connection</a></h4>
+<p>A Pool MUST have a method of allowing the driver to check in a <a href="#connection">Connection</a>. The driver MUST NOT be allowed
+to check in a <a href="#connection">Connection</a> to a Pool that did not create that <a href="#connection">Connection</a>, and MUST throw an
+Error if this is attempted.</p>
+<p>When the <a href="#connection">Connection</a> is checked in, it MUST be <a href="#closing-a-connection-internal-implementation">closed</a> if
+any of the following are true:</p>
+<ul>
+<li>The <a href="#connection">Connection</a> is perished.</li>
+<li>The pool has been closed.</li>
+</ul>
+<p>Otherwise, the <a href="#connection">Connection</a> is marked as available.</p>
+<pre><code>emit ConnectionCheckedInEvent and equivalent log message
+if connection is perished OR pool is closed:
+  close connection
+else:
+  mark connection as available
+</code></pre>
+<h4 id="clearing-a-connection-pool"><a class="header" href="#clearing-a-connection-pool">Clearing a Connection Pool</a></h4>
+<p>Clearing the pool involves different steps depending on whether the pool is in load balanced mode or not. The
+traditional / non-load balanced clearing behavior MUST NOT be used by pools in load balanced mode, and the load balanced
+pool clearing behavior MUST NOT be used in non-load balanced pools.</p>
+<h5 id="clearing-a-non-load-balanced-pool"><a class="header" href="#clearing-a-non-load-balanced-pool">Clearing a non-load balanced pool</a></h5>
+<p>A Pool MUST have a method of clearing all <a href="#connection">Connections</a> when instructed. Rather than iterating through
+every <a href="#connection">Connection</a>, this method should simply increment the generation of the Pool, implicitly marking all
+current <a href="#connection">Connections</a> as stale. It should also transition the pool's state to "paused" to halt the creation
+of new connections until it is marked as "ready" again. The checkOut and checkIn algorithms will handle clearing out
+stale <a href="#connection">Connections</a>. If a user is subscribed to Connection Monitoring events and/or connection log
+messages, a PoolClearedEvent and log message MUST be emitted after incrementing the generation / marking the pool as
+"paused". If the pool is already "paused" when it is cleared, then the pool MUST NOT emit a PoolCleared event or log
+message.</p>
+<p>As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all requests in the WaitQueue MUST fail with
+errors indicating that the pool was cleared while the checkOut was being performed. The error returned as a result of
+the pool being cleared MUST be considered a retryable error and MUST NOT be an error that marks the SDAM state unknown.
+Clearing the WaitQueue MUST happen eagerly so that any operations waiting on <a href="#connection">Connections</a> can retry as
+soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear requests from the WaitQueue.</p>
+<p>The clearing method MUST provide the option to interrupt any in-use connections as part of the clearing (henceforth
+referred to as the interruptInUseConnections flag in this specification). "Interrupting a Connection" is defined as
+canceling whatever task the Connection is currently performing and marking the Connection as perished (e.g. by closing
+its underlying socket). The interrupting of these Connections MUST be performed as soon as possible but MUST NOT block
+the pool or prevent it from processing further requests. If the pool has a background thread, and it is responsible for
+interrupting in-use connections, its next run MUST be scheduled as soon as possible.</p>
+<p>The pool MUST only interrupt in-use Connections whose generation is less than or equal to the generation of the pool at
+the moment of the clear (before the increment) that used the interruptInUseConnections flag. Any operations that have
+their Connections interrupted in this way MUST fail with a retryable error. If possible, the error SHOULD be a
+PoolClearedError with the following message: "Connection to <pool address> interrupted due to server monitor timeout".</p>
+<h5 id="clearing-a-load-balanced-pool"><a class="header" href="#clearing-a-load-balanced-pool">Clearing a load balanced pool</a></h5>
+<p>A Pool MUST also have a method of clearing all <a href="#connection">Connections</a> for a specific <code>serviceId</code> for use when in
+load balancer mode. This method increments the generation of the pool for that specific <code>serviceId</code> in the generation
+map. A PoolClearedEvent and log message MUST be emitted after incrementing the generation. Note that this method MUST
+NOT transition the pool to the "paused" state and MUST NOT clear the WaitQueue.</p>
+<h4 id="load-balancer-mode"><a class="header" href="#load-balancer-mode">Load Balancer Mode</a></h4>
+<p>For load-balanced deployments, pools MUST maintain a map from <code>serviceId</code> to a tuple of (generation, connection count)
+where the connection count refers to the total number of connections that exist for a specific <code>serviceId</code>. The pool
+MUST remove the entry for a <code>serviceId</code> once the connection count reaches 0. Once the MongoDB handshake is done, the
+connection MUST get the generation number that applies to its <code>serviceId</code> from the map and update the map to increment
+the connection count for this <code>serviceId</code>.</p>
+<p>See the <a href="../load-balancers/load-balancers.html#connection-pooling">Load Balancer Specification</a> for details.</p>
+<h4 id="forking"><a class="header" href="#forking">Forking</a></h4>
+<p>A <a href="#connection">Connection</a> is explicitly not fork-safe. The proper behavior in the case of a fork is to ResetAfterFork
+by:</p>
+<ul>
+<li>clear all Connection Pools in the child process</li>
+<li>closing all <a href="#connection">Connections</a> in the child-process.</li>
+</ul>
+<p>Drivers that support forking MUST document that <a href="#connection">Connections</a> to an Endpoint are not fork-safe, and
+document the proper way to ResetAfterFork in the driver.</p>
+<p>Drivers MAY aggressively ResetAfterFork if the driver detects it has been forked.</p>
+<h4 id="optional-behaviors"><a class="header" href="#optional-behaviors">Optional Behaviors</a></h4>
+<p>The following features of a Connection Pool SHOULD be implemented if they make sense in the driver and driver's
+language.</p>
+<h5 id="background-thread"><a class="header" href="#background-thread">Background Thread</a></h5>
+<p>A Pool SHOULD have a background Thread that is responsible for monitoring the state of all available
+<a href="#connection">Connections</a>. This background thread SHOULD</p>
+<ul>
+<li>Populate <a href="#connection">Connections</a> to ensure that the pool always satisfies minPoolSize.</li>
+<li>Remove and close perished available <a href="#connection">Connections</a> including "in use" connections if
+<code>interruptInUseConnections</code> option was set to true in the most recent pool clear.</li>
+<li>Apply timeouts to connection establishment per
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#background-connection-pooling">Client Side Operations Timeout: Background Connection Pooling</a>.</li>
+</ul>
+<p>A pool SHOULD allow immediate scheduling of the next background thread iteration after a clear is performed.</p>
+<p>Conceptually, the aforementioned activities are organized into sequential Background Thread Runs. A Run MUST do as much
+work as readily available and then end instead of waiting for more work. For example, instead of waiting for
+pendingConnectionCount to become less than maxConnecting when satisfying minPoolSize, a Run MUST either proceed with the
+rest of its duties, e.g., closing available perished connections, or end.</p>
+<p>The duration of intervals between the end of one Run and the beginning of the next Run is not specified, but the
+<a href="../connection-monitoring-and-pooling/tests/README.html">Test Format and Runner Specification</a> may restrict this duration,
+or introduce other restrictions to facilitate testing.</p>
+<h5 id="withconnection"><a class="header" href="#withconnection">withConnection</a></h5>
+<p>A Pool SHOULD implement a scoped resource management mechanism idiomatic to their language to prevent
+<a href="#connection">Connections</a> from not being checked in. Examples include
+<a href="https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement">Python's "with" statement</a> and
+<a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement">C#'s "using" statement</a>. If
+implemented, drivers SHOULD use this method as the default method of checking out and checking in
+<a href="#connection">Connections</a>.</p>
+<h3 id="connection-pool-monitoring-1"><a class="header" href="#connection-pool-monitoring-1">Connection Pool Monitoring</a></h3>
+<p>All drivers that implement a connection pool MUST provide an API that allows users to subscribe to events emitted from
+the pool. If a user subscribes to Connection Monitoring events, these events MUST be emitted when specified in
+"Connection Pool Behaviors". Events SHOULD be created and subscribed to in a manner idiomatic to their language and
+driver.</p>
+<p><span id="events"></span></p>
+<h4 id="events"><a class="header" href="#events">Events</a></h4>
+<p>See the <a href="../load-balancers/load-balancers.html#events">Load Balancer Specification</a> for details on the <code>serviceId</code> field.</p>
+<pre><code class="language-typescript">/**
+ *  Emitted when a Connection Pool is created
+ */
+interface PoolCreatedEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  Any non-default pool options that were set on this Connection Pool.
+   */
+  options: {...}
+}
+
+/**
+ *  Emitted when a Connection Pool is marked as ready.
+ */
+interface PoolReadyEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+}
+
+/**
+ *  Emitted when a Connection Pool is cleared
+ */
+interface PoolClearedEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   * The service id for which the pool was cleared for in load balancing mode.
+   * See load balancer specification for more information about this field.
+   */
+  serviceId: Optional&lt;ObjectId&gt;;
+
+  /**
+   * A flag whether the pool forced interrupting "in use" connections as part of the clear.
+  */
+  interruptInUseConnections: Optional&lt;Boolean&gt;;
+}
+
+/**
+ *  Emitted when a Connection Pool is closed
+ */
+interface PoolClosedEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+}
+
+/**
+ *  Emitted when a Connection Pool creates a Connection object.
+ *  NOTE: This does not mean that the Connection is ready for use.
+ */
+interface ConnectionCreatedEvent { 
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection
+   */
+  connectionId: int64;
+}
+
+/**
+ *  Emitted when a Connection has finished its setup, and is now ready to use
+ */
+interface ConnectionReadyEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection
+   */
+  connectionId: int64;
+
+  /**
+   * The time it took to establish the connection.
+   * In accordance with the definition of establishment of a connection
+   * specified by `ConnectionPoolOptions.maxConnecting`,
+   * it is the time elapsed between emitting a `ConnectionCreatedEvent`
+   * and emitting this event as part of the same checking out.
+   *
+   * Naturally, when establishing a connection is part of checking out,
+   * this duration is not greater than
+   * `ConnectionCheckedOutEvent`/`ConnectionCheckOutFailedEvent.duration`.
+   *
+   * A driver MAY choose the type idiomatic to the driver.
+   * If the type chosen does not convey units, e.g., `int64`,
+   * then the driver MAY include units in the name, e.g., `durationMS`.
+   */
+  duration: Duration;
+}
+
+/**
+ *  Emitted when a Connection Pool closes a Connection
+ */
+interface ConnectionClosedEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection
+   */
+  connectionId: int64;
+
+  /**
+   * A reason explaining why this Connection was closed.
+   * Can be implemented as a string or enum.
+   * Current valid values are:
+   *   - "stale":           The pool was cleared, making the Connection no longer valid
+   *   - "idle":            The Connection became stale by being available for too long
+   *   - "error":           The Connection experienced an error, making it no longer valid
+   *   - "poolClosed":      The pool was closed, making the Connection no longer valid
+   */
+  reason: string|Enum;
+}
+
+/**
+ *  Emitted when the driver starts attempting to check out a Connection
+ */
+interface ConnectionCheckOutStartedEvent {
+  /**
+   * The ServerAddress of the Endpoint the pool is attempting
+   * to connect to.
+   */
+  address: string;
+}
+
+/**
+ *  Emitted when the driver's attempt to check out a Connection fails
+ */
+interface ConnectionCheckOutFailedEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  A reason explaining why Connection check out failed.
+   *  Can be implemented as a string or enum.
+   *  Current valid values are:
+   *   - "poolClosed":      The pool was previously closed, and cannot provide new Connections
+   *   - "timeout":         The Connection check out attempt exceeded the specified timeout
+   *   - "connectionError": The Connection check out attempt experienced an error while setting up a new Connection
+   */
+  reason: string|Enum;
+
+  /**
+   * See `ConnectionCheckedOutEvent.duration`.
+   */
+  duration: Duration;
+}
+
+/**
+ *  Emitted when the driver successfully checks out a Connection
+ */
+interface ConnectionCheckedOutEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection
+   */
+  connectionId: int64;
+
+  /**
+   * The time it took to check out the connection.
+   * More specifically, the time elapsed between
+   * emitting a `ConnectionCheckOutStartedEvent`
+   * and emitting this event as part of the same checking out.
+   *
+   * Naturally, if a new connection was not created (`ConnectionCreatedEvent`)
+   * and established (`ConnectionReadyEvent`) as part of checking out,
+   * this duration is usually
+   * not greater than `ConnectionPoolOptions.waitQueueTimeoutMS`,
+   * but MAY occasionally be greater than that,
+   * because a driver does not provide hard real-time guarantees.
+   *
+   * A driver MAY choose the type idiomatic to the driver.
+   * If the type chosen does not convey units, e.g., `int64`,
+   * then the driver MAY include units in the name, e.g., `durationMS`.
+   */
+  duration: Duration;
+}
+
+/**
+ *  Emitted when the driver checks in a Connection back to the Connection Pool
+ */
+interface ConnectionCheckedInEvent {
+  /**
+   * The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection
+   */
+  connectionId: int64;
+}
+</code></pre>
+<h3 id="connection-pool-logging"><a class="header" href="#connection-pool-logging">Connection Pool Logging</a></h3>
+<p>Please refer to the <a href="../logging/logging.html">logging specification</a> for details on logging implementations in general,
+including log levels, log components, handling of null values in log messages, and structured versus unstructured
+logging.</p>
+<p>Drivers MUST support logging of connection pool information via the following types of log messages. These messages MUST
+be logged at <code>Debug</code> level and use the <code>connection</code> log component. These messages MUST be emitted when specified in
+"Connection Pool Behaviors".</p>
+<p>The log messages are intended to match the information contained in the events above. Drivers MAY implement connection
+logging support via an event subscriber if it is convenient to do so.</p>
+<p>The types used in the structured message definitions below are demonstrative, and drivers MAY use similar types instead
+so long as the information is present (e.g. a double instead of an integer, or a string instead of an integer if the
+structured logging framework does not support numeric types).</p>
+<h4 id="common-fields"><a class="header" href="#common-fields">Common Fields</a></h4>
+<p>All connection log messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>serverHost</td><td>String</td><td>the hostname, IP address, or Unix domain socket path for the endpoint the pool is for.</td></tr>
+<tr><td>serverPort</td><td>Int</td><td>The port for the endpoint the pool is for. Optional; not present for Unix domain sockets. When the user does not specify a port and the default (27017) is used, the driver SHOULD include it here.</td></tr>
+</tbody></table>
+</div>
+<h4 id="pool-created-message"><a class="header" href="#pool-created-message">Pool Created Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection pool created"</td></tr>
+<tr><td>maxIdleTimeMS</td><td>Int</td><td>The maxIdleTimeMS value for this pool. Optional; only required to include if the user specified a value.</td></tr>
+<tr><td>minPoolSize</td><td>Int</td><td>The minPoolSize value for this pool. Optional; only required to include if the user specified a value.</td></tr>
+<tr><td>maxPoolSize</td><td>Int</td><td>The maxPoolSize value for this pool. Optional; only required to include if the user specified a value.</td></tr>
+<tr><td>maxConnecting</td><td>Int</td><td>The maxConnecting value for this pool. Optional; only required to include if the driver supports this option and the user specified a value.</td></tr>
+<tr><td>waitQueueTimeoutMS</td><td>Int</td><td>The waitQueueTimeoutMS value for this pool. Optional; only required to include if the driver supports this option and the user specified a value.</td></tr>
+<tr><td>waitQueueSize</td><td>Int</td><td>The waitQueueSize value for this pool. Optional; only required to include if the driver supports this option and the user specified a value.</td></tr>
+<tr><td>waitQueueMultiple</td><td>Int</td><td>The waitQueueMultiple value for this pool. Optional; only required to include if the driver supports this option and the user specified a value.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection pool created for {{serverHost}}:{{serverPort}} using options maxIdleTimeMS={{maxIdleTimeMS}},
+minPoolSize={{minPoolSize}}, maxPoolSize={{maxPoolSize}}, maxConnecting={{maxConnecting}},
+waitQueueTimeoutMS={{waitQueueTimeoutMS}}, waitQueueSize={{waitQueueSize}}, waitQueueMultiple={{waitQueueMultiple}}</p>
+</blockquote>
+<h4 id="pool-ready-message"><a class="header" href="#pool-ready-message">Pool Ready Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection pool ready"</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection pool ready for {{serverHost}}:{{serverPort}}</p>
+</blockquote>
+<h4 id="pool-cleared-message"><a class="header" href="#pool-cleared-message">Pool Cleared Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection pool cleared"</td></tr>
+<tr><td>serviceId</td><td>String</td><td>The hex string representation of the service ID which the pool was cleared for. Optional; only present in load balanced mode.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection pool for {{serverHost}}:{{serverPort}} cleared for serviceId {{serviceId}}</p>
+</blockquote>
+<h4 id="pool-closed-message"><a class="header" href="#pool-closed-message">Pool Closed Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection pool closed"</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection pool closed for {{serverHost}}:{{serverPort}}</p>
+</blockquote>
+<h4 id="connection-created-message"><a class="header" href="#connection-created-message">Connection Created Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection created"</td></tr>
+<tr><td>driverConnectionId</td><td>Int64</td><td>The driver-generated ID for the connection as defined in <a href="#connection">Connection</a>.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection created: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}</p>
+</blockquote>
+<h4 id="connection-ready-message"><a class="header" href="#connection-ready-message">Connection Ready Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection ready"</td></tr>
+<tr><td>driverConnectionId</td><td>Int64</td><td>The driver-generated ID for the connection as defined in <a href="#connection">Connection</a>.</td></tr>
+<tr><td>durationMS</td><td>Int64</td><td><code>ConnectionReadyEvent.duration</code> converted to milliseconds.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection ready: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, established
+in={{durationMS}} ms</p>
+</blockquote>
+<h4 id="connection-closed-message"><a class="header" href="#connection-closed-message">Connection Closed Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection closed"</td></tr>
+<tr><td>driverConnectionId</td><td>Int64</td><td>The driver-generated ID for the connection as defined in a <a href="#connection">Connection</a>.</td></tr>
+<tr><td>reason</td><td>String</td><td>A string describing the reason the connection was closed. The following strings MUST be used for each possible reason as defined in <a href="#events">Events</a> above:<br>- Stale: "Connection became stale because the pool was cleared<br>- Idle: "Connection has been available but unused for longer than the configured max idle time"<br>- Error: "An error occurred while using the connection"<br>- Pool closed: "Connection pool was closed"</td></tr>
+<tr><td>error</td><td>Flexible</td><td>If <code>reason</code> is <code>Error</code>, the associated error.<br>The type and format of this value is flexible; see the <a href="../logging/logging.html#representing-errors-in-log-messages">logging specification</a> for details on representing errors in log messages.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection closed: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}. Reason:
+{{reason}}. Error: {{error}}</p>
+</blockquote>
+<h4 id="connection-checkout-started-message"><a class="header" href="#connection-checkout-started-message">Connection Checkout Started Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection checkout started"</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Checkout started for connection to {{serverHost}}:{{serverPort}}</p>
+</blockquote>
+<h4 id="connection-checkout-failed-message"><a class="header" href="#connection-checkout-failed-message">Connection Checkout Failed Message</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection checkout failed"</td></tr>
+<tr><td>reason</td><td>String</td><td>A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in <a href="#events">Events</a> above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed"</td></tr>
+<tr><td>error</td><td>Flexible</td><td>If <code>reason</code> is <code>ConnectionError</code>, the associated error. The type and format of this value is flexible; see the <a href="../logging/logging.html#representing-errors-in-log-messages">logging specification</a> for details on representing errors in log messages.</td></tr>
+<tr><td>durationMS</td><td>Int64</td><td><code>ConnectionCheckOutFailedEvent.duration</code> converted to milliseconds.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Checkout failed for connection to {{serverHost}}:{{serverPort}}. Reason: {{reason}}. Error: {{error}}. Duration:
+{{durationMS}} ms</p>
+</blockquote>
+<h4 id="connection-checked-out"><a class="header" href="#connection-checked-out">Connection Checked Out</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection checked out"</td></tr>
+<tr><td>driverConnectionId</td><td>Int64</td><td>The driver-generated ID for the connection as defined in <a href="#connection">Connection</a>.</td></tr>
+<tr><td>durationMS</td><td>Int64</td><td><code>ConnectionCheckedOutEvent.duration</code> converted to milliseconds.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection checked out: address={serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
+duration={{durationMS}} ms</p>
+</blockquote>
+<h4 id="connection-checked-in"><a class="header" href="#connection-checked-in">Connection Checked In</a></h4>
+<p>In addition to the common fields defined above, this message MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Connection checked in"</td></tr>
+<tr><td>driverConnectionId</td><td>Int64</td><td>The driver-generated ID for the connection as defined in <a href="#connection">Connection</a>.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Connection checked in: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}</p>
+</blockquote>
+<h3 id="connection-pool-errors"><a class="header" href="#connection-pool-errors">Connection Pool Errors</a></h3>
+<p>A connection pool throws errors in specific circumstances. These Errors MUST be emitted by the pool. Errors SHOULD be
+created and dispatched in a manner idiomatic to the Driver and Language.</p>
+<pre><code class="language-typescript">/**
+ *  Thrown when the driver attempts to check out a
+ *  Connection from a closed Connection Pool
+ */
+interface PoolClosedError {
+  message: 'Attempted to check out a Connection from closed connection pool';
+  address: &lt;pool address&gt;;
+}
+
+/**
+ *  Thrown when the driver attempts to check out a
+ *  Connection from a paused Connection Pool
+ */
+interface PoolClearedError extends RetryableError {
+  message: 'Connection pool for &lt;pool address&gt; was cleared because another operation failed with: &lt;original error which cleared the pool&gt;';
+  address: &lt;pool address&gt;;
+}
+
+/**
+ *  Thrown when a driver times out when attempting to check out
+ *  a Connection from a Pool
+ */
+interface WaitQueueTimeoutError {
+  message: 'Timed out while checking out a Connection from connection pool';
+  address: &lt;pool address&gt;;
+}
+</code></pre>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>See <a href="tests/README.html">tests/README</a></p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<h3 id="why-do-we-set-minpoolsize-across-all-members-of-a-replicaset-when-most-traffic-will-be-against-a-primary"><a class="header" href="#why-do-we-set-minpoolsize-across-all-members-of-a-replicaset-when-most-traffic-will-be-against-a-primary">Why do we set minPoolSize across all members of a replicaSet, when most traffic will be against a Primary?</a></h3>
+<p>Currently, we are attempting to codify our current pooling behavior with minimal changes, and minPoolSize is currently
+uniform across all members of a replicaSet. This has the benefit of offsetting connection swarming during a Primary
+Step-Down, which will be further addressed in our <a href="#advanced-pooling-behaviors">Advanced Pooling Behaviors</a>.</p>
+<h3 id="why-do-we-have-separate-connectioncreated-and-connectionready-events-but-only-one-connectionclosed-event"><a class="header" href="#why-do-we-have-separate-connectioncreated-and-connectionready-events-but-only-one-connectionclosed-event">Why do we have separate ConnectionCreated and ConnectionReady events, but only one ConnectionClosed event?</a></h3>
+<p>ConnectionCreated and ConnectionReady each involve different state changes in the pool.</p>
+<ul>
+<li>ConnectionCreated adds a new "pending" <a href="#connection">Connection</a>, meaning the totalConnectionCount and
+pendingConnectionCount increase by one</li>
+<li>ConnectionReady establishes that the <a href="#connection">Connection</a> is ready for use, meaning the availableConnectionCount
+increases by one</li>
+</ul>
+<p>ConnectionClosed indicates that the <a href="#connection">Connection</a> is no longer a member of the pool, decrementing
+totalConnectionCount and potentially availableConnectionCount. After this point, the <a href="#connection">Connection</a> is no
+longer a part of the pool. Further hypothetical events would not indicate a change to the state of the pool, so they are
+not specified here.</p>
+<h3 id="why-are-waitqueuesize-and-waitqueuemultiple-deprecated"><a class="header" href="#why-are-waitqueuesize-and-waitqueuemultiple-deprecated">Why are waitQueueSize and waitQueueMultiple deprecated?</a></h3>
+<p>These options were originally only implemented in three drivers (Java, C#, and Python), and provided little value. While
+these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error
+from occurring.</p>
+<p>Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily
+the behavior that users want. They can also result in cases where queue access oscillates back and forth between full
+and not full. If a driver has a full waitQueue, then all requests for <a href="#connection">Connections</a> will be rejected. If
+the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no
+longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness
+guarantee that the waitQueue normally provides.</p>
+<p>Because of these issues, it does not make sense to
+<a href="../driver-mantras.html#">go against driver mantras and provide an additional knob</a>. We may eventually pursue an
+alternative configuration to address wait queue size in <a href="#advanced-pooling-behaviors">Advanced Pooling Behaviors</a>.</p>
+<p>Users that wish to have this functionality can achieve similar results by utilizing other methods to limit concurrency.
+Examples include implementing either a thread pool or an operation queue with a capped size in the user application.
+Drivers that need to deprecate <code>waitQueueSize</code> and/or <code>waitQueueMultiple</code> SHOULD refer users to these examples.</p>
+<h3 id="why-is-waitqueuetimeoutms-optional-for-some-drivers"><a class="header" href="#why-is-waitqueuetimeoutms-optional-for-some-drivers">Why is waitQueueTimeoutMS optional for some drivers?</a></h3>
+<p>We are anticipating eventually introducing a single client-side timeout mechanism, making us hesitant to introduce
+another granular timeout control. Therefore, if a driver/language already has an idiomatic way to implement their
+timeouts, they should leverage that mechanism over implementing waitQueueTimeoutMS.</p>
+<h3 id="why-must-populating-the-pool-require-the-use-of-a-background-thread-or-async-io"><a class="header" href="#why-must-populating-the-pool-require-the-use-of-a-background-thread-or-async-io">Why must populating the pool require the use of a background thread or async I/O?</a></h3>
+<p>Without the use of a background thread, the pool is
+<a href="#populating-the-pool-with-a-connection-internal-implementation">populated</a> with enough connections to satisfy
+minPoolSize during checkOut. <a href="#connection">Connections</a> are established as part of populating the pool though, so if
+<a href="#connection">Connection</a> establishment were done in a blocking fashion, the first operations after a clearing of the
+pool would experience unacceptably high latency, especially for larger values of minPoolSize. Thus, populating the pool
+must occur on a background thread (which is acceptable to block) or via the usage of non-blocking (async) I/O.</p>
+<h3 id="why-should-closing-a-connection-be-non-blocking"><a class="header" href="#why-should-closing-a-connection-be-non-blocking">Why should closing a connection be non-blocking?</a></h3>
+<p>Because idle and perished <a href="#connection">Connections</a> are cleaned up as part of checkOut, performing blocking I/O while
+closing such <a href="#connection">Connections</a> would block application threads, introducing unnecessary latency. Once a
+<a href="#connection">Connection</a> is marked as "closed", it will not be checked out again, so ensuring the socket is torn down
+does not need to happen immediately and can happen at a later time, either via async I/O or a background thread.</p>
+<h3 id="why-can-the-pool-be-paused"><a class="header" href="#why-can-the-pool-be-paused">Why can the pool be paused?</a></h3>
+<p>The distinction between the "paused" state and the "ready" state allows the pool to determine whether or not the
+endpoint it is associated with is available or not. This enables the following behaviors:</p>
+<ol>
+<li>The pool can halt the creation of background connection establishments until the endpoint becomes available again.
+Without the "paused" state, the pool would have no way of determining when to begin establishing background
+connections again, so it would just continually attempt, and often fail, to create connections until minPoolSize was
+satisfied, even after repeated failures. This could unnecessarily waste resources both server and driver side.</li>
+<li>The pool can evict requests that enter the WaitQueue after the pool was cleared but before the server was in a known
+state again. Such requests can occur when a server is selected at the same time as it becomes marked as Unknown in
+highly concurrent workloads. Without the "paused" state, the pool would attempt to service these requests, since it
+would assume they were routed to the pool because its endpoint was available, not because of a race between SDAM and
+Server Selection. These requests would then likely fail with potentially high latency, again wasting resources both
+server and driver side.</li>
+</ol>
+<h3 id="why-not-emit-poolcleared-events-and-log-messages-when-clearing-a-paused-pool"><a class="header" href="#why-not-emit-poolcleared-events-and-log-messages-when-clearing-a-paused-pool">Why not emit PoolCleared events and log messages when clearing a paused pool?</a></h3>
+<p>If a pool is already paused when it is cleared, that means it was previously cleared and no new connections have been
+created since then. Thus, clearing the pool in this case is essentially a no-op, so there is no need to notify any
+listeners that it has occurred. The generation is still incremented, however, to ensure future errors that caused the
+duplicate clear will stop attempting to clear the pool again. This situation is possible if the pool is cleared by the
+background thread after it encounters an error establishing a connection, but the ServerDescription for the endpoint was
+not updated accordingly yet.</p>
+<h3 id="why-does-the-pool-need-to-support-interrupting-in-use-connections-as-part-of-its-clear-logic"><a class="header" href="#why-does-the-pool-need-to-support-interrupting-in-use-connections-as-part-of-its-clear-logic">Why does the pool need to support interrupting in use connections as part of its clear logic?</a></h3>
+<p>If a SDAM monitor has observed a network timeout, we assume that all connections including "in use" connections are no
+longer healthy. In some cases connections will fail to detect the network timeout fast enough. For example, a server
+request can hang at the OS level in TCP retry loop up for 17 minutes before failing. Therefore these connections MUST be
+proactively interrupted in the case of a server monitor network timeout. Requesting an immediate background thread run
+will speed up this process.</p>
+<h3 id="why-dont-we-configure-tcp_user_timeout"><a class="header" href="#why-dont-we-configure-tcp_user_timeout">Why don't we configure TCP_USER_TIMEOUT?</a></h3>
+<p>Ideally, a reasonable TCP_USER_TIMEOUT can help with detecting stale connections as an alternative to
+<code>interruptInUseConnections</code> in Clear. Unfortunately this approach is platform dependent and not each driver allows
+easily configuring it. For example, C# driver can configure this socket option on linux only with target frameworks
+higher or equal to .net 5.0. On macOS, there is no straight equivalent for this option, it's possible that we can find
+some equivalent configuration, but this configuration will also require target frameworks higher than or equal to .net
+5.0. The advantage of using Background Thread to manage perished connections is that it will work regardless of
+environment setup.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>As mentioned in <a href="#deprecated-options">Deprecated Options</a>, some drivers currently implement the options <code>waitQueueSize</code>
+and/or <code>waitQueueMultiple</code>. These options will need to be deprecated and phased out of the drivers that have implemented
+them.</p>
+<h2 id="reference-implementations"><a class="header" href="#reference-implementations">Reference Implementations</a></h2>
+<ul>
+<li>JAVA (JAVA-3079)</li>
+<li>RUBY (RUBY-1560)</li>
+</ul>
+<h2 id="future-development"><a class="header" href="#future-development">Future Development</a></h2>
+<h3 id="sdam"><a class="header" href="#sdam">SDAM</a></h3>
+<p>This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that "A monitor SHOULD
+NOT use the client's regular Connection pool". Some possible solutions for this include:</p>
+<ul>
+<li>Having each Endpoint representation in the driver create and manage a separate dedicated <a href="#connection">Connection</a> for
+monitoring purposes</li>
+<li>Having each Endpoint representation in the driver maintain a separate pool of maxPoolSize 1 for monitoring purposes.</li>
+<li>Having each Pool maintain a dedicated <a href="#connection">Connection</a> for monitoring purposes, with an API to expose that
+Connection.</li>
+</ul>
+<h3 id="advanced-pooling-behaviors"><a class="header" href="#advanced-pooling-behaviors">Advanced Pooling Behaviors</a></h3>
+<p>This spec does not address all advanced pooling behaviors like predictive pooling or aggressive
+<a href="#connection">Connection</a> creation. Future work may address this.</p>
+<h3 id="add-support-for-op_msg-exhaustallowed"><a class="header" href="#add-support-for-op_msg-exhaustallowed">Add support for OP_MSG exhaustAllowed</a></h3>
+<p>Exhaust Cursors may require changes to how we close <a href="#connection">Connections</a> in the future, specifically to add a way
+to close and remove from its pool a <a href="#connection">Connection</a> which has unread exhaust messages.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-01-23: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent</p>
+</li>
+<li>
+<p>2020-09-03: Clarify Connection states and definition. Require the use of a background thread and/or async I/O. Add
+tests to ensure ConnectionReadyEvents are fired after ConnectionCreatedEvents.</p>
+</li>
+<li>
+<p>2020-09-24: Introduce maxConnecting requirement</p>
+</li>
+<li>
+<p>2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.</p>
+</li>
+<li>
+<p>2021-01-12: Clarify "clear" method behavior in load balancer mode.</p>
+</li>
+<li>
+<p>2021-01-19: Require that timeouts be applied per the client-side operations timeout specification.</p>
+</li>
+<li>
+<p>2021-04-12: Adding in behaviour for load balancer mode.</p>
+</li>
+<li>
+<p>2021-06-02: Formalize the behavior of a <a href="#background-thread">Background Thread</a>.</p>
+</li>
+<li>
+<p>2021-11-08: Make maxConnecting configurable.</p>
+</li>
+<li>
+<p>2022-04-05: Preemptively cancel in progress operations when SDAM heartbeats timeout.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-10-14: Add connection pool log messages and associated tests.</p>
+</li>
+<li>
+<p>2023-04-17: Fix duplicate logging test description.</p>
+</li>
+<li>
+<p>2023-08-04: Add durations to connection pool events.</p>
+</li>
+<li>
+<p>2023-10-04: Commit to the currently specified requirements regarding durations in events.</p>
+</li>
+</ul>
+<hr />
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../load-balancers/load-balancers.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../load-balancers/load-balancers.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Command Execution - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html" class="active"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="run-command"><a class="header" href="#run-command">Run Command</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: N/A</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>This specification defines requirements and behaviors for drivers' run command and related APIs.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<p>Command<br />
+A structure representing a BSON document that has a shape matching a supported MongoDB operation.</p>
+<h3 id="implementation-requirements"><a class="header" href="#implementation-requirements">Implementation requirements</a></h3>
+<p>All drivers MAY offer the operations defined in the following sections. This does not preclude a driver from offering
+more.</p>
+<h3 id="deviations"><a class="header" href="#deviations">Deviations</a></h3>
+<p>Please refer to <a href="../crud/crud.html#guidance">The CRUD specification's Guidance</a> on how APIs may deviate between languages.</p>
+<p>Cursor iterating APIs MAY be offered via language syntax or predefined iterable methods.</p>
+<h3 id="runcommand"><a class="header" href="#runcommand"><code>runCommand</code></a></h3>
+<p>The following represents how a runCommand API SHOULD be exposed.</p>
+<pre><code class="language-typescript">interface Database {
+  /**
+   * Takes an argument representing an arbitrary BSON document and executes it against the server.
+   */
+  runCommand(command: BSONDocument, options: RunCommandOptions): BSONDocument;
+}
+
+interface RunCommandOptions {
+  /**
+   * An optional readPreference setting to apply to server selection logic.
+   * This value MUST be applied to the command document as the $readPreference global command argument if not set to primary.
+   *
+   * @defaultValue ReadPreference(mode: primary)
+   *
+   * @see ../server-selection/server-selection.md#read-preference
+   */
+  readPreference?: ReadPreference;
+
+  /**
+   * An optional explicit client session.
+   * The associated logical session id (`lsid`) the driver MUST apply to the command.
+   *
+   * @see ../sessions/driver-sessions.md#clientsession
+   */
+  session?: ClientSession;
+
+  /**
+   * An optional timeout option to govern the amount of time that a single operation can execute before control is returned to the user.
+   * This timeout applies to all of the work done to execute the operation, including but not limited to server selection, connection checkout, and server-side execution.
+   *
+   * @ see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md
+   */
+  timeoutMS?: number;
+}
+</code></pre>
+<h4 id="runcommand-implementation-details"><a class="header" href="#runcommand-implementation-details">RunCommand implementation details</a></h4>
+<p>RunCommand provides a way to access MongoDB server commands directly without requiring a driver to implement a bespoke
+helper. The API is intended to take a document from a user and apply a number of common driver internal concerns before
+forwarding the command to a server. A driver MUST not inspect the user's command, this includes checking for the fields
+a driver MUST attach to the command sent as described below. Depending on a driver's BSON implementation this can result
+in these fields being overwritten or duplicated, a driver SHOULD document that using these fields has undefined
+behavior. A driver MUST not modify the user's command, a clone SHOULD be created before the driver attaches any of the
+required fields to the command.</p>
+<p>Drivers that have historically modified user input SHOULD strive to instead clone the input such that appended fields do
+not affect the user's input in their next major version.</p>
+<h5 id="op_msg"><a class="header" href="#op_msg">OP_MSG</a></h5>
+<p>The <code>$db</code> global command argument MUST be set on the command sent to the server and it MUST equal the database name
+RunCommand was invoked on.</p>
+<ul>
+<li>See OP_MSG's section on <a href="../message/OP_MSG.html#global-command-arguments">Global Command Arguments</a></li>
+</ul>
+<h5 id="readpreference"><a class="header" href="#readpreference">ReadPreference</a></h5>
+<p>For the purposes of server selection RunCommand MUST assume all commands are read operations. To facilitate server
+selection the RunCommand operation MUST accept an optional <code>readPreference</code> option.</p>
+<ul>
+<li>See Server Selection's section on
+<a href="../server-selection/server-selection.html#use-of-read-preferences-with-commands">Use of read preferences with commands</a></li>
+</ul>
+<p>If the provided ReadPreference is NOT <code>{mode: primary}</code> and the selected server is NOT a standalone, the command sent
+MUST include the <code>$readPreference</code> global command argument.</p>
+<ul>
+<li>See OP_MSG's section on <a href="../message/OP_MSG.html#global-command-arguments">Global Command Arguments</a></li>
+</ul>
+<h5 id="driver-sessions"><a class="header" href="#driver-sessions">Driver Sessions</a></h5>
+<p>A driver's RunCommand MUST provide an optional session option to support explicit sessions and transactions. If a
+session is not provided the driver MUST attach an implicit session if the connection supports sessions. Drivers MUST NOT
+attempt to check the command document for the presence of an <code>lsid</code>.</p>
+<p>Every ClientSession has a corresponding logical session ID representing the server-side session ID. The logical session
+ID MUST be included under <code>lsid</code> in the command sent to the server without modifying user input.</p>
+<ul>
+<li>See Driver Sessions' section on
+<a href="../sessions/driver-sessions.html#sending-the-session-id-to-the-server-on-all-commands">Sending the session ID to the server on all commands</a></li>
+</ul>
+<p>The command sent to the server MUST gossip the <code>$clusterTime</code> if cluster time support is detected.</p>
+<ul>
+<li>See Driver Sessions' section on
+<a href="../sessions/driver-sessions.html#gossipping-the-cluster-time">Gossipping the cluster time</a></li>
+</ul>
+<h5 id="transactions"><a class="header" href="#transactions">Transactions</a></h5>
+<p>If RunCommand is used within a transaction the read preference MUST be sourced from the transaction's options. The
+command sent to the server MUST include the transaction specific fields, summarized as follows:</p>
+<ul>
+<li>If <code>runCommand</code> is executing within a transaction:
+<ul>
+<li><code>autocommit</code> - The autocommit flag MUST be set to false.</li>
+<li><code>txnNumber</code> - MUST be set.</li>
+</ul>
+</li>
+<li>If <code>runCommand</code> is the first operation of the transaction:
+<ul>
+<li><code>startTransaction</code> - MUST be set to true.</li>
+<li><code>readConcern</code> - MUST be set to the transaction's read concern if it is NOT the default.</li>
+</ul>
+</li>
+<li>See
+<a href="../transactions/transactions.html#generic-runcommand-helper-within-a-transaction">Generic RunCommand helper within a transaction</a>
+in the Transactions specification.</li>
+</ul>
+<h5 id="readconcern-and-writeconcern"><a class="header" href="#readconcern-and-writeconcern">ReadConcern and WriteConcern</a></h5>
+<p>RunCommand MUST NOT support read concern and write concern options. Drivers MUST NOT attempt to check the command
+document for the presence of a <code>readConcern</code> and <code>writeConcern</code> field.</p>
+<p>Additionally, unless executing within a transaction, RunCommand MUST NOT set the <code>readConcern</code> or <code>writeConcern</code> fields
+in the command document. For example, default values MUST NOT be inherited from client, database, or collection options.</p>
+<p>If the user-provided command document already includes <code>readConcern</code> or <code>writeConcern</code> fields, the values MUST be left
+as-is.</p>
+<ul>
+<li>See Read Concern's section on
+<a href="../read-write-concern/read-write-concern.html#generic-command-method">Generic Command Method</a></li>
+<li>See Write Concern's section on
+<a href="../read-write-concern/read-write-concern.html#generic-command-method">Generic Command Method</a></li>
+</ul>
+<h5 id="retryability"><a class="header" href="#retryability">Retryability</a></h5>
+<p>All commands executed via RunCommand are non-retryable operations. Drivers MUST NOT inspect the command to determine if
+it is a write and MUST NOT attach a <code>txnNumber</code>.</p>
+<ul>
+<li>See Retryable Reads' section on
+<a href="../retryable-reads/retryable-reads.html#unsupported-read-operations">Unsupported Read Operations</a></li>
+<li>See Retryable Writes' section on
+<a href="../retryable-writes/retryable-writes.html#behavioral-changes-for-write-commands">Behavioral Changes for Write Commands</a></li>
+</ul>
+<h5 id="stable-api"><a class="header" href="#stable-api">Stable API</a></h5>
+<p>The command sent MUST attach stable API fields as configured on the MongoClient.</p>
+<ul>
+<li>See Stable API's section on
+<a href="../versioned-api/versioned-api.html#generic-command-helper">Generic Command Helper Behaviour</a></li>
+</ul>
+<h5 id="client-side-operations-timeout"><a class="header" href="#client-side-operations-timeout">Client Side Operations Timeout</a></h5>
+<p>RunCommand MUST provide an optional <code>timeoutMS</code> option to support client side operations timeout. Drivers MUST NOT
+attempt to check the command document for the presence of a <code>maxTimeMS</code> field. Drivers MUST document the behavior of
+RunCommand if a <code>maxTimeMS</code> field is already set on the command (such as overwriting the command field).</p>
+<ul>
+<li>See Client Side Operations Timeout's section on
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#runcommand">runCommand</a></li>
+<li>See Client Side Operations Timeout's section on
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#runcommand-behavior">runCommand behavior</a></li>
+</ul>
+<h3 id="runcursorcommand"><a class="header" href="#runcursorcommand"><code>runCursorCommand</code></a></h3>
+<p>Drivers MAY expose a runCursorCommand API with the following syntax.</p>
+<pre><code class="language-typescript">interface Database {
+  /**
+   * Takes an argument representing an arbitrary BSON document and executes it against the server.
+   */
+  runCursorCommand(command: BSONDocument, options: RunCursorCommandOptions): RunCommandCursor;
+}
+
+interface RunCursorCommandOptions extends RunCommandOptions {
+  /**
+   * This option is an enum with possible values CURSOR_LIFETIME and ITERATION.
+   * For operations that create cursors, timeoutMS can either cap the lifetime of the cursor or be applied separately to the original operation and all subsequent calls.
+   * To support both of these use cases, these operations MUST support a timeoutMode option.
+   *
+   * @defaultValue CURSOR_LIFETIME
+   *
+   * @see https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md
+   */
+  timeoutMode?: ITERATION | CURSOR_LIFETIME;
+
+  /**
+   * See the `cursorType` enum defined in the crud specification.
+   * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.md#read
+   *
+   * Identifies the type of cursor this is for client side operations timeout to properly apply timeoutMode settings.
+   *
+   * A tailable cursor can receive empty `nextBatch` arrays in `getMore` responses.
+   * However, subsequent `getMore` operations may return documents if new data has become available.
+   *
+   * A tailableAwait cursor is an enhancement where instead of dealing with empty responses the server will block until data becomes available.
+   *
+   * @defaultValue NON_TAILABLE
+   */
+  cursorType?: CursorType;
+}
+
+/**
+ * The following are the configurations a driver MUST provide to control how getMores are constructed.
+ * How the options are controlled should be idiomatic to the driver's language.
+ * See Executing ``getMore`` Commands.
+ */
+interface RunCursorCommandGetMoreOptions {
+  /** Any positive integer is permitted. */
+  batchSize?: int;
+  /** Any non-negative integer is permitted. */
+  maxTimeMS?: int;
+  comment?: BSONValue;
+}
+</code></pre>
+<h4 id="runcursorcommand-implementation-details"><a class="header" href="#runcursorcommand-implementation-details">RunCursorCommand implementation details</a></h4>
+<p>RunCursorCommand provides a way to access MongoDB server commands that return a cursor directly without requiring a
+driver to implement a bespoke cursor implementation. The API is intended to be built upon RunCommand and take a document
+from a user and apply a number of common driver internal concerns before forwarding the command to a server. A driver
+can expect that the result from running this command will return a document with a <code>cursor</code> field and MUST provide the
+caller with a language native abstraction to continue iterating the results from the server. If the response from the
+server does not include a <code>cursor</code> field the driver MUST throw an error either before returning from <code>runCursorCommand</code>
+or upon first iteration of the cursor.</p>
+<p>High level RunCursorCommand steps:</p>
+<ul>
+<li>Run the cursor creating command provided by the caller and retain the ClientSession used as well as the server the
+command was executed on.</li>
+<li>Create a local cursor instance and store the <code>firstBatch</code>, <code>ns</code>, and <code>id</code> from the response.</li>
+<li>When the current batch has been fully iterated, execute a <code>getMore</code> using the same server the initial command was
+executed on.</li>
+<li>Store the <code>nextBatch</code> from the <code>getMore</code> response and update the cursor's <code>id</code>.</li>
+<li>Continue to execute <code>getMore</code> commands as needed when the caller empties local batches until the cursor is exhausted
+or closed (i.e. <code>id</code> is zero).</li>
+</ul>
+<h5 id="driver-sessions-1"><a class="header" href="#driver-sessions-1">Driver Sessions</a></h5>
+<p>A driver MUST create an implicit ClientSession if none is provided and it MUST be attached for the duration of the
+cursor's lifetime. All <code>getMore</code> commands constructed for this cursor MUST send the same <code>lsid</code> used on the initial
+command. A cursor is considered exhausted or closed when the server reports its <code>id</code> as zero. When the cursor is
+exhausted the client session MUST be ended and the server session returned to the pool as early as possible rather than
+waiting for a caller to completely iterate the final batch.</p>
+<ul>
+<li>See Drivers Sessions' section on <a href="../sessions/driver-sessions.html#sessions-and-cursors">Sessions and Cursors</a></li>
+</ul>
+<h5 id="server-selection"><a class="header" href="#server-selection">Server Selection</a></h5>
+<p>RunCursorCommand MUST support a <code>readPreference</code> option that MUST be used to determine server selection. The selected
+server MUST be used for subsequent <code>getMore</code> commands.</p>
+<h5 id="load-balancers"><a class="header" href="#load-balancers">Load Balancers</a></h5>
+<p>When in <code>loadBalanced</code> mode, a driver MUST pin the connection used to execute the initial operation, and reuse it for
+subsequent <code>getMore</code> operations.</p>
+<ul>
+<li>See Load Balancer's section on <a href="../load-balancers/load-balancers.html#behaviour-with-cursors">Behaviour With Cursors</a></li>
+</ul>
+<h5 id="iterating-the-cursor"><a class="header" href="#iterating-the-cursor">Iterating the Cursor</a></h5>
+<p>Drivers MUST provide an API, typically, a method named <code>next()</code>, that returns one document per invocation. If the
+cursor's batch is empty and the cursor id is nonzero, the driver MUST perform a <code>getMore</code> operation.</p>
+<h5 id="executing-getmore-commands"><a class="header" href="#executing-getmore-commands">Executing <code>getMore</code> Commands</a></h5>
+<p>The cursor API returned to the caller MUST offer an API to configure <code>batchSize</code>, <code>maxTimeMS</code>, and <code>comment</code> options
+that are sent on subsequent <code>getMore</code> commands. If it is idiomatic for a driver to allow setting these options in
+<code>RunCursorCommandOptions</code>, the driver MUST document that the options only pertain to <code>getMore</code> commands. A driver MAY
+permit users to change <code>getMore</code> field settings at any time during the cursor's lifetime and subsequent <code>getMore</code>
+commands MUST be constructed with the changes to those fields. If that API is offered drivers MUST write tests asserting
+<code>getMore</code> commands are constructed with any updated fields.</p>
+<ul>
+<li>See Find, getMore and killCursors commands' section on
+<a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html#getmore">GetMore</a></li>
+</ul>
+<h5 id="tailable-and-tailableawait"><a class="header" href="#tailable-and-tailableawait">Tailable and TailableAwait</a></h5>
+<ul>
+<li><strong>See first:</strong> Find, getMore and killCursors commands's section on
+<a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html#tailable-cursors">Tailable cursors</a></li>
+</ul>
+<p>It is the responsibility of the caller to construct their initial command with <code>awaitData</code> and <code>tailable</code> flags <strong>as
+well as</strong> inform RunCursorCommand of the <code>cursorType</code> that should be constructed. Requesting a <code>cursorType</code> that does
+not align with the fields sent to the server on the initial command SHOULD be documented as undefined behavior.</p>
+<h5 id="resource-cleanup"><a class="header" href="#resource-cleanup">Resource Cleanup</a></h5>
+<p>Drivers MUST provide an explicit mechanism for releasing the cursor resources, typically a <code>.close()</code> method. If the
+cursor id is nonzero a KillCursors operation MUST be attempted, the result of the operation SHOULD be ignored. The
+ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.</p>
+<ul>
+<li>See Driver Sessions' section on
+<a href="../sessions/driver-sessions.html#when-sending-a-killcursors-command">When sending a killCursors command</a></li>
+<li>See Find, getMore and killCursors commands' section on
+<a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html#killcursors">killCursors</a></li>
+</ul>
+<h5 id="client-side-operations-timeout-1"><a class="header" href="#client-side-operations-timeout-1">Client Side Operations Timeout</a></h5>
+<p>RunCursorCommand MUST provide an optional <code>timeoutMS</code> option to support client side operations timeout. Drivers MUST NOT
+attempt to check the command document for the presence of a <code>maxTimeMS</code> field. Drivers MUST document the behavior of
+RunCursorCommand if a <code>maxTimeMS</code> field is already set on the command. Drivers SHOULD raise an error if both <code>timeoutMS</code>
+and the <code>getMore</code>-specific <code>maxTimeMS</code> option are specified (see:
+<a href="#executing-getmore-commands">Executing getMore Commands</a>). Drivers MUST document that attempting to set both options
+can have undefined behavior and is not supported.</p>
+<p>When <code>timeoutMS</code> and <code>timeoutMode</code> are provided the driver MUST support timeout functionality as described in the CSOT
+specification.</p>
+<ul>
+<li>See Client Side Operations Timeout's section on
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#cursors">Cursors</a></li>
+</ul>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>2024-09-02: Migrated from reStructuredText to Markdown.</li>
+<li>2023-05-10: Add runCursorCommand API specification.</li>
+<li>2023-05-08: <code>$readPreference</code> is not sent to standalone servers</li>
+<li>2023-04-20: Add run command specification.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../message/OP_MSG.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../connection-string/connection-string-spec.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../message/OP_MSG.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../connection-string/connection-string-spec.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

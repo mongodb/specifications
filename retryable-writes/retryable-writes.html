@@ -1,0 +1,910 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Writes - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html" class="active"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="retryable-writes"><a class="header" href="#retryable-writes">Retryable Writes</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 3.6</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>MongoDB 3.6 will implement support for server sessions, which are shared resources within a cluster identified by a
+session ID. Drivers compatible with MongoDB 3.6 will also implement support for client sessions, which are always
+associated with a server session and will allow for certain commands to be executed within the context of a server
+session.</p>
+<p>Additionally, MongoDB 3.6 will utilize server sessions to allow some write commands to specify a transaction ID to
+enforce at-most-once semantics for the write operation(s) and allow for retrying the operation if the driver fails to
+obtain a write result (e.g. network error or "not writable primary" error after a replica set failover). This
+specification will outline how an API for retryable write operations will be implemented in drivers. The specification
+will define an option to enable retryable writes for an application and describe how a transaction ID will be provided
+to write commands executed therein.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<p><strong>Transaction ID</strong></p>
+<p>The transaction ID identifies the transaction as part of which the command is running. In a write command where the
+client has requested retryable behavior, it is expressed by the top-level <code>lsid</code> and <code>txnNumber</code> fields. The <code>lsid</code>
+component is the corresponding server session ID. which is a BSON value defined in the
+<a href="../sessions/driver-sessions.html">Driver Session</a> specification. The <code>txnNumber</code> component is a monotonically increasing
+(per server session), positive 64-bit integer.</p>
+<p><strong>ClientSession</strong></p>
+<p>Driver object representing a client session, which is defined in the <a href="../sessions/driver-sessions.html">Driver Session</a>
+specification. This object is always associated with a server session; however, drivers will pool server sessions so
+that creating a ClientSession will not always entail creation of a new server session. The name of this object MAY vary
+across drivers.</p>
+<p><strong>Retryable Error</strong></p>
+<p>An error is considered retryable if it has a RetryableWriteError label in its top-level "errorLabels" field. See
+<a href="#determining-retryable-errors">Determining Retryable Errors</a> for more information.</p>
+<p>Additional terms may be defined in the <a href="../sessions/driver-sessions.html">Driver Session</a> specification.</p>
+<h3 id="naming-deviations"><a class="header" href="#naming-deviations">Naming Deviations</a></h3>
+<p>This specification defines the name for a new MongoClient option, <code>retryWrites</code>. Drivers MUST use the defined name for
+the connection string parameter to ensure portability of connection strings across applications and drivers.</p>
+<p>If drivers solicit MongoClient options through another mechanism (e.g. options dictionary provided to the MongoClient
+constructor), drivers SHOULD use the defined name but MAY deviate to comply with their existing conventions. For
+example, a driver may use <code>retry_writes</code> instead of <code>retryWrites</code>.</p>
+<p>For any other names in the spec, drivers SHOULD use the defined name but MAY deviate to comply with their existing
+conventions.</p>
+<h3 id="mongoclient-configuration"><a class="header" href="#mongoclient-configuration">MongoClient Configuration</a></h3>
+<p>This specification introduces the following client-level configuration option.</p>
+<h4 id="retrywrites"><a class="header" href="#retrywrites">retryWrites</a></h4>
+<p>This boolean option determines whether retryable behavior will be applied to all supported write operations executed
+within the MongoClient. This option MUST default to true.</p>
+<p>This option MUST NOT be configurable at the level of a database object, collection object, or at the level of an
+individual write operation.</p>
+<h3 id="requirements-for-retryable-writes"><a class="header" href="#requirements-for-retryable-writes">Requirements for Retryable Writes</a></h3>
+<h4 id="supported-server-versions"><a class="header" href="#supported-server-versions">Supported Server Versions</a></h4>
+<p>Like sessions, retryable writes require a MongoDB 3.6 replica set or shard cluster operating with feature compatibility
+version 3.6 (i.e. the <code>{setFeatureCompatibilityVersion: 3.6}</code> administrative command has been run on the cluster).
+Drivers MUST verify server eligibility by ensuring that <code>maxWireVersion</code> is at least six, the
+<code>logicalSessionTimeoutMinutes</code> field is present in the server's <code>hello</code> or legacy hello response, and the server type is
+not standalone.</p>
+<p>Retryable writes are only supported by storage engines that support document-level locking. Notably, that excludes the
+MMAPv1 storage engine which is available in both MongoDB 3.6 and 4.0. Since <code>retryWrites</code> defaults to <code>true</code>, Drivers
+MUST raise an actionable error message when the server returns code 20 with errmsg starting with "Transaction numbers".
+The replacement error message MUST be:</p>
+<pre><code>This MongoDB deployment does not support retryable writes. Please add
+retryWrites=false to your connection string.
+</code></pre>
+<p>If the server selected for the first attempt of a retryable write operation does not support retryable writes, drivers
+MUST execute the write as if retryable writes were not enabled. Drivers MUST NOT include a transaction ID in the write
+command and MUST not retry the command under any circumstances.</p>
+<p>In a sharded cluster, it is possible that mongos may appear to support retryable writes but one or more shards in the
+cluster do not (e.g. replica set shard is configured with feature compatibility version 3.4, a standalone is added as a
+new shard). In these rare cases, a write command that fans out to a shard that does not support retryable writes may
+partially fail and an error may be reported in the write result from mongos (e.g. <code>writeErrors</code> array in the bulk write
+result). This does not constitute a retryable error. Drivers MUST relay such errors to the user.</p>
+<h4 id="supported-write-operations"><a class="header" href="#supported-write-operations">Supported Write Operations</a></h4>
+<p>MongoDB 3.6 will support retryability for some, but not all, write operations.</p>
+<p>Supported single-statement write operations include <code>insertOne()</code>, <code>updateOne()</code>, <code>replaceOne()</code>, <code>deleteOne()</code>,
+<code>findOneAndDelete()</code>, <code>findOneAndReplace()</code>, and <code>findOneAndUpdate()</code>.</p>
+<p>Supported multi-statement write operations include <code>insertMany()</code> and <code>bulkWrite()</code>. The ordered option may be <code>true</code> or
+<code>false</code>. For both the collection-level and client-level <code>bulkWrite()</code> methods, a bulk write batch is only retryable if
+it does not contain any <code>multi: true</code> writes (i.e. <code>UpdateMany</code> and <code>DeleteMany</code>). Drivers MUST evaluate eligibility for
+each write command sent as part of the <code>bulkWrite()</code> (after order and batch splitting) individually. Drivers MUST NOT
+alter existing logic for order and batch splitting in an attempt to maximize retryability for operations within a bulk
+write.</p>
+<p>These methods above are defined in the <a href="../crud/crud.html">CRUD</a> specification.</p>
+<p>Later versions of MongoDB may add support for additional write operations.</p>
+<p>Drivers MUST document operations that support retryable behavior and the conditions for which retryability is determined
+(see: <a href="#how-will-users-know-which-operations-are-supported">How will users know which operations are supported?</a>).
+Drivers are not required to exhaustively document all operations that do not support retryable behavior.</p>
+<h4 id="unsupported-write-operations"><a class="header" href="#unsupported-write-operations">Unsupported Write Operations</a></h4>
+<p>Write commands specifying an unacknowledged write concern (e.g. <code>{w: 0})</code>) do not support retryable behavior. Drivers
+MUST NOT add a transaction ID to any write command with an unacknowledged write concern executed within a MongoClient
+where retryable writes have been enabled. Drivers MUST NOT retry these commands.</p>
+<p>Write commands where a single statement might affect multiple documents will not be initially supported by MongoDB 3.6,
+although this may change in the future. This includes an
+<a href="https://www.mongodb.com/docs/manual/reference/command/update/">update</a> command where any statement in the updates
+sequence specifies a <code>multi</code> option of <code>true</code> or a
+<a href="https://www.mongodb.com/docs/manual/reference/command/delete/">delete</a> command where any statement in the <code>deletes</code>
+sequence specifies a <code>limit</code> option of <code>0</code>. In the context of the <a href="../crud/crud.html">CRUD</a> specification, this includes
+the <code>updateMany()</code> and <code>deleteMany()</code> methods and, in some cases, <code>bulkWrite()</code>. Drivers MUST NOT add a transaction ID
+to any single- or multi-statement write commands that include one or more multi-document write operations. Drivers MUST
+NOT retry these commands if they fail to return a response. With regard to <code>bulkWrite()</code>, drivers MUST evaluate
+eligibility for each write command sent as part of the <code>bulkWrite()</code> (after order and batch splitting) individually.</p>
+<p>Write commands other than <a href="https://www.mongodb.com/docs/manual/reference/command/insert/">insert</a>,
+<a href="https://www.mongodb.com/docs/manual/reference/command/update/">update</a>,
+<a href="https://www.mongodb.com/docs/manual/reference/command/delete/">delete</a>, or
+<a href="https://www.mongodb.com/docs/manual/reference/command/findAndModify/">findAndModify</a> will not be initially supported by
+MongoDB 3.6, although this may change in the future. This includes, but is not limited to, an
+<a href="https://www.mongodb.com/docs/manual/reference/command/aggregate/">aggregate</a> command using a write stage (e.g. <code>$out</code>,
+<code>$merge</code>). Drivers MUST NOT add a transaction ID to these commands and MUST NOT retry these commands if they fail to
+return a response.</p>
+<h4 id="retryable-writes-within-transactions"><a class="header" href="#retryable-writes-within-transactions">Retryable Writes Within Transactions</a></h4>
+<p>In MongoDB 4.0 the only supported retryable write commands within a transaction are <code>commitTransaction</code> and
+<code>abortTransaction</code>. Therefore drivers MUST NOT retry write commands within transactions even when <code>retryWrites</code> has been
+set to true on the <code>MongoClient</code>. In addition, drivers MUST NOT add the <code>RetryableWriteError</code> label to any error that
+occurs during a write command within a transaction (excepting <code>commitTransation</code> and <code>abortTransaction</code>), even when
+<code>retryWrites</code> has been set to true on the <code>MongoClient</code>.</p>
+<h3 id="implementing-retryable-writes"><a class="header" href="#implementing-retryable-writes">Implementing Retryable Writes</a></h3>
+<h4 id="determining-retryable-errors"><a class="header" href="#determining-retryable-errors">Determining Retryable Errors</a></h4>
+<p>When connected to a MongoDB instance that supports retryable writes (versions 3.6+), the driver MUST treat all errors
+with the RetryableWriteError label as retryable. This error label can be found in the top-level "errorLabels" field of
+the error.</p>
+<h5 id="retryablewriteerror-labels"><a class="header" href="#retryablewriteerror-labels">RetryableWriteError Labels</a></h5>
+<p>The RetryableWriteError label might be added to an error in a variety of ways:</p>
+<ul>
+<li>
+<p>When the driver encounters a network error establishing an initial connection to a server, it MUST add a
+RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites configuration
+option set to true.</p>
+</li>
+<li>
+<p>When the driver encounters a network error communicating with any server version that supports retryable writes, it
+MUST add a RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
+configuration option set to true.</p>
+</li>
+<li>
+<p>When a CMAP-compliant driver encounters a
+<a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html#connection-pool-errors">PoolClearedError</a>
+during connection check out, it MUST add a RetryableWriteError label to that error if the MongoClient performing the
+operation has the retryWrites configuration option set to true.</p>
+</li>
+<li>
+<p>For server versions 4.4 and newer, the server will add a RetryableWriteError label to errors or server responses that
+it considers retryable before returning them to the driver. As new server versions are released, the errors that are
+labeled with the RetryableWriteError label may change. Drivers MUST NOT add a RetryableWriteError label to any error
+derived from a 4.4+ server response (i.e. any error that is not a network error).</p>
+</li>
+<li>
+<p>When receiving a command result with an error from a pre-4.4 server that supports retryable writes, the driver MUST
+add a RetryableWriteError label to errors that meet the following criteria if the retryWrites option is set to true on
+the client performing the relevant operation:</p>
+<ul>
+<li>
+<p>a mongod or mongos response with any the following error codes in the top-level <code>code</code> field:</p>
+<div class="table-wrapper"><table><thead><tr><th>Error Name</th><th>Error Code</th></tr></thead><tbody>
+<tr><td>InterruptedAtShutdown</td><td>11600</td></tr>
+<tr><td>InterruptedDueToReplStateChange</td><td>11602</td></tr>
+<tr><td>NotWritablePrimary</td><td>10107</td></tr>
+<tr><td>NotPrimaryNoSecondaryOk</td><td>13435</td></tr>
+<tr><td>NotPrimaryOrSecondary</td><td>13436</td></tr>
+<tr><td>PrimarySteppedDown</td><td>189</td></tr>
+<tr><td>ShutdownInProgress</td><td>91</td></tr>
+<tr><td>HostNotFound</td><td>7</td></tr>
+<tr><td>HostUnreachable</td><td>6</td></tr>
+<tr><td>NetworkTimeout</td><td>89</td></tr>
+<tr><td>SocketException</td><td>9001</td></tr>
+<tr><td>ExceededTimeLimit</td><td>262</td></tr>
+</tbody></table>
+</div></li>
+<li>
+<p>a mongod response with any of the previously listed codes in the <code>writeConcernError.code</code> field.</p>
+</li>
+</ul>
+<p>Drivers MUST NOT add a RetryableWriteError label based on the following:</p>
+<ul>
+<li>any <code>writeErrors[].code</code> fields in a mongod or mongos response</li>
+<li>the <code>writeConcernError.code</code> field in a mongos response</li>
+</ul>
+<p>The criteria for retryable errors is similar to the discussion in the SDAM spec's section on
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#error-handling">Error Handling</a>, but includes
+additional error codes. See <a href="#what-do-the-additional-error-codes-mean">What do the additional error codes mean?</a> for
+the reasoning behind these additional errors.</p>
+</li>
+</ul>
+<p>To understand why the driver should only add the RetryableWriteError label to an error when the retryWrites option is
+true on the MongoClient performing the operation, see
+<a href="#why-does-the-driver-only-add-the-retryablewriteerror-label-to-errors-that-occur-on-a-mongoclient-with-retrywrites-set-to-true">Why does the driver only add the RetryableWriteError label to errors that occur on a MongoClient with retryWrites set to true?</a></p>
+<p>Note: During a retryable write operation on a sharded cluster, mongos may retry the operation internally, in which case
+it will not add a RetryableWriteError label to any error that occurs after those internal retries to prevent excessive
+retrying.</p>
+<p>For more information about error labels, see the
+<a href="../transactions/transactions.html#error-labels">Transactions specification</a>.</p>
+<h4 id="generating-transaction-ids"><a class="header" href="#generating-transaction-ids">Generating Transaction IDs</a></h4>
+<p>The server requires each retryable write operation to provide a unique transaction ID in its command document. The
+transaction ID consists of a server session ID and a monotonically increasing transaction number. The session ID is
+obtained from the ClientSession object, which will have either been passed to the write operation from the application
+or constructed internally for the operation. Drivers will be responsible for maintaining a monotonically increasing
+transaction number for each server session used by a ClientSession object. Drivers that pool server sessions MUST
+preserve the transaction number when reusing a server session from the pool with a new ClientSession (this can be
+tracked as another property on the driver's object for the server session).</p>
+<p>Drivers MUST ensure that each retryable write command specifies a transaction number larger than any previously used
+transaction number for its session ID.</p>
+<p>Since ClientSession objects are not thread safe and may only be used by one thread at a time, drivers should not need to
+worry about race conditions when incrementing the transaction number.</p>
+<h4 id="behavioral-changes-for-write-commands"><a class="header" href="#behavioral-changes-for-write-commands">Behavioral Changes for Write Commands</a></h4>
+<p>Drivers MUST automatically add a transaction ID to all supported write commands executed via a specific
+<a href="../crud/crud.html">CRUD</a> method (e.g. <code>updateOne()</code>) or write command method (e.g. <code>executeWriteCommand()</code>) within a
+MongoClient where retryable writes have been enabled and when the selected server supports retryable writes.</p>
+<p>If your driver offers a generic command method on your database object (e.g. <code>runCommand()</code>), it MUST NOT check the
+user's command document to determine if it is a supported write operation and MUST NOT automatically add a transaction
+ID. The method should send the user's command document to the server as-is.</p>
+<p>This specification does not affect write commands executed within a MongoClient where retryable writes have not been
+enabled.</p>
+<h4 id="constructing-write-commands"><a class="header" href="#constructing-write-commands">Constructing Write Commands</a></h4>
+<p>When constructing a supported write command that will be executed within a MongoClient where retryable writes have been
+enabled, drivers MUST increment the transaction number for the corresponding server session and include the server
+session ID and transaction number in top-level <code>lsid</code> and <code>txnNumber</code> fields, respectively. <code>lsid</code> is a BSON value
+(discussed in the <a href="../sessions/driver-sessions.html">Driver Session</a> specification). <code>txnNumber</code> MUST be a positive 64-bit
+integer (BSON type 0x12).</p>
+<p>The following example illustrates a possible write command for an <code>updateOne()</code> operation:</p>
+<pre><code class="language-typescript">{
+  update: "coll",
+  lsid: { ... },
+  txnNumber: 100,
+  updates: [
+    { q: { x: 1 }, u: { $inc: { y: 1 } } },
+  ],
+  ordered: true
+}
+</code></pre>
+<p>When constructing multiple write commands for a multi-statement write operation (i.e. <code>insertMany()</code> and <code>bulkWrite()</code>),
+drivers MUST increment the transaction number for each supported write command in the batch.</p>
+<h4 id="executing-retryable-write-commands"><a class="header" href="#executing-retryable-write-commands">Executing Retryable Write Commands</a></h4>
+<p>When selecting a writable server for the first attempt of a retryable write command, drivers MUST allow a server
+selection error to propagate. In this case, the caller is able to infer that no attempt was made.</p>
+<p>If retryable writes is not enabled or the selected server does not support retryable writes, drivers MUST NOT include a
+transaction ID in the command and MUST attempt to execute the write command exactly once and allow any errors to
+propagate. In this case, the caller is able to infer that an attempt was made.</p>
+<p>If retryable writes are enabled and the selected server supports retryable writes, drivers MUST add a transaction ID to
+the command. Drivers MUST only attempt to retry a write command if the first attempt yields a retryable error. Drivers
+MUST NOT attempt to retry a write command on any other error.</p>
+<p>If the first attempt of a write command including a transaction ID encounters a retryable error, the driver MUST update
+its topology according to the SDAM spec (see:
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#error-handling">Error Handling</a>) and capture this
+original retryable error.</p>
+<p>Drivers MUST then retry the operation as many times as necessary until any one of the following conditions is reached:</p>
+<ul>
+<li>the operation succeeds.</li>
+<li>the operation fails with a non-retryable error.</li>
+<li>CSOT is enabled and the operation times out per
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#retryability">Client Side Operations Timeout: Retryability</a>.</li>
+<li>CSOT is not enabled and one retry was attempted.</li>
+</ul>
+<p>For each retry attempt, drivers MUST select a writable server. In a sharded cluster, the server on which the operation
+failed MUST be provided to the server selection mechanism as a deprioritized server.</p>
+<p>If the driver cannot select a server for a retry attempt or the selected server does not support retryable writes,
+retrying is not possible and drivers MUST raise the retryable error from the previous attempt. In both cases, the caller
+is able to infer that an attempt was made.</p>
+<p>If a retry attempt also fails, drivers MUST update their topology according to the SDAM spec (see:
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#error-handling">Error Handling</a>). If an error
+would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
+driver) or the error is labeled "NoWritesPerformed", the error from the previous attempt should be raised. If all server
+errors are labeled "NoWritesPerformed", then the first error should be raised.</p>
+<p>If a driver associates server information (e.g. the server address or description) with an error, the driver MUST ensure
+that the reported server information corresponds to the server that originated the error.</p>
+<p>The above rules are implemented in the following pseudo-code:</p>
+<pre><code class="language-typescript">/**
+ * Checks if a server supports retryable writes.
+ */
+function isRetryableWritesSupported(server) {
+  if (server.getMaxWireVersion() &lt; RETRYABLE_WIRE_VERSION) {
+    return false;
+  }
+
+  if ( ! server.hasLogicalSessionTimeoutMinutes()) {
+    return false;
+  }
+
+  if (server.isStandalone()) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Executes a write command in the context of a MongoClient where retryable
+ * writes have been enabled. The session parameter may be an implicit or
+ * explicit client session (depending on how the CRUD method was invoked).
+ */
+function executeRetryableWrite(command, session) {
+  /* Allow ServerSelectionException to propagate to our caller, which can then
+   * assume that no attempts were made. */
+  server = selectServer("writable");
+
+  /* If the server does not support retryable writes, execute the write as if
+   * retryable writes are not enabled. */
+  if ( ! isRetryableWritesSupported(server)) {
+    return executeCommand(server, command);
+  }
+
+  /* Incorporate lsid and txnNumber fields into the command document. These
+   * values will be derived from the implicit or explicit session object. */
+  retryableCommand = addTransactionIdToCommand(command, session);
+
+  Exception previousError = null;
+  retrying = false;
+  while true {
+    try {
+      return executeCommand(server, retryableCommand);
+    } catch (Exception currentError) {
+      handleError(currentError);
+
+      /* If the error has a RetryableWriteError label, remember the exception
+       * and proceed with retrying the operation.
+       *
+       * IllegalOperation (code 20) with errmsg starting with "Transaction
+       * numbers" MUST be re-raised with an actionable error message.
+       */
+      if (!currentError.hasErrorLabel("RetryableWriteError")) {
+        if ( currentError.code == 20 &amp;&amp; previousError.errmsg.startsWith("Transaction numbers") ) {
+          currentError.errmsg = "This MongoDB deployment does not support retryable...";
+        }
+        throw currentError;
+      }
+
+      /*
+       * If the "previousError" is "null", then the "currentError" is the
+       * first error encountered during the retry attempt cycle. We must
+       * persist the first error in the case where all succeeding errors are
+       * labeled "NoWritesPerformed", which would otherwise raise "null" as
+       * the error.
+       */
+      if (previousError == null) {
+        previousError = currentError;
+      }
+
+      /*
+       * For exceptions that originate from the driver (e.g. no socket available
+       * from the connection pool), we should raise the previous error if there
+       * was one.
+       */
+      if (currentError is not DriverException &amp;&amp; ! previousError.hasErrorLabel("NoWritesPerformed")) {
+        previousError = currentError;
+      }
+    }
+
+    /*
+     * We try to select server that is not the one that failed by passing the
+     * failed server as a deprioritized server.
+     * If we cannot select a writable server, do not proceed with retrying and
+     * throw the previous error. The caller can then infer that an attempt was
+     * made and failed. */
+    try {
+      deprioritizedServers = [ server ];
+      server = selectServer("writable", deprioritizedServers);
+    } catch (Exception ignoredError) {
+      throw previousError;
+    }
+
+    /* If the server selected for retrying is too old, throw the previous error.
+     * The caller can then infer that an attempt was made and failed. This case
+     * is very rare, and likely means that the cluster is in the midst of a
+     * downgrade. */
+    if ( ! isRetryableWritesSupported(server)) {
+      throw previousError;
+    }
+
+    if (timeoutMS == null) {
+      /* If CSOT is not enabled, allow any retryable error from the second
+       * attempt to propagate to our caller, as it will be just as relevant
+       * (if not more relevant) than the original error. */
+      if (retrying) {
+        throw previousError;
+      }
+    } else if (isExpired(timeoutMS)) {
+      /* CSOT is enabled and the operation has timed out. */
+      throw previousError;
+    }
+    retrying = true;
+  }
+}
+</code></pre>
+<p><code>handleError</code> in the above pseudocode refers to the function defined in the
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html#error-handling-pseudocode">Error handling pseudocode</a>
+section of the SDAM specification.</p>
+<p>When retrying a write command, drivers MUST resend the command with the same transaction ID. Drivers MUST NOT resend the
+original wire protocol message if doing so would violate rules for
+<a href="../sessions/driver-sessions.html#gossipping-the-cluster-time">gossipping the cluster time</a> (see:
+<a href="#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts">Can drivers resend the same wire protocol message on retry attempts?</a>).</p>
+<p>In the case of a multi-statement write operation split across multiple write commands, a failed retry attempt will also
+interrupt execution of any additional write operations in the batch (regardless of the ordered option). This is no
+different than if a retryable error had been encountered without retryable behavior enabled or supported by the driver.
+Drivers are encouraged to provide access to an intermediary write result (e.g. BulkWriteResult, InsertManyResult)
+through the BulkWriteException, in accordance with the <a href="../crud/crud.html">CRUD</a> specification.</p>
+<h2 id="logging-retry-attempts"><a class="header" href="#logging-retry-attempts">Logging Retry Attempts</a></h2>
+<p>Drivers MAY choose to log retry attempts for write operations. This specification does not define a format for such log
+messages.</p>
+<h2 id="command-monitoring"><a class="header" href="#command-monitoring">Command Monitoring</a></h2>
+<p>In accordance with the
+<a href="../command-logging-and-monitoring/command-logging-and-monitoring.html">Command Logging and Monitoring</a> specification,
+drivers MUST guarantee that each <code>CommandStartedEvent</code> has either a correlating <code>CommandSucceededEvent</code> or
+<code>CommandFailedEvent</code> and that every "command started" log message has either a correlating "command succeeded" log
+message or "command failed" log message. If the first attempt of a retryable write operation encounters a retryable
+error, drivers MUST fire a <code>CommandFailedEvent</code> and emit a "command failed" log message for the retryable error and fire
+a separate <code>CommandStartedEvent</code> and "command succeeded" log message when executing the subsequent retry attempt. Note
+that the second <code>CommandStartedEvent</code> and "command succeeded" log message may have a different <code>connectionId</code>, since a
+writable server is reselected for the retry attempt.</p>
+<p>Each attempt of a retryable write operation SHOULD report a different <code>requestId</code> so that events for each attempt can be
+properly correlated with one another.</p>
+<p>The <a href="../command-logging-and-monitoring/command-logging-and-monitoring.html">Command Logging and Monitoring</a> specification
+states that the <code>operationId</code> field is a driver-generated, 64-bit integer and may be "used to link events together such
+as bulk write operations." Each attempt of a retryable write operation SHOULD report the same <code>operationId</code>; however,
+drivers SHOULD NOT use the <code>operationId</code> field to relay information about a transaction ID. A bulk write operation may
+consist of multiple write commands, each of which may specify a unique transaction ID.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>See the <a href="tests/README.html">README</a> for tests.</p>
+<p>At a high level, the test plan will cover the following scenarios for executing supported write operations within a
+MongoClient where retryable writes have been enabled:</p>
+<ul>
+<li>Executing the same write operation (and transaction ID) multiple times should yield an identical write result.</li>
+<li>Test at-most-once behavior by observing that subsequent executions of the same write operation do not incur further
+modifications to the collection data.</li>
+<li>Exercise supported single-statement write operations (i.e. deleteOne, insertOne, replaceOne, updateOne, and
+findAndModify).</li>
+<li>Exercise supported multi-statement insertMany and bulkWrite operations, which contain only supported single-statement
+write operations. Both ordered and unordered execution should be tested.</li>
+</ul>
+<p>Additional prose tests for other scenarios are also included.</p>
+<h2 id="motivation-for-change"><a class="header" href="#motivation-for-change">Motivation for Change</a></h2>
+<p>Drivers currently have no API for specifying at-most-once semantics and retryable behavior for write operations. The
+driver API needs to be extended to support this behavior.</p>
+<h2 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h2>
+<p>The design of this specification piggy-backs that of the <a href="../sessions/driver-sessions.html">Driver Session</a> specification
+in that it modifies the driver API as little as possible to introduce the concept of at-most-once semantics and
+retryable behavior for write operations. A transaction ID will be included in all supported write commands executed
+within the scope of a MongoClient where retryable writes have been enabled.</p>
+<p>Drivers expect the server to yield an error if a transaction ID is included in an unsupported write command. This
+requires drivers to maintain an allow list and track which write operations support retryable behavior for a given
+server version (see:
+<a href="#why-must-drivers-maintain-an-allow-list-of-supported-operations">Why must drivers maintain an allow list of supported operations?</a>).</p>
+<p>While this approach will allow applications to take advantage of retryable write behavior with minimal code changes, it
+also presents a documentation challenge. Users must understand exactly what can and will be retried (see:
+<a href="#how-will-users-know-which-operations-are-supported">How will users know which operations are supported?</a>).</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>The API changes to support retryable writes extend the existing API but do not introduce any backward breaking changes.
+Existing programs that do not make use of retryable writes will continue to compile and run correctly.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p>The C# and C drivers will provide reference implementations. JIRA links will be added here at a later point.</p>
+<h2 id="future-work"><a class="header" href="#future-work">Future Work</a></h2>
+<p>Supporting at-most-once semantics and retryable behavior for updateMany and deleteMany operations may become possible
+once the server implements support for multi-document transactions.</p>
+<p>A separate specification for retryable read operations could complement this specification. Retrying read operations
+would not require client or server sessions and could be implemented independently of retryable writes.</p>
+<h2 id="q--a"><a class="header" href="#q--a">Q &amp; A</a></h2>
+<h3 id="what-do-the-additional-error-codes-mean"><a class="header" href="#what-do-the-additional-error-codes-mean">What do the additional error codes mean?</a></h3>
+<p>The errors <code>HostNotFound</code>, <code>HostUnreachable</code>, <code>NetworkTimeout</code>, <code>SocketException</code> may be returned from mongos during
+problems routing to a shard. These may be transient, or localized to that mongos.</p>
+<h3 id="why-are-write-operations-only-retried-once-by-default"><a class="header" href="#why-are-write-operations-only-retried-once-by-default">Why are write operations only retried once by default?</a></h3>
+<p>The spec concerns itself with retrying write operations that encounter a retryable error (i.e. no response due to
+network error or a response indicating that the node is no longer a primary). A retryable error may be classified as
+either a transient error (e.g. dropped connection, replica set failover) or persistent outage. In the case of a
+transient error, the driver will mark the server as "unknown" per the
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html">SDAM</a> spec. A subsequent retry attempt will
+allow the driver to rediscover the primary within the designated server selection timeout period (30 seconds by
+default). If server selection times out during this retry attempt, we can reasonably assume that there is a persistent
+outage. In the case of a persistent outage, multiple retry attempts are fruitless and would waste time. See
+<a href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">How To Write Resilient MongoDB Applications</a>
+for additional discussion on this strategy.</p>
+<p>However when <a href="../client-side-operations-timeout/client-side-operations-timeout.html">Client Side Operations Timeout</a> is
+enabled, the driver will retry multiple times until the operation succeeds, a non-retryable error is encountered, or the
+timeout expires. Retrying multiple times provides greater resilience to cascading failures such as rolling server
+restarts during planned maintenance events.</p>
+<h3 id="what-if-the-transaction-number-overflows"><a class="header" href="#what-if-the-transaction-number-overflows">What if the transaction number overflows?</a></h3>
+<p>Since server sessions are pooled and session lifetimes are configurable on the server, it is theoretically possible for
+the transaction number to overflow if it reaches the limits of a signed 64-bit integer. The spec does not address this
+scenario. Drivers may decide to handle this as they wish. For example, they may raise a client-side error if a
+transaction number would overflow, eagerly remove sessions with sufficiently high transactions numbers from the pool in
+an attempt to limit such occurrences, or simply rely on the server to raise an error when a transaction number is
+reused.</p>
+<h3 id="why-are-unacknowledged-write-concerns-unsupported"><a class="header" href="#why-are-unacknowledged-write-concerns-unsupported">Why are unacknowledged write concerns unsupported?</a></h3>
+<p>The server does not consider the write concern when deciding if a write operation supports retryable behavior.
+Technically, operations with an unacknowledged write concern can specify a transaction ID and be retried. However, the
+spec elects not to support unacknowledged write concerns due to various ways that drivers may issue write operations
+with unacknowledged write concerns.</p>
+<p>When using <code>OP_QUERY</code> to issue a write command to the server, a command response is always returned. A write command
+with an unacknowledged write concern (i.e. <code>{w: 0}</code>) will return a response of <code>{ok: 1}</code>. If a retryable error is
+encountered (either a network error or "not writeable primary" response), the driver could attempt to retry the
+operation by executing it again with the same transaction ID.</p>
+<p>Some drivers fall back to legacy opcodes (e.g. <code>OP_INSERT</code>) to execute write operations with an unacknowledged write
+concern. In the future, <code>OP_MSG</code> may allow the server to avoid returning any response for write operations sent with an
+unacknowledged write concern. In both of these cases, there is no response for which the driver might encounter a
+retryable error and decide to retry the operation.</p>
+<p>Rather than depend on an implementation detail to determine if retryable behavior might apply, the spec has chosen to
+not support retryable behavior for unacknowledged write concerns and guarantee a consistent user experience across all
+drivers.</p>
+<h3 id="why-must-drivers-maintain-an-allow-list-of-supported-operations"><a class="header" href="#why-must-drivers-maintain-an-allow-list-of-supported-operations">Why must drivers maintain an allow list of supported operations?</a></h3>
+<p>Requiring that drivers maintain an allow list of supported write operations is unfortunate. It both adds complexity to
+the driver's implementation and limits the driver's ability to immediately take advantage of new server functionality
+(i.e. the driver must be upgraded to support additional write operations).</p>
+<p>Several other alternatives were discussed:</p>
+<ul>
+<li>The server could inform drivers which write operations support retryable behavior in its <code>hello</code> or legacy hello
+response. This would be a form of feature discovery, for which there is no established protocol. It would also add
+complexity to the connection handshake.</li>
+<li>The server could ignore a transaction ID on the first observed attempt of an unsupported write command and only yield
+an error on subsequent attempts. This would require the server to create a transaction record for unsupported writes
+to avoid the risk of applying a write twice and ensuring that retry attempts could be differentiated. It also poses a
+significant problem for sharding if a multi-document write does not reach all shards, since those shards would not
+know to create a transaction record.</li>
+<li>The driver could allow more fine-grained control retryable write behavior by supporting a <code>retryWrites</code> option on the
+database and collection objects. This would allow users to enable <code>retryWrites</code> on a MongoClient and disable it as
+needed to execute unsupported write operations, or vice versa. Since we expect the <code>retryWrites</code> option to become less
+relevant once transactions are implemented, we would prefer not to add the option throughout the driver API.</li>
+</ul>
+<h3 id="how-will-users-know-which-operations-are-supported"><a class="header" href="#how-will-users-know-which-operations-are-supported">How will users know which operations are supported?</a></h3>
+<p>The initial list of supported operations is already quite permissive. Most <a href="../crud/crud.html">CRUD</a> operations are
+supported apart from <code>updateMany()</code>, <code>deleteMany()</code>, and <code>aggregate()</code> with a write stage (e.g. <code>$out</code>, <code>$merge</code>). Other
+write operations (e.g. <code>renameCollection</code>) are rare.</p>
+<p>That said, drivers will need to clearly document exactly which operations support retryable behavior. In the case
+<code>bulkWrite()</code>, which may or may not support retryability, drivers should discuss how eligibility is determined.</p>
+<h3 id="can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts"><a class="header" href="#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts">Can drivers resend the same wire protocol message on retry attempts?</a></h3>
+<p>Since retry attempts entail sending the same command and transaction ID to the server, drivers might consider resending
+the same wire protocol message in order to avoid constructing a new message and computing its checksum. The server will
+not complain if it receives two messages with the same <code>requestId</code>, as the field is only used for logging and populating
+the <code>responseTo</code> field in its replies to the client. That said, re-using a wire protocol message might violate rules for
+<a href="../sessions/driver-sessions.html#gossipping-the-cluster-time">gossipping the cluster time</a> and might also have
+implications for <a href="#command-monitoring">Command Monitoring</a>, since the original write command and its retry attempt may
+report the same <code>requestId</code>.</p>
+<h3 id="why-cant-drivers-split-bulk-write-commands-to-maximize-retryability"><a class="header" href="#why-cant-drivers-split-bulk-write-commands-to-maximize-retryability">Why can't drivers split bulk write commands to maximize retryability?</a></h3>
+<p>In <a href="#supported-write-operations">Supported Write Operations</a>, the spec prohibits drivers from altering existing logic
+for splits <code>bulkWrite()</code>'s <code>requests</code> parameter into write commands in an attempt to segregate unsupported,
+multi-document write operations and maximize retryability for other, supported write operations. The reasoning behind
+this prohibition is that such behavior would conflict with a primary goal of the bulk API in reducing the number of
+command round-trips to the server.</p>
+<h3 id="retrywrites-originally-defaulted-to-false-why-does-it-now-default-to-true"><a class="header" href="#retrywrites-originally-defaulted-to-false-why-does-it-now-default-to-true">retryWrites originally defaulted to false, why does it now default to true?</a></h3>
+<p>Since the initial release of retryable writes in MongoDB 3.6 testing showed that the overhead for supported operations
+was sufficiently small that there was no risk in changing the default. Additionally, the fact that some operations
+continue to be unsupported for retryable writes (updateMany and deleteMany) does not seem to pose a problem in practice.</p>
+<h3 id="why-do-drivers-have-to-parse-errmsg-to-determine-storage-engine-support"><a class="header" href="#why-do-drivers-have-to-parse-errmsg-to-determine-storage-engine-support">Why do drivers have to parse errmsg to determine storage engine support?</a></h3>
+<p>There is no reliable way to determine the storage engine in use for shards in a sharded cluster, and replica sets (and
+shards) can have mixed deployments using different storage engines on different members. This is especially true when a
+replica set or sharded cluster is being upgraded from one storage engine to another. This could be common when upgrading
+to MongoDB 4.2, where MMAPv1 is no longer supported.</p>
+<p>The server returns error code 20 (IllegalOperation) when the storage engine doesn't support document-level locking and
+txnNumbers. Error code 20 is used for a large number of different error cases in the server so we need some other way to
+differentiate this error case from any other. The error code and errmsg are the same in MongoDB 3.6 and 4.0, and the
+same from a replica set or sharded cluster (mongos just forwards the error from the shard's replica set).</p>
+<h3 id="why-does-the-driver-only-add-the-retryablewriteerror-label-to-errors-that-occur-on-a-mongoclient-with-retrywrites-set-to-true"><a class="header" href="#why-does-the-driver-only-add-the-retryablewriteerror-label-to-errors-that-occur-on-a-mongoclient-with-retrywrites-set-to-true">Why does the driver only add the RetryableWriteError label to errors that occur on a MongoClient with retryWrites set to true?</a></h3>
+<p>The driver does this to maintain consistency with the MongoDB server. Servers that support the RetryableWriteError label
+(MongoDB version 4.4 and newer) only add the label to an error when the client has added a txnNumber to the command,
+which only happens when the retryWrites option is true on the client. For the driver to add the label even if
+retryWrites is not true would be inconsistent with the server and potentially confusing to developers.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-05-08: Add guidance for client-level <code>bulkWrite()</code> retryability.</p>
+</li>
+<li>
+<p>2024-05-02: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2024-04-29: Fix the link to the Driver Sessions spec.</p>
+</li>
+<li>
+<p>2024-01-16: Do not use <code>writeConcernError.code</code> in pre-4.4 mongos response to determine retryability. Do not use
+<code>writeErrors[].code</code> in pre-4.4 server responses to determine retryability.</p>
+</li>
+<li>
+<p>2023-12-06: Clarify that writes are not retried within transactions.</p>
+</li>
+<li>
+<p>2023-12-05: Add that any server information associated with retryable exceptions MUST reflect the originating server,
+even in the presence of retries.</p>
+</li>
+<li>
+<p>2023-10-02: When CSOT is not enabled, one retry attempt occurs.</p>
+</li>
+<li>
+<p>2023-08-26: Require that in a sharded cluster the server on which the operation failed MUST be provided to the server
+selection mechanism as a deprioritized server.</p>
+</li>
+<li>
+<p>2022-11-17: Add logic for persisting "currentError" as "previousError" on first retry attempt, avoiding raising "null"
+errors.</p>
+</li>
+<li>
+<p>2022-11-09: CLAM must apply both events and log messages.</p>
+</li>
+<li>
+<p>2022-10-18: When CSOT is enabled multiple retry attempts may occur.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-01-25: Note that drivers should retry handshake network failures.</p>
+</li>
+<li>
+<p>2021-11-02: Clarify that error labels are only specified in a top-level field of an error.</p>
+</li>
+<li>
+<p>2021-04-26: Replaced deprecated terminology</p>
+</li>
+<li>
+<p>2021-03-24: Require that PoolClearedErrors be retried</p>
+</li>
+<li>
+<p>2020-09-01: State the the driver should only add the RetryableWriteError label to network errors when connected to a
+4.4+ server.</p>
+</li>
+<li>
+<p>2020-02-25: State that the driver should only add the RetryableWriteError label when retryWrites is on, and make it
+clear that mongos will sometimes perform internal retries and not return the RetryableWriteError label.</p>
+</li>
+<li>
+<p>2020-02-10: Remove redundant content in Tests section.</p>
+</li>
+<li>
+<p>2020-01-14: Add ExceededTimeLimit to the list of error codes that should receive a RetryableWriteError label.</p>
+</li>
+<li>
+<p>2019-10-21: Change the definition of "retryable write" to be based on the RetryableWriteError label. Stop requiring
+drivers to parse errmsg to categorize retryable errors for pre-4.4 servers.</p>
+</li>
+<li>
+<p>2019-07-30: Drivers must rewrite error messages for error code 20 when txnNumber is not supported by the storage
+engine.</p>
+</li>
+<li>
+<p>2019-06-07: Mention <code>$merge</code> stage for aggregate alongside <code>$out</code></p>
+</li>
+<li>
+<p>2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange</p>
+</li>
+<li>
+<p>2019-03-06: retryWrites now defaults to true.</p>
+</li>
+<li>
+<p>2019-03-05: Prohibit resending wire protocol messages if doing so would violate rules for gossipping the cluster time.</p>
+</li>
+<li>
+<p>2018-06-07: WriteConcernFailed is not a retryable error code.</p>
+</li>
+<li>
+<p>2018-04-25: Evaluate retryable eligibility of bulkWrite() commands individually.</p>
+</li>
+<li>
+<p>2018-03-14: Clarify that retryable writes may fail with a FCV 3.4 shard.</p>
+</li>
+<li>
+<p>2017-11-02: Drivers should not raise errors if selected server does not support retryable writes and instead fall back
+to non-retryable behavior. In addition to wire protocol version, drivers may check for <code>logicalSessionTimeoutMinutes</code>
+to determine if a server supports sessions and retryable writes.</p>
+</li>
+<li>
+<p>2017-10-26: Errors when retrying may be raised instead of the original error provided they allow the user to infer
+that an attempt was made.</p>
+</li>
+<li>
+<p>2017-10-23: Drivers must document operations that support retryability.</p>
+</li>
+<li>
+<p>2017-10-23: Raise the original retryable error if server selection or wire protocol checks fail during the retry
+attempt. Encourage drivers to provide intermediary write results after an unrecoverable failure during a bulk write.</p>
+</li>
+<li>
+<p>2017-10-18: Standalone servers do not support retryable writes.</p>
+</li>
+<li>
+<p>2017-10-18: Also retry writes after a "not writable primary" error.</p>
+</li>
+<li>
+<p>2017-10-08: Renamed <code>txnNum</code> to <code>txnNumber</code> and noted that it must be a 64-bit integer (BSON type 0x12).</p>
+</li>
+<li>
+<p>2017-08-25: Drivers will maintain an allow list so that only supported write operations may be retried. Transaction
+IDs will not be included in unsupported write commands, irrespective of the <code>retryWrites</code> option.</p>
+</li>
+<li>
+<p>2017-08-18: <code>retryWrites</code> is now a MongoClient option.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../retryable-reads/retryable-reads.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../client-side-operations-timeout/client-side-operations-timeout.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../retryable-reads/retryable-reads.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../client-side-operations-timeout/client-side-operations-timeout.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

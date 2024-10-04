@@ -1,0 +1,1867 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Server Discovery and Monitoring - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html" class="active"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="server-discovery-and-monitoring"><a class="header" href="#server-discovery-and-monitoring">Server Discovery And Monitoring</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 2.4</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>This spec defines how a MongoDB client discovers and monitors one or more servers. It covers monitoring a single server,
+a set of mongoses, or a replica set. How does the client determine what type of servers they are? How does it keep this
+information up to date? How does the client find an entire replica set from a seed list, and how does it respond to a
+stepdown, election, reconfiguration, or network error?</p>
+<p>All drivers must answer these questions the same. Or, where platforms' limitations require differences among drivers,
+there must be as few answers as possible and each must be clearly explained in this spec. Even in cases where several
+answers seem equally good, drivers must agree on one way to do it.</p>
+<p>MongoDB users and driver authors benefit from having one way to discover and monitor servers. Users can substantially
+understand their driver's behavior without inspecting its code or asking its author. Driver authors can avoid subtle
+mistakes when they take advantage of a design that has been well-considered, reviewed, and tested.</p>
+<p>The server discovery and monitoring method is specified in four sections. First, a client is
+<a href="#configuration">configured</a>. Second, it begins <a href="#monitoring">monitoring</a> by calling
+<a href="../mongodb-handshake/handshake.html#terms">hello or legacy hello</a> on all servers. (Multi-threaded and asynchronous
+monitoring is described first, then single-threaded monitoring.) Third, as hello or legacy hello responses are received
+the client <a href="#parsing-a-hello-or-legacy-hello-response">parses them</a>, and fourth, it updates its view of the topology.</p>
+<p>Finally, this spec describes how drivers update their topology view in response to errors, and includes generous
+implementation notes for driver authors.</p>
+<p>This spec does not describe how a client chooses a server for an operation; that is the domain of the Server Selection
+Spec. But there is a section describing the interaction between monitoring and server selection.</p>
+<p>There is no discussion of driver architecture and data structures, nor is there any specification of a user-facing API.
+This spec is only concerned with the algorithm for monitoring the server topology.</p>
+<h2 id="meta"><a class="header" href="#meta">Meta</a></h2>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="general-requirements"><a class="header" href="#general-requirements">General Requirements</a></h3>
+<p><strong>Direct connections:</strong> A client MUST be able to connect to a single server of any type. This includes querying hidden
+replica set members, and connecting to uninitialized members (see <a href="#rsghost-and-rsother">RSGhost</a>) in order to run
+"replSetInitiate". Setting a read preference MUST NOT be necessary to connect to a secondary. Of course, the secondary
+will reject all operations done with the PRIMARY read preference because the secondaryOk bit is not set, but the initial
+connection itself succeeds. Drivers MAY allow direct connections to arbiters (for example, to run administrative
+commands).</p>
+<p><strong>Replica sets:</strong> A client MUST be able to discover an entire replica set from a seed list containing one or more
+replica set members. It MUST be able to continue monitoring the replica set even when some members go down, or when
+reconfigs add and remove members. A client MUST be able to connect to a replica set while there is no primary, or the
+primary is down.</p>
+<p><strong>Mongos:</strong> A client MUST be able to connect to a set of mongoses and monitor their availability and
+<a href="#round-trip-time">round trip time</a>. This spec defines how mongoses are discovered and monitored, but does not define
+which mongos is selected for a given operation.</p>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<h4 id="server"><a class="header" href="#server">Server</a></h4>
+<p>A mongod or mongos process, or a load balancer.</p>
+<h4 id="deployment"><a class="header" href="#deployment">Deployment</a></h4>
+<p>One or more servers: either a standalone, a replica set, or one or more mongoses.</p>
+<h4 id="topology"><a class="header" href="#topology">Topology</a></h4>
+<p>The state of the deployment: its type (standalone, replica set, or sharded), which servers are up, what type of servers
+they are, which is primary, and so on.</p>
+<h4 id="client"><a class="header" href="#client">Client</a></h4>
+<p>Driver code responsible for connecting to MongoDB.</p>
+<h4 id="seed-list"><a class="header" href="#seed-list">Seed list</a></h4>
+<p>Server addresses provided to the client in its initial configuration, for example from the
+<a href="https://www.mongodb.com/docs/manual/reference/connection-string/">connection string</a>.</p>
+<h4 id="data-bearing-server-type"><a class="header" href="#data-bearing-server-type">Data-Bearing Server Type</a></h4>
+<p>A server type from which a client can receive application data:</p>
+<ul>
+<li>Mongos</li>
+<li>RSPrimary</li>
+<li>RSSecondary</li>
+<li>Standalone</li>
+<li>LoadBalanced</li>
+</ul>
+<h4 id="round-trip-time"><a class="header" href="#round-trip-time">Round trip time</a></h4>
+<p>Also known as RTT.</p>
+<p>The client's measurement of the duration of one hello or legacy hello call. The round trip time is used to support the
+"localThresholdMS"<sup class="footnote-reference"><a href="#1">1</a></sup> option in the Server Selection Spec.</p>
+<h4 id="hello-or-legacy-hello-outcome"><a class="header" href="#hello-or-legacy-hello-outcome">hello or legacy hello outcome</a></h4>
+<p>The result of an attempt to call the hello or legacy hello command on a server. It consists of three elements: a boolean
+indicating the success or failure of the attempt, a document containing the command response (or null if it failed), and
+the round trip time to execute the command (or null if it failed).</p>
+<h4 id="check"><a class="header" href="#check">check</a></h4>
+<p>The client checks a server by attempting to call hello or legacy hello on it, and recording the outcome.</p>
+<h4 id="scan"><a class="header" href="#scan">scan</a></h4>
+<p>The process of checking all servers in the deployment.</p>
+<h4 id="suitable"><a class="header" href="#suitable">suitable</a></h4>
+<p>A server is judged "suitable" for an operation if the client can use it for a particular operation. For example, a write
+requires a standalone, primary, or mongos. Suitability is fully specified in the
+<a href="../server-selection/server-selection.html">Server Selection Spec</a>.</p>
+<h4 id="address"><a class="header" href="#address">address</a></h4>
+<p>The hostname or IP address, and port number, of a MongoDB server.</p>
+<h4 id="network-error"><a class="header" href="#network-error">network error</a></h4>
+<p>An error that occurs while reading from or writing to a network socket.</p>
+<h4 id="network-timeout"><a class="header" href="#network-timeout">network timeout</a></h4>
+<p>A timeout that occurs while reading from or writing to a network socket.</p>
+<h4 id="minheartbeatfrequencyms"><a class="header" href="#minheartbeatfrequencyms">minHeartbeatFrequencyMS</a></h4>
+<p>Defined in the <a href="server-monitoring.html">Server Monitoring spec</a>. This value MUST be 500 ms, and it MUST NOT be
+configurable.</p>
+<h4 id="pool-generation-number"><a class="header" href="#pool-generation-number">pool generation number</a></h4>
+<p>The pool's generation number which starts at 0 and is incremented each time the pool is cleared. Defined in the
+<a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html">Connection Monitoring and Pooling spec</a>.</p>
+<h4 id="connection-generation-number"><a class="header" href="#connection-generation-number">connection generation number</a></h4>
+<p>The pool's generation number at the time this connection was created. Defined in the
+<a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html">Connection Monitoring and Pooling spec</a>.</p>
+<h4 id="error-generation-number"><a class="header" href="#error-generation-number">error generation number</a></h4>
+<p>The error's generation number is the generation of the connection on which the application error occurred. Note that
+when a network error occurs before the handshake completes then the error's generation number is the generation of the
+pool at the time the connection attempt was started.</p>
+<h4 id="state-change-error"><a class="header" href="#state-change-error">State Change Error</a></h4>
+<p>A server reply document indicating a "not writable primary" or "node is recovering" error. Starting in MongoDB 4.4 these
+errors may also include a <a href="#topologyversion">topologyVersion</a> field.</p>
+<h3 id="data-structures"><a class="header" href="#data-structures">Data structures</a></h3>
+<p>This spec uses a few data structures to describe the client's view of the topology. It must be emphasized that a driver
+is free to implement the same behavior using different data structures. This spec uses these enums and structs in order
+to describe driver <strong>behavior</strong>, not to mandate how a driver represents the topology, nor to mandate an API.</p>
+<h4 id="constants"><a class="header" href="#constants">Constants</a></h4>
+<h5 id="clientminwireversion-and-clientmaxwireversion"><a class="header" href="#clientminwireversion-and-clientmaxwireversion">clientMinWireVersion and clientMaxWireVersion</a></h5>
+<p>Integers. The wire protocol range supported by the client.</p>
+<h4 id="enums"><a class="header" href="#enums">Enums</a></h4>
+<h5 id="topologytype"><a class="header" href="#topologytype">TopologyType</a></h5>
+<p>Single, ReplicaSetNoPrimary, ReplicaSetWithPrimary, Sharded, LoadBalanced, or Unknown.</p>
+<p>See <a href="#updating-the-topologydescription">updating the TopologyDescription</a>.</p>
+<h5 id="servertype"><a class="header" href="#servertype">ServerType</a></h5>
+<p>Standalone, Mongos, PossiblePrimary, RSPrimary, RSSecondary, RSArbiter, RSOther, RSGhost, LoadBalancer or Unknown.</p>
+<p>See <a href="#parsing-a-hello-or-legacy-hello-response">parsing a hello or legacy hello response</a>.</p>
+<blockquote>
+<p>[!NOTE]
+Single-threaded clients use the PossiblePrimary type to maintain proper
+<a href="server-monitoring.html#scanning-order">scanning order</a>. Multi-threaded and asynchronous clients do not need this
+ServerType; it is synonymous with Unknown.</p>
+</blockquote>
+<p><span id="TopologyDescription"></span></p>
+<h4 id="topologydescription"><a class="header" href="#topologydescription">TopologyDescription</a></h4>
+<p>The client's representation of everything it knows about the deployment's topology.</p>
+<p>Fields:</p>
+<ul>
+<li>type: a <a href="#topologytype">TopologyType</a> enum value. See <a href="#initial-topologytype">initial TopologyType</a>.</li>
+<li>setName: the replica set name. Default null.</li>
+<li>maxElectionId: an ObjectId or null. The largest electionId ever reported by a primary. Default null. Part of the
+(<code>electionId</code>, <code>setVersion</code>) tuple.</li>
+<li>maxSetVersion: an integer or null. The largest setVersion ever reported by a primary. It may not monotonically
+increase, as electionId takes precedence in ordering Default null. Part of the (<code>electionId</code>, <code>setVersion</code>) tuple.</li>
+<li>servers: a set of ServerDescription instances. Default contains one server: "localhost:27017", ServerType Unknown.</li>
+<li>stale: a boolean for single-threaded clients, whether the topology must be re-scanned. (Not related to
+maxStalenessSeconds, nor to stale primaries.)</li>
+<li>compatible: a boolean. False if any server's wire protocol version range is incompatible with the client's. Default
+true.</li>
+<li>compatibilityError: a string. The error message if "compatible" is false, otherwise null.</li>
+<li>logicalSessionTimeoutMinutes: integer or null. Default null. See <a href="#logical-session-timeout">logical session timeout</a>.</li>
+</ul>
+<h4 id="serverdescription"><a class="header" href="#serverdescription">ServerDescription</a></h4>
+<p>The client's view of a single server, based on the most recent hello or legacy hello outcome.</p>
+<p>Again, drivers may store this information however they choose; this data structure is defined here merely to describe
+the monitoring algorithm.</p>
+<p>Fields:</p>
+<ul>
+<li>address: the hostname or IP, and the port number, that the client connects to. Note that this is <strong>not</strong> the "me"
+field in the server's hello or legacy hello response, in the case that the server reports an address different from
+the address the client uses.</li>
+<li>(=) error: information about the last error related to this server. Default null.</li>
+<li>roundTripTime: the duration of the hello or legacy hello call. Default null.</li>
+<li>minRoundTripTime: the minimum RTT for the server. Default null.</li>
+<li>lastWriteDate: a 64-bit BSON datetime or null. The "lastWriteDate" from the server's most recent hello or legacy hello
+response.</li>
+<li>opTime: an opTime or null. An opaque value representing the position in the oplog of the most recently seen write.
+Default null. (Only mongos and shard servers record this field when monitoring config servers as replica sets, at
+least until
+<a href="../max-staleness/max-staleness.html#future-feature-to-support-readconcern-afteroptime">drivers allow applications to use readConcern "afterOptime".</a>)</li>
+<li>(=) type: a <a href="#servertype">ServerType</a> enum value. Default Unknown.</li>
+<li>(=) minWireVersion, maxWireVersion: the wire protocol version range supported by the server. Both default to 0.
+<a href="#checking-wire-protocol-compatibility">Use min and maxWireVersion only to determine compatibility</a>.</li>
+<li>(=) me: The hostname or IP, and the port number, that this server was configured with in the replica set. Default
+null.</li>
+<li>(=) hosts, passives, arbiters: Sets of addresses. This server's opinion of the replica set's members, if any. These
+<a href="#hostnames-are-normalized-to-lower-case">hostnames are normalized to lower-case</a>. Default empty. The client monitors
+all three types of servers in a replica set.</li>
+<li>(=) tags: map from string to string. Default empty.</li>
+<li>(=) setName: string or null. Default null.</li>
+<li>(=) electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that believes it is primary. See
+<a href="#using-electionid-and-setversion-to-detect-stale-primaries">using electionId and setVersion to detect stale primaries</a>.
+Default null.</li>
+<li>(=) setVersion: integer or null. Default null.</li>
+<li>(=) primary: an address. This server's opinion of who the primary is. Default null.</li>
+<li>lastUpdateTime: when this server was last checked. Default "infinity ago".</li>
+<li>(=) logicalSessionTimeoutMinutes: integer or null. Default null.</li>
+<li>(=) topologyVersion: A topologyVersion or null. Default null. The "topologyVersion" from the server's most recent
+hello or legacy hello response or <a href="#state-change-error">State Change Error</a>.</li>
+<li>(=) iscryptd: boolean indicating if the server is a
+<a href="../client-side-encryption/client-side-encryption.html#mongocryptd">mongocryptd</a> server. Default null.</li>
+</ul>
+<p>"Passives" are priority-zero replica set members that cannot become primary. The client treats them precisely the same
+as other members.</p>
+<p>Fields marked (=) are used for <a href="#server-description-equality">Server Description Equality</a> comparison.</p>
+<h3 id="configuration"><a class="header" href="#configuration">Configuration</a></h3>
+<h4 id="no-breaking-changes"><a class="header" href="#no-breaking-changes">No breaking changes</a></h4>
+<p>This spec does not intend to require any drivers to make breaking changes regarding what configuration options are
+available, how options are named, or what combinations of options are allowed.</p>
+<h4 id="initial-topologydescription"><a class="header" href="#initial-topologydescription">Initial TopologyDescription</a></h4>
+<p>The default values for <a href="#topologydescription">TopologyDescription</a> fields are described above. Users may override the
+defaults as follows:</p>
+<h5 id="initial-servers"><a class="header" href="#initial-servers">Initial Servers</a></h5>
+<p>The user MUST be able to set the initial servers list to a <a href="#seed-list">seed list</a> of one or more addresses.</p>
+<p>The hostname portion of each address MUST be normalized to lower-case.</p>
+<h5 id="initial-topologytype"><a class="header" href="#initial-topologytype">Initial TopologyType</a></h5>
+<p>If the <code>directConnection</code> URI option is specified when a MongoClient is constructed, the TopologyType must be
+initialized based on the value of the <code>directConnection</code> option and the presence of the <code>replicaSet</code> option according to
+the following table:</p>
+<div class="table-wrapper"><table><thead><tr><th>directConnection</th><th>replicaSet present</th><th>Initial TopologyType</th></tr></thead><tbody>
+<tr><td>true</td><td>no</td><td>Single</td></tr>
+<tr><td>true</td><td>yes</td><td>Single</td></tr>
+<tr><td>false</td><td>no</td><td>Unknown</td></tr>
+<tr><td>false</td><td>yes</td><td>ReplicaSetNoPrimary</td></tr>
+</tbody></table>
+</div>
+<p>If the <code>directConnection</code> option is not specified, newly developed drivers MUST behave as if it was specified with the
+false value.</p>
+<p>Since changing the starting topology can reasonably be considered a backwards-breaking change, existing drivers SHOULD
+stage implementation according to semantic versioning guidelines. Specifically, support for the <code>directConnection</code> URI
+option can be added in a minor release. In a subsequent major release, the default starting topology can be changed to
+Unknown. Drivers MUST document this in a prior minor release.</p>
+<p>Existing drivers MUST deprecate other URI options, if any, for controlling topology discovery or specifying the
+deployment topology. If such a legacy option is specified and the <code>directConnection</code> option is also specified, and the
+values of the two options are semantically different, the driver MUST report an error during URI option parsing.</p>
+<p>The API for initializing TopologyType using language-specific native options is not specified here. Drivers might
+already have a convention, e.g. a single seed means Single, a setName means ReplicaSetNoPrimary, and a list of seeds
+means Unknown. There are variations, however: In the Java driver a single seed means Single, but a <strong>list</strong> containing
+one seed means Unknown, so it can transition to replica-set monitoring if the seed is discovered to be a replica set
+member. In contrast, PyMongo requires a non-null setName in order to begin replica-set monitoring, regardless of the
+number of seeds. This spec does not cover language-specific native options that a driver may provide.</p>
+<h5 id="initial-setname"><a class="header" href="#initial-setname">Initial setName</a></h5>
+<p>It is allowed to use <code>directConnection=true</code> in conjunction with the <code>replicaSet</code> URI option. The driver must connect in
+Single topology and verify that setName matches the specified name, as per
+<a href="#verifying-setname-with-topologytype-single">verifying setName with TopologyType Single</a>.</p>
+<p>When a MongoClient is initialized using language-specific native options, the user MUST be able to set the client's
+initial replica set name. A driver MAY require the set name in order to connect to a replica set, or it MAY be able to
+discover the replica set name as it connects.</p>
+<h5 id="allowed-configuration-combinations"><a class="header" href="#allowed-configuration-combinations">Allowed configuration combinations</a></h5>
+<p>Drivers MUST enforce:</p>
+<ul>
+<li>TopologyType Single cannot be used with multiple seeds.</li>
+<li><code>directConnection=true</code> cannot be used with multiple seeds.</li>
+<li>If setName is not null, only TopologyType ReplicaSetNoPrimary, and possibly Single, are allowed. (See
+<a href="#verifying-setname-with-topologytype-single">verifying setName with TopologyType Single</a>.)</li>
+<li><code>loadBalanced=true</code> cannot be used in conjunction with <code>directConnection=true</code> or <code>replicaSet</code></li>
+</ul>
+<h5 id="handling-of-srv-uris-resolving-to-single-host"><a class="header" href="#handling-of-srv-uris-resolving-to-single-host">Handling of SRV URIs resolving to single host</a></h5>
+<p>When a driver is given an SRV URI, if the <code>directConnection</code> URI option is not specified, and the <code>replicaSet</code> URI
+option is not specified, the driver MUST start in Unknown topology, and follow the rules in the
+<a href="#topologytype-table">TopologyType table</a> for transitioning to other topologies. In particular, the driver MUST NOT use
+the number of hosts from the initial SRV lookup to decide what topology to start in.</p>
+<p><span id="heartbeatFrequencyMS"></span></p>
+<h4 id="heartbeatfrequencyms"><a class="header" href="#heartbeatfrequencyms">heartbeatFrequencyMS</a></h4>
+<p>The interval between server <a href="#check">checks</a>, counted from the end of the previous check until the beginning of the next
+one.</p>
+<p>For multi-threaded and asynchronous drivers it MUST default to 10 seconds and MUST be configurable. For single-threaded
+drivers it MUST default to 60 seconds and MUST be configurable. It MUST be called heartbeatFrequencyMS unless this
+breaks backwards compatibility.</p>
+<p>For both multi- and single-threaded drivers, the driver MUST NOT permit users to configure it less than
+minHeartbeatFrequencyMS (500ms).</p>
+<p>(See
+<a href="#heartbeatfrequencyms-defaults-to-10-seconds-or-60-seconds">heartbeatFrequencyMS defaults to 10 seconds or 60 seconds</a>
+and <a href="#whats-the-point-of-periodic-monitoring">what's the point of periodic monitoring?</a>)</p>
+<h3 id="client-construction"><a class="header" href="#client-construction">Client construction</a></h3>
+<p>Except for <a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html">initial DNS seed list discovery</a> when
+given a connection string with <code>mongodb+srv</code> scheme, the client's constructor MUST NOT do any I/O. This means that the
+constructor does not throw an exception if servers are unavailable: the topology is not yet known when the constructor
+returns. Similarly if a server has an incompatible wire protocol version, the constructor does not throw. Instead, all
+subsequent operations on the client fail as long as the error persists.</p>
+<p>See <a href="#clients-do-no-io-in-the-constructor">clients do no I/O in the constructor</a> for the justification.</p>
+<h4 id="multi-threaded-and-asynchronous-client-construction"><a class="header" href="#multi-threaded-and-asynchronous-client-construction">Multi-threaded and asynchronous client construction</a></h4>
+<p>The constructor MAY start the monitors as background tasks and return immediately. Or the monitors MAY be started by
+some method separate from the constructor; for example they MAY be started by some "initialize" method (by any name), or
+on the first use of the client for an operation.</p>
+<h4 id="single-threaded-client-construction"><a class="header" href="#single-threaded-client-construction">Single-threaded client construction</a></h4>
+<p>Single-threaded clients do no I/O in the constructor. They MUST <a href="#scan">scan</a> the servers on demand, when the first
+operation is attempted.</p>
+<h3 id="client-closing"><a class="header" href="#client-closing">Client closing</a></h3>
+<p>When a client is closing, before it emits the <code>TopologyClosedEvent</code> as per the
+<a href="./server-discovery-and-monitoring-logging-and-monitoring.html#events-api">Events API</a>, it SHOULD <a href="#remove">remove</a> all
+servers from its <code>TopologyDescription</code> and set its <code>TopologyType</code> to <code>Unknown</code>, emitting the corresponding
+<code>TopologyDescriptionChangedEvent</code>.</p>
+<h3 id="monitoring"><a class="header" href="#monitoring">Monitoring</a></h3>
+<p>See the <a href="server-monitoring.html">Server Monitoring spec</a> for how a driver monitors each server. In summary, the client
+monitors each server in the topology. The scope of server monitoring is to provide the topology with updated
+ServerDescriptions based on hello or legacy hello command responses.</p>
+<h3 id="parsing-a-hello-or-legacy-hello-response"><a class="header" href="#parsing-a-hello-or-legacy-hello-response">Parsing a hello or legacy hello response</a></h3>
+<p>The client represents its view of each server with a <a href="#serverdescription">ServerDescription</a>. Each time the client
+<a href="#check">checks</a> a server, it MUST replace its description of that server with a new one if and only if the new
+ServerDescription's <a href="#topologyversion">topologyVersion</a> is greater than or equal to the current ServerDescription's
+<a href="#topologyversion">topologyVersion</a>.</p>
+<p>(See <a href="#replacing-the-topologydescription">Replacing the TopologyDescription</a> for an example implementation.)</p>
+<p>This replacement MUST happen even if the new server description compares equal to the previous one, in order to keep
+client-tracked attributes like last update time and round trip time up to date.</p>
+<p>Drivers MUST be able to handle responses to both <code>hello</code> and legacy hello commands. When checking results, drivers MUST
+first check for the <code>isWritablePrimary</code> field and fall back to checking for an <code>ismaster</code> field if <code>isWritablePrimary</code>
+was not found.</p>
+<p>ServerDescriptions are created from hello or legacy hello outcomes as follows:</p>
+<h4 id="type"><a class="header" href="#type">type</a></h4>
+<p>The new ServerDescription's type field is set to a <a href="#servertype">ServerType</a>. Note that these states do <strong>not</strong> exactly
+correspond to <a href="https://www.mongodb.com/docs/manual/reference/replica-states/">replica set member states</a>. For example,
+some replica set member states like STARTUP and RECOVERING are identical from the client's perspective, so they are
+merged into "RSOther". Additionally, states like Standalone and Mongos are not replica set member states at all.</p>
+<div class="table-wrapper"><table><thead><tr><th>State</th><th>Symptoms</th></tr></thead><tbody>
+<tr><td>Unknown</td><td>Initial, or after a network error or failed hello or legacy hello call, or "ok: 1" not in hello or legacy hello response.</td></tr>
+<tr><td>Standalone</td><td>No "msg: isdbgrid", no setName, and no "isreplicaset: true".</td></tr>
+<tr><td>Mongos</td><td>"msg: isdbgrid".</td></tr>
+<tr><td>PossiblePrimary</td><td>Not yet checked, but another member thinks it is the primary.</td></tr>
+<tr><td>RSPrimary</td><td>"isWritablePrimary: true" or "ismaster: true", "setName" in response.</td></tr>
+<tr><td>RSSecondary</td><td>"secondary: true", "setName" in response.</td></tr>
+<tr><td>RSArbiter</td><td>"arbiterOnly: true", "setName" in response.</td></tr>
+<tr><td>RSOther</td><td>"setName" in response, "hidden: true" or not primary, secondary, nor arbiter.</td></tr>
+<tr><td>RSGhost</td><td>"isreplicaset: true" in response.</td></tr>
+<tr><td>LoadBalanced</td><td>"loadBalanced=true" in URI.</td></tr>
+</tbody></table>
+</div>
+<p>A server can transition from any state to any other. For example, an administrator could shut down a secondary and bring
+up a mongos in its place.</p>
+<h5 id="rsghost-and-rsother"><a class="header" href="#rsghost-and-rsother">RSGhost and RSOther</a></h5>
+<p>The client MUST monitor replica set members even when they cannot be queried. These members are in state RSGhost or
+RSOther.</p>
+<p><strong>RSGhost</strong> members occur in at least three situations:</p>
+<ul>
+<li>briefly during server startup,</li>
+<li>in an uninitialized replica set,</li>
+<li>or when the server is shunned (removed from the replica set config).</li>
+</ul>
+<p>An RSGhost server has no hosts list nor setName. Therefore the client MUST NOT attempt to use its hosts list nor check
+its setName (see <a href="https://jira.mongodb.org/browse/JAVA-1161">JAVA-1161</a> or
+<a href="https://jira.mongodb.org/browse/CSHARP-671">CSHARP-671</a>.) However, the client MUST keep the RSGhost member in its
+TopologyDescription, in case the client's only hope for staying connected to the replica set is that this member will
+transition to a more useful state.</p>
+<p>For simplicity, this is the rule: any server is an RSGhost that reports "isreplicaset: true".</p>
+<p>Non-ghost replica set members have reported their setNames since MongoDB 1.6.2. See
+<a href="#only-support-replica-set-members-running-mongodb-162-or-later">only support replica set members running MongoDB 1.6.2 or later</a>.</p>
+<blockquote>
+<p>[!NOTE]
+The Java driver does not have a separate state for RSGhost; it is an RSOther server with no hosts list.</p>
+</blockquote>
+<p><strong>RSOther</strong> servers may be hidden, starting up, or recovering. They cannot be queried, but their hosts lists are useful
+for discovering the current replica set configuration.</p>
+<p>If a <a href="https://www.mongodb.com/docs/manual/core/replica-set-hidden-member/">hidden member</a> is provided as a seed, the
+client can use it to find the primary. Since the hidden member does not appear in the primary's host list, it will be
+removed once the primary is checked.</p>
+<h4 id="error"><a class="header" href="#error">error</a></h4>
+<p>If the client experiences any error when checking a server, it stores error information in the ServerDescription's error
+field.</p>
+<h4 id="roundtriptime"><a class="header" href="#roundtriptime">roundTripTime</a></h4>
+<p>Drivers MUST record the server's <a href="#round-trip-time">round trip time</a> (RTT) after each successful call to hello or legacy
+hello. The Server Selection Spec describes how RTT is averaged and how it is used in server selection. Drivers MUST also
+record the server's minimum RTT per <a href="server-monitoring.html#measuring-rtt">Server Monitoring (Measuring RTT)</a>.</p>
+<p>If a hello or legacy hello call fails, the RTT is not updated. Furthermore, while a server's type is Unknown its RTT is
+null, and if it changes from a known type to Unknown its RTT is set to null. However, if it changes from one known type
+to another (e.g. from RSPrimary to RSSecondary) its RTT is updated normally, not set to null nor restarted from scratch.</p>
+<h4 id="lastwritedate-and-optime"><a class="header" href="#lastwritedate-and-optime">lastWriteDate and opTime</a></h4>
+<p>The hello or legacy hello response of a replica set member running MongoDB 3.4 and later contains a <code>lastWrite</code>
+subdocument with fields <code>lastWriteDate</code> and <code>opTime</code> (<a href="https://jira.mongodb.org/browse/SERVER-8858">SERVER-8858</a>). If
+these fields are available, parse them from the hello or legacy hello response, otherwise set them to null.</p>
+<p>Clients MUST NOT attempt to compensate for the network latency between when the server generated its hello or legacy
+hello response and when the client records <code>lastUpdateTime</code>.</p>
+<h4 id="lastupdatetime"><a class="header" href="#lastupdatetime">lastUpdateTime</a></h4>
+<p>Clients SHOULD set lastUpdateTime with a monotonic clock.</p>
+<h4 id="hostnames-are-normalized-to-lower-case"><a class="header" href="#hostnames-are-normalized-to-lower-case">Hostnames are normalized to lower-case</a></h4>
+<p>The same as with seeds provided in the initial configuration, all hostnames in the hello or legacy hello response's
+"me", "hosts", "passives", and "arbiters" entries MUST be lower-cased.</p>
+<p>This prevents unnecessary work rediscovering a server if a seed "A" is provided and the server responds that "a" is in
+the replica set.</p>
+<p><a href="http://tools.ietf.org/html/rfc4343">RFC 4343</a>:</p>
+<blockquote>
+<p>Domain Name System (DNS) names are "case insensitive".</p>
+</blockquote>
+<h4 id="logicalsessiontimeoutminutes"><a class="header" href="#logicalsessiontimeoutminutes">logicalSessionTimeoutMinutes</a></h4>
+<p>MongoDB 3.6 and later include a <code>logicalSessionTimeoutMinutes</code> field if logical sessions are enabled in the deployment.
+Clients MUST check for this field and set the ServerDescription's logicalSessionTimeoutMinutes field to this value, or
+to null otherwise.</p>
+<h4 id="topologyversion"><a class="header" href="#topologyversion">topologyVersion</a></h4>
+<p>MongoDB 4.4 and later include a <code>topologyVersion</code> field in all hello or legacy hello and
+<a href="#state-change-error">State Change Error</a> responses. Clients MUST check for this field and set the ServerDescription's
+topologyVersion field to this value, if present. The topologyVersion helps the client and server determine the relative
+freshness of topology information in concurrent messages. (See
+<a href="#what-is-the-purpose-of-topologyversion">What is the purpose of topologyVersion?</a>)</p>
+<p>The topologyVersion is a subdocument with two fields, "processId" and "counter":</p>
+<pre><code class="language-typescript">{
+    topologyVersion: {processId: &lt;ObjectId&gt;, counter: &lt;int64&gt;},
+    ( ... other fields ...)
+}
+</code></pre>
+<h5 id="topologyversion-comparison"><a class="header" href="#topologyversion-comparison">topologyVersion Comparison</a></h5>
+<p>To compare a topologyVersion from a hello or legacy hello or State Change Error response to the current
+ServerDescription's topologyVersion:</p>
+<ol>
+<li>If the response topologyVersion is unset or the ServerDescription's topologyVersion is null, the client MUST assume
+the response is more recent.</li>
+<li>If the response's topologyVersion.processId is not equal to the ServerDescription's, the client MUST assume the
+response is more recent.</li>
+<li>If the response's topologyVersion.processId is equal to the ServerDescription's, the client MUST use the counter
+field to determine which topologyVersion is more recent.</li>
+</ol>
+<p>See <a href="#replacing-the-topologydescription">Replacing the TopologyDescription</a> for an example implementation of
+topologyVersion comparison.</p>
+<h4 id="serviceid"><a class="header" href="#serviceid">serviceId</a></h4>
+<p>MongoDB 5.0 and later, as well as any mongos-like service, include a <code>serviceId</code> field when the service is configured
+behind a load balancer.</p>
+<h4 id="other-serverdescription-fields"><a class="header" href="#other-serverdescription-fields">Other ServerDescription fields</a></h4>
+<p>Other required fields defined in the <a href="#serverdescription">ServerDescription</a> data structure are parsed from the hello or
+legacy hello response in the obvious way.</p>
+<h4 id="server-description-equality"><a class="header" href="#server-description-equality">Server Description Equality</a></h4>
+<p>For the purpose of determining whether to publish SDAM events, two server descriptions having the same address MUST be
+considered equal if and only if the values of <a href="#serverdescription">ServerDescription</a> fields marked (=) are respectively
+equal.</p>
+<p>This specification does not prescribe how to compare server descriptions with different addresses for equality.</p>
+<h3 id="updating-the-topologydescription"><a class="header" href="#updating-the-topologydescription">Updating the TopologyDescription</a></h3>
+<p>Each time the client checks a server, it processes the outcome (successful or not) to create a
+<a href="#serverdescription">ServerDescription</a>, and then it processes the ServerDescription to update its
+<a href="#topologydescription">TopologyDescription</a>.</p>
+<p>The TopologyDescription's <a href="#topologytype">TopologyType</a> influences how the ServerDescription is processed. The following
+subsection specifies how the client updates its TopologyDescription when the TopologyType is Single. The next subsection
+treats the other types.</p>
+<h4 id="topologytype-single"><a class="header" href="#topologytype-single">TopologyType Single</a></h4>
+<p>The TopologyDescription's type was initialized as Single and remains Single forever. There is always one
+ServerDescription in TopologyDescription.servers.</p>
+<p>Whenever the client checks a server (successfully or not), and regardless of whether the new server description is equal
+to the previous server description as defined in <a href="#server-description-equality">Server Description Equality</a>, the
+ServerDescription in TopologyDescription.servers MUST be replaced with the new ServerDescription.</p>
+<p><span id="checking-wire-protocol-compatibility"></span></p>
+<h5 id="checking-wire-protocol-compatibility"><a class="header" href="#checking-wire-protocol-compatibility">Checking wire protocol compatibility</a></h5>
+<p>A ServerDescription which is not Unknown is incompatible if:</p>
+<ul>
+<li>minWireVersion &gt; clientMaxWireVersion, or</li>
+<li>maxWireVersion &lt; clientMinWireVersion</li>
+</ul>
+<p>If any ServerDescription is incompatible, the client MUST set the TopologyDescription's "compatible" field to false and
+fill out the TopologyDescription's "compatibilityError" field like so:</p>
+<ul>
+<li>
+<p>if ServerDescription.minWireVersion &gt; clientMaxWireVersion:</p>
+<p>"Server at $host:$port requires wire version $minWireVersion, but this version of $driverName only supports up to
+$clientMaxWireVersion."</p>
+</li>
+<li>
+<p>if ServerDescription.maxWireVersion &lt; clientMinWireVersion:</p>
+<p>"Server at $host:$port reports wire version $maxWireVersion, but this version of $driverName requires at least
+$clientMinWireVersion (MongoDB $mongoVersion)."</p>
+</li>
+</ul>
+<p>Replace $mongoVersion with the appropriate MongoDB minor version, for example if clientMinWireVersion is 2 and it
+connects to MongoDB 2.4, format the error like:</p>
+<blockquote>
+<p>"Server at example.com:27017 reports wire version 0, but this version of My Driver requires at least 2 (MongoDB 2.6)."</p>
+</blockquote>
+<p>In this second case, the exact required MongoDB version is known and can be named in the error message, whereas in the
+first case the implementer does not know which MongoDB versions will be compatible or incompatible in the future.</p>
+<h5 id="verifying-setname-with-topologytype-single"><a class="header" href="#verifying-setname-with-topologytype-single">Verifying setName with TopologyType Single</a></h5>
+<p>A client MAY allow the user to supply a setName with an initial TopologyType of Single. In this case, if the
+ServerDescription's setName is null or wrong, the ServerDescription MUST be replaced with a default ServerDescription of
+type Unknown.</p>
+<h4 id="topologytype-loadbalanced"><a class="header" href="#topologytype-loadbalanced">TopologyType LoadBalanced</a></h4>
+<p>See the <a href="../load-balancers/load-balancers.html#server-discovery-logging-and-monitoring">Load Balancer Specification</a> for
+details.</p>
+<h4 id="other-topologytypes"><a class="header" href="#other-topologytypes">Other TopologyTypes</a></h4>
+<p>If the TopologyType is <strong>not</strong> Single, the topology can contain zero or more servers. The state of topology containing
+zero servers is terminal (because servers can only be added if they are reported by a server already in the topology). A
+client SHOULD emit a warning if it is constructed with no seeds in the initial seed list. A client SHOULD emit a warning
+when, in the process of updating its topology description, it removes the last server from the topology.</p>
+<p>Whenever a client completes a hello or legacy hello call, it creates a new ServerDescription with the proper
+<a href="#servertype">ServerType</a>. It replaces the server's previous description in TopologyDescription.servers with the new
+one.</p>
+<p>Apply the logic for <a href="#checking-wire-protocol-compatibility">checking wire protocol compatibility</a> to each
+ServerDescription in the topology. If any server's wire protocol version range does not overlap with the client's, the
+client updates the "compatible" and "compatibilityError" fields as described above for TopologyType Single. Otherwise
+"compatible" is set to true.</p>
+<p>It is possible for a multi-threaded client to receive a hello or legacy hello outcome from a server after the server has
+been removed from the TopologyDescription. For example, a monitor begins checking a server "A", then a different monitor
+receives a response from the primary claiming that "A" has been removed from the replica set, so the client removes "A"
+from the TopologyDescription. Then, the check of server "A" completes.</p>
+<p>In all cases, the client MUST ignore hello or legacy hello outcomes from servers that are not in the
+TopologyDescription.</p>
+<p>The following subsections explain in detail what actions the client takes after replacing the ServerDescription.</p>
+<h5 id="topologytype-table"><a class="header" href="#topologytype-table">TopologyType table</a></h5>
+<p>The new ServerDescription's type is the vertical axis, and the current TopologyType is the horizontal. Where a
+ServerType and a TopologyType intersect, the table shows what action the client takes.</p>
+<p>"no-op" means, do nothing <strong>after</strong> replacing the server's old description with the new one.</p>
+<div class="table-wrapper"><table><thead><tr><th></th><th>TopologyType Unknown</th><th>TopologyType Sharded</th><th>TopologyType ReplicaSetNoPrimary</th><th>TopologyType ReplicaSetWithPrimary</th></tr></thead><tbody>
+<tr><td>ServerType Unknown</td><td>no-op</td><td>no-op</td><td>no-op</td><td><a href="#checkifhasprimary">checkIfHasPrimary</a></td></tr>
+<tr><td>ServerType Standalone</td><td><a href="#updateunknownwithstandalone">updateUnknownWithStandalone</a></td><td><a href="#remove">remove</a></td><td><a href="#remove">remove</a></td><td><a href="#remove">remove</a> and <a href="#checkifhasprimary">checkIfHasPrimary</a></td></tr>
+<tr><td>ServerType Mongos</td><td>Set topology type to Sharded</td><td>no-op</td><td><a href="#remove">remove</a></td><td><a href="#remove">remove</a> and <a href="#checkifhasprimary">checkIfHasPrimary</a></td></tr>
+<tr><td>ServerType RSPrimary</td><td>Set topology type to ReplicaSetWithPrimary then <a href="#updatersfromprimary">updateRSFromPrimary</a></td><td><a href="#remove">remove</a></td><td>Set topology type to ReplicaSetWithPrimary then <a href="#updatersfromprimary">updateRSFromPrimary</a></td><td><a href="#updatersfromprimary">updateRSFromPrimary</a></td></tr>
+<tr><td>ServerType RSSecondary</td><td>Set topology type to ReplicaSetNoPrimary then <a href="#updaterswithoutprimary">updateRSWithoutPrimary</a></td><td><a href="#remove">remove</a></td><td><a href="#updaterswithoutprimary">updateRSWithoutPrimary</a></td><td><a href="#updaterswithprimaryfrommember">updateRSWithPrimaryFromMember</a></td></tr>
+<tr><td>ServerType RSArbiter</td><td>Set topology type to ReplicaSetNoPrimary then <a href="#updaterswithoutprimary">updateRSWithoutPrimary</a></td><td><a href="#remove">remove</a></td><td><a href="#updaterswithoutprimary">updateRSWithoutPrimary</a></td><td><a href="#updaterswithprimaryfrommember">updateRSWithPrimaryFromMember</a></td></tr>
+<tr><td>ServerType RSOther</td><td>Set topology type to ReplicaSetNoPrimary then <a href="#updaterswithoutprimary">updateRSWithoutPrimary</a></td><td><a href="#remove">remove</a></td><td><a href="#updaterswithoutprimary">updateRSWithoutPrimary</a></td><td><a href="#updaterswithprimaryfrommember">updateRSWithPrimaryFromMember</a></td></tr>
+<tr><td>ServerType RSGhost</td><td>no-op<sup class="footnote-reference"><a href="#2">2</a></sup></td><td><a href="#remove">remove</a></td><td>no-op</td><td><a href="#checkifhasprimary">checkIfHasPrimary</a></td></tr>
+</tbody></table>
+</div>
+<h5 id="topologytype-explanations"><a class="header" href="#topologytype-explanations">TopologyType explanations</a></h5>
+<p>This subsection complements the <a href="#topologytype-table">TopologyType table</a> with prose explanations of the TopologyTypes
+(besides Single and LoadBalanced).</p>
+<p><strong>TopologyType Unknown</strong></p>
+<p>A starting state.</p>
+<p><strong>Actions</strong>:</p>
+<ul>
+<li>If the incoming ServerType is Unknown (that is, the hello or legacy hello call failed), keep the server in
+TopologyDescription.servers. The TopologyType remains Unknown.</li>
+<li>The
+<a href="#topologytype-remains-unknown-when-an-rsghost-is-discovered">TopologyType remains Unknown when an RSGhost is discovered</a>,
+too.</li>
+<li>If the type is Standalone, run <a href="#updateunknownwithstandalone">updateUnknownWithStandalone</a>.</li>
+<li>If the type is Mongos, set the TopologyType to Sharded.</li>
+<li>If the type is RSPrimary, record its setName and call <a href="#updatersfromprimary">updateRSFromPrimary</a>.</li>
+<li>If the type is RSSecondary, RSArbiter or RSOther, record its setName, set the TopologyType to ReplicaSetNoPrimary, and
+call <a href="#updaterswithoutprimary">updateRSWithoutPrimary</a>.</li>
+</ul>
+<p><strong>TopologyType Sharded</strong></p>
+<p>A steady state. Connected to one or more mongoses.</p>
+<p><strong>Actions</strong>:</p>
+<ul>
+<li>If the server is Unknown or Mongos, keep it.</li>
+<li>Remove others.</li>
+</ul>
+<p><strong>TopologyType ReplicaSetNoPrimary</strong></p>
+<p>A starting state. The topology is definitely a replica set, but no primary is known.</p>
+<p><strong>Actions</strong>:</p>
+<ul>
+<li>Keep Unknown servers.</li>
+<li>Keep RSGhost servers: they are members of some replica set, perhaps this one, and may recover. (See
+<a href="#rsghost-and-rsother">RSGhost and RSOther</a>.)</li>
+<li>Remove any Standalones or Mongoses.</li>
+<li>If the type is RSPrimary call <a href="#updatersfromprimary">updateRSFromPrimary</a>.</li>
+<li>If the type is RSSecondary, RSArbiter or RSOther, run <a href="#updaterswithoutprimary">updateRSWithoutPrimary</a>.</li>
+</ul>
+<p><strong>TopologyType ReplicaSetWithPrimary</strong></p>
+<p>A steady state. The primary is known.</p>
+<p><strong>Actions</strong>:</p>
+<ul>
+<li>If the server type is Unknown, keep it, and run <a href="#checkifhasprimary">checkIfHasPrimary</a>.</li>
+<li>Keep RSGhost servers: they are members of some replica set, perhaps this one, and may recover. (See
+<a href="#rsghost-and-rsother">RSGhost and RSOther</a>.) Run <a href="#checkifhasprimary">checkIfHasPrimary</a>.</li>
+<li>Remove any Standalones or Mongoses and run <a href="#checkifhasprimary">checkIfHasPrimary</a>.</li>
+<li>If the type is RSPrimary run <a href="#updatersfromprimary">updateRSFromPrimary</a>.</li>
+<li>If the type is RSSecondary, RSArbiter or RSOther, run <a href="#updaterswithprimaryfrommember">updateRSWithPrimaryFromMember</a>.</li>
+</ul>
+<h4 id="actions"><a class="header" href="#actions">Actions</a></h4>
+<h5 id="updateunknownwithstandalone"><a class="header" href="#updateunknownwithstandalone">updateUnknownWithStandalone</a></h5>
+<p>This subroutine is executed with the ServerDescription from Standalone when the TopologyType is Unknown:</p>
+<pre><code class="language-python">if description.address not in topologyDescription.servers:
+    return
+
+if settings.seeds has one seed:
+    topologyDescription.type = Single
+else:
+    remove this server from topologyDescription and stop monitoring it
+</code></pre>
+<p>See
+<a href="#topologytype-remains-unknown-when-one-of-the-seeds-is-a-standalone">TopologyType remains Unknown when one of the seeds is a Standalone</a>.</p>
+<p><span id="updateRSWithoutPrimary"></span></p>
+<h5 id="updaterswithoutprimary"><a class="header" href="#updaterswithoutprimary">updateRSWithoutPrimary</a></h5>
+<p>This subroutine is executed with the ServerDescription from an RSSecondary, RSArbiter, or RSOther when the TopologyType
+is ReplicaSetNoPrimary:</p>
+<pre><code class="language-python">if description.address not in topologyDescription.servers:
+    return
+
+if topologyDescription.setName is null:
+    topologyDescription.setName = description.setName
+
+else if topologyDescription.setName != description.setName:
+    remove this server from topologyDescription and stop monitoring it
+    return
+
+for each address in description's "hosts", "passives", and "arbiters":
+    if address is not in topologyDescription.servers:
+        add new default ServerDescription of type "Unknown"
+        begin monitoring the new server
+
+if description.primary is not null:
+    find the ServerDescription in topologyDescription.servers whose
+    address equals description.primary
+
+    if its type is Unknown, change its type to PossiblePrimary
+
+if description.address != description.me:
+    remove this server from topologyDescription and stop monitoring it
+    return
+</code></pre>
+<p>Unlike <a href="#updatersfromprimary">updateRSFromPrimary</a>, this subroutine does <strong>not</strong> remove any servers from the
+TopologyDescription based on the list of servers in the "hosts" field of the hello or legacy hello response. The only
+server that might be removed is the server itself that the hello or legacy hello response is from.</p>
+<p>The special handling of description.primary ensures that a single-threaded client <a href="#scan">scans</a> the possible primary
+before other members.</p>
+<p>See <a href="#replica-set-monitoring-with-and-without-a-primary">replica set monitoring with and without a primary</a>.</p>
+<h5 id="updaterswithprimaryfrommember"><a class="header" href="#updaterswithprimaryfrommember">updateRSWithPrimaryFromMember</a></h5>
+<p>This subroutine is executed with the ServerDescription from an RSSecondary, RSArbiter, or RSOther when the TopologyType
+is ReplicaSetWithPrimary:</p>
+<pre><code class="language-python">if description.address not in topologyDescription.servers:
+    # While we were checking this server, another thread heard from the
+    # primary that this server is not in the replica set.
+    return
+
+# SetName is never null here.
+if topologyDescription.setName != description.setName:
+    remove this server from topologyDescription and stop monitoring it
+    checkIfHasPrimary()
+    return
+
+if description.address != description.me:
+    remove this server from topologyDescription and stop monitoring it
+    checkIfHasPrimary()
+    return
+
+# Had this member been the primary?
+if there is no primary in topologyDescription.servers:
+    topologyDescription.type = ReplicaSetNoPrimary
+
+    if description.primary is not null:
+        find the ServerDescription in topologyDescription.servers whose
+        address equals description.primary
+
+        if its type is Unknown, change its type to PossiblePrimary
+</code></pre>
+<p>The special handling of description.primary ensures that a single-threaded client <a href="#scan">scans</a> the possible primary
+before other members.</p>
+<p><span id="updateRSFromPrimary"></span></p>
+<h5 id="updatersfromprimary"><a class="header" href="#updatersfromprimary">updateRSFromPrimary</a></h5>
+<p>This subroutine is executed with a ServerDescription of type RSPrimary:</p>
+<pre><code class="language-python">if serverDescription.address not in topologyDescription.servers:
+    return
+
+if topologyDescription.setName is null:
+    topologyDescription.setName = serverDescription.setName
+
+else if topologyDescription.setName != serverDescription.setName:
+    # We found a primary but it doesn't have the setName
+    # provided by the user or previously discovered.
+    remove this server from topologyDescription and stop monitoring it
+    checkIfHasPrimary()
+    return
+
+# Election ids are ObjectIds, see
+# see "Using electionId and setVersion to detect stale primaries"
+# for comparison rules.
+
+if serverDescription.maxWireVersion &gt;= 17:  # MongoDB 6.0+
+    # Null values for both electionId and setVersion are always considered less than
+    if serverDescription.electionId &gt; topologyDescription.maxElectionId or (
+        serverDescription.electionId == topologyDescription.maxElectionId
+        and serverDescription.setVersion &gt;= topologyDescription.maxSetVersion
+    ):
+        topologyDescription.maxElectionId = serverDescription.electionId
+        topologyDescription.maxSetVersion = serverDescription.setVersion
+    else:
+        # Stale primary.
+        # replace serverDescription with a default ServerDescription of type "Unknown"
+        checkIfHasPrimary()
+        return
+else:
+    # Maintain old comparison rules, namely setVersion is checked before electionId
+    if serverDescription.setVersion is not null and serverDescription.electionId is not null:
+        if (
+            topologyDescription.maxSetVersion is not null
+            and topologyDescription.maxElectionId is not null
+            and (
+                topologyDescription.maxSetVersion &gt; serverDescription.setVersion
+                or (
+                    topologyDescription.maxSetVersion == serverDescription.setVersion
+                    and topologyDescription.maxElectionId &gt; serverDescription.electionId
+                )
+            )
+        ):
+            # Stale primary.
+            # replace serverDescription with a default ServerDescription of type "Unknown"
+            checkIfHasPrimary()
+            return
+
+        topologyDescription.maxElectionId = serverDescription.electionId
+
+    if serverDescription.setVersion is not null and (
+        topologyDescription.maxSetVersion is null
+        or serverDescription.setVersion &gt; topologyDescription.maxSetVersion
+    ):
+        topologyDescription.maxSetVersion = serverDescription.setVersion
+
+
+for each server in topologyDescription.servers:
+    if server.address != serverDescription.address:
+        if server.type is RSPrimary:
+            # See note below about invalidating an old primary.
+            replace the server with a default ServerDescription of type "Unknown"
+
+for each address in serverDescription's "hosts", "passives", and "arbiters":
+    if address is not in topologyDescription.servers:
+        add new default ServerDescription of type "Unknown"
+        begin monitoring the new server
+
+for each server in topologyDescription.servers:
+    if server.address not in serverDescription's "hosts", "passives", or "arbiters":
+        remove the server and stop monitoring it
+
+checkIfHasPrimary()
+</code></pre>
+<p>A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
+should be none or one) and replaces its description with a default ServerDescription of type "Unknown." A multi-threaded
+client MUST <a href="server-monitoring.html#requesting-an-immediate-check">request an immediate check</a> for that server as soon as
+possible.</p>
+<p>If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
+the connections are all bad because the old primary has closed its sockets. If the old primary server version is 4.2 or
+newer, the client MUST NOT clear its connection pool for the old primary.</p>
+<p>See <a href="#replica-set-monitoring-with-and-without-a-primary">replica set monitoring with and without a primary</a>.</p>
+<p>If the server is primary with an obsolete electionId or setVersion, it is likely a stale primary that is going to step
+down. Mark it Unknown and let periodic monitoring detect when it becomes secondary. See
+<a href="#using-electionid-and-setversion-to-detect-stale-primaries">using electionId and setVersion to detect stale primaries</a>.</p>
+<p>A note on checking "me": Unlike <code>updateRSWithPrimaryFromMember</code>, there is no need to remove the server if the address is
+not equal to "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the
+server will already have been removed.</p>
+<h5 id="checkifhasprimary"><a class="header" href="#checkifhasprimary">checkIfHasPrimary</a></h5>
+<p>Set TopologyType to ReplicaSetWithPrimary if there is an RSPrimary in TopologyDescription.servers, otherwise set it to
+ReplicaSetNoPrimary.</p>
+<p>For example, if the TopologyType is ReplicaSetWithPrimary and the client is processing a new ServerDescription of type
+Unknown, that could mean the primary just disconnected, so checkIfHasPrimary must run to check if the TopologyType
+should become ReplicaSetNoPrimary.</p>
+<p>Another example is if the client first reaches the primary via its external IP, but the response's host list includes
+only internal IPs. In that case the client adds the primary's internal IP to the TopologyDescription and begins
+monitoring it, and removes the external IP. Right after removing the external IP from the description, the TopologyType
+MUST be ReplicaSetNoPrimary, since no primary is available at this moment.</p>
+<h5 id="remove"><a class="header" href="#remove">remove</a></h5>
+<p>Remove the server from TopologyDescription.servers and stop monitoring it.</p>
+<p>In multi-threaded clients, a monitor may be currently checking this server and may not immediately abort. Once the check
+completes, this server's hello or legacy hello outcome MUST be ignored, and the monitor SHOULD halt.</p>
+<h4 id="logical-session-timeout"><a class="header" href="#logical-session-timeout">Logical Session Timeout</a></h4>
+<p>Whenever a client updates the TopologyDescription from a hello or legacy hello response, it MUST set
+TopologyDescription.logicalSessionTimeoutMinutes to the smallest logicalSessionTimeoutMinutes value among
+ServerDescriptions of all data-bearing server types. If any have a null logicalSessionTimeoutMinutes, then
+TopologyDescription.logicalSessionTimeoutMinutes MUST be set to null.</p>
+<p>See the Driver Sessions Spec for the purpose of this value.</p>
+<h3 id="connection-pool-management"><a class="header" href="#connection-pool-management">Connection Pool Management</a></h3>
+<p>For drivers that support connection pools, after a server check is completed successfully, if the server is determined
+to be <a href="server-discovery-and-monitoring.html#data-bearing-server-type">data-bearing</a> or a
+<a href="server-discovery-and-monitoring.html#general-requirements">direct connection</a> to the server is requested, and does not
+already have a connection pool, the driver MUST create the connection pool for the server. Additionally, if a driver
+implements a CMAP compliant connection pool, the server's pool (even if it already existed) MUST be marked as "ready".
+See the <a href="server-monitoring.html">Server Monitoring spec</a> for more information.</p>
+<p>Clearing the connection pool for a server MUST be synchronized with the update to the corresponding ServerDescription
+(e.g. by holding the lock on the TopologyDescription when clearing the pool). This prevents a possible race between the
+monitors and application threads. See
+<a href="#why-synchronize-clearing-a-servers-pool-with-updating-the-topology">Why synchronize clearing a server's pool with updating the topology?</a>
+for more information.</p>
+<h3 id="error-handling"><a class="header" href="#error-handling">Error handling</a></h3>
+<h4 id="network-error-during-server-check"><a class="header" href="#network-error-during-server-check">Network error during server check</a></h4>
+<p>See error handling in the <a href="server-monitoring.html">Server Monitoring spec</a>.</p>
+<h4 id="application-errors"><a class="header" href="#application-errors">Application errors</a></h4>
+<p>When processing a network or command error, clients MUST first check the error's generation number. If the error's
+generation number is equal to the pool's generation number then error handling MUST continue according to
+<a href="#network-error-when-reading-or-writing">Network error when reading or writing</a> or
+<a href="#not-writable-primary-and-node-is-recovering">"not writable primary" and "node is recovering"</a>. Otherwise, the error is
+considered stale and the client MUST NOT update any topology state. (See
+<a href="#why-ignore-errors-based-on-cmaps-generation-number">Why ignore errors based on CMAP's generation number?</a>)</p>
+<h5 id="error-handling-pseudocode"><a class="header" href="#error-handling-pseudocode">Error handling pseudocode</a></h5>
+<p>Application operations can fail in various places, for example:</p>
+<ul>
+<li>A network error, network timeout, or command error may occur while establishing a new connection. Establishing a
+connection includes the MongoDB handshake and completing authentication (if configured).</li>
+<li>A network error or network timeout may occur while reading or writing to an established connection.</li>
+<li>A command error may be returned from the server.</li>
+<li>A "writeConcernError" field may be included in the command response.</li>
+</ul>
+<p>Depending on the context, these errors may update SDAM state by marking the server Unknown and may clear the server's
+connection pool. Some errors also require other side effects, like cancelling a check or requesting an immediate check.
+Drivers may use the following pseudocode to guide their implementation:</p>
+<pre><code class="language-python">def handleError(error):
+    address = error.address
+    topologyVersion = error.topologyVersion
+
+    with client.lock:
+        # Ignore stale errors based on generation and topologyVersion.
+        if isStaleError(client.topologyDescription, error)
+            return
+
+        if isStateChangeError(error):
+            # Don't mark server unknown in load balanced mode.
+            if type != LoadBalanced
+              # Mark the server Unknown
+              unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
+              onServerDescriptionChanged(unknown, connection pool for server)
+            if isShutdown(code) or (error was from &lt;4.2):
+              # the pools must only be cleared while the lock is held.
+              if type == LoadBalanced:
+                clear connection pool for serviceId
+              else:
+                clear connection pool for server
+            if multi-threaded:
+                request immediate check
+            else:
+                # Check right now if this is "not writable primary", since it might be a
+                # useful secondary. If it's "node is recovering" leave it for the
+                # next full scan.
+                if isNotWritablePrimary(error):
+                    check failing server
+        elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+            if type != LoadBalanced
+              # Mark the server Unknown
+              unknown = new ServerDescription(type=Unknown, error=error)
+              onServerDescriptionChanged(unknown, connection pool for server)
+              clear connection pool for server
+            else
+              if serviceId
+                clear connection pool for serviceId
+            # Cancel inprogress check
+            cancel monitor check
+
+def isStaleError(topologyDescription, error):
+    currentServer = topologyDescription.servers[server.address]
+    currentGeneration = currentServer.pool.generation
+    generation = get connection generation from error
+    if generation &lt; currentGeneration:
+        # Stale generation number.
+        return True
+
+    currentTopologyVersion = currentServer.topologyVersion
+    # True if the current error's topologyVersion is greater than the server's
+    # We use &gt;= instead of &gt; because any state change should result in a new topologyVersion
+    return compareTopologyVersion(currentTopologyVersion, error.commandResponse.get("topologyVersion")) &gt;= 0
+</code></pre>
+<p>The following pseudocode checks a response for a "not master" or "node is recovering" error:</p>
+<pre><code class="language-python">recoveringCodes = [11600, 11602, 13436, 189, 91]
+notWritablePrimaryCodes = [10107, 13435, 10058]
+shutdownCodes = [11600, 91]
+
+def isRecovering(message, code):
+    if code:
+        if code in recoveringCodes:
+            return true
+    else:
+        # if no code, use the error message.
+        return ("not master or secondary" in message
+            or "node is recovering" in message)
+
+def isNotWritablePrimary(message, code):
+    if code:
+        if code in notWritablePrimaryCodes:
+          return true
+    else:
+      # if no code, use the error message.
+      if isRecovering(message, None):
+          return false
+      return ("not master" in message)
+
+def isShutdown(code):
+    if code and code in shutdownCodes:
+        return true
+    return false
+
+def isStateChangeError(error):
+    message = error.errmsg
+    code = error.code
+    return isRecovering(message, code) or isNotWritablePrimary(message, code)
+
+def parseGle(response):
+    if "err" in response:
+        handleError(CommandError(response, response["err"], response["code"]))
+
+# Parse response to any command besides getLastError.
+def parseCommandResponse(response):
+    if not response["ok"]:
+        handleError(CommandError(response, response["errmsg"], response["code"]))
+    else if response["writeConcernError"]:
+        wce = response["writeConcernError"]
+        handleError(WriteConcernError(response, wce["errmsg"], wce["code"]))
+
+def parseQueryResponse(response):
+    if the "QueryFailure" bit is set in response flags:
+        handleError(CommandError(response, response["$err"], response["code"]))
+</code></pre>
+<p>The following sections describe the handling of different classes of application errors in detail including network
+errors, network timeout errors, state change errors, and authentication errors.</p>
+<h5 id="network-error-when-reading-or-writing"><a class="header" href="#network-error-when-reading-or-writing">Network error when reading or writing</a></h5>
+<p>To describe how the client responds to network errors during application operations, we distinguish two phases of
+connecting to a server and using it for application operations:</p>
+<ul>
+<li><em>Before the handshake completes</em>: the client establishes a new connection to the server and completes an initial
+handshake by calling "hello" or legacy hello and reading the response, and optionally completing authentication</li>
+<li><em>After the handshake completes</em>: the client uses the established connection for application operations</li>
+</ul>
+<p>If there is a network error or timeout on the connection before the handshake completes, the client MUST replace the
+server's description with a default ServerDescription of type Unknown when the TopologyType is not LoadBalanced, and
+fill the ServerDescription's error field with useful information.</p>
+<p>If there is a network error or timeout on the connection before the handshake completes, and the TopologyType is
+LoadBalanced, the client MUST keep the ServerDescription as LoadBalancer.</p>
+<p>If there is a network timeout on the connection after the handshake completes, the client MUST NOT mark the server
+Unknown. (A timeout may indicate a slow operation on the server, rather than an unavailable server.) If, however, there
+is some other network error on the connection after the handshake completes, the client MUST replace the server's
+description with a default ServerDescription of type Unknown if the TopologyType is not LoadBalanced, and fill the
+ServerDescription's error field with useful information, the same as if an error or timeout occurred before the
+handshake completed.</p>
+<p>When the client marks a server Unknown due to a network error or timeout, the Unknown ServerDescription MUST be sent
+through the same process for <a href="#updating-the-topologydescription">updating the TopologyDescription</a> as if it had been a
+failed hello or legacy hello outcome from a server check: for example, if the TopologyType is ReplicaSetWithPrimary and
+a write to the RSPrimary server fails because of a network error (other than timeout), then a new ServerDescription is
+created for the primary, with type Unknown, and the client executes the proper subroutine for an Unknown server when the
+TopologyType is ReplicaSetWithPrimary: referring to the table above we see the subroutine is
+<a href="#checkifhasprimary">checkIfHasPrimary</a>. The result is the TopologyType changes to ReplicaSetNoPrimary. See the test
+scenario called "Network error writing to primary".</p>
+<p>The client MUST close all idle sockets in its connection pool for the server: if one socket is bad, it is likely that
+all are.</p>
+<p>Clients MUST NOT request an immediate check of the server; since application sockets are used frequently, a network
+error likely means the server has just become unavailable, so an immediate refresh is likely to get a network error,
+too.</p>
+<p>The server will not remain Unknown forever. It will be refreshed by the next periodic check or, if an application
+operation needs the server sooner than that, then a re-check will be triggered by the server selection algorithm.</p>
+<h5 id="not-writable-primary-and-node-is-recovering"><a class="header" href="#not-writable-primary-and-node-is-recovering">"not writable primary" and "node is recovering"</a></h5>
+<p>These errors are detected from a getLastError response, write command response, or query response. Clients MUST check if
+the server error is a "node is recovering" error or a "not writable primary" error.</p>
+<p>If the response includes an error code, it MUST be solely used to determine if error is a "node is recovering" or "not
+writable primary" error. Clients MUST match the errors by the numeric error code and not by the code name, as the code
+name can change from one server version to the next.</p>
+<p>The following error codes indicate a replica set member is temporarily unusable. These are called "node is recovering"
+errors:</p>
+<div class="table-wrapper"><table><thead><tr><th>Error Name</th><th>Error Code</th></tr></thead><tbody>
+<tr><td>InterruptedAtShutdown</td><td>11600</td></tr>
+<tr><td>InterruptedDueToReplStateChange</td><td>11602</td></tr>
+<tr><td>NotPrimaryOrSecondary</td><td>13436</td></tr>
+<tr><td>PrimarySteppedDown</td><td>189</td></tr>
+<tr><td>ShutdownInProgress</td><td>91</td></tr>
+</tbody></table>
+</div>
+<p>And the following error codes indicate a "not writable primary" error:</p>
+<div class="table-wrapper"><table><thead><tr><th>Error Name</th><th>Error Code</th></tr></thead><tbody>
+<tr><td>NotWritablePrimary</td><td>10107</td></tr>
+<tr><td>NotPrimaryNoSecondaryOk</td><td>13435</td></tr>
+<tr><td>LegacyNotPrimary</td><td>10058</td></tr>
+</tbody></table>
+</div>
+<p>Clients MUST fallback to checking the error message if and only if the response does not include an error code. The
+error is considered a "node is recovering" error if the substrings "node is recovering" or "not master or secondary" are
+anywhere in the error message. Otherwise, if the substring "not master" is in the error message it is a "not writable
+primary" error.</p>
+<p>Additionally, if the response includes a write concern error, then the code and message of the write concern error MUST
+be checked the same way a response error is checked above.</p>
+<p>Errors contained within the writeErrors field MUST NOT be checked.</p>
+<p>See the test scenario called "parsing 'not writable primary' and 'node is recovering' errors" for example response
+documents.</p>
+<p>When the client sees a "not writable primary" or "node is recovering" error and the error's
+<a href="#topologyversion">topologyVersion</a> is strictly greater than the current ServerDescription's topologyVersion it MUST
+replace the server's description with a ServerDescription of type Unknown. Clients MUST store useful information in the
+new ServerDescription's error field, including the error message from the server. Clients MUST store the error's
+<a href="#topologyversion">topologyVersion</a> field in the new ServerDescription if present. (See
+<a href="#what-is-the-purpose-of-topologyversion">What is the purpose of topologyVersion?</a>)</p>
+<p>Multi-threaded and asynchronous clients MUST
+<a href="server-monitoring.html#requesting-an-immediate-check">request an immediate check</a> of the server. Unlike in the "network
+error" scenario above, a "not writable primary" or "node is recovering" error means the server is available but the
+client is wrong about its type, thus an immediate re-check is likely to provide useful information.</p>
+<p>For single-threaded clients, in the case of a "not writable primary" or "node is shutting down" error, the client MUST
+mark the topology as "stale" so the next server selection scans all servers. For a "node is recovering" error,
+single-threaded clients MUST NOT mark the topology as "stale". If a node is recovering for some time, an immediate scan
+may not gain useful information.</p>
+<p>The following subset of "node is recovering" errors is defined to be "node is shutting down" errors:</p>
+<div class="table-wrapper"><table><thead><tr><th>Error Name</th><th>Error Code</th></tr></thead><tbody>
+<tr><td>InterruptedAtShutdown</td><td>11600</td></tr>
+<tr><td>ShutdownInProgress</td><td>91</td></tr>
+</tbody></table>
+</div>
+<p>When handling a "not writable primary" or "node is recovering" error, the client MUST clear the server's connection pool
+if and only if the error is "node is shutting down" or the error originated from server version &lt; 4.2.</p>
+<p>(See
+<a href="#when-does-a-client-see-not-writable-primary-or-node-is-recovering">when does a client see "not writable primary" or "node is recovering"?</a>,
+<a href="#use-error-messages-to-detect-not-master-and-node-is-recovering">use error messages to detect "not master" and "node is recovering"</a>,
+and <a href="#other-transient-errors">other transient errors</a> and
+<a href="#why-close-connections-when-a-node-is-shutting-down">Why close connections when a node is shutting down?</a>.)</p>
+<h5 id="authentication-errors"><a class="header" href="#authentication-errors">Authentication errors</a></h5>
+<p>If the authentication handshake fails for a connection, drivers MUST mark the server Unknown and clear the server's
+connection pool if the TopologyType is not LoadBalanced. (See
+<a href="#why-mark-a-server-unknown-after-an-auth-error">Why mark a server Unknown after an auth error?</a>)</p>
+<h3 id="monitoring-sdam-events"><a class="header" href="#monitoring-sdam-events">Monitoring SDAM events</a></h3>
+<p>The required driver specification for providing lifecycle hooks into server discovery and monitoring for applications to
+consume can be found in the <a href="server-discovery-and-monitoring-logging-and-monitoring.html">SDAM Monitoring Specification</a>.</p>
+<h3 id="implementation-notes"><a class="header" href="#implementation-notes">Implementation notes</a></h3>
+<p>This section intends to provide generous guidance to driver authors. It is complementary to the reference
+implementations. Words like "should", "may", and so on are used more casually here.</p>
+<p>See also, the implementation notes in the <a href="server-monitoring.html">Server Monitoring spec</a>.</p>
+<h4 id="multi-threaded-or-asynchronous-server-selection"><a class="header" href="#multi-threaded-or-asynchronous-server-selection">Multi-threaded or asynchronous server selection</a></h4>
+<p>While no suitable server is available for an operation,
+<a href="#the-client-must-re-check-all-servers-every-minheartbeatfrequencyms">the client MUST re-check all servers every minHeartbeatFrequencyMS</a>.
+(See <a href="server-monitoring.html#requesting-an-immediate-check">requesting an immediate check</a>.)</p>
+<h4 id="single-threaded-server-selection"><a class="header" href="#single-threaded-server-selection">Single-threaded server selection</a></h4>
+<p>When a client that uses <a href="server-monitoring.html#single-threaded-monitoring">single-threaded monitoring</a> fails to select a
+suitable server for any operation, it <a href="#scan">scans</a> the servers, then attempts selection again, to see if the scan
+discovered suitable servers. It repeats, waiting <a href="#minheartbeatfrequencyms">minHeartbeatFrequencyMS</a> after each scan,
+until a timeout.</p>
+<h4 id="documentation"><a class="header" href="#documentation">Documentation</a></h4>
+<h5 id="giant-seed-lists"><a class="header" href="#giant-seed-lists">Giant seed lists</a></h5>
+<p>Drivers' manuals should warn against huge seed lists, since it will slow initialization for single-threaded clients and
+generate load for multi-threaded and asynchronous drivers.</p>
+<h4 id="multi-threaded"><a class="header" href="#multi-threaded">Multi-threaded</a></h4>
+<h4 id="warning-about-the-maxwireversion-from-a-monitors-hello-or-legacy-hello-response"><a class="header" href="#warning-about-the-maxwireversion-from-a-monitors-hello-or-legacy-hello-response">Warning about the maxWireVersion from a monitor's hello or legacy hello response</a></h4>
+<p>Clients consult some fields from a server's hello or legacy hello response to decide how to communicate with it:</p>
+<ul>
+<li>maxWireVersion</li>
+<li>maxBsonObjectSize</li>
+<li>maxMessageSizeBytes</li>
+<li>maxWriteBatchSize</li>
+</ul>
+<p>It is tempting to take these values from the last hello or legacy hello response a <em>monitor</em> received and store them in
+the ServerDescription, but this is an anti-pattern. Multi-threaded and asynchronous clients that do so are prone to
+several classes of race, for example:</p>
+<ul>
+<li>Setup: A MongoDB 3.0 Standalone with authentication enabled, the client must log in with SCRAM-SHA-1.</li>
+<li>The monitor thread discovers the server and stores maxWireVersion on the ServerDescription</li>
+<li>An application thread wants a socket, selects the Standalone, and is about to check the maxWireVersion on its
+ServerDescription when...</li>
+<li>The monitor thread gets disconnected from server and marks it Unknown, with default maxWireVersion of 0.</li>
+<li>The application thread resumes, creates a socket, and attempts to log in using MONGODB-CR, since maxWireVersion is
+<em>now</em> reported as 0.</li>
+<li>Authentication fails, the server requires SCRAM-SHA-1.</li>
+</ul>
+<p>Better to call hello or legacy hello for each new socket, as required by the <a href="../auth/auth.html">Auth Spec</a>, and use the
+hello or legacy hello response associated with that socket for maxWireVersion, maxBsonObjectSize, etc.: all the fields
+required to correctly communicate with the server.</p>
+<p>The hello or legacy hello responses received by monitors determine if the topology as a whole is compatible with the
+driver, and which servers are suitable for selection. The monitors' responses should not be used to determine how to
+format wire protocol messages to the servers.</p>
+<h5 id="immutable-data"><a class="header" href="#immutable-data">Immutable data</a></h5>
+<p>Multi-threaded drivers should treat ServerDescriptions and TopologyDescriptions as immutable: the client replaces them,
+rather than modifying them, in response to new information about the topology. Thus readers of these data structures can
+simply acquire a reference to the current one and read it, without holding a lock that would block a monitor from making
+further updates.</p>
+<h5 id="process-one-hello-or-legacy-hello-outcome-at-a-time"><a class="header" href="#process-one-hello-or-legacy-hello-outcome-at-a-time">Process one hello or legacy hello outcome at a time</a></h5>
+<p>Although servers are checked in parallel, the function that actually creates the new TopologyDescription should be
+synchronized so only one thread can run it at a time.</p>
+<h5 id="replacing-the-topologydescription"><a class="header" href="#replacing-the-topologydescription">Replacing the TopologyDescription</a></h5>
+<p>Drivers may use the following pseudocode to guide their implementation. The client object has a lock and a condition
+variable. It uses the lock to ensure that only one new ServerDescription is processed at a time, and it must be acquired
+before invoking this function. Once the client has taken the lock it must do no I/O:</p>
+<pre><code class="language-python">def onServerDescriptionChanged(server, pool):
+    # "server" is the new ServerDescription.
+    # "pool" is the pool associated with the server
+
+    if server.address not in client.topologyDescription.servers:
+        # The server was once in the topologyDescription, otherwise
+        # we wouldn't have been monitoring it, but an intervening
+        # state-change removed it. E.g., we got a host list from
+        # the primary that didn't include this server.
+        return
+
+    newTopologyDescription = client.topologyDescription.copy()
+
+    # Ignore this update if the current topologyVersion is greater than
+    # the new ServerDescription's.
+    if isStaleServerDescription(td, server):
+        return
+
+    # Replace server's previous description.
+    address = server.address
+    newTopologyDescription.servers[address] = server
+
+    # for drivers that implement CMAP, mark the connection pool as ready after a successful check
+    if (server.type in (Mongos, RSPrimary, RSSecondary, Standalone, LoadBalanced))
+            or (server.type != Unknown and newTopologyDescription.type == Single):
+        pool.ready()
+
+    take any additional actions,
+    depending on the TopologyType and server...
+
+    # Replace TopologyDescription and notify waiters.
+    client.topologyDescription = newTopologyDescription
+    client.condition.notifyAll()
+
+def compareTopologyVersion(tv1, tv2):
+    """Return -1 if tv1&lt;tv2, 0 if tv1==tv2, 1 if tv1&gt;tv2"""
+    if tv1 is None or tv2 is None:
+        # Assume greater.
+        return -1
+    pid1 = tv1['processId']
+    pid2 = tv2['processId']
+    if pid1 == pid2:
+        counter1 = tv1['counter']
+        counter2 = tv2['counter']
+        if counter1 == counter2:
+            return 0
+        elif counter1 &lt; counter2:
+            return -1
+        else:
+            return 1
+    else:
+        # Assume greater.
+        return -1
+
+def isStaleServerDescription(topologyDescription, server):
+    # True if the new ServerDescription's topologyVersion is greater than
+    # or equal to the current server's.
+    currentServer = topologyDescription.servers[server.address]
+    currentTopologyVersion = currentServer.topologyVersion
+    return compareTopologyVersion(currentTopologyVersion, server.topologyVersion) &gt; 0
+</code></pre>
+<p>Notifying the condition unblocks threads waiting in the server-selection loop for a suitable server to be discovered.</p>
+<blockquote>
+<p>[!NOTE]
+The Java driver uses a CountDownLatch instead of a condition variable, and it atomically swaps the old and new
+CountDownLatches so it does not need "client.lock". It does, however, use a lock to ensure that only one thread runs
+onServerDescriptionChanged at a time.</p>
+</blockquote>
+<h2 id="rationale"><a class="header" href="#rationale">Rationale</a></h2>
+<h3 id="clients-do-no-io-in-the-constructor"><a class="header" href="#clients-do-no-io-in-the-constructor">Clients do no I/O in the constructor</a></h3>
+<p>An alternative proposal was to distinguish between "discovery" and "monitoring". When discovery begins, the client
+checks all its seeds, and discovery is complete once all servers have been checked, or after some maximum time.
+Application operations cannot proceed until discovery is complete.</p>
+<p>If the discovery phase is distinct, then single- and multi-threaded drivers could accomplish discovery in the
+constructor, and throw an exception from the constructor if the deployment is unavailable or misconfigured. This is
+consistent with prior behavior for many drivers. It will surprise some users that the constructor now succeeds, but all
+operations fail.</p>
+<p>Similarly for misconfigured seed lists: the client may discover a mix of mongoses and standalones, or find multiple
+replica set names. It may surprise some users that the constructor succeeds and the client attempts to proceed with a
+compatible subset of the deployment.</p>
+<p>Nevertheless, this spec prohibits I/O in the constructor for the following reasons:</p>
+<h4 id="common-case"><a class="header" href="#common-case">Common case</a></h4>
+<p>In the common case, the deployment is available and usable. This spec favors allowing operations to proceed as soon as
+possible in the common case, at the cost of surprising behavior in uncommon cases.</p>
+<h4 id="simplicity"><a class="header" href="#simplicity">Simplicity</a></h4>
+<p>It is simpler to omit a special discovery phase and treat all server <a href="#check">checks</a> the same.</p>
+<h4 id="consistency"><a class="header" href="#consistency">Consistency</a></h4>
+<p>Asynchronous clients cannot do I/O in a constructor, so it is consistent to prohibit I/O in other clients' constructors
+as well.</p>
+<h4 id="restarts"><a class="header" href="#restarts">Restarts</a></h4>
+<p>If clients can be constructed when the deployment is in some states but not in other states, it leads to an unfortunate
+scenario: When the deployment is passing through a strange state, long-running clients may keep working, but any clients
+restarted during this period fail.</p>
+<p>Say an administrator changes one replica set member's setName. Clients that are already constructed remove the bad
+member and stay usable, but if any client is restarted its constructor fails. Web servers that dynamically adjust their
+process pools will show particularly undesirable behavior.</p>
+<h3 id="heartbeatfrequencyms-defaults-to-10-seconds-or-60-seconds"><a class="header" href="#heartbeatfrequencyms-defaults-to-10-seconds-or-60-seconds">heartbeatFrequencyMS defaults to 10 seconds or 60 seconds</a></h3>
+<p>Many drivers have different values. The time has come to standardize. Lacking a rigorous methodology for calculating the
+best frequency, this spec chooses 10 seconds for multi-threaded or asynchronous drivers because some already use that
+value.</p>
+<p>Because scanning has a greater impact on the performance of single-threaded drivers, they MUST default to a longer
+frequency (60 seconds).</p>
+<p>An alternative is to check servers less and less frequently the longer they remain unchanged. This idea is rejected
+because it is a goal of this spec to answer questions about monitoring such as,</p>
+<ul>
+<li>"How rapidly can I rotate a replica set to a new set of hosts?"</li>
+<li>"How soon after I add a secondary will query load be rebalanced?"</li>
+<li>"How soon will a client notice a change in round trip time, or tags?"</li>
+</ul>
+<p>Having a constant monitoring frequency allows us to answer these questions simply and definitively. Losing the ability
+to answer these questions is not worth any minor gain in efficiency from a more complex scheduling method.</p>
+<h3 id="the-client-must-re-check-all-servers-every-minheartbeatfrequencyms"><a class="header" href="#the-client-must-re-check-all-servers-every-minheartbeatfrequencyms">The client MUST re-check all servers every minHeartbeatFrequencyMS</a></h3>
+<p>While an application is waiting to do an operation for which there is no suitable server, a multi-threaded client MUST
+re-check all servers very frequently. The slight cost is worthwhile in many scenarios. For example:</p>
+<ol>
+<li>A client and a MongoDB server are started simultaneously.</li>
+<li>The client checks the server before it begins listening, so the check fails.</li>
+<li>The client waits in the server-selection loop for the topology to change.</li>
+</ol>
+<p>In this state, the client should check the server very frequently, to give it ample opportunity to connect to the server
+before timing out in server selection.</p>
+<h3 id="no-knobs"><a class="header" href="#no-knobs">No knobs</a></h3>
+<p>This spec does not intend to introduce any new configuration options unless absolutely necessary.</p>
+<h3 id="the-client-must-monitor-arbiters"><a class="header" href="#the-client-must-monitor-arbiters">The client MUST monitor arbiters</a></h3>
+<p>Mongos 2.6 does not monitor arbiters, but it costs little to do so, and in the rare case that all data members are moved
+to new hosts in a short time, an arbiter may be the client's last hope to find the new replica set configuration.</p>
+<h3 id="only-support-replica-set-members-running-mongodb-162-or-later"><a class="header" href="#only-support-replica-set-members-running-mongodb-162-or-later">Only support replica set members running MongoDB 1.6.2 or later</a></h3>
+<p>Replica set members began reporting their setNames in that version. Supporting earlier versions is impractical.</p>
+<h3 id="topologytype-remains-unknown-when-an-rsghost-is-discovered"><a class="header" href="#topologytype-remains-unknown-when-an-rsghost-is-discovered">TopologyType remains Unknown when an RSGhost is discovered</a></h3>
+<p>If the TopologyType is Unknown and the client receives a hello or legacy hello response from
+an<a href="#rsghost-and-rsother">RSGhost</a>, the TopologyType could be set to ReplicaSetNoPrimary. However, an RSGhost does not
+report its setName, so the setName would still be unknown. This adds an additional state to the existing list:
+"TopologyType ReplicaSetNoPrimary <strong>and</strong> no setName." The additional state adds substantial complexity without any
+benefit, so this spec says clients MUST NOT change the TopologyType when an RSGhost is discovered.</p>
+<h3 id="topologytype-remains-unknown-when-one-of-the-seeds-is-a-standalone"><a class="header" href="#topologytype-remains-unknown-when-one-of-the-seeds-is-a-standalone">TopologyType remains Unknown when one of the seeds is a Standalone</a></h3>
+<p>If TopologyType is Unknown and there are multiple seeds, and one of them is discovered to be a standalone, it MUST be
+removed. The TopologyType remains Unknown.</p>
+<p>This rule supports the following common scenario:</p>
+<ol>
+<li>Servers A and B are in a replica set.</li>
+<li>A seed list with A and B is stored in a configuration file.</li>
+<li>An administrator removes B from the set and brings it up as standalone for maintenance, without changing its port
+number.</li>
+<li>The client is initialized with seeds A and B, TopologyType Unknown, and no setName.</li>
+<li>The first hello or legacy hello response is from B, the standalone.</li>
+</ol>
+<p>What if the client changed TopologyType to Single at this point? It would be unable to use the replica set; it would
+have to remove A from the TopologyDescription once A's hello or legacy hello response comes.</p>
+<p>The user's intent in this case is clearly to use the replica set, despite the outdated seed list. So this spec requires
+clients to remove B from the TopologyDescription and keep the TopologyType as Unknown. Then when A's response arrives,
+the client can set its TopologyType to ReplicaSet (with or without primary).</p>
+<p>On the other hand, if there is only one seed and the seed is discovered to be a Standalone, the TopologyType MUST be set
+to Single.</p>
+<p>See the "member brought up as standalone" test scenario.</p>
+<h3 id="replica-set-monitoring-with-and-without-a-primary"><a class="header" href="#replica-set-monitoring-with-and-without-a-primary">Replica set monitoring with and without a primary</a></h3>
+<p>The client strives to fill the "servers" list only with servers that the <strong>primary</strong> said were members of the replica
+set, when the client most recently contacted the primary.</p>
+<p>The primary's view of the replica set is authoritative for two reasons:</p>
+<ol>
+<li>The primary is never on the minority side of a network partition. During a partition it is the primary's list of
+servers the client should use.</li>
+<li>Since reconfigs must be executed on the primary, the primary is the first to know of them. Reconfigs propagate to
+non-primaries eventually, but the client can receive hello or legacy hello responses from non-primaries that reflect
+any past state of the replica set. See the "Replica set discovery" test scenario.</li>
+</ol>
+<p>If at any time the client believes there is no primary, the TopologyDescription's type is set to ReplicaSetNoPrimary.
+While there is no known primary, the client MUST <strong>add</strong> servers from non-primaries' host lists, but it MUST NOT remove
+servers from the TopologyDescription.</p>
+<p>Eventually, when a primary is discovered, any hosts not in the primary's host list are removed.</p>
+<h3 id="using-electionid-and-setversion-to-detect-stale-primaries"><a class="header" href="#using-electionid-and-setversion-to-detect-stale-primaries">Using electionId and setVersion to detect stale primaries</a></h3>
+<p>Replica set members running MongoDB 2.6.10+ or 3.0+ include an integer called "setVersion" and an ObjectId called
+"electionId" in their hello or legacy hello response. Starting with MongoDB 3.2.0, replica sets can use two different
+replication protocol versions; electionIds from one protocol version must not be compared to electionIds from a
+different protocol.</p>
+<p>Because protocol version changes require replica set reconfiguration, clients use the tuple (electionId, setVersion) to
+detect stale primaries. The tuple order comparison MUST be checked in the order of electionId followed by setVersion
+since that order of comparison is guaranteed monotonicity.</p>
+<p>The client remembers the greatest electionId and setVersion reported by a primary, and distrusts primaries from older
+electionIds or from the same electionId but with lesser setVersion.</p>
+<ul>
+<li>It compares electionIds as 12-byte sequence i.e. memory comparison.</li>
+<li>It compares setVersions as integer values.</li>
+</ul>
+<p>This prevents the client from oscillating between the old and new primary during a split-brain period, and helps provide
+read-your-writes consistency with write concern "majority" and read preference "primary".</p>
+<p>Prior to MongoDB server version 6.0 drivers had the logic opposite from the server side Replica Set Management logic by
+ordering the tuple by <code>setVersion</code> before the <code>electionId</code>. In order to remain compatibility with backup systems, etc.
+drivers continue to maintain the reversed logic when connected to a topology that reports a maxWireVersion less than
+<code>17</code>. Server versions 6.0 and beyond MUST order the tuple by <code>electionId</code> then <code>setVersion</code>.</p>
+<h4 id="requirements-for-read-your-writes-consistency"><a class="header" href="#requirements-for-read-your-writes-consistency">Requirements for read-your-writes consistency</a></h4>
+<p>Using (electionId, setVersion) only provides read-your-writes consistency if:</p>
+<ul>
+<li>The application uses the same MongoClient instance for write-concern "majority" writes and read-preference "primary"
+reads, and</li>
+<li>All members use MongoDB 2.6.10+, 3.0.0+ or 3.2.0+ with replication protocol 0 and clocks are <em>less</em> than 30 seconds
+skewed, or</li>
+<li>All members run MongoDB 3.2.0 and replication protocol 1 and clocks are <em>less</em> skewed than the election timeout
+(<code>electionTimeoutMillis</code>, which defaults to 10 seconds), or</li>
+<li>All members run MongoDB 3.2.1+ and replication protocol 1 (in which case clocks need not be synchronized).</li>
+</ul>
+<h4 id="scenario"><a class="header" href="#scenario">Scenario</a></h4>
+<p>Consider the following situation:</p>
+<ol>
+<li>Server A is primary.</li>
+<li>A network partition isolates A from the set, but the client still sees it.</li>
+<li>Server B is elected primary.</li>
+<li>The client discovers that B is primary, does a write-concern "majority" write operation on B and receives
+acknowledgment.</li>
+<li>The client receives a hello or legacy hello response from A, claiming A is still primary.</li>
+<li>If the client trusts that A is primary, the next read-preference "primary" read sees stale data from A that may <em>not</em>
+include the write sent to B.</li>
+</ol>
+<p>See <a href="https://jira.mongodb.org/browse/SERVER-17975">SERVER-17975</a>, "Stale reads with WriteConcern Majority and
+ReadPreference Primary."</p>
+<h4 id="detecting-a-stale-primary"><a class="header" href="#detecting-a-stale-primary">Detecting a stale primary</a></h4>
+<p>To prevent this scenario, the client uses electionId and setVersion to determine which primary was elected last. In this
+case, it would not consider "A" a primary, nor read from it because server B will have a greater electionId but the same
+setVersion.</p>
+<h4 id="monotonicity"><a class="header" href="#monotonicity">Monotonicity</a></h4>
+<p>The electionId is an ObjectId compared bytewise in order.</p>
+<p>(ie. 000000000000000000000001 &gt; 000000000000000000000000, FF0000000000000000000000 &gt; FE0000000000000000000000 etc.)</p>
+<p>In some server versions, it is monotonic with respect to a particular servers' system clock, but is not globally
+monotonic across a deployment. However, if inter-server clock skews are small, it can be treated as a monotonic value.</p>
+<p>In MongoDB 2.6.10+ (which has <a href="https://jira.mongodb.org/browse/SERVER-13542">SERVER-13542</a> backported), MongoDB 3.0.0+
+or MongoDB 3.2+ (under replication protocol version 0), the electionId's leading bytes are a server timestamp. As long
+as server clocks are skewed <em>less</em> than 30 seconds, electionIds can be reliably compared. (This is precise enough,
+because in replication protocol version 0, servers are designed not to complete more than one election every 30 seconds.
+Elections do not take 30 seconds--they are typically much faster than that--but there is a 30-second cooldown before the
+next election can complete.)</p>
+<p>Beginning in MongoDB 3.2.0, under replication protocol version 1, the electionId begins with a timestamp, but the
+cooldown is shorter. As long as inter-server clock skew is <em>less</em> than the configured election timeout
+(<code>electionTimeoutMillis</code>, which defaults to 10 seconds), then electionIds can be reliably compared.</p>
+<p>Beginning in MongoDB 3.2.1, under replication protocol version 1, the electionId is guaranteed monotonic without relying
+on any clock synchronization.</p>
+<h3 id="using-me-field-to-detect-seed-list-members-that-do-not-match-host-names-in-the-replica-set-configuration"><a class="header" href="#using-me-field-to-detect-seed-list-members-that-do-not-match-host-names-in-the-replica-set-configuration">Using me field to detect seed list members that do not match host names in the replica set configuration</a></h3>
+<p>Removal from the topology of seed list members where the "me" property does not match the address used to connect
+prevents clients from being able to select a server, only to fail to re-select that server once the primary has
+responded.</p>
+<p>This scenario illustrates the problems that arise if this is NOT done:</p>
+<ul>
+<li>The client specifies a seed list of A, B, C</li>
+<li>Server A responds as a secondary with hosts D, E, F</li>
+<li>The client executes a query with read preference of secondary, and server A is selected</li>
+<li>Server B responds as a primary with hosts D, E, F. Servers A, B, C are removed, as they don't appear in the primary's
+hosts list</li>
+<li>The client iterates the cursor and attempts to execute a getMore against server A.</li>
+<li>Server selection fails because server A is no longer part of the topology.</li>
+</ul>
+<p>With checking for "me" in place, it looks like this instead:</p>
+<ul>
+<li>The client specifies a seed list of A, B, C</li>
+<li>Server A responds as a secondary with hosts D, E, F, where "me" is D, and so the client adds D, E, F as type "Unknown"
+and starts monitoring them, but removes A from the topology.</li>
+<li>The client executes a query with read preference of secondary, and goes into the server selection loop</li>
+<li>Server D responds as a secondary where "me" is D</li>
+<li>Server selection completes by matching D</li>
+<li>The client iterates the cursor and attempts to execute a getMore against server D.</li>
+<li>Server selection completes by matching D.</li>
+</ul>
+<h3 id="ignore-setversion-unless-the-server-is-primary"><a class="header" href="#ignore-setversion-unless-the-server-is-primary">Ignore setVersion unless the server is primary</a></h3>
+<p>It was thought that if all replica set members report a setVersion, and a secondary's response has a higher setVersion
+than any seen, that the secondary's host list could be considered as authoritative as the primary's. (See
+<a href="#replica-set-monitoring-with-and-without-a-primary">Replica set monitoring with and without a primary</a>.)</p>
+<p>This scenario illustrates the problem with setVersion:</p>
+<ul>
+<li>We have a replica set with servers A, B, and C.</li>
+<li>Server A is the primary, with setVersion 4.</li>
+<li>An administrator runs replSetReconfig on A, which increments its setVersion to 5.</li>
+<li>The client checks Server A and receives the new config.</li>
+<li>Server A crashes before any secondary receives the new config.</li>
+<li>Server B is elected primary. It has the old setVersion 4.</li>
+<li>The client ignores B's version of the config because its setVersion is not greater than 5.</li>
+</ul>
+<p>The client may never correct its view of the topology.</p>
+<p>Even worse:</p>
+<ul>
+<li>An administrator runs replSetReconfig on Server B, which increments its setVersion to 5.</li>
+<li>Server A restarts. This results in <em>two</em> versions of the config, both claiming to be version 5.</li>
+</ul>
+<p>If the client trusted the setVersion in this scenario, it would trust whichever config it received first.</p>
+<p>mongos 2.6 ignores setVersion and only trusts the primary. This spec requires all clients to ignore setVersion from
+non-primaries.</p>
+<h3 id="use-error-messages-to-detect-not-master-and-node-is-recovering"><a class="header" href="#use-error-messages-to-detect-not-master-and-node-is-recovering">Use error messages to detect "not master" and "node is recovering"</a></h3>
+<p>When error codes are not available, error messages are checked for the substrings "not master" and "node is recovering".
+This is because older server versions returned unstable error codes or no error codes in many circumstances.</p>
+<h3 id="other-transient-errors"><a class="header" href="#other-transient-errors">Other transient errors</a></h3>
+<p>There are other transient errors a server may return, e.g. retryable errors listed in the retryable writes spec. SDAM
+does not consider these because they do not imply the connected server should be marked as "Unknown". For example, the
+following errors may be returned from a mongos when it cannot route to a shard:</p>
+<div class="table-wrapper"><table><thead><tr><th>Error Name</th><th>Error Code</th></tr></thead><tbody>
+<tr><td>HostNotFound</td><td>7</td></tr>
+<tr><td>HostUnreachable</td><td>6</td></tr>
+<tr><td>NetworkTimeout</td><td>89</td></tr>
+<tr><td>SocketException</td><td>9001</td></tr>
+</tbody></table>
+</div>
+<p>When these are returned, the mongos should <em>not</em> be marked as "Unknown", since it is more likely an issue with the
+shard.</p>
+<h3 id="why-ignore-errors-based-on-cmaps-generation-number"><a class="header" href="#why-ignore-errors-based-on-cmaps-generation-number">Why ignore errors based on CMAP's generation number?</a></h3>
+<p>Using CMAP's generation number solves the following race condition among application threads and the monitor during
+error handling:</p>
+<ol>
+<li>Two concurrent writes begin on application threads A and B.</li>
+<li>The server restarts.</li>
+<li>Thread A receives the first non-timeout network error, and the client marks the server Unknown, and clears the
+server's pool.</li>
+<li>The client re-checks the server and marks it Primary.</li>
+<li>Thread B receives the second non-timeout network error and the client marks the server Unknown again.</li>
+</ol>
+<p>The core issue is that the client processes errors in arbitrary order and may overwrite fresh information about the
+server's status with stale information. Using CMAP's generation number avoids the race condition because the duplicate
+(or stale) network error can be identified (changes in <strong>bold</strong>):</p>
+<ol>
+<li>Two concurrent writes begin on application threads A and B, <strong>with generation 1</strong>.</li>
+<li>The server restarts.</li>
+<li>Thread A receives the first non-timeout network error, and the client marks the server Unknown, and clears the
+server's pool. <strong>The pool's generation is now 2.</strong></li>
+<li>The client re-checks the server and marks it Primary.</li>
+<li>Thread B receives the second non-timeout network error, <strong>and the client ignores the error because the error
+originated from a connection with generation 1.</strong></li>
+</ol>
+<h3 id="why-synchronize-clearing-a-servers-pool-with-updating-the-topology"><a class="header" href="#why-synchronize-clearing-a-servers-pool-with-updating-the-topology">Why synchronize clearing a server's pool with updating the topology?</a></h3>
+<p>Doing so solves the following race condition among application threads and the monitor during error handling, similar to
+the previous example:</p>
+<ol>
+<li>A write begins on an application thread.</li>
+<li>The server restarts.</li>
+<li>The application thread receives a non-timeout network error.</li>
+<li>The application thread acquires the lock on the TopologyDescription, marks the Server as Unknown, and releases the
+lock.</li>
+<li>The monitor re-checks the server and marks it Primary and its pool as "ready".</li>
+<li>Several other application threads enter the WaitQueue of the server's pool.</li>
+<li>The application thread clears the server's pool, evicting all those new threads from the WaitQueue, causing them to
+return errors or to retry. Additionally, the pool is now "paused", but the server is considered the Primary, meaning
+future operations will be routed to the server and fail until the next heartbeat marks the pool as "ready" again.</li>
+</ol>
+<p>If marking the server as Unknown and clearing its pool were synchronized, then the monitor marking the server as Primary
+after its check would happen after the pool was cleared and thus avoid putting it an inconsistent state.</p>
+<h3 id="what-is-the-purpose-of-topologyversion"><a class="header" href="#what-is-the-purpose-of-topologyversion">What is the purpose of topologyVersion?</a></h3>
+<p><a href="#topologyversion">topologyVersion</a> solves the following race condition among application threads and the monitor when
+handling State Change Errors:</p>
+<ol>
+<li>Two concurrent writes begin on application threads A and B.</li>
+<li>The primary steps down.</li>
+<li>Thread A receives the first State Change Error, the client marks the server Unknown.</li>
+<li>The client re-checks the server and marks it Secondary.</li>
+<li>Thread B receives a delayed State Change Error and the client marks the server Unknown again.</li>
+</ol>
+<p>The core issue is that the client processes errors in arbitrary order and may overwrite fresh information about the
+server's status with stale information. Using topologyVersion avoids the race condition because the duplicate (or stale)
+State Change Errors can be identified (changes in <strong>bold</strong>):</p>
+<ol>
+<li>Two concurrent writes begin on application threads A and B.
+<ol>
+<li><strong>The primary's ServerDescription.topologyVersion == tv1</strong></li>
+</ol>
+</li>
+<li>The primary steps down <strong>and sets its topologyVersion to tv2</strong>.</li>
+<li>Thread A receives the first State Change Error <strong>containing tv2</strong>, the client marks the server Unknown (<strong>with
+topologyVersion: tv2</strong>).</li>
+<li>The client re-checks the server and marks it Secondary (<strong>with topologyVersion: tv2</strong>).</li>
+<li>Thread B receives a delayed State Change Error (<strong>with topologyVersion: tv2</strong>) <strong>and the client ignores the error
+because the error's topologyVersion (tv2) is not greater than the current ServerDescription (tv2).</strong></li>
+</ol>
+<h3 id="why-mark-a-server-unknown-after-an-auth-error"><a class="header" href="#why-mark-a-server-unknown-after-an-auth-error">Why mark a server Unknown after an auth error?</a></h3>
+<p>The <a href="../auth/auth.html">Authentication spec</a> requires that when authentication fails on a server, the driver MUST clear
+the server's connection pool. Clearing the pool without marking the server Unknown would leave the pool in the "paused"
+state while the server is still selectable. When auth fails due to invalid credentials, marking the server Unknown also
+serves to rate limit new connections; future operations will need to wait for the server to be rediscovered.</p>
+<p>Note that authentication may fail for a variety of reasons, for example:</p>
+<ul>
+<li>A network error, or network timeout error may occur.</li>
+<li>The server may return a <a href="#state-change-error">State Change Error</a>.</li>
+<li>The server may return a AuthenticationFailed command error (error code 18) indicating that the provided credentials
+are invalid.</li>
+</ul>
+<p>Does this mean that authentication failures due to invalid credentials will manifest as server selection timeout errors?
+No, authentication errors are still returned to the application immediately. A subsequent operation will block until the
+server is rediscovered and immediately attempt authentication on a new connection.</p>
+<h3 id="clients-use-the-hostnames-listed-in-the-replica-set-config-not-the-seed-list"><a class="header" href="#clients-use-the-hostnames-listed-in-the-replica-set-config-not-the-seed-list">Clients use the hostnames listed in the replica set config, not the seed list</a></h3>
+<p>Very often users have DNS aliases they use in their <a href="#seed-list">seed list</a> instead of the hostnames in the replica set
+config. For example, the name "host_alias" might refer to a server also known as "host1", and the URI is:</p>
+<pre><code>mongodb://host_alias/?replicaSet=rs
+</code></pre>
+<p>When the client connects to "host_alias", its hello or legacy hello response includes the list of hostnames from the
+replica set config, which does not include the seed:</p>
+<pre><code>{
+   hosts: ["host1:27017", "host2:27017"],
+   setName: "rs",
+   ... other hello or legacy hello response fields ...
+}
+</code></pre>
+<p>This spec requires clients to connect to the hostnames listed in the hello or legacy hello response. Furthermore, if the
+response is from a primary, the client MUST remove all hostnames not listed. In this case, the client disconnects from
+"host_alias" and tries "host1" and "host2". (See <a href="#updatersfromprimary">updateRSFromPrimary</a>.)</p>
+<p>Thus, replica set members must be reachable from the client by the hostnames listed in the replica set config.</p>
+<p>An alternative proposal is for clients to continue using the hostnames in the seed list. It could add new hosts from the
+hello or legacy hello response, and where a host is known by two names, the client can deduplicate them using the "me"
+field and prefer the name in the seed list.</p>
+<p>This proposal was rejected because it does not support key features of replica sets: failover and zero-downtime
+reconfiguration.</p>
+<p>In our example, if "host1" and "host2" are not reachable from the client, the client continues to use "host_alias" only.
+If that server goes down or is removed by a replica set reconfig, the client is suddenly unable to reach the replica set
+at all: by allowing the client to use the alias, we have hidden the fact that the replica set's failover feature will
+not work in a crisis or during a reconfig.</p>
+<p>In conclusion, to support key features of replica sets, we require that the hostnames used in a replica set config are
+reachable from the client.</p>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>The Java driver 2.12.1 has a "heartbeatConnectRetryFrequency". Since this spec recommends the option be named
+"minHeartbeatFrequencyMS", the Java driver must deprecate its old option and rename it minHeartbeatFrequency (for
+consistency with its other options which also lack the "MS" suffix).</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<ul>
+<li>Java driver 3.x</li>
+<li>PyMongo 3.x</li>
+<li>Perl driver 1.0.0 (in progress)</li>
+</ul>
+<h2 id="future-work"><a class="header" href="#future-work">Future Work</a></h2>
+<p>MongoDB is likely to add some of the following features, which will require updates to this spec:</p>
+<ul>
+<li>Eventually consistent collections (SERVER-2956)</li>
+<li>Mongos discovery (SERVER-1834)</li>
+<li>Put individual databases into maintenance mode, instead of the whole server (SERVER-7826)</li>
+<li>Put setVersion in write-command responses (SERVER-13909)</li>
+</ul>
+<h2 id="questions-and-answers"><a class="header" href="#questions-and-answers">Questions and Answers</a></h2>
+<h3 id="when-does-a-client-see-not-writable-primary-or-node-is-recovering"><a class="header" href="#when-does-a-client-see-not-writable-primary-or-node-is-recovering">When does a client see "not writable primary" or "node is recovering"?</a></h3>
+<p>These errors indicate one of these:</p>
+<ul>
+<li>A write was attempted on an unwritable server (arbiter, secondary, ghost, or recovering).</li>
+<li>A read was attempted on an unreadable server (arbiter, ghost, or recovering) or a read was attempted on a read-only
+server without the secondaryOk bit set.</li>
+<li>An operation was attempted on a server that is now shutting down.</li>
+</ul>
+<p>In any case the error is a symptom that a ServerDescription's type no longer reflects reality.</p>
+<p>On MongoDB 4.0 and earlier, a primary closes its connections when it steps down, so in many cases the next operation
+causes a network error rather than "not writable primary". The driver can see a "not writable primary" error in the
+following scenario:</p>
+<ol>
+<li>The client discovers the primary.</li>
+<li>The primary steps down.</li>
+<li>Before the client checks the server and discovers the stepdown, the application attempts an operation.</li>
+<li>The client's connection pool is empty, either because it has never attempted an operation on this server, or because
+all connections are in use by other threads.</li>
+<li>The client creates a connection to the old primary.</li>
+<li>The client attempts to write, or to read without the secondaryOk bit, and receives "not writable primary".</li>
+</ol>
+<p>See <a href="#not-writable-primary-and-node-is-recovering">"not writable primary" and "node is recovering"</a>, and the test
+scenario called "parsing 'not writable primary' and 'node is recovering' errors".</p>
+<h3 id="why-close-connections-when-a-node-is-shutting-down"><a class="header" href="#why-close-connections-when-a-node-is-shutting-down">Why close connections when a node is shutting down?</a></h3>
+<p>When a server shuts down, it will return one of the "node is shutting down" errors for each attempted operation and
+eventually will close all connections. Keeping a connection to a server which is shutting down open would only produce
+errors on this connection - such a connection will never be usable for any operations. In contrast, when a server 4.2 or
+later returns "not writable primary" error the connection may be usable for other operations (such as secondary reads).</p>
+<h3 id="whats-the-point-of-periodic-monitoring"><a class="header" href="#whats-the-point-of-periodic-monitoring">What's the point of periodic monitoring?</a></h3>
+<p>Why not just wait until a "not writable primary" error or "node is recovering" error informs the client that its
+TopologyDescription is wrong? Or wait until server selection fails to find a suitable server, and only scan all servers
+then?</p>
+<p>Periodic monitoring accomplishes three objectives:</p>
+<ul>
+<li>Update each server's type, tags, and <a href="#round-trip-time">round trip time</a>. Read preferences and the mongos selection
+algorithm require this information remains up to date.</li>
+<li>Discover new secondaries so that secondary reads are evenly spread.</li>
+<li>Detect incremental changes to the replica set configuration, so that the client remains connected to the set even
+while it is migrated to a completely new set of hosts.</li>
+</ul>
+<p>If the application uses some servers very infrequently, monitoring can also proactively detect state changes (primary
+stepdown, server becoming unavailable) that would otherwise cause future errors.</p>
+<h3 id="why-is-auto-discovery-the-preferred-default"><a class="header" href="#why-is-auto-discovery-the-preferred-default">Why is auto-discovery the preferred default?</a></h3>
+<p>Auto-discovery is most resilient and is therefore preferred.</p>
+<h3 id="why-is-it-possible-for-maxsetversion-to-go-down"><a class="header" href="#why-is-it-possible-for-maxsetversion-to-go-down">Why is it possible for maxSetVersion to go down?</a></h3>
+<p><code>maxElectionId</code> and <code>maxSetVersion</code> are actually considered a pair of values Drivers MAY consider implementing
+comparison in code as a tuple of the two to ensure their always updated together:</p>
+<pre><code class="language-typescript">// New tuple                        old tuple
+{ electionId: 2, setVersion: 1 } &gt; { electionId: 1, setVersion: 50 }
+</code></pre>
+<p>In this scenario, the maxSetVersion goes from 50 to 1, but the maxElectionId is raised to 2.</p>
+<h2 id="acknowledgments"><a class="header" href="#acknowledgments">Acknowledgments</a></h2>
+<p>Jeff Yemin's code for the Java driver 2.12, and his patient explanation thereof, is the major inspiration for this spec.
+Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6 contributed as well. Bernie Hackett gently
+oversaw the specification process.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-08-16: Updated host b wire versions in <code>too_new</code> and <code>too_old</code> tests</p>
+</li>
+<li>
+<p>2024-08-09: Updated wire versions in tests to 4.0+.</p>
+</li>
+<li>
+<p>2024-05-08: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2015-12-17: Require clients to compare (setVersion, electionId) tuples.</p>
+</li>
+<li>
+<p>2015-10-09: Specify electionID comparison method.</p>
+</li>
+<li>
+<p>2015-06-16: Added cooldownMS.</p>
+</li>
+<li>
+<p>2016-05-04: Added link to SDAM monitoring.</p>
+</li>
+<li>
+<p>2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server Selection Spec", and
+"secondaryAcceptableLatencyMS" with "localThresholdMS".</p>
+</li>
+<li>
+<p>2016-07-21: Updated for Max Staleness support.</p>
+</li>
+<li>
+<p>2016-08-04: Explain better why clients use the hostnames in RS config, not URI.</p>
+</li>
+<li>
+<p>2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to update the topology when they handshake
+application connections.</p>
+</li>
+<li>
+<p>2016-10-06: In updateRSWithoutPrimary the hello or legacy hello response's "primary" field should be used to update
+the topology description, even if address != me.</p>
+</li>
+<li>
+<p>2016-10-29: Allow for idleWritePeriodMS to change someday.</p>
+</li>
+<li>
+<p>2016-11-01: "Unknown" is no longer the default TopologyType, the default is now explicitly unspecified. Update
+instructions for setting the initial TopologyType when running the spec tests.</p>
+</li>
+<li>
+<p>2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future.</p>
+</li>
+<li>
+<p>2017-02-28: Update "network error when reading or writing": timeout while connecting does mark a server Unknown,
+unlike a timeout while reading or writing. Justify the different behaviors, and also remove obsolete reference to
+auto-retry.</p>
+</li>
+<li>
+<p>2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.</p>
+</li>
+<li>
+<p>2017-08-01: Parse logicalSessionTimeoutMinutes from hello or legacy hello reply.</p>
+</li>
+<li>
+<p>2017-08-11: Clearer specification of "incompatible" logic.</p>
+</li>
+<li>
+<p>2017-09-01: Improved incompatibility error messages.</p>
+</li>
+<li>
+<p>2018-03-28: Specify that monitoring must not do mechanism negotiation or authentication.</p>
+</li>
+<li>
+<p>2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange</p>
+</li>
+<li>
+<p>2020-02-13: Drivers must run SDAM flow even when server description is equal to the last one.</p>
+</li>
+<li>
+<p>2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring stale application errors.</p>
+</li>
+<li>
+<p>2020-05-07: Include error field in ServerDescription equality comparison.</p>
+</li>
+<li>
+<p>2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.</p>
+</li>
+<li>
+<p>2020-12-17: Mark the pool for a server as "ready" after performing a successful check. Synchronize pool clearing with
+SDAM updates.</p>
+</li>
+<li>
+<p>2021-01-17: Require clients to compare (electionId, setVersion) tuples.</p>
+</li>
+<li>
+<p>2021-02-11: Errors encountered during auth are handled by SDAM. Auth errors mark the server Unknown and clear the
+pool.</p>
+</li>
+<li>
+<p>2021-04-12: Adding in behaviour for load balancer mode.</p>
+</li>
+<li>
+<p>2021-05-03: Require parsing "isWritablePrimary" field in responses.</p>
+</li>
+<li>
+<p>2021-06-09: Connection pools must be created and eventually marked ready for any server if a direct connection is
+used.</p>
+</li>
+<li>
+<p>2021-06-29: Updated to use modern terminology.</p>
+</li>
+<li>
+<p>2022-01-19: Add iscryptd and 90th percentile RTT fields to ServerDescription.</p>
+</li>
+<li>
+<p>2022-07-11: Convert integration tests to the unified format.</p>
+</li>
+<li>
+<p>2022-09-30: Update <code>updateRSFromPrimary</code> to include logic before and after 6.0 servers</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter, move footnote, and reformat changelog.</p>
+</li>
+<li>
+<p>2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.</p>
+</li>
+<li>
+<p>2024-01-17: Add section on expected client close behaviour</p>
+</li>
+</ul>
+<hr />
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>"localThresholdMS" was called "secondaryAcceptableLatencyMS" in the Read Preferences Spec, before it was superseded
+by the Server Selection Spec.</p>
+</div>
+<div class="footnote-definition" id="2"><sup class="footnote-definition-label">2</sup>
+<p><a href="#topologytype-remains-unknown-when-an-rsghost-is-discovered">TopologyType remains Unknown when an RSGhost is discovered</a>.</p>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

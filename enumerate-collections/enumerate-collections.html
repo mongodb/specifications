@@ -1,0 +1,496 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Collections - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html" class="active"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="enumerating-collections"><a class="header" href="#enumerating-collections">Enumerating Collections</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 1.8</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>A driver can contain a feature to enumerate all collections belonging to a database. This specification defines how
+collections should be enumerated.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<p><strong>MongoClient</strong></p>
+<p>Driver object representing a connection to MongoDB. This is the root object of a driver's API and MAY be named
+differently in some drivers.</p>
+<p><strong>Iterable</strong></p>
+<p>An object or data structure that is a sequence of elements that can be iterated over. This spec is flexible on what that
+means as different drivers will have different requirements, types, and idioms.</p>
+<h3 id="listcollections-database-command"><a class="header" href="#listcollections-database-command">listCollections Database Command</a></h3>
+<p>The <code>listCollections</code> command returns a cursor:</p>
+<pre><code class="language-javascript">db.runCommand( { listCollections: 1 } );
+</code></pre>
+<p>The command also accepts options.</p>
+<p>The <code>filter</code> option, which acts like a query against the returned collection documents. You can i.e. use the following
+to only list the collections beginning with <code>test</code>:</p>
+<pre><code class="language-javascript">db.runCommand( { listCollections: 1, filter: { name: /^test/ } } );
+</code></pre>
+<p>Or to find all capped collections:</p>
+<pre><code class="language-javascript">db.runCommand( { listCollections: 1, filter: { 'options.capped': true } } );
+</code></pre>
+<p>The <code>cursor.batchSize</code> option, which allows you to set how many initial collections should be returned as part of the
+cursor specification document that comes back from the server. This first batch is part of the returned structure in the
+<code>firstBatch</code> key (see more about return types further on).</p>
+<p>The command returns a cursor definition structure:</p>
+<pre><code class="language-javascript">{
+    cursor: {
+        id: &lt;long&gt;,
+        ns: &lt;string&gt;,
+        firstBatch: [&lt;object&gt;, &lt;object&gt;, ...]
+    },
+    ok: 1
+}
+</code></pre>
+<p>With the <code>cursor.id</code> and <code>cursor.ns</code> fields you can retrieve further collection information structures.</p>
+<p>The command also returns the field <code>ok</code> to signal whether the command was executed successfully.</p>
+<p>This will return the first 25 collection descriptions as part of the returned document:</p>
+<pre><code class="language-javascript">db.runCommand( { listCollections: 1, cursor : { batchSize: 25 } } );
+</code></pre>
+<p>MongoDB 4.4 introduced a <code>comment</code> option to the <code>listCollections</code> database command. This option enables users to
+specify a comment as an arbitrary BSON type to help trace the operation through the database profiler, currentOp and
+logs. The default is to not send a value. If a comment is provided on pre-4.4 servers, the comment should still be
+attached and the driver should rely on the server to provide an error to the user.</p>
+<p>Example of usage of the comment option:</p>
+<pre><code class="language-javascript">db.runCommand({"listCollections": 1, "comment": "hi there"})
+</code></pre>
+<p>Any comment set on a <code>listCollections</code> command is inherited by any subsequent <code>getMore</code> commands run on the same
+<code>cursor.id</code> returned from the <code>listCollections</code> command. Therefore, drivers MUST NOT attach the comment to subsequent
+getMore commands on a cursor.</p>
+<h4 id="return-types"><a class="header" href="#return-types">Return types</a></h4>
+<p>The <code>listCollections</code> command returns a cursor description. The format that is returned is the same as for any other
+command cursor:</p>
+<pre><code class="language-javascript">{
+    cursor: {
+        id: &lt;long&gt;,
+        ns: &lt;string&gt;,
+        firstBatch: [&lt;object&gt;, &lt;object&gt;, ...]
+    },
+    ok: 1
+}
+</code></pre>
+<p>The number of objects in the <code>firstBatch</code> field depends on the <code>cursor.batchSize</code> option.</p>
+<p>Drivers MAY expose methods to return collection names as an array. If your driver already has such a method, its return
+type MUST NOT be changed in order to prevent breaking backwards compatibility.</p>
+<p>Drivers SHOULD expose (a) method(s) to return collection information through a cursor, where the information for each
+collection is represented by a single document.</p>
+<h3 id="driver-methods"><a class="header" href="#driver-methods">Driver methods</a></h3>
+<p>Drivers SHOULD use the method name <code>listCollections</code> for a method that returns all collections with a cursor return
+type. Drivers MAY use an idiomatic variant that fits the language the driver is for.</p>
+<p>If a driver already has a method to perform one of the listed tasks, there is no need to change it. Do not break
+backwards compatibility when adding new methods.</p>
+<p>All methods:</p>
+<ul>
+<li>SHOULD be on the database object.</li>
+<li>MUST allow a filter to be passed to include only requested collections.</li>
+<li>MAY allow the <code>cursor.batchSize</code> option to be passed.</li>
+<li>SHOULD allow the <code>comment</code> option to be passed.</li>
+<li>MUST apply timeouts per the
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html">Client Side Operations Timeout</a> specification.</li>
+</ul>
+<p>All methods that return cursors MUST support the timeout options documented in
+<a href="../client-side-operations-timeout/client-side-operations-timeout.html#cursors">Client Side Operations Timeout: Cursors</a>.</p>
+<h4 id="getting-collection-names"><a class="header" href="#getting-collection-names">Getting Collection Names</a></h4>
+<p>Drivers MAY implement a MongoClient method that returns an Iterable of strings, where each string corresponds to a
+collection name. This method SHOULD be named <code>listCollectionNames</code>.</p>
+<p>MongoDB 4.0 introduced a <code>nameOnly</code> boolean option to the <code>listCollections</code> database command, which limits the command
+result to only include collection names. NOTE: <code>nameOnly</code> is applied before any filter is applied.</p>
+<p>Example return:</p>
+<pre><code class="language-javascript">[
+    "me",
+    "oplog.rs",
+    "replset.minvalid",
+    "startup_log",
+    "system.indexes",
+    "system.replset"
+]
+</code></pre>
+<p>Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support the <code>nameOnly</code> option for the
+<code>listCollections</code> command and will ignore it without raising an error. Therefore, drivers MUST always specify the
+<code>nameOnly</code> option when they only intend to access collection names from the <code>listCollections</code> command result, except
+drivers MUST NOT set <code>nameOnly</code> if a filter specifies any keys other than <code>name</code>.</p>
+<p>MongoDB 4.0 also added an <code>authorizedCollections</code> boolean option to the <code>listCollections</code> command, which can be used to
+limit the command result to only include collections the user is authorized to use. Drivers MAY allow users to set the
+<code>authorizedCollections</code> option on the <code>listCollectionNames</code> method.</p>
+<h4 id="getting-full-collection-information"><a class="header" href="#getting-full-collection-information">Getting Full Collection Information</a></h4>
+<p>Drivers MAY implement a method to return the full <code>name/options</code> pairs that are returned from both <code>listCollections</code> (in
+the <code>res.cursor.firstBatch</code> field, and subsequent retrieved documents through getmore on the cursor constructed from
+<code>res.cursor.ns</code> and <code>res.cursor.id</code>), and the query result for <code>system.namespaces</code>.</p>
+<p>The returned result for each variant MUST be equivalent, and each collection that is returned MUST use the field names
+<code>name</code> and <code>options</code>.</p>
+<p>In MongoDB 4.4, the <code>ns</code> field was removed from the index specifications, so the index specification included in the
+<code>idIndex</code> field of the collection information will no longer contain an <code>ns</code> field.</p>
+<ul>
+<li>For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
+necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the <code>ns</code> field will
+no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no special
+mention of the <code>ns</code> field is necessary.</li>
+<li>For drivers that report those index specifications in the form of statically defined models, the driver MUST manually
+populate the <code>ns</code> field of the models with the appropriate namespace if the server does not report it in the
+<code>listCollections</code> command response. The <code>ns</code> field is not required to be a part of the models, however.</li>
+</ul>
+<p>Example return (a cursor which returns documents, not a simple array):</p>
+<pre><code class="language-javascript">{
+    "name" : "me", "options" : { "flags" : 1 }
+},
+{
+    "name" : "oplog.rs", "options" : { "capped" : true, "size" : 10485760, "autoIndexId" : false }
+},
+{
+    "name" : "replset.minvalid", "options" : { "flags" : 1 }
+},
+{
+    "name" : "startup_log", "options" : { "capped" : true, "size" : 10485760 }
+},
+{
+    "name" : "system.indexes", "options" : { }
+},
+{
+    "name" : "system.replset", "options" : { "flags" : 1 }
+}
+</code></pre>
+<p>When returning this information as a cursor, a driver SHOULD use the method name <code>listCollections</code> or an idiomatic
+variant.</p>
+<p>Drivers MAY allow the <code>nameOnly</code> and <code>authorizedCollections</code> options to be passed when executing the <code>listCollections</code>
+command for this method.</p>
+<h4 id="returning-a-list-of-collection-objects"><a class="header" href="#returning-a-list-of-collection-objects">Returning a List of Collection Objects</a></h4>
+<p>Drivers MAY implement a method that returns a collection object for each returned collection, if the driver has such a
+concept. This method MAY be named <code>listMongoCollections</code>.</p>
+<p>Example return (in PHP, but abbreviated):</p>
+<pre><code class="language-javascript">array(6) {
+  [0] =&gt; class MongoCollection#6 { }
+  [1] =&gt; class MongoCollection#7 { }
+  [2] =&gt; class MongoCollection#8 { }
+  [3] =&gt; class MongoCollection#9 { }
+  [4] =&gt; class MongoCollection#10 { }
+  [5] =&gt; class MongoCollection#11 { }
+}
+</code></pre>
+<p>Drivers MUST specify true for the <code>nameOnly</code> option when executing the <code>listCollections</code> command for this method, except
+drivers MUST NOT set <code>nameOnly</code> if a filter specifies any keys other than <code>name</code>.</p>
+<p>Drivers MAY allow the <code>authorizedCollections</code> option to be passed when executing the <code>listCollections</code> command for this
+method</p>
+<h4 id="replica-sets"><a class="header" href="#replica-sets">Replica Sets</a></h4>
+<ul>
+<li><code>listCollections</code> can be run on a secondary node.</li>
+<li>Querying <code>system.indexes</code> on a secondary node requires secondaryOk to be set.</li>
+<li>Drivers MUST run <code>listCollections</code> on the primary node when in a replica set topology, unless directly connected to a
+secondary node in Single topology.</li>
+</ul>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<h3 id="configurations"><a class="header" href="#configurations">Configurations</a></h3>
+<ul>
+<li>standalone node</li>
+<li>replica set primary node</li>
+<li>replica set secondary node</li>
+<li>mongos node</li>
+</ul>
+<h3 id="preparation"><a class="header" href="#preparation">Preparation</a></h3>
+<p>For each of the configurations:</p>
+<ul>
+<li>Create a (new) database</li>
+<li>Create a collection and a capped collection</li>
+<li>Create an index on each of the two collections</li>
+<li>Insert at least one document in each of the two collections</li>
+</ul>
+<h3 id="tests"><a class="header" href="#tests">Tests</a></h3>
+<ul>
+<li>Run the driver's method that returns a list of collection names (e.g. <code>listCollectionNames()</code>):
+<ul>
+<li>verify that <em>all</em> collection names are represented in the result</li>
+<li>verify that there are no duplicate collection names</li>
+<li>there are no returned collections that do not exist</li>
+<li>there are no returned collections containing an '$'</li>
+</ul>
+</li>
+<li>Run the driver's method that returns a list of collection names (e.g. <code>listCollectionNames()</code>), pass a filter of
+<code>{ 'options.capped': true }</code>, and:
+<ul>
+<li>verify that <em>only</em> names of capped collections are represented in the result</li>
+<li>verify that there are no duplicate collection names</li>
+<li>there are no returned collections that do not exist</li>
+<li>there are no returned collections containing an '$'</li>
+</ul>
+</li>
+</ul>
+<h2 id="backwards-compatibility"><a class="header" href="#backwards-compatibility">Backwards Compatibility</a></h2>
+<p>There should be no backwards compatibility concerns. This SPEC merely deals with how to enumerate collections in future
+versions of MongoDB.</p>
+<h2 id="reference-implementation"><a class="header" href="#reference-implementation">Reference Implementation</a></h2>
+<p>The shell implements the first algorithm for falling back if the <code>listCollections</code> command does not exist
+(<a href="https://github.com/mongodb/mongo/blob/f32ba54f971c045fb589fe4c3a37da77dc486cee/src/mongo/shell/db.js#L550">https://github.com/mongodb/mongo/blob/f32ba54f971c045fb589fe4c3a37da77dc486cee/src/mongo/shell/db.js#L550</a>).</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-07-26: Migrated from reStructuredText to Markdown. Drop description of behavior for MongoDB 2.x servers.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2022-09-15: Clarify the behavior of <code>comment</code> on pre-4.4 servers.</p>
+</li>
+<li>
+<p>2022-02-01: Add <code>comment</code> option to <code>listCollections</code> command.</p>
+</li>
+<li>
+<p>2022-01-20: Require that timeouts be applied per the client-side operations timeout spec.</p>
+</li>
+<li>
+<p>2021-12-17: Support <code>authorizedCollections</code> option in <code>listCollections</code> command.</p>
+</li>
+<li>
+<p>2021-04-22: Update to use secondaryOk.</p>
+</li>
+<li>
+<p>2020-03-18: MongoDB 4.4 no longer includes <code>ns</code> field in <code>idIndex</code> field for <code>listCollections</code> responses.</p>
+</li>
+<li>
+<p>2019-03-21: The method that returns a list of collection names should be named <code>listCollectionNames</code>. The method that
+returns a list of collection objects may be named <code>listMongoCollections</code>.</p>
+</li>
+<li>
+<p>2018-07-03: Clarify that <code>nameOnly</code> must not be used with filters other than <code>name</code>.</p>
+</li>
+<li>
+<p>2018-05-18: Support <code>nameOnly</code> option in <code>listCollections</code> command.</p>
+</li>
+<li>
+<p>2017-09-27: Clarify reason for filtering collection names containing '$'.</p>
+</li>
+<li>
+<p>2015-01-14: Clarify trimming of database name. Put preferred method name for listing collections with a cursor as
+return value.</p>
+</li>
+<li>
+<p>2014-12-18: Update with the server change to return a cursor for <code>listCollections</code>.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../enumerate-databases/enumerate-databases.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../index-management/index-management.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../enumerate-databases/enumerate-databases.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../index-management/index-management.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Load Balancer Support - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html" class="active"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="load-balancer-support"><a class="header" href="#load-balancer-support">Load Balancer Support</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 5.0</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>This specification defines driver behaviour when connected to MongoDB services through a load balancer.</p>
+<h2 id="meta"><a class="header" href="#meta">META</a></h2>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<h3 id="terms"><a class="header" href="#terms">Terms</a></h3>
+<h4 id="sdam"><a class="header" href="#sdam">SDAM</a></h4>
+<p>An abbreviated form of "Server Discovery and Monitoring", specification defined in
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html">Server Discovery and Monitoring Specification</a>.</p>
+<h4 id="service"><a class="header" href="#service">Service</a></h4>
+<p>Any MongoDB service that can run behind a load balancer.</p>
+<h3 id="mongoclient-configuration"><a class="header" href="#mongoclient-configuration">MongoClient Configuration</a></h3>
+<h4 id="loadbalanced"><a class="header" href="#loadbalanced">loadBalanced</a></h4>
+<p>To specify to the driver to operate in load balancing mode, a connection string option of <code>loadBalanced=true</code> MUST be
+added to the connection string. This boolean option specifies whether or not the driver is connecting to a MongoDB
+cluster through a load balancer. The default value MUST be false. This option MUST only be configurable at the level of
+a <code>MongoClient</code>.</p>
+<h4 id="uri-validation"><a class="header" href="#uri-validation">URI Validation</a></h4>
+<p>When <code>loadBalanced=true</code> is provided in the connection string, the driver MUST throw an exception in the following
+cases:</p>
+<ul>
+<li>The connection string contains more than one host/port.</li>
+<li>The connection string contains a <code>replicaSet</code> option.</li>
+<li>The connection string contains a <code>directConnection</code> option with a value of <code>true</code>.</li>
+<li>The connection string contains an <code>srvMaxHosts</code> option with a positive integer value.</li>
+</ul>
+<p>If a URI is provided with the <code>mongodb+srv</code> scheme, the driver MUST first do the SRV and TXT lookup and then perform the
+validation. For drivers that do SRV lookup asynchronously this may result in a <code>MongoClient</code> being instantiated but
+erroring later during operation execution.</p>
+<h4 id="dns-seedlist-discovery"><a class="header" href="#dns-seedlist-discovery">DNS Seedlist Discovery</a></h4>
+<p>The connection string option for <code>loadBalanced=true</code> MUST be valid in a TXT record and when present MUST be validated as
+defined in the URI Validation section.</p>
+<p>When a MongoClient is configured with an SRV URI and <code>loadBalanced=true</code>, the driver MUST NOT poll for changes in the
+SRV record as is done for non-load balanced sharded clusters.</p>
+<h3 id="server-discovery-logging-and-monitoring"><a class="header" href="#server-discovery-logging-and-monitoring">Server Discovery Logging and Monitoring</a></h3>
+<p><span id="monitoring"></span></p>
+<h4 id="monitoring"><a class="header" href="#monitoring">Monitoring</a></h4>
+<p>When <code>loadBalanced=true</code> is specified in the URI the topology MUST start in type <code>LoadBalanced</code> and MUST remain as
+<code>LoadBalanced</code> indefinitely. The topology MUST contain 1 <code>ServerDescription</code> with a <code>ServerType</code> of -
+Code:<code>LoadBalancer</code>. The "address" field of the <code>ServerDescription</code> MUST be set to the address field of the load
+balancer. All other fields in the - Code:<code>ServerDescription</code> MUST remain unset. In this mode the driver MUST NOT start a
+monitoring connection. The <code>TopologyDescription</code>'s <code>compatible</code> field MUST always be <code>true</code>.</p>
+<p>Although there is no monitoring connection in load balanced mode, drivers MUST emit the following series of SDAM events:</p>
+<ul>
+<li><code>TopologyOpeningEvent</code> when the topology is created.</li>
+<li><code>TopologyDescriptionChangedEvent</code>. The <code>previousDescription</code> field MUST have <code>TopologyType</code> <code>Unknown</code> and no servers.
+The <code>newDescription</code> MUST have <code>TopologyType</code> <code>LoadBalanced</code> and one server with <code>ServerType</code> <code>Unknown</code>.</li>
+<li><code>ServerOpeningEvent</code> when the server representing the load balancer is created.</li>
+<li><code>ServerDescriptionChangedEvent</code>. The <code>previousDescription</code> MUST have <code>ServerType</code> <code>Unknown</code>. The <code>newDescription</code> MUST
+have <code>ServerType</code> <code>LoadBalancer</code>.</li>
+<li><code>TopologyDescriptionChangedEvent</code>. The <code>newDescription</code> MUST have <code>TopologyType</code> <code>LoadBalanced</code> and one server with
+<code>ServerType</code> <code>LoadBalancer</code>.</li>
+</ul>
+<p>Drivers MUST also emit a <code>ServerClosedEvent</code> followed by a <code>TopologyDescriptionChangedEvent</code> that transitions the
+<code>Topology</code> to the <code>UNKNOWN</code> state and a <code>TopologyClosedEvent</code> when the topology is closed and MUST NOT emit any other
+events when operating in this mode.</p>
+<h4 id="log-messages"><a class="header" href="#log-messages">Log Messages</a></h4>
+<p>SDAM events details described in <a href="#monitoring">Monitoring</a> apply to corresponding log messages. Please refer to the
+<a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html#log-messages">SDAM logging specification</a>
+for details on SDAM logging. Drivers MUST emit the relevant SDAM log messages, such as:</p>
+<ul>
+<li><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html#starting-topology-monitoring-log-message">Starting Topology Monitoring</a></li>
+<li><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html#stopped-topology-monitoring-log-message">Stopped Topology Mmonitoring</a></li>
+<li><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html#starting-server-monitoring-log-message">Starting Server Monitoring</a></li>
+<li><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html#stopped-server-monitoring-log-message">Stopped Server Monitoring</a></li>
+<li><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html#topology-description-changed-log-message">Topology Description Changed</a></li>
+</ul>
+<h3 id="driver-sessions"><a class="header" href="#driver-sessions">Driver Sessions</a></h3>
+<h4 id="session-support"><a class="header" href="#session-support">Session Support</a></h4>
+<p>When the <code>TopologyType</code> is <code>LoadBalanced</code>, sessions are always supported.</p>
+<h4 id="session-expiration"><a class="header" href="#session-expiration">Session Expiration</a></h4>
+<p>When in load balancer mode, drivers MUST ignore <code>logicalSessionTimeoutMinutes</code> and MUST NOT prune client sessions from
+the session pool when implemented by the driver.</p>
+<h4 id="data-bearing-server-type"><a class="header" href="#data-bearing-server-type">Data-Bearing Server Type</a></h4>
+<p>A <code>ServerType</code> of <code>LoadBalancer</code> MUST be considered a data-bearing server.</p>
+<h3 id="server-selection"><a class="header" href="#server-selection">Server Selection</a></h3>
+<p>A deployment of topology type Load Balanced contains one server of type <code>LoadBalancer</code>.</p>
+<p>For read and write operations, the single server in the topology MUST always be selected.</p>
+<p>During command construction, the LoadBalancer server MUST be treated like a mongos and drivers MUST add a
+<code>$readPreference</code> field to the command when required by
+<a href="../server-selection/server-selection.html#passing-read-preference-to-mongos-and-load-balancers">Passing read preference to mongos and load balancers</a>.</p>
+<h3 id="connection-pooling"><a class="header" href="#connection-pooling">Connection Pooling</a></h3>
+<h4 id="connection-establishment"><a class="header" href="#connection-establishment">Connection Establishment</a></h4>
+<p>In the case of the driver having the <code>loadBalanced=true</code> connection string option specified, every pooled connection
+MUST add a <code>loadBalanced</code> field to the - Code:<code>hello</code> command in its
+<a href="../mongodb-handshake/handshake.html#connection-handshake">handshake</a>. The value of the field MUST be <code>true</code>. If
+<code>loadBalanced=true</code> is specified then the <code>OP_MSG</code> protocol MUST be used for all steps of the connection handshake.</p>
+<p>Example:</p>
+<p>Driver connection string contains <code>loadBalanced=true</code>:</p>
+<pre><code class="language-typescript">{ hello: 1, loadBalanced: true }
+</code></pre>
+<p>Driver connection string contains <code>loadBalanced=false</code> or no - Code:<code>loadBalanced</code> option:</p>
+<pre><code class="language-typescript">{ hello: 1 }
+</code></pre>
+<p>When the server's hello response does not contain a <code>serviceId</code> field, the driver MUST throw an exception with the
+message "Driver attempted to initialize in load balancing mode, but the server does not support this mode."</p>
+<p>For single threaded drivers that do not use a connection pool, the driver MUST have only 1 socket connection to the load
+balancer in load balancing mode.</p>
+<h4 id="connection-pinning"><a class="header" href="#connection-pinning">Connection Pinning</a></h4>
+<p>Some features in MongoDB such as cursors and transactions require sending multiple commands to the same mongos in a
+sharded cluster. In load balanced mode, it is not possible to target the same mongos behind a load balancer when pooling
+connections. To account for this, drivers MUST pin to a single connection for these features. When using a pinned
+connection, the driver MUST emit only 1 - Code:<code>ConnectionCheckOutStartedEvent</code>, and only 1 <code>ConnectionCheckedOutEvent</code>
+or <code>ConnectionCheckOutFailedEvent</code>. Similarly, the driver MUST only publish 1 - Code:<code>ConnectionCheckedInEvent</code>.</p>
+<h4 id="behaviour-with-cursors"><a class="header" href="#behaviour-with-cursors">Behaviour With Cursors</a></h4>
+<p>When the driver is in load balancing mode and executing any cursor-initiating command, the driver MUST NOT check the
+connection back into the pool unless the command fails or the server returns a cursor ID of <code>0</code> (i.e. all documents are
+returned in a single batch). Otherwise, the driver MUST continue to use the same connection for all subsequent -
+Code:<code>getMore</code> commands for the cursor. The driver MUST check the connection back into the pool if the server returns a
+cursor ID of <code>0</code> in a <code>getMore</code> response (i.e. the cursor is drained). When the cursor's <code>close</code> method is invoked,
+either explicitly or via an implicit resource cleanup mechanism, the driver MUST use the same connection to execute a
+<code>killCursors</code> command if necessary and then check the connection back into the pool regardless of the result.</p>
+<p>For multi-threaded drivers, cursors with pinned connections MUST either document to the user that calling <code>next()</code> and
+<code>close()</code> operations on the cursor concurrently is not permitted, or explicitly prevent cursors from executing those
+operations simultaneously.</p>
+<p>If a <code>getMore</code> fails with a network error, drivers MUST leave the connection pinned to the cursor. When the cursor's
+<code>close</code> method is invoked, drivers MUST NOT execute a <code>killCursors</code> command because the pinned connection is no longer
+valid and MUST return the connection back to the pool.</p>
+<h4 id="behaviour-with-transactions"><a class="header" href="#behaviour-with-transactions">Behaviour With Transactions</a></h4>
+<p>When executing a transaction in load balancing mode, drivers MUST follow the rules outlined in
+<a href="../transactions/transactions.html#sharded-transactions">Sharded Transactions</a> with one exception: drivers MUST use the
+same connection for all commands in the transaction (excluding retries of commitTranscation and abortTransaction in some
+cases). Pinning to a single connection ensures that all commands in the transaction target the same service behind the
+load balancer. The rules for pinning to a connection and releasing a pinned connection are the same as those for server
+pinning in non-load balanced sharded transactions as described in
+<a href="../transactions/transactions.html#when-to-unpin">When to unpin</a>. Drivers MUST NOT use the same connection for two
+concurrent transactions run under different sessions from the same client.</p>
+<h4 id="connection-tracking"><a class="header" href="#connection-tracking">Connection Tracking</a></h4>
+<p>The driver connection pool MUST track the purpose for which connections are checked out in the following 3 categories:</p>
+<ul>
+<li>Connections checked out for cursors</li>
+<li>Connections checked out for transactions</li>
+<li>Connections checked out for operations not falling under the previous 2 categories</li>
+</ul>
+<p>When the connection pool's <code>maxPoolSize</code> is reached and the pool times out waiting for a new connection the
+<code>WaitQueueTimeoutError</code> MUST include a new detailed message, "Timeout waiting for connection from the connection pool.
+maxPoolSize: n, connections in use by cursors: n, connections in use by transactions: n, connections in use by other
+operations: n".</p>
+<h3 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h3>
+<h4 id="initial-handshake-errors"><a class="header" href="#initial-handshake-errors">Initial Handshake Errors</a></h4>
+<p>When establishing a new connection in load balanced mode, drivers MUST NOT perform SDAM error handling for any errors
+that occur before the MongoDB Handshake (i.e. <code>hello</code> command) is complete. Errors during the MongoDB Handshake MUST
+also be ignored for SDAM error handling purposes. Once the initial handshake is complete, the connection MUST determine
+its generation number based on the <code>serviceId</code> field in the handshake response. Any errors that occur during the rest of
+connection establishment (e.g. errors during authentication commands) MUST go through the SDAM error handling flow but
+MUST NOT mark the server as - Code:<code>Unknown</code> and when requiring the connection pool to be cleared, MUST only clear
+connections for the <code>serviceId</code>.</p>
+<h4 id="post-handshake-errors"><a class="header" href="#post-handshake-errors">Post-Handshake Errors</a></h4>
+<p>When the driver is operating in load balanced mode and an application operation receives a state change error, the
+driver MUST NOT make any changes to the <code>TopologyDescription</code> or the <code>ServerDescription</code> of the load balancer (i.e. it
+MUST NOT mark the load balancer as <code>Unknown</code>). If the error requires the connection pool to be cleared, the driver MUST
+only clear connections with the same <code>serviceId</code> as the connection which errored.</p>
+<h3 id="events"><a class="header" href="#events">Events</a></h3>
+<p>When in load balancer mode the driver MUST now include the <code>serviceId</code> in the - Code:<code>CommandStartedEvent</code>,
+<code>CommandSucceededEvent</code>, and - Code:<code>CommandFailedEvent</code>. The driver MAY decide how to expose this information. Drivers
+that have a <code>ConnectionId</code> object for example, MAY choose to provide a - Code:<code>serviceId</code> in that object. The
+<code>serviceId</code> field is only present when in load balancer mode and connected to a service that is behind a load balancer.</p>
+<p>Additionally the <code>PoolClearedEvent</code> MUST also contain a <code>serviceId</code> field.</p>
+<h3 id="downstream-visible-behavioral-changes"><a class="header" href="#downstream-visible-behavioral-changes">Downstream Visible Behavioral Changes</a></h3>
+<p>Services MAY add a command line option or other configuration parameter, that tells the service it is running behind a
+load balancer. Services MAY also dynamically determine whether they are behind a load balancer.</p>
+<p>All services which terminate TLS MUST be configured to return a TLS certificate for a hostname which matches the
+hostname the client is connecting to.</p>
+<p>All services behind a load balancer that have been started with the aforementioned option MUST add a top level
+<code>serviceId</code> field to their response to the <code>hello</code> command. This field MUST be a BSON <code>ObjectId</code> and SHOULD NOT change
+while the service is running. When a driver is configured to not be in load balanced mode and the service is configured
+behind a load balancer, the service MAY return an error from the driver's <code>hello</code> command that the driver is not
+configured to use it properly.</p>
+<p>All services that have the behaviour of reaping idle cursors after a specified period of time MAY also close the
+connection associated with the cursor when the cursor is reaped. Conversely, those services MAY reap a cursor when the
+connection associated with the cursor is closed.</p>
+<p>All services that have the behaviour of reaping idle transactions after a specified period of time MAY also close the
+connection associated with the transaction when the transaction is reaped. Conversely, those services must abort a
+transaction when the connection associated with the transaction is closed.</p>
+<p>Any applications that connect directly to services and not through the load balancer MUST connect via the regular
+service port as they normally would and not the port specified by the <code>loadBalancerPort</code> option. The <code>loadBalanced=true</code>
+URI option MUST be omitted in this case.</p>
+<h3 id="qa"><a class="header" href="#qa">Q&amp;A</a></h3>
+<h4 id="why-use-a-connection-string-option-instead-of-a-new-uri-scheme"><a class="header" href="#why-use-a-connection-string-option-instead-of-a-new-uri-scheme">Why use a connection string option instead of a new URI scheme?</a></h4>
+<p>Use of a connection string option would allow the driver to continue to use SRV records that pointed at a load balancer
+instead of a replica set without needing to change the URI provided to the <code>MongoClient</code>. The SRV records could also
+provide the default <code>loadBalanced=true</code> in the TXT records.</p>
+<h4 id="why-explicitly-opt-in-to-this-behaviour-instead-of-letting-mongos-inform-the-driver-of-the-load-balancer"><a class="header" href="#why-explicitly-opt-in-to-this-behaviour-instead-of-letting-mongos-inform-the-driver-of-the-load-balancer">Why explicitly opt-in to this behaviour instead of letting mongos inform the driver of the load balancer?</a></h4>
+<p>Other versions of this design proposed a scheme in which the application does not have to opt-in to load balanced mode.
+Instead, the server would send a special field in <code>hello</code> command responses to indicate that it was running behind a
+load balancer and the driver would change its behavior accordingly. We opted to take an approach that required code
+changes instead because load balancing changes driver behavior in ways that could cause unexpected application errors,
+so it made sense to have applications consciously opt-in to this mode. For example, connection pinning creates new
+stresses on connection pools because we go from a total of <code>numMongosServers * maxPoolSize</code> connections to simply
+maxPoolSize. Furthermore, connections get pinned to open cursors and transactions, further straining resource
+availability. Due to this change, applications may also need to increase the configured <code>maxPoolSize</code> when opting into
+this mode.</p>
+<h4 id="why-does-this-specification-instruct-drivers-to-not-check-connections-back-into-the-connection-pool-in-some-circumstances"><a class="header" href="#why-does-this-specification-instruct-drivers-to-not-check-connections-back-into-the-connection-pool-in-some-circumstances">Why does this specification instruct drivers to not check connections back into the connection pool in some circumstances?</a></h4>
+<p>In the case of a load balancer fronting multiple services, it is possible that a connection to the load balancer could
+result in a connection behind the load balancer to a different service. In order to guarantee these operations execute
+on the same service they need to be executed on the same socket - not checking a connection back into the pool for the
+entire operation guarantees this.</p>
+<h4 id="what-reason-has-a-client-side-connection-reaper-for-idle-cursors-not-been-put-into-this-specification"><a class="header" href="#what-reason-has-a-client-side-connection-reaper-for-idle-cursors-not-been-put-into-this-specification">What reason has a client side connection reaper for idle cursors not been put into this specification?</a></h4>
+<p>It was discussed as a potential solution for maxed out connection pools that the drivers could potentially behave
+similar to the server and close long running cursors after a specified time period and return their connections to the
+pool. Due to the high complexity of that solution it was determined that better error messaging when the connection pool
+was maxed out would suffice in order for users to easily debug when the pool ran out of connections and fix their
+applications or adjust their pool options accordingly.</p>
+<h4 id="why-are-we-requiring-mongos-servers-to-add-a-new-serviceid-field-in-hello-responses-rather-than-reusing-the-existing-topologyversionprocessid"><a class="header" href="#why-are-we-requiring-mongos-servers-to-add-a-new-serviceid-field-in-hello-responses-rather-than-reusing-the-existing-topologyversionprocessid">Why are we requiring mongos servers to add a new serviceId field in hello responses rather than reusing the existing topologyVersion.processId?</a></h4>
+<p>This option was previously discussed, but we opted to add a new <code>hello</code> response field in order to not mix intentions.</p>
+<h4 id="why-does-this-specification-not-address-load-balancer-restarts-or-maintenance"><a class="header" href="#why-does-this-specification-not-address-load-balancer-restarts-or-maintenance">Why does this specification not address load balancer restarts or maintenance?</a></h4>
+<p>The Layer 4 load balancers that would be in use for this feature lack the ability that a layer 7 load balancer could
+potentially have to be able to understand the MongoDB wire protocol and respond to monitoring requests.</p>
+<h3 id="design-rationales"><a class="header" href="#design-rationales">Design Rationales</a></h3>
+<p>Services cannot dynamically switch from running behind a load balancer and not running behind a load balancer. Based on
+that, this design forces the application to opt-in to this behaviour and make potential changes that require restarts to
+their applications. If this were to change, see alternative designs below.</p>
+<h3 id="alternative-designs"><a class="header" href="#alternative-designs">Alternative Designs</a></h3>
+<h4 id="service-proxy-detection"><a class="header" href="#service-proxy-detection">Service PROXY Detection</a></h4>
+<p>An alternative to the driver using a connection string option to put it into load balancing mode would be for the
+service the driver is connected to to inform the driver it is behind a load balancer. A possible solution for this would
+be for all services to understand the PROXY protocol such as Data Lake does, and to alter their hello responses to
+inform the driver they are behind a load balancer, potentially with the IP address of the load balancer itself.</p>
+<p>The benefit of this solution would be that no changes would be required from the application side, and could also not
+require a restart of any application. A single request to the service through the load balancer could automatically
+trigger the change in the hello response and cause the driver to switch into load balancing mode pointing at the load
+balancer's IP address. Also with this solution it would provide services the ability to record the original IP addresses
+of the application that was connecting to it as they are provided the PROXY protocol's header bytes.</p>
+<p>The additional complexity of this alternative on the driver side is that instead of starting in a single mode and
+remaining there for the life of the application, the driver would need to deal with additional state changes based on
+the results of the server monitors. From a service perspective, every service would need to be updated to understand the
+PROXY protocol header bytes prepended to the initial connection and modify their states and hello responses accordingly.
+Additionally load balancers would need to have additional configuration as noted in the reference section below, and
+only load balancers that support the PROXY protocol would be supported.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>2024-04-25: Clarify that <code>TopologyDescriptionChangedEvent</code> must be emitted on topology close</li>
+<li>2024-03-06: Migrated from reStructuredText to Markdown.</li>
+<li>2022-10-05: Remove spec front matter and reformat changelog.</li>
+<li>2022-01-18: Clarify that <code>OP_MSG</code> must be used in load balanced mode.</li>
+<li>2021-12-22: Clarify that pinned connections in transactions are exclusive.</li>
+<li>2021-10-14: Note that <code>loadBalanced=true</code> conflicts with <code>srvMaxHosts</code>.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../server-discovery-and-monitoring/server-monitoring.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../server-discovery-and-monitoring/server-monitoring.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,1031 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Bulk Write - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html" class="active"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="bulk-write"><a class="header" href="#bulk-write">Bulk Write</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 8.0</li>
+</ul>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>This specification defines the driver API for the <code>bulkWrite</code> server command introduced in MongoDB 8.0. The API defined
+in this specification allows users to perform insert, update, and delete operations against mixed namespaces in a
+minimized number of round trips, and to receive detailed results for each operation performed. This API is distinct from
+the <a href="../crud/crud.html#insert-update-replace-delete-and-bulk-writes">collection-level bulkWrite method</a> defined in the
+CRUD specification.</p>
+<h2 id="specification"><a class="header" href="#specification">Specification</a></h2>
+<blockquote>
+<p>[!NOTE]
+The <code>BulkWriteOptions</code>, <code>BulkWriteResult</code>, and <code>BulkWriteException</code> types defined in this specification are similar to
+those used for the <code>MongoCollection.bulkWrite</code> method. Statically typed drivers MUST NOT reuse their existing
+definitions for these types for the <code>MongoClient.bulkWrite</code> API and MUST introduce new types. If naming conflicts
+arise, drivers SHOULD prepend "Client" to the new type names (e.g. <code>ClientBulkWriteOptions</code>).</p>
+</blockquote>
+<h3 id="mongoclientbulkwrite-interface"><a class="header" href="#mongoclientbulkwrite-interface"><code>MongoClient.bulkWrite</code> Interface</a></h3>
+<pre><code class="language-typescript">interface MongoClient {
+    /**
+     * Executes a list of mixed write operations.
+     *
+     * @throws BulkWriteException
+     */
+    bulkWrite(models: NamespaceWriteModelPair[], options: Optional&lt;BulkWriteOptions&gt;): BulkWriteResult;
+}
+</code></pre>
+<h3 id="write-models"><a class="header" href="#write-models">Write Models</a></h3>
+<p>A <code>WriteModel</code> defines a single write operation to be performed as part of a bulk write.</p>
+<pre><code class="language-typescript">/**
+ * Unifying interface for the various write model types. Drivers may also use an enum with
+ * variants for each write model for this type.
+ */
+interface WriteModel {}
+
+class InsertOneModel implements WriteModel {
+    /**
+     * The document to insert.
+     */
+    document: Document;
+}
+
+class UpdateOneModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * The update document or pipeline to apply to the selected document.
+     */
+    update: (Document | Document[]);
+
+    /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    arrayFilters: Optional&lt;Document[]&gt;;
+
+    /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional&lt;Document&gt;;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional&lt;Document | String&gt;;
+
+    /**
+     * When true, creates a new document if no document matches the query.
+     *
+     * This option is only sent if the caller explicitly provides a value. The server's default
+     * value is false.
+     */
+    upsert: Optional&lt;Boolean&gt;;
+}
+
+class UpdateManyModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * The update document or pipeline to apply to the selected documents.
+     */
+    update: (Document | Document[]);
+
+    /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    arrayFilters: Optional&lt;Document[]&gt;;
+
+    /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional&lt;Document&gt;;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional&lt;Document | String&gt;;
+
+    /**
+     * When true, creates a new document if no document matches the query.
+     *
+     * This option is only sent if the caller explicitly provides a value. The server's default
+     * value is false.
+     */
+    upsert: Optional&lt;Boolean&gt;;
+}
+
+class ReplaceOneModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * The replacement document.
+     */
+    replacement: Document;
+
+    /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional&lt;Document&gt;;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional&lt;Document | String&gt;;
+
+    /**
+     * When true, creates a new document if no document matches the query.
+     *
+     * This option is only sent if the caller explicitly provides a value. The server's default
+     * value is false.
+     */
+    upsert: Optional&lt;Boolean&gt;;
+}
+
+class DeleteOneModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional&lt;Document&gt;;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional&lt;Document | String&gt;;
+}
+
+class DeleteManyModel implements WriteModel {
+    /**
+     * The filter to apply.
+     */
+    filter: Document;
+
+    /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value.
+     */
+    collation: Optional&lt;Document&gt;;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern. If
+     * specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    hint: Optional&lt;Document | String&gt;;
+}
+</code></pre>
+<p>Each write model provided to <code>MongoClient.bulkWrite</code> in the <code>models</code> parameter MUST have a corresponding namespace that
+defines the collection on which the operation should be performed. Drivers SHOULD design this pairing in whichever way
+is most idiomatic for its language. For example, drivers may:</p>
+<ul>
+<li>Include a required <code>namespace</code> field on each <code>WriteModel</code> variant and accept a list of <code>WriteModel</code> objects for the
+<code>models</code> parameter.</li>
+<li>Accept a list of <code>(Namespace, WriteModel)</code> tuples for <code>models</code>.</li>
+<li>Define the following pair class:</li>
+</ul>
+<pre><code class="language-typescript">class NamespaceWriteModelPair {
+    /**
+     * The namespace on which to perform the write.
+     */
+    namespace: Namespace;
+
+    /**
+     * The write to perform.
+     */
+    model: WriteModel;
+}
+</code></pre>
+<p>Drivers MUST throw an exception if the list provided for <code>models</code> is empty.</p>
+<h4 id="update-vs-replace-document-validation"><a class="header" href="#update-vs-replace-document-validation">Update vs. replace document validation</a></h4>
+<p>Update documents provided in <code>UpdateOne</code> and <code>UpdateMany</code> write models are required only to contain atomic modifiers
+(i.e. keys that start with "$"). Drivers MUST throw an error if an update document is empty or if the document's first
+key does not start with "$". Drivers MUST rely on the server to return an error if any other entries in the update
+document are not atomic modifiers. Drivers are not required to perform validation on update pipelines.</p>
+<p>Replacement documents provided in <code>ReplaceOne</code> write models are required not to contain atomic modifiers. Drivers MUST
+throw an error if a replacement document is nonempty and its first key starts with "$". Drivers MUST rely on the server
+to return an error if any other entries in the replacement document are atomic modifiers.</p>
+<h3 id="options"><a class="header" href="#options">Options</a></h3>
+<pre><code class="language-typescript">class BulkWriteOptions {
+    /**
+     * Whether the operations in this bulk write should be executed in the order in which they were
+     * specified. If false, writes will continue to be executed if an individual write fails. If
+     * true, writes will stop executing if an individual write fails.
+     *
+     * Defaults to true.
+     */
+    ordered: Optional&lt;Boolean&gt;;
+
+    /**
+     * If true, allows the writes to opt out of document-level validation.
+     *
+     * This option is only sent if the caller explicitly provides a value. The server's default
+     * value is false.
+     */
+    bypassDocumentValidation: Optional&lt;Boolean&gt;;
+
+    /**
+     * A map of parameter names and values to apply to all operations within the bulk write. Value
+     * must be constant or closed expressions that do not reference document fields. Parameters can
+     * then be accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    let: Optional&lt;Document&gt;;
+
+    /**
+     * The write concern to use for this bulk write.
+     */
+    writeConcern: Optional&lt;WriteConcern&gt;;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    comment: Optional&lt;BSON value&gt;;
+
+    /**
+     * Whether detailed results for each successful operation should be included in the returned
+     * BulkWriteResult.
+     *
+     * Defaults to false. This value corresponds inversely to the errorsOnly field in the bulkWrite
+     * command.
+     */
+    verboseResults: Optional&lt;Boolean&gt;;
+}
+</code></pre>
+<h3 id="result"><a class="header" href="#result">Result</a></h3>
+<pre><code class="language-typescript">class BulkWriteResult {
+    /**
+     * Indicates whether this write result was acknowledged.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling unacknowledged results.
+     */
+    acknowledged: Boolean;
+
+    /**
+     * Indicates whether this result contains verbose results.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
+     */
+    hasVerboseResults: Boolean;
+
+    /**
+     * The total number of documents inserted across all insert operations.
+     */
+    insertedCount: Int64;
+
+    /**
+     * The total number of documents upserted across all update operations.
+     */
+    upsertedCount: Int64;
+
+    /**
+     * The total number of documents matched across all update operations.
+     */
+    matchedCount: Int64;
+
+    /**
+     * The total number of documents modified across all update operations.
+     */
+    modifiedCount: Int64;
+
+    /**
+     * The total number of documents deleted across all delete operations.
+     */
+    deletedCount: Int64;
+
+    /**
+     * The results of each individual insert operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
+     */
+    insertResults: Map&lt;Index, InsertOneResult&gt;;
+
+    /**
+     * The results of each individual update operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
+     */
+    updateResults: Map&lt;Index, UpdateResult&gt;;
+
+    /**
+     * The results of each individual delete operation that was successfully performed.
+     *
+     * NOT REQUIRED TO IMPLEMENT. See below for guidance on modeling verbose results.
+     */
+    deleteResults: Map&lt;Index, DeleteResult&gt;;
+}
+
+class InsertOneResult {
+    /**
+     * The _id of the inserted document.
+     */
+    insertedId: Any;
+}
+
+class UpdateResult {
+    /**
+     * The number of documents that matched the filter.
+     */
+    matchedCount: Int64;
+
+    /**
+     * The number of documents that were modified.
+     */
+    modifiedCount: Int64;
+
+    /**
+     * The _id field of the upserted document if an upsert occurred.
+     *
+     * It MUST be possible to discern between a BSON Null upserted ID value and this field being
+     * unset. If necessary, drivers MAY add a didUpsert boolean field to differentiate between
+     * these two cases.
+     */
+    upsertedId: Optional&lt;BSON value&gt;;
+}
+
+class DeleteResult {
+    /**
+     * The number of documents that were deleted.
+     */
+    deletedCount: Int64;
+}
+</code></pre>
+<h4 id="unacknowledged-results"><a class="header" href="#unacknowledged-results">Unacknowledged results</a></h4>
+<p>Users MUST be able to discern whether a <code>BulkWriteResult</code> contains acknowledged results without inspecting the
+configured write concern. Drivers should follow the guidance in the CRUD specification
+<a href="../crud/crud.html#write-results">here</a> to determine how to model unacknowledged results.</p>
+<p>If drivers expose the <code>acknowledged</code> field, they MUST document what will happen if a user attempts to access a result
+value when <code>acknowledged</code> is <code>false</code> (e.g. an undefined value is returned or an error is thrown).</p>
+<h4 id="summary-vs-verbose-results"><a class="header" href="#summary-vs-verbose-results">Summary vs. verbose results</a></h4>
+<p>When a user does not set the <code>verboseResults</code> option to <code>true</code>, drivers MUST NOT populate the <code>insertResults</code>,
+<code>updateResults</code>, and <code>deleteResults</code> fields. Users MUST be able to discern whether a <code>BulkWriteResult</code> contains these
+verbose results without inspecting the value provided for <code>verboseResults</code> in <code>BulkWriteOptions</code>. Drivers can implement
+this in a number of ways, including:</p>
+<ul>
+<li>Expose the <code>hasVerboseResults</code> field in <code>BulkWriteResult</code> as defined above. Document what will happen if a user
+attempts to access the <code>insertResults</code>, <code>updateResults</code>, or <code>deleteResults</code> values when <code>hasVerboseResults</code> is false.
+Drivers MAY raise an error if a user attempts to access one of these values when <code>hasVerboseResults</code> is false.</li>
+<li>Embed the verbose results in an optional type:</li>
+</ul>
+<pre><code class="language-typescript">class BulkWriteResult {
+    /**
+     * The results of each individual write operation that was successfully performed.
+     *
+     * This value will only be populated if the verboseResults option was set to true.
+     */ 
+    verboseResults: Optional&lt;VerboseResults&gt;;
+
+    /* rest of fields */
+}
+
+class VerboseResults {
+    /**
+     * The results of each individual insert operation that was successfully performed.
+     */
+    insertResults: Map&lt;Index, InsertOneResult&gt;;
+
+    /**
+     * The results of each individual update operation that was successfully performed.
+     */
+    updateResults: Map&lt;Index, UpdateResult&gt;;
+
+    /**
+     * The results of each individual delete operation that was successfully performed.
+     */
+    deleteResults: Map&lt;Index, DeleteResult&gt;;
+}
+</code></pre>
+<ul>
+<li>Define separate <code>SummaryBulkWriteResult</code> and <code>VerboseBulkWriteResult</code> types. <code>SummaryBulkWriteResult</code> MUST only
+contain the summary result fields, and <code>VerboseBulkWriteResult</code> MUST contain both the summary and verbose result
+fields. Return <code>VerboseBulkWriteResult</code> when <code>verboseResults</code> was set to true and <code>SummaryBulkWriteResult</code> otherwise.</li>
+</ul>
+<h4 id="individual-results"><a class="header" href="#individual-results">Individual results</a></h4>
+<p>The <code>InsertOneResult</code>, <code>UpdateResult</code>, and <code>DeleteResult</code> classes are the same as or similar to types of the same name
+defined in the <a href="crud.html">CRUD specification</a>. Drivers MUST redefine these classes if their existing result classes
+deviate from the definitions in this specification (e.g. if they contain acknowledgement information, which is not
+applicable for individual bulk write operations). Drivers MAY reuse their existing types for these classes if they match
+the ones defined here exactly.</p>
+<h3 id="exception"><a class="header" href="#exception">Exception</a></h3>
+<pre><code class="language-typescript">class BulkWriteException {
+    /**
+     * A top-level error that occurred when attempting to communicate with the server or execute
+     * the bulk write. This value may not be populated if the exception was thrown due to errors
+     * occurring on individual writes.
+     */
+    error: Optional&lt;Error&gt;;
+
+    /**
+     * Write concern errors that occurred while executing the bulk write. This list may have
+     * multiple items if more than one server command was required to execute the bulk write.
+     */
+    writeConcernErrors: WriteConcernError[];
+
+    /**
+     * Errors that occurred during the execution of individual write operations. This map will
+     * contain at most one entry if the bulk write was ordered.
+     */
+    writeErrors: Map&lt;Index, WriteError&gt;;
+
+    /**
+     * The results of any successful operations that were performed before the error was
+     * encountered.
+     */
+    partialResult: Optional&lt;BulkWriteResult&gt;;
+}
+</code></pre>
+<h3 id="index-types"><a class="header" href="#index-types">Index Types</a></h3>
+<p>The <code>insertResults</code>, <code>updateResults</code>, and <code>deleteResults</code> maps in <code>BulkWriteResult</code> and the <code>writeErrors</code> map in
+<code>BulkWriteException</code> specify <code>Index</code> as their key type. This value corresponds to the index of the operation in the
+<code>writeModels</code> list that was provided to <code>MongoClient.bulkWrite</code>. Drivers SHOULD use their language's standard numeric
+type for indexes for this type (e.g. <code>usize</code> in Rust). If no standard index type exists, drivers MUST use <code>Int64</code>.</p>
+<h2 id="building-a-bulkwrite-command"><a class="header" href="#building-a-bulkwrite-command">Building a <code>bulkWrite</code> Command</a></h2>
+<p>The <code>bulkWrite</code> server command has the following format:</p>
+<pre><code class="language-javascript">{
+    "bulkWrite": 1,
+    "ops": &lt;Array&gt;,
+    "nsInfo": &lt;Array&gt;,
+    "errorsOnly": Optional&lt;Boolean&gt;,
+    "ordered": Optional&lt;Boolean&gt;,
+    "bypassDocumentValidation": Optional&lt;Boolean&gt;,
+    "comment": Optional&lt;BSON value&gt;,
+    "let": Optional&lt;Document&gt;,
+    ...additional operation-agnostic fields
+}
+</code></pre>
+<p>Drivers MUST use document sequences (<a href="../message/OP_MSG.html"><code>OP_MSG</code></a> payload type 1) for the <code>ops</code> and <code>nsInfo</code> fields.</p>
+<p>The <code>bulkWrite</code> command is executed on the "admin" database.</p>
+<h3 id="operations"><a class="header" href="#operations">Operations</a></h3>
+<p>The <code>ops</code> field is a list of write operation documents. The first entry in each document has the name of the operation
+(i.e. "insert", "update", or "delete") as its key and the index in the <code>nsInfo</code> array of the namespace on which the
+operation should be performed as its value. The documents have the following format:</p>
+<h4 id="insert"><a class="header" href="#insert">Insert</a></h4>
+<pre><code class="language-javascript">{
+    "insert": &lt;Int32&gt;,
+    "document": &lt;Document&gt;
+}
+</code></pre>
+<p>If the document to be inserted does not contain an <code>_id</code> field, drivers MUST generate a new
+<a href="../bson-objectid/objectid.html"><code>ObjectId</code></a> and add it as the <code>_id</code> field at the beginning of the document.</p>
+<h4 id="update"><a class="header" href="#update">Update</a></h4>
+<pre><code class="language-javascript">{
+    "update": &lt;Int32&gt;,
+    "filter": &lt;Document&gt;,
+    "updateMods": &lt;Document | Array&gt;,
+    "multi": Optional&lt;Boolean&gt;,
+    "upsert": Optional&lt;Boolean&gt;,
+    "arrayFilters": Optional&lt;Array&gt;,
+    "hint": Optional&lt;Document | String&gt;,
+    "collation": Optional&lt;Document&gt;
+}
+</code></pre>
+<p>The <code>update</code> command document is used for update and replace operations. For update operations, the <code>updateMods</code> field
+corresponds to the <code>update</code> field in <code>UpdateOneModel</code> and <code>UpdateManyModel</code>. For replace operations, the <code>updateMods</code>
+field corresponds to the <code>replacement</code> field in <code>ReplaceOneModel</code>.</p>
+<h4 id="delete"><a class="header" href="#delete">Delete</a></h4>
+<pre><code class="language-javascript">{
+    "delete": &lt;Int32&gt;,
+    "filter": &lt;Document&gt;,
+    "multi": Optional&lt;Boolean&gt;,
+    "hint": Optional&lt;Document | String&gt;,
+    "collation": Optional&lt;Document&gt;
+}
+</code></pre>
+<h3 id="namespace-information"><a class="header" href="#namespace-information">Namespace Information</a></h3>
+<p>The <code>nsInfo</code> field is an array containing the namespaces on which the write operations should be performed. Drivers MUST
+NOT include duplicate namespaces in this list. The documents in the <code>nsInfo</code> array have the following format:</p>
+<pre><code class="language-javascript">{
+    "ns": &lt;String&gt;
+}
+</code></pre>
+<h3 id="errorsonly-and-verboseresults"><a class="header" href="#errorsonly-and-verboseresults"><code>errorsOnly</code> and <code>verboseResults</code></a></h3>
+<p>The <code>errorsOnly</code> field indicates whether the results cursor returned in the <code>bulkWrite</code> response should contain only
+errors and omit individual results. If false, both individual results for successful operations and errors will be
+returned. This field is optional and defaults to false on the server.</p>
+<p><code>errorsOnly</code> corresponds inversely to the <code>verboseResults</code> option defined on <code>BulkWriteOptions</code>. If the user specified a
+value for <code>verboseResults</code>, drivers MUST define <code>errorsOnly</code> as the opposite of <code>verboseResults</code>. If the user did not
+specify a value for <code>verboseResults</code>, drivers MUST define <code>errorsOnly</code> as <code>true</code>.</p>
+<h3 id="ordered"><a class="header" href="#ordered"><code>ordered</code></a></h3>
+<p>The <code>ordered</code> field defines whether writes should be executed in the order in which they were specified, and, if an
+error occurs, whether the server should halt execution of further writes. It is optional and defaults to true on the
+server. Drivers MUST explicitly define <code>ordered</code> as <code>true</code> in the <code>bulkWrite</code> command if a value is not specified in
+<code>BulkWriteOptions</code>. This is required to avoid inconsistencies between server and driver behavior if the server default
+changes in the future.</p>
+<h3 id="size-limits"><a class="header" href="#size-limits">Size Limits</a></h3>
+<p>The server reports a <code>maxBsonObjectSize</code> in its <code>hello</code> response. This value defines the maximum size for documents that
+are inserted into the database. Documents that are sent to the server but are not intended to be inserted into the
+database (e.g. command documents) have a size limit of <code>maxBsonObjectSize + 16KiB</code>. When an acknowledged write concern
+is used, drivers MUST NOT perform any checks related to these size limits and MUST rely on the server to raise an error
+if a limit is exceeded. However, when an unacknowledged write concern is used, drivers MUST raise an error if one of the
+following limits is exceeded:</p>
+<ul>
+<li>The size of a document to be inserted MUST NOT exceed <code>maxBsonObjectSize</code>. This applies to the <code>document</code> field of an
+<code>InsertOneModel</code> and the <code>replacement</code> field of a <code>ReplaceOneModel</code>.</li>
+<li>The size of an entry in the <code>ops</code> array MUST NOT exceed <code>maxBsonObjectSize + 16KiB</code>.</li>
+<li>The size of the <code>bulkWrite</code> command document MUST NOT exceed <code>maxBsonObjectSize + 16KiB</code>.</li>
+</ul>
+<p>See <a href="https://jira.mongodb.org/browse/SERVER-10643">SERVER-10643</a> for more details on these size limits.</p>
+<h2 id="auto-encryption"><a class="header" href="#auto-encryption">Auto-Encryption</a></h2>
+<p>If <code>MongoClient.bulkWrite</code> is called on a <code>MongoClient</code> configured with <code>AutoEncryptionOpts</code>, drivers MUST return an
+error with the message: "bulkWrite does not currently support automatic encryption".</p>
+<p>This is expected to be removed once <a href="https://jira.mongodb.org/browse/DRIVERS-2888">DRIVERS-2888</a> is implemented.</p>
+<h2 id="command-batching"><a class="header" href="#command-batching">Command Batching</a></h2>
+<p>Drivers MUST accept an arbitrary number of operations as input to the <code>MongoClient.bulkWrite</code> method. Because the server
+imposes restrictions on the size of write operations, this means that a single call to <code>MongoClient.bulkWrite</code> may
+require multiple <code>bulkWrite</code> commands to be sent to the server. Drivers MUST split bulk writes into separate commands
+when the user's list of operations exceeds one or more of these maximums: <code>maxWriteBatchSize</code>, <code>maxBsonObjectSize</code> (for
+<code>OP_MSG</code> payload type 0), and <code>maxMessageSizeBytes</code> (for <code>OP_MSG</code> payload type 1). Each of these values can be retrieved
+from the selected server's <code>hello</code> command response. Drivers MUST merge results from multiple batches into a single
+<code>BulkWriteResult</code> or <code>BulkWriteException</code> to return from <code>MongoClient.bulkWrite</code>.</p>
+<p>When constructing the <code>nsInfo</code> array for a <code>bulkWrite</code> batch, drivers MUST only include the namespaces that are
+referenced in the <code>ops</code> array for that batch.</p>
+<h3 id="number-of-writes"><a class="header" href="#number-of-writes">Number of Writes</a></h3>
+<p><code>maxWriteBatchSize</code> defines the total number of writes allowed in one command. Drivers MUST split a bulk write into
+multiple commands if the user provides more than <code>maxWriteBatchSize</code> operations in the argument for <code>models</code>.</p>
+<h3 id="total-message-size"><a class="header" href="#total-message-size">Total Message Size</a></h3>
+<p>Drivers MUST ensure that the total size of the <code>OP_MSG</code> built for each <code>bulkWrite</code> command does not exceed
+<code>maxMessageSizeBytes</code>.</p>
+<p>The upper bound for the size of an <code>OP_MSG</code> includes opcode-related bytes (e.g. the <code>OP_MSG</code> header) and
+operation-agnostic command field bytes (e.g. <code>txnNumber</code>, <code>lsid</code>). Drivers MUST limit the combined size of the
+<code>bulkWrite</code> command document (excluding command-agnostic fields), <code>ops</code> document sequence, and <code>nsInfo</code> document
+sequence to <code>maxMessageSizeBytes - 1000</code> to account for this overhead. The following pseudocode demonstrates how to
+apply this limit in batch-splitting logic:</p>
+<pre><code>MESSAGE_OVERHEAD_BYTES = 1000
+
+bulkWriteCommand = Document { "bulkWrite": 1 }
+bulkWriteCommand.appendOptions(bulkWriteOptions)
+
+maxOpsNsInfoBytes = maxMessageSizeBytes - (MESSAGE_OVERHEAD_BYTES + bulkWriteCommand.numBytes())
+
+while (writeModels.hasNext()) {
+    ops = DocumentSequence {}
+    nsInfo = DocumentSequence {}
+    while (true) {
+        if (!writeModels.hasNext()) {
+            break
+        }
+        model = writeModels.next()
+
+        modelDoc = writeModel.toOpsDoc()
+        bytesAdded = modelDoc.numBytes()
+
+        nsInfoDoc = null
+        if (!nsInfo.contains(model.namespace)) {
+            nsInfoDoc = model.namespace.toNsInfoDoc()
+            bytesAdded += nsInfoDoc.numBytes()
+        }
+
+        newSize = ops.numBytes() + nsInfo.numBytes() + bytesAdded
+        if (newSize &gt; maxOpsNsInfoBytes) {
+            break
+        } else {
+            ops.push(modelDoc)
+            if (nsInfoDoc != null) {
+                nsInfo.push(nsInfoDoc)
+            }
+        }
+    }
+
+    // construct and send OP_MSG
+}
+</code></pre>
+<p>See <a href="#how-was-the-op_msg-overhead-allowance-determined">this Q&amp;A entry</a> for more details on how the overhead allowance
+was determined.</p>
+<p>Drivers MUST return an error if there is not room to add at least one operation to <code>ops</code>.</p>
+<h2 id="handling-the-bulkwrite-server-response"><a class="header" href="#handling-the-bulkwrite-server-response">Handling the <code>bulkWrite</code> Server Response</a></h2>
+<p>The server's response to <code>bulkWrite</code> has the following format:</p>
+<pre><code class="language-javascript">{
+    "ok": &lt;0 | 1&gt;,
+    "cursor": {
+        "id": &lt;Int64&gt;,
+        "firstBatch": &lt;Array&gt;,
+        "ns": &lt;String&gt;
+    },
+    "nErrors": &lt;Int32&gt;,
+    "nInserted": &lt;Int32&gt;,
+    "nUpserted": &lt;Int32&gt;,
+    "nMatched": &lt;Int32&gt;,
+    "nModified": &lt;Int32&gt;,
+    "nDeleted": &lt;Int32&gt;,
+    ...additional command-agnostic fields
+}
+</code></pre>
+<p>Drivers MUST record the summary count fields in a <code>BulkWriteResult</code> to be returned to the user or embedded in a
+<code>BulkWriteException</code> if the response indicates that at least one write was successful:</p>
+<ul>
+<li>For ordered bulk writes, at least one write was successful if <code>nErrors</code> is 0 or if the <code>idx</code> value for the write error
+returned in the results cursor is greater than 0.</li>
+<li>For unordered bulk writes, at least one write was successful if <code>nErrors</code> is less than the number of operations that
+were included in the <code>bulkWrite</code> command.</li>
+</ul>
+<p>Drivers MUST NOT populate the <code>partialResult</code> field in <code>BulkWriteException</code> if it cannot be determined that at least one
+write was successfully performed.</p>
+<p>Drivers MUST attempt to consume the contents of the cursor returned in the server's <code>bulkWrite</code> response before
+returning to the user. This is required regardless of whether the user requested verbose or summary results, as the
+results cursor always contains any write errors that occurred. If the cursor contains a nonzero cursor ID, drivers MUST
+perform <code>getMore</code> until the cursor has been exhausted. Drivers MUST use the same session used for the <code>bulkWrite</code>
+command for each <code>getMore</code> call. When connected to a load balancer, drivers MUST use the connection used for the
+<code>bulkWrite</code> command to create the cursor to ensure the same server is targeted.</p>
+<p>The documents in the results cursor have the following format:</p>
+<pre><code class="language-javascript">{
+    "ok": &lt;0 | 1&gt;,
+    "idx": Int32,
+    "code": Optional&lt;Int32&gt;,
+    "errmsg": Optional&lt;String&gt;,
+    "errInfo": Optional&lt;Document&gt;,
+    "n": &lt;Int32&gt;,
+    "nModified": Optional&lt;Int32&gt;,
+    "upserted": Optional&lt;Document with "_id" field&gt;
+}
+</code></pre>
+<p>If an error occurred (i.e. the value for <code>ok</code> is 0), the <code>code</code>, <code>errmsg</code>, and optionally <code>errInfo</code> fields will be
+populated with details about the failure.</p>
+<p>If the write succeeded, (i.e. the value for <code>ok</code> is 1), <code>n</code>, <code>nModified</code>, and <code>upsertedId</code> will be populated with the
+following values based on the type of write:</p>
+<div class="table-wrapper"><table><thead><tr><th>Response Field</th><th>Insert</th><th>Update</th><th>Delete</th></tr></thead><tbody>
+<tr><td><code>n</code></td><td>The number of documents that were inserted.</td><td>The number of documents that matched the filter.</td><td>The number of documents that were deleted.</td></tr>
+<tr><td><code>nModified</code></td><td>Not present.</td><td>The number of documents that were modified.</td><td>Not present.</td></tr>
+<tr><td><code>upserted</code></td><td>Not present.</td><td>A document containing the <code>_id</code> value for the upserted document. Only present if an upsert took place.</td><td>Not present.</td></tr>
+</tbody></table>
+</div>
+<p>Note that the responses do not contain information about the type of operation that was performed. Drivers may need to
+maintain the user's list of write models to infer which type of result should be recorded based on the value of <code>idx</code>.</p>
+<h3 id="handling-insert-results"><a class="header" href="#handling-insert-results">Handling Insert Results</a></h3>
+<p>Unlike the other result types, <code>InsertOneResult</code> contains an <code>insertedId</code> field that is generated driver-side, either by
+recording the <code>_id</code> field present in the user's insert document or creating and adding one. Drivers MUST only record
+these <code>insertedId</code> values in a <code>BulkWriteResult</code> when a successful response for the insert operation (i.e.
+<code>{ "ok": 1, "n": 1 }</code>) is received in the results cursor. This ensures that drivers only report an <code>insertedId</code> when it
+is confirmed that the insert succeeded.</p>
+<h2 id="handling-errors"><a class="header" href="#handling-errors">Handling Errors</a></h2>
+<h3 id="top-level-errors"><a class="header" href="#top-level-errors">Top-Level Errors</a></h3>
+<p>A top-level error is any error that occurs that is not the result of a single write operation failing or a write concern
+error. Examples include network errors that occur when communicating with the server, command errors (<code>{ "ok": 0 }</code>)
+returned from the server, client-side errors, and errors that occur when attempting to perform a <code>getMore</code> to retrieve
+results from the server.</p>
+<p>When a top-level error is caused by a command error (i.e. an <code>{ "ok": 0 }</code> server response), drivers MUST provide access
+to the raw server reply in the error returned to the user.</p>
+<p>When a top-level error is encountered and individual results and/or errors have already been observed, drivers MUST
+embed the top-level error within a <code>BulkWriteException</code> as the <code>error</code> field to retain this information. Otherwise,
+drivers MAY throw an exception containing only the top-level error.</p>
+<p>Encountering a top-level error MUST halt execution of a bulk write for both ordered and unordered bulk writes. This
+means that drivers MUST NOT attempt to retrieve more responses from the cursor or execute any further <code>bulkWrite</code>
+batches and MUST immediately throw an exception. If the results cursor has not been exhausted on the server when a
+top-level error occurs, drivers MUST send the <code>killCursors</code> command to attempt to close it. The result returned from the
+<code>killCursors</code> command MAY be ignored.</p>
+<h3 id="write-concern-errors"><a class="header" href="#write-concern-errors">Write Concern Errors</a></h3>
+<p>Write concern errors are recorded in the <code>writeConcernErrors</code> field on <code>BulkWriteException</code>. When a write concern error
+is encountered, it should not terminate execution of the bulk write for either ordered or unordered bulk writes.
+However, drivers MUST throw an exception at the end of execution if any write concern errors were observed.</p>
+<h3 id="individual-write-errors"><a class="header" href="#individual-write-errors">Individual Write Errors</a></h3>
+<p>Individual write errors retrieved from the cursor are recorded in the <code>writeErrors</code> field on <code>BulkWriteException</code>. If an
+individual write error is encountered during an ordered bulk write, drivers MUST record the error in <code>writeErrors</code> and
+immediately throw the exception. Otherwise, drivers MUST continue to iterate the results cursor and execute any further
+<code>bulkWrite</code> batches.</p>
+<h2 id="test-plan"><a class="header" href="#test-plan">Test Plan</a></h2>
+<p>The majority of tests for <code>MongoClient.bulkWrite</code> are written in the
+<a href="../unified-test-format/unified-test-format.html">Unified Test Format</a> and reside in the CRUD unified tests directory.</p>
+<p>Additional prose tests are specified <a href="../crud/tests/README.html">here</a>. These tests require constructing very large
+documents to test batch splitting, which is not feasible in the unified test format at the time of writing this
+specification.</p>
+<h2 id="future-work"><a class="header" href="#future-work">Future Work</a></h2>
+<h3 id="retry-bulkwrite-when-getmore-fails-with-a-retryable-error"><a class="header" href="#retry-bulkwrite-when-getmore-fails-with-a-retryable-error">Retry <code>bulkWrite</code> when <code>getMore</code> fails with a retryable error</a></h3>
+<p>When a <code>getMore</code> fails with a retryable error when attempting to iterate the results cursor, drivers could retry the
+entire <code>bulkWrite</code> command to receive a fresh cursor and retry iteration. This work was omitted to minimize the scope of
+the initial implementation and testing of the new bulk write API, but may be revisited in the future.</p>
+<h2 id="qa"><a class="header" href="#qa">Q&amp;A</a></h2>
+<h3 id="is-bulkwrite-supported-on-atlas-serverless"><a class="header" href="#is-bulkwrite-supported-on-atlas-serverless">Is <code>bulkWrite</code> supported on Atlas Serverless?</a></h3>
+<p>No. See <a href="https://jira.mongodb.org/browse/CLOUDP-256344">CLOUDP-256344</a></p>
+<h3 id="why-are-we-adding-a-new-bulk-write-api-rather-than-updating-the-mongocollectionbulkwrite-implementation"><a class="header" href="#why-are-we-adding-a-new-bulk-write-api-rather-than-updating-the-mongocollectionbulkwrite-implementation">Why are we adding a new bulk write API rather than updating the <code>MongoCollection.bulkWrite</code> implementation?</a></h3>
+<p>The new <code>bulkWrite</code> command is only available in MongoDB 8.0+, so it cannot function as a drop-in replacement for the
+existing bulk write implementation that uses the <code>insert</code>, <code>update</code>, and <code>delete</code> commands. Additionally, because the
+new <code>bulkWrite</code> command allows operations against multiple collections and databases, <code>MongoClient</code> is a more
+appropriate place to expose its functionality.</p>
+<h3 id="why-cant-drivers-reuse-existing-bulk-write-types"><a class="header" href="#why-cant-drivers-reuse-existing-bulk-write-types">Why can't drivers reuse existing bulk write types?</a></h3>
+<p>This specification introduces several types that are similar to existing types used in the <code>MongoCollection.bulkWrite</code>
+API. Although these types are similar now, they may diverge in the future with the introduction of new options and
+features to the <code>bulkWrite</code> command. Introducing new types also provides more clarity to users on the existing
+differences between the collection-level and client-level bulk write APIs. For example, the <code>verboseResults</code> option is
+only available for <code>MongoClient.bulkWrite</code>.</p>
+<h3 id="why-are-bulk-write-operation-results-returned-in-a-cursor"><a class="header" href="#why-are-bulk-write-operation-results-returned-in-a-cursor">Why are bulk write operation results returned in a cursor?</a></h3>
+<p>Returning results via a cursor rather than an array in the <code>bulkWrite</code> response allows full individual results and
+errors to be returned without the risk of the response exceeding the maximum BSON object size. Using a cursor also
+leaves open the opportunity to add <code>findAndModify</code> to the list of supported write operations in the future.</p>
+<h3 id="why-was-the-verboseresults-option-introduced-and-why-is-its-default-false"><a class="header" href="#why-was-the-verboseresults-option-introduced-and-why-is-its-default-false">Why was the <code>verboseResults</code> option introduced, and why is its default <code>false</code>?</a></h3>
+<p>The <code>bulkWrite</code> command returns top-level summary result counts and, optionally, individual results for each operation.
+Compiling the individual results server-side and consuming these results driver-side is less performant than only
+recording the summary counts. We expect that most users are not interested in the individual results of their operations
+and that most users will rely on defaults, so <code>verboseResults</code> defaults to <code>false</code> to improve performance in the common
+case.</p>
+<h3 id="why-should-drivers-send-bypassdocumentvalidation-false-for-bulkwrite"><a class="header" href="#why-should-drivers-send-bypassdocumentvalidation-false-for-bulkwrite">Why should drivers send <code>bypassDocumentValidation: false</code> for <code>bulkWrite</code>?</a></h3>
+<p><a href="https://jira.mongodb.org/browse/DRIVERS-450">DRIVERS-450</a> introduced a requirement that drivers only send a value for
+<code>bypassDocumentValidation</code> on write commands if it was specified as true. The original motivation for this change is not
+documented. This specification requires that drivers send <code>bypassDocumentValidation</code> in the <code>bulkWrite</code> command if it is
+set by the user in <code>BulkWriteOptions</code>, regardless of its value.</p>
+<p>Explicitly defining <code>bypassDocumentValidation: false</code> aligns with the server's default to perform schema validation and
+thus has no effect. However, checking the value of an option that the user specified and omitting it from the command
+document if it matches the server's default creates unnecessary work for drivers. Always sending the user's specified
+value also safeguards against the unlikely event that the server changes the default value for
+<code>bypassDocumentValidation</code> in the future.</p>
+<h3 id="why-is-providing-access-to-the-raw-server-response-when-a-command-error-occurs-required"><a class="header" href="#why-is-providing-access-to-the-raw-server-response-when-a-command-error-occurs-required">Why is providing access to the raw server response when a command error occurs required?</a></h3>
+<p>This allows users to access new error fields that the server may add in the future without needing to upgrade their
+driver version. See <a href="https://jira.mongodb.org/browse/DRIVERS-2385">DRIVERS-2385</a> for more details.</p>
+<h3 id="why-are-drivers-required-to-send-nsinfo-as-a-document-sequence"><a class="header" href="#why-are-drivers-required-to-send-nsinfo-as-a-document-sequence">Why are drivers required to send <code>nsInfo</code> as a document sequence?</a></h3>
+<p><code>nsInfo</code> could exceed <code>maxBsonObjectSize</code> if a user is doing <code>maxWriteBatchSize</code> operations, each operation is on a
+unique namespace, and each namespace is near the
+<a href="https://www.mongodb.com/docs/manual/reference/limits/#mongodb-limit-Restriction-on-Collection-Names">maximum length</a>
+allowed for namespaces given the values for these limits at the time of writing this specification. Providing <code>nsInfo</code>
+as a document sequence reduces the likelihood that a driver would need to batch split a user's bulk write in this
+scenario.</p>
+<h3 id="how-was-the-op_msg-overhead-allowance-determined"><a class="header" href="#how-was-the-op_msg-overhead-allowance-determined">How was the <code>OP_MSG</code> overhead allowance determined?</a></h3>
+<p>The Command Batching <a href="#total-message-size">Total Message Size</a> section uses a 1000 byte overhead allowance to
+approximate the number of non-<code>bulkWrite</code>-specific bytes contained in an <code>OP_MSG</code> sent for a <code>bulkWrite</code> batch. This
+number was determined by constructing <code>OP_MSG</code> messages with various fields attached to the command, including
+<code>startTransaction</code>, <code>autocommit</code>, and <code>apiVersion</code>. Additional room was allocated to allow for future additions to the
+<code>OP_MSG</code> structure or the introduction of new command-agnostic fields.</p>
+<p>Drivers are required to use this value even if they are capable of determining the exact size of the message prior to
+batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.</p>
+<h2 id="changelog"><a class="header" href="#changelog"><strong>Changelog</strong></a></h2>
+<ul>
+<li>
+<p>2024-09-30: Define more options for modeling summary vs. verbose results.</p>
+</li>
+<li>
+<p>2024-09-25: Add <code>collation</code> field to <code>update</code> document and clarify usage of <code>updateMods</code>.</p>
+</li>
+<li>
+<p>2024-09-25: Update the <code>partialResult</code> population logic to account for ordered bulk writes.</p>
+</li>
+<li>
+<p>2024-09-18: Relax numeric type requirements for indexes.</p>
+</li>
+<li>
+<p>2024-05-17: Update specification status to "Accepted".</p>
+</li>
+<li>
+<p>2024-05-10: Improve rendered format for JSON-like code blocks.</p>
+</li>
+<li>
+<p>2024-05-08: Bulk write specification created.</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../driver-bulk-update.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../read-write-concern/read-write-concern.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../driver-bulk-update.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../read-write-concern/read-write-concern.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

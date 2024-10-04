@@ -1,0 +1,737 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>SDAM Logging and Monitoring - MongoDB Driver Specifications</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="../driver-mantras.html">Mantras</a></li><li class="chapter-item expanded affix "><a href="../wireversion-featurelist/wireversion-featurelist.html">Wire Version Feature List</a></li><li class="chapter-item expanded affix "><li class="part-title">Specifications</li><li class="chapter-item expanded "><div><strong aria-hidden="true">1.</strong> Serialization</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../BSON.html"><strong aria-hidden="true">1.1.</strong> BSON</a></li><li class="chapter-item expanded "><a href="../bson-objectid/objectid.html"><strong aria-hidden="true">1.2.</strong> ObjectId</a></li><li class="chapter-item expanded "><a href="../bson-decimal128/decimal128.html"><strong aria-hidden="true">1.3.</strong> Decimal128</a></li><li class="chapter-item expanded "><a href="../bson-binary-uuid/uuid.html"><strong aria-hidden="true">1.4.</strong> UUID</a></li><li class="chapter-item expanded "><a href="../dbref/dbref.html"><strong aria-hidden="true">1.5.</strong> DBRef</a></li><li class="chapter-item expanded "><a href="../extended-json/extended-json.html"><strong aria-hidden="true">1.6.</strong> Extended JSON</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Communication</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../message/OP_MSG.html"><strong aria-hidden="true">2.1.</strong> OP_MSG</a></li><li class="chapter-item expanded "><a href="../run-command/run-command.html"><strong aria-hidden="true">2.2.</strong> Command Execution</a></li><li class="chapter-item expanded "><a href="../connection-string/connection-string-spec.html"><strong aria-hidden="true">2.3.</strong> Connection String</a></li><li class="chapter-item expanded "><a href="../uri-options/uri-options.html"><strong aria-hidden="true">2.4.</strong> URI Options</a></li><li class="chapter-item expanded "><a href="../ocsp-support/ocsp-support.html"><strong aria-hidden="true">2.5.</strong> OCSP</a></li><li class="chapter-item expanded "><a href="../mongodb-handshake/handshake.html"><strong aria-hidden="true">2.6.</strong> Initial Handshake</a></li><li class="chapter-item expanded "><a href="../compression/OP_COMPRESSED.html"><strong aria-hidden="true">2.7.</strong> Wire Compression</a></li><li class="chapter-item expanded "><a href="../socks5-support/socks5.html"><strong aria-hidden="true">2.8.</strong> SOCKS5</a></li><li class="chapter-item expanded "><a href="../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.html"><strong aria-hidden="true">2.9.</strong> Initial DNS Seedlist Discovery</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Connectivity</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring.html"><strong aria-hidden="true">3.1.</strong> Server Discovery and Monitoring</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">3.2.</strong> Connection Monitoring and Pooling</a></li><li class="chapter-item expanded "><a href="../load-balancers/load-balancers.html"><strong aria-hidden="true">3.3.</strong> Load Balancer Support</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Availability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-monitoring.html"><strong aria-hidden="true">4.1.</strong> Server Monitoring</a></li><li class="chapter-item expanded "><a href="../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.html"><strong aria-hidden="true">4.2.</strong> SRV Polling for mongos Discovery</a></li><li class="chapter-item expanded "><a href="../server-selection/server-selection.html"><strong aria-hidden="true">4.3.</strong> Server Selection</a></li><li class="chapter-item expanded "><a href="../max-staleness/max-staleness.html"><strong aria-hidden="true">4.4.</strong> Max Staleness</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Resilience</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">5.1.</strong> Retryability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../retryable-reads/retryable-reads.html"><strong aria-hidden="true">5.1.1.</strong> Reads</a></li><li class="chapter-item expanded "><a href="../retryable-writes/retryable-writes.html"><strong aria-hidden="true">5.1.2.</strong> Writes</a></li></ol></li><li class="chapter-item expanded "><a href="../client-side-operations-timeout/client-side-operations-timeout.html"><strong aria-hidden="true">5.2.</strong> CSOT</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.3.</strong> Consistency</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../sessions/driver-sessions.html"><strong aria-hidden="true">5.3.1.</strong> Sessions</a></li><li class="chapter-item expanded "><a href="../causal-consistency/causal-consistency.html"><strong aria-hidden="true">5.3.2.</strong> Causal Consistency</a></li><li class="chapter-item expanded "><a href="../sessions/snapshot-sessions.html"><strong aria-hidden="true">5.3.3.</strong> Snapshot Reads</a></li><li class="chapter-item expanded "><a href="../transactions/transactions.html"><strong aria-hidden="true">5.3.4.</strong> Transactions</a></li><li class="chapter-item expanded "><a href="../transactions-convenient-api/transactions-convenient-api.html"><strong aria-hidden="true">5.3.5.</strong> Convenient Transactions API</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Programmability</div></li><li><ol class="section"><li class="chapter-item expanded "><div><strong aria-hidden="true">6.1.</strong> Resource Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../enumerate-databases/enumerate-databases.html"><strong aria-hidden="true">6.1.1.</strong> Databases</a></li><li class="chapter-item expanded "><a href="../enumerate-collections/enumerate-collections.html"><strong aria-hidden="true">6.1.2.</strong> Collections</a></li><li class="chapter-item expanded "><a href="../index-management/index-management.html"><strong aria-hidden="true">6.1.3.</strong> Indexes</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.2.</strong> Data Management</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../crud/crud.html"><strong aria-hidden="true">6.2.1.</strong> CRUD</a></li><li class="chapter-item expanded "><a href="../collation/collation.html"><strong aria-hidden="true">6.2.2.</strong> Collation</a></li><li class="chapter-item expanded "><a href="../server_write_commands/server_write_commands.html"><strong aria-hidden="true">6.2.3.</strong> Write Commands</a></li><li class="chapter-item expanded "><a href="../driver-bulk-update.html"><strong aria-hidden="true">6.2.4.</strong> Bulk API</a></li><li class="chapter-item expanded "><a href="../crud/bulk-write.html"><strong aria-hidden="true">6.2.5.</strong> Bulk Write</a></li><li class="chapter-item expanded "><a href="../read-write-concern/read-write-concern.html"><strong aria-hidden="true">6.2.6.</strong> R/W Concern</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> Cursors</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../change-streams/change-streams.html"><strong aria-hidden="true">6.3.1.</strong> Change Streams</a></li><li class="chapter-item expanded "><a href="../find_getmore_killcursors_commands/find_getmore_killcursors_commands.html"><strong aria-hidden="true">6.3.2.</strong> find/getMore/killCursors</a></li></ol></li><li class="chapter-item expanded "><a href="../gridfs/gridfs-spec.html"><strong aria-hidden="true">6.4.</strong> GridFS</a></li><li class="chapter-item expanded "><a href="../versioned-api/versioned-api.html"><strong aria-hidden="true">6.5.</strong> Stable API</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.6.</strong> Security</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../client-side-encryption/client-side-encryption.html"><strong aria-hidden="true">6.6.1.</strong> Client Side Encryption</a></li><li class="chapter-item expanded "><a href="../bson-binary-encrypted/binary-encrypted.html"><strong aria-hidden="true">6.6.2.</strong> BSON Binary Subtype 6</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Observability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../command-logging-and-monitoring/command-logging-and-monitoring.html"><strong aria-hidden="true">7.1.</strong> Command Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.html" class="active"><strong aria-hidden="true">7.2.</strong> SDAM Logging and Monitoring</a></li><li class="chapter-item expanded "><a href="../logging/logging.html"><strong aria-hidden="true">7.3.</strong> Standardized Logging</a></li><li class="chapter-item expanded "><a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html"><strong aria-hidden="true">7.4.</strong> Connection Pool Logging</a></li></ol></li><li class="chapter-item expanded "><li class="spacer"></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Testability</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../unified-test-format/unified-test-format.html"><strong aria-hidden="true">8.1.</strong> Unified Test Format</a></li><li class="chapter-item expanded "><a href="../atlas-data-lake-testing/tests/index.html"><strong aria-hidden="true">8.2.</strong> Atlas Data Federation Testing</a></li><li class="chapter-item expanded "><a href="../benchmarking/benchmarking.html"><strong aria-hidden="true">8.3.</strong> Performance Benchmarking</a></li><li class="chapter-item expanded "><a href="../bson-corpus/bson-corpus.html"><strong aria-hidden="true">8.4.</strong> BSON Corpus</a></li><li class="chapter-item expanded "><a href="../connections-survive-step-down/tests/index.html"><strong aria-hidden="true">8.5.</strong> Replication Event Resilience</a></li><li class="chapter-item expanded "><a href="../faas-automated-testing/faas-automated-testing.html"><strong aria-hidden="true">8.6.</strong> FAAS Automated Testing</a></li><li class="chapter-item expanded "><a href="../serverless-testing/index.html"><strong aria-hidden="true">8.7.</strong> Atlas Serverless Testing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">MongoDB Driver Specifications</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="sdam-logging-and-monitoring-specification"><a class="header" href="#sdam-logging-and-monitoring-specification">SDAM Logging and Monitoring Specification</a></h1>
+<ul>
+<li>Status: Accepted</li>
+<li>Minimum Server Version: 2.4</li>
+</ul>
+<hr />
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>The SDAM logging and monitoring specification defines a set of behaviors in the driver for providing runtime information
+about server discovery and monitoring (SDAM) in log messages, as well as in events that users can consume
+programmatically, either directly or by integrating with third-party APM libraries.</p>
+<h3 id="definitions"><a class="header" href="#definitions">Definitions</a></h3>
+<h4 id="meta"><a class="header" href="#meta">META</a></h4>
+<p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h4 id="terms"><a class="header" href="#terms">Terms</a></h4>
+<p><code>ServerAddress</code></p>
+<blockquote>
+<p>The term <code>ServerAddress</code> refers to the implementation in the driver's language of a server host/port pair. This may be
+an object or a string. The name of this object is NOT REQUIRED.</p>
+</blockquote>
+<p><code>TopologyType</code></p>
+<blockquote>
+<p>The term <code>TopologyType</code> refers to the implementation in the driver's language of a topology type (standalone, sharded,
+etc.). This may be a string or object. The name of the object is NOT REQUIRED.</p>
+</blockquote>
+<p><code>Server</code></p>
+<blockquote>
+<p>The term <code>Server</code> refers to the implementation in the driver's language of an abstraction of a mongod or mongos
+process, or a load balancer, as defined by the <a href="server-discovery-and-monitoring.html#server">SDAM specification</a>.</p>
+</blockquote>
+<h3 id="specification"><a class="header" href="#specification">Specification</a></h3>
+<h3 id="guidance"><a class="header" href="#guidance">Guidance</a></h3>
+<h4 id="documentation"><a class="header" href="#documentation">Documentation</a></h4>
+<p>The documentation provided in the code below is merely for driver authors and SHOULD NOT be taken as required
+documentation for the driver.</p>
+<h4 id="messages-and-events"><a class="header" href="#messages-and-events">Messages and Events</a></h4>
+<p>All drivers MUST implement the specified event types as well as log messages.</p>
+<p>Implementation details are noted below when a specific implementation is required. Within each event and log message,
+all properties are REQUIRED unless noted otherwise.</p>
+<h4 id="naming"><a class="header" href="#naming">Naming</a></h4>
+<p>All drivers MUST name types, properties, and log message values as defined in the following sections. Exceptions to this
+rule are noted in the appropriate section. Class and interface names may vary according to the driver and language best
+practices.</p>
+<h4 id="publishing-and-subscribing"><a class="header" href="#publishing-and-subscribing">Publishing and Subscribing</a></h4>
+<p>The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is
+not strictly mandated in this specification.</p>
+<p>Similarly, as described in the <a href="../logging/logging.html#implementation-requirements">logging specification</a> the driver
+SHOULD emit log messages in a manner that is standard for the language.</p>
+<h3 id="guarantees"><a class="header" href="#guarantees">Guarantees</a></h3>
+<h4 id="event-order-and-concurrency"><a class="header" href="#event-order-and-concurrency">Event Order and Concurrency</a></h4>
+<p>Events and log messages MUST be published in the order that their corresponding changes are processed in the driver.
+Events MUST NOT be published concurrently for the same topology ID or server ID, but MAY be published concurrently for
+differing topology IDs and server IDs.</p>
+<h4 id="heartbeats"><a class="header" href="#heartbeats">Heartbeats</a></h4>
+<p>The driver MUST guarantee that every <code>ServerHeartbeatStartedEvent</code> has either a correlating
+<code>ServerHeartbeatSucceededEvent</code> or <code>ServerHeartbeatFailedEvent</code>, and that every "server heartbeat started" log message
+has either a correlating "server heartbeat succeeded" or "server heartbeat failed" log message.</p>
+<p>Drivers that use the streaming heartbeat protocol MUST publish a <code>ServerHeartbeatStartedEvent</code> and "server heartbeat
+started" log message before attempting to read the next <code>hello</code> or legacy hello exhaust response.</p>
+<h4 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h4>
+<p>If an exception occurs while sending the <code>hello</code> or legacy hello operation to the server, the driver MUST generate a
+<code>ServerHeartbeatFailedEvent</code> and "server heartbeat failed" log message with the exception or message and re-raise the
+exception. The SDAM mandated retry of the <code>hello</code> or legacy hello call should be visible to consumers.</p>
+<h4 id="topology-ids"><a class="header" href="#topology-ids">Topology IDs</a></h4>
+<p>These MUST be a unique value that is specific to the Topology for which the events and log messages are emitted. The
+language may decide how to generate the value and what type the value is, as long as it is unique to the Topology. The
+ID MUST be created once when the Topology is created and remain the same until the Topology is destroyed.</p>
+<h4 id="initial-server-description"><a class="header" href="#initial-server-description">Initial Server Description</a></h4>
+<p><code>ServerDescription</code> objects MUST be initialized with a default description in an "unknown" state, guaranteeing that the
+previous description in the events and log messages will never be null.</p>
+<h4 id="initial-topology-description"><a class="header" href="#initial-topology-description">Initial Topology Description</a></h4>
+<p>The first <code>TopologyDescriptionChangedEvent</code> to be emitted from a monitored Topology MUST set its <code>previousDescription</code>
+property to be a <code>TopologyDescription</code> object in the "unknown" state.</p>
+<h3 id="events-api"><a class="header" href="#events-api">Events API</a></h3>
+<p>The first <code>TopologyDescriptionChangedEvent</code> to be emitted from a monitored Topology MUST set its <code>previousDescription</code>
+property to be a <code>TopologyDescription</code> object in the "unknown" state.</p>
+<h2 id="closing-topology-description"><a class="header" href="#closing-topology-description">Closing Topology Description</a></h2>
+<p>When a <code>Topology</code> object or equivalent is being shut-down or closed, the driver MUST change the <code>TopologyDescription</code> to
+an "unknown" state.</p>
+<hr />
+<h2 id="events-api-1"><a class="header" href="#events-api-1">Events API</a></h2>
+<p>This specification defines 9 main events that MUST be published in the scenarios described. 6 of these events are the
+core behaviour within the cluster lifecycle, and the remaining 3 server heartbeat events are fired from the server
+monitor and follow the guidelines for publishing in the command monitoring specification.</p>
+<p>Events that MUST be published (with their conditions) are as follows.</p>
+<div class="table-wrapper"><table><thead><tr><th>Event Type</th><th>Condition</th></tr></thead><tbody>
+<tr><td><code>TopologyOpeningEvent</code></td><td>When a topology description is initialized - this MUST be the first SDAM event fired.</td></tr>
+<tr><td><code>ServerOpeningEvent</code></td><td>Published when the server description is instantiated with its defaults, and MUST be the first operation to happen after the defaults are set. This is before the Monitor is created and the Monitor socket connection is opened.</td></tr>
+<tr><td><code>ServerDescriptionChangedEvent</code></td><td>When the old server description is not equal to the new server description</td></tr>
+<tr><td><code>TopologyDescriptionChangedEvent</code></td><td>When the old topology description is not equal to the new topology description.</td></tr>
+<tr><td><code>ServerClosedEvent</code></td><td>Published when the server monitor's connection is closed and the server is shutdown.</td></tr>
+<tr><td><code>TopologyClosedEvent</code></td><td>When a topology is shut down - this MUST be the last SDAM event fired.</td></tr>
+<tr><td><code>ServerHeartbeatStartedEvent</code></td><td>Published when the server monitor sends its <code>hello</code> or legacy hello call to the server. When the monitor is creating a new connection, this event MUST be published just before the socket is created.</td></tr>
+<tr><td><code>ServerHeartbeatSucceededEvent</code></td><td>Published on successful completion of the server monitor's <code>hello</code> or legacy hello call.</td></tr>
+<tr><td><code>ServerHeartbeatFailedEvent</code></td><td>Published on failure of the server monitor's <code>hello</code> or legacy hello call, either with an ok: 0 result or a socket exception from the connection.</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-typescript">/**
+ * Published when server description changes, but does NOT include changes to the RTT.
+ */
+interface ServerDescriptionChangedEvent {
+
+  /**
+   * Returns the address (host/port pair) of the server.
+   */
+  address: ServerAddress;
+
+  /**
+   * Returns a unique identifier for the topology.
+   */
+  topologyId: Object;
+
+  /**
+   * Returns the previous server description.
+   */
+  previousDescription: ServerDescription;
+
+  /**
+   * Returns the new server description.
+   */
+  newDescription: ServerDescription;
+}
+
+/**
+ * Published when server is initialized.
+ */
+interface ServerOpeningEvent {
+
+  /**
+   * Returns the address (host/port pair) of the server.
+   */
+  address: ServerAddress;
+
+  /**
+   * Returns a unique identifier for the topology.
+   */
+  topologyId: Object;
+}
+
+/**
+ * Published when server is closed.
+ */
+interface ServerClosedEvent {
+
+  /**
+   * Returns the address (host/port pair) of the server.
+   */
+  address: ServerAddress;
+
+  /**
+   * Returns a unique identifier for the topology.
+   */
+  topologyId: Object;
+}
+
+/**
+ * Published when topology description changes.
+ */
+interface TopologyDescriptionChangedEvent {
+
+  /**
+   * Returns a unique identifier for the topology.
+   */
+  topologyId: Object;
+
+  /**
+   * Returns the old topology description.
+   */
+  previousDescription: TopologyDescription;
+
+  /**
+   * Returns the new topology description.
+   */
+  newDescription: TopologyDescription;
+}
+
+/**
+ * Published when topology is initialized.
+ */
+interface TopologyOpeningEvent {
+
+  /**
+   * Returns a unique identifier for the topology.
+   */
+  topologyId: Object;
+}
+
+/**
+ * Published when topology is closed.
+ */
+interface TopologyClosedEvent {
+
+  /**
+   * Returns a unique identifier for the topology.
+   */
+  topologyId: Object;
+}
+
+/**
+ * Fired when the server monitor's ``hello`` or legacy hello command is started - immediately before
+ * the ``hello`` or legacy hello command is serialized into raw BSON and written to the socket.
+ * When the monitor is creating a new monitoring connection, this event is fired just before the
+ * socket is opened.
+ */
+interface ServerHeartbeatStartedEvent {
+
+ /**
+   * Returns the connection id for the command. The connection id is the unique
+   * identifier of the driver's Connection object that wraps the socket. For languages that
+   * do not have this object, this MUST a string of "hostname:port" or an object that
+   * that contains the hostname and port as attributes.
+   *
+   * The name of this field is flexible to match the object that is returned from the driver.
+   * Examples are, but not limited to, 'address', 'serverAddress', 'connectionId',
+   */
+  connectionId: ConnectionId;
+
+ /**
+   * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello.
+   */
+  awaited: Boolean;
+
+}
+
+/**
+ * Fired when the server monitor's ``hello`` or legacy hello succeeds.
+ */
+interface ServerHeartbeatSucceededEvent {
+
+ /**
+   * Returns the execution time of the event in the highest possible resolution for the platform.
+   * The calculated value MUST be the time to send the message and receive the reply from the server,
+   * including BSON serialization and deserialization. The name can imply the units in which the
+   * value is returned, i.e. durationMS, durationNanos.
+   *
+   * When the awaited field is false, the time measurement used MUST be the
+   * same measurement used for the RTT calculation. When the awaited field is
+   * true, the time measurement is not used for RTT calculation.
+   */
+  duration: Int64;
+
+  /**
+   * Returns the command reply.
+   */
+  reply: Document;
+
+ /**
+   * Returns the connection id for the command. For languages that do not have this,
+   * this MUST return the driver equivalent which MUST include the server address and port.
+   * The name of this field is flexible to match the object that is returned from the driver.
+   */
+  connectionId: ConnectionId;
+
+ /**
+   * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello. If
+   * true, then the duration field cannot be used for RTT calculation
+   * because the command blocks on the server.
+   */
+  awaited: Boolean;
+
+}
+
+/**
+ * Fired when the server monitor's ``hello`` or legacy hello fails, either with an "ok: 0" or a socket exception.
+ */
+interface ServerHeartbeatFailedEvent {
+
+ /**
+   * Returns the execution time of the event in the highest possible resolution for the platform.
+   * The calculated value MUST be the time to send the message and receive the reply from the server,
+   * including BSON serialization and deserialization. The name can imply the units in which the
+   * value is returned, i.e. durationMS, durationNanos.
+   */
+  duration: Int64;
+
+ /**
+   * Returns the failure. Based on the language, this SHOULD be a message string,
+   * exception object, or error document.
+   */
+  failure: String,Exception,Document;
+
+ /**
+   * Returns the connection id for the command. For languages that do not have this,
+   * this MUST return the driver equivalent which MUST include the server address and port.
+   * The name of this field is flexible to match the object that is returned from the driver.
+   */
+  connectionId: ConnectionId;
+
+ /**
+   * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello. If
+   * true, then the duration field cannot be used for RTT calculation
+   * because the command blocks on the server.
+   */
+  awaited: Boolean;
+}
+</code></pre>
+<p>The <code>TopologyDescription</code> object MUST expose the new methods defined in the API below, in order for subscribers to take
+action on certain conditions based on the driver options.</p>
+<p><code>TopologyDescription</code> objects MAY have additional methods and properties.</p>
+<pre><code class="language-typescript">/**
+ * Describes the current topology.
+ */
+interface TopologyDescription {
+
+  /**
+   * Determines if the topology has a readable server available. See the table in the
+   * following section for behaviour rules.
+   */
+  hasReadableServer(readPreference: Optional&lt;ReadPreference&gt;): Boolean
+
+  /**
+   * Determines if the topology has a writable server available. See the table in the
+   * following section for behaviour rules.
+   */
+  hasWritableServer(): Boolean
+}
+</code></pre>
+<h3 id="determining-if-a-topology-has-readablewritable-servers"><a class="header" href="#determining-if-a-topology-has-readablewritable-servers">Determining If A Topology Has Readable/Writable Servers</a></h3>
+<p>The following table describes the rules for determining if a topology type has readable or writable servers. If no read
+preference is passed to <code>hasReadableServer</code>, the driver MUST default the value to the default read preference,
+<code>primary</code>, or treat the call as if <code>primary</code> was provided.</p>
+<div class="table-wrapper"><table><thead><tr><th>Topology Type</th><th><code>hasReadableServer</code></th><th><code>hasWritableServer</code></th></tr></thead><tbody>
+<tr><td>Unknown</td><td><code>false</code></td><td><code>false</code></td></tr>
+<tr><td>Single</td><td><code>true</code> if the server is available</td><td><code>true</code> if the server is available</td></tr>
+<tr><td>ReplicaSetNoPrimary</td><td>Called with <code>primary</code>: <code>false</code>  <br>Called with any other option: uses the read preference to determine if any server in the cluster is suitable for reading.  <br>Called with no option: <code>false</code></td><td><code>false</code></td></tr>
+<tr><td>ReplicaSetWithPrimary</td><td>Called with any valid option: uses the read preference to determine if any server in the cluster is suitable for reading.  <br>Called with no option: <code>true</code></td><td><code>true</code></td></tr>
+<tr><td>Sharded</td><td><code>true</code> if 1+ servers are available</td><td><code>true</code> if 1+ servers are available</td></tr>
+<tr><td>LoadBalanced</td><td><code>true</code></td><td><code>true</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="log-messages"><a class="header" href="#log-messages">Log Messages</a></h3>
+<p>Please refer to the <a href="../logging/logging.html">logging specification</a> for details on logging implementations in general,
+including log levels, log components, and structured versus unstructured logging.</p>
+<p>Drivers MUST support logging of SDAM information via the following types of log messages. These messages MUST be logged
+at <code>Debug</code> level and use the <code>topology</code> log component.</p>
+<p>A number of the log messages are intended to match the information contained in the events above. However, note that a
+log message regarding a server description change (which would correspond to <code>ServerDescriptionChangedEvent</code>) has been
+intentionally omitted since the information it would contain is redundant with <code>TopologyDescriptionChangedEvent</code> and the
+equivalent log message.</p>
+<p>Drivers MAY implement SDAM logging support via an event subscriber if it is convenient to do so.</p>
+<p>The types used in the structured message definitions below are demonstrative, and drivers MAY use similar types instead
+so long as the information is present (e.g. a double instead of an integer, or a string instead of an integer if the
+structured logging framework does not support numeric types.)</p>
+<h4 id="common-fields"><a class="header" href="#common-fields">Common Fields</a></h4>
+<p>The following key-value pairs are common to all or several log messages and MUST be included in the "applicable
+messages":</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Applicable Messages</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>topologyId</td><td>All messages</td><td>Flexible</td><td>The driver's unique ID for this topology as discussed in <a href="#topology-ids">Topology IDs</a>. The type is flexible depending on the driver's choice of type for topology ID.</td></tr>
+<tr><td>serverHost</td><td>Log messages specific to a particular server, including heartbeat-related messages</td><td>String</td><td>The hostname, IP address, or Unix domain socket path for the endpoint the pool is for.</td></tr>
+<tr><td>serverPort</td><td>Log messages specific to a particular server, including heartbeat-related messages</td><td>Int</td><td>(Only present for server-specific log messages) The port for the endpoint the pool is for. Optional; not present for Unix domain sockets. When the user does not specify a port and the default (27017) is used, the driver SHOULD include it here.</td></tr>
+<tr><td>driverConnectionId</td><td>Heartbeat-related log messages</td><td>Int</td><td>The driver-generated ID for the monitoring connection as defined in the <a href="../connection-monitoring-and-pooling/connection-monitoring-and-pooling.html">connection monitoring and pooling specification</a>. Unlike <code>connectionId</code> in the above events, this field MUST NOT contain the host/port; that information MUST be in the above fields, <code>serverHost</code> and <code>serverPort</code>. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of a connection ID.</td></tr>
+<tr><td>serverConnectionId</td><td>Heartbeat-related log messages</td><td>Int</td><td>The server's ID for the monitoring connection, if known. This value will be unknown and can be omitted in certain cases, e.g. the first "heartbeat started" message for a monitoring connection. Only present on server versions 4.2+.</td></tr>
+</tbody></table>
+</div>
+<h4 id="starting-topology-monitoring-log-message"><a class="header" href="#starting-topology-monitoring-log-message">"Starting Topology Monitoring" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>TopologyOpeningEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pair:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Starting topology monitoring"</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Starting monitoring for topology with ID {{topologyId}}</p>
+</blockquote>
+<h4 id="stopped-topology-monitoring-log-message"><a class="header" href="#stopped-topology-monitoring-log-message">"Stopped Topology Monitoring" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>TopologyClosedEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pair:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Stopped topology monitoring"</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Stopped monitoring for topology with ID {{topologyId}}</p>
+</blockquote>
+<h4 id="starting-server-monitoring-log-message"><a class="header" href="#starting-server-monitoring-log-message">"Starting Server Monitoring" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>ServerOpeningEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pair:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Starting server monitoring"</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Starting monitoring for server {{serverHost}}:{{serverPort}} in topology with ID {{topologyId}}</p>
+</blockquote>
+<h4 id="stopped-server-monitoring-log-message"><a class="header" href="#stopped-server-monitoring-log-message">"Stopped Server Monitoring" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>ServerClosedEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pair:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Stopped server monitoring"</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Stopped monitoring for server {{serverHost}}:{{serverPort}} in topology with ID {{topologyId}}</p>
+</blockquote>
+<h4 id="topology-description-changed-log-message"><a class="header" href="#topology-description-changed-log-message">"Topology Description Changed" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>TopologyDescriptionChangedEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Topology description changed"</td></tr>
+<tr><td>previousDescription</td><td>String</td><td>A string representation of the previous description of the topology. The format is flexible and could be e.g. the <code>toString()</code> implementation for a driver's topology description type, or an extended JSON representation of the topology object.</td></tr>
+<tr><td>newDescription</td><td>String</td><td>A string representation of the new description of the server. The format is flexible and could be e.g. the <code>toString()</code> implementation for a driver's topology description type, or an extended JSON representation of the topology object.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Description changed for topology with ID {{topologyId}}. Previous description: {{previousDescription}}. New
+description: {{newDescription}}</p>
+</blockquote>
+<h4 id="server-heartbeat-started-log-message"><a class="header" href="#server-heartbeat-started-log-message">"Server Heartbeat Started" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>ServerHeartbeatStartedEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Server heartbeat started"</td></tr>
+<tr><td>awaited</td><td>Boolean</td><td>Whether this log message is for an awaitable hello or legacy "hello".</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Heartbeat started for {{serverHost}}:{{serverPort}} on connection with driver-generated ID {{driverConnectionId}} and
+server-generated ID {{serverConnectionId}} in topology with ID {{topologyId}}. Awaited: {{awaited}}</p>
+</blockquote>
+<h4 id="server-heartbeat-succeeded-log-message"><a class="header" href="#server-heartbeat-succeeded-log-message">"Server Heartbeat Succeeded" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>ServerHeartbeatSucceededEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Server heartbeat succeeded"</td></tr>
+<tr><td>awaited</td><td>Boolean</td><td>Whether this log message is for an awaitable hello or legacy "hello".</td></tr>
+<tr><td>durationMS</td><td>Int</td><td>The execution time for the heartbeat in milliseconds. See <code>ServerHeartbeatSucceededEvent</code> in <a href="#events-api">Events API</a> for details on calculating this value.</td></tr>
+<tr><td>reply</td><td>String</td><td>Relaxed extended JSON representation of the reply to the heartbeat command.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Heartbeat succeeded in {{durationMS}} ms for {{serverHost}}:{{serverPort}} on connection with driver-generated ID
+{{driverConnectionId}} and server-generated ID {{serverConnectionId}} in topology with ID {{topologyId}}. Awaited:
+{{awaited}}. Reply: {{reply}}</p>
+</blockquote>
+<h4 id="server-heartbeat-failed-log-message"><a class="header" href="#server-heartbeat-failed-log-message">"Server Heartbeat Failed" Log Message</a></h4>
+<p>This message MUST be published under the same circumstances as a <code>ServerHeartbeatFailedEvent</code> as detailed in
+<a href="#events-api">Events API</a>.</p>
+<p>In addition to the relevant common fields, these messages MUST contain the following key-value pairs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Suggested Type</th><th>Value</th></tr></thead><tbody>
+<tr><td>message</td><td>String</td><td>"Server heartbeat failed"</td></tr>
+<tr><td>awaited</td><td>Boolean</td><td>Whether this log message is for an awaitable hello or legacy "hello".</td></tr>
+<tr><td>durationMS</td><td>Int</td><td>The execution time for the heartbeat in milliseconds. See <code>ServerHeartbeatFailedEvent</code> in <a href="#events-api">Events API</a> for details on calculating this value.</td></tr>
+<tr><td>failure</td><td>Flexible</td><td>The error. The type and format of this value is flexible; see the <a href="../logging/logging.html#representing-errors-in-log-messages">logging specification</a> for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null.</td></tr>
+</tbody></table>
+</div>
+<p>The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:</p>
+<blockquote>
+<p>Heartbeat failed in {{durationMS}} ms for {{serverHost}}:{{serverPort}} on connection with driver-generated ID
+{{driverConnectionId}} and server-generated ID {{serverConnectionId}} in topology with ID {{topologyId}}. Awaited:
+{{awaited}}. Failure: {{failure}}</p>
+</blockquote>
+<h3 id="tests"><a class="header" href="#tests">Tests</a></h3>
+<p>See the <a href="tests/monitoring/README.html">README</a>.</p>
+<h2 id="changelog"><a class="header" href="#changelog">Changelog</a></h2>
+<ul>
+<li>
+<p>2024-05-02: Migrated from reStructuredText to Markdown.</p>
+</li>
+<li>
+<p>2024-03-29: Updated to clarify expected initial value of TopologyDescriptionChangedEvent's previousDescription field</p>
+</li>
+<li>
+<p>2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted</p>
+</li>
+<li>
+<p>2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and
+added requirements for SDAM log messages.</p>
+</li>
+<li>
+<p>2022-10-05: Remove spec front matter and reformat changelog.</p>
+</li>
+<li>
+<p>2021-05-06: Updated to use modern terminology.</p>
+</li>
+<li>
+<p>2020-04-20: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.</p>
+</li>
+<li>
+<p>2018-12-12: Clarified table of rules for readable/writable servers</p>
+</li>
+<li>
+<p>2016-08-31: Added table of rules for determining if topology has readable/writable servers.</p>
+</li>
+<li>
+<p>2016-10-11: TopologyDescription objects MAY have additional methods and properties.</p>
+</li>
+</ul>
+<hr />
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../command-logging-and-monitoring/command-logging-and-monitoring.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../logging/logging.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../command-logging-and-monitoring/command-logging-and-monitoring.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../logging/logging.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
