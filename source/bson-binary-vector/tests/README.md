@@ -43,6 +43,7 @@ To prove correct in a valid case (`valid: true`), one MUST
   those provided in the JSON.
 - encode a document from the numeric values, dtype, and padding, along with the "test_key", and assert this matches the
   canonical_bson string.
+- For floating point number types, numerical values need not match exactly.
 
 To prove correct in an invalid case (`valid:false`), one MUST
 
