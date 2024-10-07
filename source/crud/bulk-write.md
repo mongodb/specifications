@@ -935,6 +935,8 @@ batch-splitting to standardize implementations across drivers and simplify batch
 
 ## **Changelog**
 
+- 2024-10-07: Error if `w:0` is used with `ordered=true` or `verboseResults=true`.
+
 - 2024-10-01: Add sort option to `replaceOne` and `updateOne`.
 
 - 2024-09-30: Define more options for modeling summary vs. verbose results.
