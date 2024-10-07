@@ -3357,16 +3357,34 @@ For "gcp":
 ```
 
 
-#### Case 1: createDataKey with TCP retry
+#### Case 1: createDataKey and encrypt with TCP retry
 
 1. Configure the mock server to simulate one network failure.
-2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed.
+2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed. Store the returned key
+   ID in a variable named `keyId`.
+3. Configure the mock server to simulate another network failure.
+4. Call `clientEncryption.encrypt` with the following `EncryptOpts` to encrypt the int32 value `123` with the newly created key:
+   ```typescript
+   class EncryptOpts {
+      keyId : <keyID>,
+   }
+   ```
+   Expect this to succeed.
 
 Repeat this test with the `azure` and `gcp` masterKeys.
 
-#### Case 2: createDataKey with HTTP retry
+#### Case 2: createDataKey and encrypt with HTTP retry
 1. Configure the mock server to simulate one HTTP failure.
-2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed.
+2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed. Store the returned key
+   ID in a variable named `keyId`.
+3. Configure the mock server to simulate another HTTP failure.
+4. Call `clientEncryption.encrypt` with the following `EncryptOpts` to encrypt the int32 value `123` with the newly created key:
+   ```typescript
+   class EncryptOpts {
+      keyId : <keyID>,
+   }
+   ```
+   Expect this to succeed.
 
 Repeat this test with the `azure` and `gcp` masterKeys.
 
