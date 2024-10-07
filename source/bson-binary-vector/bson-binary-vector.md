@@ -46,16 +46,17 @@ some languages, Python for one, do not have an uint8 type, so must be represente
 
 As not all data types have a bit length equal to a multiple of 8, and hence do not fit squarely into a certain number of
 bytes, a second piece of metadata, the "padding" is included. This instructs the driver of the number of bits in the
-final byte that are to be ignored.
+final byte that are to be ignored. It is the least-significant bits that are ignored.
 
 ### Binary structure
 
 Following the binary subtype `\x09` a two-element byte array of metadata precedes the packed numbers.
 
 - The first byte (dtype) describes its data type. The table above shows those that MUST be implemented. This table may
-  increase.
+  increase. dtype is an unsigned integer.
 
-- The second byte (padding) prescribes the number of bits to ignore in the final byte of the value.
+- The second byte (padding) prescribes the number of bits to ignore in the final byte of the value. It is a non-negative
+  integer. It must be present, even in cases where it is not applicable, and set to zero.
 
 - The remainder contains the actual vector elements packed according to dtype.
 
