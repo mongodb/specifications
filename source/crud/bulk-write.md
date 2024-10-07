@@ -90,6 +90,14 @@ class UpdateOneModel implements WriteModel {
      * value is false.
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Specify which document the operation updates if the query matches multiple
+     * documents. The first document matched by the sort order will be updated.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    sort: Optional<Document>;
 }
 
 class UpdateManyModel implements WriteModel {
@@ -167,6 +175,14 @@ class ReplaceOneModel implements WriteModel {
      * value is false.
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Specify which document the operation replaces if the query matches multiple
+     * documents. The first document matched by the sort order will be replaced.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    sort: Optional<Document>;
 }
 
 class DeleteOneModel implements WriteModel {
@@ -908,6 +924,8 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-10-01: Add sort option to `replaceOne` and `updateOne`.
 
 - 2024-09-30: Define more options for modeling summary vs. verbose results.
 
