@@ -10,16 +10,21 @@ ______________________________________________________________________
 
 ## Unified Spec Tests
 
-Drivers MUST run the unified spec tests in all supported OIDC environments.
+Drivers MUST run the unified spec tests in all supported OIDC environments. Drivers MUST set the placeholder
+authMechanism properties (`ENVIRONMENT` and `TOKEN_RESOURCE`, if applicable). These will typically be read from
+environment variables set by the test runner, e,g. `AZUREOIDC_RESOURCE`.
 
 ______________________________________________________________________
 
-## Prose Tests
+## Machine Authentication Flow Prose Tests
+
+Drivers MUST run the machine prose tests when `OIDC_TOKEN_DIR` is set. Drivers can either set the `ENVIRONMENT:test`
+auth mechanism property, or use a custom callback that also reads the file.
+
+Drivers can also choose to run the machine prose tests on GCP or Azure VMs.
 
 Drivers MUST implement all prose tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be
 configured with `retryReads=false`.
-
-Drivers MUST run the prose tests in all supported OIDC environments.
 
 > [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
@@ -28,9 +33,6 @@ Drivers MUST run the prose tests in all supported OIDC environments.
 After setting up your OIDC
 [environment](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md),
 source the `secrets-export.sh` file and use the associated env variables in your tests.
-
-An OIDC configured client MUST set the appropriate `ENVIRONMENT` auth mechanism property and include a callback that
-gets the appropriate token for the given environment.
 
 ### Callback Authentication
 
@@ -73,7 +75,14 @@ gets the appropriate token for the given environment.
 **2.4 Invalid Client Configuration with Callback**
 
 - Create an OIDC configured client with an OIDC callback and auth mechanism property `ENVIRONMENT:test`.
-- Assert it returns a client configuration error.
+- Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
+  connection.
+
+**2.5 Invalid use of ALLOWED_HOSTS**
+
+- Create an OIDC configured client with auth mechanism properties `{"ENVIRONMENT": "azure", "ALLOWED_HOSTS": []}`.
+- Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
+  connection.
 
 ### (3) Authentication Failure
 
@@ -92,7 +101,35 @@ gets the appropriate token for the given environment.
 - Assert that the callback was called 1 time.
 - Close the client.
 
+**3.3 Unexpected error code does not clear the cache**
+
+- Create a `MongoClient` with an OIDC callback that returns a valid token.
+- Set a fail point for `saslStart` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "saslStart"
+    ],
+    errorCode: 20 // IllegalOperation
+  }
+}
+```
+
+- Perform a `find` operation that fails.
+- Assert that the callback has been called once.
+- Perform a `find` operation that succeeds.
+- Assert that the callback has been called once.
+- Close the client.
+
 ### (4) Reauthentication
+
+#### 4.1 Reauthentication Succeeds
 
 - Create an OIDC configured client.
 - Set a fail point for `find` commands of the form:
@@ -116,6 +153,85 @@ gets the appropriate token for the given environment.
 - Assert that the callback was called 2 times (once during the connection handshake, and again during reauthentication).
 - Close the client.
 
+#### 4.2 Read Commands Fail If Reauthentication Fails
+
+- Create a `MongoClient` whose OIDC callback returns one good token and then bad tokens after the first call.
+- Perform a `find` operation that succeeds.
+- Set a fail point for `find` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "find"
+    ],
+    errorCode: 391 // ReauthenticationRequired
+  }
+}
+```
+
+- Perform a `find` operation that fails.
+- Assert that the callback was called 2 times.
+- Close the client.
+
+#### 4.3 Write Commands Fail If Reauthentication Fails
+
+- Create a `MongoClient` whose OIDC callback returns one good token and then bad tokens after the first call.
+- Perform an `insert` operation that succeeds.
+- Set a fail point for `insert` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "insert"
+    ],
+    errorCode: 391 // ReauthenticationRequired
+  }
+}
+```
+
+- Perform a `find` operation that fails.
+- Assert that the callback was called 2 times.
+- Close the client.
+
+#### 4.4 Speculative Authentication should be ignored on Reauthentication
+
+- Create an OIDC configured client.
+- Populate the *Client Cache* with a valid access token to enforce Speculative Authentication.
+- Perform an `insert` operation that succeeds.
+- Assert that the callback was not called.
+- Assert there were no `SaslStart` commands executed.
+- Set a fail point for `insert` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "insert"
+    ],
+    errorCode: 391 // ReauthenticationRequired
+  }
+}
+```
+
+- Perform an `insert` operation that succeeds.
+- Assert that the callback was called once.
+- Assert there were `SaslStart` commands executed.
+- Close the client.
+
 ## (5) Azure Tests
 
 Drivers MUST only run the Azure tests when testing on an Azure VM. See instructions in
@@ -128,7 +244,7 @@ for test setup.
 - Perform a `find` operation that succeeds.
 - Close the client.
 
-# 5.2 Azure with Bad Usernam
+# 5.2 Azure with Bad Username
 
 - Create an OIDC configured client with `ENVIRONMENT:azure` and a valid `TOKEN_RESOURCE` and a username of `"bad"`.
 - Perform a `find` operation that fails.
@@ -141,7 +257,7 @@ ______________________________________________________________________
 Drivers that support the [Human Authentication Flow](../auth.md#human-authentication-flow) MUST implement all prose
 tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be configured with `retryReads=false`.
 
-The human workflow tests MUST only be run when in `ENVIRONMENT:test`.
+The human workflow tests MUST only be run when `OIDC_TOKEN_DIR` is set.
 
 > [!NOTE]
 > For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
@@ -200,6 +316,25 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 - Assert that a `find` operation fails with a client-side error.
 - Close the client.
 
+**1.7 Allowed Hosts in Connection String Ignored**
+
+- Create an OIDC configured client with the connection string:
+  `mongodb+srv://example.com/?authMechanism=MONGODB-OIDC&authMechanismProperties=ALLOWED_HOSTS:%5B%22example.com%22%5D`
+  and a Human Callback.
+- Assert that the creation of the client raises a configuration error.
+
+**1.8 Machine IdP with Human Callback**
+
+This test MUST only be run when `OIDC_IS_LOCAL` is set. This indicates that the server is local and not using Atlas. In
+this case, `MONGODB_URI_SINGLE` will be configured with a human user `test_user1`, and a machine user `test_machine`.
+This test uses the machine user with a human callback, ensuring that the missing `clientId` in the
+`PrincipalStepRequest` response is handled by the driver.
+
+- Create an OIDC configured client with `MONGODB_URI_SINGLE` and a username of `test_machine` that uses the
+  `test_machine` token.
+- Perform a find operation that succeeds.
+- Close the client.
+
 ### (2) OIDC Human Callback Validation
 
 **2.1 Valid Callback Inputs**
@@ -209,12 +344,37 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
   including the timeout parameter if possible.
 - Close the client.
 
-**2.3 Human Callback Returns Missing Data**
+**2.2 Human Callback Returns Missing Data**
 
 - Create an OIDC configured client with a human callback that returns data not conforming to the `OIDCCredential` with
   missing fields.
 - Perform a `find` operation that fails.
 - Close the client.
+
+**2.3 Refresh Token Is Passed To The Callback**
+
+- Create a `MongoClient` with a human callback that checks for the presence of a refresh token.
+- Perform a find operation that succeeds.
+- Set a fail point for `find` commands of the form:
+
+```javascript
+{
+  configureFailPoint: "failCommand",
+  mode: {
+    times: 1
+  },
+  data: {
+    failCommands: [
+      "find"
+    ],
+    errorCode: 391
+  }
+}
+```
+
+- Perform a `find` operation that succeeds.
+- Assert that the callback has been called twice.
+- Assert that the refresh token was provided to the callback once.
 
 ### (3) Speculative Authentication
 
@@ -244,12 +404,14 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 ```javascript
 {
   configureFailPoint: "failCommand",
-  mode: "alwaysOn",
+  mode: {
+    times: 1
+  },
   data: {
     failCommands: [
       "saslStart"
     ],
-    errorCode: 20
+    errorCode: 18
   }
 }
 ```
@@ -265,12 +427,14 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 ```javascript
 {
   configureFailPoint: "failCommand",
-  mode: "alwaysOn",
+  mode: {
+    times: 1
+  },
   data: {
     failCommands: [
       "saslStart"
     ],
-    errorCode: 20 // IllegalOperation
+    errorCode: 18
   }
 }
 ```
@@ -341,7 +505,7 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 
 **4.3 Succeeds after refresh fails**
 
-- Create an OIDC configured client.
+- Create an OIDC configured client with a callback that returns the `test_user1` access token and a bad refresh token.
 - Perform a `find` operation that succeeds.
 - Assert that the human callback has been called once.
 - Force a reauthenication using a fail point of the form:
@@ -350,11 +514,11 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 {
   configureFailPoint: "failCommand",
   mode: {
-    times: 2
+    times: 1
   },
   data: {
     failCommands: [
-      "find", "saslStart"
+      "find",
     ],
     errorCode: 391 // ReauthenticationRequired
   }
@@ -362,12 +526,13 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 ```
 
 - Perform a `find` operation that succeeds.
-- Assert that the human callback has been called 3 times.
+- Assert that the human callback has been called 2 times.
 - Close the client.
 
 **4.4 Fails**
 
-- Create an OIDC configured client.
+- Create an OIDC configured client that returns invalid refresh tokens and returns invalid access tokens after the first
+  access.
 - Perform a find operation that succeeds (to force a speculative auth).
 - Assert that the human callback has been called once.
 - Force a reauthenication using a failCommand of the form:
@@ -376,11 +541,11 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 {
   configureFailPoint: "failCommand",
   mode: {
-    times: 3
+    times: 1
   },
   data: {
     failCommands: [
-      "find", "saslStart"
+      "find",
     ],
     errorCode: 391 // ReauthenticationRequired
   }
@@ -388,5 +553,5 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 ```
 
 - Perform a find operation that fails.
-- Assert that the human callback has been called twice.
+- Assert that the human callback has been called three times.
 - Close the client.

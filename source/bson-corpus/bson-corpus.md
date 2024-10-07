@@ -37,7 +37,7 @@ pseudo-specification provides such tests.
 ## Specification
 
 The specification for BSON lives at <http://bsonspec.org>. The `extjson` format specification is
-[here](../extended-json.rst).
+[here](../extended-json/extended-json.md).
 
 ## Test Plan
 
@@ -339,29 +339,24 @@ development.
 
 - 2024-01-22: Migrated from reStructuredText to Markdown.
 
-- 2023-06-14: Add decimal128 Extended JSON parse tests for clamped zeros with\
-  very large exponents.
+- 2023-06-14: Add decimal128 Extended JSON parse tests for clamped zeros with very large exponents.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
 - 2021-09-09: Clarify error expectation rules for `parseErrors`.
 
-- 2021-09-02: Add spec and prose tests for prohibiting null bytes in\
-  null-terminated strings within document field
-  names and regular expressions. Clarify type-specific rules for `parseErrors`.
+- 2021-09-02: Add spec and prose tests for prohibiting null bytes in null-terminated strings within document field names
+  and regular expressions. Clarify type-specific rules for `parseErrors`.
 
-- 2017-05-26: Revised to be consistent with Extended JSON spec 2.0: valid case\
-  fields have changed, as have the test
+- 2017-05-26: Revised to be consistent with Extended JSON spec 2.0: valid case fields have changed, as have the test
   assertions.
 
-- 2017-01-23: Added `multi-type.json` to test encoding and decoding all BSON\
-  types within the same document. Amended
-  all extended JSON strings to adhere to the Extended JSON Specification. Modified the "Use of extjson" section of this
+- 2017-01-23: Added `multi-type.json` to test encoding and decoding all BSON types within the same document. Amended all
+  extended JSON strings to adhere to the Extended JSON Specification. Modified the "Use of extjson" section of this
   specification to note that canonical extended JSON is now used.
 
 - 2016-11-14: Removed "invalid flags" BSON Regexp case.
 
-- 2016-10-25: Added a "non-alphabetized flags" case to the BSON Regexp corpus\
-  file; decoders must be able to read
+- 2016-10-25: Added a "non-alphabetized flags" case to the BSON Regexp corpus file; decoders must be able to read
   non-alphabetized flags, but encoders must emit alphabetized flags. Added an "invalid flags" case to the BSON Regexp
   corpus file.

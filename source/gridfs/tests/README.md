@@ -12,8 +12,8 @@ GridFS. These tests utilize the [Unified Test Format](../../unified-test-format/
 The unified test format allows binary stream data to be expressed and matched with `$$hexBytes` (for uploads) and
 `$$matchesHexBytes` (for downloads), respectively; however, those operators are not supported in all contexts, such as
 `insertData` and `outcome`. When binary data must be expressed as a base64-encoded string
-([Extended JSON](../../extended-json.rst) for a BSON binary type), the test SHOULD include a comment noting the
-equivalent value in hexadecimal for human-readability. For example:
+([Extended JSON](../../extended-json/extended-json.md) for a BSON binary type), the test SHOULD include a comment noting
+the equivalent value in hexadecimal for human-readability. For example:
 
 ```yaml
 data: { $binary: { base64: "ESIzRA==", subType: "00" } } # hex 11223344

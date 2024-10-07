@@ -1,4 +1,4 @@
-SCHEMA=../schema-1.19.json
+SCHEMA=../schema-1.21.json
 
 .PHONY: all invalid valid-fail valid-pass atlas-data-lake versioned-api load-balancers gridfs transactions transactions-convenient-api crud collection-management read-write-concern retryable-reads retryable-writes sessions command-logging-and-monitoring client-side-operations-timeout HAS_AJV
 

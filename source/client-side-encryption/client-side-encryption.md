@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
-- Version: 1.13.0
+- Version: 1.14.0
 
 ______________________________________________________________________
 
@@ -23,24 +23,27 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Terms
 
-**encrypted MongoClient**\
+**encrypted MongoClient**
+
 A MongoClient with client side encryption enabled.
 
-**data key**\
-A key used to encrypt and decrypt BSON values. Data keys are encrypted with a key management service (e.g.
-AWS KMS) and stored within a document in the MongoDB key vault collection (see
+**data key**
+
+A key used to encrypt and decrypt BSON values. Data keys are encrypted with a key management service (e.g. AWS KMS) and
+stored within a document in the MongoDB key vault collection (see
 [Key vault collection schema for data keys](#key-vault-collection-schema-for-data-keys) for a description of the data
 key document). Therefore, a client needs access to both MongoDB and the external KMS service to utilize a data key.
 
-**MongoDB key vault collection**\
-A MongoDB collection designated to contain data keys. This can either be co-located
-with the data-bearing cluster, or in a separate external MongoDB cluster.
+**MongoDB key vault collection**
 
-**Key Management Service (KMS)**\
-An external service providing fixed-size encryption/decryption. Only data keys are
-encrypted and decrypted with KMS.
+A MongoDB collection designated to contain data keys. This can either be co-located with the data-bearing cluster, or in
+a separate external MongoDB cluster.
 
-**KMS providers**\\
+**Key Management Service (KMS)**
+
+An external service providing fixed-size encryption/decryption. Only data keys are encrypted and decrypted with KMS.
+
+**KMS providers**
 
 > A map of KMS providers to credentials. Configured client-side. Example:
 >
@@ -56,66 +59,76 @@ encrypted and decrypted with KMS.
 > }
 > ```
 
-**KMS provider**\
-A configured KMS. Identified by a key in the KMS providers map. The key has the form
-"<KMS provider type>" or "<KMS provider type>:<KMS
-provider name>". Examples: "aws" or "aws:myname". In
-[libmongocrypt](#libmongocrypt), the key is referred to as the KMS ID.
+**KMS provider**
 
-**KMS provider type**\
+A configured KMS. Identified by a key in the KMS providers map. The key has the form "<KMS provider type>" or
+"<KMS provider type>:<KMS
+provider name>". Examples: "aws" or "aws:myname". In [libmongocrypt](#libmongocrypt), the key
+is referred to as the KMS ID.
+
+**KMS provider type**
+
 The type of backing KMS. Identified by the string: "aws", "azure", "gcp", "kmip", or "local".
 
-**KMS provider name**\
-An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the
-same KMS provider type (e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
+**KMS provider name**
 
-**Customer Master Key (CMK)**\
+An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the same KMS provider type
+(e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
+
+**Customer Master Key (CMK)**
+
 The underlying key AWS KMS uses to encrypt and decrypt. See
 [AWS Key Management Service Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys).
 
-**schema**\
-A MongoDB JSON Schema (either supplied by the server or client-side) which may include metadata about
-encrypted fields. This is a JSON Schema based on draft 4 of the JSON Schema specification,
+**schema**
+
+A MongoDB JSON Schema (either supplied by the server or client-side) which may include metadata about encrypted fields.
+This is a JSON Schema based on draft 4 of the JSON Schema specification,
 [as documented in the MongoDB manual.](https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/).
 
-**[libmongocrypt](#libmongocrypt)**\
-A library, written in C, that coordinates communication, does
-encryption/decryption, caches key and schemas. [Located here](https://github.com/mongodb/libmongocrypt).
+**[libmongocrypt](#libmongocrypt)**
 
-**[mongocryptd](#mongocryptd)**\
-A local process the driver communicates with to determine how to encrypt values in a
-command.
+A library, written in C, that coordinates communication, does encryption/decryption, caches key and schemas.
+[Located here](https://github.com/mongodb/libmongocrypt).
 
-**[crypt_shared](#crypt_shared)**\
-This term, spelled in all-lowercase with an underscore, refers to the client-side
-field-level-encryption dynamic library provided as part of a MongoDB Enterprise distribution. It replaces
-[mongocryptd](#mongocryptd) as the method of
-`marking-up a database command for encryption <subtype6.intent-to-encrypt>`.
+**[mongocryptd](#mongocryptd)**
+
+A local process the driver communicates with to determine how to encrypt values in a command.
+
+**[crypt_shared](#crypt_shared)**
+
+This term, spelled in all-lowercase with an underscore, refers to the client-side field-level-encryption dynamic library
+provided as part of a MongoDB Enterprise distribution. It replaces [mongocryptd](#mongocryptd) as the method of
+[marking-up a database command for encryption](../bson-binary-encrypted/binary-encrypted.md#intent-to-encrypt).
 
 See also:
 
 > - [Introduction on crypt_shared](#crypt_shared)
 > - [Enabling crypt_shared](#enabling-crypt_shared)
 
-**ciphertext**\
-One of the data formats of
-[BSON binary subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst),
-representing an encoded BSON document containing encrypted ciphertext and metadata.
+**ciphertext**
 
-**FLE**\
-FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the
-exception of server-side JSON schema.
+One of the data formats of [BSON binary encrypted](../bson-binary-encrypted/binary-encrypted.md), representing an
+encoded BSON document containing encrypted ciphertext and metadata.
 
-**Queryable Encryption**\
-Queryable Encryption the second version of Client-Side Field Level Encryption. Data is
-encrypted client-side. Queryable Encryption supports indexed encrypted fields, which are further processed server-side.
+**FLE**
 
-**In-Use Encryption**\
+FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the exception of
+server-side JSON schema.
+
+**Queryable Encryption**
+
+Queryable Encryption the second version of Client-Side Field Level Encryption. Data is encrypted client-side. Queryable
+Encryption supports indexed encrypted fields, which are further processed server-side.
+
+**In-Use Encryption**
+
 Is an umbrella term describing the both FLE and Queryable Encryption.
 
-**encryptedFields**\
-A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON
-Schema in FLE. The following is an example encryptedFields in extended canonical JSON:
+**encryptedFields**
+
+A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON Schema in FLE. The
+following is an example encryptedFields in extended canonical JSON:
 
 ```javascript
 {
@@ -245,7 +258,7 @@ connect to [mongocryptd](#mongocryptd) and instead rely on [crypt_shared](#crypt
 
 [crypt_shared](#crypt_shared) is a dynamically-loaded C++ library providing query analysis for auto-encryption. It
 replaces [mongocryptd](#mongocryptd) for performing query analysis to -
-[mark-up sensitive fields within a command](./subtype6#intent-to-encrypt).
+[mark-up sensitive fields within a command](../bson-binary-encrypted/binary-encrypted.md#intent-to-encrypt).
 
 Drivers are not required to load and interact with [crypt_shared](#crypt_shared) directly. Instead, they inform
 [libmongocrypt](#libmongocrypt) where to find [crypt_shared](#crypt_shared) and [libmongocrypt](#libmongocrypt) will
@@ -292,11 +305,11 @@ Drivers MAY deviate the spelling of option names to conform to their language's 
 in an idiomatic way (e.g. keyword arguments, builder classes, etc.).
 
 Drivers MAY use a native UUID type in place of a parameter or return type specified as a BSON binary with subtype 0x04
-as described in [Handling of Native UUID Types](../uuid.rst).
+as described in [Handling of Native UUID Types](../bson-binary-uuid/uuid.md).
 
 ### MongoClient Changes
 
-<span id="MongoClient" />
+<span id="MongoClient"></span>
 
 ```typescript
 class MongoClient {
@@ -315,7 +328,7 @@ class MongoClient {
 }
 ```
 
-<span id="AutoEncryptionOpts" />
+<span id="AutoEncryptionOpts"></span>
 
 ```typescript
 class AutoEncryptionOpts {
@@ -423,12 +436,8 @@ Drivers MUST document that an additional `MongoClient` may be created, using the
 See
 [What's the deal with metadataClient, keyVaultClient, and the internal client?](#whats-the-deal-with-metadataclient-keyvaultclient-and-the-internal-client)
 
-<span id="GCPKMSOptions" />
-<span id="AWSKMSOptions" />
-<span id="KMSProvider" />
-<span id="KMSProviders" />
-<span id="AzureAccessToken" />
-<span id="kmsproviders" />
+<span id="GCPKMSOptions"></span> <span id="AWSKMSOptions"></span> <span id="KMSProvider"></span>
+<span id="KMSProviders"></span> <span id="AzureAccessToken"></span> <span id="kmsproviders"></span>
 
 #### kmsProviders
 
@@ -522,6 +531,8 @@ The following shows an example object of `KMSProviders`:
 }
 ```
 
+<span id="automatic-credentials"></span>
+
 ##### Automatic Credentials
 
 Certain values of [KMSProviders](#kmsproviders) indicate a request by the user that the associated KMS providers should
@@ -570,7 +581,7 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
          $t_0 + d\_{exp}$.
 6. Return $P$ as the additional KMS providers to [libmongocrypt](#libmongocrypt).
 
-<span id="obtaining-gcp-credentials" />
+<span id="obtaining-gcp-credentials"></span>
 
 ##### Obtaining GCP Credentials
 
@@ -681,11 +692,10 @@ Drivers MUST NOT raise an error if `tlsDisableOCSPEndpointCheck` is set. Setting
 prevent operation errors when OCSP responders are unresponsive.
 
 See the OCSP specification for a description of the default values of
-[tlsDisableOCSPEndpointCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisableocspendpointcheck)
-and
-[tlsDisableCertificateRevocationCheck](https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisablecertificaterevocationcheck)
-Drivers MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck`
-for KMS TLS connections.
+[tlsDisableOCSPEndpointCheck](../ocsp-support/ocsp-support.md#tlsdisableocspendpointcheck) and
+[tlsDisableCertificateRevocationCheck](../ocsp-support/ocsp-support.md#tlsdisablecertificaterevocationcheck) Drivers
+MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck` for KMS
+TLS connections.
 
 See [Why do KMS providers require TLS options?](#why-do-kms-providers-require-tls-options)
 
@@ -744,7 +754,7 @@ Drivers MUST implement extraOptions in a way that allows deprecating/removing op
 break, such as with a BSON document or map type instead of a struct type with fixed fields. See
 [Why are extraOptions and kmsProviders maps?](#why-are-extraoptions-and-kmsproviders-maps).
 
-<span id="extraoptions.cryptsharedlibpath" />
+<span id="extraoptions.cryptsharedlibpath"></span>
 
 ##### `extraOptions.cryptSharedLibPath`
 
@@ -757,7 +767,7 @@ Allow the user to specify an absolute path to a [crypt_shared](#crypt_shared) dy
 - [Path Resolution Behavior](#path-resolution-behavior)
 - [Enabling crypt_shared](#enabling-crypt_shared)
 
-<span id="extraoptions.cryptsharedlibrequired" />
+<span id="extraoptions.cryptsharedlibrequired"></span>
 
 ##### `extraOptions.cryptSharedLibRequired`
 
@@ -770,8 +780,7 @@ If, after initializing a `libmongocrypt_handle`, [crypt_shared](#crypt_shared) i
 [extraOptions.cryptSharedLibRequired](#extraoptions.cryptsharedlibrequired) is `true`, the driver MUST consider the
 `libmongocrypt_handle` to be invalid and return an error to the user. Refer:
 
-<span id="managing-mongocryptd" />
-<span id="detecting-crypt_shared-availability" />
+<span id="managing-mongocryptd"></span> <span id="detecting-crypt_shared-availability"></span>
 
 #### encryptedFieldsMap
 
@@ -802,7 +811,7 @@ See [Why is bypassQueryAnalysis needed?](#why-is-bypassqueryanalysis-needed).
 
 A collection supporting Queryable Encryption requires an index and three additional collections.
 
-<span id="GetEncryptedFields" />
+<span id="GetEncryptedFields"></span>
 
 #### Collection `encryptedFields` Lookup (GetEncryptedFields)
 
@@ -824,6 +833,8 @@ and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by
       $EF$ is $L$ `["options"]["encryptedFields"]`.
    3. Otherwise, $EF$ is *not-found*
 5. Otherwise, $EF$ is considered *not-found*.
+
+<span id="create-collection-helper"></span>
 
 #### Create Collection Helper
 
@@ -868,7 +879,7 @@ remaining operations are not attempted:
 #### Create Encrypted Collection Helper
 
 To support automatic generation of encryption data keys, a helper $CreateEncryptedCollection(CE, database, collName,
-collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption-1) object,
+collOpts, kmsProvider, masterKey)$ is defined, where $CE$ is a [ClientEncryption](#clientencryption) object,
 $kmsProvider$ is a [KMSProvider](#KMSProvider) and $masterKey$ is equivalent to the $masterKey$ defined in
 [DataKeyOpts](#datakeyopts). It has the following behavior:
 
@@ -982,8 +993,7 @@ class ClientEncryption {
    // 2. An Aggregate Expression of this form:
    //   {$and: [{$gt: [<fieldpath>, <value1>]}, {$lt: [<fieldpath>, <value2>]}]
    // $gt may also be $gte. $lt may also be $lte.
-   // Only supported when queryType is "rangePreview" and algorithm is "RangePreview".
-   // NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+   // Only supported when queryType is "range" and algorithm is "Range".
    encryptExpression(expr: Document, opts: EncryptOpts): Document;
 
    // Decrypts an encrypted value (BSON binary of subtype 6).
@@ -996,9 +1006,9 @@ class ClientEncryption {
 }
 ```
 
-<span id="ClientEncryptionOpts" />
+<span id="ClientEncryptionOpts"></span>
 
-<span id="KMSProvidersTLSOptions" />
+<span id="KMSProvidersTLSOptions"></span>
 
 ```typescript
 interface ClientEncryptionOpts {
@@ -1148,7 +1158,7 @@ class RewrapManyDataKeyResult {
 }
 ```
 
-`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md##write-results) used to update the key
+`bulkWriteResult` is the [result of the bulk write operation](../crud/crud.md#write-results) used to update the key
 vault collection with one or more rewrapped data keys. If `rewrapManyDataKey()` does not find any matching keys to
 rewrap, no bulk write operation will be executed and this field will be unset. This field may also be unset if the bulk
 write operation is unacknowledged as permitted by the [CRUD API Spec](../crud/crud.md#write-results).
@@ -1168,17 +1178,19 @@ class EncryptOpts {
    rangeOpts: Optional<RangeOpts>
 }
 
-// NOTE: The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
-// RangeOpts specifies index options for a Queryable Encryption field supporting "rangePreview" queries.
-// min, max, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
+// RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
+// min, max, trimFactor, sparsity, and precision must match the values set in the encryptedFields of the destination collection.
 // For double and decimal128, min/max/precision must all be set, or all be unset.
 class RangeOpts {
-   // min is required if precision is set.
+   // min is the minimum value for the encrypted index. Required if precision is set.
    min: Optional<BSONValue>,
-   // max is required if precision is set.
+   // max is the maximum value for the encrypted index. Required if precision is set.
    max: Optional<BSONValue>,
-   sparsity: Int64,
-   // precision may only be set for double or decimal128.
+   // trimFactor may be used to tune performance. When omitted, a default value is used.
+   trimFactor: Optional<Int32>,
+   // sparsity may be used to tune performance. When omitted, a default value is used.
+   sparsity: Optional<Int64>,
+   // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
    precision: Optional<Int32>
 }
 ```
@@ -1202,46 +1214,34 @@ One of the strings:
 - "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 - "Indexed"
 - "Unindexed"
-- "RangePreview"
+- "Range"
 
-The result of explicit encryption with the "Indexed" or "RangePreview" algorithm must be processed by the server to
-insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
+query. Drivers MUST document the following behavior:
 
-> To insert or query with an "Indexed" or "RangePreview" encrypted payload, use a `MongoClient` configured with
+> To insert or query with an "Indexed" or "Range" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
-
 #### contentionFactor
 
-contentionFactor only applies when algorithm is "Indexed" or "RangePreview". It is an error to set contentionFactor when
-algorithm is not "Indexed" or "RangePreview".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". libmongocrypt
+returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
 
 One of the strings:
 
 - "equality"
-- "rangePreview"
+- "range"
 
-queryType only applies when algorithm is "Indexed" or "RangePreview". It is an error to set queryType when algorithm is
-not "Indexed" or "RangePreview".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+queryType only applies when algorithm is "Indexed" or "Range". libmongocrypt returns an error if queryType is set for a
+non-applicable queryType.
 
 #### rangeOpts
 
-rangeOpts only applies when algorithm is "rangePreview". It is an error to set rangeOpts when algorithm is not
-"rangePreview".
-
-> [!NOTE]
-> The Range algorithm is experimental only. It is not intended for public use. It is subject to breaking changes.
+rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
+non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
 
@@ -1364,7 +1364,7 @@ Drivers MUST propagate errors from libmongocrypt in whatever way is idiomatic to
 etc.). These errors MUST be distinguished in some way (e.g. exception type) to make it easier for users to distinguish
 when a command fails due to client side encryption.
 
-<span id="enabling-crypt_shared" />
+<span id="enabling-crypt_shared"></span>
 
 ## Enabling Command Marking with the `crypt_shared` Library
 
@@ -1384,8 +1384,7 @@ facilitate driver testing with [crypt_shared](#crypt_shared) (Refer:
 > The driver MUST NOT manipulate or do any validation on the [crypt_shared](#crypt_shared) path options provided in
 > [extraOptions](#extraoptions). They should be passed through to [libmongocrypt](#libmongocrypt) unchanged.
 
-<span id="search-path" />
-<span id="search-paths" />
+<span id="search-path"></span> <span id="search-paths"></span>
 
 ### Setting Search Paths
 
@@ -1404,7 +1403,7 @@ execution from the ambient state of the host system.
 Refer to: [Path Resolution Behavior](#path-resolution-behavior) and
 [Search Paths for Testing](#search-paths-for-testing)
 
-<span id="override-path" />
+<span id="override-path"></span>
 
 ### Overriding the `crypt_shared` Library Path
 
@@ -1478,7 +1477,7 @@ successfully loaded by asking [libmongocrypt](#libmongocrypt) for the [crypt_sha
 the result is an empty string, [libmongocrypt](#libmongocrypt) did not load [crypt_shared](#crypt_shared) and the driver
 must rely on [mongocryptd](#mongocryptd) to mark command documents for encryption.
 
-<span id="disabling-crypt_shared" />
+<span id="disabling-crypt_shared"></span>
 
 ### "Disabling" `crypt_shared`
 
@@ -1574,8 +1573,7 @@ If the [crypt_shared](#crypt_shared) library is loaded, the driver MUST NOT atte
 Single-threaded drivers MUST connect with
 [serverSelectionTryOnce=false](../server-selection/server-selection.md#serverselectiontryonce),
 `connectTimeoutMS=10000`, and MUST bypass
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms) when connecting to
-mongocryptd. See
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms) when connecting to mongocryptd. See
 [Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?](#why-are-serverselectiontryonce-and-cooldownms-disabled-for-single-threaded-drivers-connecting-to-mongocryptd)
 
 If the ClientEncryption is configured with `mongocryptdBypassSpawn=true`, then the driver is not responsible for
@@ -1653,10 +1651,8 @@ CommandStartedEvent, and decryption MUST occur after generating a CommandSucceed
 ## Size limits for Write Commands
 
 Automatic encryption requires the driver to serialize write commands as a single BSON document before automatically
-encrypting with libmongocrypt (analogous to constructing
-[OP_MSG payload type 0](https://github.com/mongodb/specifications/blob/70628e30c96361346f7b6872571c0ec4d54846cb/source/message/OP_MSG.rst#sections),
-not a document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to
-send.
+encrypting with libmongocrypt (analogous to constructing [OP_MSG payload type 0](../message/OP_MSG.md#sections), not a
+document sequence). Automatic encryption returns a single (possibly modified) BSON document as the command to send.
 
 Because automatic encryption increases the size of commands, the driver MUST split bulk writes at a reduced size limit
 before undergoing automatic encryption. The write payload MUST be split at 2MiB (2097152). Where batch splitting occurs
@@ -1674,9 +1670,10 @@ documentation in MongoClient:
 
 ### Appendix terms
 
-intent-to-encrypt marking\
-One of the data formats of BSON binary subtype 6, representing an encoded BSON document
-containing plaintext and metadata.
+**intent-to-encrypt marking**
+
+One of the data formats of BSON binary subtype 6, representing an encoded BSON document containing plaintext and
+metadata.
 
 ### Key vault collection schema for data keys
 
@@ -1794,9 +1791,7 @@ struct {
 }
 ```
 
-See
-[Driver Spec: BSON Binary Subtype 6](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/subtype6.rst)
-for more information.
+See [Driver Spec: BSON Binary Encrypted](../bson-binary-encrypted/binary-encrypted.md) for more information.
 
 ### JSONSchema "encrypt"
 
@@ -2115,7 +2110,7 @@ server before making another attempt. Meaning if the first attempt to mongocrypt
 observe a 5 second delay. This is not configurable in the URI, so this must be overridden internally. Since mongocryptd
 is a local process, there should only be a very short delay after spawning mongocryptd for it to start listening on
 sockets. See the SDAM spec description of
-[cooldownMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms).
+[cooldownMS](../server-discovery-and-monitoring/server-monitoring.md#cooldownms).
 
 Because single threaded drivers may exceed `serverSelectionTimeoutMS` by the duration of the topology scan,
 `connectTimeoutMS` is also reduced.
@@ -2385,9 +2380,17 @@ libmongocrypt would create multiple OP_MSGs to send.
 
 Key management functions currently assume there are no concurrent accesses of the key vault collection being operated
 on. To support concurrent access of the key vault collection, the key management functions may be overloaded to take an
-explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.rst).
+explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-07-29: Document range as stable.
+
+- 2024-07-22: Make `trimFactor` and `sparsity` optional.
+
+- 2024-06-13: Document range as unstable.
+
+- 2024-05-31: Replace rangePreview with range.
 
 - 2024-03-20: Add `delegated` option to "kmip" KMS provider
 

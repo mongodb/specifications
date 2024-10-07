@@ -23,5 +23,5 @@ The following tests have not yet been automated, but MUST still be tested:
 
 ## Logging Tests
 
-Tests for connection pool logging can be found in the [/logging](./logging) subdirectory and are written in the
+Tests for connection pool logging can be found in the `/logging` subdirectory and are written in the
 [Unified Test Format](../../unified-test-format/unified-test-format.md).

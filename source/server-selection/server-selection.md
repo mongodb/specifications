@@ -56,117 +56,142 @@ This specification does not apply to commands issued for server monitoring or au
 
 ### Terms
 
-**Available**\
-Describes a server that is believed to be reachable over the network and able to respond to requests. A
-server of type Unknown or PossiblePrimary is not available; other types are available.
+**Available**
 
-**Client**\
+Describes a server that is believed to be reachable over the network and able to respond to requests. A server of type
+Unknown or PossiblePrimary is not available; other types are available.
+
+**Client**
+
 Software that communicates with a MongoDB deployment. This includes both drivers and mongos.
 
-**Candidate**\
-Describes servers in a deployment that enter the selection process, determined by the read preference
-`mode` parameter and the servers' type. Depending on the `mode`, candidate servers might only include secondaries or
-might apply to all servers in the deployment.
+**Candidate**
 
-**Deployment**\
+Describes servers in a deployment that enter the selection process, determined by the read preference `mode` parameter
+and the servers' type. Depending on the `mode`, candidate servers might only include secondaries or might apply to all
+servers in the deployment.
+
+**Deployment**
+
 One or more servers that collectively provide access to a single logical set of MongoDB databases.
 
-**Command**\
+**Command**
+
 An OP_QUERY operation targeting the '$cmd' collection namespace.
 
-**Direct connection**\
-A driver connection mode that sends all database operations to a single server without regard for
-type.
+**Direct connection**
 
-<span id="eligible"/>
+A driver connection mode that sends all database operations to a single server without regard for type.
 
-**Eligible**\
-Describes candidate servers that also meet the criteria specified by the `tag_sets` and
-`maxStalenessSeconds` read preference parameters.
+<span id="eligible"></span>
 
-**Hedged Read**\
+**Eligible**
+
+Describes candidate servers that also meet the criteria specified by the `tag_sets` and `maxStalenessSeconds` read
+preference parameters.
+
+**Hedged Read**
+
 A server mode in which the same query is dispatched in parallel to multiple replica set members.
 
-**Immediate topology check**\
-For a multi-threaded or asynchronous client, this means waking all server monitors for an
-immediate check. For a single-threaded client, this means a (blocking) scan of all servers.
+**Immediate topology check**
 
-**Latency window**\
-When choosing between several suitable servers, the latency window is the range of acceptable RTTs
-from the shortest RTT to the shortest RTT plus the local threshold. E.g. if the shortest RTT is 15ms and the local
-threshold is 200ms, then the latency window ranges from 15ms - 215ms.
+For a multi-threaded or asynchronous client, this means waking all server monitors for an immediate check. For a
+single-threaded client, this means a (blocking) scan of all servers.
 
-**Local threshold**\
-The maximum acceptable difference in milliseconds between the shortest RTT and the longest RTT of
-servers suitable to be selected.
+**Latency window**
 
-**Mode**\
-One of several enumerated values used as part of a read preference, defining which server types are candidates
-for reads and the semantics for choosing a specific one.
+When choosing between several suitable servers, the latency window is the range of acceptable RTTs from the shortest RTT
+to the shortest RTT plus the local threshold. E.g. if the shortest RTT is 15ms and the local threshold is 200ms, then
+the latency window ranges from 15ms - 215ms.
 
-**Primary**\
+**Local threshold**
+
+The maximum acceptable difference in milliseconds between the shortest RTT and the longest RTT of servers suitable to be
+selected.
+
+**Mode**
+
+One of several enumerated values used as part of a read preference, defining which server types are candidates for reads
+and the semantics for choosing a specific one.
+
+**Primary**
+
 Describes a server of type RSPrimary.
 
-**Query**\
+**Query**
+
 An OP_QUERY operation targeting a regular (non '$cmd') collection namespace.
 
-**Read preference**\
-The parameters describing which servers in a deployment can receive read operations, including
-`mode`, `tag_sets`, `maxStalenessSeconds`, and `hedge`.
+**Read preference**
 
-**RS**\
+The parameters describing which servers in a deployment can receive read operations, including `mode`, `tag_sets`,
+`maxStalenessSeconds`, and `hedge`.
+
+**RS**
+
 Abbreviation for "replica set".
 
-**RTT**\
+**RTT**
+
 Abbreviation for "round trip time".
 
-**Round trip time**\
-The time in milliseconds to execute a `hello` or legacy hello command and receive a response for a
-given server. This spec differentiates between the RTT of a single `hello` or legacy hello command and a server's
-*average* RTT over several such commands.
+**Round trip time**
 
-**Secondary**\
+The time in milliseconds to execute a `hello` or legacy hello command and receive a response for a given server. This
+spec differentiates between the RTT of a single `hello` or legacy hello command and a server's *average* RTT over
+several such commands.
+
+**Secondary**
+
 A server of type RSSecondary.
 
-**Staleness**\
+**Staleness**
+
 A worst-case estimate of how far a secondary's replication lags behind the primary's last write.
 
-**Server**\
+**Server**
+
 A mongod or mongos process.
 
-**Server selection**\
-The process by which a server is chosen for a database operation out of all potential servers in a
-deployment.
+**Server selection**
 
-**Server type**\
-An enumerated type indicating whether a server is up or down, whether it is a mongod or mongos, whether
-it belongs to a replica set and, if so, what role it serves in the replica set. See the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec for more details.
+The process by which a server is chosen for a database operation out of all potential servers in a deployment.
 
-**Suitable**\
+**Server type**
+
+An enumerated type indicating whether a server is up or down, whether it is a mongod or mongos, whether it belongs to a
+replica set and, if so, what role it serves in the replica set. See the
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec for more
+details.
+
+**Suitable**
+
 Describes a server that meets all specified criteria for a read or write operation.
 
-**Tag**\
-A single key/value pair describing either (1) a user-specified characteristic of a replica set member or (2) a
-desired characteristic for the target of a read operation. The key and value have no semantic meaning to the driver;
-they are arbitrary user choices.
+**Tag**
 
-**Tag set**\
+A single key/value pair describing either (1) a user-specified characteristic of a replica set member or (2) a desired
+characteristic for the target of a read operation. The key and value have no semantic meaning to the driver; they are
+arbitrary user choices.
+
+**Tag set**
+
 A document of zero or more tags. Each member of a replica set can be configured with zero or one tag set.
 
-**Tag set list**\
-A list of zero or more tag sets. A read preference might have a tag set list used for selecting
-servers.
+**Tag set list**
 
-**Topology**\
+A list of zero or more tag sets. A read preference might have a tag set list used for selecting servers.
+
+**Topology**
+
 The state of a deployment, including its type, which servers are members, and the server types of members.
 
-**Topology type**\
-An enumerated type indicating the semantics for monitoring servers and selecting servers for database
-operations. See the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec for more details.
+**Topology type**
+
+An enumerated type indicating the semantics for monitoring servers and selecting servers for database operations. See
+the [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec for
+more details.
 
 ### Assumptions
 
@@ -177,8 +202,7 @@ spec for more details.
      reconfiguration.
    - Low-latency: all else being equal, faster responses to queries and writes are preferable.
 2. Clients know the state of a deployment based on some form of ongoing monitoring, following the rules defined in the
-   [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-   spec.
+   [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec.
    - They know which members are up or down, what their tag sets are, and their types.
    - They know average round trip times to each available member.
    - They detect reconfiguration and the addition or removal of members.
@@ -228,10 +252,9 @@ once after server selection fails, then either selects a server or raises an err
 
 The serverSelectionTryOnce option MUST be true by default. If it is set false, then the driver repeatedly searches for
 an appropriate server until the selection process times out (pausing
-[minHeartbeatFrequencyMS](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms)
+[minHeartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#minheartbeatfrequencyms)
 between attempts, as required by the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec).
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec).
 
 Users of single-threaded drivers MUST be able to control this mode in one or both of these ways:
 
@@ -249,10 +272,9 @@ for a ["try once" mode](#try-once-mode).)
 #### heartbeatFrequencyMS
 
 This controls when topology updates are scheduled. See
-[heartbeatFrequencyMS](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms)
-in the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec for details.
+[heartbeatFrequencyMS](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#heartbeatfrequencyms) in
+the [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec for
+details.
 
 #### socketCheckIntervalMS
 
@@ -267,8 +289,8 @@ See [checking an idle socket after socketCheckIntervalMS](#checking-an-idle-sock
 #### idleWritePeriodMS
 
 A constant, how often an idle primary writes a no-op to the oplog. See
-[idleWritePeriodMS](https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#idlewriteperiodms)
-in the [Max Staleness](https://github.com/mongodb/specifications/tree/master/source/max-staleness) spec for details.
+[idleWritePeriodMS](../max-staleness/max-staleness.md#idlewriteperiodms) in the
+[Max Staleness](../max-staleness/max-staleness.md) spec for details.
 
 #### smallestMaxStalenessSeconds
 
@@ -308,28 +330,34 @@ are described elsewhere.
 
 Clients MUST support these modes:
 
-**primary**\
+**primary**
+
 Only an available primary is suitable.
 
-**secondary**\
-All secondaries (and *only* secondaries) are candidates, but only [eligible](#eligible) candidates (i.e.
-after applying `tag_sets` and `maxStalenessSeconds`) are suitable.
+**secondary**
 
-**primaryPreferred**\
-If a primary is available, only the primary is suitable. Otherwise, all secondaries are
-candidates, but only eligible secondaries are suitable.
+All secondaries (and *only* secondaries) are candidates, but only [eligible](#eligible) candidates (i.e. after applying
+`tag_sets` and `maxStalenessSeconds`) are suitable.
 
-**secondaryPreferred**\
-All secondaries are candidates. If there is at least one eligible secondary, only eligible
-secondaries are suitable. Otherwise, when there are no eligible secondaries, the primary is suitable.
+**primaryPreferred**
 
-**nearest**\
+If a primary is available, only the primary is suitable. Otherwise, all secondaries are candidates, but only eligible
+secondaries are suitable.
+
+**secondaryPreferred**
+
+All secondaries are candidates. If there is at least one eligible secondary, only eligible secondaries are suitable.
+Otherwise, when there are no eligible secondaries, the primary is suitable.
+
+**nearest**
+
 The primary and all secondaries are candidates, but only eligible candidates are suitable.
 
 *Note on other server types*: The
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec defines several other server types that could appear in a replica set. Such types are never candidates, eligible or
-suitable.
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec defines
+several other server types that could appear in a replica set. Such types are never candidates, eligible or suitable.
+
+<span id="algorithm-for-filtering-by-staleness"></span>
 
 ##### maxStalenessSeconds
 
@@ -351,9 +379,8 @@ maxStalenessSeconds >= smallestMaxStalenessSeconds
 ```
 
 `heartbeatFrequencyMS` is defined in the
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec, and `idleWritePeriodMS` is defined to be 10 seconds in the
-[Max Staleness](https://github.com/mongodb/specifications/tree/master/source/max-staleness) spec.
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec, and
+`idleWritePeriodMS` is defined to be 10 seconds in the [Max Staleness](../max-staleness/max-staleness.md) spec.
 
 See "Smallest allowed value for maxStalenessSeconds" in the Max Staleness Spec.
 
@@ -392,6 +419,8 @@ After filtering servers according to `mode`, and before filtering with `tag_sets
   Servers with staleness less than or equal to `maxStalenessSeconds` are eligible.
 
 See the Max Staleness Spec for overall description and justification of this feature.
+
+<span id="algorithm-for-filtering-by-tag_sets"></span>
 
 ##### tag_sets
 
@@ -462,11 +491,13 @@ db.collection.find(
     hedge={'enabled': true})
 ```
 
+<span id="passing-read-preference-to-mongos"></span>
+
 #### Passing read preference to mongos and load balancers
 
 If a server of type Mongos or LoadBalancer is selected for a read operation, the read preference is passed to the
 selected mongos through the use of `$readPreference` (as a
-[Global Command Argument](../message/OP_MSG.rst#global-command-arguments) for OP_MSG or a query modifier for OP_QUERY)
+[Global Command Argument](../message/OP_MSG.md#global-command-arguments) for OP_MSG or a query modifier for OP_QUERY)
 and, for OP_QUERY only, the `SecondaryOk` wire protocol flag, according to the following rules.
 
 ##### For OP_MSG:
@@ -687,7 +718,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
     ["Server selection succeeded" message](#server-selection-succeeded-message). Do not go onto later steps.
 09. Request an immediate topology check, then block the server selection thread until the topology changes or until the
     server selection timeout has elapsed
-10. If server selection has timed out, raise a \[server selection error\](#server selection error) and log a
+10. If server selection has timed out, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message).
 11. Goto Step #2
 
@@ -711,7 +742,7 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
 04. If the topology is stale, proceed as follows:
     - record the target scan time as last scan time plus `minHeartBeatFrequencyMS`
     - if [serverSelectionTryOnce](#serverselectiontryonce) is false and the target scan time would exceed the maximum
-      time, raise a \[server selection error\](#server selection error) and log a
+      time, raise a [server selection error](#server-selection-errors) and log a
       ["Server selection failed" message](#server-selection-failed-message).
     - if the current time is less than the target scan time, sleep until the target scan time
     - do a blocking immediate topology check (which must also update the last scan time and mark the topology as no
@@ -728,11 +759,11 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
     ["Server selection succeeded" message](#server-selection-succeeded-message).; otherwise, mark the topology stale and
     continue to step #9.
 09. If [serverSelectionTryOnce](#serverselectiontryonce) is true and the last scan time is newer than the selection
-    start time, raise a \[server selection error\](#server selection error) and log a
+    start time, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message); otherwise, log a
     ["Waiting for suitable server to become available" message](#waiting-for-suitable-server-to-become-available-message)
     if one has not already been logged for this operation, and goto Step #4
-10. If the current time exceeds the maximum time, raise a \[server selection error\](#server selection error) and log a
+10. If the current time exceeds the maximum time, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message).
 11. Goto Step #4
 
@@ -801,8 +832,8 @@ If `mode` is 'secondary' or 'nearest':
 > 3. From the remaining servers, select servers matching the `tag_sets`.
 > 4. From these, select one server within the latency window.
 
-(See \[algorithm for filtering by staleness\](#algorithm for filtering by staleness), \[algorithm for filtering by
-tag_sets\](#algorithm for filtering by tag_sets), and
+(See [algorithm for filtering by staleness](#algorithm-for-filtering-by-staleness),
+[algorithm for filtering by tag_sets](#algorithm-for-filtering-by-tag_sets), and
 [filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window) for
 details on each step, and
 [why is maxStalenessSeconds applied before tag_sets?](#why-is-maxstalenessseconds-applied-before-tag_sets).)
@@ -1289,8 +1320,8 @@ The server selection test plan is given in a separate document that describes th
 ### Use of topology types
 
 The prior version of the read preference spec had only a loose definition of server or topology types. The
-[Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-spec defines these terms explicitly and they are used here for consistency and clarity.
+[Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec defines
+these terms explicitly and they are used here for consistency and clarity.
 
 ### Consistency with mongos
 
@@ -1568,61 +1599,49 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 
 ## References
 
-- [Server Discovery and Monitoring](https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring)
-  specification
-- [Driver Authentication](https://github.com/mongodb/specifications/blob/master/source/auth) specification
+- [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) specification
+- [Driver Authentication](../auth/auth.md) specification
 - [Connection Monitoring and Pooling](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)
   specification
 
 ## Changelog
 
-- 2024-02-07: Migrated from reStructuredText to Markdown.
-
 - 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
-- 2015-08-10: Updated single-threaded selection logic to ensure a scan always\
-  happens at least once under
+- 2015-08-10: Updated single-threaded selection logic to ensure a scan always happens at least once under
   serverSelectionTryOnce if selection fails. Removed the general selection algorithm and put full algorithms for each of
   the single- and multi-threaded sections. Added a requirement that single-threaded drivers document selection time
   expectations.
 
 - 2016-07-21: Updated for Max Staleness support.
 
-- 2016-08-03: Clarify selection algorithm, in particular that maxStalenessMS\
-  comes before tag_sets.
+- 2016-08-03: Clarify selection algorithm, in particular that maxStalenessMS comes before tag_sets.
 
 - 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 
-- 2016-10-25: Change minimum maxStalenessSeconds value from 2 \*\
-  heartbeatFrequencyMS to heartbeatFrequencyMS +
+- 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS to heartbeatFrequencyMS +
   idleWritePeriodMS (with proper conversions of course).
 
-- 2016-11-01: Update formula for secondary staleness estimate with the\
-  equivalent, and clearer, expression of this
+- 2016-11-01: Update formula for secondary staleness estimate with the equivalent, and clearer, expression of this
   formula from the Max Staleness Spec
 
-- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the\
-  future, require maxStalenessSeconds to
+- 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future, require maxStalenessSeconds to
   be at least 90.
 
-- 2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers\
-  must retry selection after checking an
+- 2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers must retry selection after checking an
   idle socket and discovering it is broken.
 
 - 2017-11-10: Added application-configurated server selector.
 
-- 2017-11-12: Specify read preferences for OP_MSG with direct connection, and\
-  delete obsolete comment direct
-  connections to secondaries getting "not writable primary" errors by design.
+- 2017-11-12: Specify read preferences for OP_MSG with direct connection, and delete obsolete comment direct connections
+  to secondaries getting "not writable primary" errors by design.
 
 - 2018-01-22: Clarify that $query wrapping is only for OP_QUERY
 
-- 2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation\
-  Pipeline Operator" spec and warns if read
+- 2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation Pipeline Operator" spec and warns if read
   preference is not primary.
 
-- 2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand\
-  selection rules.
+- 2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand selection rules.
 
 - 2018-12-13: Update tag_set example to use only String values
 
@@ -1644,9 +1663,8 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 
 - 2021-09-03: Clarify that wire version check only applies to available servers.
 
-- 2021-09-28: Note that 5.0+ secondaries support aggregate with write stages\
-  (e.g. `$out` and `$merge`). Clarify
-  setting `SecondaryOk` wire protocol flag or `$readPreference` global command argument for replica set topology.
+- 2021-09-28: Note that 5.0+ secondaries support aggregate with write stages (e.g. `$out` and `$merge`). Clarify setting
+  `SecondaryOk` wire protocol flag or `$readPreference` global command argument for replica set topology.
 
 - 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 
@@ -1655,6 +1673,8 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - 2022-11-09: Add log messages and tests.
 
 - 2023-08-26: Add list of deprioritized servers for sharded cluster topology.
+
+- 2024-02-07: Migrated from reStructuredText to Markdown.
 
 [^1]: mongos 3.4 refuses to connect to mongods with maxWireVersion \< 5, so it does no additional wire version checks
     related to maxStalenessSeconds.

@@ -20,8 +20,8 @@ is supported when all of the following are true:
 
 - Server version is 4.2.0 or higher. Legacy spec test runners can rely on `runOn.minServerVersion` for this check.
 - Driver has libmongocrypt enabled
-- At least one of [crypt_shared](../client-side-encryption.rst#crypt_shared) and/or
-  [mongocryptd](../client-side-encryption.rst#mongocryptd) is available.
+- At least one of [crypt_shared](../client-side-encryption.md#crypt_shared) and/or
+  [mongocryptd](../client-side-encryption.md#mongocryptd) is available.
 
 ## Spec Test Format
 
@@ -130,8 +130,9 @@ Test credentials to create environments are available in "drivers/gcpkms" and "d
 
 Do the following before running spec tests:
 
-- If available for the platform under test, obtain a [crypt_shared](../client-side-encryption.rst#crypt_shared) binary
-  and place it in a location accessible to the tests. Refer to: [Using crypt_shared](#using-crypt_shared)
+- If available for the platform under test, obtain a [crypt_shared](../client-side-encryption.md#crypt_shared) binary
+  and place it in a location accessible to the tests. Refer to:
+  [Using crypt_shared](../client-side-encryption.md#enabling-crypt_shared)
 - Start the mongocryptd process.
 - Start a mongod process with **server version 4.2.0 or later**.
 - Place credentials somewhere in the environment outside of tracked code. (If testing on evergreen, project variables
@@ -291,7 +292,7 @@ Then for each element in `tests`:
 
 8. If the test includes a list of command-started events in `expectations`, compare them to the actual command-started
    events using the same logic as the
-   [Command Monitoring spec legacy test runner](https://github.com/mongodb/specifications/blob/09ee1ebc481f1502e3246971a9419e484d736207/source/command-monitoring/tests/README.rst).
+   [Command Monitoring spec legacy test runner](../../command-logging-and-monitoring/tests/README.md).
 
 9. For each element in `outcome`:
 
@@ -304,33 +305,33 @@ The spec test MUST be run with *and* without auth.
 
 ## Using `crypt_shared`
 
-On platforms where [crypt_shared](../client-side-encryption.rst#crypt_shared) is available, drivers should prefer to
-test with the `crypt_shared` library instead of spawning mongocryptd.
+On platforms where [crypt_shared](../client-side-encryption.md#crypt_shared) is available, drivers should prefer to test
+with the `crypt_shared` library instead of spawning mongocryptd.
 
-[crypt_shared](../client-side-encryption.rst#crypt_shared) is released alongside the server.
-[crypt_shared](../client-side-encryption.rst#crypt_shared) is only available in versions 6.0 and above.
+[crypt_shared](../client-side-encryption.md#crypt_shared) is released alongside the server.
+[crypt_shared](../client-side-encryption.md#crypt_shared) is only available in versions 6.0 and above.
 
 mongocryptd is released alongside the server. mongocryptd is available in versions 4.2 and above.
 
 Drivers MUST run all tests with mongocryptd on at least one platform for all tested server versions.
 
-Drivers MUST run all tests with [crypt_shared](../client-side-encryption.rst#crypt_shared) on at least one platform for
+Drivers MUST run all tests with [crypt_shared](../client-side-encryption.md#crypt_shared) on at least one platform for
 all tested server versions. For server versions \< 6.0, drivers MUST test with the latest major release of
-[crypt_shared](../client-side-encryption.rst#crypt_shared). Using the latest major release of
-[crypt_shared](../client-side-encryption.rst#crypt_shared) is supported with older server versions.
+[crypt_shared](../client-side-encryption.md#crypt_shared). Using the latest major release of
+[crypt_shared](../client-side-encryption.md#crypt_shared) is supported with older server versions.
 
 Note that some tests assert on mongocryptd-related behaviors (e.g. the `mongocryptdBypassSpawn` test).
 
-Drivers under test should load the [crypt_shared](../client-side-encryption.rst#crypt_shared) library using either the
+Drivers under test should load the [crypt_shared](../client-side-encryption.md#crypt_shared) library using either the
 `cryptSharedLibPath` public API option (as part of the AutoEncryption `extraOptions`), or by setting a special search
 path instead.
 
-Some tests will require *not* using [crypt_shared](../client-side-encryption.rst#crypt_shared). For such tests, one
+Some tests will require *not* using [crypt_shared](../client-side-encryption.md#crypt_shared). For such tests, one
 should ensure that `crypt_shared` will not be loaded. Refer to the client-side-encryption documentation for information
 on "disabling" `crypt_shared` and setting library search paths.
 
 > [!NOTE]
-> The [crypt_shared](../client-side-encryption.rst#crypt_shared) dynamic library can be obtained using the
+> The [crypt_shared](../client-side-encryption.md#crypt_shared) dynamic library can be obtained using the
 > [mongodl](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/mongodl.py) Python script
 > from [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools/):
 >
@@ -590,7 +591,7 @@ Using `client_encrypted` perform the following operations:
    - `{ "_id": "over_2mib_2", "unencrypted": <the string "a" repeated (2097152) times> }`
 
    Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
-   [command monitoring](https://github.com/mongodb/specifications/tree/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst).
+   [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
 4. Bulk insert the following:
 
@@ -600,7 +601,7 @@ Using `client_encrypted` perform the following operations:
      `{ "_id": "encryption_exceeds_2mib_2", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }`
 
    Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
-   [command logging and monitoring](https://github.com/mongodb/specifications/tree/master/source/command-logging-and-monitoring/command-logging-and-monitoring.rst).
+   [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
 5. Insert `{ "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times>`.
 
@@ -986,12 +987,12 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
 
 #### Via loading shared library
 
-The following tests that loading [crypt_shared](../client-side-encryption.rst#crypt_shared) bypasses spawning
+The following tests that loading [crypt_shared](../client-side-encryption.md#crypt_shared) bypasses spawning
 mongocryptd.
 
 > [!NOTE]
-> IMPORTANT: This test requires the [crypt_shared](../client-side-encryption.rst#crypt_shared) library be loaded. If the
-> [crypt_shared](../client-side-encryption.rst#crypt_shared) library is not available, skip the test.
+> IMPORTANT: This test requires the [crypt_shared](../client-side-encryption.md#crypt_shared) library be loaded. If the
+> [crypt_shared](../client-side-encryption.md#crypt_shared) library is not available, skip the test.
 
 1. Create a MongoClient configured with auto encryption (referred to as `client_encrypted`)
 
@@ -1027,7 +1028,7 @@ mongocryptd.
    timeout.
 
 > [!NOTE]
-> IMPORTANT: If [crypt_shared](../client-side-encryption.rst#crypt_shared) is visible to the operating system's library
+> IMPORTANT: If [crypt_shared](../client-side-encryption.md#crypt_shared) is visible to the operating system's library
 > search mechanism, the expected server error generated by the `Via mongocryptdBypassSpawn`, `Via bypassAutoEncryption`,
 > `Via bypassQueryAnalysis` tests will not appear because libmongocrypt will load the `crypt_shared` library instead of
 > consulting mongocryptd. For the following tests, it is required that libmongocrypt *not* load `crypt_shared`. Refer to
@@ -1907,7 +1908,7 @@ as `key1Document`.
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
 Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
-[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#fle-2-createcollection-and-collection-drop).
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
 Drop and create the collection `keyvault.datakeys`.
 
@@ -2247,9 +2248,9 @@ for the field `cursor.firstBatch.encrypted`.
 ### 15. On-demand AWS Credentials
 
 These tests require valid AWS credentials. Refer:
-[Automatic AWS Credentials](../client-side-encryption.rst#automatic-aws-credentials).
+[Automatic AWS Credentials](../client-side-encryption.md#automatic-credentials).
 
-For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object $C$ with the
+For these cases, create a [ClientEncryption](../client-side-encryption.md#clientencryption) object $C$ with the
 following options:
 
 ```typescript
@@ -2263,7 +2264,7 @@ class ClientEncryptionOpts {
 #### Case 1: Failure
 
 Do not run this test case in an environment where AWS credentials are available (e.g. via environment variables or a
-metadata URL). (Refer: [Obtaining credentials for AWS](../../auth/auth.rst#obtaining-credentials))
+metadata URL). (Refer: [Obtaining credentials for AWS](../../auth/auth.md#obtaining-credentials))
 
 Attempt to create a datakey with $C$ using the `"aws"` KMS provider. Expect this to fail due to a lack of KMS provider
 credentials.
@@ -2408,9 +2409,9 @@ impossible by design to omit `RewrapManyDataKeyOpts.provider` when `RewrapManyDa
 
 ### 17. On-demand GCP Credentials
 
-Refer: [Automatic GCP Credentials](../client-side-encryption.rst#automatic-gcp-credentials).
+Refer: [Automatic GCP Credentials](../client-side-encryption.md#obtaining-gcp-credentials).
 
-For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object $C$ with the
+For these cases, create a [ClientEncryption](../client-side-encryption.md#clientencryption) object $C$ with the
 following options:
 
 ```typescript
@@ -2467,7 +2468,7 @@ Expect the key to be successfully created.
 
 ### 18. Azure IMDS Credentials
 
-Refer: [Automatic Azure Credentials](../client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault)
+Refer: [Automatic Azure Credentials](../client-side-encryption.md#obtaining-an-access-token-for-azure-key-vault)
 
 The test cases for IMDS communication are specially designed to not require an Azure environment, while still exercising
 the core of the functionality. The design of these test cases encourages an implementation to separate the concerns of
@@ -2486,7 +2487,7 @@ This will run the `imds` Bottle application defined in the `fake_azure` Python m
 command line arguments to control the bind host and TCP port (use `--help` for more information).
 
 For each test case, follow the process for obtaining the token as outlined in the
-[automatic Azure credentials section](../client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault) with
+[automatic Azure credentials section](../client-side-encryption.md#obtaining-an-access-token-for-azure-key-vault) with
 the following changes:
 
 1. Instead of the standard IMDS TCP endpoint of `169.254.169.254:80`, communicate with the running `fake_azure` HTTP
@@ -2573,9 +2574,9 @@ a timeout.
 
 ### 19. Azure IMDS Credentials Integration Test
 
-Refer: [Automatic Azure Credentials](../client-side-encryption.rst#obtaining-an-access-token-for-azure-key-vault)
+Refer: [Automatic Azure Credentials](../client-side-encryption.md#obtaining-an-access-token-for-azure-key-vault)
 
-For these cases, create a [ClientEncryption](../client-side-encryption.rst#clientencryption) object $C$ with the
+For these cases, create a [ClientEncryption](../client-side-encryption.md#clientencryption) object $C$ with the
 following options:
 
 ```typescript
@@ -2628,7 +2629,7 @@ Expect the key to be successfully created.
 ### 20. Bypass creating mongocryptd client when shared library is loaded
 
 > [!NOTE]
-> IMPORTANT: If [crypt_shared](../client-side-encryption.rst#crypt_shared) is not visible to the operating system's
+> IMPORTANT: If [crypt_shared](../client-side-encryption.md#crypt_shared) is not visible to the operating system's
 > library search mechanism, this test should be skipped.
 
 The following tests that a mongocryptd client is not created when shared library is in-use.
@@ -2672,7 +2673,7 @@ The Automatic Data Encryption Keys tests require MongoDB server 7.0+. The tests 
 > libmongocrypt 1.8.0 is configured to use the QEv2 protocol.
 
 For each of the following test cases, assume `DB` is a valid open database handle, and assume a
-[ClientEncryption](../client-side-encryption.rst#clientencryption) object `CE` created using the following options:
+[ClientEncryption](../client-side-encryption.md#clientencryption) object `CE` created using the following options:
 
 ```
 clientEncryptionOptions: {
@@ -2703,7 +2704,7 @@ When testing `local`, set `masterKey` to `null`.
 #### Case 1: Simple Creation and Validation
 
 This test is the most basic to verify that
-[CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-collection-helper) created a collection with
+[CreateEncryptedCollection](../client-side-encryption.md#create-encrypted-collection-helper) created a collection with
 queryable encryption enabled. It verifies that the server rejects an attempt to insert plaintext in an encrypted fields.
 
 1. Create a new create-collection options $Opts$ including the following:
@@ -2737,7 +2738,7 @@ queryable encryption enabled. It verifies that the server rejects an attempt to 
 
 #### Case 2: Missing `encryptedFields`
 
-The [CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-collection-helper) helper should not
+The [CreateEncryptedCollection](../client-side-encryption.md#create-encrypted-collection-helper) helper should not
 create a regular collection if there are no `encryptedFields` for the collection being created. Instead, it should
 generate an error indicated that the `encryptedFields` option is missing.
 
@@ -2745,14 +2746,14 @@ generate an error indicated that the `encryptedFields` option is missing.
 2. Invoke $CreateEncryptedCollection(CE, DB, "testing1", Opts, kmsProvider, masterKey)$.
 3. Expect the invocation to fail with an error indicating that `encryptedFields` is not defined for the collection, and
    expect that no collection was created within the database. It would be *incorrect* for
-   [CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-collection-helper) to create a regular
+   [CreateEncryptedCollection](../client-side-encryption.md#create-encrypted-collection-helper) to create a regular
    collection without queryable encryption enabled.
 
 #### Case 3: Invalid `keyId`
 
-The [CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-collection-helper) helper only inspects
+The [CreateEncryptedCollection](../client-side-encryption.md#create-encrypted-collection-helper) helper only inspects
 `encryptedFields.fields` for `keyId` of `null`.
-[CreateEncryptedCollection](../client-side-encryption.rst#create-encrypted-collection-helper) should forward all other
+[CreateEncryptedCollection](../client-side-encryption.md#create-encrypted-collection-helper) should forward all other
 data as-is, even if it would be malformed. The server should generate an error when attempting to create a collection
 with such invalid settings.
 
@@ -2815,16 +2816,9 @@ This test is continuation of the case 1 and provides a way to complete inserting
 
 ### 22. Range Explicit Encryption
 
-The Range Explicit Encryption tests require MongoDB server 7.0+. The tests must not run against a standalone. The tests
-must be skipped on MongoDB server 8.0+.
-
-> [!NOTE]
-> MongoDB Server 8.0 introduced a backwards breaking change to the Queryable Encryption (QE) range protocol: QE Range
-> V2. Skip tests using `rangePreview` when using Server 8.0 or newer until DRIVERS-2767 is addressed.
-
-> [!NOTE]
-> MongoDB Server 7.0 introduced a backwards breaking change to the Queryable Encryption (QE) protocol: QEv2.
-> libmongocrypt 1.8.0 is configured to use the QEv2 protocol.
+The Range Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server
+8.0.0-rc14+ for [SERVER-91889](https://jira.mongodb.org/browse/SERVER-91889) and libmongocrypt 1.11.0+ for
+[MONGOCRYPT-705](https://jira.mongodb.org/browse/MONGOCRYPT-705). The tests must not run against a standalone.
 
 Each of the following test cases must pass for each of the supported types (`DecimalNoPrecision`, `DecimalPrecision`,
 `DoublePrecision`, `DoubleNoPrecision`, `Date`, `Int`, and `Long`), unless it is stated the type should be skipped.
@@ -2847,7 +2841,7 @@ as `key1Document`.
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
 Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
-[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#fle-2-createcollection-and-collection-drop).
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
 Drop and create the collection `keyvault.datakeys`.
 
@@ -2886,7 +2880,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -2913,6 +2907,7 @@ skipped.
 
    ```typescript
    class RangeOpts {
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
@@ -2923,6 +2918,7 @@ skipped.
    class RangeOpts {
       min: { "$numberDecimal": "0" },
       max: { "$numberDecimal": "200" },
+      trimFactor: 1,
       sparsity: 1,
       precision: 2,
    }
@@ -2932,6 +2928,7 @@ skipped.
 
    ```typescript
    class RangeOpts {
+      trimFactor: 1
       sparsity: 1,
    }
    ```
@@ -2942,6 +2939,7 @@ skipped.
    class RangeOpts {
       min: { "$numberDouble": "0" },
       max: { "$numberDouble": "200" },
+      trimFactor: 1,
       sparsity: 1,
       precision: 2,
    }
@@ -2953,6 +2951,7 @@ skipped.
    class RangeOpts {
       min: {"$date": { "$numberLong": "0" } } ,
       max: {"$date": { "$numberLong": "200" } },
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
@@ -2963,6 +2962,7 @@ skipped.
    class RangeOpts {
       min: {"$numberInt": "0" } ,
       max: {"$numberInt": "200" },
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
@@ -2973,6 +2973,7 @@ skipped.
    class RangeOpts {
       min: {"$numberLong": "0" } ,
       max: {"$numberLong": "200" },
+      trimFactor: 1,
       sparsity: 1,
    }
    ```
@@ -2987,7 +2988,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3016,8 +3017,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3051,8 +3052,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3085,8 +3086,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3118,8 +3119,8 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
-   queryType: "rangePreview",
+   algorithm: "Range",
+   queryType: "range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3150,7 +3151,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3172,7 +3173,7 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type>,
 }
@@ -3197,10 +3198,95 @@ Encrypt using the following `EncryptOpts`:
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "RangePreview",
+   algorithm: "Range",
    contentionFactor: 0,
    rangeOpts: <RangeOpts for Type with precision added>,
 }
 ```
 
 Assert that an error was raised.
+
+### 23. Range Explicit Encryption applies defaults
+
+This test requires libmongocrypt with changes in
+[14ccd9ce](https://github.com/mongodb/libmongocrypt/commit/14ccd9ce8a030158aec07f63e8139d34b95d88e6)
+([MONGOCRYPT-698](https://jira.mongodb.org/browse/MONGOCRYPT-698)).
+
+#### Test Setup
+
+Create a MongoClient named `keyVaultClient`.
+
+Create a ClientEncryption object named `clientEncryption` with these options:
+
+```typescript
+class ClientEncryptionOpts {
+   keyVaultClient: keyVaultClient,
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": "<base64 decoding of LOCAL_MASTERKEY>" } },
+}
+```
+
+Create a key with `clientEncryption.createDataKey`. Store the returned key ID in a variable named `keyId`.
+
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
+
+```typescript
+class EncryptOpts {
+   keyId : keyId,
+   algorithm: "Range",
+   contentionFactor: 0,
+   rangeOpts: RangeOpts {
+      min: 0,
+      max: 1000
+   }
+}
+```
+
+Store the result in a variable named `payload_defaults`.
+
+#### Case 1: Uses libmongocrypt defaults
+
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
+
+```typescript
+class EncryptOpts {
+   keyId : keyId,
+   algorithm: "Range",
+   contentionFactor: 0,
+   rangeOpts: RangeOpts {
+      min: 0,
+      max: 1000,
+      sparsity: 2,
+      trimFactor: 6
+   }
+}
+```
+
+Assert the returned payload size equals the size of `payload_defaults`.
+
+> [!NOTE]
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly affect
+> the payload size.
+
+#### Case 2: Accepts `trimFactor` 0
+
+Call `clientEncryption.encrypt` to encrypt the int32 value `123` with these options:
+
+```typescript
+class EncryptOpts {
+   keyId : keyId,
+   algorithm: "Range",
+   contentionFactor: 0,
+   rangeOpts: RangeOpts {
+      min: 0,
+      max: 1000,
+      trimFactor: 0
+   }
+}
+```
+
+Assert the returned payload size is greater than the size of `payload_defaults`.
+
+> [!NOTE]
+> Do not compare the payload contents. The payloads include random data. The `trimFactor` and `sparsity` directly affect
+> the payload size.

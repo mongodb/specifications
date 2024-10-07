@@ -1,4 +1,4 @@
-# Driver Transactions Specification
+# Transactions Specification
 
 - Status: Accepted
 - Minimum Server Version: 4.0
@@ -8,8 +8,8 @@ ______________________________________________________________________
 ## **Abstract**
 
 Version 4.0 of the server introduces multi-statement transactions. This spec builds upon the
-[Driver Sessions Specification](../sessions/driver-sessions.rst) to define how an application uses transactions and how
-a driver interacts with the server to implement transactions.
+[Driver Sessions Specification](../sessions/driver-sessions.md) to define how an application uses transactions and how a
+driver interacts with the server to implement transactions.
 
 The API for transactions must be specified to ensure that all drivers and the mongo shell are consistent with each
 other, and to provide a natural interface for application developers and DBAs who use multi-statement transactions.
@@ -23,8 +23,8 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### **Terms**
 
-This specification uses the terms defined in the [Driver Sessions Specification](../sessions/driver-sessions.rst) and
-[Retryable Writes Specification](../retryable-writes/retryable-writes.rst). Additional terms are defined below.
+This specification uses the terms defined in the [Driver Sessions Specification](../sessions/driver-sessions.md) and
+[Retryable Writes Specification](../retryable-writes/retryable-writes.md). Additional terms are defined below.
 
 #### Resource Management Block
 
@@ -46,7 +46,7 @@ including (but not limited to) creating, updating, or deleting databases, collec
 
 #### Retryable Error
 
-An error considered retryable by the [Retryable Writes Specification](../retryable-writes/retryable-writes.rst).
+An error considered retryable by the [Retryable Writes Specification](../retryable-writes/retryable-writes.md).
 
 #### Command Error
 
@@ -259,7 +259,7 @@ ClientSession is in one of five states: "no transaction", "starting transaction"
 diagram:
 
 <img src="client-session-transaction-states.png"
-style="width:6.5in;height:3.68056in" alt="states" />\
+style="width:6.5in;height:3.68056in" alt="states" />
 ([GraphViz source](client-session-transaction-states.dot))
 
 When a ClientSession is created it starts in the "no transaction" state. Starting, committing, and aborting a
@@ -289,7 +289,7 @@ containing the message "Transaction already in progress" without modifying any s
 startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
 A deployment does not support transactions when the deployment does not support sessions, or maxWireVersion \< 7, or the
 maxWireVersion \< 8 and the topology type is Sharded, see
-[How to Check Whether a Deployment Supports Sessions](https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions).
+[How to Tell Whether a Connection Supports Sessions](../sessions/driver-sessions.md#how-to-tell-whether-a-connection-supports-sessions).
 Note that checking the maxWireVersion does not guarantee that the deployment supports transactions, for example a
 MongoDB 4.0 replica set using MMAPv1 will report maxWireVersion 7 but does not support transactions. In this case,
 Drivers rely on the deployment to report an error when a transaction is started.
@@ -375,7 +375,7 @@ state. When the session is in the "starting transaction" state, meaning, no oper
 transaction, drivers MUST NOT run the abortTransaction command.
 
 abortTransaction is a retryable write command. Drivers MUST retry after abortTransaction fails with a retryable error
-according to the [Retryable Writes Specification](../retryable-writes/retryable-writes.rst), including a handshake
+according to the [Retryable Writes Specification](../retryable-writes/retryable-writes.md), including a handshake
 network error, regardless of whether retryWrites is set on the MongoClient or not.
 
 If the operation times out or fails with a non-retryable error, drivers MUST ignore all errors from the abortTransaction
@@ -553,7 +553,7 @@ been enabled on the MongoClient.
 
 Drivers MUST retry the commitTransaction and abortTransaction commands even when retryWrites has been disabled on the
 MongoClient. commitTransaction and abortTransaction are retryable write commands and MUST be retried according to the
-[Retryable Writes Specification](../retryable-writes/retryable-writes.rst).
+[Retryable Writes Specification](../retryable-writes/retryable-writes.md).
 
 Retryable writes and transactions both use the `txnNumber` associated with a ServerSession. For retryable writes,
 `txnNumber` would normally increment before each retryable command, whereas in a transaction, the `txnNumber` is
@@ -636,7 +636,7 @@ Drivers MUST unpin a ClientSession in the following situations:
 1. The transaction is aborted. The session MUST be unpinned regardless of whether or the `abortTransaction` command
    succeeds or fails, or was executed at all. If the operation fails with a retryable error, the session MUST be
    unpinned before performing server selection for the retry.
-2. Any operation in the transcation, including `commitTransaction` fails with a TransientTransactionError. Transient
+2. Any operation in the transaction, including `commitTransaction` fails with a TransientTransactionError. Transient
    errors indicate that the transaction in question has already been aborted or that the pinnned mongos is
    down/unavailable. Unpinning the session ensures that a subsequent `abortTransaction` (or `commitTransaction`) does
    not block waiting on a server that is unreachable.
@@ -778,7 +778,7 @@ The Python driver serves as a reference implementation.
 
 ## **Design Rationale**
 
-The design of this specification builds on the [Driver Sessions Specification](../sessions/driver-sessions.rst) and
+The design of this specification builds on the [Driver Sessions Specification](../sessions/driver-sessions.md) and
 modifies the driver API as little as possible.
 
 Drivers will rely on the server to yield an error if an unsupported command is executed within a transaction. This will
@@ -859,8 +859,8 @@ execute a command directly with minimum additional client-side logic.
 
 This specification depends on:
 
-1. [Driver Sessions Specification](../sessions/driver-sessions.rst)
-2. [Retryable Writes Specification](../retryable-writes/retryable-writes.rst)
+1. [Driver Sessions Specification](../sessions/driver-sessions.md)
+2. [Retryable Writes Specification](../retryable-writes/retryable-writes.md)
 
 ## **Backwards Compatibility**
 
@@ -875,18 +875,15 @@ The [Python driver](https://github.com/mongodb/mongo-python-driver/) serves as a
 
 - Support retryable writes within a transaction.
 
-- Support transactions on secondaries. In this case, drivers would be\
-  required to pin a transaction to the server
+- Support transactions on secondaries. In this case, drivers would be required to pin a transaction to the server
   selected for the initial operation. All subsequent operations in the transaction would go to the pinned server.
 
-- Support for transactions that read from multiple nodes in a replica\
-  set. One interesting use case would be to run a
+- Support for transactions that read from multiple nodes in a replica set. One interesting use case would be to run a
   single transaction that performs low-latency reads with readPreference "nearest" followed by some writes.
 
-- Support for unacknowledged transaction commits. This might be useful\
-  when data consistency is paramount but
-  durability is optional. Imagine a system that increments two counters in two different collections. The system may
-  want to use transactions to guarantee that both counters are always incremented together or not at all.
+- Support for unacknowledged transaction commits. This might be useful when data consistency is paramount but durability
+  is optional. Imagine a system that increments two counters in two different collections. The system may want to use
+  transactions to guarantee that both counters are always incremented together or not at all.
 
 ## **Justifications**
 
@@ -1009,6 +1006,7 @@ The following commands are allowed inside transactions:
 10. geoSearch
 11. create
 12. createIndexes on an empty collection created in the same transaction or on a non-existing collection
+13. bulkWrite
 
 ### Why don’t drivers automatically retry commit after a write concern timeout error?
 
@@ -1072,10 +1070,11 @@ objective of avoiding duplicate commits.
 
 ## **Changelog**
 
+- 2024-05-08: Add bulkWrite to the list of commands allowed in transactions.
+
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 
-- 2023-11-22: Specify that non-transient transaction errors abort the transaction\
-  on the server.
+- 2023-11-22: Specify that non-transient transaction errors abort the transaction on the server.
 
 - 2022-10-05: Remove spec front matter and reformat changelog
 
@@ -1085,8 +1084,7 @@ objective of avoiding duplicate commits.
 
 - 2021-04-12: Adding in behaviour for load balancer mode.
 
-- 2020-04-07: Clarify that all abortTransaction attempts should unpin the session,\
-  even if the command is not executed.
+- 2020-04-07: Clarify that all abortTransaction attempts should unpin the session, even if the command is not executed.
 
 - 2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.
 
@@ -1098,8 +1096,7 @@ objective of avoiding duplicate commits.
 
 - 2019-06-07: Mention `$merge` stage for aggregate alongside `$out`
 
-- 2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired\
-  errors on commit are labelled
+- 2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired errors on commit are labelled
   UnknownTransactionCommitResult.
 
 - 2019-02-19: Add support for sharded transaction recoveryToken.
@@ -1110,13 +1107,11 @@ objective of avoiding duplicate commits.
 
 - 2018-11-13: Add mongos pinning to support sharded transaction.
 
-- 2018-06-18: Explicit readConcern and/or writeConcern are prohibited within\
-  transactions, with a client-side error.
+- 2018-06-18: Explicit readConcern and/or writeConcern are prohibited within transactions, with a client-side error.
 
 - 2018-06-07: The count command is not supported within transactions.
 
-- 2018-06-14: Any retryable writes error raised by commitTransaction must be\
-  labelled "UnknownTransactionCommitResult".
+- 2018-06-14: Any retryable writes error raised by commitTransaction must be labelled "UnknownTransactionCommitResult".
 
 [^1]: In 4.2, a new mongos waits for the *outcome* of the transaction but will never itself cause the transaction to be
     committed. If the initial commit on the original mongos itself failed to initiate the transaction's commit sequence,

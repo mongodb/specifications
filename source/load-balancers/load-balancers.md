@@ -21,7 +21,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 #### SDAM
 
 An abbreviated form of "Server Discovery and Monitoring", specification defined in
-[Server Discovery and Monitoring Specification](../server-discovery-and-monitoring/server-discovery-and-monitoring.rst).
+[Server Discovery and Monitoring Specification](../server-discovery-and-monitoring/server-discovery-and-monitoring.md).
 
 #### Service
 
@@ -60,7 +60,7 @@ SRV record as is done for non-load balanced sharded clusters.
 
 ### Server Discovery Logging and Monitoring
 
-<div id="monitoring">
+<span id="monitoring"></span>
 
 #### Monitoring
 
@@ -81,20 +81,21 @@ Although there is no monitoring connection in load balanced mode, drivers MUST e
 - `TopologyDescriptionChangedEvent`. The `newDescription` MUST have `TopologyType` `LoadBalanced` and one server with
   `ServerType` `LoadBalancer`.
 
-Drivers MUST also emit a `ServerClosedEvent` and `TopologyClosedEvent` when the topology is closed and MUST NOT emit any
-other events when operating in this mode.
+Drivers MUST also emit a `ServerClosedEvent` followed by a `TopologyDescriptionChangedEvent` that transitions the
+`Topology` to the `UNKNOWN` state and a `TopologyClosedEvent` when the topology is closed and MUST NOT emit any other
+events when operating in this mode.
 
 #### Log Messages
 
 SDAM events details described in [Monitoring](#monitoring) apply to corresponding log messages. Please refer to the
-[SDAM logging specification](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#log-messages)
+[SDAM logging specification](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#log-messages)
 for details on SDAM logging. Drivers MUST emit the relevant SDAM log messages, such as:
 
-- [Starting Topology Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#starting-topology-monitoring-log-message)
-- [Stopped Topology Mmonitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#stopped-topology-monitoring-log-message)
-- [Starting Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#starting-server-monitoring-log-message)
-- [Stopped Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#stopped-server-monitoring-log-message)
-- [Topology Description Changed](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.rst#topology-description-changed-log-message)
+- [Starting Topology Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#starting-topology-monitoring-log-message)
+- [Stopped Topology Mmonitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#stopped-topology-monitoring-log-message)
+- [Starting Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#starting-server-monitoring-log-message)
+- [Stopped Server Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#stopped-server-monitoring-log-message)
+- [Topology Description Changed](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#topology-description-changed-log-message)
 
 ### Driver Sessions
 
@@ -127,7 +128,7 @@ During command construction, the LoadBalancer server MUST be treated like a mong
 
 In the case of the driver having the `loadBalanced=true` connection string option specified, every pooled connection
 MUST add a `loadBalanced` field to the - Code:`hello` command in its
-[handshake](../mongodb-handshake/handshake.rst#connection-handshake). The value of the field MUST be `true`. If
+[handshake](../mongodb-handshake/handshake.md#connection-handshake). The value of the field MUST be `true`. If
 `loadBalanced=true` is specified then the `OP_MSG` protocol MUST be used for all steps of the connection handshake.
 
 Example:
@@ -328,6 +329,7 @@ only load balancers that support the PROXY protocol would be supported.
 
 ## Changelog
 
+- 2024-04-25: Clarify that `TopologyDescriptionChangedEvent` must be emitted on topology close
 - 2024-03-06: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter and reformat changelog.
 - 2022-01-18: Clarify that `OP_MSG` must be used in load balanced mode.

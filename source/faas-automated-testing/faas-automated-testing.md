@@ -201,8 +201,8 @@ sam local invoke --parameter-overrides "MongoDbUri=${MONGODB_URI}"
 ```
 
 *NOTE* "127.0.0.1" in the MONGODB_URI MUST be replaced with "host.docker.internal" to test a local MongoDB deployment.
-If "host.docker.internal" does not work (can occur on M1 machines), drivers MAY choose to use a \[bridged docker
-container\](<https://docs.docker.com/network/bridge/>) to test locally.
+If "host.docker.internal" does not work (can occur on M1 machines), drivers MAY choose to use a
+[bridged docker container](https://docs.docker.com/network/bridge/) to test locally.
 
 ###### Implementing the Function
 

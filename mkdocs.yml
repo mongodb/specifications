@@ -1,0 +1,14 @@
+site_name: MongoDB Specifications
+docs_dir: source
+nav:
+  - 'index.md'
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: 
+plugins:
+  - gh-admonitions
+validation:
+  absolute_links: warn 
+  unrecognized_links: warn
+  anchors: warn

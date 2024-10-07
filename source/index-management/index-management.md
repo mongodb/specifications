@@ -20,23 +20,27 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 #### Terms
 
-**Collection**\
+**Collection**
+
 The term `Collection` references the object in the driver that represents a collection on the server.
 
-**Cursor**\
+**Cursor**
+
 The term `Cursor` references the driver's cursor object.
 
-**Iterable**\
+**Iterable**
+
 The term `Iterable` is to describe an object that is a sequence of elements that can be iterated over.
 
-**Document**\
+**Document**
+
 The term `Document` refers to the implementation in the driver's language of a BSON document.
 
-**Result**\
-The term `Result` references the object that is normally returned by the driver as the result of a command
-execution. In the case of situations where an actual command is not executed, rather an insert or a query, an object
-that adheres to the same interface must be returned with as much information as possible that could be obtained from the
-operation.
+**Result**
+
+The term `Result` references the object that is normally returned by the driver as the result of a command execution. In
+the case of situations where an actual command is not executed, rather an insert or a query, an object that adheres to
+the same interface must be returned with as much information as possible that could be obtained from the operation.
 
 ### Guidance
 
@@ -387,7 +391,7 @@ interface IndexView extends Iterable<Document> {
    * requirement is dropped in favor of the driver language standard for handling iteration
    * over a sequence of objects.
    *
-   * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst
+   * @see https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.md
    *
    * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
    *   method. See below.
@@ -664,7 +668,7 @@ interface IndexOptions {
    * @example For an index of name: 1, age: -1, the generated name would be "name_1_age_-1".
    */
   name: String;
-
+  
   /**
    * Optionally tells the index to only reference documents with the specified field in
    * the index.
@@ -820,6 +824,8 @@ In MongoDB 4.4, the `ns` field was removed from the index specifications returne
   populate the `ns` field of the models with the appropriate namespace if the server does not report it in the
   `listIndexes` command response. The `ns` field is not required to be a part of the models, however.
 
+<span id="enumerate-indexes"></span>
+
 #### Getting Index Names
 
 Drivers MAY implement a method to enumerate all indexes, and return only the index names. The helper operates the same
@@ -898,16 +904,39 @@ await collection.dropSearchIndex('my-test-index');
 
 ```typescript
 interface SearchIndexModel {
-  // The definition for this index.
+  /**
+   * Document describing the index to create.
+   *
+   * The definition syntax depends on whether you create a standard search index
+   * or a vector search index.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/createSearchIndexes/
+   */
   definition: Document;
 
-  // The name for this index, if present.
-  name: Optional<string>;
+  /**
+   * Contains the options for the index.
+   */
+  options: SearchIndexOptions;
 }
 
 interface SearchIndexOptions {
-  // The name for this index, if present.
+  /**
+   * Name of the search index to create.
+   *
+   * The server will use "default" if this option is not specified.
+   */
   name: Optional<string>;
+
+  /**
+   * Type of search index to create. Defaults to "search" if not provided.
+   *
+   * Specify "search" for a standard search index or "vectorSearch" for a vector
+   * search index.
+   *
+   * The server will use "search" if this option is not specified.
+   */
+  type: Optional<string>;
 }
 
 /**
@@ -1050,12 +1079,12 @@ interface SearchIndexView extends Iterable<Document> {
 
 ### Q & A
 
-Q: Where is write concern?\
-The `createIndexes` and `dropIndexes` commands take a write concern that indicates how the
-write is acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon
-that two different index operations on the same collection would use a different write concern. As such, the most
-natural place to indicate write concern is on the client, the database, or the collection itself and not the operations
-within it.
+Q: Where is write concern?
+
+The `createIndexes` and `dropIndexes` commands take a write concern that indicates how the write is acknowledged. Since
+all operations defined in this specification are performed on a collection, it's uncommon that two different index
+operations on the same collection would use a different write concern. As such, the most natural place to indicate write
+concern is on the client, the database, or the collection itself and not the operations within it.
 
 However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is
 permitted to allow a write concern option, but since writeConcern is a top-level command option, it MUST NOT be
@@ -1063,11 +1092,12 @@ specified as part of an `IndexModel` passed into the helper. It SHOULD be specif
 helper. For example, it would be ambiguous to specify write concern for one or more models passed to `createIndexes()`,
 but it would not be to specify it via the `CreateIndexesOptions`.
 
-Q: What does the commitQuorum option do?\
-Prior to MongoDB 4.4, secondaries would simply replicate index builds once
-they were completed on the primary. Building indexes requires an exclusive lock on the collection being indexed, so the
-secondaries would be blocked from replicating all other operations while the index build took place. This would
-introduce replication lag correlated to however long the index build took.
+Q: What does the commitQuorum option do?
+
+Prior to MongoDB 4.4, secondaries would simply replicate index builds once they were completed on the primary. Building
+indexes requires an exclusive lock on the collection being indexed, so the secondaries would be blocked from replicating
+all other operations while the index build took place. This would introduce replication lag correlated to however long
+the index build took.
 
 Starting in MongoDB 4.4, secondaries build indexes simultaneously with the primary, and after starting an index build,
 the primary will wait for a certain number of data-bearing nodes, including itself, to have completed the build before
@@ -1080,11 +1110,12 @@ committing the index.
 The server-default value for `commitQuorum` is "votingMembers", which means the primary will wait for all voting
 data-bearing nodes to complete building the index before it commits it.
 
-Q: Why would a user want to specify a non-default `commitQuorum`?\
-Like `w: "majority"`, `commitQuorum: "votingMembers"`
-doesn't consider non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't
-lag behind, then they would specify `commitQuorum: <total number of data-bearing nodes, including non-voting nodes>`.
-Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a
+Q: Why would a user want to specify a non-default `commitQuorum`
+
+Like `w: "majority"`, `commitQuorum: "votingMembers"` doesn't consider non-voting data-bearing nodes such as analytics
+nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify
+`commitQuorum: <total number of data-bearing nodes, including non-voting nodes>`. Alternatively, if they wanted to
+ensure only specific non-voting nodes didn't lag behind, they could specify a
 [custom getLastErrorMode based on the nodes' tag sets](https://www.mongodb.com/docs/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes)
 (e.g. `commitQuorum: <custom getLastErrorMode name>`).
 
@@ -1092,11 +1123,12 @@ Additionally, if a user has a high tolerance for replication lag, they can set a
 useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't
 care if they lag behind.
 
-Q: What is the difference between write concern and `commitQuorum`?\
-While these two options share a lot in terms of how
-they are specified, they configure entirely different things. `commitQuorum` determines how much new replication lag an
-index build can tolerably introduce, but it says nothing of durability. Write concern specifies the durability
-requirements of an index build, but it makes no guarantees about introducing replication lag.
+Q: What is the difference between write concern and `commitQuorum`?
+
+While these two options share a lot in terms of how they are specified, they configure entirely different things.
+`commitQuorum` determines how much new replication lag an index build can tolerably introduce, but it says nothing of
+durability. Write concern specifies the durability requirements of an index build, but it makes no guarantees about
+introducing replication lag.
 
 For instance, an index built with `writeConcern: { w: 1 }, commitQuorum: "votingMembers"` could possibly be rolled back,
 but it will not introduce any new replication lag. Likewise, an index built with
@@ -1107,61 +1139,54 @@ lag. To ensure the index is both durable and will not introduce replication lag 
 Also note that, since indexes are built simultaneously, higher values of `commitQuorum` are not as expensive as higher
 values of `writeConcern`.
 
-Q: Why does the driver manually throw errors if the `commitQuorum` option is specified against a pre 4.4
-server?\
-Starting in 3.4, the server validates all options passed to the `createIndexes` command, but due to a bug in
-versions 4.2.0-4.2.5 of the server (SERVER-47193), specifying `commitQuorum` does not result in an error. The option is
-used internally by the server on those versions, and its value could have adverse effects on index builds. To prevent
-users from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
+Q: Why does the driver manually throw errors if the `commitQuorum` option is specified against a pre 4.4 server?<br>
+Starting in 3.4, the server validates all options passed to the `createIndexes` command, but due to a bug in versions
+4.2.0-4.2.5 of the server (SERVER-47193), specifying `commitQuorum` does not result in an error. The option is used
+internally by the server on those versions, and its value could have adverse effects on index builds. To prevent users
+from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 #### Changelog
 
+- 2024-09-05: Moved options in SearchIndexModel to SearchIndexOptions for consistency with IndexModel and IndexOptions.
+
+- 2024-03-06: Added `type` option to SearchIndexOptions.
+
 - 2024-03-05: Migrated from reStructuredText to Markdown.
 
-- 2023-11-08: Clarify that `readConcern` and `writeConcern` must not be\
-  applied to search index management commands.
+- 2023-11-08: Clarify that `readConcern` and `writeConcern` must not be applied to search index management commands.
 
 - 2023-07-27: Add search index management clarifications.
 
 - 2023-05-18: Add the search index management API.
 
-- 2023-05-10: Merge index enumeration and index management specs and get rid of references\
-  to legacy server versions.
+- 2023-05-10: Merge index enumeration and index management specs and get rid of references to legacy server versions.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
-- 2022-04-18: Added the `clustered` attribute to `IndexOptions` in order to\
-  support clustered collections.
+- 2022-04-18: Added the `clustered` attribute to `IndexOptions` in order to support clustered collections.
 
-- 2022-02-10: Specified that `getMore` command must explicitly send inherited\
-  comment.
+- 2022-02-10: Specified that `getMore` command must explicitly send inherited comment.
 
 - 2022-02-01: Added comment field to helper methods.
 
-- 2022-01-19: Require that timeouts be applied per the client-side operations\
-  timeout spec.
+- 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
 
-- 2020-03-30: Added options types to various helpers. Introduced `commitQuorum`\
-  option. Added deprecation message for
+- 2020-03-30: Added options types to various helpers. Introduced `commitQuorum` option. Added deprecation message for
   `background` option.
 
-- 2019-04-24: Added `wildcardProjection` attribute to `IndexOptions` in order\
-  to support setting a wildcard projection
+- 2019-04-24: Added `wildcardProjection` attribute to `IndexOptions` in order to support setting a wildcard projection
   on a wildcard index.
 
 - 2017-06-07: Include listIndexes() in Q&A about maxTimeMS.
 
 - 2017-05-31: Add Q & A addressing write concern and maxTimeMS option.
 
-- 2016-10-11: Added note on 3.4 servers validation options passed to\
-  `createIndexes`. Add note on server generated name
+- 2016-10-11: Added note on 3.4 servers validation options passed to `createIndexes`. Add note on server generated name
   for the `_id` index.
 
 - 2016-08-08: Fixed `collation` language to not mention a collection default.
 
-- 2016-05-19: Added `collation` attribute to `IndexOptions` in order to\
-  support setting a collation on an index.
+- 2016-05-19: Added `collation` attribute to `IndexOptions` in order to support setting a collation on an index.
 
-- 2015-09-17: Added `partialFilterExpression` attribute to `IndexOptions` in\
-  order to support partial indexes. Fixed
+- 2015-09-17: Added `partialFilterExpression` attribute to `IndexOptions` in order to support partial indexes. Fixed
   "provides" typo.
