@@ -46,7 +46,7 @@ some languages, Python for one, do not have an uint8 type, so must be represente
 
 As not all data types have a bit length equal to a multiple of 8, and hence do not fit squarely into a certain number of
 bytes, a second piece of metadata, the "padding" is included. This instructs the driver of the number of bits in the
-final byte that are to be ignored. It is the least-significant bits that are ignored.
+final byte that are to be ignored. The least-significant bits are ignored.
 
 ### Binary structure
 
