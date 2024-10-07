@@ -704,10 +704,10 @@ If testing with a sharded cluster, only connect to one mongos. This is intended 
 uses the same connection as the `bulkWrite` to get the correct connection count. (See
 [DRIVERS-2921](https://jira.mongodb.org/browse/DRIVERS-2921)).
 
-Construct a `MongoClient` (referred to as `client`) with
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
-response.
+Construct a `MongoClient` (referred to as `client`) with [command
+monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxBsonObjectSize` and
+`maxMessageSizeBytes` values in the response.
 
 Construct a `MongoCollection` (referred to as `coll`) for the collection "db.coll". Drop `coll`.
 
@@ -718,20 +718,22 @@ Construct the following write model (referred to as `model`):
 ```javascript
 InsertOne: {
   "namespace": "db.coll",
-  "document": { "a": "b" }
+  "document": { "a": "b".repeat(maxBsonObjectSize - 500) }
 }
 ```
 
-Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times.
+Construct a list of write models (referred to as `models`) with `model` repeated
+`maxMessageSizeBytes / maxBsonObjectSize + 1` times.
 
 Call `client.bulkWrite` with `models`. Pass `BulkWriteOptions` with `ordered` set to `false` and `writeConcern` set to
 an unacknowledged write concern. Assert no error occurred. Assert the result indicates the write was unacknowledged.
 
 Assert that two CommandStartedEvents (referred to as `firstEvent` and `secondEvent`) were observed for the `bulkWrite`
-command. Assert that the length of `firstEvent.command.ops` is `maxWriteBatchSize`. Assert that the length of
-`secondEvent.command.ops` is 1. If the driver exposes `operationId`s in its CommandStartedEvents, assert that
-`firstEvent.operationId` is equal to `secondEvent.operationId`. Assert both commands include `writeConcern: {w: 0}`.
+command. Assert that the length of `firstEvent.command.ops` is `maxMessageSizeBytes / maxBsonObjectSize`. Assert that
+the length of `secondEvent.command.ops` is 1. If the driver exposes `operationId`s in its CommandStartedEvents, assert
+that `firstEvent.operationId` is equal to `secondEvent.operationId`. Assert both commands include `writeConcern: {w:
+0}`.
 
 To force completion of the `w:0` writes, execute `coll.countDocuments` and expect the returned count is
-`maxWriteBatchSize + 1`. This is intended to avoid incomplete writes interfering with other tests that may use this
-collection.
+`maxMessageSizeBytes / maxBsonObjectSize + 1`. This is intended to avoid incomplete writes interfering with other tests
+that may use this collection.
