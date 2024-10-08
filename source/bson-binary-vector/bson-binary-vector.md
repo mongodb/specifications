@@ -27,7 +27,7 @@ This specification introduces a new BSON binary subtype, the vector, with value 
 
 Drivers SHOULD provide idiomatic APIs to translate between arrays of numbers and this BSON Binary specification.
 
-### Data Types
+### Data Types (dtypes)
 
 Each vector can take one of multiple data types (dtypes). The following table lists the dtypes implemented.
 
@@ -117,6 +117,99 @@ Finally, after we remove the last 4 bits of padding, the actual bit vector has a
 
 | 1   | 1   | 1   | 0   | 1   | 1   | 1   | 0   | 1   | 1   | 1   | 0   |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## API Guidance
+
+Drivers MUST implement methods for explicit encoding and decoding that adhere to the pattern described below while
+following idioms of the language of the driver.
+
+### Encoding
+
+```
+Function from_vector(vector: Iterable<Number>, dtype: DtypeEnum, padding: Integer = 0) -> Binary
+    # Converts a numeric vector into a binary representation based on the specified dtype and padding.
+
+    # :param vector: A sequence or iterable of numbers (either float or int)
+    # :param dtype: Data type for binary conversion (from DtypeEnum)
+    # :param padding: Optional integer specifying how many bits to ignore in the final byte
+    # :return: A binary representation of the vector
+
+    Declare binary_data as Binary
+    
+    # Process each number in vector and convert according to dtype
+    For each number in vector
+        binary_element = convert_to_binary(number, dtype)
+        binary_data.append(binary_element)
+    End For
+    
+    # Apply padding to the binary data if needed
+    If padding > 0
+        apply_padding(binary_data, padding)
+    End If
+    
+    Return binary_data
+End Function
+```
+
+### Decoding
+
+```
+Function as_vector() -> Vector
+    # Unpacks binary data (BSON or similar) into a Vector structure.
+    # This process involves extracting numeric values, the data type, and padding information.
+
+    # :return: A BinaryVector containing the unpacked numeric values, dtype, and padding.
+
+    Declare binary_vector as BinaryVector  # Struct to hold the unpacked data
+
+    # Extract dtype (data type) from the binary data
+    binary_vector.dtype = extract_dtype_from_binary()
+
+    # Extract padding from the binary data
+    binary_vector.padding = extract_padding_from_binary()
+
+    # Unpack the actual numeric values from the binary data according to the dtype
+    binary_vector.data = unpack_numeric_values(binary_vector.dtype)
+
+    Return binary_vector
+End Function
+```
+
+#### Data Structures
+
+Drivers MAY find the following structures to represent the dtype and vector structure useful.
+
+```
+Enum Dtype
+    # Enum for data types (dtype)
+
+    # FLOAT32: Represents packing of list of floats as float32
+    # Value: 0x27 (hexadecimal byte value)
+
+    # INT8: Represents packing of list of signed integers in the range [-128, 127] as signed int8
+    # Value: 0x03 (hexadecimal byte value)
+
+    # PACKED_BIT: Special case where vector values are 0 or 1, packed as unsigned uint8 in range [0, 255]
+    # Packed into groups of 8 (a byte)
+    # Value: 0x10 (hexadecimal byte value)
+    
+    # Documentation:
+    # Each value is a byte (length of one), a convenient choice for decoding.
+End Enum
+
+Struct Vector
+    # Numeric vector with metadata for binary interoperability
+
+    # Fields:
+    # data: Sequence of numeric values (either float or int)
+    # dtype: Data type of vector (from enum BinaryVectorDtype)
+    # padding: Number of bits to ignore in the final byte for alignment
+
+    data     # Sequence of float or int
+    dtype    # Type: DtypeEnum
+    padding  # Integer: Number of padding bits
+ End Struct
+```
 
 ## Reference Implementation
 
