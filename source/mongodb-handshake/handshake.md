@@ -604,7 +604,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
-- 2024-010-09: Clarify that FaaS metadata must not be populated when a container is also present.
+- 2024-10-09: Clarify that FaaS metadata must not be populated when a container is also present.
 - 2024-08-16: Migrated from reStructuredText to Markdown.
 - 2019-11-13: Added section about supporting wrapping libraries
 - 2020-02-12: Added section about speculative authentication
