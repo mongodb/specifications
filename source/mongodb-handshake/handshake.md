@@ -513,7 +513,7 @@ the following sets of environment variables:
 | -------------------- | ----- |
 | `AWS_EXECUTION_ENV`  | `EC2` |
 
-9. Valid container and FaaS provider
+9. Valid container and FaaS provider. This test MUST verify that only the container metadata is present in `client.env`.
 
 | Environment Variable              | Value              |
 | --------------------------------- | ------------------ |
