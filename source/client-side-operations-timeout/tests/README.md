@@ -606,7 +606,7 @@ Tests in this section MUST only run against replica sets and sharded clusters wi
 
 This test MUST only run against server versions 8.0+. This test must be skipped on Atlas Serverless.
 
-This test MUST only run against standalones. The insertMany call takes an exceedingly long time on replicasets and
+This test MUST only run against standalones. The bulkWrite call takes an exceedingly long time on replicasets and
 sharded clusters. Drivers MAY adjust the timeouts used in this test to allow for differing bulk encoding performance.
 
 1. Using `internalClient`, drop the `db.coll` collection.
