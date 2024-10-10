@@ -3309,7 +3309,9 @@ python -u kms_failpoint_server.py --port 9003
 
 See the [TLS tests](#10-kms-tls-tests) for running the mock server on Evergreen. See
 [the mock server implementation](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/4ba50d373652b6fb39239745664637e33e2b01e6/.evergreen/csfle/kms_failpoint_server.py)
-and the [C driver tests](TODO) for how to configure failpoints.
+and the
+[C driver tests](https://github.com/mongodb/mongo-c-driver/blob/d934cd5de55af65220816e4fd01ce3f9c0ef1cd4/src/libmongoc/tests/test-mongoc-client-side-encryption.c#L6295)
+for how to configure failpoints.
 
 #### Setup
 
@@ -3338,6 +3340,7 @@ For "aws":
 ```
 
 For "azure":
+
 ```javascript
 {
    "keyVaultEndpoint": "127.0.0.1:9003",
@@ -3346,6 +3349,7 @@ For "azure":
 ```
 
 For "gcp":
+
 ```javascript
 {
    "projectId": "foo",
@@ -3356,14 +3360,14 @@ For "gcp":
 }
 ```
 
-
 #### Case 1: createDataKey and encrypt with TCP retry
 
 1. Configure the mock server to simulate one network failure.
 2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed. Store the returned key
    ID in a variable named `keyId`.
 3. Configure the mock server to simulate another network failure.
-4. Call `clientEncryption.encrypt` with the following `EncryptOpts` to encrypt the int32 value `123` with the newly created key:
+4. Call `clientEncryption.encrypt` with the following `EncryptOpts` to encrypt the int32 value `123` with the newly
+   created key:
    ```typescript
    class EncryptOpts {
       keyId : <keyID>,
@@ -3375,11 +3379,13 @@ For "gcp":
 Repeat this test with the `azure` and `gcp` masterKeys.
 
 #### Case 2: createDataKey and encrypt with HTTP retry
+
 1. Configure the mock server to simulate one HTTP failure.
 2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to succeed. Store the returned key
    ID in a variable named `keyId`.
 3. Configure the mock server to simulate another HTTP failure.
-4. Call `clientEncryption.encrypt` with the following `EncryptOpts` to encrypt the int32 value `123` with the newly created key:
+4. Call `clientEncryption.encrypt` with the following `EncryptOpts` to encrypt the int32 value `123` with the newly
+   created key:
    ```typescript
    class EncryptOpts {
       keyId : <keyID>,
@@ -3391,6 +3397,7 @@ Repeat this test with the `azure` and `gcp` masterKeys.
 Repeat this test with the `azure` and `gcp` masterKeys.
 
 #### Case 3: createDataKey fails after too many retries
+
 1. Configure the mock server to simulate four network failures.
 2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to fail.
 
