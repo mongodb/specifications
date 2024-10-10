@@ -3367,6 +3367,7 @@ For "gcp":
    ```typescript
    class EncryptOpts {
       keyId : <keyID>,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
    }
    ```
    Expect this to succeed.
@@ -3382,6 +3383,7 @@ Repeat this test with the `azure` and `gcp` masterKeys.
    ```typescript
    class EncryptOpts {
       keyId : <keyID>,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
    }
    ```
    Expect this to succeed.
