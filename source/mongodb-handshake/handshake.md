@@ -327,8 +327,6 @@ Depending on which `client.env.name` has been selected, other FaaS fields in `cl
 Missing variables or variables with values not matching the expected type MUST cause the corresponding `client.env`
 field to be omitted and MUST NOT cause a user-visible error.
 
-If any fields of `client.env.container` are populated, all FaaS values MUST be entirely omitted.
-
 ##### Container
 
 Container runtime information is captured in `client.env.container`.
@@ -513,7 +511,8 @@ the following sets of environment variables:
 | -------------------- | ----- |
 | `AWS_EXECUTION_ENV`  | `EC2` |
 
-9. Valid container and FaaS provider. This test MUST verify that only the container metadata is present in `client.env`.
+9. Valid container and FaaS provider. This test MUST verify that both the container metadata and the AWS Lambda metadata
+   is present in `client.env`.
 
 | Environment Variable              | Value              |
 | --------------------------------- | ------------------ |
@@ -604,7 +603,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
-- 2024-10-09: Clarify that FaaS metadata must not be populated when a container is also present.
+- 2024-10-09: Clarify that FaaS and container metadata must both be populated when both are present.
 - 2024-08-16: Migrated from reStructuredText to Markdown.
 - 2019-11-13: Added section about supporting wrapping libraries
 - 2020-02-12: Added section about speculative authentication
