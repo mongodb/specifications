@@ -2384,6 +2384,8 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 ## Changelog
 
+- 2024-10-09: Add retry prose test.
+
 - 2024-07-29: Document range as stable.
 
 - 2024-07-22: Make `trimFactor` and `sparsity` optional.
