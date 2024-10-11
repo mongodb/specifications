@@ -338,6 +338,9 @@ is populated.
 
 If no fields of `client.env.container` would be populated, `client.env.container` MUST be entirely omitted.
 
+If the runtime environment has both FaaS and container information, both must have their metadata included in
+`client.env`.
+
 ### Speculative Authentication
 
 - Since: 4.4
