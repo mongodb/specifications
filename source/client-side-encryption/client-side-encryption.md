@@ -15,6 +15,18 @@ provider, and KMIP). Once enabled, data can be seamlessly encrypted and decrypte
 expressive encrypted search operations. This spec covers both capabilities - 1st generation, "Client Side Field Level
 Encryption" and generation 2, "Queryable Encryption" - as the associated core cryptographic library and supporting
 drivers share a common codebase.
+
+### Naming
+
+The public name of this feature is
+[In-Use Encryption](https://www.mongodb.com/docs/manual/core/security-in-use-encryption/) and consists of:
+
+- Client-Side Field Level Encryption (CSFLE).
+- Queryable Encryption (QE).
+
+Internally, CSFLE is sometimes called Client Side Encryption (like this specification). In-Use Encryption is sometimes
+called Field Level Encryption (FLE). CSFLE and QE are sometimes called FLE1 and FLE2.
+
 ### Server support history
 
 MongoDB 4.2 added support for CSFLE. This includes `encrypt` in JSON Schema
