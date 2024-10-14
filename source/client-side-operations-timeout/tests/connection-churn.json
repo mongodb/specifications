@@ -114,8 +114,8 @@
           "events": [
             {
               "commandFailedEvent": {
-              }
                 "commandName": "insert"
+              }
             }
           ]
         },
