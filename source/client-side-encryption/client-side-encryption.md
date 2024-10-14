@@ -1,7 +1,7 @@
 # Client Side Encryption
 
 - Status: Accepted
-- Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
+- Minimum Server Version: 4.2 (CSFLE), 7.0 (Queryable Encryption)
 - Version: 1.14.0
 
 ______________________________________________________________________
@@ -11,7 +11,7 @@ ______________________________________________________________________
 MongoDB 4.2 introduced support for client side encryption, guaranteeing that sensitive data can only be encrypted and
 decrypted with access to both MongoDB and a separate key management provider (supporting AWS, Azure, GCP, a local
 provider, and KMIP). Once enabled, data can be seamlessly encrypted and decrypted with minimal application code changes.
-6.0 introduced the next generation of client side encryption based on a Structured Encryption framework which allows
+7.0 introduced the next generation of client side encryption based on a Structured Encryption framework which allows
 expressive encrypted search operations. This spec covers both capabilities - 1st generation, "Client Side Field Level
 Encryption" and generation 2, "Queryable Encryption" - as the associated core cryptographic library and supporting
 drivers share a common codebase.
