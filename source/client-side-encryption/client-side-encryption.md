@@ -45,19 +45,19 @@ An external service providing fixed-size encryption/decryption. Only data keys a
 
 **KMS providers**
 
-> A map of KMS providers to credentials. Configured client-side. Example:
->
-> ```python
-> kms_providers = {
->    "aws": {
->       "accessKeyId": AWS_KEYID,
->       "secretAccessKey": AWS_SECRET,
->    },
->    "local": {
->       "key": LOCAL_KEK
->    },
-> }
-> ```
+A map of KMS providers to credentials. Configured client-side. Example:
+
+```python
+kms_providers = {
+   "aws": {
+      "accessKeyId": AWS_KEYID,
+      "secretAccessKey": AWS_SECRET,
+   },
+   "local": {
+      "key": LOCAL_KEK
+   },
+}
+```
 
 **KMS provider**
 
@@ -103,8 +103,8 @@ provided as part of a MongoDB Enterprise distribution. It replaces [mongocryptd]
 
 See also:
 
-> - [Introduction on crypt_shared](#crypt_shared)
-> - [Enabling crypt_shared](#enabling-crypt_shared)
+- [Introduction on crypt_shared](#crypt_shared)
+- [Enabling crypt_shared](#enabling-crypt_shared)
 
 **ciphertext**
 
