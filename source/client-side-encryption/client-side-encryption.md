@@ -15,6 +15,25 @@ provider, and KMIP). Once enabled, data can be seamlessly encrypted and decrypte
 expressive encrypted search operations. This spec covers both capabilities - 1st generation, "Client Side Field Level
 Encryption" and generation 2, "Queryable Encryption" - as the associated core cryptographic library and supporting
 drivers share a common codebase.
+### Server support history
+
+MongoDB 4.2 added support for CSFLE. This includes `encrypt` in JSON Schema
+([SERVER-38900](https://jira.mongodb.org/browse/SERVER-38900)) and [mongocryptd](#mongocryptd)
+([SPM-1258](https://jira.mongodb.org/browse/SPM-1258)).
+
+MongoDB 5.3 added the [crypt_shared](#crypt_shared) library ([SPM-2403](https://jira.mongodb.org/browse/SPM-2403)).
+
+MongoDB 6.0 added unstable support for QE (QEv1) ([SPM-2463](https://jira.mongodb.org/browse/SPM-2463)). This includes
+`queryType=equality`.
+
+MongoDB 6.2 added unstable support for QE range queries ([SPM-2719](https://jira.mongodb.org/browse/SPM-2719)). This
+includes `queryType=rangePreview`.
+
+MongoDB 7.0 dropped QEv1 and added stable support of QE (QEv2) ([SPM-2972](https://jira.mongodb.org/browse/SPM-2972)).
+QEv1 and QEv2 are incompatible.
+
+MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
+([SPM-3583](https://jira.mongodb.org/browse/SPM-3583)).
 
 ## META
 
