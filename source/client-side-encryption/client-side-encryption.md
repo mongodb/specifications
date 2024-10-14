@@ -1,7 +1,7 @@
 # Client Side Encryption
 
 - Status: Accepted
-- Minimum Server Version: 4.2 (CSFLE), 7.0 (Queryable Encryption)
+- Minimum Server Version: 4.2 (CSFLE), 7.0 (QE)
 - Version: 1.14.0
 
 ______________________________________________________________________
