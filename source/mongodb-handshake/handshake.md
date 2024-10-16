@@ -338,6 +338,9 @@ is populated.
 
 If no fields of `client.env.container` would be populated, `client.env.container` MUST be entirely omitted.
 
+If the runtime environment has both FaaS and container information, both must have their metadata included in
+`client.env`.
+
 ### Speculative Authentication
 
 - Since: 4.4
@@ -511,6 +514,16 @@ the following sets of environment variables:
 | -------------------- | ----- |
 | `AWS_EXECUTION_ENV`  | `EC2` |
 
+9. Valid container and FaaS provider. This test MUST verify that both the container metadata and the AWS Lambda metadata
+   is present in `client.env`.
+
+| Environment Variable              | Value              |
+| --------------------------------- | ------------------ |
+| `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
+| `AWS_REGION`                      | `us-east-2`        |
+| `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
+| `KUBERNETES_SERVICE_HOST`         | `1`                |
+
 ## Motivation For Change
 
 Being able to annotate individual connections with custom data will allow users and sysadmins to easily correlate events
@@ -593,6 +606,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2024-10-09: Clarify that FaaS and container metadata must both be populated when both are present.
 - 2024-08-16: Migrated from reStructuredText to Markdown.
 - 2019-11-13: Added section about supporting wrapping libraries
 - 2020-02-12: Added section about speculative authentication
