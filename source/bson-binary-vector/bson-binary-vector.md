@@ -213,7 +213,7 @@ Struct Vector
 
 ## Reference Implementation
 
-- PYTHON (PYTHON-4577) [pymongo.binary](https://github.com/mongodb/mongo-python-driver/blob/master/bson/binary.py)
+- PYTHON (PYTHON-4577)
 
 ## Test Plan
 
