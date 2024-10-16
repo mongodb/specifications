@@ -23,7 +23,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Specification
 
-This specification introduces a new BSON binary subtype, the vector, with value `"\x09"`.
+This specification introduces a new BSON binary subtype, the vector, with value `9`.
 
 Drivers SHOULD provide idiomatic APIs to translate between arrays of numbers and this BSON Binary specification.
 
@@ -50,7 +50,7 @@ final byte that are to be ignored. The least-significant bits are ignored.
 
 ### Binary structure
 
-Following the binary subtype `\x09` a two-element byte array of metadata precedes the packed numbers.
+Following the binary subtype `9`, a two-element byte array of metadata precedes the packed numbers.
 
 - The first byte (dtype) describes its data type. The table above shows those that MUST be implemented. This table may
   increase. dtype is an unsigned integer.
