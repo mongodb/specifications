@@ -24,8 +24,9 @@ The public name of this feature is
 - Client-Side Field Level Encryption (CSFLE).
 - Queryable Encryption (QE).
 
-Internally, CSFLE is sometimes called Client Side Encryption (like this specification). In-Use Encryption is sometimes
-called Field Level Encryption (FLE). CSFLE and QE are sometimes called FLE1 and FLE2, respectively.
+Internally, In-Use Encryption is sometimes called Field Level Encryption (FLE). Internally, CSFLE is sometimes called
+Client Side Encryption (like this specification). Internally, CSFLE and QE are sometimes called FLE1 and FLE2,
+respectively.
 
 ### Server support history
 
