@@ -5,6 +5,7 @@ nav:
 markdown_extensions:
   - admonition
   - pymdownx.superfences
+  - pymdownx.arithmatex
   - toc:
       permalink: 
 plugins:
@@ -13,3 +14,5 @@ validation:
   absolute_links: warn 
   unrecognized_links: warn
   anchors: warn
+extra_javascript:
+  - 'https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS_CHTML'
