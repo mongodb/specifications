@@ -1,7 +1,7 @@
 # Client Side Encryption
 
 - Status: Accepted
-- Minimum Server Version: 4.2 (CSFLE), 6.0 (Queryable Encryption)
+- Minimum Server Version: 4.2 (CSFLE), 7.0 (QE)
 - Version: 1.14.0
 
 ______________________________________________________________________
@@ -11,10 +11,42 @@ ______________________________________________________________________
 MongoDB 4.2 introduced support for client side encryption, guaranteeing that sensitive data can only be encrypted and
 decrypted with access to both MongoDB and a separate key management provider (supporting AWS, Azure, GCP, a local
 provider, and KMIP). Once enabled, data can be seamlessly encrypted and decrypted with minimal application code changes.
-6.0 introduced the next generation of client side encryption based on a Structured Encryption framework which allows
+7.0 introduced the next generation of client side encryption based on a Structured Encryption framework which allows
 expressive encrypted search operations. This spec covers both capabilities - 1st generation, "Client Side Field Level
 Encryption" and generation 2, "Queryable Encryption" - as the associated core cryptographic library and supporting
 drivers share a common codebase.
+
+### Naming
+
+The public name of this feature is
+[In-Use Encryption](https://www.mongodb.com/docs/manual/core/security-in-use-encryption/) and consists of:
+
+- Client-Side Field Level Encryption (CSFLE).
+- Queryable Encryption (QE).
+
+Internally, In-Use Encryption is sometimes called Field Level Encryption (FLE). Internally, CSFLE is sometimes called
+Client Side Encryption (like this specification). Internally, CSFLE and QE are sometimes called FLE1 and FLE2,
+respectively.
+
+### Server support history
+
+MongoDB 4.2 added support for CSFLE. This includes `encrypt` in JSON Schema
+([SERVER-38900](https://jira.mongodb.org/browse/SERVER-38900)) and [mongocryptd](#mongocryptd)
+([SPM-1258](https://jira.mongodb.org/browse/SPM-1258)).
+
+MongoDB 5.3 added the [crypt_shared](#crypt_shared) library ([SPM-2403](https://jira.mongodb.org/browse/SPM-2403)).
+
+MongoDB 6.0 added unstable support for QE (QEv1) ([SPM-2463](https://jira.mongodb.org/browse/SPM-2463)). This includes
+`queryType=equality`.
+
+MongoDB 6.2 added unstable support for QE range queries ([SPM-2719](https://jira.mongodb.org/browse/SPM-2719)). This
+includes `queryType=rangePreview`.
+
+MongoDB 7.0 dropped QEv1 and added stable support of QE (QEv2) ([SPM-2972](https://jira.mongodb.org/browse/SPM-2972)).
+QEv1 and QEv2 are incompatible.
+
+MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
+([SPM-3583](https://jira.mongodb.org/browse/SPM-3583)).
 
 ## META
 
@@ -45,19 +77,19 @@ An external service providing fixed-size encryption/decryption. Only data keys a
 
 **KMS providers**
 
-> A map of KMS providers to credentials. Configured client-side. Example:
->
-> ```python
-> kms_providers = {
->    "aws": {
->       "accessKeyId": AWS_KEYID,
->       "secretAccessKey": AWS_SECRET,
->    },
->    "local": {
->       "key": LOCAL_KEK
->    },
-> }
-> ```
+A map of KMS providers to credentials. Configured client-side. Example:
+
+```python
+kms_providers = {
+   "aws": {
+      "accessKeyId": AWS_KEYID,
+      "secretAccessKey": AWS_SECRET,
+   },
+   "local": {
+      "key": LOCAL_KEK
+   },
+}
+```
 
 **KMS provider**
 
@@ -103,8 +135,8 @@ provided as part of a MongoDB Enterprise distribution. It replaces [mongocryptd]
 
 See also:
 
-> - [Introduction on crypt_shared](#crypt_shared)
-> - [Enabling crypt_shared](#enabling-crypt_shared)
+- [Introduction on crypt_shared](#crypt_shared)
+- [Enabling crypt_shared](#enabling-crypt_shared)
 
 **ciphertext**
 
