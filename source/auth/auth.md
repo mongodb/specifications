@@ -276,23 +276,23 @@ the password using the returned nonce, and then sends an `authenticate` command.
 
 1. Send `getnonce` command
 
-```javascript
-CMD = { getnonce: 1 }
-RESP = { nonce: <nonce> }
-```
+    ```javascript
+    CMD = { getnonce: 1 }
+    RESP = { nonce: <nonce> }
+    ```
 
-1. Compute key
+2. Compute key
 
-```javascript
-passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))
-key = HEX( MD5( UTF8( nonce + username + passwordDigest )))
-```
+    ```javascript
+    passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))
+    key = HEX( MD5( UTF8( nonce + username + passwordDigest )))
+    ```
 
-1. Send `authenticate` command
+3. Send `authenticate` command
 
-```javascript
-CMD = { authenticate: 1, nonce: nonce, user: username, key: key }
-```
+    ```javascript
+    CMD = { authenticate: 1, nonce: nonce, user: username, key: key }
+    ```
 
 As an example, given a username of "user" and a password of "pencil", the conversation would appear as follows:
 
@@ -351,21 +351,21 @@ When connected to MongoDB 3.2 or earlier:
 
 1. Send `authenticate` command (MongoDB 3.4+)
 
-```javascript
-CMD = {"authenticate": 1, "mechanism": "MONGODB-X509"}
-RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}
-```
+    ```javascript
+    CMD = {"authenticate": 1, "mechanism": "MONGODB-X509"}
+    RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}
+    ```
 
-1. Send `authenticate` command with username:
+2. Send `authenticate` command with username:
 
-```bash
-username = $(openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem)
-```
+    ```bash
+    username = $(openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem)
+    ```
 
-```javascript
-CMD = {authenticate: 1, mechanism: "MONGODB-X509", user: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}
-RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}
-```
+    ```javascript
+    CMD = {authenticate: 1, mechanism: "MONGODB-X509", user: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}
+    RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}
+    ```
 
 #### [MongoCredential](#mongocredential) Properties
 
@@ -400,31 +400,31 @@ SASL mechanisms are all implemented using the same sasl commands and interpreted
 
 1. Send the `saslStart` command.
 
-```javascript
-CMD = { saslStart: 1, mechanism: <mechanism_name>, payload: BinData(...), autoAuthorize: 1 }
-RESP = { conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }
-```
+    ```javascript
+    CMD = { saslStart: 1, mechanism: <mechanism_name>, payload: BinData(...), autoAuthorize: 1 }
+    RESP = { conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }
+    ```
 
-- conversationId: the conversation identifier. This will need to be remembered and used for the duration of the
-    conversation.
-- code: A response code that will indicate failure. This field is not included when the command was successful.
-- done: a boolean value indicating whether or not the conversation has completed.
-- payload: a sequence of bytes or a base64 encoded string (depending on input) to pass into the SASL library to
-    transition the state machine.
+    - conversationId: the conversation identifier. This will need to be remembered and used for the duration of the
+        conversation.
+    - code: A response code that will indicate failure. This field is not included when the command was successful.
+    - done: a boolean value indicating whether or not the conversation has completed.
+    - payload: a sequence of bytes or a base64 encoded string (depending on input) to pass into the SASL library to
+        transition the state machine.
 
-1. Continue with the `saslContinue` command while `done` is `false`.
+2. Continue with the `saslContinue` command while `done` is `false`.
 
-```javascript
-CMD = { saslContinue: 1, conversationId: conversationId, payload: BinData(...) }
-RESP = { conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }
-```
+    ```javascript
+    CMD = { saslContinue: 1, conversationId: conversationId, payload: BinData(...) }
+    RESP = { conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }
+    ```
 
-Many languages will have the ability to utilize 3rd party libraries. The server uses
-[cyrus-sasl](https://www.cyrusimap.org/sasl/) and it would make sense for drivers with a choice to also choose cyrus.
-However, it is important to ensure that when utilizing a 3rd party library it does implement the mechanism on all
-supported OS versions and that it interoperates with the server. For instance, the cyrus sasl library offered on RHEL 6
-does not implement SCRAM-SHA-1. As such, if your driver supports RHEL 6, you'll need to implement SCRAM-SHA-1 from
-scratch.
+    Many languages will have the ability to utilize 3rd party libraries. The server uses
+    [cyrus-sasl](https://www.cyrusimap.org/sasl/) and it would make sense for drivers with a choice to also choose
+    cyrus. However, it is important to ensure that when utilizing a 3rd party library it does implement the mechanism
+    on all supported OS versions and that it interoperates with the server. For instance, the cyrus sasl library
+    offered on RHEL 6 does not implement SCRAM-SHA-1. As such, if your driver supports RHEL 6, you'll need to implement
+    SCRAM-SHA-1 from scratch.
 
 ### GSSAPI
 

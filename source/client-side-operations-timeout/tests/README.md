@@ -70,7 +70,7 @@ This test MUST only be run against enterprise server versions 4.2 and higher.
 Each test under this category MUST only be run against server versions 4.4 and higher. In these tests, `LOCAL_MASTERKEY`
 refers to the following base64:
 
-```javascript
+```
 Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
 ```
 

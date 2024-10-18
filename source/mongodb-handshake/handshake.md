@@ -459,70 +459,70 @@ the following sets of environment variables:
 
 1. Valid AWS
 
-| Environment Variable              | Value              |
-| --------------------------------- | ------------------ |
-| `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
-| `AWS_REGION`                      | `us-east-2`        |
-| `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
+    | Environment Variable              | Value              |
+    | --------------------------------- | ------------------ |
+    | `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
+    | `AWS_REGION`                      | `us-east-2`        |
+    | `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
 
-1. Valid Azure
+2. Valid Azure
 
-| Environment Variable       | Value  |
-| -------------------------- | ------ |
-| `FUNCTIONS_WORKER_RUNTIME` | `node` |
+    | Environment Variable       | Value  |
+    | -------------------------- | ------ |
+    | `FUNCTIONS_WORKER_RUNTIME` | `node` |
 
-1. Valid GCP
+3. Valid GCP
 
-| Environment Variable   | Value         |
-| ---------------------- | ------------- |
-| `K_SERVICE`            | `servicename` |
-| `FUNCTION_MEMORY_MB`   | `1024`        |
-| `FUNCTION_TIMEOUT_SEC` | `60`          |
-| `FUNCTION_REGION`      | `us-central1` |
+    | Environment Variable   | Value         |
+    | ---------------------- | ------------- |
+    | `K_SERVICE`            | `servicename` |
+    | `FUNCTION_MEMORY_MB`   | `1024`        |
+    | `FUNCTION_TIMEOUT_SEC` | `60`          |
+    | `FUNCTION_REGION`      | `us-central1` |
 
-1. Valid Vercel
+4. Valid Vercel
 
-| Environment Variable | Value  |
-| -------------------- | ------ |
-| `VERCEL`             | `1`    |
-| `VERCEL_REGION`      | `cdg1` |
+    | Environment Variable | Value  |
+    | -------------------- | ------ |
+    | `VERCEL`             | `1`    |
+    | `VERCEL_REGION`      | `cdg1` |
 
-1. Invalid - multiple providers
+5. Invalid - multiple providers
 
-| Environment Variable       | Value              |
-| -------------------------- | ------------------ |
-| `AWS_EXECUTION_ENV`        | `AWS_Lambda_java8` |
-| `FUNCTIONS_WORKER_RUNTIME` | `node`             |
+    | Environment Variable       | Value              |
+    | -------------------------- | ------------------ |
+    | `AWS_EXECUTION_ENV`        | `AWS_Lambda_java8` |
+    | `FUNCTIONS_WORKER_RUNTIME` | `node`             |
 
-1. Invalid - long string
+6. Invalid - long string
 
-| Environment Variable | Value                  |
-| -------------------- | ---------------------- |
-| `AWS_EXECUTION_ENV`  | `AWS_Lambda_java8`     |
-| `AWS_REGION`         | `a` repeated 512 times |
+    | Environment Variable | Value                  |
+    | -------------------- | ---------------------- |
+    | `AWS_EXECUTION_ENV`  | `AWS_Lambda_java8`     |
+    | `AWS_REGION`         | `a` repeated 512 times |
 
-1. Invalid - wrong types
+7. Invalid - wrong types
 
-| Environment Variable              | Value              |
-| --------------------------------- | ------------------ |
-| `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
-| `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `big`              |
+    | Environment Variable              | Value              |
+    | --------------------------------- | ------------------ |
+    | `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
+    | `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `big`              |
 
-1. Invalid - `AWS_EXECUTION_ENV` does not start with `"AWS_Lambda_"`
+8. Invalid - `AWS_EXECUTION_ENV` does not start with `"AWS_Lambda_"`
 
-| Environment Variable | Value |
-| -------------------- | ----- |
-| `AWS_EXECUTION_ENV`  | `EC2` |
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    | `AWS_EXECUTION_ENV`  | `EC2` |
 
-1. Valid container and FaaS provider. This test MUST verify that both the container metadata and the AWS Lambda metadata
+9. Valid container and FaaS provider. This test MUST verify that both the container metadata and the AWS Lambda metadata
     is present in `client.env`.
 
-| Environment Variable              | Value              |
-| --------------------------------- | ------------------ |
-| `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
-| `AWS_REGION`                      | `us-east-2`        |
-| `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
-| `KUBERNETES_SERVICE_HOST`         | `1`                |
+    | Environment Variable              | Value              |
+    | --------------------------------- | ------------------ |
+    | `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
+    | `AWS_REGION`                      | `us-east-2`        |
+    | `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
+    | `KUBERNETES_SERVICE_HOST`         | `1`                |
 
 ## Motivation For Change
 

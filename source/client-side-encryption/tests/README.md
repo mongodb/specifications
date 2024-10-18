@@ -348,7 +348,7 @@ Tests for the ClientEncryption type are not included as part of the YAML tests.
 
 In the prose tests LOCAL_MASTERKEY refers to the following base64:
 
-```javascript
+```
 Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
 ```
 
@@ -358,26 +358,31 @@ command) with readConcern/writeConcern "majority".
 ### 1. Custom Key Material Test
 
 1. Create a `MongoClient` object (referred to as `client`).
+
 2. Using `client`, drop the collection `keyvault.datakeys`.
+
 3. Create a `ClientEncryption` object (referred to as `client_encryption`) with `client` set as the `keyVaultClient`.
+
 4. Using `client_encryption`, create a data key with a `local` KMS provider and the following custom key material (given
     as base64):
 
-```javascript
-xPTAjBRG5JiPm+d3fj6XLi2q5DMXUS/f1f+SMAlhhwkhDRL0kr8r9GDLIGTAGlvC+HVjSIgdL+RKwZCvpXSyxTICWSXTUYsWYPyu3IoHbuBZdmw2faM3WhcRIgbMReU5
-```
+    ```
+    xPTAjBRG5JiPm+d3fj6XLi2q5DMXUS/f1f+SMAlhhwkhDRL0kr8r9GDLIGTAGlvC+HVjSIgdL+RKwZCvpXSyxTICWSXTUYsWYPyu3IoHbuBZdmw2faM3WhcRIgbMReU5
+    ```
 
-1. Find the resulting key document in `keyvault.datakeys`, save a copy of the key document, then remove the key document
+5. Find the resulting key document in `keyvault.datakeys`, save a copy of the key document, then remove the key document
     from the collection.
-2. Replace the `_id` field in the copied key document with a UUID with base64 value `AAAAAAAAAAAAAAAAAAAAAA==` (16 bytes
+
+6. Replace the `_id` field in the copied key document with a UUID with base64 value `AAAAAAAAAAAAAAAAAAAAAA==` (16 bytes
     all equal to `0x00`) and insert the modified key document into `keyvault.datakeys` with majority write concern.
-3. Using `client_encryption`, encrypt the string `"test"` with the modified data key using the
+
+7. Using `client_encryption`, encrypt the string `"test"` with the modified data key using the
     `AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic` algorithm and assert the resulting value is equal to the following
     (given as base64):
 
-```javascript
-AQAAAAAAAAAAAAAAAAAAAAACz0ZOLuuhEYi807ZXTdhbqhLaS2/t9wLifJnnNYwiw79d75QYIZ6M/aYC1h9nCzCjZ7pGUpAuNnkUhnIXM3PjrA==
-```
+    ```
+    AQAAAAAAAAAAAAAAAAAAAAACz0ZOLuuhEYi807ZXTdhbqhLaS2/t9wLifJnnNYwiw79d75QYIZ6M/aYC1h9nCzCjZ7pGUpAuNnkUhnIXM3PjrA==
+    ```
 
 ### 2. Data Key and Double Encryption
 
@@ -2094,31 +2099,34 @@ The following setup must occur before running each of the following test cases.
 #### Setup
 
 1. Create a `MongoClient` object (referred to as `client`).
+
 2. Using `client`, drop the collection `keyvault.datakeys`.
+
 3. Using `client`, create a unique index on `keyAltNames` with a partial index filter for only documents where
     `keyAltNames` exists using writeConcern "majority".
 
-The command should be equivalent to:
+    The command should be equivalent to:
 
-```typescript
-db.runCommand(
-  {
-     createIndexes: "datakeys",
-     indexes: [
-       {
-         name: "keyAltNames_1",
-         key: { "keyAltNames": 1 },
-         unique: true,
-         partialFilterExpression: { keyAltNames: { $exists: true } }
-       }
-     ],
-     writeConcern: { w: "majority" }
-  }
-)
-```
+    ```typescript
+    db.runCommand(
+    {
+        createIndexes: "datakeys",
+        indexes: [
+        {
+            name: "keyAltNames_1",
+            key: { "keyAltNames": 1 },
+            unique: true,
+            partialFilterExpression: { keyAltNames: { $exists: true } }
+        }
+        ],
+        writeConcern: { w: "majority" }
+    }
+    )
+    ```
 
-1. Create a `ClientEncryption` object (referred to as `client_encryption`) with `client` set as the `keyVaultClient`.
-2. Using `client_encryption`, create a data key with a `local` KMS provider and the keyAltName "def".
+4. Create a `ClientEncryption` object (referred to as `client_encryption`) with `client` set as the `keyVaultClient`.
+
+5. Using `client_encryption`, create a data key with a `local` KMS provider and the keyAltName "def".
 
 #### Case 1: createDataKey()
 

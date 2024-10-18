@@ -58,12 +58,12 @@ CONSIDERATION OF YOUR ACCEPTANCE OF SUCH TERMS AND CONDITIONS.
     phonorecords of, display publicly, perform publicly, and perform publicly by means of a digital audio transmission
     Derivative Works;
 
-The above rights may be exercised in all media and formats whether now known or hereafter devised. The above rights
-include the right to make such modifications as are technically necessary to exercise the rights in other media and
-formats. All rights not expressly granted by Licensor are hereby reserved, including but not limited to the rights set
-forth in Sections 4(e) and 4(f).
+    The above rights may be exercised in all media and formats whether now known or hereafter devised. The above rights
+    include the right to make such modifications as are technically necessary to exercise the rights in other media and
+    formats. All rights not expressly granted by Licensor are hereby reserved, including but not limited to the rights
+    set forth in Sections 4(e) and 4(f).
 
-1. Restrictions. The license granted in Section 3 above is expressly made subject to and limited by the following
+4. Restrictions. The license granted in Section 3 above is expressly made subject to and limited by the following
     restrictions:
 
     a. You may distribute, publicly display, publicly perform, or publicly digitally perform the Work only under the
@@ -146,20 +146,20 @@ forth in Sections 4(e) and 4(f).
     public digital performance is primarily intended for or directed toward commercial advantage or private monetary
     compensation.
 
-2. Representations, Warranties and Disclaimer
+5. Representations, Warranties and Disclaimer
 
-UNLESS OTHERWISE MUTUALLY AGREED TO BY THE PARTIES IN WRITING, LICENSOR OFFERS THE WORK AS-IS AND ONLY TO THE EXTENT OF
-ANY RIGHTS HELD IN THE LICENSED WORK BY THE LICENSOR. THE LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND
-CONCERNING THE WORK, EXPRESS, IMPLIED, STATUTORY OR OTHERWISE, INCLUDING, WITHOUT LIMITATION, WARRANTIES OF TITLE,
-MARKETABILITY, MERCHANTIBILITY, FITNESS FOR A PARTICULAR PURPOSE, NONINFRINGEMENT, OR THE ABSENCE OF LATENT OR OTHER
-DEFECTS, ACCURACY, OR THE PRESENCE OF ABSENCE OF ERRORS, WHETHER OR NOT DISCOVERABLE. SOME JURISDICTIONS DO NOT ALLOW
-THE EXCLUSION OF IMPLIED WARRANTIES, SO SUCH EXCLUSION MAY NOT APPLY TO YOU.
+    UNLESS OTHERWISE MUTUALLY AGREED TO BY THE PARTIES IN WRITING, LICENSOR OFFERS THE WORK AS-IS AND ONLY TO THE EXTENT
+    OF ANY RIGHTS HELD IN THE LICENSED WORK BY THE LICENSOR. THE LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY
+    KIND CONCERNING THE WORK, EXPRESS, IMPLIED, STATUTORY OR OTHERWISE, INCLUDING, WITHOUT LIMITATION, WARRANTIES OF
+    TITLE, MARKETABILITY, MERCHANTIBILITY, FITNESS FOR A PARTICULAR PURPOSE, NONINFRINGEMENT, OR THE ABSENCE OF LATENT
+    OR OTHER DEFECTS, ACCURACY, OR THE PRESENCE OF ABSENCE OF ERRORS, WHETHER OR NOT DISCOVERABLE. SOME JURISDICTIONS
+    DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES, SO SUCH EXCLUSION MAY NOT APPLY TO YOU.
 
-1. Limitation on Liability. EXCEPT TO THE EXTENT REQUIRED BY APPLICABLE LAW, IN NO EVENT WILL LICENSOR BE LIABLE TO YOU
+6. Limitation on Liability. EXCEPT TO THE EXTENT REQUIRED BY APPLICABLE LAW, IN NO EVENT WILL LICENSOR BE LIABLE TO YOU
     ON ANY LEGAL THEORY FOR ANY SPECIAL, INCIDENTAL, CONSEQUENTIAL, PUNITIVE OR EXEMPLARY DAMAGES ARISING OUT OF THIS
     LICENSE OR THE USE OF THE WORK, EVEN IF LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
-2. Termination
+7. Termination
 
     a. This License and the rights granted hereunder will terminate automatically upon any breach by You of the terms of
     this License. Individuals or entities who have received Derivative Works (as defined in Section 1 above) or
@@ -172,7 +172,7 @@ THE EXCLUSION OF IMPLIED WARRANTIES, SO SUCH EXCLUSION MAY NOT APPLY TO YOU.
     that has been, or is required to be, granted under the terms of this License), and this License will continue in
     full force and effect unless terminated as stated above.
 
-3. Miscellaneous
+8. Miscellaneous
 
     a. Each time You distribute or publicly digitally perform the Work (as defined in Section 1 above) or a Collective
     Work (as defined in Section 1 above), the Licensor offers to the recipient a license to the Work on the same terms
