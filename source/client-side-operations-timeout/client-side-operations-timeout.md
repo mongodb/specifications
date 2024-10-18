@@ -152,28 +152,28 @@ socket read/write timeouts and HTTP request timeouts.
 The following pieces of operation execution are considered blocking:
 
 1. Implicit session acquisition if an explicit session was not provided for the operation. This is only considered
-   blocking for drivers that perform server selection to determine session support when acquiring implicit sessions.
+    blocking for drivers that perform server selection to determine session support when acquiring implicit sessions.
 2. Server selection
 3. Connection checkout - If `maxPoolSize` has already been reached for the selected server, this is the amount of time
-   spent waiting for a connection to be available.
+    spent waiting for a connection to be available.
 4. Connection establishment - If the pool for the selected server is empty and a new connection is needed, the following
-   pieces of connection establishment are considered blocking:
-   1. TCP socket establishment
-   2. TLS handshake
-      1. All messages sent over the socket as part of the TLS handshake
-      2. OCSP verification - HTTP requests sent to OCSP responders.
-   3. MongoDB handshake (i.e. initial connection `hello`)
-   4. Authentication
-      1. SCRAM-SHA-1, SCRAM-SHA-256, PLAIN: Execution of the command required for the SASL conversation.
-      2. GSSAPI: Execution of the commands required for the SASL conversation and requests to the KDC and TGS.
-      3. MONGODB-AWS: Execution of the commands required for the SASL conversation and all HTTP requests to ECS and EC2
-         endpoints.
-      4. MONGODB-X509: Execution of the commands required for the authentication conversation.
+    pieces of connection establishment are considered blocking:
+    1. TCP socket establishment
+    2. TLS handshake
+        1. All messages sent over the socket as part of the TLS handshake
+        2. OCSP verification - HTTP requests sent to OCSP responders.
+    3. MongoDB handshake (i.e. initial connection `hello`)
+    4. Authentication
+        1. SCRAM-SHA-1, SCRAM-SHA-256, PLAIN: Execution of the command required for the SASL conversation.
+        2. GSSAPI: Execution of the commands required for the SASL conversation and requests to the KDC and TGS.
+        3. MONGODB-AWS: Execution of the commands required for the SASL conversation and all HTTP requests to ECS and EC2
+            endpoints.
+        4. MONGODB-X509: Execution of the commands required for the authentication conversation.
 5. Client-side encryption
-   1. Execution of `listCollections` commands to get collection schemas.
-   2. Execution of `find` commands against the key vault collection to get encrypted data keys.
-   3. Requests to non-local key management servers (e.g. AWS KMS) to decrypt data keys.
-   4. Requests to mongocryptd servers.
+    1. Execution of `listCollections` commands to get collection schemas.
+    2. Execution of `find` commands against the key vault collection to get encrypted data keys.
+    3. Requests to non-local key management servers (e.g. AWS KMS) to decrypt data keys.
+    4. Requests to mongocryptd servers.
 6. Socket write to send a command to the server
 7. Socket read to receive the server’s response
 

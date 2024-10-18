@@ -197,46 +197,46 @@ The values in connection options MUST be URL decoded by the parser. The values c
 
 - Boolean: "true" and "false" strings MUST be supported. If the value is the empty string, the key MUST be ignored.
 
-  - For legacy reasons it is RECOMMENDED that alternative values for true and false be supported:
-    - true: "1", "yes", "y" and "t"
-    - false: "0", "-1", "no", "n" and "f".
+    - For legacy reasons it is RECOMMENDED that alternative values for true and false be supported:
+        - true: "1", "yes", "y" and "t"
+        - false: "0", "-1", "no", "n" and "f".
 
-  Alternative values are deprecated and MUST be removed from documentation and examples.
+    Alternative values are deprecated and MUST be removed from documentation and examples.
 
-  If any of these alternative values are used, drivers MUST log a deprecation notice or issue a logging message at the
-  WARNING level (as appropriate for your language). For example:
+    If any of these alternative values are used, drivers MUST log a deprecation notice or issue a logging message at the
+    WARNING level (as appropriate for your language). For example:
 
-  ```
-  Deprecated boolean value for "journal" : "1", please update to "journal=true"
-  ```
+    ```
+    Deprecated boolean value for "journal" : "1", please update to "journal=true"
+    ```
 
 - Lists: Repeated keys represent a list in the Connection String consisting of the corresponding values in the same
-  order as they appear in the Connection String. For example:
+    order as they appear in the Connection String. For example:
 
-  ```
-  ?readPreferenceTags=dc:ny,rack:1&readPreferenceTags=dc:ny&readPreferenceTags=
-  ```
+    ```
+    ?readPreferenceTags=dc:ny,rack:1&readPreferenceTags=dc:ny&readPreferenceTags=
+    ```
 
 - Key value pairs: A value that represents one or more key and value pairs. Multiple key value pairs are delimited by a
-  comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards.
+    comma (","). The key is everything up to the first colon sign (":") and the value is everything afterwards.
 
-  For example:
+    For example:
 
-  ```
-  ?readPreferenceTags=dc:ny,rack:1
-  ```
+    ```
+    ?readPreferenceTags=dc:ny,rack:1
+    ```
 
-  Drivers MUST handle unencoded colon signs (":") within the value. For example, given the connection string option:
+    Drivers MUST handle unencoded colon signs (":") within the value. For example, given the connection string option:
 
-  ```
-  authMechanismProperties=TOKEN_RESOURCE:mongodb://foo
-  ```
+    ```
+    authMechanismProperties=TOKEN_RESOURCE:mongodb://foo
+    ```
 
-  the driver MUST interpret the key as `TOKEN_RESOURCE` and the value as `mongodb://foo`.
+    the driver MUST interpret the key as `TOKEN_RESOURCE` and the value as `mongodb://foo`.
 
-  For any option key-value pair that may contain a comma (such as `TOKEN_RESOURCE`), drivers MUST document that: a value
-  containing a comma (",") MUST NOT be provided as part of the connection string. This prevents use of values that would
-  interfere with parsing.
+    For any option key-value pair that may contain a comma (such as `TOKEN_RESOURCE`), drivers MUST document that: a value
+    containing a comma (",") MUST NOT be provided as part of the connection string. This prevents use of values that
+    would interfere with parsing.
 
 Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:
 
@@ -335,20 +335,20 @@ The following example parses a connection string into its components and can be 
 Given the string `mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock/admin?w=1`:
 
 1. Validate and remove the scheme prefix `mongodb://`, leaving:
-   `foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock/admin?w=1`
+    `foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock/admin?w=1`
 2. Split the string by the first, unescaped `/` (if any), yielding:
-   1. User information and host identifiers: `foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock`.
-   2. Auth database and connection options: `admin?w=1`.
+    1. User information and host identifiers: `foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock`.
+    2. Auth database and connection options: `admin?w=1`.
 3. Split the user information and host identifiers string by the last, unescaped `@`, yielding:
-   1. User information: `foo:bar%3A`.
-   2. Host identifiers: `mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock`.
+    1. User information: `foo:bar%3A`.
+    2. Host identifiers: `mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock`.
 4. Validate, split (if applicable), and URL decode the user information. In this example, the username and password
-   would be `foo` and `bar:`, respectively.
+    would be `foo` and `bar:`, respectively.
 5. Validate, split, and URL decode the host identifiers. In this example, the hosts would be
-   `["mongodb.example.com", "/tmp/mongodb-27018.sock"]`.
+    `["mongodb.example.com", "/tmp/mongodb-27018.sock"]`.
 6. Split the auth database and connection options string by the first, unescaped `?`, yielding:
-   1. Auth database: `admin`.
-   2. Connection options: `w=1`.
+    1. Auth database: `admin`.
+    2. Connection options: `w=1`.
 7. URL decode the auth database. In this example, the auth database is `admin`.
 8. Validate the database contains no prohibited characters.
 9. Validate, split, and URL decode the connection options. In this example, the connection options are `{w: 1}`.
@@ -394,15 +394,15 @@ The connection string format does not follow the standard URI format (as describ
 
 1. Hosts
 
-   The connection string allows for multiple hosts for high availability reasons but standard URI's only ever define a
-   single host.
+    The connection string allows for multiple hosts for high availability reasons but standard URI's only ever define a
+    single host.
 
 2. Query Parameters / Connection Options
 
-   The connection string provides a concreted definition on how the Connection Options are parsed, including definitions
-   of different data types. The [RFC 3986](http://tools.ietf.org/html/rfc3986) only defines that they are `key=value`
-   pairs and gives no instruction on parsing. In fact different languages handle the parsing of query parameters in
-   different ways and as such there is no such thing as a standard URI parser.
+    The connection string provides a concreted definition on how the Connection Options are parsed, including definitions
+    of different data types. The [RFC 3986](http://tools.ietf.org/html/rfc3986) only defines that they are `key=value`
+    pairs and gives no instruction on parsing. In fact different languages handle the parsing of query parameters in
+    different ways and as such there is no such thing as a standard URI parser.
 
 Q: Can the connection string contain non-ASCII characters
 
@@ -475,15 +475,15 @@ by default.
 - 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
 
 - 2017-06-10: In Userinfo section, require username and password to be fully URI encoded, not just "%", "@", and ":". In
-  Auth Database, list the prohibited characters. In Reference Implementation, split at the first "/", not the last.
+    Auth Database, list the prohibited characters. In Reference Implementation, split at the first "/", not the last.
 
 - 2018-01-09: Clarified that space characters should be encoded to `%20`.
 
 - 2018-06-04: Revised Userinfo section to provide an explicit list of allowed characters and clarify rules for
-  exceptions.
+    exceptions.
 
 - 2019-02-04: In Repeated Keys section, clarified that the URI options spec may override the repeated key behavior
-  described here for certain options.
+    described here for certain options.
 
 - 2019-03-04: Require drivers to document option precedence rules
 

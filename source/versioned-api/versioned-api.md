@@ -30,9 +30,9 @@ account.
 An application can specify the server API version when creating MongoClient. When this is done:
 
 - The client sends the specified API version to the server, causing the server to behave in a manner compatible with
-  that API version.
+    that API version.
 - The driver will behave in a manner compatible with a server configured with that API version, regardless of the
-  server's actual release version.
+    server's actual release version.
 
 Presently there is no specification for how a driver must behave when a particular server API version is requested, or
 what driver operations are subject to API compatibility guarantees. Such requirements may be stipulated in subsequent
@@ -205,10 +205,10 @@ include features that are part of the stable API. This is not covered in this sp
 - 2022-02-24: Rename Versioned API to Stable API
 
 - 2022-01-14: Require `OP_MSG` for all messages including the initial step of\
-  the handshake when using stable API.
+    the handshake when using stable API.
 
 - 2021-05-05: Require sending stable API parameters with `getMore` and\
-  transaction-continuing commands.
+    transaction-continuing commands.
 
 - 2021-04-20: Require using `hello` when using the stable API.
 

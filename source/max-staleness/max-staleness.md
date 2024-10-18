@@ -31,7 +31,7 @@ laggy secondaries to mitigate the risk of very stale reads.
 - Provide a client-side knob to adjust the tradeoff between network-local reads and data recency.
 - Be robust in the face of clock skew between the client and servers, and skew between the primary and secondaries.
 - Avoid "inadvertent primary read preference": prevent a maxStalenessSeconds setting so small it forces all reads to the
-  primary regardless of actual replication lag.
+    primary regardless of actual replication lag.
 - Specify how mongos routers and shards track the opTimes of Config Servers as Replica Sets ("CSRS").
 
 ### Non-Goals
@@ -40,7 +40,7 @@ laggy secondaries to mitigate the risk of very stale reads.
 - Support small values for max staleness.
 - Make a consistency guarantee resembling readConcern "afterOpTime".
 - Specify how maxStalenessSeconds interacts with readConcern "afterOpTime" in drivers (distinct from the goal for
-  routers and shards).
+    routers and shards).
 - Compensate for the duration of server checks in staleness estimations.
 
 ## Specification
@@ -84,9 +84,9 @@ period as `idleWritePeriodMS` with constant value 10,000.
 A primary's or secondary's hello response contains a "lastWrite" subdocument with these fields (SERVER-8858):
 
 - lastWriteDate: a BSON UTC datetime, the wall-clock time of the **primary** when it most recently recorded a write to
-  the oplog.
+    the oplog.
 - opTime: an opaque value representing the position in the oplog of the most recently seen write. Needed for sharding,
-  not used for the maxStalenessSeconds read preference option.
+    not used for the maxStalenessSeconds read preference option.
 
 ### Wire Version
 
@@ -122,9 +122,9 @@ Where "SMax" is the secondary with the greatest lastWriteDate.
 #### Explanation of Staleness Estimate With Primary
 
 1. When the client checks the primary, it gets the delta between the primary's lastWriteDate and the client clock. Call
-   this "Client_to_Primary".
+    this "Client_to_Primary".
 2. When the client checks a secondary, it gets the delta between the secondary's lastWriteDate and the client clock.
-   Call this "Client_to_Secondary".
+    Call this "Client_to_Secondary".
 3. The difference of these two is an estimate of the delta between the primary's and secondary's lastWriteDate.
 
 Thus:
@@ -166,7 +166,7 @@ readConcern: { afterOpTime: OPTIME }
 2. Filter out those whose last known opTime is older than OPTIME.
 3. If no servers remain, select the primary.
 4. Otherwise, select randomly one of the CSRS members whose roundTripTime is within localThresholdMS of the member with
-   the fastest roundTripTime.
+    the fastest roundTripTime.
 
 Step 4 is the standard localThresholdMS logic from the Server Selection Spec.
 
@@ -296,10 +296,10 @@ maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
 Python scripts in this document's source directory:
 
 - `test_max_staleness_spo.py`: Uses `scipy.optimize` to determine worst-case accuracy of the staleness estimate in an
-  idle replica set.
+    idle replica set.
 - `test_staleness_estimate.py`: Tests whether a client would correctly select a secondary from an idle replica set,
-  given a random distribution of values for maxStalenessSeconds, heartbeatFrequencyMS, lastWriteDate, and
-  lastUpdateTime.
+    given a random distribution of values for maxStalenessSeconds, heartbeatFrequencyMS, lastWriteDate, and
+    lastUpdateTime.
 
 ## Test Plan
 
@@ -324,12 +324,12 @@ Consider a scenario in which the primary does *not*:
 
 1. There are no writes for an hour.
 2. A client performs a heavy read-only workload with read preference mode "nearest" and maxStalenessSeconds of 90
-   seconds.
+    seconds.
 3. The primary receives a write.
 4. In the brief time before any secondary replicates the write, the client re-checks all servers.
 5. Since the primary's lastWriteDate is an hour ahead of all secondaries', the client only queries the primary.
 6. After heartbeatFrequencyMS, the client re-checks all servers and finds that the secondaries aren't lagging after all,
-   and resumes querying them.
+    and resumes querying them.
 
 This apparent "replication lag spike" is just a measurement error, but it causes exactly the behavior the user wanted to
 avoid: a small replication lag makes the client route all queries from the secondaries to the primary.
@@ -374,7 +374,7 @@ Therefore, this spec *also* requires that maxStalenessSeconds is at least 90:
 
 - To provide a minimum for all languages and topologies that is easy to document and explain
 - To avoid application breakage when moving from replica set to sharded cluster, or when using the same URI with
-  different drivers
+    different drivers
 - To emphasize that maxStalenessSeconds is a low-precision heuristic
 - To avoid the arbitrary-seeming minimum of 70 seconds imposed by single-threaded drivers
 
@@ -486,7 +486,7 @@ client-side setting.
 - 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 
 - 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS to heartbeatFrequencyMS +
-  idleWritePeriodMS (with proper conversions of course).
+    idleWritePeriodMS (with proper conversions of course).
 
 - 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future, require maxStalenessSeconds to
-  be at least 90.
+    be at least 90.

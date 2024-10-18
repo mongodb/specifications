@@ -133,18 +133,18 @@ These YAML and JSON files contain the following fields:
 - `uri`: a `mongodb+srv` connection string
 - `seeds`: the expected set of initial seeds discovered from the SRV record
 - `numSeeds`: the expected number of initial seeds discovered from the SRV record. This is mainly used to test
-  `srvMaxHosts`, since randomly selected hosts cannot be deterministically asserted.
+    `srvMaxHosts`, since randomly selected hosts cannot be deterministically asserted.
 - `hosts`: the discovered topology's list of hosts once SDAM completes a scan
 - `numHosts`: the expected number of hosts discovered once SDAM completes a scan. This is mainly used to test
-  `srvMaxHosts`, since randomly selected hosts cannot be deterministically asserted.
+    `srvMaxHosts`, since randomly selected hosts cannot be deterministically asserted.
 - `options`: the parsed [URI options](../../uri-options/uri-options.md) as discovered from the
-  [Connection String](../../connection-string/connection-string-spec.md)'s "Connection Options" component and SRV
-  resolution (e.g. TXT records, implicit `tls` default).
+    [Connection String](../../connection-string/connection-string-spec.md)'s "Connection Options" component and SRV
+    resolution (e.g. TXT records, implicit `tls` default).
 - `parsed_options`: additional, parsed options from other
-  [Connection String](../../connection-string/connection-string-spec.md) components. This is mainly used for asserting
-  `UserInfo` (as `user` and `password`) and `Auth database` (as `auth_database`).
+    [Connection String](../../connection-string/connection-string-spec.md) components. This is mainly used for asserting
+    `UserInfo` (as `user` and `password`) and `Auth database` (as `auth_database`).
 - `error`: indicates that the parsing of the URI, or the resolving or contents of the SRV or TXT records included
-  errors.
+    errors.
 - `comment`: a comment to indicate why a test would fail.
 - `ping`: if false, the test runner should not run a "ping" operation.
 
@@ -156,27 +156,27 @@ For each YAML file:
 Assertions:
 
 - If `seeds` is specified, drivers SHOULD verify that the set of hosts in the client's initial seedlist matches the list
-  in `seeds`. If `numSeeds` is specified, drivers SHOULD verify that the size of that set matches `numSeeds`.
+    in `seeds`. If `numSeeds` is specified, drivers SHOULD verify that the size of that set matches `numSeeds`.
 
 - If `hosts` is specified, drivers MUST verify that the set of ServerDescriptions in the client's TopologyDescription
-  eventually matches the list in `hosts`. If `numHosts` is specified, drivers MUST verify that the size of that set
-  matches `numHosts`.
+    eventually matches the list in `hosts`. If `numHosts` is specified, drivers MUST verify that the size of that set
+    matches `numHosts`.
 
 - If `options` is specified, drivers MUST verify each of the values under `options` match the MongoClient's parsed value
-  for that option. There may be other options parsed by the MongoClient as well, which a test does not verify.
+    for that option. There may be other options parsed by the MongoClient as well, which a test does not verify.
 
 - If `parsed_options` is specified, drivers MUST verify that each of the values under `parsed_options` match the
-  MongoClient's parsed value for that option. Supported values include, but are not limited to, `user` and `password`
-  (parsed from `UserInfo`) and `auth_database` (parsed from `Auth database`).
+    MongoClient's parsed value for that option. Supported values include, but are not limited to, `user` and `password`
+    (parsed from `UserInfo`) and `auth_database` (parsed from `Auth database`).
 
 - If `error` is specified and `true`, drivers MUST verify that initializing the MongoClient throws an error. If `error`
-  is not specified or is `false`, both initializing the MongoClient and running a ping operation must succeed without
-  throwing any errors.
+    is not specified or is `false`, both initializing the MongoClient and running a ping operation must succeed without
+    throwing any errors.
 
 - If `ping` is not specified or `true`, drivers MUST verify that running a "ping" operation using the initialized
-  MongoClient succeeds. If `ping` is `false`, drivers MUST NOT run a "ping" operation.
+    MongoClient succeeds. If `ping` is `false`, drivers MUST NOT run a "ping" operation.
 
-  > **Note:** These tests are expected to be run against MongoDB databases with and without authentication enabled. The
-  > "ping" operation does not require authentication so should succeed with URIs that contain no userinfo (i.e. no
-  > username and password). Tests with URIs that contain userinfo always set `ping` to `false` because some drivers will
-  > fail handshake on a connection if userinfo is provided but incorrect.
+    > **Note:** These tests are expected to be run against MongoDB databases with and without authentication enabled. The
+    > "ping" operation does not require authentication so should succeed with URIs that contain no userinfo (i.e. no
+    > username and password). Tests with URIs that contain userinfo always set `ping` to `false` because some drivers will
+    > fail handshake on a connection if userinfo is provided but incorrect.

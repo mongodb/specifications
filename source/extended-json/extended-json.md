@@ -59,20 +59,20 @@ An Extended JSON value MUST conform to one of these two formats as described in 
 #### Notes on grammar
 
 - Key order:
-  - Keys within Canonical Extended JSON type wrapper objects SHOULD be emitted in the order described.
-  - Keys within Relaxed Extended JSON type wrapper objects are unordered.
+    - Keys within Canonical Extended JSON type wrapper objects SHOULD be emitted in the order described.
+    - Keys within Relaxed Extended JSON type wrapper objects are unordered.
 - Terms in *italics* represent types defined elsewhere in the table or in the
-  [JSON specification](https://tools.ietf.org/html/rfc7159).
+    [JSON specification](https://tools.ietf.org/html/rfc7159).
 - JSON *numbers* (as defined in [Section 6](https://tools.ietf.org/html/rfc7159#section-6) of the JSON specification)
-  include both integer and floating point types. For the purpose of this document, we define the following subtypes:
-  - Type *integer* means a JSON *number* without *frac* or *exp* components; this is expressed in the JSON spec grammar
-    as `[minus] int`.
-  - Type *non-integer* means a JSON *number* that is not an *integer*; it must include either a *frac* or *exp*
-    component or both.
-  - Type *pos-integer* means a non-negative JSON *number* without *frac* or *exp* components; this is expressed in the
-    JSON spec grammar as `int`.
+    include both integer and floating point types. For the purpose of this document, we define the following subtypes:
+    - Type *integer* means a JSON *number* without *frac* or *exp* components; this is expressed in the JSON spec grammar
+        as `[minus] int`.
+    - Type *non-integer* means a JSON *number* that is not an *integer*; it must include either a *frac* or *exp*
+        component or both.
+    - Type *pos-integer* means a non-negative JSON *number* without *frac* or *exp* components; this is expressed in the
+        JSON spec grammar as `int`.
 - A *hex string* is a JSON *string* that contains only hexadecimal digits `[0-9a-f]`. It SHOULD be emitted lower-case,
-  but MUST be read in a case-insensitive fashion.
+    but MUST be read in a case-insensitive fashion.
 - `<Angle brackets>` detail the contents of a value, including type information.
 - `[Square brackets]` specify a type constraint that restricts the specification to a particular range or set of values.
 
@@ -182,26 +182,26 @@ the parser MUST follow these rules, unless configured to allow Legacy Extended J
 these rules:
 
 - Parsers MUST NOT consider key order as having significance. For example, the document
-  `{"$code": "function(){}", "$scope": {}}` must be considered identical to `{"$scope": {}, "$code": "function(){}"}`.
+    `{"$code": "function(){}", "$scope": {}}` must be considered identical to `{"$scope": {}, "$code": "function(){}"}`.
 
 - If the parsed object contains any of the special **keys** for a type in the [Conversion table](#conversion-table)
-  (e.g. `"$binary"`, `"$timestamp"`) then it must contain exactly the keys of the type wrapper. Any missing or extra
-  keys constitute an error.
+    (e.g. `"$binary"`, `"$timestamp"`) then it must contain exactly the keys of the type wrapper. Any missing or extra
+    keys constitute an error.
 
-  DBRef is the lone exception to this rule, as it is only a common convention and not a proper type. An object that
-  resembles a DBRef but fails to fully comply with its structure (e.g. has `$ref` but missing `$id`) MUST be left as-is
-  and MUST NOT constitute an error.
+    DBRef is the lone exception to this rule, as it is only a common convention and not a proper type. An object that
+    resembles a DBRef but fails to fully comply with its structure (e.g. has `$ref` but missing `$id`) MUST be left
+    as-is and MUST NOT constitute an error.
 
 - If the **keys** of the parsed object exactly match the **keys** of a type wrapper in the Conversion table, and the
-  **values** of the parsed object have the correct type for the type wrapper as described in the Conversion table, then
-  the parser MUST interpret the parsed object as a type wrapper object of the corresponding type.
+    **values** of the parsed object have the correct type for the type wrapper as described in the Conversion table,
+    then the parser MUST interpret the parsed object as a type wrapper object of the corresponding type.
 
 - If the **keys** of the parsed object exactly match the **keys** of a type wrapper in the Conversion table, but any of
-  the **values** are of an incorrect type, then the parser MUST report an error.
+    the **values** are of an incorrect type, then the parser MUST report an error.
 
 - If the `$`-prefixed key does not match a known type wrapper in the Conversion table, the parser MUST NOT raise an
-  error and MUST leave the value as-is. See [Restrictions and limitations](#restrictions-and-limitations) for additional
-  information.
+    error and MUST leave the value as-is. See [Restrictions and limitations](#restrictions-and-limitations) for
+    additional information.
 
 #### Special rules for parsing JSON numbers
 
@@ -211,9 +211,9 @@ parsing JSON numbers:
 
 - If the number is a *non-integer*, parsers SHOULD interpret it as BSON Double.
 - If the number is an *integer*, parsers SHOULD interpret it as being of the smallest BSON integer type that can
-  represent the number exactly. If a parser is unable to represent the number exactly as an integer (e.g. a large 64-bit
-  number on a 32-bit platform), it MUST interpret it as a BSON Double even if this results in a loss of precision. The
-  parser MUST NOT interpret it as a BSON String containing a decimal representation of the number.
+    represent the number exactly. If a parser is unable to represent the number exactly as an integer (e.g. a large
+    64-bit number on a 32-bit platform), it MUST interpret it as a BSON Double even if this results in a loss of
+    precision. The parser MUST NOT interpret it as a BSON String containing a decimal representation of the number.
 
 #### Special rules for parsing `$uuid` fields
 
@@ -494,11 +494,11 @@ There are various use cases for expressing BSON documents in a text rather that 
 two categories:
 
 - Type preserving: for things like testing, where one has to describe the expected form of a BSON document, it's helpful
-  to be able to precisely specify expected types. In particular, numeric types need to differentiate between Int32,
-  Int64 and Double forms.
+    to be able to precisely specify expected types. In particular, numeric types need to differentiate between Int32,
+    Int64 and Double forms.
 - JSON-like: for things like a web API, where one is sending a document (or a projection of a document) that only uses
-  ordinary JSON type primitives, it's desirable to represent numbers in the native JSON format. This output is also the
-  most human readable and is useful for debugging and documentation.
+    ordinary JSON type primitives, it's desirable to represent numbers in the native JSON format. This output is also
+    the most human readable and is useful for debugging and documentation.
 
 The two formats in this specification address these two categories of use cases.
 
@@ -523,7 +523,7 @@ Prior to this specification, BSON types fell into three categories with respect 
 
 1. A single, portable representation for the type already existed.
 2. Multiple representations for the type existed among various Extended JSON generators, and those representations were
-   in conflict with each other or with current portability goals.
+    in conflict with each other or with current portability goals.
 3. No Legacy Extended JSON representation existed.
 
 If a BSON type fell into category (1), this specification just declares that form to be canonical, since all drivers,
@@ -603,17 +603,17 @@ following new Extended JSON type wrappers are introduced by this spec:
 - `$dbPointer`- See above.
 
 - `$numberInt` - This is used to preserve the "int32" BSON type in Canonical Extended JSON. Without using `$numberInt`,
-  this type will be indistinguishable from a double in certain languages where the distinction does not exist, such as
-  Javascript.
+    this type will be indistinguishable from a double in certain languages where the distinction does not exist, such as
+    Javascript.
 
 - `$numberDouble` - This is used to preserve the `double`type in Canonical Extended JSON, as some JSON generators might
-  omit a trailing ".0" for integral types.
+    omit a trailing ".0" for integral types.
 
-  It also supports representing non-finite values like NaN or Infinity which are prohibited in the JSON specification
-  for numbers.
+    It also supports representing non-finite values like NaN or Infinity which are prohibited in the JSON specification
+    for numbers.
 
 - `$symbol` - The use of the `$symbol` key preserves the symbol type in Canonical Extended JSON, distinguishing it from
-  JSON strings.
+    JSON strings.
 
 ### Reference Implementation
 
@@ -695,27 +695,34 @@ parsed as a normal document and not reported as an error.
 - 2024-05-29: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter and reformat changelog.
 - 2021-05-26:
-  - Remove any mention of extra dollar-prefixed keys being prohibited in a DBRef. MongoDB 5.0 and compatible drivers no
-    longer enforce such restrictions.
-  - Objects that resemble a DBRef without fully complying to its structure should be left as-is during parsing. -
-    2020-09-01: Note that `$`-prefixed keys not matching a known type MUST be left as-is when parsing. This is
-    patch-level change as this behavior was already required in the BSON corpus tests ("Document with keys that start
-    with $").
+    - Remove any mention of extra dollar-prefixed keys being prohibited in a DBRef. MongoDB 5.0 and compatible drivers no
+        longer enforce such restrictions.
+    - Objects that resemble a DBRef without fully complying to its structure should be left as-is during parsing. -
+        2020-09-01: Note that `$`-prefixed keys not matching a known type MUST be left as-is when parsing. This is
+        patch-level change as this behavior was already required in the BSON corpus tests ("Document with keys that start
+        with $").
 - 2020-09-08:
-  - Added support for parsing `$uuid` fields as BSON Binary subtype 4.
-  - Changed the example to using the MongoDB Python Driver. It previously used the MongoDB Java Driver. The new example
-    excludes the following BSON types that are unsupported in Python - `Symbol`,`SpecialFloat`,`DBPointer`, and
-    `Undefined`. Transformations for these types are now only documented in the [Conversion table](#conversion-table)
+    - Added support for parsing `$uuid` fields as BSON Binary subtype 4.
+    - Changed the example to using the MongoDB Python Driver. It previously used the MongoDB Java Driver. The new example
+        excludes the following BSON types that are unsupported in Python - `Symbol`,`SpecialFloat`,`DBPointer`, and
+        `Undefined`. Transformations for these types are now only documented in the [Conversion table](#conversion-table)
 - 2017-07-20:
-  - Bumped specification to version 2.0.
-  - Added "Relaxed" format.
-  - Changed BSON timestamp type wrapper back to `{"t": *int*, "i": *int*}` for backwards compatibility. (The change in
-    v1 to unsigned 64-bit string was premature optimization)
-  - Changed BSON regular expression type wrapper to `{"$regularExpression": {pattern: *string*, "options": *string*"}}`.
-  - Changed BSON binary type wrapper to
-    `{"$binary": {"base64": <base64-encoded payload as a *string*>, "subType": <BSON binary type as a one- or two-character *hex string*>}}`
-  - Added "Restrictions and limitations" section.
-  - Clarified parser and generator rules.
+    - Bumped specification to version 2.0.
+
+    - Added "Relaxed" format.
+
+    - Changed BSON timestamp type wrapper back to `{"t": *int*, "i": *int*}` for backwards compatibility. (The change in
+        v1 to unsigned 64-bit string was premature optimization)
+
+    - Changed BSON regular expression type wrapper to `{"$regularExpression": {pattern: *string*, "options": *string*"}}`.
+
+    - Changed BSON binary type wrapper to
+        `{"$binary": {"base64": <base64-encoded payload as a *string*>, "subType": <BSON binary type as a one- or two-character *hex string*>}}`
+        
+
+    - Added "Restrictions and limitations" section.
+
+    - Clarified parser and generator rules.
 - 2017-02-01: Initial specification version 1.0.
 
 [^1]: This MUST conform to the [Decimal128 specification](../bson-decimal128/decimal128.md#writing-to-extended-json)

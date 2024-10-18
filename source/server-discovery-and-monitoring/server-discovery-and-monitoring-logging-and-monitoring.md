@@ -565,7 +565,7 @@ See the [README](tests/monitoring/README.md).
 - 2024-01-04: Updated to clarify when ServerHeartbeatStartedEvent should be emitted
 
 - 2023-03-31: Renamed to include "logging" in the title. Reorganized contents and made consistent with CLAM spec, and
-  added requirements for SDAM log messages.
+    added requirements for SDAM log messages.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 

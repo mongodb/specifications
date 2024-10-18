@@ -346,11 +346,11 @@ Note that the BSON documents are placed immediately after each other, not with a
 
 - Create a single document and insert it over `OP_MSG`, ensure it works
 - Create two documents and insert them over `OP_MSG`, ensure each document is pulled out and presented as document
-  sequence.
+    sequence.
 - hello.maxWriteBatchSize might change and be bumped to 100,000
 - Repeat the previous 5 tests as updates, and then deletes.
 - Create one small document, and one large 16mb document. Ensure they are inserted, updated and deleted in one
-  roundtrip.
+    roundtrip.
 
 ### Motivation For Change
 
@@ -378,34 +378,34 @@ In the near future, this opcode is expected to be extended and include support f
 - Message checksum (crc32c)
 - Output document sequences
 - `moreToCome` can also be used for other commands, such as `killCursors` to restore `OP_KILL_CURSORS` behaviour as
-  currently any errors/replies are ignored.
+    currently any errors/replies are ignored.
 
 ### Q & A
 
 - Has the maximum number of documents per batch changed ?
 
-  - The maximum number of documents per batch is dictated by the `maxWriteBatchSize` value returned during the MongoDB
-    Handshake. It is likely this value will be bumped from 1,000 to 100,000.
+    - The maximum number of documents per batch is dictated by the `maxWriteBatchSize` value returned during the MongoDB
+        Handshake. It is likely this value will be bumped from 1,000 to 100,000.
 
 - Has the maximum size of the message changed?
 
-  - No. The maximum message size is still the `maxMessageSizeBytes` value returned during the MongoDB Handshake.
+    - No. The maximum message size is still the `maxMessageSizeBytes` value returned during the MongoDB Handshake.
 
 - Is everything still little-endian?
 
-  - Yes. As with BSON, all MongoDB opcodes must be serialized in little-endian format.
+    - Yes. As with BSON, all MongoDB opcodes must be serialized in little-endian format.
 
 - How does fire-and-forget (w=0 / unacknowledged write) work over `OP_MSG`?
 
-  - The client sets the `moreToCome` flag on the request. The server will not send a response to such requests.
-  - Malformed operation or errors such as duplicate key errors are not discoverable and will be swallowed by the server.
-  - Write errors due to not-primary will close the connection, which clients will pickup on next time it uses the
-    connection. This means at least one unacknowledged write operation will be lost as the client does not discover the
-    failover until next time the socket is used.
+    - The client sets the `moreToCome` flag on the request. The server will not send a response to such requests.
+    - Malformed operation or errors such as duplicate key errors are not discoverable and will be swallowed by the server.
+    - Write errors due to not-primary will close the connection, which clients will pickup on next time it uses the
+        connection. This means at least one unacknowledged write operation will be lost as the client does not discover
+        the failover until next time the socket is used.
 
 - Should we provide `runMoreToComeCommand()` helpers? Since the protocol allows any command to be tagged with
-  `moreToCome`, effectively allowing any operation to become `fire & forget`, it might be a good idea to add such
-  helper, rather then adding wire protocol headers as options to the existing `runCommand` helpers.
+    `moreToCome`, effectively allowing any operation to become `fire & forget`, it might be a good idea to add such
+    helper, rather then adding wire protocol headers as options to the existing `runCommand` helpers.
 
 ### Changelog
 

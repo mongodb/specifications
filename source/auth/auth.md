@@ -26,29 +26,29 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 - Credential
 
-  The pieces of information used to establish the authenticity of a user. This is composed of an identity and some form
-  of evidence such as a password or a certificate.
+    The pieces of information used to establish the authenticity of a user. This is composed of an identity and some form
+    of evidence such as a password or a certificate.
 
 - FQDN
 
-  Fully Qualified Domain Name
+    Fully Qualified Domain Name
 
 - Mechanism
 
-  A SASL implementation of a particular type of credential negotiation.
+    A SASL implementation of a particular type of credential negotiation.
 
 - Source
 
-  The authority used to establish credentials and/or privileges in reference to a mongodb server. In practice, it is the
-  database to which sasl authentication commands are sent.
+    The authority used to establish credentials and/or privileges in reference to a mongodb server. In practice, it is the
+    database to which sasl authentication commands are sent.
 
 - Realm
 
-  The authority used to establish credentials and/or privileges in reference to GSSAPI.
+    The authority used to establish credentials and/or privileges in reference to GSSAPI.
 
 - SASL
 
-  Simple Authentication and Security Layer - [RFC 4422](http://www.ietf.org/rfc/rfc4422.txt)
+    Simple Authentication and Security Layer - [RFC 4422](http://www.ietf.org/rfc/rfc4422.txt)
 
 ### Client Implementation
 
@@ -58,27 +58,27 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 
 - username (string)
 
-  - Applies to all mechanisms.
-  - Optional for MONGODB-X509, MONGODB-AWS, and MONGODB-OIDC.
+    - Applies to all mechanisms.
+    - Optional for MONGODB-X509, MONGODB-AWS, and MONGODB-OIDC.
 
 - source (string)
 
-  - Applies to all mechanisms.
-  - Always '$external' for GSSAPI and MONGODB-X509.
-  - This is the database to which the authenticate command will be sent.
-  - This is the database to which sasl authentication commands will be sent.
+    - Applies to all mechanisms.
+    - Always '$external' for GSSAPI and MONGODB-X509.
+    - This is the database to which the authenticate command will be sent.
+    - This is the database to which sasl authentication commands will be sent.
 
 - password (string)
 
-  - Does not apply to all mechanisms.
+    - Does not apply to all mechanisms.
 
 - mechanism (string)
 
-  - Indicates which mechanism to use with the credential.
+    - Indicates which mechanism to use with the credential.
 
 - mechanism_properties
 
-  - Includes additional properties for the given mechanism.
+    - Includes additional properties for the given mechanism.
 
 Each mechanism requires certain properties to be present in a MongoCredential for authentication to occur. See the
 individual mechanism definitions in the "MongoCredential Properties" section. All requirements listed for a mechanism
@@ -125,7 +125,7 @@ Socket connections from a MongoClient to deployment members can be one of two ty
 
 - Monitoring-only socket: multi-threaded drivers maintain monitoring sockets separate from sockets in connection pools.
 - General-use socket: for multi-threaded drivers, these are sockets in connection pools used for (non-monitoring) user
-  operations; in single-threaded drivers, these are used for both monitoring and user operations.
+    operations; in single-threaded drivers, these are used for both monitoring and user operations.
 
 Authentication (including mechanism negotiation) MUST NOT happen on monitoring-only sockets.
 
@@ -143,14 +143,14 @@ authentication conversations.
 Drivers MUST follow the following steps for an authentication handshake:
 
 1. Upon opening a general-use socket to a server for a given MongoClient, drivers MUST issue a
-   [MongoDB Handshake](../mongodb-handshake/handshake.md) immediately. This allows a driver to determine the server
-   type. If the `hello` or legacy hello of the MongoDB Handshake fails with an error, drivers MUST treat this as an
-   authentication error.
+    [MongoDB Handshake](../mongodb-handshake/handshake.md) immediately. This allows a driver to determine the server
+    type. If the `hello` or legacy hello of the MongoDB Handshake fails with an error, drivers MUST treat this as an
+    authentication error.
 2. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
 3. Inspect the value of `maxWireVersion`. If the value is greater than or equal to `6`, then the driver MUST use
-   `OP_MSG` for authentication. Otherwise, it MUST use `OP_QUERY`.
+    `OP_MSG` for authentication. Otherwise, it MUST use `OP_QUERY`.
 4. If credentials exist: 3.1. A driver MUST authenticate with all credentials provided to the MongoClient. 3.2. A single
-   invalid credential is the same as all credentials being invalid.
+    invalid credential is the same as all credentials being invalid.
 
 If the authentication handshake fails for a socket, drivers MUST mark the server Unknown and clear the server's
 connection pool. (See [Q & A](#q-and-a) below and SDAM's
@@ -201,10 +201,10 @@ When authenticating each credential, if the authentication mechanism is not spec
 that credential:
 
 - If the connection handshake results indicate the server version is 4.0 or later, drivers MUST send a new `hello` or
-  legacy hello negotiation command for the credential to determine the default authentication mechanism.
+    legacy hello negotiation command for the credential to determine the default authentication mechanism.
 - Otherwise, when the server version is earlier than 4.0, the driver MUST select a default authentication mechanism for
-  the credential following the instructions for when the `saslSupportedMechs` field is not present in a legacy hello
-  response.
+    the credential following the instructions for when the `saslSupportedMechs` field is not present in a legacy hello
+    response.
 
 ### Caching credentials in SCRAM
 
@@ -281,14 +281,14 @@ CMD = { getnonce: 1 }
 RESP = { nonce: <nonce> }
 ```
 
-2. Compute key
+1. Compute key
 
 ```javascript
 passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))
 key = HEX( MD5( UTF8( nonce + username + passwordDigest )))
 ```
 
-3. Send `authenticate` command
+1. Send `authenticate` command
 
 ```javascript
 CMD = { authenticate: 1, nonce: nonce, user: username, key: key }
@@ -307,23 +307,23 @@ RESP = {ok: 1}
 
 - username
 
-  MUST be specified and non-zero length.
+    MUST be specified and non-zero length.
 
 - source
 
-  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+    MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
 - password
 
-  MUST be specified.
+    MUST be specified.
 
 - mechanism
 
-  MUST be "MONGODB-CR"
+    MUST be "MONGODB-CR"
 
 - mechanism_properties
 
-  MUST NOT be specified.
+    MUST NOT be specified.
 
 ### MONGODB-X509
 
@@ -343,9 +343,9 @@ When connected to MongoDB 3.2 or earlier:
 
 - You MUST send a username to the server.
 - If no username is provided by the application, you MAY extract the username from the X.509 certificate instead of
-  requiring the application to provide it.
+    requiring the application to provide it.
 - If you choose not to automatically extract the username from the certificate you MUST error when no username is
-  provided by the application.
+    provided by the application.
 
 #### Conversation
 
@@ -356,7 +356,7 @@ CMD = {"authenticate": 1, "mechanism": "MONGODB-X509"}
 RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}
 ```
 
-2. Send `authenticate` command with username:
+1. Send `authenticate` command with username:
 
 ```bash
 username = $(openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem)
@@ -371,23 +371,23 @@ RESP = {"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoD
 
 - username
 
-  SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
+    SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
 
 - source
 
-  MUST be "$external". Defaults to `$external`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
-  MUST NOT be specified.
+    MUST NOT be specified.
 
 - mechanism
 
-  MUST be "MONGODB-X509"
+    MUST be "MONGODB-X509"
 
 - mechanism_properties
 
-  MUST NOT be specified.
+    MUST NOT be specified.
 
 TODO: Errors
 
@@ -406,13 +406,13 @@ RESP = { conversationId: <number>, code: <code>, done: <boolean>, payload: <payl
 ```
 
 - conversationId: the conversation identifier. This will need to be remembered and used for the duration of the
-  conversation.
+    conversation.
 - code: A response code that will indicate failure. This field is not included when the command was successful.
 - done: a boolean value indicating whether or not the conversation has completed.
 - payload: a sequence of bytes or a base64 encoded string (depending on input) to pass into the SASL library to
-  transition the state machine.
+    transition the state machine.
 
-2. Continue with the `saslContinue` command while `done` is `false`.
+1. Continue with the `saslContinue` command while `done` is `false`.
 
 ```javascript
 CMD = { saslContinue: 1, conversationId: conversationId, payload: BinData(...) }
@@ -430,9 +430,9 @@ scratch.
 
 - Since:
 
-  2.4 Enterprise
+    2.4 Enterprise
 
-  2.6 Enterprise on Windows
+    2.6 Enterprise on Windows
 
 GSSAPI is kerberos authentication as defined in [RFC 4752](http://tools.ietf.org/html/rfc4752). Microsoft has a
 proprietary implementation called SSPI which is compatible with both Windows and Linux clients.
@@ -441,47 +441,47 @@ proprietary implementation called SSPI which is compatible with both Windows and
 
 - username
 
-  MUST be specified and non-zero length.
+    MUST be specified and non-zero length.
 
 - source
 
-  MUST be "$external". Defaults to `$external`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
-  MAY be specified. If omitted, drivers MUST NOT pass the username without password to SSPI on Windows and instead use
-  the default credentials.
+    MAY be specified. If omitted, drivers MUST NOT pass the username without password to SSPI on Windows and instead use
+    the default credentials.
 
 - mechanism
 
-  MUST be "GSSAPI"
+    MUST be "GSSAPI"
 
 - mechanism_properties
 
-  - SERVICE_NAME
+    - SERVICE_NAME
 
-    Drivers MUST allow the user to specify a different service name. The default is "mongodb".
+        Drivers MUST allow the user to specify a different service name. The default is "mongodb".
 
-  - CANONICALIZE_HOST_NAME
+    - CANONICALIZE_HOST_NAME
 
-    Drivers MAY allow the user to request canonicalization of the hostname. This might be required when the hosts report
-    different hostnames than what is used in the kerberos database. The value is a string of either "none", "forward",
-    or "forwardAndReverse". "none" is the default and performs no canonicalization. "forward" performs a forward DNS
-    lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS lookup and then a reverse lookup on
-    that value to canonicalize the hostname. The driver MUST fallback to the provided host if any lookup errors or
-    returns no results. Drivers MAY decide to also keep the legacy boolean values where `true` equals the
-    "forwardAndReverse" behaviour and `false` equals "none".
+        Drivers MAY allow the user to request canonicalization of the hostname. This might be required when the hosts report
+        different hostnames than what is used in the kerberos database. The value is a string of either "none", "forward",
+        or "forwardAndReverse". "none" is the default and performs no canonicalization. "forward" performs a forward DNS
+        lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS lookup and then a reverse lookup
+        on that value to canonicalize the hostname. The driver MUST fallback to the provided host if any lookup errors or
+        returns no results. Drivers MAY decide to also keep the legacy boolean values where `true` equals the
+        "forwardAndReverse" behaviour and `false` equals "none".
 
-  - SERVICE_REALM
+    - SERVICE_REALM
 
-    Drivers MAY allow the user to specify a different realm for the service. This might be necessary to support
-    cross-realm authentication where the user exists in one realm and the service in another.
+        Drivers MAY allow the user to specify a different realm for the service. This might be necessary to support
+        cross-realm authentication where the user exists in one realm and the service in another.
 
-  - SERVICE_HOST
+    - SERVICE_HOST
 
-    Drivers MAY allow the user to specify a different host for the service. This is stored in the service principal name
-    instead of the standard host name. This is generally used for cases where the initial role is being created from
-    localhost but the actual service host would differ.
+        Drivers MAY allow the user to specify a different host for the service. This is stored in the service principal name
+        instead of the standard host name. This is generally used for cases where the initial role is being created from
+        localhost but the actual service host would differ.
 
 #### Hostname Canonicalization
 
@@ -585,23 +585,23 @@ MongoDB supports either of these forms.
 
 - username
 
-  MUST be specified and non-zero length.
+    MUST be specified and non-zero length.
 
 - source
 
-  MUST be specified. Defaults to the database name if supplied on the connection string or `$external`.
+    MUST be specified. Defaults to the database name if supplied on the connection string or `$external`.
 
 - password
 
-  MUST be specified.
+    MUST be specified.
 
 - mechanism
 
-  MUST be "PLAIN"
+    MUST be "PLAIN"
 
 - mechanism_properties
 
-  MUST NOT be specified.
+    MUST NOT be specified.
 
 ### SCRAM-SHA-1
 
@@ -671,23 +671,23 @@ RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2a
 
 - username
 
-  MUST be specified and non-zero length.
+    MUST be specified and non-zero length.
 
 - source
 
-  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+    MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
 - password
 
-  MUST be specified.
+    MUST be specified.
 
 - mechanism
 
-  MUST be "SCRAM-SHA-1"
+    MUST be "SCRAM-SHA-1"
 
 - mechanism_properties
 
-  MUST NOT be specified.
+    MUST NOT be specified.
 
 ### SCRAM-SHA-256
 
@@ -701,7 +701,7 @@ The MongoDB SCRAM-SHA-256 mechanism works similarly to the SCRAM-SHA-1 mechanism
 - The SCRAM algorithm MUST use SHA-256 as the hash function instead of SHA-1.
 - User names MUST NOT be prepared with SASLprep. This intentionally contravenes the "SHOULD" provision of RFC 5802.
 - Passwords MUST be prepared with SASLprep, per RFC 5802. Passwords are used directly for key derivation ; they MUST NOT
-  be digested as they are in SCRAM-SHA-1.
+    be digested as they are in SCRAM-SHA-1.
 
 Additionally, drivers MUST enforce a minimum iteration count of 4096 and MUST error if the authentication conversation
 specifies a lower count. This mitigates downgrade attacks by a man-in-the-middle attacker.
@@ -737,23 +737,23 @@ RESP = {conversationId: 1, payload: BinData(0, "dj02cnJpVFJCaTIzV3BSUi93dHVwK21N
 
 - username
 
-  MUST be specified and non-zero length.
+    MUST be specified and non-zero length.
 
 - source
 
-  MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
+    MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
 
 - password
 
-  MUST be specified.
+    MUST be specified.
 
 - mechanism
 
-  MUST be "SCRAM-SHA-256"
+    MUST be "SCRAM-SHA-256"
 
 - mechanism_properties
 
-  MUST NOT be specified.
+    MUST NOT be specified.
 
 ### MONGODB-AWS
 
@@ -939,25 +939,25 @@ Examples are provided below.
 
 - username
 
-  MAY be specified. The non-sensitive AWS access key.
+    MAY be specified. The non-sensitive AWS access key.
 
 - source
 
-  MUST be "$external". Defaults to `$external`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
-  MAY be specified. The sensitive AWS secret key.
+    MAY be specified. The sensitive AWS secret key.
 
 - mechanism
 
-  MUST be "MONGODB-AWS"
+    MUST be "MONGODB-AWS"
 
 - mechanism_properties
 
-  - AWS_SESSION_TOKEN
+    - AWS_SESSION_TOKEN
 
-    Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
+        Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
 
 #### Obtaining Credentials
 
@@ -1129,12 +1129,12 @@ to access the secret token. In other words, Drivers MUST
 
 - Start a session with a simple HTTP PUT request to IMDSv2.
 
-  - The URL is `http://169.254.169.254/latest/api/token`.
-  - The required header is `X-aws-ec2-metadata-token-ttl-seconds`. Its value is the number of seconds the secret token
-    should remain valid with a max of six hours (`21600` seconds).
+    - The URL is `http://169.254.169.254/latest/api/token`.
+    - The required header is `X-aws-ec2-metadata-token-ttl-seconds`. Its value is the number of seconds the secret token
+        should remain valid with a max of six hours (`21600` seconds).
 
 - Capture the secret token IMDSv2 returned as a response to the PUT request. This token is the value for the header
-  `X-aws-ec2-metadata-token`.
+    `X-aws-ec2-metadata-token`.
 
 The curl recipe below demonstrates the above. It retrieves a secret token that's valid for 30 seconds. It then uses that
 token to access the EC2 instance's credentials:
@@ -1217,13 +1217,13 @@ There are two OIDC authentication flows that drivers can support: machine-to-mac
 The MONGODB-OIDC specification refers to the following OIDC concepts:
 
 - **Identity Provider (IdP)**: A service that manages user accounts and authenticates users or applications, such as
-  Okta or OneLogin. In the [Human Authentication Flow](#human-authentication-flow), the
-  [OIDC Human Callback](#oidc-human-callback) interacts directly the IdP. In the
-  [Machine Authentication Flow](#machine-authentication-flow), only the MongoDB server interacts directly the IdP.
+    Okta or OneLogin. In the [Human Authentication Flow](#human-authentication-flow), the
+    [OIDC Human Callback](#oidc-human-callback) interacts directly the IdP. In the
+    [Machine Authentication Flow](#machine-authentication-flow), only the MongoDB server interacts directly the IdP.
 - **Access token**: Used to authenticate requests to protected resources. OIDC access tokens are signed JWT strings.
 - **Refresh token**: Some OIDC providers may return a refresh token in addition to an access token. A refresh token can
-  be used to retrieve new access tokens without requiring a human to re-authorize the application. Refresh tokens are
-  typically only supported by the [Human Authentication Flow](#human-authentication-flow).
+    be used to retrieve new access tokens without requiring a human to re-authorize the application. Refresh tokens are
+    typically only supported by the [Human Authentication Flow](#human-authentication-flow).
 
 #### Machine Authentication Flow
 
@@ -1247,64 +1247,64 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 - username
 
-  MAY be specified. Its meaning varies depending on the OIDC provider integration used.
+    MAY be specified. Its meaning varies depending on the OIDC provider integration used.
 
 - source
 
-  MUST be "$external". Defaults to `$external`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
-  MUST NOT be specified.
+    MUST NOT be specified.
 
 - mechanism
 
-  MUST be "MONGODB-OIDC"
+    MUST be "MONGODB-OIDC"
 
 - mechanism_properties
 
-  - ENVIRONMENT
+    - ENVIRONMENT
 
-    Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration to use to
-    obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp"]`. If both `ENVIRONMENT` and an
-    [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
-    `MongoClient`, the driver MUST raise an error.
+        Drivers MUST allow the user to specify the name of a built-in OIDC application environment integration to use to
+        obtain credentials. If provided, the value MUST be one of `["test", "azure", "gcp"]`. If both `ENVIRONMENT` and an
+        [OIDC Callback](#oidc-callback) or [OIDC Human Callback](#oidc-human-callback) are provided for the same
+        `MongoClient`, the driver MUST raise an error.
 
-  - TOKEN_RESOURCE
+    - TOKEN_RESOURCE
 
-    The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of `["azure", "gcp"]`
-    or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver MUST raise an error.
-    Note: because the `TOKEN_RESOURCE` is often itself a URL, drivers MUST document that a `TOKEN_RESOURCE` with a comma
-    `,` must be given as a `MongoClient` configuration and not as part of the connection string, and that the
-    `TOKEN_RESOURCE` value can contain a colon `:` character.
+        The URI of the target resource. If `TOKEN_RESOURCE` is provided and `ENVIRONMENT` is not one of `["azure", "gcp"]`
+        or `TOKEN_RESOURCE` is not provided and `ENVIRONMENT` is one of `["azure", "gcp"]`, the driver MUST raise an
+        error. Note: because the `TOKEN_RESOURCE` is often itself a URL, drivers MUST document that a `TOKEN_RESOURCE`
+        with a comma `,` must be given as a `MongoClient` configuration and not as part of the connection string, and that
+        the `TOKEN_RESOURCE` value can contain a colon `:` character.
 
-  - OIDC_CALLBACK
+    - OIDC_CALLBACK
 
-    An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to specify an
-    [OIDC Callback](#oidc-callback) using a `MongoClient` configuration instead of a mechanism property, depending on
-    what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_CALLBACK` mechanism property and a
-    `MongoClient` configuration.
+        An [OIDC Callback](#oidc-callback) that returns OIDC credentials. Drivers MAY allow the user to specify an
+        [OIDC Callback](#oidc-callback) using a `MongoClient` configuration instead of a mechanism property, depending on
+        what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_CALLBACK` mechanism property and a
+        `MongoClient` configuration.
 
-  - OIDC_HUMAN_CALLBACK
+    - OIDC_HUMAN_CALLBACK
 
-    An [OIDC Human Callback](#oidc-human-callback) that returns OIDC credentials. Drivers MAY allow the user to specify
-    a [OIDC Human Callback](#oidc-human-callback) using a `MongoClient` configuration instead of a mechanism property,
-    depending on what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_HUMAN_CALLBACK` mechanism
-    property and a `MongoClient` configuration. Drivers MUST return an error if both an [OIDC Callback](#oidc-callback)
-    and `OIDC Human Callback` are provided for the same `MongoClient`. This property is only required for drivers that
-    support the [Human Authentication Flow](#human-authentication-flow).
+        An [OIDC Human Callback](#oidc-human-callback) that returns OIDC credentials. Drivers MAY allow the user to specify
+        a [OIDC Human Callback](#oidc-human-callback) using a `MongoClient` configuration instead of a mechanism property,
+        depending on what is idiomatic for the driver. Drivers MUST NOT support both the `OIDC_HUMAN_CALLBACK` mechanism
+        property and a `MongoClient` configuration. Drivers MUST return an error if both an
+        [OIDC Callback](#oidc-callback) and `OIDC Human Callback` are provided for the same `MongoClient`. This property
+        is only required for drivers that support the [Human Authentication Flow](#human-authentication-flow).
 
-  - ALLOWED_HOSTS
+    - ALLOWED_HOSTS
 
-    The list of allowed hostnames or ip-addresses (ignoring ports) for MongoDB connections. The hostnames may include a
-    leading "\*." wildcard, which allows for matching (potentially nested) subdomains. `ALLOWED_HOSTS` is a security
-    feature and MUST default to
-    `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]`.
-    When MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a hostname
-    that does not match any of list of allowed hosts, the driver MUST raise a client-side error without invoking any
-    user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname check MUST be
-    performed after SRV record resolution, if applicable. This property is only required for drivers that support the
-    [Human Authentication Flow](#human-authentication-flow).
+        The list of allowed hostnames or ip-addresses (ignoring ports) for MongoDB connections. The hostnames may include a
+        leading "\*." wildcard, which allows for matching (potentially nested) subdomains. `ALLOWED_HOSTS` is a security
+        feature and MUST default to
+        `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]`.
+        When MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a
+        hostname that does not match any of list of allowed hosts, the driver MUST raise a client-side error without
+        invoking any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname
+        check MUST be performed after SRV record resolution, if applicable. This property is only required for drivers
+        that support the [Human Authentication Flow](#human-authentication-flow).
 
 <span id="built-in-provider-integrations"/>
 
@@ -1448,25 +1448,25 @@ The driver MUST pass the following information to the callback:
 - `username`: The username given as part of the connection string or `MongoClient` parameter.
 
 - `version`: The callback API version number. The version number is used to communicate callback API changes that are
-  not breaking but that users may want to know about and review their implementation. Drivers MUST pass `1` for the
-  initial callback API version number and increment the version number anytime the API changes. Note that this may
-  eventually lead to some drivers having different callback version numbers.
+    not breaking but that users may want to know about and review their implementation. Drivers MUST pass `1` for the
+    initial callback API version number and increment the version number anytime the API changes. Note that this may
+    eventually lead to some drivers having different callback version numbers.
 
-  For example, users may add the following check in their callback:
+    For example, users may add the following check in their callback:
 
-  ```typescript
-  if(params.version > 1) {
-      throw new Error("OIDC callback API has changed!");
-  }
-  ```
+    ```typescript
+    if(params.version > 1) {
+        throw new Error("OIDC callback API has changed!");
+    }
+    ```
 
 The callback MUST be able to return the following information:
 
 - `accessToken`: An OIDC access token string. The driver MUST NOT attempt to validate `accessToken` directly.
 - `expiresIn`: An optional expiry duration for the access token. Drivers with optional parameters MAY interpret a
-  missing value as infinite. Drivers MUST error if a negative value is returned. Drivers SHOULD use the most idiomatic
-  type for representing a duration in the driver's language. Note that the access token expiry value is currently not
-  used in [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
+    missing value as infinite. Drivers MUST error if a negative value is returned. Drivers SHOULD use the most idiomatic
+    type for representing a duration in the driver's language. Note that the access token expiry value is currently not
+    used in [Credential Caching](#credential-caching), but is intended to support future caching optimizations.
 
 The signature and naming of the callback API is up to the driver's discretion. Drivers MUST ensure that additional
 optional input parameters and return values can be added to the callback signature in the future without breaking
@@ -1499,10 +1499,10 @@ In addition to the information described in the [OIDC Callback](#oidc-callback) 
 the following information to the callback:
 
 - `idpInfo`: Information used to authenticate with the IdP.
-  - `issuer`: A URL which describes the Authentication Server. This identifier should be the iss of provided access
-    tokens, and be viable for RFC8414 metadata discovery and RFC9207 identification.
-  - `clientId`: A unique client ID for this OIDC client.
-  - `requestScopes`: A list of additional scopes to request from IdP.
+    - `issuer`: A URL which describes the Authentication Server. This identifier should be the iss of provided access
+        tokens, and be viable for RFC8414 metadata discovery and RFC9207 identification.
+    - `clientId`: A unique client ID for this OIDC client.
+    - `requestScopes`: A list of additional scopes to request from IdP.
 - `refreshToken`: The refresh token, if applicable, to be used by the callback to request a new token from the issuer.
 
 In addition to the information described in the [OIDC Callback](#oidc-callback) section, the callback MUST be able to
@@ -1544,10 +1544,10 @@ function oidcCallback(params: OIDCCallbackParams): OIDCCredential
 When a human callback is provided, drivers MUST use the following behaviors when calling the callback:
 
 - The driver MUST pass the `IdpInfo` and the refresh token (if available) to the callback.
-  - If there is no cached `IdpInfo`, drivers MUST start a [Two-Step](#two-step) conversation before calling the human
-    callback. See the Conversation and [Credential Caching](#credential-caching) sections for more details.
+    - If there is no cached `IdpInfo`, drivers MUST start a [Two-Step](#two-step) conversation before calling the human
+        callback. See the Conversation and [Credential Caching](#credential-caching) sections for more details.
 - The timeout duration MUST be 5 minutes. This is to account for the human interaction required to complete the
-  callback. In this case, the callback is not subject to CSOT.
+    callback. In this case, the callback is not subject to CSOT.
 
 #### Conversation
 
@@ -1750,11 +1750,11 @@ refresh token in the *Client Cache* when a [OIDC Human Callback](#oidc-human-cal
 Use the following algorithm to authenticate a new connection:
 
 - Check if the the *Client Cache* has an access token.
-  - If it does, cache the access token in the *Connection Cache* and perform a `One-Step` SASL conversation using the
-    access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access token.
-    Raise any other errors to the user. On success, exit the algorithm.
+    - If it does, cache the access token in the *Connection Cache* and perform a `One-Step` SASL conversation using the
+        access token in the *Client Cache*. If the server returns a Authentication error (18), invalidate that access
+        token. Raise any other errors to the user. On success, exit the algorithm.
 - Call the configured built-in provider integration or the OIDC callback to retrieve a new access token. Wait until it
-  has been at least 100ms since the last callback invocation, to avoid overloading the callback.
+    has been at least 100ms since the last callback invocation, to avoid overloading the callback.
 - Cache the new access token in the *Client Cache* and *Connection Cache*.
 - Perform a `One-Step` SASL conversation using the new access token. Raise any errors to the user.
 
@@ -1787,23 +1787,23 @@ For drivers that support the [Human Authentication Flow](#human-authentication-f
 authenticate a new connection when a [OIDC Human Callback](#oidc-human-callback) is configured:
 
 - Check if the *Client Cache* has an access token.
-  - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
-    using the access token. If the server returns an Authentication error (18), invalidate the access token token from
-    the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. Raise any other errors to the
-    user. On success, exit the algorithm.
+    - If it does, cache the access token in the *Connection Cache* and perform a [One-Step](#one-step) SASL conversation
+        using the access token. If the server returns an Authentication error (18), invalidate the access token token from
+        the *Client Cache*, clear the *Connection Cache*, and restart the authentication flow. Raise any other errors to
+        the user. On success, exit the algorithm.
 - Check if the *Client Cache* has a refresh token.
-  - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
-    a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
-    [One-Step](#one-step) SASL conversation using the new access token. If the the server returns an Authentication
-    error (18), clear the refresh token, invalidate the access token from the *Client Cache*, clear the *Connection
-    Cache*, and restart the authentication flow. Raise any other errors to the user. On success, exit the algorithm.
+    - If it does, call the [OIDC Human Callback](#oidc-human-callback) with the cached refresh token and `IdpInfo` to get
+        a new access token. Cache the new access token in the *Client Cache* and *Connection Cache*. Perform a
+        [One-Step](#one-step) SASL conversation using the new access token. If the the server returns an Authentication
+        error (18), clear the refresh token, invalidate the access token from the *Client Cache*, clear the *Connection
+        Cache*, and restart the authentication flow. Raise any other errors to the user. On success, exit the algorithm.
 - Start a new [Two-Step](#two-step) SASL conversation.
 - Run a `PrincipalStepRequest` to get the `IdpInfo`.
 - Call the [OIDC Human Callback](#oidc-human-callback) with the new `IdpInfo` to get a new access token and optional
-  refresh token. Drivers MUST NOT pass a cached refresh token to the callback when performing a new
-  [Two-Step](#two-step) conversation.
+    refresh token. Drivers MUST NOT pass a cached refresh token to the callback when performing a new
+    [Two-Step](#two-step) conversation.
 - Cache the new `IdpInfo` and refresh token in the *Client Cache* and the new access token in the *Client Cache* and
-  *Connection Cache*.
+    *Connection Cache*.
 - Attempt to authenticate using a `JwtStepRequest` with the new access token. Raise any errors to the user.
 
 #### Speculative Authentication
@@ -1815,10 +1815,10 @@ invalidate tokens from the *Client Cache* if speculative authentication does not
 Use the following algorithm to perform speculative authentication:
 
 - Check if the *Client Cache* has an access token.
-  - If it does, cache the access token in the *Connection Cache* and send a `JwtStepRequest` with the cached access
-    token in the speculative authentication SASL payload. If the response is missing a speculative authentication
-    document or the speculative authentication document indicates authentication was not successful, clear the the
-    *Connection Cache* and proceed to the next step.
+    - If it does, cache the access token in the *Connection Cache* and send a `JwtStepRequest` with the cached access
+        token in the speculative authentication SASL payload. If the response is missing a speculative authentication
+        document or the speculative authentication document indicates authentication was not successful, clear the the
+        *Connection Cache* and proceed to the next step.
 - Authenticate with the standard authentication handshake.
 
 Example code for speculative authentication using the `auth` function described above:
@@ -1865,14 +1865,14 @@ def reauth(connection):
 
 - authMechanism
 
-  MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
+    MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
 
-  Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256,
-  SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
+    Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256,
+    SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
 
 - authSource
 
-  Sets the Source property on the MongoCredential.
+    Sets the Source property on the MongoCredential.
 
 For GSSAPI, MONGODB-X509 and MONGODB-AWS authMechanisms the authSource defaults to `$external`. For PLAIN the authSource
 defaults to the database name if supplied on the connection string or `$external`. For MONGODB-CR, SCRAM-SHA-1 and
@@ -1881,14 +1881,14 @@ SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if su
 
 - authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
 
-  A generic method to set mechanism properties in the connection string.
+    A generic method to set mechanism properties in the connection string.
 
 For example, to set REALM and CANONICALIZE_HOST_NAME, the option would be
 `authMechanismProperties=CANONICALIZE_HOST_NAME:forward,SERVICE_REALM:AWESOME`.
 
 - gssapiServiceName (deprecated)
 
-  An alias for `authMechanismProperties=SERVICE_NAME:mongodb`.
+    An alias for `authMechanismProperties=SERVICE_NAME:mongodb`.
 
 #### Errors
 
@@ -1900,19 +1900,19 @@ Drivers MUST raise an error if the `authSource` option is specified in the conne
 1. Credentials MAY be specified in the connection string immediately after the scheme separator "//".
 
 2. A realm MAY be passed as a part of the username in the url. It would be something like <dev@MONGODB.COM>, where dev
-   is the username and MONGODB.COM is the realm. Per the RFC, the @ symbol should be url encoded using %40.
+    is the username and MONGODB.COM is the realm. Per the RFC, the @ symbol should be url encoded using %40.
 
-   - When GSSAPI is specified, this should be interpreted as the realm.
-   - When non-GSSAPI is specified, this should be interpreted as part of the username.
+    - When GSSAPI is specified, this should be interpreted as the realm.
+    - When non-GSSAPI is specified, this should be interpreted as part of the username.
 
 3. It is permissible for only the username to appear in the connection string. This would be identified by having no
-   colon follow the username before the '@' hostname separator.
+    colon follow the username before the '@' hostname separator.
 
 4. The source is determined by the following:
 
-   - if authSource is specified, it is used.
-   - otherwise, if database is specified, it is used.
-   - otherwise, the admin database is used.
+    - if authSource is specified, it is used.
+    - otherwise, if database is specified, it is used.
+    - otherwise, the admin database is used.
 
 ## Test Plan
 
@@ -2110,7 +2110,7 @@ practice to avoid this. (See
 - 2024-05-29: Disallow comma character when `TOKEN_RESOURCE` is given in a connection string.
 
 - 2024-05-03: Clarify timeout behavior for OIDC machine callback. Add `serverless:forbid` to OIDC unified tests. Add an
-  additional prose test for the behavior of `ALLOWED_HOSTS`.
+    additional prose test for the behavior of `ALLOWED_HOSTS`.
 
 - 2024-04-24: Clarify that TOKEN_RESOURCE for MONGODB-OIDC must be url-encoded.
 
@@ -2170,16 +2170,16 @@ practice to avoid this. (See
 
 - 2019-04-26: Test format changed to improve specificity of behavior assertions.
 
-  - Clarify that database name in URI is not treated as a user configuring auth credentials.
+    - Clarify that database name in URI is not treated as a user configuring auth credentials.
 
 - 2018-08-08: Unknown users don't cause handshake errors. This was changed before server 4.0 GA in SERVER-34421, so the
-  auth spec no longer refers to such a possibility.
+    auth spec no longer refers to such a possibility.
 
 - 2018-04-17: Clarify authSource defaults
 
-  - Fix PLAIN authSource rule to allow user provided values
-  - Change SCRAM-SHA-256 rules such that usernames are *NOT* normalized; this follows a change in the server design and
-    should be available in server 4.0-rc0.
+    - Fix PLAIN authSource rule to allow user provided values
+    - Change SCRAM-SHA-256 rules such that usernames are *NOT* normalized; this follows a change in the server design and
+        should be available in server 4.0-rc0.
 
 - 2018-03-29: Clarify auth handshake and that it only applies to non-monitoring sockets.
 
@@ -2187,25 +2187,25 @@ practice to avoid this. (See
 
 - 2018-03-02: Added SCRAM-SHA-256 and mechanism negotiation as provided by server 4.0
 
-  - Updated default mechanism determination
-  - Clarified SCRAM-SHA-1 rules around SASLprep
-  - Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a minimum iteration count
+    - Updated default mechanism determination
+    - Clarified SCRAM-SHA-1 rules around SASLprep
+    - Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a minimum iteration count
 
 - 2017-11-10: Updated minimum server version to 2.6
 
-  - Updated the Q & A to recommend support for at most a single credential per MongoClient
-  - Removed lazy authentication section
-  - Changed the list of server types requiring authentication
-  - Made providing username for X509 authentication optional
+    - Updated the Q & A to recommend support for at most a single credential per MongoClient
+    - Removed lazy authentication section
+    - Changed the list of server types requiring authentication
+    - Made providing username for X509 authentication optional
 
 - 2015-02-04: Added SCRAM-SHA-1 sasl mechanism
 
-  - Added connection handshake
-  - Changed connection string to support mechanism properties in generic form
-  - Added example conversations for all mechanisms except GSSAPI
-  - Miscellaneous wording changes for clarification
-  - Added MONGODB-X509
-  - Added PLAIN sasl mechanism
-  - Added support for GSSAPI mechanism property gssapiServiceName
+    - Added connection handshake
+    - Changed connection string to support mechanism properties in generic form
+    - Added example conversations for all mechanisms except GSSAPI
+    - Miscellaneous wording changes for clarification
+    - Added MONGODB-X509
+    - Added PLAIN sasl mechanism
+    - Added support for GSSAPI mechanism property gssapiServiceName
 
 ______________________________________________________________________

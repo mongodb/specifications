@@ -25,11 +25,11 @@ Set up the benchmark data:
 
 - Create a data key with the "local" KMS provider.
 - Encrypt 1500 string values of the form `value 0001`, `value 0002`, `value 0003`, ... with the algorithm
-  `AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic`.
+    `AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic`.
 - Create a document of the form:
-  `{ "key0001": <encrypted "value 0001">, "key0002": <encrypted "value 0002">, "key0003": <encrypted "value 0003"> }`.
+    `{ "key0001": <encrypted "value 0001">, "key0002": <encrypted "value 0002">, "key0003": <encrypted "value 0003"> }`.
 - Create a handle to `mongocrypt_t`. This may be through the bindings API (preferred) or through a `MongoClient`
-  configured with `AutoEncryptionOpts`.
+    configured with `AutoEncryptionOpts`.
 
 Warm up the benchmark:
 

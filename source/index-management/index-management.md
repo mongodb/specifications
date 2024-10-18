@@ -69,10 +69,10 @@ could fail on the server.
 A non-exhaustive list of acceptable deviations are as follows:
 
 - Using named parameters in place of an options hash or class. For instance,
-  `collection.create_index({x: 1}, commit_quorum="majority")`.
+    `collection.create_index({x: 1}, commit_quorum="majority")`.
 - When using an `Options` class, if multiple `Options` classes are structurally equatable, it is permissible to
-  consolidate them into one with a clear name. For instance, it would be permissible to use the name
-  `CreateIndexOptions` as the options for `createIndex` and `createIndexes`.
+    consolidate them into one with a clear name. For instance, it would be permissible to use the name
+    `CreateIndexOptions` as the options for `createIndex` and `createIndexes`.
 
 #### Naming
 
@@ -87,11 +87,11 @@ the user of another driver.
 A non-exhaustive list of acceptable naming deviations are as follows:
 
 - Using "maxTimeMS" as an example, .NET would use "MaxTime" where it's type is a TimeSpan structure that includes units.
-  However, calling it "MaximumTime" would not be acceptable.
+    However, calling it "MaximumTime" would not be acceptable.
 - Using "CreateIndexOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to call
-  it "CreateIndexArgs" or "CreateIndexParams".
+    it "CreateIndexArgs" or "CreateIndexParams".
 - Acceptable naming deviations should fall within the basic style of the language. For example, `createIndex` would be a
-  required name in Java, where camel-case method names are used, but in Ruby `create_index` would be acceptable.
+    required name in Java, where camel-case method names are used, but in Ruby `create_index` would be acceptable.
 
 #### Index Name Generation
 
@@ -817,12 +817,12 @@ implementing the index view API.
 In MongoDB 4.4, the `ns` field was removed from the index specifications returned from the `listIndexes` command.
 
 - For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
-  necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the `ns` field will
-  no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no special
-  mention of the `ns` field is necessary.
+    necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the `ns` field
+    will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
+    special mention of the `ns` field is necessary.
 - For drivers that report those index specifications in the form of statically defined models, the driver MUST manually
-  populate the `ns` field of the models with the appropriate namespace if the server does not report it in the
-  `listIndexes` command response. The `ns` field is not required to be a part of the models, however.
+    populate the `ns` field of the models with the appropriate namespace if the server does not report it in the
+    `listIndexes` command response. The `ns` field is not required to be a part of the models, however.
 
 <span id="enumerate-indexes"></span>
 
@@ -1172,21 +1172,21 @@ from mistakenly specifying this option, drivers manually verify it is only sent 
 - 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
 
 - 2020-03-30: Added options types to various helpers. Introduced `commitQuorum` option. Added deprecation message for
-  `background` option.
+    `background` option.
 
 - 2019-04-24: Added `wildcardProjection` attribute to `IndexOptions` in order to support setting a wildcard projection
-  on a wildcard index.
+    on a wildcard index.
 
 - 2017-06-07: Include listIndexes() in Q&A about maxTimeMS.
 
 - 2017-05-31: Add Q & A addressing write concern and maxTimeMS option.
 
 - 2016-10-11: Added note on 3.4 servers validation options passed to `createIndexes`. Add note on server generated name
-  for the `_id` index.
+    for the `_id` index.
 
 - 2016-08-08: Fixed `collation` language to not mention a collection default.
 
 - 2016-05-19: Added `collation` attribute to `IndexOptions` in order to support setting a collation on an index.
 
 - 2015-09-17: Added `partialFilterExpression` attribute to `IndexOptions` in order to support partial indexes. Fixed
-  "provides" typo.
+    "provides" typo.

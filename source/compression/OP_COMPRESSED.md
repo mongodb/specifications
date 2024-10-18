@@ -217,7 +217,7 @@ normally.
 
 - <mongodb://localhost:27017/?compressors=snappy>
 
-  mongod should have logged the following (the exact log output may differ depending on server version):
+    mongod should have logged the following (the exact log output may differ depending on server version):
 
 ```
       {"t":{"$date":"2021-04-08T13:28:38.885-06:00"},"s":"I",  "c":"NETWORK",  "id":22943,   "ctx":"listener","msg":"Connection accepted","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":1}}
@@ -268,7 +268,7 @@ The result of the program should have been:
 
 - <mongodb://localhost:27017/?compressors=snoopy>
 
-  mongod should have logged the following:
+    mongod should have logged the following:
 
 ```
       {"t":{"$date":"2021-04-20T09:57:26.823-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn5","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"}}}
@@ -289,7 +289,7 @@ The results of the program should have been:
 
 - <mongodb://localhost:27017/?compressors=snappy,zlib>
 
-  mongod should have logged the following:
+    mongod should have logged the following:
 
 ```
       {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
@@ -303,7 +303,7 @@ The results of the program should have been:
 
 - <mongodb://localhost:27017/?compressors=zlib,snappy>
 
-  mongod should have logged the following:
+    mongod should have logged the following:
 
 ```
       {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"zlib"}}
@@ -316,11 +316,11 @@ The results of the program should have been:
 ```
 
 - Create example program that authenticates to the server using SCRAM-SHA-1, then creates another user (MONGODB-CR),
-  then runs hello followed with serverStatus.
+    then runs hello followed with serverStatus.
 
 - Reconnect to the same server using the created MONGODB-CR credentials. Observe that the only command that was
-  decompressed on the server was `serverStatus`, while the server replied with OP_COMPRESSED for at least the
-  serverStatus command.
+    decompressed on the server was `serverStatus`, while the server replied with OP_COMPRESSED for at least the
+    serverStatus command.
 
 ## Motivation For Change
 
@@ -363,63 +363,63 @@ needing to (not) compress very few operations.
 
 - Statistics?
 
-  - See [serverStatus](https://www.mongodb.com/docs/manual/reference/command/serverStatus/) in the server
+    - See [serverStatus](https://www.mongodb.com/docs/manual/reference/command/serverStatus/) in the server
 
 - How to try this/enable it?
 
-  - `mongod --networkMessageCompressors "snappy"`
+    - `mongod --networkMessageCompressors "snappy"`
 
 - The server MAY reply with compressed data even if the request was not compressed?
 
-  - Yes, and this is in fact the behaviour of MongoDB 3.4
+    - Yes, and this is in fact the behaviour of MongoDB 3.4
 
 - Can drivers compress the initial MongoDB Handshake/hello request?
 
-  - No.
+    - No.
 
 - Can the server reply to the MongoDB Handshake/hello compressed?
 
-  - Yes, yes it can. Be aware it is completely acceptable for the server to use compression for any and all replies,
-    using any supported compressor, when the client announced support for compression - this includes the reply to the
-    actual MongoDB Handshake/hello where the support was announced.
+    - Yes, yes it can. Be aware it is completely acceptable for the server to use compression for any and all replies,
+        using any supported compressor, when the client announced support for compression - this includes the reply to the
+        actual MongoDB Handshake/hello where the support was announced.
 
 - This is billed a MongoDB 3.6 feature -- but I hear it works with MongoDB3.4?
 
-  - Yes, it does. All MongoDB versions support the `compression` argument to the initial handshake and all MongoDB
-    versions will reply with an intersection of compressors it supports. This works even with MongoDB 3.0, as it will
-    not reply with any compressors. It also works with MongoDB 3.4 which will reply with `snappy` if it was part of the
-    driver's list. MongoDB 3.6 will likely include zlib support.
+    - Yes, it does. All MongoDB versions support the `compression` argument to the initial handshake and all MongoDB
+        versions will reply with an intersection of compressors it supports. This works even with MongoDB 3.0, as it will
+        not reply with any compressors. It also works with MongoDB 3.4 which will reply with `snappy` if it was part of
+        the driver's list. MongoDB 3.6 will likely include zlib support.
 
 - Which compressors are currently supported?
 
-  - MongoDB 3.4 supports `snappy`
-  - MongoDB 3.6 supports `snappy` and `zlib`
-  - MongoDB 4.2 supports `snappy`, `zlib`, and `zstd`
+    - MongoDB 3.4 supports `snappy`
+    - MongoDB 3.6 supports `snappy` and `zlib`
+    - MongoDB 4.2 supports `snappy`, `zlib`, and `zstd`
 
 - My language supports xyz compressor, should I announce them all in the handshake?
 
-  - No. But you are allowed to if you really want to make sure you can use that compressor with MongoDB 42 and your
-    current driver versions.
+    - No. But you are allowed to if you really want to make sure you can use that compressor with MongoDB 42 and your
+        current driver versions.
 
 - My language does not support xzy compressor. What do I do?
 
-  - That is OK. You don’t have to support xyz.
+    - That is OK. You don’t have to support xyz.
 
 - No MongoDB supported compressors are available for my language
 
-  - That is OK. You don’t have to support compressors you can’t support. All it means is you can’t compress the request,
-    and since you never declared support for any compressor, you won’t be served with compressed responses either.
+    - That is OK. You don’t have to support compressors you can’t support. All it means is you can’t compress the request,
+        and since you never declared support for any compressor, you won’t be served with compressed responses either.
 
 - Why did the server not support zlib in MongoDB 3.4?
 
-  - Snappy was selected for its very low performance hit, while giving reasonable compression, resulting in quite
-    significant bandwidth reduction. Zlib characteristics are slightly different out-of-the-box and did not make sense
-    for the initial goal of reducing bandwidth between replica set nodes.
+    - Snappy was selected for its very low performance hit, while giving reasonable compression, resulting in quite
+        significant bandwidth reduction. Zlib characteristics are slightly different out-of-the-box and did not make sense
+        for the initial goal of reducing bandwidth between replica set nodes.
 
 - If snappy is preferable to zlib, why add support for zlib in MongoDB 3.6?
 
-  - Zlib is available on every platform known to man. Snappy is not. Having zlib support makes sense for client traffic,
-    which could originate on any type of platform, which may or may not support snappy.
+    - Zlib is available on every platform known to man. Snappy is not. Having zlib support makes sense for client traffic,
+        which could originate on any type of platform, which may or may not support snappy.
 
 ## Changelog
 

@@ -27,7 +27,7 @@ per MongoClient basis and implement support for `tlsAllowInvalidCertificates`.
 1. Create a MongoClient with `tlsAllowInvalidCertificates=true`.
 2. Enable certificate revocation checking on the MongoClient
 3. Ensure that an error is thrown noting that revocation checking cannot be used in combination with
-   `tlsAllowInvalidCertificates=true`.
+    `tlsAllowInvalidCertificates=true`.
 
 ## Integration Tests: Permutations to Be Tested
 
@@ -141,7 +141,7 @@ Drivers MUST test on Linux platforms that have server support for OCSP stapling.
 
 - [SERVER-51364](https://jira.mongodb.org/browse/SERVER-51364) disables OCSP stapling on the server for Ubuntu 18.04.
 - [SERVER-56848](https://jira.mongodb.org/browse/SERVER-56848) is a known bug with Go clients and versions of RHEL 8
-  before 8.3.
+    before 8.3.
 
 Consider using RHEL 7.0 or Ubuntu 20.04 as alternative platforms.
 

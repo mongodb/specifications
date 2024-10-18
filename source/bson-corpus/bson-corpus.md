@@ -25,9 +25,9 @@ pseudo-specification provides such tests.
 - Provide machine-readable test data files for BSON and `extjson` encoding and decoding.
 - Cover all current and historical BSON types.
 - Define test data patterns for three cases:
-  - conversion/roundtrip,
-  - decode errors, and
-  - parse errors.
+    - conversion/roundtrip,
+    - decode errors, and
+    - parse errors.
 
 ### Non-Goals
 
@@ -54,14 +54,14 @@ enclosing document and a `multi-type.json` file for testing a document with all 
 
 - `description`: human-readable description of what is in the file
 - `bson_type`: hex string of the first byte of a BSON element (e.g. "0x01" for type "double"); this will be the
-  synthetic value "0x00" for "whole document" tests like `top.json`.
+    synthetic value "0x00" for "whole document" tests like `top.json`.
 - `test_key`: (optional) name of a field in a single-BSON-type `valid` test case that contains the data type being
-  tested.
+    tested.
 - `valid` (optional): an array of validity test cases (see below).
 - `decodeErrors` (optional): an array of decode error cases (see below).
 - `parseErrors` (optional): an array of type-specific parse error case (see below).
 - `deprecated` (optional): this field will be present (and true) if the BSON type has been deprecated (i.e. Symbol,
-  Undefined and DBPointer)
+    Undefined and DBPointer)
 
 #### Validity test case keys
 
@@ -70,23 +70,24 @@ additional cases or metadata for additional assertions. For each case, keys incl
 
 - `description`: human-readable test case label.
 - `canonical_bson`: an (uppercase) big-endian hex representation of a BSON byte string. Be sure to mangle the case as
-  appropriate in any roundtrip tests.
+    appropriate in any roundtrip tests.
 - `canonical_extjson`: a string containing a Canonical Extended JSON document. Because this is itself embedded as a
-  *string* inside a JSON document, characters like quote and backslash are escaped.
+    *string* inside a JSON document, characters like quote and backslash are escaped.
 - `relaxed_extjson`: (optional) a string containing a Relaxed Extended JSON document. Because this is itself embedded as
-  a *string* inside a JSON document, characters like quote and backslash are escaped.
+    a *string* inside a JSON document, characters like quote and backslash are escaped.
 - `degenerate_bson`: (optional) an (uppercase) big-endian hex representation of a BSON byte string that is technically
-  parseable, but not in compliance with the BSON spec. Be sure to mangle the case as appropriate in any roundtrip tests.
+    parseable, but not in compliance with the BSON spec. Be sure to mangle the case as appropriate in any roundtrip
+    tests.
 - `degenerate_extjson`: (optional) a string containing an invalid form of Canonical Extended JSON that is still
-  parseable according to type-specific rules. (For example, "1e100" instead of "1E+100".)
+    parseable according to type-specific rules. (For example, "1e100" instead of "1E+100".)
 - `converted_bson`: (optional) an (uppercase) big-endian hex representation of a BSON byte string. It may be present for
-  deprecated types. It represents a possible conversion of the deprecated type to a non-deprecated type, e.g. symbol to
-  string.
+    deprecated types. It represents a possible conversion of the deprecated type to a non-deprecated type, e.g. symbol
+    to string.
 - `converted_extjson`: (optional) a string containing a Canonical Extended JSON document. Because this is itself
-  embedded as a *string* inside a JSON document, characters like quote and backslash are escaped. It may be present for
-  deprecated types and is the Canonical Extended JSON representation of `converted_bson`.
+    embedded as a *string* inside a JSON document, characters like quote and backslash are escaped. It may be present
+    for deprecated types and is the Canonical Extended JSON representation of `converted_bson`.
 - `lossy` (optional) -- boolean; present (and true) iff `canonical_bson` can't be represented exactly with extended JSON
-  (e.g. NaN with a payload).
+    (e.g. NaN with a payload).
 
 #### Decode error case keys
 
@@ -132,13 +133,13 @@ To test validity of a case in the `valid` array, we consider up to five possible
 
 - Canonical BSON (denoted herein as "cB") -- fully valid, spec-compliant BSON
 - Degenerate BSON (denoted herein as "dB") -- invalid but still parseable BSON (bad array keys, regex options out of
-  order)
+    order)
 - Canonical Extended JSON (denoted herein as "cEJ") -- A string format based on the JSON standard that emphasizes type
-  preservation at the expense of readability and interoperability.
+    preservation at the expense of readability and interoperability.
 - Degenerate Extended JSON (denoted herin as "dEJ") -- An invalid form of Canonical Extended JSON that is still
-  parseable. (For example, "1e100" instead of "1E+100".)
+    parseable. (For example, "1e100" instead of "1E+100".)
 - Relaxed Extended JSON (denoted herein as "rEJ") -- A string format based on the JSON standard that emphasizes
-  readability and interoperability at the expense of type preservation.
+    readability and interoperability at the expense of type preservation.
 
 Not all input types will exist for a given test case.
 
@@ -149,35 +150,35 @@ For a codec *without* an intermediate representation (i.e. one that translates d
 following assertions MUST hold (function names are for clarity of illustration only):
 
 - for cB input:
-  - bson_to_canonical_extended_json(cB) = cEJ
-  - bson_to_relaxed_extended_json(cB) = rEJ (if rEJ exists)
+    - bson_to_canonical_extended_json(cB) = cEJ
+    - bson_to_relaxed_extended_json(cB) = rEJ (if rEJ exists)
 - for cEJ input:
-  - json_to_bson(cEJ) = cB (unless lossy)
+    - json_to_bson(cEJ) = cB (unless lossy)
 - for dB input (if it exists):
-  - bson_to_canonical_extended_json(dB) = cEJ
-  - bson_to_relaxed_extended_json(dB) = rEJ (if rEJ exists)
+    - bson_to_canonical_extended_json(dB) = cEJ
+    - bson_to_relaxed_extended_json(dB) = rEJ (if rEJ exists)
 - for dEJ input (if it exists):
-  - json_to_bson(dEJ) = cB (unless lossy)
+    - json_to_bson(dEJ) = cB (unless lossy)
 - for rEJ input (if it exists):
-  - bson_to_relaxed_extended_json( json_to_bson(rEJ) ) = rEJ
+    - bson_to_relaxed_extended_json( json_to_bson(rEJ) ) = rEJ
 
 For a codec that has a language-native representation, we want to test both conversion and round-tripping. For these
 codecs, the following assertions MUST hold (function names are for clarity of illustration only):
 
 - for cB input:
-  - native_to_bson( bson_to_native(cB) ) = cB
-  - native_to_canonical_extended_json( bson_to_native(cB) ) = cEJ
-  - native_to_relaxed_extended_json( bson_to_native(cB) ) = rEJ (if rEJ exists)
+    - native_to_bson( bson_to_native(cB) ) = cB
+    - native_to_canonical_extended_json( bson_to_native(cB) ) = cEJ
+    - native_to_relaxed_extended_json( bson_to_native(cB) ) = rEJ (if rEJ exists)
 - for cEJ input:
-  - native_to_canonical_extended_json( json_to_native(cEJ) ) = cEJ
-  - native_to_bson( json_to_native(cEJ) ) = cB (unless lossy)
+    - native_to_canonical_extended_json( json_to_native(cEJ) ) = cEJ
+    - native_to_bson( json_to_native(cEJ) ) = cB (unless lossy)
 - for dB input (if it exists):
-  - native_to_bson( bson_to_native(dB) ) = cB
+    - native_to_bson( bson_to_native(dB) ) = cB
 - for dEJ input (if it exists):
-  - native_to_canonical_extended_json( json_to_native(dEJ) ) = cEJ
-  - native_to_bson( json_to_native(dEJ) ) = cB (unless lossy)
+    - native_to_canonical_extended_json( json_to_native(dEJ) ) = cEJ
+    - native_to_bson( json_to_native(dEJ) ) = cB (unless lossy)
 - for rEJ input (if it exists):
-  - native_to_relaxed_extended_json( json_to_native(rEJ) ) = rEJ
+    - native_to_relaxed_extended_json( json_to_native(rEJ) ) = rEJ
 
 Implementations MAY test assertions in an implementation-specific manner.
 
@@ -346,17 +347,17 @@ development.
 - 2021-09-09: Clarify error expectation rules for `parseErrors`.
 
 - 2021-09-02: Add spec and prose tests for prohibiting null bytes in null-terminated strings within document field names
-  and regular expressions. Clarify type-specific rules for `parseErrors`.
+    and regular expressions. Clarify type-specific rules for `parseErrors`.
 
 - 2017-05-26: Revised to be consistent with Extended JSON spec 2.0: valid case fields have changed, as have the test
-  assertions.
+    assertions.
 
 - 2017-01-23: Added `multi-type.json` to test encoding and decoding all BSON types within the same document. Amended all
-  extended JSON strings to adhere to the Extended JSON Specification. Modified the "Use of extjson" section of this
-  specification to note that canonical extended JSON is now used.
+    extended JSON strings to adhere to the Extended JSON Specification. Modified the "Use of extjson" section of this
+    specification to note that canonical extended JSON is now used.
 
 - 2016-11-14: Removed "invalid flags" BSON Regexp case.
 
 - 2016-10-25: Added a "non-alphabetized flags" case to the BSON Regexp corpus file; decoders must be able to read
-  non-alphabetized flags, but encoders must emit alphabetized flags. Added an "invalid flags" case to the BSON Regexp
-  corpus file.
+    non-alphabetized flags, but encoders must emit alphabetized flags. Added an "invalid flags" case to the BSON Regexp
+    corpus file.

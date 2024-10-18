@@ -22,18 +22,18 @@ cluster because the fail point is not supported by mongos.
 The tests exercise the following scenarios:
 
 - Single-statement write operations
-  - Each test expecting a write result will encounter at-most one network error for the write command. Retry attempts
-    should return without error and allow operation to succeed. Observation of the collection state will assert that the
-    write occurred at-most once.
-  - Each test expecting an error will encounter successive network errors for the write command. Observation of the
-    collection state will assert that the write was never committed on the server.
+    - Each test expecting a write result will encounter at-most one network error for the write command. Retry attempts
+        should return without error and allow operation to succeed. Observation of the collection state will assert that
+        the write occurred at-most once.
+    - Each test expecting an error will encounter successive network errors for the write command. Observation of the
+        collection state will assert that the write was never committed on the server.
 - Multi-statement write operations
-  - Each test expecting a write result will encounter at-most one network error for some write command(s) in the batch.
-    Retry attempts should return without error and allow the batch to ultimately succeed. Observation of the collection
-    state will assert that each write occurred at-most once.
-  - Each test expecting an error will encounter successive network errors for some write command in the batch. The batch
-    will ultimately fail with an error, but observation of the collection state will assert that the failing write was
-    never committed on the server. We may observe that earlier writes in the batch occurred at-most once.
+    - Each test expecting a write result will encounter at-most one network error for some write command(s) in the batch.
+        Retry attempts should return without error and allow the batch to ultimately succeed. Observation of the
+        collection state will assert that each write occurred at-most once.
+    - Each test expecting an error will encounter successive network errors for some write command in the batch. The batch
+        will ultimately fail with an error, but observation of the collection state will assert that the failing write was
+        never committed on the server. We may observe that earlier writes in the batch occurred at-most once.
 
 We cannot test a scenario where the first and second attempts both encounter network errors but the write does actually
 commit during one of those attempts. This is because (1) the fail point only triggers when a write would be committed
@@ -77,28 +77,28 @@ Drivers should test that transaction IDs are never included in commands for unsu
 
 - Write commands with unacknowledged write concerns (e.g. `{w: 0}`)
 - Unsupported single-statement write operations
-  - `updateMany()`
-  - `deleteMany()`
+    - `updateMany()`
+    - `deleteMany()`
 - Unsupported multi-statement write operations
-  - `bulkWrite()` that includes `UpdateMany` or `DeleteMany`
+    - `bulkWrite()` that includes `UpdateMany` or `DeleteMany`
 - Unsupported write commands
-  - `aggregate` with write stage (e.g. `$out`, `$merge`)
+    - `aggregate` with write stage (e.g. `$out`, `$merge`)
 
 Drivers should test that transactions IDs are always included in commands for supported write operations:
 
 - Supported single-statement write operations
-  - `insertOne()`
-  - `updateOne()`
-  - `replaceOne()`
-  - `deleteOne()`
-  - `findOneAndDelete()`
-  - `findOneAndReplace()`
-  - `findOneAndUpdate()`
+    - `insertOne()`
+    - `updateOne()`
+    - `replaceOne()`
+    - `deleteOne()`
+    - `findOneAndDelete()`
+    - `findOneAndReplace()`
+    - `findOneAndUpdate()`
 - Supported multi-statement write operations
-  - `insertMany()` with `ordered=true`
-  - `insertMany()` with `ordered=false`
-  - `bulkWrite()` with `ordered=true` (no `UpdateMany` or `DeleteMany`)
-  - `bulkWrite()` with `ordered=false` (no `UpdateMany` or `DeleteMany`)
+    - `insertMany()` with `ordered=true`
+    - `insertMany()` with `ordered=false`
+    - `bulkWrite()` with `ordered=true` (no `UpdateMany` or `DeleteMany`)
+    - `bulkWrite()` with `ordered=false` (no `UpdateMany` or `DeleteMany`)
 
 ## Prose Tests
 
@@ -127,23 +127,23 @@ This test MUST be implemented by any driver that implements the CMAP specificati
 This test requires MongoDB 4.3.4+ for both the `errorLabels` and `blockConnection` fail point options.
 
 1. Create a client with maxPoolSize=1 and retryWrites=true. If testing against a sharded deployment, be sure to connect
-   to only a single mongos.
+    to only a single mongos.
 
 2. Enable the following failpoint:
 
-   ```javascript
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 1 },
-       data: {
-           failCommands: ["insert"],
-           errorCode: 91,
-           blockConnection: true,
-           blockTimeMS: 1000,
-           errorLabels: ["RetryableWriteError"]
-       }
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["insert"],
+            errorCode: 91,
+            blockConnection: true,
+            blockTimeMS: 1000,
+            errorLabels: ["RetryableWriteError"]
+        }
+    }
+    ```
 
 3. Start two threads and attempt to perform an `insertOne` simultaneously on both.
 
@@ -175,47 +175,47 @@ test to cover the same sequence of events.
 
 2. Configure a fail point with error code `91` (ShutdownInProgress):
 
-   ```javascript
-   {
-       configureFailPoint: "failCommand",
-       mode: {times: 1},
-       data: {
-           failCommands: ["insert"],
-           errorLabels: ["RetryableWriteError"],
-           writeConcernError: { code: 91 }
-       }
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableWriteError"],
+            writeConcernError: { code: 91 }
+        }
+    }
+    ```
 
 3. Via the command monitoring CommandSucceededEvent, configure a fail point with error code `10107` (NotWritablePrimary)
-   and a NoWritesPerformed label:
+    and a NoWritesPerformed label:
 
-   ```javascript
-   {
-       configureFailPoint: "failCommand",
-       mode: {times: 1},
-       data: {
-           failCommands: ["insert"],
-           errorCode: 10107,
-           errorLabels: ["RetryableWriteError", "NoWritesPerformed"]
-       }
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorCode: 10107,
+            errorLabels: ["RetryableWriteError", "NoWritesPerformed"]
+        }
+    }
+    ```
 
-   Drivers SHOULD only configure the `10107` fail point command if the the succeeded event is for the `91` error
-   configured in step 2.
+    Drivers SHOULD only configure the `10107` fail point command if the the succeeded event is for the `91` error
+    configured in step 2.
 
 4. Attempt an `insertOne` operation on any record for any database and collection. For the resulting error, assert that
-   the associated error code is `91`.
+    the associated error code is `91`.
 
 5. Disable the fail point:
 
-   ```javascript
-   {
-       configureFailPoint: "failCommand",
-       mode: "off"
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
 
 ### 4. Test that in a sharded cluster writes are retried on a different mongos when one is available.
 
@@ -229,24 +229,24 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 > coverage tool, etc.
 
 1. Create two clients `s0` and `s1` that each connect to a single mongos from the sharded cluster. They must not connect
-   to the same mongos.
+    to the same mongos.
 
 2. Configure the following fail point for both `s0` and `s1`:
 
-   ```javascript
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 1 },
-       data: {
-           failCommands: ["insert"],
-           errorCode: 6,
-           errorLabels: ["RetryableWriteError"]
-       }
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["insert"],
+            errorCode: 6,
+            errorLabels: ["RetryableWriteError"]
+        }
+    }
+    ```
 
 3. Create a client `client` with `retryWrites=true` that connects to the cluster using the same two mongoses as `s0` and
-   `s1`.
+    `s1`.
 
 4. Enable failed command event monitoring for `client`.
 
@@ -270,28 +270,28 @@ debugger, code coverage tool, etc.
 
 2. Configure the following fail point for `s0`:
 
-   ```javascript
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 1 },
-       data: {
-           failCommands: ["insert"],
-           errorCode: 6,
-           errorLabels: ["RetryableWriteError"],
-           closeConnection: true
-       }
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["insert"],
+            errorCode: 6,
+            errorLabels: ["RetryableWriteError"],
+            closeConnection: true
+        }
+    }
+    ```
 
 3. Create a client `client` with `directConnection=false` (when not set by default) and `retryWrites=true` that connects
-   to the cluster using the same single mongos as `s0`.
+    to the cluster using the same single mongos as `s0`.
 
 4. Enable succeeded and failed command event monitoring for `client`.
 
 5. Execute an `insert` command with `client`. Assert that the command succeeded.
 
 6. Assert that exactly one failed command event and one succeeded command event occurred. Assert that both events
-   occurred on the same mongos.
+    occurred on the same mongos.
 
 7. Disable the fail point on `s0`.
 
@@ -306,12 +306,12 @@ debugger, code coverage tool, etc.
 - 2024-01-05: Fix typo in prose test title.
 
 - 2024-01-03: Note server version requirements for fail point options and revise tests to specify the `errorLabels`
-  option at the top-level instead of within `writeConcernError`.
+    option at the top-level instead of within `writeConcernError`.
 
 - 2023-08-26: Add prose tests for retrying in a sharded cluster.
 
 - 2022-08-30: Add prose test verifying correct error handling for errors with the NoWritesPerformed label, which is to
-  return the original error.
+    return the original error.
 
 - 2022-04-22: Clarifications to `serverless` and `useMultipleMongoses`.
 
@@ -328,7 +328,7 @@ debugger, code coverage tool, etc.
 - 2019-06-07: Mention $merge stage for aggregate alongside $out
 
 - 2019-03-01: Add top-level `runOn` field to denote server version and/or topology requirements requirements for the
-  test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now expressed within
-  `runOn` elements.
+    test file. Removes the `minServerVersion` and `maxServerVersion` top-level fields, which are now expressed within
+    `runOn` elements.
 
-  Add test-level `useMultipleMongoses` field.
+    Add test-level `useMultipleMongoses` field.

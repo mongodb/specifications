@@ -27,29 +27,29 @@ Each YAML file has the following keys:
 - `database2_name`: Another database
 - `collection2_name`: Another collection
 - `tests`: An array of tests that are to be run independently of each other. Each test will have some of the following
-  fields:
-  - `description`: The name of the test.
-  - `minServerVersion`: The minimum server version to run this test against. If not present, assume there is no minimum
-    server version.
-  - `maxServerVersion`: Reserved for later use
-  - `failPoint`: Optional configureFailPoint command document to run to configure a fail point on the primary server.
-  - `target`: The entity on which to run the change stream. Valid values are:
-    - `collection`: Watch changes on collection `database_name.collection_name`
-    - `database`: Watch changes on database `database_name`
-    - `client`: Watch changes on entire clusters
-  - `topology`: An array of server topologies against which to run the test. Valid topologies are `single`,
-    `replicaset`, `sharded`, and `load-balanced`.
-  - `changeStreamPipeline`: An array of additional aggregation pipeline stages to add to the change stream
-  - `changeStreamOptions`: Additional options to add to the changeStream
-  - `operations`: Array of documents, each describing an operation. Each document has the following fields:
-    - `database`: Database against which to run the operation
-    - `collection`: Collection against which to run the operation
-    - `name`: Name of the command to run
-    - `arguments` (optional): Object of arguments for the command (ex: document to insert)
-  - `expectations`: Optional list of command-started events in Extended JSON format
-  - `result`: Document with ONE of the following fields:
-    - `error`: Describes an error received during the test
-    - `success`: An Extended JSON array of documents expected to be received from the changeStream
+    fields:
+    - `description`: The name of the test.
+    - `minServerVersion`: The minimum server version to run this test against. If not present, assume there is no minimum
+        server version.
+    - `maxServerVersion`: Reserved for later use
+    - `failPoint`: Optional configureFailPoint command document to run to configure a fail point on the primary server.
+    - `target`: The entity on which to run the change stream. Valid values are:
+        - `collection`: Watch changes on collection `database_name.collection_name`
+        - `database`: Watch changes on database `database_name`
+        - `client`: Watch changes on entire clusters
+    - `topology`: An array of server topologies against which to run the test. Valid topologies are `single`,
+        `replicaset`, `sharded`, and `load-balanced`.
+    - `changeStreamPipeline`: An array of additional aggregation pipeline stages to add to the change stream
+    - `changeStreamOptions`: Additional options to add to the changeStream
+    - `operations`: Array of documents, each describing an operation. Each document has the following fields:
+        - `database`: Database against which to run the operation
+        - `collection`: Collection against which to run the operation
+        - `name`: Name of the command to run
+        - `arguments` (optional): Object of arguments for the command (ex: document to insert)
+    - `expectations`: Optional list of command-started events in Extended JSON format
+    - `result`: Document with ONE of the following fields:
+        - `error`: Describes an error received during the test
+        - `success`: An Extended JSON array of documents expected to be received from the changeStream
 
 ## Spec Test Match Function
 
@@ -88,44 +88,44 @@ following approaches to comparisons, as long as they are consistent:
 Before running the tests
 
 - Create a MongoClient `globalClient`, and connect to the server. When executing tests against a sharded cluster,
-  `globalClient` must only connect to one mongos. This is because tests that set failpoints will only work consistently
-  if both the `configureFailPoint` and failing commands are sent to the same mongos.
+    `globalClient` must only connect to one mongos. This is because tests that set failpoints will only work
+    consistently if both the `configureFailPoint` and failing commands are sent to the same mongos.
 
 For each YAML file, for each element in `tests`:
 
 - If `topology` does not include the topology of the server instance(s), skip this test.
 - Use `globalClient` to
-  - Drop the database `database_name`
-  - Drop the database `database2_name`
-  - Create the database `database_name` and the collection `database_name.collection_name`
-  - Create the database `database2_name` and the collection `database2_name.collection2_name`
-  - If the the `failPoint` field is present, configure the fail point on the primary server. See
-    [Server Fail Point](../../transactions/tests/legacy-test-format.md#server-fail-point) in the Transactions spec test
-    documentation for more information.
+    - Drop the database `database_name`
+    - Drop the database `database2_name`
+    - Create the database `database_name` and the collection `database_name.collection_name`
+    - Create the database `database2_name` and the collection `database2_name.collection2_name`
+    - If the the `failPoint` field is present, configure the fail point on the primary server. See
+        [Server Fail Point](../../transactions/tests/legacy-test-format.md#server-fail-point) in the Transactions spec
+        test documentation for more information.
 - Create a new MongoClient `client`
 - Begin monitoring all APM events for `client`. (If the driver uses global listeners, filter out all events that do not
-  originate with `client`). Filter out any "internal" commands (e.g. `hello` or legacy hello)
+    originate with `client`). Filter out any "internal" commands (e.g. `hello` or legacy hello)
 - Using `client`, create a changeStream `changeStream` against the specified `target`. Use `changeStreamPipeline` and
-  `changeStreamOptions` if they are non-empty. Capture any error.
+    `changeStreamOptions` if they are non-empty. Capture any error.
 - If there was no error, use `globalClient` and run every operation in `operations` in serial against the server until
-  all operations have been executed or an error is thrown. Capture any error.
+    all operations have been executed or an error is thrown. Capture any error.
 - If there was no error and `result.error` is set, iterate `changeStream` once and capture any error.
 - If there was no error and `result.success` is non-empty, iterate `changeStream` until it returns as many changes as
-  there are elements in the `result.success` array or an error is thrown. Capture any error.
+    there are elements in the `result.success` array or an error is thrown. Capture any error.
 - Close `changeStream`
 - If there was an error:
-  - Assert that an error was expected for the test.
-  - Assert that the error MATCHES `result.error`
+    - Assert that an error was expected for the test.
+    - Assert that the error MATCHES `result.error`
 - Else:
-  - Assert that no error was expected for the test
-  - Assert that the changes received from `changeStream` MATCH the results in `result.success`
+    - Assert that no error was expected for the test
+    - Assert that the changes received from `changeStream` MATCH the results in `result.success`
 - If there are any `expectations`
-  - For each (`expected`, `idx`) in `expectations`
-    - If `actual[idx]` is a `killCursors` event, skip it and move to `actual[idx+1]`.
-    - Else assert that `actual[idx]` MATCHES `expected`
-  - Note: the change stream test command event expectations cover a prefix subset of all command events published by the
-    driver. The test runner MUST verify that, if there are N expectations, that the first N events published by the
-    driver match the expectations, and MUST NOT inspect any subsequent events published by the driver.
+    - For each (`expected`, `idx`) in `expectations`
+        - If `actual[idx]` is a `killCursors` event, skip it and move to `actual[idx+1]`.
+        - Else assert that `actual[idx]` MATCHES `expected`
+    - Note: the change stream test command event expectations cover a prefix subset of all command events published by the
+        driver. The test runner MUST verify that, if there are N expectations, that the first N events published by the
+        driver match the expectations, and MUST NOT inspect any subsequent events published by the driver.
 - Close the MongoClient `client`
 
 After running all tests
@@ -165,29 +165,29 @@ tests with smaller timeouts.
 The following tests have not yet been automated, but MUST still be tested. All tests SHOULD be run on both replica sets
 and sharded clusters unless otherwise specified:
 
-01. `ChangeStream` must continuously track the last seen `resumeToken`
+1. `ChangeStream` must continuously track the last seen `resumeToken`
 
-02. `ChangeStream` will throw an exception if the server response is missing the resume token (if wire version is \< 8,
+2. `ChangeStream` will throw an exception if the server response is missing the resume token (if wire version is \< 8,
     this is a driver-side error; for 8+, this is a server-side error)
 
-03. After receiving a `resumeToken`, `ChangeStream` will automatically resume one time on a resumable error with the
+3. After receiving a `resumeToken`, `ChangeStream` will automatically resume one time on a resumable error with the
     initial pipeline and options, except for the addition/update of a `resumeToken`.
 
-04. `ChangeStream` will not attempt to resume on any error encountered while executing an `aggregate` command. Note that
+4. `ChangeStream` will not attempt to resume on any error encountered while executing an `aggregate` command. Note that
     retryable reads may retry `aggregate` commands. Drivers should be careful to distinguish retries from resume
     attempts. Alternatively, drivers may specify `retryReads=false` or avoid using a
     [retryable error](../../retryable-reads/retryable-reads.md#retryable-error) for this test.
 
-05. **Removed**
+5. **Removed**
 
-06. `ChangeStream` will perform server selection before attempting to resume, using initial `readPreference`
+6. `ChangeStream` will perform server selection before attempting to resume, using initial `readPreference`
 
-07. Ensure that a cursor returned from an aggregate command with a cursor id and an initial empty batch is not closed on
+7. Ensure that a cursor returned from an aggregate command with a cursor id and an initial empty batch is not closed on
     the driver side.
 
-08. The `killCursors` command sent during the "Resume Process" must not be allowed to throw an exception.
+8. The `killCursors` command sent during the "Resume Process" must not be allowed to throw an exception.
 
-09. `$changeStream` stage for `ChangeStream` against a server `>=4.0` and `<4.0.7` that has not received any results yet
+9. `$changeStream` stage for `ChangeStream` against a server `>=4.0` and `<4.0.7` that has not received any results yet
     MUST include a `startAtOperationTime` option when resuming a change stream.
 
 10. **Removed**
@@ -254,9 +254,9 @@ and sharded clusters unless otherwise specified:
     2. Create a new collection `_[C]()` with `changeStreamPreAndPostImages` enabled.
     3. Insert into `_[C]()` a document at least 10mb in size, e.g. `{ "value": "q"*10*1024*1024 }`
     4. Create a change stream `_[S]()` by calling `watch` on `_[C]()` with pipeline
-       `[{ "$changeStreamSplitLargeEvent": {} }]` and `fullDocumentBeforeChange=required`.
+        `[{ "$changeStreamSplitLargeEvent": {} }]` and `fullDocumentBeforeChange=required`.
     5. Call `updateOne` on `_[C]()` with an empty `query` and an update setting the field to a new large value, e.g.
-       `{ "$set": { "value": "z"*10*1024*1024 } }`.
+        `{ "$set": { "value": "z"*10*1024*1024 } }`.
     6. Collect two events from `_[S]()`.
     7. Assert that the events collected have `splitEvent` fields `{ "fragment": 1, "of": 2 }` and
-       `{ "fragment": 2, "of": 2 }`, in that order.
+        `{ "fragment": 2, "of": 2 }`, in that order.

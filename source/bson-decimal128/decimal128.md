@@ -73,25 +73,26 @@ The specification defines several statuses which are meant to signal exceptional
 
 - Overflow
 
-  - When overflow occurs, the operation MUST emit an error and result in a failure
+    - When overflow occurs, the operation MUST emit an error and result in a failure
 
 - Underflow
 
-  - When underflow occurs, the operation MUST emit an error and result in a failure
+    - When underflow occurs, the operation MUST emit an error and result in a failure
 
 - Clamping
 
-  - Since clamping does not change the actual value, only the representation of it, clamping MUST occur without emitting
-    an error.
+    - Since clamping does not change the actual value, only the representation of it, clamping MUST occur without emitting
+        an error.
 
 - Rounding
 
-  - When the coefficient requires more digits then Decimal128 provides, rounding MUST be done without emitting an error,
-    unless it would result in inexact rounding, in which case the operation MUST emit an error and result in a failure.
+    - When the coefficient requires more digits then Decimal128 provides, rounding MUST be done without emitting an error,
+        unless it would result in inexact rounding, in which case the operation MUST emit an error and result in a
+        failure.
 
 - Conversion Syntax
 
-  - Invalid strings MUST emit an error and result in a failure.
+    - Invalid strings MUST emit an error and result in a failure.
 
 It should be noted that the given exponent is a preferred representation. If the value cannot be stored due to the value
 of the exponent being too large or too small, but can be stored using an alternative representation by clamping and or
@@ -338,21 +339,21 @@ Most of the tests are converted from the
 
 - Is it true Decimal128 doesn't normalize the value?
 
-  - Yes. As a result of non-normalization rules of the Decimal128 data type, precision is represented exactly. For
-    example, '2.00' always remains stored as 200E-2 in Decimal128, and it differs from the representation of '2.0'
-    (20E-1). These two values compare equally, but represent different ideas.
+    - Yes. As a result of non-normalization rules of the Decimal128 data type, precision is represented exactly. For
+        example, '2.00' always remains stored as 200E-2 in Decimal128, and it differs from the representation of '2.0'
+        (20E-1). These two values compare equally, but represent different ideas.
 
 - How does Decimal128 "2.000" look in the shell?
 
-  - NumberDecimal("2.000")
+    - NumberDecimal("2.000")
 
 - Should a driver avoid sending Decimal128 values to pre-3.4 servers?
 
-  - No
+    - No
 
 - Is there a wire version bump or something for Decimal128?
 
-  - No
+    - No
 
 ## Changelog
 

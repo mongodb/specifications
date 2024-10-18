@@ -196,20 +196,20 @@ more details.
 ### Assumptions
 
 1. Unless they explicitly override these priorities, we assume our users prefer their applications to be, in order:
-   - Predictable: the behavior of the application should not change based on the deployment type, whether single mongod,
-     replica set or sharded cluster.
-   - Resilient: applications will adapt to topology changes, if possible, without raising errors or requiring manual
-     reconfiguration.
-   - Low-latency: all else being equal, faster responses to queries and writes are preferable.
+    - Predictable: the behavior of the application should not change based on the deployment type, whether single mongod,
+        replica set or sharded cluster.
+    - Resilient: applications will adapt to topology changes, if possible, without raising errors or requiring manual
+        reconfiguration.
+    - Low-latency: all else being equal, faster responses to queries and writes are preferable.
 2. Clients know the state of a deployment based on some form of ongoing monitoring, following the rules defined in the
-   [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec.
-   - They know which members are up or down, what their tag sets are, and their types.
-   - They know average round trip times to each available member.
-   - They detect reconfiguration and the addition or removal of members.
+    [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) spec.
+    - They know which members are up or down, what their tag sets are, and their types.
+    - They know average round trip times to each available member.
+    - They detect reconfiguration and the addition or removal of members.
 3. The state of a deployment could change at any time, in between any network interaction.
-   - Servers might or might not be reachable; they can change type at any time, whether due to partitions, elections, or
-     misconfiguration.
-   - Data rollbacks could occur at any time.
+    - Servers might or might not be reachable; they can change type at any time, whether due to partitions, elections, or
+        misconfiguration.
+    - Data rollbacks could occur at any time.
 
 ### MongoClient Configuration
 
@@ -259,9 +259,9 @@ between attempts, as required by the
 Users of single-threaded drivers MUST be able to control this mode in one or both of these ways:
 
 - In code, pass true or false for an option called serverSelectionTryOnce, spelled idiomatically for the language, to
-  the MongoClient constructor.
+    the MongoClient constructor.
 - Include "serverSelectionTryOnce=true" or "serverSelectionTryOnce=false" in the URI. The URI option is spelled the same
-  for all drivers.
+    for all drivers.
 
 Conflicting usages of the URI option and the symbol is an error.
 
@@ -400,23 +400,23 @@ After filtering servers according to `mode`, and before filtering with `tag_sets
 - If `maxStalenessSeconds` is not a positive number, then all servers are eligible.
 
 - Otherwise, calculate staleness. Non-secondary servers (including Mongos servers) have zero staleness. If TopologyType
-  is ReplicaSetWithPrimary, a secondary's staleness is calculated using its ServerDescription "S" and the primary's
-  ServerDescription "P":
+    is ReplicaSetWithPrimary, a secondary's staleness is calculated using its ServerDescription "S" and the primary's
+    ServerDescription "P":
 
-  ```
-  (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
-  ```
+    ```
+    (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
+    ```
 
-  (All datetime units are in milliseconds.)
+    (All datetime units are in milliseconds.)
 
-  If TopologyType is ReplicaSetNoPrimary, a secondary's staleness is calculated using its ServerDescription "S" and the
-  ServerDescription of the secondary with the greatest lastWriteDate, "SMax":
+    If TopologyType is ReplicaSetNoPrimary, a secondary's staleness is calculated using its ServerDescription "S" and the
+    ServerDescription of the secondary with the greatest lastWriteDate, "SMax":
 
-  ```
-  SMax.lastWriteDate - S.lastWriteDate + heartbeatFrequencyMS
-  ```
+    ```
+    SMax.lastWriteDate - S.lastWriteDate + heartbeatFrequencyMS
+    ```
 
-  Servers with staleness less than or equal to `maxStalenessSeconds` are eligible.
+    Servers with staleness less than or equal to `maxStalenessSeconds` are eligible.
 
 See the Max Staleness Spec for overall description and justification of this feature.
 
@@ -444,12 +444,13 @@ the latency window.
 Eligibility MUST be determined from `tag_sets` as follows:
 
 - If the `tag_sets` list is empty then all candidate servers are eligible servers. (Note, the default of `[{}]` means an
-  empty list probably won't often be seen, but if the client does not forbid an empty list, this rule MUST be
-  implemented to handle that case.)
+    empty list probably won't often be seen, but if the client does not forbid an empty list, this rule MUST be
+    implemented to handle that case.)
 - If the `tag_sets` list is not empty, then tag sets are tried in order until a tag set matches at least one candidate
-  server. All candidate servers matching that tag set are eligible servers. Subsequent tag sets in the list are ignored.
+    server. All candidate servers matching that tag set are eligible servers. Subsequent tag sets in the list are
+    ignored.
 - If the `tag_sets` list is not empty and no tag set in the list matches any candidate server, no servers are eligible
-  servers.
+    servers.
 
 ##### hedge
 
@@ -518,8 +519,8 @@ Therefore, when sending queries to a mongos or load balancer, the following rule
 - For mode 'secondary', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
 - For mode 'primaryPreferred', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
 - For mode 'secondaryPreferred', drivers MUST set the `SecondaryOk` wire protocol flag. If the read preference contains
-  a non-empty `tag_sets` parameter, `maxStalenessSeconds` is a positive integer, or the `hedge` parameter is non-empty,
-  drivers MUST use `$readPreference`; otherwise, drivers MUST NOT use `$readPreference`
+    a non-empty `tag_sets` parameter, `maxStalenessSeconds` is a positive integer, or the `hedge` parameter is
+    non-empty, drivers MUST use `$readPreference`; otherwise, drivers MUST NOT use `$readPreference`
 - For mode 'nearest', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
 
 The `$readPreference` query modifier sends the read preference as part of the query. The read preference fields
@@ -549,20 +550,20 @@ A valid `$readPreference` document for mongos or load balancer has the following
 
 1. The `mode` field MUST be present exactly once with the mode represented in camel case:
 
-   - 'primary'
-   - 'secondary'
-   - 'primaryPreferred'
-   - 'secondaryPreferred'
-   - 'nearest'
+    - 'primary'
+    - 'secondary'
+    - 'primaryPreferred'
+    - 'secondaryPreferred'
+    - 'nearest'
 
 2. If the `mode` field is "primary", the `tags`, `maxStalenessSeconds`, and `hedge` fields MUST be absent.
 
-   Otherwise, for other `mode` values, the `tags` field MUST either be absent or be present exactly once and have an
-   array value containing at least one document. It MUST contain only documents, no other type.
+    Otherwise, for other `mode` values, the `tags` field MUST either be absent or be present exactly once and have an
+    array value containing at least one document. It MUST contain only documents, no other type.
 
-   The `maxStalenessSeconds` field MUST be either be absent or be present exactly once with an integer value.
+    The `maxStalenessSeconds` field MUST be either be absent or be present exactly once with an integer value.
 
-   The `hedge` field MUST be either absent or be a document.
+    The `hedge` field MUST be either absent or be a document.
 
 Mongos or service receiving a query with `$readPreference` SHOULD validate the `mode`, `tags`, `maxStalenessSeconds`,
 and `hedge` fields according to rules 1 and 2 above, but SHOULD ignore unrecognized fields for forward-compatibility
@@ -575,83 +576,84 @@ preference by a driver depends on the command and how it is invoked:
 
 1. Write commands: `insert`, `update`, `delete`, `findAndModify`
 
-   Write commands are considered write operations and MUST follow the corresponding
-   [Rules for server selection](#rules-for-server-selection) for each topology type.
+    Write commands are considered write operations and MUST follow the corresponding
+    [Rules for server selection](#rules-for-server-selection) for each topology type.
 
 2. Generic command method: typically `command` or `runCommand`
 
-   The generic command method MUST act as a read operation for the purposes of server selection.
+    The generic command method MUST act as a read operation for the purposes of server selection.
 
-   The generic command method has a default read preference of `mode` 'primary'. The generic command method MUST ignore
-   any default read preference from client, database or collection configuration. The generic command method SHOULD
-   allow an optional read preference argument.
+    The generic command method has a default read preference of `mode` 'primary'. The generic command method MUST ignore
+    any default read preference from client, database or collection configuration. The generic command method SHOULD
+    allow an optional read preference argument.
 
-   If an explicit read preference argument is provided as part of the generic command method call, it MUST be used for
-   server selection, regardless of the name of the command. It is up to the user to use an appropriate read preference,
-   e.g. not calling `renameCollection` with a `mode` of 'secondary'.
+    If an explicit read preference argument is provided as part of the generic command method call, it MUST be used for
+    server selection, regardless of the name of the command. It is up to the user to use an appropriate read
+    preference, e.g. not calling `renameCollection` with a `mode` of 'secondary'.
 
-   N.B.: "used for server selection" does not supersede rules for server selection on "Standalone" topologies, which
-   ignore any requested read preference.
+    N.B.: "used for server selection" does not supersede rules for server selection on "Standalone" topologies, which
+    ignore any requested read preference.
 
 3. Command-specific helper: methods that wrap database commands, like `count`, `distinct`, `listCollections` or
-   `renameCollection`.
+    `renameCollection`.
 
-   Command-specific helpers MUST act as read operations for the purposes of server selection, with read preference rules
-   defined by the following three categories of commands:
+    Command-specific helpers MUST act as read operations for the purposes of server selection, with read preference rules
+    defined by the following three categories of commands:
 
-   - "must-use-primary": these commands have state-modifying effects and will only succeed on a primary. An example is
-     `renameCollection`.
+    - "must-use-primary": these commands have state-modifying effects and will only succeed on a primary. An example is
+        `renameCollection`.
 
-     These command-specific helpers MUST use a read preference `mode` of 'primary', MUST NOT take a read preference
-     argument and MUST ignore any default read preference from client, database or collection configuration. Languages
-     with dynamic argument lists MUST throw an error if a read preference is provided as an argument.
+        These command-specific helpers MUST use a read preference `mode` of 'primary', MUST NOT take a read preference
+        argument and MUST ignore any default read preference from client, database or collection configuration. Languages
+        with dynamic argument lists MUST throw an error if a read preference is provided as an argument.
 
-     Clients SHOULD rely on the server to return a "not writable primary" or other error if the command is
-     "must-use-primary". Clients MAY raise an exception before sending the command if the topology type is Single and
-     the server type is not "Standalone", "RSPrimary" or "Mongos", but the identification of the set of
-     'must-use-primary' commands is out of scope for this specification.
+        Clients SHOULD rely on the server to return a "not writable primary" or other error if the command is
+        "must-use-primary". Clients MAY raise an exception before sending the command if the topology type is Single and
+        the server type is not "Standalone", "RSPrimary" or "Mongos", but the identification of the set of
+        'must-use-primary' commands is out of scope for this specification.
 
-   - "should-use-primary": these commands are intended to be run on a primary, but would succeed -- albeit with possibly
-     stale data -- when run against a secondary. An example is `listCollections`.
+    - "should-use-primary": these commands are intended to be run on a primary, but would succeed -- albeit with possibly
+        stale data -- when run against a secondary. An example is `listCollections`.
 
-     These command-specific helpers MUST use a read preference `mode` of 'primary', MUST NOT take a read preference
-     argument and MUST ignore any default read preference from client, database or collection configuration. Languages
-     with dynamic argument lists MUST throw an error if a read preference is provided as an argument.
+        These command-specific helpers MUST use a read preference `mode` of 'primary', MUST NOT take a read preference
+        argument and MUST ignore any default read preference from client, database or collection configuration. Languages
+        with dynamic argument lists MUST throw an error if a read preference is provided as an argument.
 
-     Clients MUST NOT raise an exception if the topology type is Single.
+        Clients MUST NOT raise an exception if the topology type is Single.
 
-   - "may-use-secondary": these commands run against primaries or secondaries, according to users' read preferences.
-     They are sometimes called "query-like" commands.
+    - "may-use-secondary": these commands run against primaries or secondaries, according to users' read preferences.
+        They are sometimes called "query-like" commands.
 
-     The current list of "may-use-secondary" commands includes:
+        The current list of "may-use-secondary" commands includes:
 
-     - aggregate without a write stage (e.g. `$out`, `$merge`)
-     - collStats
-     - count
-     - dbStats
-     - distinct
-     - find
-     - geoNear
-     - geoSearch
-     - group
-     - mapReduce where the `out` option is `{ inline: 1 }`
-     - parallelCollectionScan
+        - aggregate without a write stage (e.g. `$out`, `$merge`)
+        - collStats
+        - count
+        - dbStats
+        - distinct
+        - find
+        - geoNear
+        - geoSearch
+        - group
+        - mapReduce where the `out` option is `{ inline: 1 }`
+        - parallelCollectionScan
 
-     Associated command-specific helpers SHOULD take a read preference argument and otherwise MUST use the default read
-     preference from client, database, or collection configuration.
+        Associated command-specific helpers SHOULD take a read preference argument and otherwise MUST use the default read
+        preference from client, database, or collection configuration.
 
-     For pre-5.0 servers, an aggregate command is "must-use-primary" if its pipeline contains a write stage (e.g.
-     `$out`, `$merge`); otherwise, it is "may-use-secondary". For 5.0+ servers, secondaries can execute an aggregate
-     command with a write stage and all aggregate commands are "may-use-secondary". This is discussed in more detail in
-     [Read preferences and server selection](../crud/crud.md#read-preferences-and-server-selection) in the CRUD spec.
+        For pre-5.0 servers, an aggregate command is "must-use-primary" if its pipeline contains a write stage (e.g.
+        `$out`, `$merge`); otherwise, it is "may-use-secondary". For 5.0+ servers, secondaries can execute an aggregate
+        command with a write stage and all aggregate commands are "may-use-secondary". This is discussed in more detail
+        in [Read preferences and server selection](../crud/crud.md#read-preferences-and-server-selection) in the CRUD
+        spec.
 
-     If a client provides a specific helper for inline mapReduce, then it is "may-use-secondary" and the *regular*
-     mapReduce helper is "must-use-primary". Otherwise, the mapReduce helper is "may-use-secondary" and it is the user's
-     responsibility to specify `{inline: 1}` when running mapReduce on a secondary.
+        If a client provides a specific helper for inline mapReduce, then it is "may-use-secondary" and the *regular*
+        mapReduce helper is "must-use-primary". Otherwise, the mapReduce helper is "may-use-secondary" and it is the
+        user's responsibility to specify `{inline: 1}` when running mapReduce on a secondary.
 
-   New command-specific helpers implemented in the future will be considered "must-use-primary", "should-use-primary" or
-   "may-use-secondary" according to the specifications for those future commands. Command helper specifications SHOULD
-   use those terms for clarity.
+    New command-specific helpers implemented in the future will be considered "must-use-primary", "should-use-primary" or
+    "may-use-secondary" according to the specifications for those future commands. Command helper specifications SHOULD
+    use those terms for clarity.
 
 ### Rules for server selection
 
@@ -697,26 +699,26 @@ for the rationale behind the way this value is used.
 
 For multi-threaded clients, the server selection algorithm is as follows:
 
-01. Record the server selection start time and log a
+1. Record the server selection start time and log a
     ["Server selection started" message](#server-selection-started-message).
-02. If the topology wire version is invalid, raise an error and log a
+2. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-03. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
+3. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
     topology is a sharded cluster, these servers should be selected only if there are no other suitable servers. The
     server selection algorithm MUST ignore the deprioritized servers if the topology is not a sharded cluster.
-04. Filter the suitable servers by calling the optional, application-provided server selector.
-05. If there are any suitable servers, filter them according to
+4. Filter the suitable servers by calling the optional, application-provided server selector.
+5. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
     and continue to the next step; otherwise, log a
     ["Waiting for suitable server to become available" message](#waiting-for-suitable-server-to-become-available-message)
     if one has not already been logged for this operation, and goto Step #9.
-06. Choose two servers at random from the set of suitable servers in the latency window. If there is only 1 server in
+6. Choose two servers at random from the set of suitable servers in the latency window. If there is only 1 server in
     the latency window, just select that server and goto Step #8.
-07. Of the two randomly chosen servers, select the one with the lower `operationCount`. If both servers have the same
+7. Of the two randomly chosen servers, select the one with the lower `operationCount`. If both servers have the same
     `operationCount`, select arbitrarily between the two of them.
-08. Increment the `operationCount` of the selected server and return it. Log a
+8. Increment the `operationCount` of the selected server and return it. Log a
     ["Server selection succeeded" message](#server-selection-succeeded-message). Do not go onto later steps.
-09. Request an immediate topology check, then block the server selection thread until the topology changes or until the
+9. Request an immediate topology check, then block the server selection thread until the topology changes or until the
     server selection timeout has elapsed
 10. If server selection has timed out, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message).
@@ -735,30 +737,30 @@ the selection timeout is exceeded.
 
 Therefore, for single-threaded clients, the server selection algorithm is as follows:
 
-01. Record the server selection start time and log a
+1. Record the server selection start time and log a
     ["Server selection started" message](#server-selection-started-message).
-02. Record the maximum time as start time plus the computed timeout
-03. If the topology has not been scanned in `heartbeatFrequencyMS` milliseconds, mark the topology stale
-04. If the topology is stale, proceed as follows:
+2. Record the maximum time as start time plus the computed timeout
+3. If the topology has not been scanned in `heartbeatFrequencyMS` milliseconds, mark the topology stale
+4. If the topology is stale, proceed as follows:
     - record the target scan time as last scan time plus `minHeartBeatFrequencyMS`
     - if [serverSelectionTryOnce](#serverselectiontryonce) is false and the target scan time would exceed the maximum
-      time, raise a [server selection error](#server-selection-errors) and log a
-      ["Server selection failed" message](#server-selection-failed-message).
+        time, raise a [server selection error](#server-selection-errors) and log a
+        ["Server selection failed" message](#server-selection-failed-message).
     - if the current time is less than the target scan time, sleep until the target scan time
     - do a blocking immediate topology check (which must also update the last scan time and mark the topology as no
-      longer stale)
-05. If the topology wire version is invalid, raise an error and log a
+        longer stale)
+5. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-06. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
+6. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
     topology is a sharded cluster, these servers should be selected only if there are no other suitable servers. The
     server selection algorithm MUST ignore the deprioritized servers if the topology is not a sharded cluster.
-07. Filter the suitable servers by calling the optional, application-provided server selector.
-08. If there are any suitable servers, filter them according to
+7. Filter the suitable servers by calling the optional, application-provided server selector.
+8. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
     and return one at random from the filtered servers, and log a
-    ["Server selection succeeded" message](#server-selection-succeeded-message).; otherwise, mark the topology stale and
-    continue to step #9.
-09. If [serverSelectionTryOnce](#serverselectiontryonce) is true and the last scan time is newer than the selection
+    ["Server selection succeeded" message](#server-selection-succeeded-message).; otherwise, mark the topology stale
+    and continue to step #9.
+9. If [serverSelectionTryOnce](#serverselectiontryonce) is true and the last scan time is newer than the selection
     start time, raise a [server selection error](#server-selection-errors) and log a
     ["Server selection failed" message](#server-selection-failed-message); otherwise, log a
     ["Waiting for suitable server to become available" message](#waiting-for-suitable-server-to-become-available-message)
@@ -794,14 +796,14 @@ suitable for reads if it is available. Depending on server type, the read prefer
 differently:
 
 - Type Mongos: the read preference is sent to the server using the rules for
-  [Passing read preference to mongos and load balancers](#passing-read-preference-to-mongos-and-load-balancers).
+    [Passing read preference to mongos and load balancers](#passing-read-preference-to-mongos-and-load-balancers).
 - Type Standalone: clients MUST NOT send the read preference to the server
 - For all other types, using OP_QUERY: clients MUST always set the `SecondaryOk` wire protocol flag on reads to ensure
-  that any server type can handle the request.
+    that any server type can handle the request.
 - For all other types, using OP_MSG: If no read preference is configured by the application, or if the application read
-  preference is Primary, then $readPreference MUST be set to `{ "mode": "primaryPreferred" }` to ensure that any server
-  type can handle the request. If the application read preference is set otherwise, $readPreference MUST be set
-  following [Document structure](#document-structure).
+    preference is Primary, then $readPreference MUST be set to `{ "mode": "primaryPreferred" }` to ensure that any
+    server type can handle the request. If the application read preference is set otherwise, $readPreference MUST be set
+    following [Document structure](#document-structure).
 
 The single server is always suitable for write operations if it is available.
 
@@ -1061,9 +1063,9 @@ In order to avoid generating redundant log messages, the driver MUST take care t
 operation. We only log the message once because the only values that can change over time are:
 
 - The remaining time: given the initial message's timestamp and the initial timestamp, the time remaining can always be
-  inferred from the original message.
+    inferred from the original message.
 - The topology description: rather than logging these changes on a per-operation basis, users should observe them with a
-  single set of messages for the entire client via SDAM log messages.
+    single set of messages for the entire client via SDAM log messages.
 
 This message MUST contain the following key-value pairs:
 
@@ -1274,7 +1276,7 @@ For example, when there are no members matching the ReadPreference:
 - "No server available for query with ReadPreference primary"
 - "No server available for query with ReadPreference secondary"
 - "No server available for query with ReadPreference " + mode + ", tag set list " + tag_sets + ", and
-  `maxStalenessSeconds` " + maxStalenessSeconds
+    `maxStalenessSeconds` " + maxStalenessSeconds
 
 Or, if authentication failed:
 
@@ -1473,23 +1475,23 @@ users about monotonicity.
 
 - Features removed:
 
-  > - Automatic pinning (see [What happened to pinning?](#what-happened-to-pinning))
-  > - Auto retry (replaced by the general server selection algorithm)
-  > - mongos "high availability" mode (effectively, mongos pinning)
+    > - Automatic pinning (see [What happened to pinning?](#what-happened-to-pinning))
+    > - Auto retry (replaced by the general server selection algorithm)
+    > - mongos "high availability" mode (effectively, mongos pinning)
 
 - Other features and behaviors have changed explicitly
 
-  > - Ignoring read preferences for topology type Single
-  > - Default read preference for the generic command method
+    > - Ignoring read preferences for topology type Single
+    > - Default read preference for the generic command method
 
 - Changes with grandfather clauses
 
-  > - Alternate names for `localThresholdMS`
-  > - Pinning for legacy request APIs
+    > - Alternate names for `localThresholdMS`
+    > - Pinning for legacy request APIs
 
 - Internal changes with little user-visibility
 
-  > - Clarifying calculation of average RTT
+    > - Clarifying calculation of average RTT
 
 ## Questions and Answers
 
@@ -1502,8 +1504,8 @@ rollback), but had the following surprising consequence:
 
 1. Thread / client reads with mode 'secondary' or 'secondaryPreferred', gets pinned to a secondary
 2. Thread / client reads with mode 'primaryPreferred', driver / mongos sees that the pinned member (a secondary) matches
-   the mode (which *allows* for a secondary) and reads from secondary, even though the primary is available and
-   preferable
+    the mode (which *allows* for a secondary) and reads from secondary, even though the primary is available and
+    preferable
 
 The old spec also had the swapped problem, reading from the primary with 'secondaryPreferred', except for mongos which
 was changed at the last minute before release with [SERVER-6565](https://jira.mongodb.org/browse/SERVER-6565).
@@ -1512,8 +1514,9 @@ This left application developers with two problems:
 
 1. 'primaryPreferred' and 'secondaryPreferred' acted surprisingly and unpredictably within requests
 2. There was no way to specify a common need: read from a secondary if possible with 'secondaryPreferred', then from
-   primary if possible with 'primaryPreferred', all within a request. Instead an application developer would have to do
-   the second read with 'primary', which would unpin the thread but risk unavailability if only secondaries were up.
+    primary if possible with 'primaryPreferred', all within a request. Instead an application developer would have to
+    do the second read with 'primary', which would unpin the thread but risk unavailability if only secondaries were
+    up.
 
 Additionally, mongos 2.4 introduced the releaseConnectionsAfterResponse option (RCAR), mongos 2.6 made it the default
 and mongos 2.8 will remove the ability to turn it off. This means that pinning to a mongos offers no guarantee that
@@ -1553,7 +1556,7 @@ sending the operation, such as:
 
 > - the server could have shutdown the socket (e.g. a primary stepping down),
 > - a connection pool could be empty, requiring new connections; those connections could fail to connect or could fail
->   the server handshake
+>     the server handshake
 
 Once an operation is sent over the wire, several additional error conditions could occur, such as:
 
@@ -1565,11 +1568,11 @@ This specification does not require nor prohibit drivers from attempting automat
 might be considered reasonable to do so, such as:
 
 > - repeating server selection if, after selection, a socket is determined to be unsuitable before a message is sent on
->   it
+>     it
 > - for a read operation, after a socket error, selecting a new server meeting the read preference and resending the
->   query
+>     query
 > - for a write operation, after a "not writable primary" error, selecting a new server (to locate the primary) and
->   resending the write operation
+>     resending the write operation
 
 Driver-common rules for retrying operations (and configuring such retries) could be the topic of a different, future
 specification.
@@ -1602,16 +1605,16 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) specification
 - [Driver Authentication](../auth/auth.md) specification
 - [Connection Monitoring and Pooling](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)
-  specification
+    specification
 
 ## Changelog
 
 - 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
 - 2015-08-10: Updated single-threaded selection logic to ensure a scan always happens at least once under
-  serverSelectionTryOnce if selection fails. Removed the general selection algorithm and put full algorithms for each of
-  the single- and multi-threaded sections. Added a requirement that single-threaded drivers document selection time
-  expectations.
+    serverSelectionTryOnce if selection fails. Removed the general selection algorithm and put full algorithms for each
+    of the single- and multi-threaded sections. Added a requirement that single-threaded drivers document selection time
+    expectations.
 
 - 2016-07-21: Updated for Max Staleness support.
 
@@ -1620,26 +1623,26 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 
 - 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS to heartbeatFrequencyMS +
-  idleWritePeriodMS (with proper conversions of course).
+    idleWritePeriodMS (with proper conversions of course).
 
 - 2016-11-01: Update formula for secondary staleness estimate with the equivalent, and clearer, expression of this
-  formula from the Max Staleness Spec
+    formula from the Max Staleness Spec
 
 - 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future, require maxStalenessSeconds to
-  be at least 90.
+    be at least 90.
 
 - 2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers must retry selection after checking an
-  idle socket and discovering it is broken.
+    idle socket and discovering it is broken.
 
 - 2017-11-10: Added application-configurated server selector.
 
 - 2017-11-12: Specify read preferences for OP_MSG with direct connection, and delete obsolete comment direct connections
-  to secondaries getting "not writable primary" errors by design.
+    to secondaries getting "not writable primary" errors by design.
 
 - 2018-01-22: Clarify that $query wrapping is only for OP_QUERY
 
 - 2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation Pipeline Operator" spec and warns if read
-  preference is not primary.
+    preference is not primary.
 
 - 2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand selection rules.
 
@@ -1664,7 +1667,7 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - 2021-09-03: Clarify that wire version check only applies to available servers.
 
 - 2021-09-28: Note that 5.0+ secondaries support aggregate with write stages (e.g. `$out` and `$merge`). Clarify setting
-  `SecondaryOk` wire protocol flag or `$readPreference` global command argument for replica set topology.
+    `SecondaryOk` wire protocol flag or `$readPreference` global command argument for replica set topology.
 
 - 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 

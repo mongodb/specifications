@@ -54,15 +54,15 @@ projects. If using a public Evergreen project, xtrace MUST be disabled when usin
 accidental leaks.
 
 - `${SERVERLESS_DRIVERS_GROUP}`: Contains the ID of the Atlas group dedicated to drivers testing of Atlas Serverless.
-  The backing multi-tenant MongoDB (MTM) MUST have the `SINGLE_TARGET_SERVERLESS_DEPLOYMENT` feature flag enabled
-  ([CLOUDP-117288](https://jira.mongodb.org/browse/CLOUDP-117288)).
+    The backing multi-tenant MongoDB (MTM) MUST have the `SINGLE_TARGET_SERVERLESS_DEPLOYMENT` feature flag enabled
+    ([CLOUDP-117288](https://jira.mongodb.org/browse/CLOUDP-117288)).
 - `${SERVERLESS_API_PUBLIC_KEY}`: The public key required to use the Atlas API for managing Atlas Serverless instances.
 - `${SERVERLESS_API_PRIVATE_KEY}`: (private) The private key required to use the Atlas API for managing Atlas Serverless
-  instances.
+    instances.
 - `${SERVERLESS_ATLAS_USER}`: (private) The SCRAM username used to authenticate to any Atlas Serverless instance created
-  in the drivers testing Atlas group.
+    in the drivers testing Atlas group.
 - `${SERVERLESS_ATLAS_PASSWORD}`: (private) The SCRAM password used to authenticate to any Atlas Serverless instance
-  created in the drivers testing Atlas group.
+    created in the drivers testing Atlas group.
 
 ## Existing Spec Tests
 
@@ -78,14 +78,14 @@ testing suite:
 - Retryable Writes
 - Sessions
 - Transactions (excluding convenient API)
-  - Note: the killAllSessions command is not supported on Serverless, so the transactions tests may hang if an
-    individual test leaves a transaction open when it finishes
-    ([CLOUDP-84298](https://jira.mongodb.org/browse/CLOUDP-84298)).
+    - Note: the killAllSessions command is not supported on Serverless, so the transactions tests may hang if an
+        individual test leaves a transaction open when it finishes
+        ([CLOUDP-84298](https://jira.mongodb.org/browse/CLOUDP-84298)).
 - Versioned/Stable API
 - Client Side Encryption
-  - Drivers MUST test with a version of the `crypt_shared` shared library that matches the MongoDB Server version
-    running in Serverless. See
-    [Using crypt_shared](../client-side-encryption/client-side-encryption.md#enabling-crypt_shared).
+    - Drivers MUST test with a version of the `crypt_shared` shared library that matches the MongoDB Server version
+        running in Serverless. See
+        [Using crypt_shared](../client-side-encryption/client-side-encryption.md#enabling-crypt_shared).
 
 Note that the legacy JSON/YAML test formats for these specifications were updated to include a new `runOnRequirement`
 specifically for Atlas Serverless testing. To ensure these requirements are enforced properly, the runner MUST be

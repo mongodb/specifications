@@ -235,7 +235,7 @@ defines the collection on which the operation should be performed. Drivers SHOUL
 is most idiomatic for its language. For example, drivers may:
 
 - Include a required `namespace` field on each `WriteModel` variant and accept a list of `WriteModel` objects for the
-  `models` parameter.
+    `models` parameter.
 - Accept a list of `(Namespace, WriteModel)` tuples for `models`.
 - Define the following pair class:
 
@@ -438,8 +438,9 @@ verbose results without inspecting the value provided for `verboseResults` in `B
 this in a number of ways, including:
 
 - Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document what will happen if a user
-  attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is false.
-  Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is false.
+    attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is
+    false. Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is
+    false.
 - Embed the verbose results in an optional type:
 
 ```typescript
@@ -473,8 +474,9 @@ class VerboseResults {
 ```
 
 - Define separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `SummaryBulkWriteResult` MUST only
-  contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
-  fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult` otherwise.
+    contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
+    fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult`
+    otherwise.
 
 #### Individual results
 
@@ -642,7 +644,7 @@ if a limit is exceeded. However, when an unacknowledged write concern is used, d
 following limits is exceeded:
 
 - The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the `document` field of an
-  `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
+    `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
 - The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.
 - The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.
 
@@ -756,9 +758,9 @@ Drivers MUST record the summary count fields in a `BulkWriteResult` to be return
 `BulkWriteException` if the response indicates that at least one write was successful:
 
 - For ordered bulk writes, at least one write was successful if `nErrors` is 0 or if the `idx` value for the write error
-  returned in the results cursor is greater than 0.
+    returned in the results cursor is greater than 0.
 - For unordered bulk writes, at least one write was successful if `nErrors` is less than the number of operations that
-  were included in the `bulkWrite` command.
+    were included in the `bulkWrite` command.
 
 Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if it cannot be determined that at least one
 write was successfully performed.

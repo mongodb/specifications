@@ -434,7 +434,7 @@ with the requirements set forth here. A non-exhaustive list of acceptable deviat
 - The name of `DriverInfoOptions` is non-normative, implementers may feel free to name this whatever they like.
 - The choice of delimiter is not fixed, `|` is the recommended value, but some drivers currently use `/`.
 - For cases where we own a particular stack of drivers (more than two), it may be preferable to accept a *list* of
-  strings for each field.
+    strings for each field.
 
 ## Limitations
 
@@ -465,13 +465,13 @@ the following sets of environment variables:
 | `AWS_REGION`                      | `us-east-2`        |
 | `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
 
-2. Valid Azure
+1. Valid Azure
 
 | Environment Variable       | Value  |
 | -------------------------- | ------ |
 | `FUNCTIONS_WORKER_RUNTIME` | `node` |
 
-3. Valid GCP
+1. Valid GCP
 
 | Environment Variable   | Value         |
 | ---------------------- | ------------- |
@@ -480,42 +480,42 @@ the following sets of environment variables:
 | `FUNCTION_TIMEOUT_SEC` | `60`          |
 | `FUNCTION_REGION`      | `us-central1` |
 
-4. Valid Vercel
+1. Valid Vercel
 
 | Environment Variable | Value  |
 | -------------------- | ------ |
 | `VERCEL`             | `1`    |
 | `VERCEL_REGION`      | `cdg1` |
 
-5. Invalid - multiple providers
+1. Invalid - multiple providers
 
 | Environment Variable       | Value              |
 | -------------------------- | ------------------ |
 | `AWS_EXECUTION_ENV`        | `AWS_Lambda_java8` |
 | `FUNCTIONS_WORKER_RUNTIME` | `node`             |
 
-6. Invalid - long string
+1. Invalid - long string
 
 | Environment Variable | Value                  |
 | -------------------- | ---------------------- |
 | `AWS_EXECUTION_ENV`  | `AWS_Lambda_java8`     |
 | `AWS_REGION`         | `a` repeated 512 times |
 
-7. Invalid - wrong types
+1. Invalid - wrong types
 
 | Environment Variable              | Value              |
 | --------------------------------- | ------------------ |
 | `AWS_EXECUTION_ENV`               | `AWS_Lambda_java8` |
 | `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `big`              |
 
-8. Invalid - `AWS_EXECUTION_ENV` does not start with `"AWS_Lambda_"`
+1. Invalid - `AWS_EXECUTION_ENV` does not start with `"AWS_Lambda_"`
 
 | Environment Variable | Value |
 | -------------------- | ----- |
 | `AWS_EXECUTION_ENV`  | `EC2` |
 
-9. Valid container and FaaS provider. This test MUST verify that both the container metadata and the AWS Lambda metadata
-   is present in `client.env`.
+1. Valid container and FaaS provider. This test MUST verify that both the container metadata and the AWS Lambda metadata
+    is present in `client.env`.
 
 | Environment Variable              | Value              |
 | --------------------------------- | ------------------ |
@@ -562,47 +562,47 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 - The 128 bytes application.name limit, does that include BSON overhead
 
-  - No, just the string itself
+    - No, just the string itself
 
 - The 512 bytes limit, does that include BSON overhead?
 
-  - Yes
+    - Yes
 
 - The 512 bytes limit, does it apply to the full initial handshake document or just the `client` subdocument
 
-  - Just the subdocument
+    - Just the subdocument
 
 - Should I really try to fill the 512 bytes with data?
 
-  - Not really. The server does not attempt to normalize or compress this data in anyway, so it will hold it in memory
-    as-is per connection. 512 bytes for 20,000 connections is ~ 10mb of memory the server will need.
+    - Not really. The server does not attempt to normalize or compress this data in anyway, so it will hold it in memory
+        as-is per connection. 512 bytes for 20,000 connections is ~ 10mb of memory the server will need.
 
 - What happens if I pass new arguments in the legacy hello command to previous MongoDB versions?
 
-  - Nothing. Arguments passed to the legacy hello command to prior versions of MongoDB are not treated in any special
-    way and have no effect one way or another.
+    - Nothing. Arguments passed to the legacy hello command to prior versions of MongoDB are not treated in any special
+        way and have no effect one way or another.
 
 - Are there wire version bumps or anything accompanying this specification?
 
-  - No
+    - No
 
 - Is establishing the handshake required for connecting to MongoDB 3.4?
 
-  - No, it only augments the connection. MongoDB will not reject connections without it
+    - No, it only augments the connection. MongoDB will not reject connections without it
 
 - Does this affect SDAM implementations?
 
-  - Possibly. There are a couple of gotchas. If the application.name is not in the URI...
-    - The SDAM monitoring cannot be launched until the user has had the ability to set the application name because the
-      application name has to be sent in the initial handshake. This means that the connection pool cannot be
-      established until the first user initiated command, or else some connections will have the application name while
-      other won't
-    - The initial handshake must be called on all sockets, including administrative background sockets to MongoDB
+    - Possibly. There are a couple of gotchas. If the application.name is not in the URI...
+        - The SDAM monitoring cannot be launched until the user has had the ability to set the application name because the
+            application name has to be sent in the initial handshake. This means that the connection pool cannot be
+            established until the first user initiated command, or else some connections will have the application name
+            while other won't
+        - The initial handshake must be called on all sockets, including administrative background sockets to MongoDB
 
 - My language doesn't have `uname`, but does instead provide its own variation of these values, is that OK?
 
-  - Absolutely. As long as the value is identifiable it is fine. The exact method and values are undefined by this
-    specification
+    - Absolutely. As long as the value is identifiable it is fine. The exact method and values are undefined by this
+        specification
 
 ## Changelog
 

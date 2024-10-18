@@ -19,22 +19,22 @@ any driver that implements the CMAP specification. This test requires MongoDB 4.
 the failpoint.
 
 1. Create a client with maxPoolSize=1 and retryReads=true. If testing against a sharded deployment, be sure to connect
-   to only a single mongos.
+    to only a single mongos.
 
 2. Enable the following failpoint:
 
-   ```
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 1 },
-       data: {
-           failCommands: ["find"],
-           errorCode: 91,
-           blockConnection: true,
-           blockTimeMS: 1000
-       }
-   }
-   ```
+    ```
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorCode: 91,
+            blockConnection: true,
+            blockTimeMS: 1000
+        }
+    }
+    ```
 
 3. Start two threads and attempt to perform a `findOne` simultaneously on both.
 
@@ -65,23 +65,23 @@ This test MUST be executed against a sharded cluster that has at least two mongo
 and has enabled the `configureFailPoint` command (MongoDB 4.2+).
 
 1. Create two clients `s0` and `s1` that each connect to a single mongos from the sharded cluster. They must not connect
-   to the same mongos.
+    to the same mongos.
 
 2. Configure the following fail point for both `s0` and `s1`:
 
-   ```
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 1 },
-       data: {
-           failCommands: ["find"],
-           errorCode: 6
-       }
-   }
-   ```
+    ```
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorCode: 6
+        }
+    }
+    ```
 
 3. Create a client `client` with `retryReads=true` that connects to the cluster using the same two mongoses as `s0` and
-   `s1`.
+    `s1`.
 
 4. Enable failed command event monitoring for `client`.
 
@@ -100,26 +100,26 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 
 2. Configure the following fail point for `s0`:
 
-   ```
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 1 },
-       data: {
-           failCommands: ["find"],
-           errorCode: 6
-       }
-   }
-   ```
+    ```
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorCode: 6
+        }
+    }
+    ```
 
 3. Create a client `client` with `directConnection=false` (when not set by default) and `retryReads=true` that connects
-   to the cluster using the same single mongos as `s0`.
+    to the cluster using the same single mongos as `s0`.
 
 4. Enable succeeded and failed command event monitoring for `client`.
 
 5. Execute a `find` command with `client`. Assert that the command succeeded.
 
 6. Assert that exactly one failed command event and one succeeded command event occurred. Assert that both events
-   occurred on the same mongos.
+    occurred on the same mongos.
 
 7. Disable the fail point on `s0`.
 
@@ -130,7 +130,7 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 - 2024-03-06: Convert legacy retryable reads tests to unified format.
 
 - 2024-02-21: Update mongos redirection prose tests to workaround SDAM behavior preventing execution of deprioritization
-  code paths.
+    code paths.
 
 - 2023-08-26: Add prose tests for retrying in a sharded cluster.
 
@@ -141,10 +141,10 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 - 2021-08-27: Clarify behavior of `useMultipleMongoses` for `LoadBalanced` topologies.
 
 - 2019-03-19: Add top-level `runOn` field to denote server version and/or topology requirements requirements for the
-  test file. Removes the `minServerVersion` and `topology` top-level fields, which are now expressed within `runOn`
-  elements.
+    test file. Removes the `minServerVersion` and `topology` top-level fields, which are now expressed within `runOn`
+    elements.
 
-  Add test-level `useMultipleMongoses` field.
+    Add test-level `useMultipleMongoses` field.
 
 - 2020-09-16: Suggest lowering heartbeatFrequencyMS in addition to minHeartbeatFrequencyMS.
 

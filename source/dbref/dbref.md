@@ -27,14 +27,14 @@ especially relevant for the [Test Plan](#test-plan).
 A DBRef is an embedded document with the following fields:
 
 - `$ref`: required string field. Contains the name of the collection where the referenced document resides. This MUST be
-  the first field in the DBRef.
+    the first field in the DBRef.
 - `$id`: required field. Contains the value of the `_id` field of the referenced document. This MUST be the second field
-  in the DBRef.
+    in the DBRef.
 - `$db`: optional string field. Contains the name of the database where the referenced document resides. If specified,
-  this MUST be the third field in the DBRef. If omitted, the referenced document is assumed to reside in the same
-  database as the DBRef.
+    this MUST be the third field in the DBRef. If omitted, the referenced document is assumed to reside in the same
+    database as the DBRef.
 - Extra, optional fields may follow after `$id` or `$db` (if specified). There are no inherent restrictions on extra
-  field names; however, older server versions may impose their own restrictions (e.g. no dots or dollars).
+    field names; however, older server versions may impose their own restrictions (e.g. no dots or dollars).
 
 DBRefs have no relation to the deprecated DBPointer BSON type (i.e. type 0x0C).
 
@@ -90,11 +90,12 @@ Drivers MAY provide an API for constructing a DBRef model directly from its cons
 
 - Drivers MUST solicit a string value for `$ref`.
 - Drivers MUST solicit an arbitrary value for `$id`. Drivers SHOULD NOT enforce any restrictions on this value; however,
-  this may be necessary if the driver is unable to differentiate between certain BSON types (e.g. `null`, `undefined`)
-  and the parameter being unspecified.
+    this may be necessary if the driver is unable to differentiate between certain BSON types (e.g. `null`, `undefined`)
+    and the parameter being unspecified.
 - Drivers SHOULD solicit an optional string value for `$db`.
 - Drivers MUST require `$ref` and `$db` (if specified) to be strings but MUST NOT enforce any
-  [naming restrictions](https://www.mongodb.com/docs/manual/reference/limits/#naming-restrictions) on the string values.
+    [naming restrictions](https://www.mongodb.com/docs/manual/reference/limits/#naming-restrictions) on the string
+    values.
 - Drivers MAY solicit extra, optional fields.
 
 #### Decoding a BSON document to a DBRef model
@@ -110,11 +111,12 @@ When decoding a BSON document to a DBRef model:
 
 - Drivers MUST require `$ref` and `$id` to be present.
 - Drivers MUST require `$ref` and `$db` (if present) to be strings but MUST NOT enforce any
-  [naming restrictions](https://www.mongodb.com/docs/manual/reference/limits/#naming-restrictions) on the string values.
+    [naming restrictions](https://www.mongodb.com/docs/manual/reference/limits/#naming-restrictions) on the string
+    values.
 - Drivers MUST accept any BSON type for `$id` and MUST NOT enforce any restrictions on its value.
 - Drivers MUST preserve extra, optional fields (beyond `$ref`, `$id`, and `$db`) and MUST provide some way to access
-  those fields via the DBRef model. For example, an accessor method that returns the original BSON document (including
-  `$ref`, etc.) would fulfill this requirement.
+    those fields via the DBRef model. For example, an accessor method that returns the original BSON document (including
+    `$ref`, etc.) would fulfill this requirement.
 
 If a BSON document cannot be implicitly decoded to a DBRef model, it MUST be left as-is (like any other embedded
 document). If a BSON document cannot be explicitly decoded to a DBRef model, the driver MUST raise an error.
@@ -137,9 +139,9 @@ When encoding a DBRef model to BSON document:
 
 - Drivers MUST encode all fields in the order defined in [DBRef Structure](#dbref-structure).
 - Drivers MUST encode `$ref` and `$id`. If `$db` was specified, it MUST be encoded after `$id`. If any extra, optional
-  fields were specified, they MUST be encoded after `$id` or `$db`.
+    fields were specified, they MUST be encoded after `$id` or `$db`.
 - If the DBRef includes any extra, optional fields after `$id` or `$db`, drivers SHOULD attempt to preserve the original
-  order of those fields relative to one another.
+    order of those fields relative to one another.
 
 ## Test Plan
 
@@ -158,57 +160,57 @@ for both explicit and implicit decoding code paths as needed.
 
 1. Valid documents MUST be decoded to a DBRef model. For each of the following:
 
-   1. `{ "$ref": "coll0", "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
-   2. `{ "$ref": "coll0", "$id": 1 }`
-   3. `{ "$ref": "coll0", "$id": null }`
-   4. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
+    1. `{ "$ref": "coll0", "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
+    2. `{ "$ref": "coll0", "$id": 1 }`
+    3. `{ "$ref": "coll0", "$id": null }`
+    4. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
 
-   Assert that each document is successfully decoded to a DBRef model. Assert that the `$ref`, `$id`, and `$db` (if
-   applicable) fields have their expected value.
+    Assert that each document is successfully decoded to a DBRef model. Assert that the `$ref`, `$id`, and `$db` (if
+    applicable) fields have their expected value.
 
 2. Valid documents with extra fields MUST be decoded to a DBRef model and the model MUST provide some way to access
-   those extra fields. For each of the following:
+    those extra fields. For each of the following:
 
-   1. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": "bar" }`
-   2. `{ "$ref": "coll0", "$id": 1, "foo": true, "bar": false }`
-   3. `{ "$ref": "coll0", "$id": 1, "meta": { "foo": 1, "bar": 2 } }`
-   4. `{ "$ref": "coll0", "$id": 1, "$foo": "bar" }`
-   5. `{ "$ref": "coll0", "$id": 1, "foo.bar": 0 }`
+    1. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": "bar" }`
+    2. `{ "$ref": "coll0", "$id": 1, "foo": true, "bar": false }`
+    3. `{ "$ref": "coll0", "$id": 1, "meta": { "foo": 1, "bar": 2 } }`
+    4. `{ "$ref": "coll0", "$id": 1, "$foo": "bar" }`
+    5. `{ "$ref": "coll0", "$id": 1, "foo.bar": 0 }`
 
-   Assert that each document is successfully decoded to a DBRef model. Assert that the `$ref`, `$id`, and `$db` (if
-   applicable) fields have their expected value. Assert that it is possible to access all extra fields and that those
-   fields have their expected value.
+    Assert that each document is successfully decoded to a DBRef model. Assert that the `$ref`, `$id`, and `$db` (if
+    applicable) fields have their expected value. Assert that it is possible to access all extra fields and that those
+    fields have their expected value.
 
 3. Documents with out of order fields that are otherwise valid MUST be decoded to a DBRef model. For each of the
-   following:
+    following:
 
-   1. `{ "$id": 1, "$ref": "coll0" }`
-   2. `{ "$db": "db0", "$ref": "coll0", "$id": 1 }`
-   3. `{ "foo": 1, "$id": 1, "$ref": "coll0" }`
-   4. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0" }`
-   5. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0", "bar": 1 }`
+    1. `{ "$id": 1, "$ref": "coll0" }`
+    2. `{ "$db": "db0", "$ref": "coll0", "$id": 1 }`
+    3. `{ "foo": 1, "$id": 1, "$ref": "coll0" }`
+    4. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0" }`
+    5. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0", "bar": 1 }`
 
-   Assert that each document is successfully decoded to a DBRef model. Assert that the `$ref`, `$id`, `$db` (if
-   applicable), and any extra fields (if applicable) have their expected value.
+    Assert that each document is successfully decoded to a DBRef model. Assert that the `$ref`, `$id`, `$db` (if
+    applicable), and any extra fields (if applicable) have their expected value.
 
 4. Documents missing required fields MUST NOT be decoded to a DBRef model. For each of the following:
 
-   1. `{ "$ref": "coll0" }`
-   2. `{ "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
-   3. `{ "$db": "db0" }`
+    1. `{ "$ref": "coll0" }`
+    2. `{ "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
+    3. `{ "$db": "db0" }`
 
-   Assert that each document is not decoded to a DBRef model. In the context of implicit decoding, the document MUST be
-   decoded like any other embedded document. In the context of explicit decoding, the DBRef decoding method MUST raise
-   an error.
+    Assert that each document is not decoded to a DBRef model. In the context of implicit decoding, the document MUST be
+    decoded like any other embedded document. In the context of explicit decoding, the DBRef decoding method MUST raise
+    an error.
 
 5. Documents with invalid types for `$ref` or `$db` MUST NOT be decoded to a DBRef model. For each of the following:
 
-   1. `{ "$ref": true, "$id": 1 }`
-   2. `{ "$ref": "coll0", "$id": 1, "$db": 1 }`
+    1. `{ "$ref": true, "$id": 1 }`
+    2. `{ "$ref": "coll0", "$id": 1, "$db": 1 }`
 
-   Assert that each document is not decoded to a DBRef model. In the context of implicit decoding, the document MUST be
-   decoded like any other embedded document. In the context of explicit decoding, the DBRef decoding method MUST raise
-   an error.
+    Assert that each document is not decoded to a DBRef model. In the context of implicit decoding, the document MUST be
+    decoded like any other embedded document. In the context of explicit decoding, the DBRef decoding method MUST raise
+    an error.
 
 ### Encoding
 
@@ -222,42 +224,42 @@ optional fields and the driver also does not support explicit/implicit decoding)
 
 1. Encoding DBRefs with basic fields. For each of the following:
 
-   1. `{ "$ref": "coll0", "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
-   2. `{ "$ref": "coll0", "$id": 1 }`
-   3. `{ "$ref": "coll0", "$id": null }`
-   4. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
+    1. `{ "$ref": "coll0", "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
+    2. `{ "$ref": "coll0", "$id": 1 }`
+    3. `{ "$ref": "coll0", "$id": null }`
+    4. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
 
-   Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, and `$db` (if
-   applicable) fields appear in the correct order and have their expected values.
+    Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, and `$db` (if
+    applicable) fields appear in the correct order and have their expected values.
 
 2. Encoding DBRefs with extra, optional fields. For each of the following:
 
-   1. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": "bar" }`
-   2. `{ "$ref": "coll0", "$id": 1, "foo": true, "bar": false }`
-   3. `{ "$ref": "coll0", "$id": 1, "meta": { "foo": 1, "bar": 2 } }`
-   4. `{ "$ref": "coll0", "$id": 1, "$foo": "bar" }`
-   5. `{ "$ref": "coll0", "$id": 1, "foo.bar": 0 }`
+    1. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": "bar" }`
+    2. `{ "$ref": "coll0", "$id": 1, "foo": true, "bar": false }`
+    3. `{ "$ref": "coll0", "$id": 1, "meta": { "foo": 1, "bar": 2 } }`
+    4. `{ "$ref": "coll0", "$id": 1, "$foo": "bar" }`
+    5. `{ "$ref": "coll0", "$id": 1, "foo.bar": 0 }`
 
-   Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, `$db` (if
-   applicable), and any extra fields appear in the correct order and have their expected values.
+    Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, `$db` (if
+    applicable), and any extra fields appear in the correct order and have their expected values.
 
 3. Encoding DBRefs re-orders any out of order fields during decoding. This test MUST NOT use a constructor that solicits
-   fields individually. For each of the following:
+    fields individually. For each of the following:
 
-   1. `{ "$id": 1, "$ref": "coll0" }`
-   2. `{ "$db": "db0", "$ref": "coll0", "$id": 1 }`
-   3. `{ "foo": 1, "$id": 1, "$ref": "coll0" }`
-   4. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0" }`
-   5. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0", "bar": 1 }`
+    1. `{ "$id": 1, "$ref": "coll0" }`
+    2. `{ "$db": "db0", "$ref": "coll0", "$id": 1 }`
+    3. `{ "foo": 1, "$id": 1, "$ref": "coll0" }`
+    4. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0" }`
+    5. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0", "bar": 1 }`
 
-   Assert that each document is successfully decoded to a DBRef model and then successfully encoded back to a BSON
-   document. Assert that the order of fields in each encoded BSON document matches the following, respectively:
+    Assert that each document is successfully decoded to a DBRef model and then successfully encoded back to a BSON
+    document. Assert that the order of fields in each encoded BSON document matches the following, respectively:
 
-   1. `{ "$ref": "coll0", "$id": 1 }`
-   2. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
-   3. `{ "$ref": "coll0", "$id": 1, "foo": 1 }`
-   4. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1}`
-   5. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1, "bar": 1 }`
+    6. `{ "$ref": "coll0", "$id": 1 }`
+    7. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
+    8. `{ "$ref": "coll0", "$id": 1, "foo": 1 }`
+    9. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1}`
+    10. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1, "bar": 1 }`
 
 ## Design Rationale
 

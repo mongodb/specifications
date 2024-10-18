@@ -67,4 +67,4 @@ configuration and execute a ping command. Repeat this test using SCRAM-SHA-256.
 - 2022-10-05: Add spec front matter
 
 - 2020-07-15: Link to CRUD test runner implementation and note that the collection under test must not be dropped before
-  each test.
+    each test.

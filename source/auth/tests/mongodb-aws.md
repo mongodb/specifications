@@ -7,7 +7,7 @@ Drivers MUST test the following scenarios:
 3. `ECS Credentials`: Auth from an ECS instance via temporary credentials assigned to the task
 4. `Assume Role`: Auth via temporary credentials obtained from an STS AssumeRole request
 5. `Assume Role with Web Identity`: Auth via temporary credentials obtained from an STS AssumeRoleWithWebIdentity
-   request
+    request
 6. `AWS Lambda`: Auth via environment variables `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`.
 7. Caching of AWS credentials fetched by the driver.
 
@@ -132,15 +132,15 @@ Drivers MUST ensure that they are testing the ability to cache credentials. Driv
 override the cached credentials to verify usage. To determine whether to run the cache tests, the driver can check for
 the absence of the AWS_ACCESS_KEY_ID environment variable and of credentials in the URI.
 
-01. Clear the cache.
-02. Create a new client.
-03. Ensure that a `find` operation adds credentials to the cache.
-04. Override the cached credentials with an "Expiration" that is within one minute of the current UTC time.
-05. Create a new client.
-06. Ensure that a `find` operation updates the credentials in the cache.
-07. Poison the cache with an invalid access key id.
-08. Create a new client.
-09. Ensure that a `find` operation results in an error.
+1. Clear the cache.
+2. Create a new client.
+3. Ensure that a `find` operation adds credentials to the cache.
+4. Override the cached credentials with an "Expiration" that is within one minute of the current UTC time.
+5. Create a new client.
+6. Ensure that a `find` operation updates the credentials in the cache.
+7. Poison the cache with an invalid access key id.
+8. Create a new client.
+9. Ensure that a `find` operation results in an error.
 10. Ensure that the cache has been cleared.
 11. Ensure that a subsequent `find` operation succeeds.
 12. Ensure that the cache has been set.
@@ -149,15 +149,15 @@ If the drivers's language supports dynamically setting environment variables, ad
 integration tests are run in parallel for the driver, then these tests must be run as unit tests interacting with the
 auth provider directly instead of using a client.
 
-01. Clear the cache.
-02. Create a new client.
-03. Ensure that a `find` operation adds credentials to the cache.
-04. Set the AWS environment variables based on the cached credentials.
-05. Clear the cache.
-06. Create a new client.
-07. Ensure that a `find` operation succeeds and does not add credentials to the cache.
-08. Set the AWS environment variables to invalid values.
-09. Create a new client.
+1. Clear the cache.
+2. Create a new client.
+3. Ensure that a `find` operation adds credentials to the cache.
+4. Set the AWS environment variables based on the cached credentials.
+5. Clear the cache.
+6. Create a new client.
+7. Ensure that a `find` operation succeeds and does not add credentials to the cache.
+8. Set the AWS environment variables to invalid values.
+9. Create a new client.
 10. Ensure that a `find` operation results in an error.
 11. Clear the AWS environment variables.
 12. Clear the cache.
