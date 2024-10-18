@@ -4,6 +4,7 @@ nav:
   - 'index.md'
 markdown_extensions:
   - admonition
+  - pymdownx.superfences
   - toc:
       permalink: 
 plugins:
