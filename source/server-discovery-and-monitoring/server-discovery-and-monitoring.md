@@ -198,19 +198,20 @@ The client's representation of everything it knows about the deployment's topolo
 
 Fields:
 
-- type: a [TopologyType](#topologytype) enum value. See [initial TopologyType](#initial-topologytype).
-- setName: the replica set name. Default null.
-- maxElectionId: an ObjectId or null. The largest electionId ever reported by a primary. Default null. Part of the
+- `type`: a [TopologyType](#topologytype) enum value. See [initial TopologyType](#initial-topologytype).
+- `setName`: the replica set name. Default null.
+- `maxElectionId`: an ObjectId or null. The largest electionId ever reported by a primary. Default null. Part of the
     (`electionId`, `setVersion`) tuple.
-- maxSetVersion: an integer or null. The largest setVersion ever reported by a primary. It may not monotonically
+- `maxSetVersion`: an integer or null. The largest setVersion ever reported by a primary. It may not monotonically
     increase, as electionId takes precedence in ordering Default null. Part of the (`electionId`, `setVersion`) tuple.
-- servers: a set of ServerDescription instances. Default contains one server: "localhost:27017", ServerType Unknown.
-- stale: a boolean for single-threaded clients, whether the topology must be re-scanned. (Not related to
+- `servers`: a set of ServerDescription instances. Default contains one server: "localhost:27017", ServerType Unknown.
+- `stale`: a boolean for single-threaded clients, whether the topology must be re-scanned. (Not related to
     maxStalenessSeconds, nor to stale primaries.)
-- compatible: a boolean. False if any server's wire protocol version range is incompatible with the client's. Default
+- `compatible`: a boolean. False if any server's wire protocol version range is incompatible with the client's. Default
     true.
-- compatibilityError: a string. The error message if "compatible" is false, otherwise null.
-- logicalSessionTimeoutMinutes: integer or null. Default null. See [logical session timeout](#logical-session-timeout).
+- `compatibilityError`: a string. The error message if "compatible" is false, otherwise null.
+- `logicalSessionTimeoutMinutes`: integer or null. Default null. See
+    [logical session timeout](#logical-session-timeout).
 
 #### ServerDescription
 
@@ -221,57 +222,57 @@ the monitoring algorithm.
 
 Fields:
 
-- address: the hostname or IP, and the port number, that the client connects to. Note that this is **not** the "me"
+- `address`: the hostname or IP, and the port number, that the client connects to. Note that this is **not** the `me`
     field in the server's hello or legacy hello response, in the case that the server reports an address different from
     the address the client uses.
 
-- (=) error: information about the last error related to this server. Default null.
+- (=) `error`: information about the last error related to this server. Default null.
 
-- roundTripTime: the duration of the hello or legacy hello call. Default null.
+- `roundTripTime`: the duration of the hello or legacy hello call. Default null.
 
-- minRoundTripTime: the minimum RTT for the server. Default null.
+- `minRoundTripTime`: the minimum RTT for the server. Default null.
 
-- lastWriteDate: a 64-bit BSON datetime or null. The "lastWriteDate" from the server's most recent hello or legacy hello
-    response.
+- `lastWriteDate`: a 64-bit BSON datetime or null. The `lastWriteDate` from the server's most recent hello or legacy
+    hello response.
 
-- opTime: an opTime or null. An opaque value representing the position in the oplog of the most recently seen write.
+- `opTime`: an opTime or null. An opaque value representing the position in the oplog of the most recently seen write.
     Default null. (Only mongos and shard servers record this field when monitoring config servers as replica sets, at
     least until
     [drivers allow applications to use readConcern "afterOptime".](../max-staleness/max-staleness.md#future-feature-to-support-readconcern-afteroptime))
     
 
-- (=) type: a [ServerType](#servertype) enum value. Default Unknown.
+- (=) `type`: a [ServerType](#servertype) enum value. Default Unknown.
 
-- (=) minWireVersion, maxWireVersion: the wire protocol version range supported by the server. Both default to 0.
+- (=) `minWireVersion`, `maxWireVersion`: the wire protocol version range supported by the server. Both default to 0.
     [Use min and maxWireVersion only to determine compatibility](#checking-wire-protocol-compatibility).
 
-- (=) me: The hostname or IP, and the port number, that this server was configured with in the replica set. Default
+- (=) `me`: The hostname or IP, and the port number, that this server was configured with in the replica set. Default
     null.
 
-- (=) hosts, passives, arbiters: Sets of addresses. This server's opinion of the replica set's members, if any. These
-    [hostnames are normalized to lower-case](#hostnames-are-normalized-to-lower-case). Default empty. The client
+- (=) `hosts`, `passives`, `arbiters`: Sets of addresses. This server's opinion of the replica set's members, if any.
+    These [hostnames are normalized to lower-case](#hostnames-are-normalized-to-lower-case). Default empty. The client
     monitors all three types of servers in a replica set.
 
-- (=) tags: map from string to string. Default empty.
+- (=) `tags`: map from string to string. Default empty.
 
-- (=) setName: string or null. Default null.
+- (=) `setName`: string or null. Default null.
 
-- (=) electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that believes it is primary. See
+- (=) `electionId`: an ObjectId, if this is a MongoDB 2.6+ replica set member that believes it is primary. See
     [using electionId and setVersion to detect stale primaries](#using-electionid-and-setversion-to-detect-stale-primaries).
     Default null.
 
-- (=) setVersion: integer or null. Default null.
+- (=) `setVersion`: integer or null. Default null.
 
-- (=) primary: an address. This server's opinion of who the primary is. Default null.
+- (=) `primary`: an address. This server's opinion of who the primary is. Default null.
 
-- lastUpdateTime: when this server was last checked. Default "infinity ago".
+- `lastUpdateTime`: when this server was last checked. Default "infinity ago".
 
-- (=) logicalSessionTimeoutMinutes: integer or null. Default null.
+- (=) `logicalSessionTimeoutMinutes`: integer or null. Default null.
 
-- (=) topologyVersion: A topologyVersion or null. Default null. The "topologyVersion" from the server's most recent
+- (=) `topologyVersion`: A topologyVersion or null. Default null. The "topologyVersion" from the server's most recent
     hello or legacy hello response or [State Change Error](#state-change-error).
 
-- (=) iscryptd: boolean indicating if the server is a
+- (=) `iscryptd`: boolean indicating if the server is a
     [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary. The client treats them precisely the same
@@ -602,23 +603,23 @@ ServerDescription in TopologyDescription.servers MUST be replaced with the new S
 
 A ServerDescription which is not Unknown is incompatible if:
 
-- minWireVersion > clientMaxWireVersion, or
-- maxWireVersion \< clientMinWireVersion
+- `minWireVersion` > `clientMaxWireVersion`, or
+- `maxWireVersion` \< `clientMinWireVersion`
 
 If any ServerDescription is incompatible, the client MUST set the TopologyDescription's "compatible" field to false and
 fill out the TopologyDescription's "compatibilityError" field like so:
 
-- if ServerDescription.minWireVersion > clientMaxWireVersion:
+- if `ServerDescription.minWireVersion` > `clientMaxWireVersion`:
 
-    "Server at $host:$port requires wire version $minWireVersion, but this version of $driverName only supports up to
-    $clientMaxWireVersion."
+    "Server at `host`:`port` requires wire version `minWireVersion`, but this version of `driverName` only supports up to
+    `clientMaxWireVersion`."
 
-- if ServerDescription.maxWireVersion \< clientMinWireVersion:
+- if `ServerDescription.maxWireVersion` \< `clientMinWireVersion`:
 
-    "Server at $host:$port reports wire version $maxWireVersion, but this version of $driverName requires at least
-    $clientMinWireVersion (MongoDB $mongoVersion)."
+    "Server at `host`:`port` reports wire version `maxWireVersion`, but this version of `driverName` requires at least
+    `clientMinWireVersion` (MongoDB `mongoVersion`)."
 
-Replace $mongoVersion with the appropriate MongoDB minor version, for example if clientMinWireVersion is 2 and it
+Replace `mongoVersion` with the appropriate MongoDB minor version, for example if `clientMinWireVersion` is 2 and it
 connects to MongoDB 2.4, format the error like:
 
 > "Server at example.com:27017 reports wire version 0, but this version of My Driver requires at least 2 (MongoDB 2.6)."

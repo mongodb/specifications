@@ -801,15 +801,15 @@ differently:
 - For all other types, using OP_QUERY: clients MUST always set the `SecondaryOk` wire protocol flag on reads to ensure
     that any server type can handle the request.
 - For all other types, using OP_MSG: If no read preference is configured by the application, or if the application read
-    preference is Primary, then $readPreference MUST be set to `{ "mode": "primaryPreferred" }` to ensure that any
-    server type can handle the request. If the application read preference is set otherwise, $readPreference MUST be set
-    following [Document structure](#document-structure).
+    preference is Primary, then `$readPreference` MUST be set to `{ "mode": "primaryPreferred" }` to ensure that any
+    server type can handle the request. If the application read preference is set otherwise, `$readPreference` MUST be
+    set following [Document structure](#document-structure).
 
 The single server is always suitable for write operations if it is available.
 
 #### Topology type: LoadBalanced
 
-During command construction, drivers MUST add a $readPreference field to the command when required by
+During command construction, drivers MUST add a `$readPreference` field to the command when required by
 [Passing read preference to mongos and load balancers](#passing-read-preference-to-mongos-and-load-balancers); see the
 [Load Balancer Specification](../load-balancers/load-balancers.md#server-selection) for details.
 
@@ -1639,12 +1639,12 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - 2017-11-12: Specify read preferences for OP_MSG with direct connection, and delete obsolete comment direct connections
     to secondaries getting "not writable primary" errors by design.
 
-- 2018-01-22: Clarify that $query wrapping is only for OP_QUERY
+- 2018-01-22: Clarify that `$query` wrapping is only for OP_QUERY
 
-- 2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation Pipeline Operator" spec and warns if read
+- 2018-01-22: Clarify that `$out` on aggregate follows the "`$out` Aggregation Pipeline Operator" spec and warns if read
     preference is not primary.
 
-- 2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand selection rules.
+- 2018-01-29: Remove reference to '`$out` Aggregation spec'. Clarify runCommand selection rules.
 
 - 2018-12-13: Update tag_set example to use only String values
 
@@ -1662,7 +1662,7 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 
 - 2021-05-13: Updated to use modern terminology.
 
-- 2021-08-05: Updated $readPreference logic to describe OP_MSG behavior.
+- 2021-08-05: Updated `$readPreference` logic to describe OP_MSG behavior.
 
 - 2021-09-03: Clarify that wire version check only applies to available servers.
 

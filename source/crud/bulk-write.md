@@ -258,12 +258,12 @@ Drivers MUST throw an exception if the list provided for `models` is empty.
 #### Update vs. replace document validation
 
 Update documents provided in `UpdateOne` and `UpdateMany` write models are required only to contain atomic modifiers
-(i.e. keys that start with "$"). Drivers MUST throw an error if an update document is empty or if the document's first
-key does not start with "$". Drivers MUST rely on the server to return an error if any other entries in the update
+(i.e. keys that start with `$`). Drivers MUST throw an error if an update document is empty or if the document's first
+key does not start with `$`. Drivers MUST rely on the server to return an error if any other entries in the update
 document are not atomic modifiers. Drivers are not required to perform validation on update pipelines.
 
 Replacement documents provided in `ReplaceOne` write models are required not to contain atomic modifiers. Drivers MUST
-throw an error if a replacement document is nonempty and its first key starts with "$". Drivers MUST rely on the server
+throw an error if a replacement document is nonempty and its first key starts with `$`. Drivers MUST rely on the server
 to return an error if any other entries in the replacement document are atomic modifiers.
 
 ### Options
