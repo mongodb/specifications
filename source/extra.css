@@ -11,3 +11,10 @@ td, th {
    vertical-align: top;
    padding: 0.4rem 0.8rem 0.4rem 0;
 }
+
+ol ol,
+ol ul,
+ul ol,
+ul ul {
+  margin-bottom: 1rem;
+}
