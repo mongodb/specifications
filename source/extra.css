@@ -12,9 +12,10 @@ td, th {
    padding: 0.4rem 0.8rem 0.4rem 0;
 }
 
-ol ol,
-ol ul,
-ul ol,
-ul ul {
-  margin-bottom: 1rem;
+ol li, ul li {
+   margin-top: 0.25rem;
+}
+
+li > p {
+   margin-top: 1rem;
 }
