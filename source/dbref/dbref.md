@@ -222,44 +222,50 @@ Drivers MAY use any method to create the DBRef model for each test (e.g. constru
 Drivers MAY skip tests that cannot be implemented as written (e.g. DBRef model constructor does not support extra,
 optional fields and the driver also does not support explicit/implicit decoding).
 
-1. Encoding DBRefs with basic fields. For each of the following:
+1. Encoding DBRefs with basic fields.
 
-    1. `{ "$ref": "coll0", "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
-    2. `{ "$ref": "coll0", "$id": 1 }`
-    3. `{ "$ref": "coll0", "$id": null }`
-    4. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
+    - For each of the following:
 
-    Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, and `$db` (if
-    applicable) fields appear in the correct order and have their expected values.
+        1. `{ "$ref": "coll0", "$id": { "$oid": "60a6fe9a54f4180c86309efa" } }`
+        2. `{ "$ref": "coll0", "$id": 1 }`
+        3. `{ "$ref": "coll0", "$id": null }`
+        4. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
 
-2. Encoding DBRefs with extra, optional fields. For each of the following:
+    - Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, and `$db`
+        (if applicable) fields appear in the correct order and have their expected values.
 
-    1. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": "bar" }`
-    2. `{ "$ref": "coll0", "$id": 1, "foo": true, "bar": false }`
-    3. `{ "$ref": "coll0", "$id": 1, "meta": { "foo": 1, "bar": 2 } }`
-    4. `{ "$ref": "coll0", "$id": 1, "$foo": "bar" }`
-    5. `{ "$ref": "coll0", "$id": 1, "foo.bar": 0 }`
+2. Encoding DBRefs with extra, optional fields.
 
-    Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, `$db` (if
-    applicable), and any extra fields appear in the correct order and have their expected values.
+    - For each of the following:
+
+        1. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": "bar" }`
+        2. `{ "$ref": "coll0", "$id": 1, "foo": true, "bar": false }`
+        3. `{ "$ref": "coll0", "$id": 1, "meta": { "foo": 1, "bar": 2 } }`
+        4. `{ "$ref": "coll0", "$id": 1, "$foo": "bar" }`
+        5. `{ "$ref": "coll0", "$id": 1, "foo.bar": 0 }`
+
+    - Assert that each DBRef model is successfully encoded to a BSON document. Assert that the `$ref`, `$id`, `$db` (if
+        applicable), and any extra fields appear in the correct order and have their expected values.
 
 3. Encoding DBRefs re-orders any out of order fields during decoding. This test MUST NOT use a constructor that solicits
-    fields individually. For each of the following:
+    fields individually.
 
-    1. `{ "$id": 1, "$ref": "coll0" }`
-    2. `{ "$db": "db0", "$ref": "coll0", "$id": 1 }`
-    3. `{ "foo": 1, "$id": 1, "$ref": "coll0" }`
-    4. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0" }`
-    5. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0", "bar": 1 }`
+    - For each of the following:
 
-    Assert that each document is successfully decoded to a DBRef model and then successfully encoded back to a BSON
-    document. Assert that the order of fields in each encoded BSON document matches the following, respectively:
+        1. `{ "$id": 1, "$ref": "coll0" }`
+        2. `{ "$db": "db0", "$ref": "coll0", "$id": 1 }`
+        3. `{ "foo": 1, "$id": 1, "$ref": "coll0" }`
+        4. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0" }`
+        5. `{ "foo": 1, "$ref": "coll0", "$id": 1, "$db": "db0", "bar": 1 }`
 
-    6. `{ "$ref": "coll0", "$id": 1 }`
-    7. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
-    8. `{ "$ref": "coll0", "$id": 1, "foo": 1 }`
-    9. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1}`
-    10. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1, "bar": 1 }`
+    - Assert that each document is successfully decoded to a DBRef model and then successfully encoded back to a BSON
+        document. Assert that the order of fields in each encoded BSON document matches the following, respectively:
+
+        1. `{ "$ref": "coll0", "$id": 1 }`
+        2. `{ "$ref": "coll0", "$id": 1, "$db": "db0" }`
+        3. `{ "$ref": "coll0", "$id": 1, "foo": 1 }`
+        4. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1}`
+        5. `{ "$ref": "coll0", "$id": 1, "$db": "db0", "foo": 1, "bar": 1 }`
 
 ## Design Rationale
 
