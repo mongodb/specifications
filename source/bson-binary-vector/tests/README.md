@@ -37,15 +37,18 @@ Each JSON file contains three top-level keys.
 
 ## Required tests
 
-To prove correct in a valid case (`valid: true`), one MUST
+#### To prove correct in a valid case (`valid: true`), one MUST
 
-- decode the canonical_bson into its binary form, and then assert that the numeric values, dtype, and padding all match
-  those provided in the JSON.
 - encode a document from the numeric values, dtype, and padding, along with the "test_key", and assert this matches the
   canonical_bson string.
-- For floating point number types, numerical values need not match exactly.
+- decode the canonical_bson into its binary form, and then assert that the numeric values, dtype, and padding all match
+  those provided in the JSON.
 
-To prove correct in an invalid case (`valid:false`), one MUST
+Note:   For floating point number types, exact numerical matches may not be possible. Drivers that natively support the
+floating-point type being tested (e.g., when testing float32 vector values in a driver that natively supports float32),
+MUST assert that the input float array is the same after encoding and decoding.
+
+#### To prove correct in an invalid case (`valid:false`), one MUST
 
 - raise an exception when attempting to encode a document from the numeric values, dtype, and padding.
 
