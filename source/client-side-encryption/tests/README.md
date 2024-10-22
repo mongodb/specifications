@@ -690,7 +690,7 @@ binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtyp
 
     Where LOCAL_MASTERKEY is the following base64:
 
-    ```javascript
+    ```
     Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
     ```
 
