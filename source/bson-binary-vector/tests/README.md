@@ -44,7 +44,7 @@ Each JSON file contains three top-level keys.
 - decode the canonical_bson into its binary form, and then assert that the numeric values, dtype, and padding all match
   those provided in the JSON.
 
-Note:   For floating point number types, exact numerical matches may not be possible. Drivers that natively support the
+Note: For floating point number types, exact numerical matches may not be possible. Drivers that natively support the
 floating-point type being tested (e.g., when testing float32 vector values in a driver that natively supports float32),
 MUST assert that the input float array is the same after encoding and decoding.
 

@@ -151,6 +151,9 @@ Function from_vector(vector: Iterable<Number>, dtype: DtypeEnum, padding: Intege
 End Function
 ```
 
+This pseudococde is suggestive. If a driver chooses to implement a Vector type (or numerous) they MAY decide that
+from_vector that has a single argument, a Vector.
+
 ### Decoding
 
 ```
@@ -174,6 +177,16 @@ Function as_vector() -> Vector
     Return binary_vector
 End Function
 ```
+
+#### Validation
+
+Drivers MUST validate vector metadata and raise an error if any invariant is violated:
+
+- Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within \[0, 7\] for PACKED_BIT.
+- A PACKED_BIT vector MUST NOT be empty if padding is in the range \[1, 7\].
+
+Drivers MUST perform this validation when a numeric vector and padding are provided through the API, and when unpacking
+binary data (BSON or similar) into a Vector structure.
 
 #### Data Structures
 
