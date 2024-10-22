@@ -151,8 +151,8 @@ Function from_vector(vector: Iterable<Number>, dtype: DtypeEnum, padding: Intege
 End Function
 ```
 
-This pseudococde is suggestive. If a driver chooses to implement a Vector type (or numerous) they MAY decide that
-from_vector that has a single argument, a Vector.
+Note: If a driver chooses to implement a `Vector` type (or numerous) like that suggested in the Data Structure
+subsection below, they MAY decide that `from_vector` that has a single argument, a Vector.
 
 ### Decoding
 
