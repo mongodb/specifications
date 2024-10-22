@@ -160,6 +160,11 @@
     },
     {
       "description": "write conflict commit",
+      "runOnRequirements": [
+        {
+          "serverless": "forbid"
+        }
+      ],
       "operations": [
         {
           "object": "session0",
@@ -226,6 +231,11 @@
     },
     {
       "description": "write conflict abort",
+      "runOnRequirements": [
+        {
+          "serverless": "forbid"
+        }
+      ],
       "operations": [
         {
           "object": "session0",

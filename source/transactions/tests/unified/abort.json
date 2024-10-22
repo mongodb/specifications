@@ -591,6 +591,11 @@
     },
     {
       "description": "abort ignores TransactionAborted",
+      "runOnRequirements": [
+        {
+          "serverless": "forbid"
+        }
+      ],
       "operations": [
         {
           "object": "session0",
