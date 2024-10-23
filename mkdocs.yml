@@ -4,6 +4,7 @@ nav:
   - 'index.md'
 markdown_extensions:
   - admonition
+  - footnotes
   - pymdownx.superfences
   - pymdownx.arithmatex
   - pymdownx.escapeall
