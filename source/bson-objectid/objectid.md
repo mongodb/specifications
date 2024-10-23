@@ -27,7 +27,7 @@ of three different portions (fields):
 - a 5-byte random number unique to a machine and process,
 - a 3-byte counter, starting with a random value.
 
-```
+```text
 4 byte timestamp    5 byte process unique   3 byte counter
 |<----------------->|<---------------------->|<------------>|
 [----|----|----|----|----|----|----|----|----|----|----|----]
@@ -77,14 +77,14 @@ and machine by combining time, process ID, and hostname.
 Drivers MUST:
 
 - Ensure that the Timestamp field is represented as an unsigned 32-bit representing the number of seconds since the
-  Epoch for the Timestamp values:
-  - `0x00000000`: To match `"Jan 1st, 1970 00:00:00 UTC"`
-  - `0x7FFFFFFF`: To match `"Jan 19th, 2038 03:14:07 UTC"`
-  - `0x80000000`: To match `"Jan 19th, 2038 03:14:08 UTC"`
-  - `0xFFFFFFFF`: To match `"Feb 7th, 2106 06:28:15 UTC"`
+    Epoch for the Timestamp values:
+    - `0x00000000`: To match `"Jan 1st, 1970 00:00:00 UTC"`
+    - `0x7FFFFFFF`: To match `"Jan 19th, 2038 03:14:07 UTC"`
+    - `0x80000000`: To match `"Jan 19th, 2038 03:14:08 UTC"`
+    - `0xFFFFFFFF`: To match `"Feb 7th, 2106 06:28:15 UTC"`
 - Ensure that the Counter field successfully overflows its sequence from `0xFFFFFF` to `0x000000`.
 - Ensure that after a new process is created through a fork() or similar process creation operation, the "random number
-  unique to a machine and process" is no longer the same as the parent process that created the new process.
+    unique to a machine and process" is no longer the same as the parent process that created the new process.
 
 ## Motivation for Change
 
@@ -127,7 +127,7 @@ Currently there is no full reference implementation yet.
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
 - 2019-01-14: Clarify that the random numbers don't need to be cryptographically secure. Add a test to test that the
-  unique value is different in forked processes.
+    unique value is different in forked processes.
 
 - 2018-10-11: Clarify that the *Timestamp* and *Counter* fields are big endian, and add the reason why.
 

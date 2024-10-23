@@ -23,12 +23,16 @@ repos:
       stages: [manual]
 
 - repo: https://github.com/executablebooks/mdformat
-  rev: 0.7.17
+  rev: 0.7.18
   hooks:
     - id: mdformat
       args: ["--wrap=120", "--number"]
       additional_dependencies:
-        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-gfm-alerts]
+        - mdformat-footnote
+        - mdformat-frontmatter
+        - mdformat-gfm
+        - mdformat-gfm-alerts
+        - mdformat-mkdocs~=3.0
 
 - repo: local
   hooks:

@@ -22,18 +22,18 @@ have the following keys:
 - `uri`: A string containing the URI to be parsed.
 - `valid:` A boolean indicating if the URI should be considered valid.
 - `credential`: If null, the credential must not be considered configured for the the purpose of deciding if the driver
-  should authenticate to the topology. If non-null, it is an object containing one or more of the following properties
-  of a credential:
-  - `username`: A string containing the username. For auth mechanisms that do not utilize a password, this may be the
-    entire `userinfo` token from the connection string.
-  - `password`: A string containing the password.
-  - `source`: A string containing the authentication database.
-  - `mechanism`: A string containing the authentication mechanism. A null value for this key is used to indicate that a
-    mechanism wasn't specified and that mechanism negotiation is required. Test harnesses should modify the mechanism
-    test as needed to assert this condition.
-  - `mechanism_properties`: A document containing mechanism-specific properties. It specifies a subset of properties
-    that must match. If a key exists in the test data, it must exist with the corresponding value in the credential.
-    Other values may exist in the credential without failing the test.
+    should authenticate to the topology. If non-null, it is an object containing one or more of the following properties
+    of a credential:
+    - `username`: A string containing the username. For auth mechanisms that do not utilize a password, this may be the
+        entire `userinfo` token from the connection string.
+    - `password`: A string containing the password.
+    - `source`: A string containing the authentication database.
+    - `mechanism`: A string containing the authentication mechanism. A null value for this key is used to indicate that a
+        mechanism wasn't specified and that mechanism negotiation is required. Test harnesses should modify the mechanism
+        test as needed to assert this condition.
+    - `mechanism_properties`: A document containing mechanism-specific properties. It specifies a subset of properties
+        that must match. If a key exists in the test data, it must exist with the corresponding value in the credential.
+        Other values may exist in the credential without failing the test.
 
 If any key is missing, no assertion about that key is necessary. Except as specified explicitly above, if a key is
 present, but the test value is null, the observed value for that key must be uninitialized (whatever that means for a

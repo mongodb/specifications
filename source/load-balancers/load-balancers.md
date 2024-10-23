@@ -74,12 +74,12 @@ Although there is no monitoring connection in load balanced mode, drivers MUST e
 
 - `TopologyOpeningEvent` when the topology is created.
 - `TopologyDescriptionChangedEvent`. The `previousDescription` field MUST have `TopologyType` `Unknown` and no servers.
-  The `newDescription` MUST have `TopologyType` `LoadBalanced` and one server with `ServerType` `Unknown`.
+    The `newDescription` MUST have `TopologyType` `LoadBalanced` and one server with `ServerType` `Unknown`.
 - `ServerOpeningEvent` when the server representing the load balancer is created.
 - `ServerDescriptionChangedEvent`. The `previousDescription` MUST have `ServerType` `Unknown`. The `newDescription` MUST
-  have `ServerType` `LoadBalancer`.
+    have `ServerType` `LoadBalancer`.
 - `TopologyDescriptionChangedEvent`. The `newDescription` MUST have `TopologyType` `LoadBalanced` and one server with
-  `ServerType` `LoadBalancer`.
+    `ServerType` `LoadBalancer`.
 
 Drivers MUST also emit a `ServerClosedEvent` followed by a `TopologyDescriptionChangedEvent` that transitions the
 `Topology` to the `UNKNOWN` state and a `TopologyClosedEvent` when the topology is closed and MUST NOT emit any other

@@ -1,0 +1,21 @@
+table {
+   margin-top: 0;
+   margin-bottom: 1rem;
+}
+
+tr {
+   border-bottom: solid 1px var(--bs-border-color);
+}
+
+td, th {
+   vertical-align: top;
+   padding: 0.4rem 0.8rem 0.4rem 0;
+}
+
+ol li, ul li {
+   margin-top: 0.25rem;
+}
+
+li > p {
+   margin-top: 1rem;
+}

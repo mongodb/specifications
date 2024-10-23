@@ -32,9 +32,9 @@ Drivers whose TLS libraries utilize application-wide settings for OCSP MUST resp
 NOT change any OCSP settings. Otherwise:
 
 - If a driver's TLS library supports OCSP, OCSP MUST be enabled by default whenever possible (even if this also enables
-  Certificate Revocation List (CRL) checking).
+    Certificate Revocation List (CRL) checking).
 - If a driver's TLS library supports verifying stapled OCSP responses, this option MUST be enabled by default whenever
-  possible (even if this also enables CRL checking).
+    possible (even if this also enables CRL checking).
 
 ### Suggested OCSP Behavior
 
@@ -42,34 +42,35 @@ Drivers SHOULD implement the OCSP behavior defined below to the extent that thei
 the steps defined below, if a certificate in or necessary to validate the chain is found to be invalid, the driver
 SHOULD end the connection.
 
-01. If a driver's TLS library supports Stapled OCSP, the server has a Must-Staple certificate and the server does not
+1. If a driver's TLS library supports Stapled OCSP, the server has a Must-Staple certificate and the server does not
     present a stapled OCSP response, a driver SHOULD end the connection.
-02. If a driver's TLS library supports Stapled OCSP and the server staples an OCSP response that does not cover the
-    certificate it presents or is invalid per [RFC 6960 Section 3.2](https://tools.ietf.org/html/rfc6960#section-3.2), a
-    driver SHOULD end the connection.
-03. If a driver's TLS library supports Stapled OCSP and the server staples an OCSP response that does cover the
-    certificate it presents, a driver SHOULD accept the stapled OCSP response and validate all of the certificates that
-    are presented in the response.
-04. If any unvalidated certificates in the chain remain and the client possesses an OCSP cache, the driver SHOULD
+2. If a driver's TLS library supports Stapled OCSP and the server staples an OCSP response that does not cover the
+    certificate it presents or is invalid per [RFC 6960 Section 3.2](https://tools.ietf.org/html/rfc6960#section-3.2),
+    a driver SHOULD end the connection.
+3. If a driver's TLS library supports Stapled OCSP and the server staples an OCSP response that does cover the
+    certificate it presents, a driver SHOULD accept the stapled OCSP response and validate all of the certificates
+    that are presented in the response.
+4. If any unvalidated certificates in the chain remain and the client possesses an OCSP cache, the driver SHOULD
     attempt to validate the status of the unvalidated certificates using the cache.
-05. If any unvalidated certificates in the chain remain and the driver has a user specified CRL, the driver SHOULD
+5. If any unvalidated certificates in the chain remain and the driver has a user specified CRL, the driver SHOULD
     attempt to validate the status of the unvalidated certificates using the user-specified CRL.
-06. If any unvalidated certificates in the chain remain and the driver has access to cached CRLs (e.g.
+6. If any unvalidated certificates in the chain remain and the driver has access to cached CRLs (e.g.
     OS-level/application-level/user-level caches), the driver SHOULD attempt to validate the status of the unvalidated
     certificates using the cached CRLs.
-07. If the server's certificate remains unvalidated, that certificate has a list of OCSP responder endpoints, and
+7. If the server's certificate remains unvalidated, that certificate has a list of OCSP responder endpoints, and
     `tlsDisableOCSPEndpointCheck` or `tlsDisableCertificateRevocationCheck` is false
     ([if the driver supports these options](#mongoclient-configuration)), the driver SHOULD send HTTP requests to the
     responders in parallel. The first valid response that concretely marks the certificate status as good or revoked
     should be used. A timeout should be applied to requests per the
-    [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification,
-    with a default timeout of five seconds. The status for a response should only be checked if the response is valid
-    per [RFC 6960 Section 3.2](https://tools.ietf.org/html/rfc6960#section-3.2)
-08. If any unvalidated intermediate certificates remain and those certificates have OCSP endpoints, for each
+    [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md)
+    specification, with a default timeout of five seconds. The status for a response should only be checked if the
+    response is valid per [RFC 6960 Section 3.2](https://tools.ietf.org/html/rfc6960#section-3.2)
+8. If any unvalidated intermediate certificates remain and those certificates have OCSP endpoints, for each
     certificate, the driver SHOULD NOT reach out to the OCSP endpoint specified and attempt to validate that
     certificate.\*
-09. If any unvalidated intermediate certificates remain and those certificates have CRL distribution points, the driver
-    SHOULD NOT download those CRLs and attempt to validate the status of all the other certificates using those CRLs.\*
+9. If any unvalidated intermediate certificates remain and those certificates have CRL distribution points, the driver
+    SHOULD NOT download those CRLs and attempt to validate the status of all the other certificates using those
+    CRLs.\*
 10. Finally, the driver SHOULD continue the connection, even if the status of all the unvalidated certificates has not
     been confirmed yet. This means that the driver SHOULD default to "soft fail" behavior, connecting as long as there
     are no explicitly invalid certificates—i.e. the driver will connect even if the status of all the unvalidated
@@ -89,7 +90,7 @@ cache SHOULD be the certificate identifier (CertID) of the OCSP request as speci
 [RFC 6960: 4.1.1](https://tools.ietf.org/html/rfc6960#section-4.1.1). For convenience, the relevant section has been
 duplicated below:
 
-```
+```text
 CertID          ::=     SEQUENCE {
     hashAlgorithm       AlgorithmIdentifier,
     issuerNameHash      OCTET STRING, -- Hash of issuer's DN
@@ -166,27 +167,27 @@ The following requirements apply only to drivers that are able to enable/disable
 
 1. If a connection string specifies `tlsInsecure=true` then the driver MUST disable OCSP.
 2. If a connection string contains both `tlsInsecure` and `tlsDisableOCSPEndpointCheck` then the driver MUST throw an
-   error.
+    error.
 3. If a driver supports `tlsAllowInvalidCertificates`, and a connection string specifies
-   `tlsAllowInvalidCertificates=true`, then the driver MUST disable OCSP.
+    `tlsAllowInvalidCertificates=true`, then the driver MUST disable OCSP.
 4. If a driver supports `tlsAllowInvalidCertificates`, and a connection string specifies both
-   `tlsAllowInvalidCertificates` and `tlsDisableOCSPEndpointCheck`, then the driver MUST throw an error.
+    `tlsAllowInvalidCertificates` and `tlsDisableOCSPEndpointCheck`, then the driver MUST throw an error.
 
 The remaining requirements in this section apply only to drivers that expose an option to enable/disable certificate
 revocation checking on a per MongoClient basis.
 
 1. Driver MUST enable OCSP support (with stapling if possible) when certificate revocation checking is enabled
-   **unless** their driver exhibits hard-fail behavior (see
-   [tlsDisableCertificateRevocationCheck](#tlsdisablecertificaterevocationcheck)). In such a case, a driver MUST disable
-   OCSP support on the platforms where its TLS library exhibits hard-fail behavior.
+    **unless** their driver exhibits hard-fail behavior (see
+    [tlsDisableCertificateRevocationCheck](#tlsdisablecertificaterevocationcheck)). In such a case, a driver MUST
+    disable OCSP support on the platforms where its TLS library exhibits hard-fail behavior.
 2. Drivers SHOULD throw an error if any of `tlsInsecure=true` or `tlsAllowInvalidCertificates=true` or
-   `tlsDisableOCSPEndpointCheck=true` is specified alongside the option to enable certificate revocation checking.
+    `tlsDisableOCSPEndpointCheck=true` is specified alongside the option to enable certificate revocation checking.
 3. If a connection string contains both `tlsInsecure` and `tlsDisableCertificateRevocationCheck` then the driver MUST
-   throw an error.
+    throw an error.
 4. If a driver supports `tlsAllowInvalidCertificates` and a connection string specifies both
-   `tlsAllowInvalidCertificates` and `tlsDisableCertificateRevocationCheck`, then the driver MUST throw an error.
+    `tlsAllowInvalidCertificates` and `tlsDisableCertificateRevocationCheck`, then the driver MUST throw an error.
 5. If a driver supports `tlsDisableOCSPEndpointCheck`, and a connection string specifies
-   `tlsDisableCertificateRevocationCheck`, then the driver MUST throw an error.
+    `tlsDisableCertificateRevocationCheck`, then the driver MUST throw an error.
 
 ### TLS Requirements
 
@@ -201,9 +202,9 @@ Drivers that cannot support OCSP MUST document this lack of support. Additionall
 following:
 
 - They MUST document that they will be unable to support certificate revocation checking with Atlas when Atlas moves to
-  OCSP-only certificates.
+    OCSP-only certificates.
 - They MUST document that users should be aware that if they use a Certificate Authority (CA) that issues OCSP-only
-  certificates, then the driver cannot perform certificate revocation checking.
+    certificates, then the driver cannot perform certificate revocation checking.
 
 Drivers that support OCSP without stapling MUST document this lack of support for stapling. They also MUST document
 their behavior when an OCSP responder is unavailable and a server has a Must-Staple certificate. If a driver is able to
@@ -313,7 +314,7 @@ include:
 
 1. When a server's certificate defines neither OCSP endpoints nor CRL distribution points
 2. When a certificate defines CRL distribution points and/or OCSP endpoints but these points are unavailable (e.g. the
-   points are down or the application is deployed behind a restrictive firewall).
+    points are down or the application is deployed behind a restrictive firewall).
 
 In such a scenario, connectivity may be able to be restored by disabling non-stapled OCSP via
 `tlsDisableOCSPEndpointCheck` or by disabling certificate revocation checking via
@@ -527,9 +528,10 @@ Run the test application and ensure that the TLS handshake succeeds. connection 
 library has contacted the OCSP endpoint specified in the server's certificate. Two simple ways of checking this are:
 
 - Use a packet analyzer while the test application is running to ensure that the driver's TLS library contacts the OCSP
-  endpoint. When using WireShark, the `ocsp` and `tls` (case-sensitive) display filters may be useful in this endeavor.
+    endpoint. When using WireShark, the `ocsp` and `tls` (case-sensitive) display filters may be useful in this
+    endeavor.
 - If the TLS library utilizes an OCSP cache and the cache was cleared prior to starting the test application, check the
-  OCSP cache for a response from an OCSP endpoint specified in the server's certificate.
+    OCSP cache for a response from an OCSP endpoint specified in the server's certificate.
 
 ## Changelog
 
@@ -542,13 +544,13 @@ library has contacted the OCSP endpoint specified in the server's certificate. T
 - 2021-04-07: Updated terminology to use allowList.
 
 - 2020-07-01: Default tlsDisableOCSPEndpointCheck or tlsDisableCertificateRevocationCheck to true in the case that a
-  driver's TLS library exhibits hard-fail behavior and add provision for platform-specific defaults.
+    driver's TLS library exhibits hard-fail behavior and add provision for platform-specific defaults.
 
 - 2020-03-20: Clarify OCSP documentation requirements for drivers unable to enable OCSP by default on a per MongoClient
-  basis.
+    basis.
 
 - 2020-03-03: Add tlsDisableCertificateRevocationCheck URI option. Add Go as a reference implementation. Add hard-fail
-  backwards compatibility documentation requirements.
+    backwards compatibility documentation requirements.
 
 - 2020-02-26: Add tlsDisableOCSPEndpointCheck URI option.
 

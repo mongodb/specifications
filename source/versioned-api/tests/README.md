@@ -17,7 +17,7 @@ authentication.
 To run this test, proceed as follows: - Start a standalone mongod instance
 
 - Connect to the standalone instance and run the following command on the `admin` database:
-  `{ setParameter: 1, requireApiVersion: true }`
+    `{ setParameter: 1, requireApiVersion: true }`
 - Declare an API version for the test run through the `MONGODB_API_VERSION` environment variable.
 - If the environment variable is set, all clients created in tests MUST declare the `ServerApiVersion` specified.
 

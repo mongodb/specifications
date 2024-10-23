@@ -134,22 +134,22 @@ Some commands and replies will contain sensitive data relating to authentication
 In order to not risk leaking this data to external sources or logs, for these commands:
 
 - The "command" field in `CommandStartedEvent` and "command started" log messages MUST be replaced with an empty BSON
-  document.
+    document.
 
 - The "reply" field in `CommandSucceededEvent` and "command succeeded" log messages MUST be replaced with an empty BSON
-  document.
+    document.
 
 - If the error is a server-side error, the "failure" field in `CommandFailedEvent` and "command failed" log messages
-  MUST have all fields besides the following redacted:
+    MUST have all fields besides the following redacted:
 
-  - `code`
-  - `codeName`
-  - `errorLabels`
+    - `code`
+    - `codeName`
+    - `errorLabels`
 
-  The exact implementation of redaction is flexible depending on the type the driver uses to represent a failure in
-  these events and log messages. For example, a driver could choose to set all properties besides these on an error
-  object to null. Alternatively, a driver that uses strings to represent failures could replace relevant portions of the
-  string with "REDACTED".
+    The exact implementation of redaction is flexible depending on the type the driver uses to represent a failure in
+    these events and log messages. For example, a driver could choose to set all properties besides these on an error
+    object to null. Alternatively, a driver that uses strings to represent failures could replace relevant portions of
+    the string with "REDACTED".
 
 The list of sensitive commands is as follows:
 
@@ -447,13 +447,13 @@ penalties, particularly when event listeners are introduced.
 - 2024-09-11: Migrated from reStructuredText to Markdown.
 
 - 2015-09-16: Removed `limit` from find test with options to support 3.2.\
-  Changed find test read preference to
-  `primaryPreferred`.
+    Changed find test read preference to
+    `primaryPreferred`.
 
 - 2015-10-01: Changed find test with a kill cursors to not run on server versions\
-  greater than 3.0. Added a find test
-  with no kill cursors command which only runs on 3.1 and higher. Added notes on which tests should run based on server
-  versions.
+    greater than 3.0. Added a find test
+    with no kill cursors command which only runs on 3.1 and higher. Added notes on which tests should run based on
+    server versions.
 
 - 2015-10-19: Changed batchSize in the 3.2 find tests to expect the remaining value.
 
@@ -466,18 +466,18 @@ penalties, particularly when event listeners are introduced.
 - 2016-11-02: Added clause for not upconverting commands larger than maxBsonSize.
 
 - 2018-04-16: Made inclusion of BSON serialization/deserialization in command\
-  durations to be optional.
+    durations to be optional.
 
 - 2020-02-12: Added legacy hello `speculativeAuthenticate` to the list of\
-  values that should be redacted.
+    values that should be redacted.
 
 - 2021-04-15: Added `serviceId` field to events.
 
 - 2021-05-05: Updated to use hello and legacy hello.
 
 - 2021-08-30: Added `serverConnectionId` field to `CommandStartedEvent`,\
-  `CommandSucceededEvent` and
-  `CommandFailedEvent`.
+    `CommandSucceededEvent` and
+    `CommandFailedEvent`.
 
 - 2022-05-18: Converted legacy tests to the unified test format.
 
@@ -490,14 +490,14 @@ penalties, particularly when event listeners are introduced.
 - 2022-11-16: Update sensitive command tests to only run on server versions where the commands are supported.
 
 - 2022-12-13: Updated log message `serverPort` field description to clarify drivers should populate it with the\
-  default
-  port 27017 when relevant. Updated suggested unstructured forms of log messages to more clearly label connection IDs
-  and use more readable server address representations.
+    default
+    port 27017 when relevant. Updated suggested unstructured forms of log messages to more clearly label connection IDs
+    and use more readable server address representations.
 
 - 2023-03-23: Updated `serverConnectionId` field to be Int64 as long-running servers can return Int64.
 
 - 2023-06-13: Added `databaseName` field to `CommandFailedEvent` and `CommandSucceededEvent`.\
-  Updated suggested
-  unstructured forms of log messages reflecting the changes.
+    Updated suggested
+    unstructured forms of log messages reflecting the changes.
 
 - 2023-10-19: Add Q&A section

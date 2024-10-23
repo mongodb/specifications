@@ -439,7 +439,7 @@ CommandStartedEvents. Perform a `hello` command using `client` and record the fo
 
 Calculate the following values:
 
-```
+```javascript
 opsBytes = maxMessageSizeBytes - 1122
 numModels = opsBytes / maxBsonObjectSize
 remainderBytes = opsBytes % maxBsonObjectSize
@@ -495,7 +495,7 @@ Assert that the namespace contained in `event.command.nsInfo` is "db.coll".
 
 Construct the following namespace (referred to as `namespace`):
 
-```
+```javascript
 "db." + "c".repeat(200)
 ```
 
@@ -535,19 +535,19 @@ changed in the bulk write specification.
 
 The command document for the `bulkWrite` has the following structure and size:
 
-```javascript
+```typescript
 {
   "bulkWrite": 1,
   "errorsOnly": true,
   "ordered": true
 }
 
-Size: 43 bytes
+// Size: 43 bytes
 ```
 
 Each write model will create an `ops` document with the following structure and size:
 
-```javascript
+```typescript
 {
   "insert": <0 | 1>,
   "document": {
@@ -556,7 +556,7 @@ Each write model will create an `ops` document with the following structure and 
   }
 }
 
-Size: 57 bytes + <number of characters in string>
+// Size: 57 bytes + <number of characters in string>
 ```
 
 The `ops` document for both `newNamespaceModel` and `sameNamespaceModel` has a string with one character, so it is a
@@ -569,7 +569,7 @@ The models using the "db.coll" namespace will create one `nsInfo` document with 
   "ns": "db.coll"
 }
 
-Size: 21 bytes
+// Size: 21 bytes
 ```
 
 `newNamespaceModel` will create an `nsInfo` document with the following structure and size:
@@ -579,13 +579,13 @@ Size: 21 bytes
   "ns": "db.<c repeated 200 times>"
 }
 
-Size: 217 bytes
+// Size: 217 bytes
 ```
 
 We need to fill up the rest of the message with bytes such that another `ops` document will fit, but another `nsInfo`
 entry will not. The following calculations are used:
 
-```
+```python
 # 1000 is the OP_MSG overhead required in the spec
 maxBulkWriteBytes = maxMessageSizeBytes - 1000
 
@@ -630,7 +630,7 @@ Assert that `error` is a client error.
 
 Construct the following namespace (referred to as `namespace`):
 
-```
+```javascript
 "db." + "c".repeat(maxMessageSizeBytes)
 ```
 

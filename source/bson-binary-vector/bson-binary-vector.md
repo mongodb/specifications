@@ -53,10 +53,10 @@ final byte that are to be ignored. The least-significant bits are ignored.
 Following the binary subtype `9`, a two-element byte array of metadata precedes the packed numbers.
 
 - The first byte (dtype) describes its data type. The table above shows those that MUST be implemented. This table may
-  increase. dtype is an unsigned integer.
+    increase. dtype is an unsigned integer.
 
 - The second byte (padding) prescribes the number of bits to ignore in the final byte of the value. It is a non-negative
-  integer. It must be present, even in cases where it is not applicable, and set to zero.
+    integer. It must be present, even in cases where it is not applicable, and set to zero.
 
 - The remainder contains the actual vector elements packed according to dtype.
 
@@ -235,10 +235,10 @@ See the [README](tests/README.md) for tests.
 ## FAQ
 
 - What MongoDB Server version does this apply to?
-  - Files in the "specifications" repository have no version scheme. They are not tied to a MongoDB server version.
+    - Files in the "specifications" repository have no version scheme. They are not tied to a MongoDB server version.
 - In PACKED_BIT, why would one choose to use integers in \[0, 256)?
-  - This follows a well-established precedent for packing binary-valued arrays into bytes (8 bits), This technique is
-    widely used across different fields, such as data compression, communication protocols, and file formats, where you
-    want to store or transmit binary data more efficiently by grouping 8 bits into a single byte (uint8). For an example
-    in Python, see
-    [numpy.unpackbits](https://numpy.org/doc/2.0/reference/generated/numpy.unpackbits.html#numpy.unpackbits).
+    - This follows a well-established precedent for packing binary-valued arrays into bytes (8 bits), This technique is
+        widely used across different fields, such as data compression, communication protocols, and file formats, where
+        you want to store or transmit binary data more efficiently by grouping 8 bits into a single byte (uint8). For an
+        example in Python, see
+        [numpy.unpackbits](https://numpy.org/doc/2.0/reference/generated/numpy.unpackbits.html#numpy.unpackbits).

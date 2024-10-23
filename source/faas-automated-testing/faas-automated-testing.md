@@ -85,7 +85,7 @@ Template: 1
 
 When prompted for language if the driver language is not Python, select "N".
 
-```
+```text
 Use the most popular runtime and package type? (Python and zip) [y/N]: n
 ```
 
@@ -211,13 +211,13 @@ driver MUST:
 
 - Create a MongoClient that points to MONGODB_URI.
 - Add listeners for the following monitoring events: ServerHeartbeatStarted, ServerHeartbeatFailed, CommandSucceeded,
-  CommandFailed, ConnectionCreated, ConnectionClosed.
+    CommandFailed, ConnectionCreated, ConnectionClosed.
 - Drivers MUST perform a single insert and then a single delete of the inserted document to force write operations on
-  the primary node.
+    the primary node.
 - Drivers MUST record the durations and counts of the heartbeats, the durations of the commands, as well as keep track
-  of the number of open connections, and report this information in the function response as JSON.
+    of the number of open connections, and report this information in the function response as JSON.
 - Drivers MUST assert no ServerHeartbeat events contain the `awaited=True` flag to confirm that the streaming protocol
-  is disabled ([DRIVERS-2578](https://jira.mongodb.org/browse/DRIVERS-2578)).
+    is disabled ([DRIVERS-2578](https://jira.mongodb.org/browse/DRIVERS-2578)).
 
 ###### Running in Continuous Integration
 

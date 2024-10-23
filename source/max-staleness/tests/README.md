@@ -10,15 +10,15 @@ YAML files contain the following setup for each test:
 
 - `heartbeatFrequencyMS`: optional int
 - `topology_description`: the state of a mocked cluster
-  - `type`: the TopologyType
-  - `servers`: a list of ServerDescriptions, each with:
-    - `address`: a "host:port"
-    - `type`: a ServerType
-    - `avg_rtt_ms`: average round trip time in milliseconds[^1]
-    - `lastWrite`: subdocument
-      - `lastWriteDate`: nonzero int64, milliseconds since some past time
-    - `maxWireVersion`: an int
-    - `lastUpdateTime`: milliseconds since the Unix epoch
+    - `type`: the TopologyType
+    - `servers`: a list of ServerDescriptions, each with:
+        - `address`: a "host:port"
+        - `type`: a ServerType
+        - `avg_rtt_ms`: average round trip time in milliseconds[^1]
+        - `lastWrite`: subdocument
+            - `lastWriteDate`: nonzero int64, milliseconds since some past time
+        - `maxWireVersion`: an int
+        - `lastUpdateTime`: milliseconds since the Unix epoch
 - `read_preference`: a read preference document
 
 For each test, create a MongoClient. Configure it with the heartbeatFrequencyMS specified by the test, or accept the
@@ -36,10 +36,10 @@ Each test specifies that it expects an error, or specifies two sets of servers:
 
 - `error: true`
 - `suitable_servers`: the set of servers in the TopologyDescription that are suitable for the ReadPreference, without
-  taking `avg_rtt_ms` into account.
+    taking `avg_rtt_ms` into account.
 - `in_latency_window`: the set of suitable servers whose round trip time qualifies them according to the default latency
-  threshold of 15ms. In each test there is one server in the latency window, to ensure tests pass or fail
-  deterministically.
+    threshold of 15ms. In each test there is one server in the latency window, to ensure tests pass or fail
+    deterministically.
 
 If the file contains `error: true`, drivers MUST test that they throw an error during server selection due to an invalid
 read preference. For other files, drivers MUST test that they correctly select the set of servers in
