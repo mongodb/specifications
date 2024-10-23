@@ -21,9 +21,9 @@ Each JSON file contains three top-level keys.
 
 - `description`: human-readable description of what is in the file
 - `test_key`: name used for key when encoding/decoding a BSON document containing the single BSON Binary for the test
-  case. Applies to *every* case.
+    case. Applies to *every* case.
 - `tests`: array of test case objects, each of which have the following keys. Valid cases will also contain additional
-  binary and json encoding values.
+    binary and json encoding values.
 
 #### Keys of individual tests cases
 
@@ -40,9 +40,9 @@ Each JSON file contains three top-level keys.
 #### To prove correct in a valid case (`valid: true`), one MUST
 
 - encode a document from the numeric values, dtype, and padding, along with the "test_key", and assert this matches the
-  canonical_bson string.
+    canonical_bson string.
 - decode the canonical_bson into its binary form, and then assert that the numeric values, dtype, and padding all match
-  those provided in the JSON.
+    those provided in the JSON.
 
 Note: For floating point number types, exact numerical matches may not be possible. Drivers that natively support the
 floating-point type being tested (e.g., when testing float32 vector values in a driver that natively supports float32),
@@ -55,4 +55,4 @@ MUST assert that the input float array is the same after encoding and decoding.
 ## FAQ
 
 - What MongoDB Server version does this apply to?
-  - Files in the "specifications" repository have no version scheme. They are not tied to a MongoDB server version.
+    - Files in the "specifications" repository have no version scheme. They are not tied to a MongoDB server version.
