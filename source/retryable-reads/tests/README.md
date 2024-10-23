@@ -23,7 +23,7 @@ the failpoint.
 
 2. Enable the following failpoint:
 
-    ```
+    ```javascript
     {
         configureFailPoint: "failCommand",
         mode: { times: 1 },
@@ -69,7 +69,7 @@ and has enabled the `configureFailPoint` command (MongoDB 4.2+).
 
 2. Configure the following fail point for both `s0` and `s1`:
 
-    ```
+    ```javascript
     {
         configureFailPoint: "failCommand",
         mode: { times: 1 },
@@ -100,7 +100,7 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 
 2. Configure the following fail point for `s0`:
 
-    ```
+    ```javascript
     {
         configureFailPoint: "failCommand",
         mode: { times: 1 },

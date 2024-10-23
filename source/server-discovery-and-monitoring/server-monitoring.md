@@ -209,7 +209,7 @@ of events.
 
 The scanning order is expressed in this pseudocode:
 
-```
+```text
 scanStartTime = now()
 # You'll likely need to convert units here.
 beforeCoolDown = scanStartTime - cooldownMS

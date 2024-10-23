@@ -686,7 +686,7 @@ operation-agnostic command field bytes (e.g. `txnNumber`, `lsid`). Drivers MUST 
 sequence to `maxMessageSizeBytes - 1000` to account for this overhead. The following pseudocode demonstrates how to
 apply this limit in batch-splitting logic:
 
-```
+```javascript
 MESSAGE_OVERHEAD_BYTES = 1000
 
 bulkWriteCommand = Document { "bulkWrite": 1 }

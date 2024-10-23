@@ -873,13 +873,13 @@ drivers MUST use for the canonical request (see
 [Summary of Signing Steps](https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html)) are
 specified in the table below. The following pseudocode shows the construction of the Authorization header.
 
-```javascript
+```text
 Authorization: algorithm Credential=access key ID/credential scope, SignedHeaders=SignedHeaders, Signature=signature
 ```
 
 The following example shows a finished Authorization header.
 
-```javascript
+```text
 Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7
 ```
 
@@ -909,7 +909,7 @@ The following diagram is a summary of the steps drivers MUST follow to calculate
 
 To get the region from the host, the driver MUST follow the algorithm expressed in pseudocode below. :
 
-```
+```text
 if the host is invalid according to the rules described earlier
     the region is undefined and the driver must raise an error.
 else if the host is "aws.amazonaws.com"
@@ -1051,7 +1051,7 @@ if using an SDK.
 If not using an AWS SDK, the request must be made manually. If making a manual request, the `Version` should be
 specified as well. An example manual POST request looks like the following:
 
-```html
+```text
 https://sts.amazonaws.com/
 ?Action=AssumeRoleWithWebIdentity
 &RoleSessionName=app1
@@ -1062,7 +1062,7 @@ https://sts.amazonaws.com/
 
 with the header:
 
-```html
+```text
 Accept: application/json
 ```
 
@@ -1106,19 +1106,19 @@ return the JSON response:
 
 If the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is unset, drivers MUST use the EC2 endpoint,
 
-```html
+```text
 http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>
 ```
 
 with the required header,
 
-```html
+```text
 X-aws-ec2-metadata-token: <secret-token>
 ```
 
 to access the EC2 instance's metadata. Drivers MUST obtain the role name from querying the URI
 
-```html
+```text
 http://169.254.169.254/latest/meta-data/iam/security-credentials/
 ```
 
@@ -1336,13 +1336,13 @@ and parse the JSON response body, as follows:
 
 Make an HTTP GET request to
 
-```
+```text
 http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=<resource>&client_id=<client_id>
 ```
 
 with headers
 
-```
+```text
 Accept: application/json
 Metadata: true
 ```
@@ -1395,13 +1395,13 @@ body, as follows:
 
 Make an HTTP GET request to
 
-```
+```text
 http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=<resource>
 ```
 
 with headers
 
-```
+```text
 Metadata-Flavor: Google
 ```
 

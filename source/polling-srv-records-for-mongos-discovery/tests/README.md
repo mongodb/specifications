@@ -17,7 +17,7 @@ For each test, take as a starting point the test1, test3, and test22 SRV records
 [test set-up](../../initial-dns-seedlist-discovery/tests/README.md) from the
 [Initial DNS Seedlist Discovery](../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md) specification:
 
-```
+```dns
 Record                                    TTL    Class   Address
 localhost.test.test.build.10gen.cc.        86400  IN A    127.0.0.1
 
@@ -39,7 +39,7 @@ described DNS changes and then verify that the new list of hosts is present.
 
 Add the following record:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 ```
 
@@ -47,7 +47,7 @@ _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.b
 
 Remove the following record:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
 ```
 
@@ -55,13 +55,13 @@ _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.b
 
 Replace the following record:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
 ```
 
 with:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 ```
 
@@ -69,7 +69,7 @@ _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.b
 
 Replace both records with:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 ```
 
@@ -77,7 +77,7 @@ _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.b
 
 Replace both records with:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 ```
@@ -108,7 +108,7 @@ described situation and make the specified assertions.
 
 Connect to `mongodb+srv://test3.test.build.10gen.cc/?loadBalanced=true`, mock the addition of the following DNS record:
 
-```
+```dns
 _mongodb._tcp.test3.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
 ```
 
@@ -126,13 +126,13 @@ Configure the MongoClient with `srvMaxHosts=0`.
 
 Replace the following record:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
 ```
 
 with:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 ```
@@ -149,7 +149,7 @@ Configure the MongoClient with `srvMaxHosts=2`.
 
 Replace both records with:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 ```
@@ -165,13 +165,13 @@ Configure the MongoClient with `srvMaxHosts=2`.
 
 Replace the following record:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
 ```
 
 with:
 
-```
+```dns
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 ```
@@ -191,7 +191,7 @@ Configure the MongoClient with `srvServiceName=customname`.
 
 Replace both records with:
 
-```
+```dns
 _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
 _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 ```

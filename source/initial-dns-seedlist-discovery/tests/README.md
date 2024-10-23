@@ -67,7 +67,7 @@ In all cases, the clusters MUST be started with SSL enabled.
 To run the tests that accompany this spec, you need to configure the SRV and TXT records with a real name server. The
 following records are required for these tests:
 
-```
+```dns
 Record                                    TTL    Class   Address
 localhost.test.build.10gen.cc.            86400  IN A    127.0.0.1
 localhost.sub.test.build.10gen.cc.        86400  IN A    127.0.0.1

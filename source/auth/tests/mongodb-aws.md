@@ -15,7 +15,7 @@ For brevity, this section gives the values `<AccessKeyId>`, `<SecretAccessKey>` 
 key ID, secret access key and session token (also known as a security token). Note that if these values are passed into
 the URI they MUST be URL encoded. Sample values are below.
 
-```
+```text
 AccessKeyId=AKIAI44QH8DHBEXAMPLE
 SecretAccessKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 Token=AQoDYXdzEJr...<remainder of security token>
@@ -26,7 +26,7 @@ Token=AQoDYXdzEJr...<remainder of security token>
 Drivers MUST be able to authenticate by providing a valid access key id and secret access key pair as the username and
 password, respectively, in the MongoDB URI. An example of a valid URI would be:
 
-```
+```text
 mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS
 ```
 
@@ -35,7 +35,7 @@ mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS
 Drivers MUST be able to authenticate from an EC2 instance via temporary credentials assigned to the machine. A sample
 URI on an EC2 machine would be:
 
-```
+```text
 mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
@@ -48,7 +48,7 @@ mongodb://localhost/?authMechanism=MONGODB-AWS
 Drivers MUST be able to authenticate from an ECS container via temporary credentials. A sample URI in an ECS container
 would be:
 
-```
+```text
 mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
@@ -62,7 +62,7 @@ Drivers MUST be able to authenticate using temporary credentials returned from a
 credentials consist of an access key ID, a secret access key, and a security token passed into the URI. A sample URI
 would be:
 
-```
+```text
 mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<Token>
 ```
 
@@ -71,7 +71,7 @@ mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS&a
 Drivers MUST be able to authentiate using a valid OIDC token and associated role ARN taken from environment variables,
 respectively:
 
-```
+```text
 AWS_WEB_IDENTITY_TOKEN_FILE
 AWS_ROLE_ARN
 AWS_ROLE_SESSION_NAME (optional)
@@ -79,7 +79,7 @@ AWS_ROLE_SESSION_NAME (optional)
 
 A sample URI in for a web identity test would be:
 
-```
+```text
 mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
@@ -97,7 +97,7 @@ to obtain credentials.
 Drivers MUST be able to authenticate via an access key ID, secret access key and optional session token taken from the
 environment variables, respectively:
 
-```
+```text
 AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY 
 AWS_SESSION_TOKEN

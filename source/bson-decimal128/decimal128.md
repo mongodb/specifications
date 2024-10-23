@@ -156,11 +156,10 @@ user will then create a new Decimal128 Value Object and optionally overwrite the
 For finite numbers, we will use the definition at <http://speleotrove.com/decimal/daconvs.html>. It has been modified to
 account for a different NaN representation and whitespace rules and copied here:
 
-```
+```text
 Strings which are acceptable for conversion to the abstract representation of
 numbers, or which might result from conversion from the abstract representation
 to a string, are called numeric strings.
-
 
 A numeric string is a character string that describes either a finite
 number or a special value.
@@ -202,11 +201,8 @@ diagnostic NaNs should be reversible if possible. If an implementation does not
 support diagnostic information on NaNs, these digits should be ignored where
 necessary. A plain 'NaN' is usually the same as 'NaN0'.
 
-
 Drivers MAY choose to support signed NaN (sNaN), along with sNaN with
 diagnostic information. 
-
-
 
 Examples::
 Some numeric strings are:
@@ -235,17 +231,15 @@ Notes:
 For finite numbers, we will use the definition at <http://speleotrove.com/decimal/daconvs.html>. It has been copied
 here:
 
-```
+```text
 The coefficient is first converted to a string in base ten using the characters
 0 through 9 with no leading zeros (except if its value is zero, in which case a
 single 0 character is used).
-
 
 Next, the adjusted exponent is calculated; this is the exponent, plus the
 number of characters in the converted coefficient, less one. That is,
 exponent+(clength-1), where clength is the length of the coefficient in decimal
 digits.
-
 
 If the exponent is less than or equal to zero and the adjusted exponent is
 greater than or equal to -6, the number will be converted to a character form
@@ -256,7 +250,6 @@ number of characters to the right of the decimal point. '0' characters are
 added to the left of the converted coefficient as necessary. If no character
 precedes the decimal point after this insertion then a conventional '0'
 character is prefixed.
-
 
 Otherwise (that is, if the exponent is positive, or the adjusted exponent is
 less than -6), the number will be converted to a character form using
@@ -271,14 +264,14 @@ sign character ('-' if the calculated exponent is negative, '+' otherwise).
 
 This corresponds to the following code snippet:
 
-> ```c
-> var adjusted_exponent = _exponent + (clength - 1);
-> if (_exponent > 0 || adjusted_exponent < -6) {
->     // exponential notation
-> } else {
->     // character form without using exponential notation
-> }
-> ```
+```c
+var adjusted_exponent = _exponent + (clength - 1);
+if (_exponent > 0 || adjusted_exponent < -6) {
+    // exponential notation
+} else {
+    // character form without using exponential notation
+}
+```
 
 For special numbers such as infinity or the not a number (NaN) variants, the below table is used:
 

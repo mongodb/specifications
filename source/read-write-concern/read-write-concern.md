@@ -175,7 +175,7 @@ Options
 
 For example:
 
-```
+```text
 mongodb://server:27017/db?readConcernLevel=majority
 ```
 
@@ -492,7 +492,7 @@ Options
 
 For example:
 
-```
+```text
 mongodb://server:27017/db?w=3
 
 mongodb://server:27017/db?journal=true

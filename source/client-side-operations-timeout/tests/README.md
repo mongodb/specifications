@@ -70,7 +70,7 @@ This test MUST only be run against enterprise server versions 4.2 and higher.
 Each test under this category MUST only be run against server versions 4.4 and higher. In these tests, `LOCAL_MASTERKEY`
 refers to the following base64:
 
-```
+```text
 Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
 ```
 
@@ -635,7 +635,7 @@ sharded clusters. Drivers MAY adjust the timeouts used in this test to allow for
 5. Create a list of write models (referred to as `models`) with the following write model repeated
     (`maxMessageSizeBytes / maxBsonObjectSize + 1`) times:
 
-    ```json
+    ```javascript
     InsertOne {
        "namespace": "db.coll",
        "document": { "a": "b".repeat(maxBsonObjectSize - 500) }

@@ -424,7 +424,7 @@ See
 
 The following pseudo-code describes the configuration behavior for the three `MongoClient` objects:
 
-```
+```python
 def getOrCreateInternalClient (client, clientOpts):
    if client.internalClient != None:
       return client.internalClient
@@ -545,20 +545,20 @@ interface KMIPKMSOptions {
 
 The following shows an example object of `KMSProviders`:
 
-```yaml
+```javascript
 {
-   # Pass credentials for AWS:
+   // Pass credentials for AWS:
    "aws": { "accessKeyId": "foo", "secretAccessKey": "bar" },
-   # Use an empty document to enable "Automatic Credentials" for Azure:
+   // Use an empty document to enable "Automatic Credentials" for Azure:
    "azure": {},
-   # Pass an access token for GCP:
+   // Pass an access token for GCP:
    "gcp": { "accessToken": "foo" },
-   # Pass a 96 byte base64 encoded string for the local KMS provider.
+   // Pass a 96 byte base64 encoded string for the local KMS provider.
    "local": { "key": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk" }
-   # Pass the endpoint for KMIP:
+   // Pass the endpoint for KMIP:
    "kmip": { "endpoint": "localhost:5698" }
-   # Pass credentials for a different AWS account by appending a name.
-   # Note: credentials with a name do not support "Automatic Credentials".
+   // Pass credentials for a different AWS account by appending a name.
+   // Note: credentials with a name do not support "Automatic Credentials".
    "aws:name2": { "accessKeyId": "foo2", "secretAccessKey": "bar2" }
 }
 ```
@@ -1772,7 +1772,7 @@ Note, "status" is unused and is purely informational.
 
 #### Example data key document
 
-```
+```javascript
 {
    "_id" : UUID("00000000-0000-0000-0000-000000000000"),
    "status" : 1,

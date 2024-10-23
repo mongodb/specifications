@@ -388,7 +388,7 @@ it has been marked as "ready". SDAM will mark the pool as "ready" on each succes
 [Connection Pool Management](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#connection-pool-management)
 section in the SDAM specification for more information.
 
-```
+```text
 set generation to 0
 set state to "paused"
 emit PoolCreatedEvent and equivalent log message
@@ -402,7 +402,7 @@ following behavior changes:
 - In use [Connections](#connection) MUST be closed when they are checked in to the closed pool.
 - Attempting to check out a [Connection](#connection) MUST result in an error.
 
-```
+```text
 mark pool as "closed"
 for connection in availableConnections:
   close connection
@@ -418,7 +418,7 @@ background.
 If the pool is already "ready" when this method is invoked, then this method MUST immediately return and MUST NOT emit a
 PoolReadyEvent.
 
-```
+```text
 mark pool as "ready"
 emit PoolReadyEvent and equivalent log message
 allow background thread to create connections
@@ -433,7 +433,7 @@ connections before observing the PoolReadyEvent event.
 When creating a [Connection](#connection), the initial [Connection](#connection) is in a "pending" state. This only
 creates a "virtual" [Connection](#connection), and performs no I/O.
 
-```
+```text
 connection = new Connection()
 increment totalConnectionCount
 increment pendingConnectionCount
@@ -448,7 +448,7 @@ return connection
 Before a [Connection](#connection) can be marked as either "available" or "in use", it must be established. This process
 involves performing the initial handshake, handling OP_COMPRESSED, and performing authentication.
 
-```
+```text
 try:
   connect connection via TCP / TLS
   perform connection handshake
@@ -469,7 +469,7 @@ When a [Connection](#connection) is closed, it MUST first be marked as "closed",
 to close its underlying socket. The Driver SHOULD perform this teardown in a non-blocking manner, such as via the use of
 a background thread or async I/O.
 
-```
+```text
 original state = connection state
 set connection state to "closed"
 
@@ -492,7 +492,7 @@ A [Connection](#connection) is "available" if it is able to be checked out. A [C
 marked as "available" until it has been established. The pool MUST keep track of the number of currently available
 [Connections](#connection).
 
-```
+```text
 increment availableConnectionCount
 set connection state to "available"
 add connection to availableConnections
@@ -524,7 +524,7 @@ observable to the [Thread](#thread). Informally, this order guarantees that no [
 establishing a [Connection](#connection) when there is an "available" [Connection](#connection) established as a result
 of populating the Pool.
 
-```
+```text
 wait until pendingConnectionCount < maxConnecting and pool is "ready"
 create connection
 try:
@@ -574,7 +574,7 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
-```python
+```text
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
 emit ConnectionCheckOutStartedEvent and equivalent log message
@@ -658,7 +658,7 @@ any of the following are true:
 
 Otherwise, the [Connection](#connection) is marked as available.
 
-```
+```text
 emit ConnectionCheckedInEvent and equivalent log message
 if connection is perished OR pool is closed:
   close connection

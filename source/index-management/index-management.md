@@ -833,7 +833,7 @@ as the following example:
 
 Example:
 
-```
+```javascript
 > a = [];
 [ ]
 > db.runCommand( { listIndexes: 'poiConcat' } ).indexes.forEach(function(i) { a.push(i.name); } );

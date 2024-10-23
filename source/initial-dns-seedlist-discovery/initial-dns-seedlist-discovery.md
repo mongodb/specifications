@@ -30,7 +30,7 @@ The connection string parser in the driver is extended with a new protocol `mong
 step before it considers the connection string and SDAM specifications. In this protocol, the comma separated list of
 host names is replaced with a single host name. The format is:
 
-```
+```text
 mongodb+srv://{hostname}/{options} 
 ```
 
@@ -180,13 +180,13 @@ concert with SRV or TXT records.
 
 If we provide the following URI:
 
-```
+```text
 mongodb+srv://server.mongodb.com/
 ```
 
 The driver needs to request the DNS server for the SRV record `_mongodb._tcp.server.mongodb.com`. This could return:
 
-```
+```dns
 Record                            TTL   Class    Priority Weight Port  Target
 _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27317 mongodb1.mongodb.com.
 _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27017 mongodb2.mongodb.com.
@@ -197,27 +197,27 @@ The returned host names (`mongodb1.mongodb.com` and `mongodb2.mongodb.com`) must
 
 The driver also needs to request the DNS server for the TXT records on `server.mongodb.com`. This could return:
 
-```
+```dns
 Record              TTL   Class    Text
 server.mongodb.com. 86400 IN TXT   "replicaSet=replProduction&authSource=authDB"
 ```
 
 From the DNS results, the driver now MUST treat the host information as if the following URI was used instead:
 
-```
+```text
 mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replicaSet=replProduction&authSource=authDB
 ```
 
 If we provide the following URI with the same DNS (SRV and TXT) records:
 
-```
+```text
 mongodb+srv://server.mongodb.com/?authSource=otherDB
 ```
 
 Then the default in the TXT record for `authSource` is not used as the value in the connection string overrides it. The
 Client MUST treat the host information as if the following URI was used instead:
 
-```
+```text
 mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replicaSet=replProduction&authSource=otherDB
 ```
 

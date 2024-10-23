@@ -66,7 +66,7 @@ RFC 3986 has guidance for encoding user information in
 
 Specifically, Section 3.2.1 provides for the following allowed characters:
 
-```
+```text
 userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
 ```
 
@@ -99,14 +99,14 @@ socket. For definitions of hostname, IP address and IP Literal formats see
 
 UNIX domain sockets MUST end in ".sock" and MUST be URL encoded, for example:
 
-```
+```text
 mongodb://user:pass@%2Ftmp%2Fmongodb-27017.sock/authDB?replicaSet=rs
 ```
 
 The host information cannot contain an unescaped slash ("/"), if it does then an exception MUST be thrown informing
 users that paths must be URL encoded. For example:
 
-```
+```text
 Unsupported host '/tmp/mongodb-27017.sock', UNIX socket domain paths must be URL encoded.
 ```
 
@@ -174,7 +174,7 @@ in lowercase, snake_case MUST not be used. Keys that aren't supported by a drive
 Keys that aren't supported by a driver MUST be ignored. A WARN level logging message MUST be issued for unsupported
 keys. For example:
 
-```
+```text
 Unsupported option 'connectMS'.
 ```
 
@@ -206,14 +206,14 @@ The values in connection options MUST be URL decoded by the parser. The values c
     If any of these alternative values are used, drivers MUST log a deprecation notice or issue a logging message at the
     WARNING level (as appropriate for your language). For example:
 
-    ```
+    ```text
     Deprecated boolean value for "journal" : "1", please update to "journal=true"
     ```
 
 - Lists: Repeated keys represent a list in the Connection String consisting of the corresponding values in the same
     order as they appear in the Connection String. For example:
 
-    ```
+    ```text
     ?readPreferenceTags=dc:ny,rack:1&readPreferenceTags=dc:ny&readPreferenceTags=
     ```
 
@@ -222,13 +222,13 @@ The values in connection options MUST be URL decoded by the parser. The values c
 
     For example:
 
-    ```
+    ```text
     ?readPreferenceTags=dc:ny,rack:1
     ```
 
     Drivers MUST handle unencoded colon signs (":") within the value. For example, given the connection string option:
 
-    ```
+    ```text
     authMechanismProperties=TOKEN_RESOURCE:mongodb://foo
     ```
 
@@ -240,7 +240,7 @@ The values in connection options MUST be URL decoded by the parser. The values c
 
 Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:
 
-```
+```text
 Unsupported value for "fsync" : "ifPossible"
 ```
 
@@ -259,14 +259,14 @@ to key names.
 If the renamed key is also defined in the connection string the deprecated key MUST NOT be applied and a WARN level
 message MUST be logged. For example:
 
-```
+```text
 Deprecated key "wtimeout" present and ignored as found replacement "wtimeoutms" value.
 ```
 
 Deprecated keys MUST log a WARN level message informing the user that the option is deprecated and supply the
 alternative key name. For example:
 
-```
+```text
 Deprecated key "wtimeout" has been replaced with "wtimeoutms"
 ```
 
@@ -425,7 +425,7 @@ Q: Why throw an exception if the userinfo contains a percent sign ("%"), at-sign
 This is done to help users format the connection string correctly. Although at-signs ("@") or colons (":") in the
 username must be URL encoded, users may not be aware of that requirement. Take the following example:
 
-```
+```text
 mongodb://anne:bob:pass@localhost:27017
 ```
 
@@ -438,7 +438,7 @@ Q: Why must UNIX domain sockets be URL encoded
 
 This has been done to reduce ambiguity between the socket name and the database name. Take the following example:
 
-```
+```text
 mongodb:///tmp/mongodb.sock/mongodb.sock
 ```
 
@@ -452,7 +452,7 @@ Q: Why must the auth database be URL decoded by the parser
 On Linux systems database names can contain a question mark ("?"), in these rare cases the auth database must be URL
 encoded. This disambiguates between the auth database and the connection options. Take the following example:
 
-```
+```text
 mongodb://localhost/admin%3F?w=1
 ```
 

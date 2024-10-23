@@ -158,7 +158,7 @@ on test runner threads.
 
 Consider the following examples:
 
-```
+```yaml
 # Error due to a duplicate name (client0 was already defined)
 createEntities:
   - client: { id: client0 }
@@ -423,7 +423,7 @@ The structure of this object is as follows:
         Any field in `uriOptions` may be a [$$placeholder](#placeholder) document and the test runner MUST support replacing
         the placeholder document with values loaded from the test environment. For example:
 
-        ```
+        ```yaml
         uriOptions:
           authMechanism: "MONGODB-OIDC"
           authMechanismProperties:
@@ -518,7 +518,7 @@ The structure of this object is as follows:
 
         Example option value:
 
-        ```
+        ```yaml
         storeEventsAsEntities:
           - id: client0_events
             events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
@@ -1478,7 +1478,7 @@ expressed in YAML and JSON. To account for this, test files MUST nest each Write
 where the key identifies the request type (e.g. "insertOne") and its value is an object expressing the parameters, as in
 the following example:
 
-```
+```yaml
 arguments:
   models:
     - insertOne:
@@ -1674,7 +1674,7 @@ expressed in YAML and JSON. To account for this, test files MUST nest each Write
 where the key identifies the request type (e.g. "insertOne") and its value is an object expressing the parameters, as in
 the following example:
 
-```
+```yaml
 arguments:
   requests:
     - insertOne:
@@ -1784,7 +1784,7 @@ optional drivers are permitted to forgo it entirely and have `insertOne` return 
 asserting InsertOneResult SHOULD utilize the [$$unsetOrMatches](#unsetormatches) operator for *both* the result object
 and any optional fields within, as in the following examples:
 
-```
+```yaml
 - name: insertOne
   object: *collection0
   arguments:
@@ -1869,7 +1869,7 @@ These operations proxy the bucket's `uploadFromStream` and `uploadFromStreamWith
 parameters and options with one exception: the `source` parameter is an object specifying hex bytes from which test
 runners MUST construct a readable stream for the underlying methods. The structure of `source` is as follows:
 
-```
+```yaml
 { $$hexBytes: <string> }
 ```
 
@@ -1957,7 +1957,7 @@ command monitoring events for this client (if applicable).
 
 An example of this operation follows:
 
-```
+```yaml
 # Enable the fail point on the server selected with a primary read preference
 - name: failPoint
   object: testRunner
@@ -2006,7 +2006,7 @@ that the fail point can be disabled on the same mongos server after the test.
 
 An example of this operation follows:
 
-```
+```yaml
 # Enable the fail point on the mongos to which session0 is pinned
 - name: targetedFailPoint
   object: testRunner
@@ -2036,7 +2036,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertSessionTransactionState
   object: testRunner
   arguments:
@@ -2055,7 +2055,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertSessionPinned
   object: testRunner
   arguments:
@@ -2073,7 +2073,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertSessionUnpinned
   object: testRunner
   arguments:
@@ -2097,7 +2097,7 @@ either command does not include an `lsid` field.
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertDifferentLsidOnLastTwoCommands
   object: testRunner
   arguments:
@@ -2121,7 +2121,7 @@ either command does not include an `lsid` field.
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertSameLsidOnLastTwoCommands
   object: testRunner
   arguments:
@@ -2138,7 +2138,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertSessionDirty
   object: testRunner
   arguments:
@@ -2155,7 +2155,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertSessionNotDirty
   object: testRunner
   arguments:
@@ -2174,7 +2174,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertCollectionExists
   object: testRunner
   arguments:
@@ -2197,7 +2197,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertCollectionNotExists
   object: testRunner
   arguments:
@@ -2221,7 +2221,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertIndexExists
   object: testRunner
   arguments:
@@ -2246,7 +2246,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertIndexNotExists
   object: testRunner
   arguments:
@@ -2271,7 +2271,7 @@ test's [Entity Map](#entity-map).
 
 An example of this operation follows:
 
-```
+```yaml
 - name: createEntities
   object: testRunner
   arguments:
@@ -2379,7 +2379,7 @@ Tests SHOULD NOT include multiple loop operations (nested or sequential).
 
 An example of this operation follows:
 
-```
+```yaml
 - name: loop
   object: testRunner
   arguments:
@@ -2411,7 +2411,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: assertNumberConnectionsCheckedOut
   object: testRunner
   arguments:
@@ -2436,7 +2436,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: runOnThread
   object: testRunner
   arguments:
@@ -2466,7 +2466,7 @@ The following arguments are supported:
 
 An example of this operation follows:
 
-```
+```yaml
 - name: waitForThread
   object: testRunner
   arguments:
@@ -2493,7 +2493,7 @@ The following arguments are supported:
 
 For example, the following instructs the test runner to wait for at least one poolClearedEvent to be published:
 
-```
+```yaml
 - name: waitForEvent
   object: testRunner
   arguments:
@@ -2518,7 +2518,7 @@ The following arguments are supported:
 
 For example, the following instructs the test runner to assert that a single PoolClearedEvent was published:
 
-```
+```yaml
 - name: assertEventCount
   object: testRunner
   arguments:
@@ -2540,7 +2540,7 @@ The following arguments are supported:
 
 For example:
 
-```
+```yaml
 - name: recordTopologyDescription
   object: testRunner
   arguments:
@@ -2562,7 +2562,7 @@ The following arguments are supported:
 
 For example:
 
-```
+```yaml
 - name: assertTopologyType
   object: testRunner
   arguments:
@@ -2591,7 +2591,7 @@ The following arguments are supported:
 
 For example:
 
-```
+```yaml
 - name: waitForPrimaryChange
   object: testRunner
   arguments:
@@ -2610,7 +2610,7 @@ The following arguments are supported:
 
 For example:
 
-```
+```yaml
 - name: wait
   object: testRunner
   arguments:
@@ -2623,7 +2623,7 @@ For example:
 
 Syntax:
 
-```
+```yaml
 { field: { $$placeholder: 1 } }
 ```
 
@@ -2634,7 +2634,7 @@ runner MUST raise an error if a placeholder value is used in an unexpected conte
 
 An example of using this placeholder value follows:
 
-```
+```yaml
 kmsProviders:
   aws:
     accessKeyId: { $$placeholder: 1 }
@@ -2650,7 +2650,7 @@ canonical [Extended JSON](../extended-json/extended-json.md).
 
 The algorithm for matching expected and actual values is specified with the following pseudo-code:
 
-```
+```c
 function match (expected, actual):
   if expected is a document:
     // handle special operators (e.g. $$type)
@@ -2721,21 +2721,21 @@ present in the expected document. Examples of root-level documents include, but 
 
 For example, the following documents match:
 
-```
+```yaml
 expected: { x: 1 }
 actual: { x: 1, y: 1 }
 ```
 
 The inverse is not true. For example, the following documents do not match:
 
-```
+```yaml
 expected: { x: 1, y: 1 }
 actual: { x: 1 }
 ```
 
 Test runners MUST NOT permit additional fields in nested documents. For example, the following documents do not match:
 
-```
+```yaml
 expected: { x: { y: 1 } }
 actual: { x: { y: 1, z: 1 } }
 ```
@@ -2749,7 +2749,7 @@ When the expected value is an array, test runners MUST differentiate between an 
 documents would not match if returned by `distinct`, but would match if returned via `find` (after iterating the
 cursor):
 
-```
+```yaml
 expected: [ { x: 1 }, { x: 2 } ]
 actual: [ { x: 1, y: 1 }, { x: 2, y: 2 } ]
 ```
@@ -2759,7 +2759,7 @@ actual: [ { x: 1, y: 1 }, { x: 2, y: 2 } ]
 When matching documents, test runners MUST NOT require keys in the expected and actual document to appear in the same
 order. For example, the following documents would match:
 
-```
+```yaml
 expected: { x: 1, y: 1 }
 actual: { y: 1, x: 1 }
 ```
@@ -2769,7 +2769,7 @@ actual: { y: 1, x: 1 }
 When comparing arrays, expected and actual values MUST contain the same number of elements. For example, the following
 arrays corresponding to a `distinct` operation result would not match:
 
-```
+```yaml
 expected: [ 1, 2, 3 ]
 actual: [ 1, 2, 3, 4 ]
 ```
@@ -2792,7 +2792,7 @@ whose first and only key starts with `$$` and, if so, defer to the special logic
 
 Syntax:
 
-```
+```yaml
 { field: { $$exists: <boolean> } }
 ```
 
@@ -2803,7 +2803,7 @@ modeled after the [$exists](https://www.mongodb.com/docs/manual/reference/operat
 
 An example of this operator checking for a field's presence follows:
 
-```
+```yaml
 command:
   getMore: { $$exists: true }
   collection: *collectionName,
@@ -2812,7 +2812,7 @@ command:
 
 An example of this operator checking for a field's absence follows:
 
-```
+```yaml
 command:
   update: *collectionName
   updates: [ { q: {}, u: { $set: { x: 1 } } } ]
@@ -2824,7 +2824,7 @@ command:
 
 Syntax:
 
-```
+```yaml
 { $$type: <string> }
 { $$type: [ <string>, <string>, ... ] }
 ```
@@ -2836,7 +2836,7 @@ operator.
 
 An example of this operator follows:
 
-```
+```yaml
 command:
   getMore: { $$type: [ "int", "long" ] }
   collection: { $$type: "string" }
@@ -2851,7 +2851,7 @@ need for this behavior in tests.
 
 Syntax, where `entityName` is a string:
 
-```
+```yaml
 { $$matchesEntity: <entityName> }
 ```
 
@@ -2865,7 +2865,7 @@ This operator is primarily used to assert identifiers for uploaded GridFS files.
 
 An example of this operator follows:
 
-```
+```yaml
 operations:
   -
     object: *bucket0
@@ -2888,7 +2888,7 @@ operations:
 
 Syntax, where `hexBytes` is an even number of hexadecimal characters (case-insensitive) and MAY be empty:
 
-```
+```yaml
 { $$matchesHexBytes: <hexBytes> }
 ```
 
@@ -2901,7 +2901,7 @@ stream contents as a string.
 
 Syntax:
 
-```
+```yaml
 { $$unsetOrMatches: <anything> }
 ```
 
@@ -2916,14 +2916,14 @@ InsertOneResult, `writeResult` for BulkWriteException).
 
 An example of this operator used for a result's field follows:
 
-```
+```yaml
 expectResult:
   insertedId: { $$unsetOrMatches: 2 }
 ```
 
 An example of this operator used for an entire result follows:
 
-```
+```yaml
 expectError:
   expectResult:
     $$unsetOrMatches:
@@ -2939,7 +2939,7 @@ expectError:
 
 Syntax:
 
-```
+```yaml
 { $$sessionLsid: <sessionEntityName> }
 ```
 
@@ -2951,7 +2951,7 @@ for a session entity's `id` field (e.g. `session: *session0`).
 
 An example of this operator follows:
 
-```
+```yaml
 command:
   ping: 1
   lsid: { $$sessionLsid: *session0 }
@@ -2961,7 +2961,7 @@ command:
 
 Syntax:
 
-```
+```yaml
 { $$lte: 5 }
 ```
 
@@ -2974,7 +2974,7 @@ expected value of `1` would match an actual value of `1.0` and `0.0` but would n
 
 Syntax:
 
-```
+```yaml
 { $$matchAsDocument: <anything> }
 ```
 
@@ -3211,7 +3211,7 @@ to a sharded cluster, each mongos server.
 
 For example:
 
-```
+```javascript
 db.adminCommand({
   killAllSessions: []
 });
@@ -3235,7 +3235,7 @@ Test runners MUST NOT execute `killAllSessions` when connected to Atlas Data Lak
 Following [SERVER-82353](https://jira.mongodb.org/browse/SERVER-82353), drivers may encounter MigrationConflict errors
 when executing transactions on sharded clusters due to an outdated cluster time. For example:
 
-```
+```text
 Transaction fe0b9a7d-4b64-4e38-aad2-4c7dd5ab0c2b - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= -  - :1 was aborted on statement 0 due to: a non-retryable snapshot error :: caused by :: Encountered error from localhost:27217 during a transaction :: caused by :: Database transaction-tests has undergone a catalog change operation at time Timestamp(1708062645, 94) and no longer satisfies the requirements for the current transaction which requires Timestamp(1708062645, 93). Transaction will be aborted.
 ```
 
@@ -3262,7 +3262,7 @@ When a shard receives its first command that contains a `databaseVersion`, the s
 mongos retries the operation. In a sharded transaction, mongos does not retry these operations and instead returns the
 error to the client. For example:
 
-```
+```text
 Command distinct failed: Transaction aa09e296-472a-494f-8334-48d57ab530b6:1 was aborted on statement 0 due to: an error from cluster data placement change :: caused by :: got stale databaseVersion response from shard sh01 at host localhost:27217 :: caused by :: don't know dbVersion.
 ```
 
@@ -3294,7 +3294,7 @@ documentation for all fail points available for driver testing, but some fail po
 
 The `configureFailPoint` command is executed on the `admin` database and has the following structure:
 
-```
+```javascript
 db.adminCommand({
     configureFailPoint: <string>,
     mode: <string|object>,
@@ -3327,7 +3327,7 @@ should already be enabled for most configuration files in
 
 A fail point may be disabled like so:
 
-```
+```javascript
 db.adminCommand({
     configureFailPoint: <string>,
     mode: "off"
@@ -3349,7 +3349,7 @@ mongos until version 4.1.7 ([SERVER-34943](https://jira.mongodb.org/browse/SERVE
 
 The `failCommand` fail point may be configured like so:
 
-```
+```javascript
 db.adminCommand({
     configureFailPoint: "failCommand",
     mode: <string|object>,

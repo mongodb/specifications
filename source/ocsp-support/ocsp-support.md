@@ -90,7 +90,7 @@ cache SHOULD be the certificate identifier (CertID) of the OCSP request as speci
 [RFC 6960: 4.1.1](https://tools.ietf.org/html/rfc6960#section-4.1.1). For convenience, the relevant section has been
 duplicated below:
 
-```
+```text
 CertID          ::=     SEQUENCE {
     hashAlgorithm       AlgorithmIdentifier,
     issuerNameHash      OCTET STRING, -- Hash of issuer's DN

@@ -89,7 +89,7 @@ MMAPv1 storage engine which is available in both MongoDB 3.6 and 4.0. Since `ret
 MUST raise an actionable error message when the server returns code 20 with errmsg starting with "Transaction numbers".
 The replacement error message MUST be:
 
-```
+```text
 This MongoDB deployment does not support retryable writes. Please add
 retryWrites=false to your connection string.
 ```

@@ -41,7 +41,7 @@ an array of BSON type strings is considered a match.
 For example, the following matches a command_started_event for an insert of a document where `random` must be of type
 `binData`:
 
-```
+```text
 - command_started_event:
     command:
       insert: *collection_name
@@ -54,7 +54,7 @@ For example, the following matches a command_started_event for an insert of a do
 The following matches a command_started_event for an insert of a document where `random` must be of type `binData` or
 `string`:
 
-```
+```text
 - command_started_event:
     command:
       insert: *collection_name
@@ -348,7 +348,7 @@ Tests for the ClientEncryption type are not included as part of the YAML tests.
 
 In the prose tests LOCAL_MASTERKEY refers to the following base64:
 
-```
+```text
 Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
 ```
 
@@ -366,7 +366,7 @@ command) with readConcern/writeConcern "majority".
 4. Using `client_encryption`, create a data key with a `local` KMS provider and the following custom key material (given
     as base64):
 
-    ```
+    ```text
     xPTAjBRG5JiPm+d3fj6XLi2q5DMXUS/f1f+SMAlhhwkhDRL0kr8r9GDLIGTAGlvC+HVjSIgdL+RKwZCvpXSyxTICWSXTUYsWYPyu3IoHbuBZdmw2faM3WhcRIgbMReU5
     ```
 
@@ -380,7 +380,7 @@ command) with readConcern/writeConcern "majority".
     `AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic` algorithm and assert the resulting value is equal to the following
     (given as base64):
 
-    ```
+    ```text
     AQAAAAAAAAAAAAAAAAAAAAACz0ZOLuuhEYi807ZXTdhbqhLaS2/t9wLifJnnNYwiw79d75QYIZ6M/aYC1h9nCzCjZ7pGUpAuNnkUhnIXM3PjrA==
     ```
 
@@ -673,7 +673,7 @@ binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtyp
         "azure": { <Azure credentials> },
         "gcp": { <GCP credentials> },
         "local": { "key": <base64 decoding of LOCAL_MASTERKEY> },
-        "kmip": { "endpoint": "localhost:5698" } }
+        "kmip": { "endpoint": "localhost:5698" }
     }
     ```
 
@@ -690,7 +690,7 @@ binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtyp
 
     Where LOCAL_MASTERKEY is the following base64:
 
-    ```
+    ```text
     Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
     ```
 
@@ -1375,7 +1375,7 @@ cert file, and one on port 9001 with
 [wrong-host.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/wrong-host.pem)
 as a cert file, run the following commands from the `.evergreen/csfle` directory:
 
-```
+```shell
 . ./activate_venv.sh
 python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 9000 &
 python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 9001 &
@@ -1458,7 +1458,7 @@ Four mock KMS server processes must be running:
 
     Example:
 
-    ```
+    ```shell
     python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 9000
     ```
 
@@ -1474,7 +1474,7 @@ Four mock KMS server processes must be running:
 
     Example:
 
-    ```
+    ```shell
     python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 9001
     ```
 
@@ -1492,7 +1492,7 @@ Four mock KMS server processes must be running:
 
     Example:
 
-    ```
+    ```shell
     python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9002 --require_client_cert
     ```
 
@@ -2496,7 +2496,7 @@ For these IMDS credentials tests, a simple stand-in IMDS-imitating HTTP server i
 at `.evergreen/csfle/fake_azure.py`. `fake_azure.py` is a very simple `bottle.py` application. For the easiest use, it
 is recommended to execute it through `bottle.py` (which is a sibling file in the same directory):
 
-```
+```shell
 python .evergreen/csfle/bottle.py fake_azure:imds
 ```
 
@@ -2692,7 +2692,7 @@ The Automatic Data Encryption Keys tests require MongoDB server 7.0+. The tests 
 For each of the following test cases, assume `DB` is a valid open database handle, and assume a
 [ClientEncryption](../client-side-encryption.md#clientencryption) object `CE` created using the following options:
 
-```
+```javascript
 clientEncryptionOptions: {
    keyVaultClient: <new MongoClient>,
    keyVaultNamespace: "keyvault.datakeys",
@@ -3314,7 +3314,7 @@ The following tests that certain AWS, Azure, and GCP KMS operations are retried 
 
 This test uses a mock server with configurable failpoints to simulate network failures. To start the server:
 
-```
+```shell
 python -u kms_failpoint_server.py --port 9003
 ```
 

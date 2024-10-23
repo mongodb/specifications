@@ -1788,14 +1788,14 @@ server is rediscovered and immediately attempt authentication on a new connectio
 Very often users have DNS aliases they use in their [seed list](#seed-list) instead of the hostnames in the replica set
 config. For example, the name "host_alias" might refer to a server also known as "host1", and the URI is:
 
-```
+```text
 mongodb://host_alias/?replicaSet=rs
 ```
 
 When the client connects to "host_alias", its hello or legacy hello response includes the list of hostnames from the
 replica set config, which does not include the seed:
 
-```
+```javascript
 {
    hosts: ["host1:27017", "host2:27017"],
    setName: "rs",

@@ -373,7 +373,7 @@ Drivers MUST raise an error if `maxStalenessSeconds` is a positive number and th
 A driver MUST raise an error if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary and either of these
 conditions is false:
 
-```
+```javascript
 maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
 maxStalenessSeconds >= smallestMaxStalenessSeconds
 ```
@@ -403,7 +403,7 @@ After filtering servers according to `mode`, and before filtering with `tag_sets
     is ReplicaSetWithPrimary, a secondary's staleness is calculated using its ServerDescription "S" and the primary's
     ServerDescription "P":
 
-    ```
+    ```javascript
     (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
     ```
 
@@ -412,7 +412,7 @@ After filtering servers according to `mode`, and before filtering with `tag_sets
     If TopologyType is ReplicaSetNoPrimary, a secondary's staleness is calculated using its ServerDescription "S" and the
     ServerDescription of the secondary with the greatest lastWriteDate, "SMax":
 
-    ```
+    ```javascript
     SMax.lastWriteDate - S.lastWriteDate + heartbeatFrequencyMS
     ```
 
@@ -887,8 +887,8 @@ weighting factor (`alpha`) of 0.2. If the prior average is denoted `old_rtt`, th
 computed from a new RTT measurement (`x`) using the following formula:
 
 ```javascript
-    alpha = 0.2
-    new_rtt = alpha * x + (1 - alpha) * old_rtt
+alpha = 0.2
+new_rtt = alpha * x + (1 - alpha) * old_rtt
 ```
 
 A weighting factor of 0.2 was chosen to put about 85% of the weight of the average RTT on the 9 most recent
@@ -925,32 +925,32 @@ The logic is expressed in this pseudocode. The algorithm for the "getServer" fun
 [Single-threaded server selection implementation](#single-threaded-server-selection-implementation):
 
 ```python
-    def getConnection(criteria):
-        # Get a server for writes, or a server matching read prefs, by
-        # running the server selection algorithm.
-        server = getServer(criteria)
-        if not server:
-            throw server selection error
+def getConnection(criteria):
+    # Get a server for writes, or a server matching read prefs, by
+    # running the server selection algorithm.
+    server = getServer(criteria)
+    if not server:
+        throw server selection error
 
-        connection = server.connection
-        if connection is NULL:
-            # connect to server and return connection
-        else if connection has been idle < socketCheckIntervalMS:
+    connection = server.connection
+    if connection is NULL:
+        # connect to server and return connection
+    else if connection has been idle < socketCheckIntervalMS:
+        return connection
+    else:
+        try:
+            use connection for "ping" command
             return connection
-        else:
-            try:
-                use connection for "ping" command
-                return connection
-            except network error:
-                close connection
-                mark server Unknown and update Topology Description
+        except network error:
+            close connection
+            mark server Unknown and update Topology Description
 
-                # Attempt *once* more to select.
-                server = getServer(criteria)
-                if not server:
-                    throw server selection error
+            # Attempt *once* more to select.
+            server = getServer(criteria)
+            if not server:
+                throw server selection error
 
-                # connect to server and return connection
+            # connect to server and return connection
 ```
 
 See [What is the purpose of socketCheckIntervalMS?](#what-is-the-purpose-of-socketcheckintervalms).
@@ -1133,65 +1133,65 @@ The following is pseudocode for
 [multi-threaded or asynchronous server selection](#multi-threaded-or-asynchronous-server-selection):
 
 ```python
-    def getServer(criteria):
-        client.lock.acquire()
+def getServer(criteria):
+    client.lock.acquire()
 
-        now = gettime()
-        endTime = now + computed server selection timeout
+    now = gettime()
+    endTime = now + computed server selection timeout
 
-        log a "server selection started" message
-        while true:
-            # The topologyDescription keeps track of whether any server has an
-            # an invalid wire version range
-            if not topologyDescription.compatible:
+    log a "server selection started" message
+    while true:
+        # The topologyDescription keeps track of whether any server has an
+        # an invalid wire version range
+        if not topologyDescription.compatible:
+            client.lock.release()
+            log a "server selection failed" message
+            throw invalid wire protocol range error with details
+
+        if maxStalenessSeconds is set:
+            if client minWireVersion < 5 and "<any available server's maxWireVersion < 5">:
                 client.lock.release()
-                log a "server selection failed" message
-                throw invalid wire protocol range error with details
+                throw error
 
-            if maxStalenessSeconds is set:
-                if client minWireVersion < 5 and "<any available server's maxWireVersion < 5">:
-                    client.lock.release()
-                    throw error
+            if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
+                if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
+                    maxStalenessSeconds < smallestMaxStalenessSeconds):
+                client.lock.release()
+                throw error
 
-                if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
-                    if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
-                        maxStalenessSeconds < smallestMaxStalenessSeconds):
-                    client.lock.release()
-                    throw error
+        servers = all servers in topologyDescription matching criteria
 
-            servers = all servers in topologyDescription matching criteria
+        if serverSelector is not null:
+            servers = serverSelector(servers)
 
-            if serverSelector is not null:
-                servers = serverSelector(servers)
-
-            if servers is not empty:
-                in_window = servers within the latency window
-                if len(in_window) == 1:
-                    selected = in_window[0]
+        if servers is not empty:
+            in_window = servers within the latency window
+            if len(in_window) == 1:
+                selected = in_window[0]
+            else:
+                server1, server2 = random two entries from in_window
+                if server1.operation_count <= server2.operation_count:
+                    selected = server1
                 else:
-                    server1, server2 = random two entries from in_window
-                    if server1.operation_count <= server2.operation_count:
-                        selected = server1
-                    else:
-                        selected = server2
-                selected.operation_count += 1
-                client.lock.release()
-                return selected
+                    selected = server2
+            selected.operation_count += 1
+            client.lock.release()
+            return selected
 
-            request that all monitors check immediately
-            if the message was not logged already for this operation: 
-                log a "waiting for suitable server to become available" message
+        request that all monitors check immediately
+        if the message was not logged already for this operation:
+            log a "waiting for suitable server to become available" message
 
-            # Wait for a new TopologyDescription. condition.wait() releases
-            # client.lock while waiting and reacquires it before returning.
-            # While a thread is waiting on client.condition, it is awakened
-            # early whenever a server check completes.
-            timeout_left = endTime - gettime()
-            client.condition.wait(timeout_left)
+        # Wait for a new TopologyDescription. condition.wait() releases
+        # client.lock while waiting and reacquires it before returning.
+        # While a thread is waiting on client.condition, it is awakened
+        # early whenever a server check completes.
+        timeout_left = endTime - gettime()
+        client.condition.wait(timeout_left)
 
-            if now after endTime:
-                client.lock.release()
-                throw server selection error
+        if now after endTime:
+            client.lock.release()
+            throw server selection error
 ```
 
 ### Single-threaded server selection implementation
@@ -1199,72 +1199,72 @@ The following is pseudocode for
 The following is pseudocode for [single-threaded server selection](#single-threaded-server-selection):
 
 ```python
-    def getServer(criteria):
-        startTime = gettime()
-        loopEndTime = startTime
-        maxTime = startTime + computed server selection timeout
-        nextUpdateTime = topologyDescription.lastUpdateTime
-                       + heartbeatFrequencyMS/1000:
+def getServer(criteria):
+    startTime = gettime()
+    loopEndTime = startTime
+    maxTime = startTime + computed server selection timeout
+    nextUpdateTime = topologyDescription.lastUpdateTime
+                    + heartbeatFrequencyMS/1000:
 
-        if nextUpdateTime < startTime:
-            topologyDescription.stale = true
+    if nextUpdateTime < startTime:
+        topologyDescription.stale = true
 
-        while true:
+    while true:
 
-            if topologyDescription.stale:
-                scanReadyTime = topologyDescription.lastUpdateTime
-                              + minHeartbeatFrequencyMS/1000
+        if topologyDescription.stale:
+            scanReadyTime = topologyDescription.lastUpdateTime
+                            + minHeartbeatFrequencyMS/1000
 
-                if ((not serverSelectionTryOnce) && (scanReadyTime > maxTime)):
-                    throw server selection error with details
-
-                # using loopEndTime below is a proxy for "now" but avoids
-                # the overhead of another gettime() call
-                sleepTime = scanReadyTime - loopEndTime
-
-                if sleepTime > 0:
-                    sleep sleepTime
-
-                rescan all servers
-                topologyDescription.lastupdateTime = gettime()
-                topologyDescription.stale = false
-
-            # topologyDescription keeps a record of whether any
-            # server has an incompatible wire version range
-            if not topologyDescription.compatible:
-                topologyDescription.stale = true
-                # throw invalid wire version range error with details
-
-            if maxStalenessSeconds is set:
-                if client minWireVersion < 5 and "<any available server's maxWireVersion < 5>":
-                    # throw error
-
-                if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
-                    if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
-                        maxStalenessSeconds < smallestMaxStalenessSeconds):
-                    # throw error
-
-            servers = all servers in topologyDescription matching criteria
-
-            if serverSelector is not null:
-                servers = serverSelector(servers)
-
-            if servers is not empty:
-                in_window = servers within the latency window
-                return random entry from in_window
-            else:
-                topologyDescription.stale = true
-
-            loopEndTime = gettime()
-
-            if serverSelectionTryOnce:
-                if topologyDescription.lastUpdateTime > startTime:
-                    throw server selection error with details
-            else if loopEndTime > maxTime:
+            if ((not serverSelectionTryOnce) and (scanReadyTime > maxTime)):
                 throw server selection error with details
 
-            if the message was not logged already: 
-                log a "waiting for suitable server to become available" message
+            # using loopEndTime below is a proxy for "now" but avoids
+            # the overhead of another gettime() call
+            sleepTime = scanReadyTime - loopEndTime
+
+            if sleepTime > 0:
+                sleep sleepTime
+
+            rescan all servers
+            topologyDescription.lastupdateTime = gettime()
+            topologyDescription.stale = false
+
+        # topologyDescription keeps a record of whether any
+        # server has an incompatible wire version range
+        if not topologyDescription.compatible:
+            topologyDescription.stale = true
+            # throw invalid wire version range error with details
+
+        if maxStalenessSeconds is set:
+            if client minWireVersion < 5 and "<any available server's maxWireVersion < 5>":
+                # throw error
+
+            if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
+                if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
+                    maxStalenessSeconds < smallestMaxStalenessSeconds):
+                # throw error
+
+        servers = all servers in topologyDescription matching criteria
+
+        if serverSelector is not null:
+            servers = serverSelector(servers)
+
+        if servers is not empty:
+            in_window = servers within the latency window
+            return random entry from in_window
+        else:
+            topologyDescription.stale = true
+
+        loopEndTime = gettime()
+
+        if serverSelectionTryOnce:
+            if topologyDescription.lastUpdateTime > startTime:
+                throw server selection error with details
+        else if loopEndTime > maxTime:
+            throw server selection error with details
+
+        if the message was not logged already: 
+            log a "waiting for suitable server to become available" message
 ```
 
 ### Server Selection Errors
@@ -1284,13 +1284,13 @@ Or, if authentication failed:
 
 Here is a sketch of some pseudocode for handling error reporting when errors could be different across servers:
 
-```python
-    if there are any available servers:
-        error_message = "No servers are suitable for " + criteria
-    else if all ServerDescriptions' errors are the same:
-        error_message = a ServerDescription.error value
-    else:
-        error_message = ', '.join(all ServerDescriptions' errors)
+```text
+if there are any available servers:
+    error_message = "No servers are suitable for " + criteria
+else if all ServerDescriptions' errors are the same:
+    error_message = a ServerDescription.error value
+else:
+    error_message = ', '.join(all ServerDescriptions' errors)
 ```
 
 ### Cursors

@@ -185,7 +185,7 @@ used instead of negative values.
 In order to have consistency between old and new applications, the following transformations MUST be performed before
 adding options to the **find** command:
 
-```
+```text
 singleBatch = (limit < 0) || (batchSize < 0)
 limit       = abs(limit)
 if singleBatch:
@@ -323,7 +323,7 @@ commands. The **killCursors** command is optional to implement in **MongoDB 3.2*
 
 The command response will be as follows:
 
-```javascript
+```typescript
 {
   "cursorsKilled": [
     <cursor id 1>
@@ -357,7 +357,7 @@ that the **killCursors** command returns a response while the **OP_KILL_CURSORS*
 
 The **OP_REPLY** message has the following general structure.
 
-```javascript
+```c
 struct {
     int32     messageLength;  // total message size, including
                               // this

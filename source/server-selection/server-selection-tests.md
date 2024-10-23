@@ -150,7 +150,7 @@ language-specific way to confirm randomness.
 For example, the following topology description, operation, and read preference will return a set of three suitable
 servers within the latency window:
 
-```
+```yaml
     topology_description:
       type: ReplicaSetWithPrimary
       servers:
@@ -202,7 +202,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 
 2. Enable the following failpoint against exactly one of the mongoses:
 
-    ```
+    ```javascript
     {
        configureFailPoint: "failCommand",
        mode: { times: 10000 },

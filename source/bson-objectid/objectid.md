@@ -27,7 +27,7 @@ of three different portions (fields):
 - a 5-byte random number unique to a machine and process,
 - a 3-byte counter, starting with a random value.
 
-```
+```text
 4 byte timestamp    5 byte process unique   3 byte counter
 |<----------------->|<---------------------->|<------------>|
 [----|----|----|----|----|----|----|----|----|----|----|----]

@@ -104,7 +104,7 @@ The definition of MATCH or MATCHES in the Spec Test Runner is as follows:
 
 Pseudocode implementation of `actual` MATCHES `expected`:
 
-```
+```text
 If expected is "42" or 42:
   Assert that actual exists (is not null or undefined)
 Else:

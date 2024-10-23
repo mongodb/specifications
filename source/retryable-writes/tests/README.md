@@ -109,7 +109,7 @@ The following tests ensure that retryable writes work properly with replica sets
 For this test, execute a write operation, such as `insertOne`, which should generate an exception. Assert that the error
 message is the replacement error message:
 
-```
+```text
 This MongoDB deployment does not support retryable writes. Please add
 retryWrites=false to your connection string.
 ```

@@ -141,7 +141,7 @@ Drivers SHOULD support the `filter`, `authorizedDatabases` and `comment` options
 MongoDB 3.6 introduced a `nameOnly` boolean option to the `listDatabases` database command, which limits the command
 result to only include database names. Consider the following example:
 
-```
+```javascript
 > db.getSiblingDB("admin").runCommand({listDatabases:1,nameOnly:true})
 {
     "databases" : [

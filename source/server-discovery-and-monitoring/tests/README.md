@@ -178,7 +178,7 @@ Run the following test(s) on MongoDB 4.4+.
     5. Configure the following failpoint to block hello or legacy hello commands for 250ms which should add extra latency
         to each RTT check:
 
-        ```
+        ```javascript
         db.adminCommand({
             configureFailPoint: "failCommand",
             mode: {times: 1000},
@@ -199,7 +199,7 @@ Run the following test(s) on MongoDB 4.4+.
 
     7. Disable the failpoint:
 
-        ```
+        ```javascript
         db.adminCommand({
             configureFailPoint: "failCommand",
             mode: "off",
@@ -213,7 +213,7 @@ Run the following test(s) on MongoDB 4.4+.
         client connects and a `client hello received` event when the server receives the client hello and then closes
         the connection:
 
-        ```
+        ```javascript
         let events = [];
         server = createServer(clientSocket => {
           events.push('client connected');
@@ -233,6 +233,6 @@ Run the following test(s) on MongoDB 4.4+.
 
     4. Assert that the first four elements in the array are: :
 
-        ```
+        ```javascript
         ['serverHeartbeatStartedEvent', 'client connected', 'client hello received', 'serverHeartbeatFailedEvent']
         ```

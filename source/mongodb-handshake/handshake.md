@@ -170,8 +170,8 @@ The recommended way for applications to provide this value is through the connec
 
 Example connection string:
 
-```
-    mongodb://server:27017/db?appname=mongodump
+```text
+mongodb://server:27017/db?appname=mongodump
 ```
 
 This option MAY also be provided on the MongoClient itself, if normal for the driver. It is only valid to set this
@@ -190,7 +190,7 @@ a function to append additional name to this field.
 
 Example:
 
-```
+```text
 - "pymongo"
 - "mongoc / phongo"
 ```
@@ -204,7 +204,7 @@ the underlying driver will typically expose a function to append additional name
 
 Example:
 
-```
+```text
 - "1.1.2-beta0"
 - "1.4.1 / 1.2.0"
 ```
@@ -218,7 +218,7 @@ This field is REQUIRED and clients must default to `unknown` when an appropriate
 
 Example:
 
-```
+```text
 - "Linux"
 - "Darwin"
 - "Windows"
@@ -236,7 +236,7 @@ typically `PRETTY_NAME` of `os-release(5)` (`/etc/os-release`) or the `DISTRIB_D
 
 Example:
 
-```
+```text
 - "Ubuntu 16.04 LTS"
 - "macOS"
 - "CygWin"
@@ -251,7 +251,7 @@ This value is optional, but RECOMMENDED, it is not application configurable. The
 
 Example:
 
-```
+```text
 - "x86_64"
 - "ppc64le"
 ```
@@ -264,7 +264,7 @@ The Operating System version.
 
 Example:
 
-```
+```text
 - "10"
 - "8.1"
 - "16.04.1"
@@ -278,7 +278,7 @@ Driver specific platform details.
 
 Example:
 
-```
+```text
 - clang 3.8.0 CFLAGS="-mcpu=power8 -mtune=power8 -mcmodel=medium"
 - "Oracle JVM EE 9.1.1"
 ```

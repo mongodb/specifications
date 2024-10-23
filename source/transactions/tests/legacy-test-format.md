@@ -288,7 +288,7 @@ subsequent tests. The fail point may be disabled like so:
 Here is an example which instructs the test runner to enable the failCommand fail point on the mongos server which
 "session0" is pinned to:
 
-```
+```yaml
 # Enable the fail point only on the Mongos that session0 is pinned to.
 - name: targetedFailPoint
   object: testRunner
@@ -313,7 +313,7 @@ The "assertSessionTransactionState" operation instructs the test runner to asser
 given session is equal to the specified value. The possible values are as follows: `none`, `starting`, `in_progress`,
 `committed`, `aborted`:
 
-```
+```yaml
 - name: assertSessionTransactionState
   object: testRunner
   arguments:
@@ -325,7 +325,7 @@ given session is equal to the specified value. The possible values are as follow
 
 The "assertSessionPinned" operation instructs the test runner to assert that the given session is pinned to a mongos:
 
-```
+```yaml
 - name: assertSessionPinned
   object: testRunner
   arguments:
@@ -337,7 +337,7 @@ The "assertSessionPinned" operation instructs the test runner to assert that the
 The "assertSessionUnpinned" operation instructs the test runner to assert that the given session is not pinned to a
 mongos:
 
-```
+```yaml
 - name: assertSessionPinned
   object: testRunner
   arguments:
@@ -349,7 +349,7 @@ mongos:
 The "assertCollectionExists" operation instructs the test runner to assert that the given collection exists in the
 database:
 
-```
+```yaml
 - name: assertCollectionExists
   object: testRunner
   arguments:
@@ -365,7 +365,7 @@ Use a `listCollections` command to check whether the collection exists. Note tha
 The "assertCollectionNotExists" operation instructs the test runner to assert that the given collection does not exist
 in the database:
 
-```
+```yaml
 - name: assertCollectionNotExists
   object: testRunner
   arguments:
@@ -381,7 +381,7 @@ Use a `listCollections` command to check whether the collection exists. Note tha
 The "assertIndexExists" operation instructs the test runner to assert that the index with the given name exists on the
 collection:
 
-```
+```yaml
 - name: assertIndexExists
   object: testRunner
   arguments:
@@ -398,7 +398,7 @@ Use a `listIndexes` command to check whether the index exists. Note that it is c
 The "assertIndexNotExists" operation instructs the test runner to assert that the index with the given name does not
 exist on the collection:
 
-```
+```yaml
 - name: assertIndexNotExists
   object: testRunner
   arguments:
@@ -449,7 +449,7 @@ When a shard receives its first command that contains a dbVersion, the shard ret
 Mongos retries the operation. In a sharded transaction, Mongos does not retry these operations and instead returns the
 error to the client. For example:
 
-```
+```text
 Command distinct failed: Transaction aa09e296-472a-494f-8334-48d57ab530b6:1 was aborted on statement 0 due to: an error from cluster data placement change :: caused by :: got stale databaseVersion response from shard sh01 at host localhost:27217 :: caused by :: don't know dbVersion.
 ```
 

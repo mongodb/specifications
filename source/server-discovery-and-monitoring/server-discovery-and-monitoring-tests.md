@@ -132,7 +132,7 @@ This test requires MongoDB 4.9.0+.
 
 1. Enable the following failpoint:
 
-    ```
+    ```javascript
     {
         configureFailPoint: "failCommand",
         mode: { times: 5 },
@@ -167,7 +167,7 @@ This test requires failCommand appName support which is only available in MongoD
 
 3. Enable the following failpoint:
 
-    ```
+    ```javascript
     {
         configureFailPoint: "failCommand",
         mode: { times: 2 },

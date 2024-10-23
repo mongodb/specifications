@@ -85,7 +85,7 @@ Template: 1
 
 When prompted for language if the driver language is not Python, select "N".
 
-```
+```text
 Use the most popular runtime and package type? (Python and zip) [y/N]: n
 ```
 

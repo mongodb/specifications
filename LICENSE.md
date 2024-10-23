@@ -2,7 +2,7 @@ Creative Commons Legal Code
 
 Attribution-NonCommercial-ShareAlike 3.0 United States
 
-```
+```text
 CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL
 SERVICES. DISTRIBUTION OF THIS LICENSE DOES NOT CREATE AN ATTORNEY-CLIENT
 RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS INFORMATION ON AN "AS-IS" BASIS.
@@ -123,7 +123,7 @@ CONSIDERATION OF YOUR ACCEPTANCE OF SUCH TERMS AND CONDITIONS.
 
     e. For the avoidance of doubt, where the Work is a musical composition:
 
-    ```
+    ```text
         i. Performance Royalties Under Blanket Licenses. Licensor reserves the exclusive right to
            collect whether individually or, in the event that Licensor is a member of a performance
            rights society (e.g. ASCAP, BMI, SESAC), via that society, royalties for the public

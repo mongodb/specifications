@@ -230,7 +230,7 @@ arguments, compressing it, adding supplemental APM data or any other modificatio
 
 For example, an insert can be represented like:
 
-```
+```javascript
 {
    "insert": "collectionName",
    "documents": [
@@ -245,7 +245,7 @@ For example, an insert can be represented like:
 Or, pulling out the `"documents"` argument out of the command document and Into `Payload Type 1`. The `Payload Type 0`
 would then be:
 
-```
+```javascript
 {
    "insert": "collectionName",
    "$db": "databaseName",
@@ -255,7 +255,7 @@ would then be:
 
 And `Payload Type 1`:
 
-```
+```yaml
 identifier: "documents"
 documents: {"_id": "Document#1", "example": 1}{"_id": "Document#2", "example": 2}{"_id": "Document#3", "example": 3}
 ```
@@ -268,7 +268,7 @@ ______________________________________________________________________
 
 An update can for example be represented like:
 
-```
+```javascript
 {
    "update": "collectionName",
    "updates": [
@@ -287,7 +287,7 @@ An update can for example be represented like:
 Or, pulling out the `"update"` argument out of the command document and Into `Payload Type 1`. The `Payload Type 0`
 would then be:
 
-```
+```javascript
 {
    "update": "collectionName",
    "$db": "databaseName"
@@ -296,7 +296,7 @@ would then be:
 
 And `Payload Type 1`:
 
-```
+```yaml
 identifier: updates
 documents: {"q": {"example": 1}, "u": { "$set": { "example": 4}}}{"q": {"example": 2}, "u": { "$set": { "example": 5}}}
 ```
@@ -307,7 +307,7 @@ ______________________________________________________________________
 
 A delete can for example be represented like:
 
-```
+```javascript
 {
    "delete": "collectionName",
    "deletes": [
@@ -326,7 +326,7 @@ A delete can for example be represented like:
 Or, pulling out the `"deletes"` argument out of the command document and into `Payload Type 1`. The `Payload Type 0`
 would then be:
 
-```
+```javascript
 {
    "delete": "collectionName",
    "$db": "databaseName"
@@ -335,7 +335,7 @@ would then be:
 
 And `Payload Type 1`:
 
-```
+```yaml
 identifier: delete
 documents: {"q": {"example": 3}, "limit": 1}{"q": {"example": 4}, "limit": 1}
 ```
