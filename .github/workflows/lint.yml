@@ -17,7 +17,7 @@ jobs:
       - name: "Run pre-commit"
         run: |
           pip install -U -q pre-commit
-          pre-commit run --all-files --hook-stage manual
+          pre-commit run --all-files --hook-stage manual || (git diff; false)
 
   mkdocs:
     runs-on: ubuntu-latest
