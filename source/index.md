@@ -3,6 +3,7 @@
 - [Atlas Serverless Tests](serverless-testing/README.md)
 - [Authentication](auth/auth.md)
 - [BSON Binary Encrypted](bson-binary-encrypted/binary-encrypted.md)
+- [BSON Binary Subtype 9 - Vector](bson-binary-vector/bson-binary-vector.md)
 - [BSON Binary UUID](bson-binary-uuid/uuid.md)
 - [BSON Corpus](bson-corpus/bson-corpus.md)
 - [BSON Decimal128](bson-decimal128/decimal128.md)
