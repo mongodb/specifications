@@ -21,7 +21,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-<div id="callback">
+<span id="callback"></span>
 
 **Callback**
 
@@ -37,7 +37,7 @@ specification. The name of this object MAY vary across drivers.
 
 The root object of a driver's API. The name of this object MAY vary across drivers.
 
-<div id="TransactionOptions">
+<span id="TransactionOptions"></span>
 
 **TransactionOptions**
 
