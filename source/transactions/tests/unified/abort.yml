@@ -348,6 +348,9 @@ tests:
           - { _id: 1 }
   -
     description: 'abort ignores TransactionAborted'
+    runOnRequirements:
+      # Serverless sets empty `codeName` on failpoint errors. Remove once CLOUDP-280424 is fixed.
+      - serverless: forbid
     operations:
       -
         object: *session0
