@@ -3387,7 +3387,7 @@ db.adminCommand({
     which the affected commands should be blocked. New in server 4.3.4 and backported to 4.2.9
     ([SERVER-41070](https://jira.mongodb.org/browse/SERVER-41070)).
 - `namespace`: Optional string. If set, the fail point will only trigger for commands on the specified namespace (e.g.
-   `db.coll`). New in server 4.3.1 and backported to 4.2.6 ([SERVER-43011](https://jira.mongodb.org/browse/SERVER-43011)).
+    `db.coll`). New in server 4.3.1 and backported to 4.2.6 ([SERVER-43011](https://jira.mongodb.org/browse/SERVER-43011)).
 
 ##### onPrimaryTransactionalWrite
 
