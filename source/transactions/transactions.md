@@ -258,8 +258,7 @@ ClientSession is in one of five states: "no transaction", "starting transaction"
 "transaction committed", and "transaction aborted". It transitions among these states according to the following
 diagram:
 
-<img src="client-session-transaction-states.png"
-style="width:6.5in;height:3.68056in" alt="states" />
+![ClientSession transaction states](client-session-transaction-states.png)
 ([GraphViz source](client-session-transaction-states.dot))
 
 When a ClientSession is created it starts in the "no transaction" state. Starting, committing, and aborting a
