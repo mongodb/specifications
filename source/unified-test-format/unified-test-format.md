@@ -3362,6 +3362,7 @@ db.adminCommand({
       appName: <string>,
       blockConnection: <boolean>,
       blockTimeMS: <integer>,
+      namespace: <string>,
     }
 });
 ```
@@ -3385,6 +3386,8 @@ db.adminCommand({
 - `blockTimeMS`: Optional integer, which is required when `blockConnection` is `true`. The number of milliseconds for
     which the affected commands should be blocked. New in server 4.3.4 and backported to 4.2.9
     ([SERVER-41070](https://jira.mongodb.org/browse/SERVER-41070)).
+- `namespace`: Optional string. If set, the fail point will only trigger for commands on the specified namespace (e.g.
+   `db.coll`). New in server 4.3.1 and backported to 4.2.6 ([SERVER-43011](https://jira.mongodb.org/browse/SERVER-43011)).
 
 ##### onPrimaryTransactionalWrite
 
@@ -3500,6 +3503,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-10-24: Document `namespace` option for `failCommand` fail point.
 
 - 2024-09-18: Note that `failCommand` `appName` option was backported
 
