@@ -18,13 +18,13 @@ Each YAML file has the following keys:
 - description: A textual description of the test.
 - uri: A connection string.
 - phases: An array of "phase" objects. A phase of the test optionally sends inputs to the client, then tests the
-  client's resulting TopologyDescription.
+    client's resulting TopologyDescription.
 
 Each phase object has the following keys:
 
 - description: (optional) A textual description of this phase.
 - responses: (optional) An array of "response" objects. If not provided, the test runner should construct the client and
-  perform assertions specified in the outcome object without processing any responses.
+    perform assertions specified in the outcome object without processing any responses.
 - applicationErrors: (optional) An array of "applicationError" objects.
 - outcome: An "outcome" object representing the TopologyDescription.
 
@@ -32,28 +32,28 @@ A response is a pair of values:
 
 - The source, for example "a:27017". This is the address the client sent the "hello" or legacy hello command to.
 - A hello or legacy hello response, for example `{ok: 1, helloOk: true, isWritablePrimary: true}`. If the response
-  includes an electionId it is shown in extended JSON like `{"$oid": "000000000000000000000002"}`. The empty response
-  `{}` indicates a network error when attempting to call "hello" or legacy hello.
+    includes an electionId it is shown in extended JSON like `{"$oid": "000000000000000000000002"}`. The empty response
+    `{}` indicates a network error when attempting to call "hello" or legacy hello.
 
 An "applicationError" object has the following keys:
 
 - address: The source address, for example "a:27017".
 - generation: (optional) The error's generation number, for example `1`. When absent this value defaults to the pool's
-  current generation number.
+    current generation number.
 - maxWireVersion: The `maxWireVersion` of the connection the error occurs on, for example `9`. Added to support testing
-  the behavior of "not writable primary" errors on \<4.2 and >=4.2 servers.
+    the behavior of "not writable primary" errors on \<4.2 and >=4.2 servers.
 - when: A string describing when this mock error should occur. Supported values are:
-  - "beforeHandshakeCompletes": Simulate this mock error as if it occurred during a new connection's handshake for an
-    application operation.
-  - "afterHandshakeCompletes": Simulate this mock error as if it occurred on an established connection for an
-    application operation (i.e. after the connection pool check out succeeds).
+    - "beforeHandshakeCompletes": Simulate this mock error as if it occurred during a new connection's handshake for an
+        application operation.
+    - "afterHandshakeCompletes": Simulate this mock error as if it occurred on an established connection for an
+        application operation (i.e. after the connection pool check out succeeds).
 - type: The type of error to mock. Supported values are:
-  - "command": A command error. Always accompanied with a "response".
-  - "network": A non-timeout network error.
-  - "timeout": A network timeout error.
+    - "command": A command error. Always accompanied with a "response".
+    - "network": A non-timeout network error.
+    - "timeout": A network timeout error.
 - response: (optional) A command error response, for example `{ok: 0, errmsg: "not primary"}`. Present if and only if
-  `type` is "command". Note the server only returns "not primary" if the "hello" command has been run on this
-  connection. Otherwise the legacy error message is returned.
+    `type` is "command". Note the server only returns "not primary" if the "hello" command has been run on this
+    connection. Otherwise the legacy error message is returned.
 
 In non-monitoring tests, an "outcome" represents the correct TopologyDescription that results from processing the
 responses in the phases so far. It has the following keys:
@@ -70,7 +70,7 @@ A "server" object represents a correct ServerDescription within the client's cur
 following keys:
 
 - type: A ServerType name, like "RSSecondary". See [ServerType](../server-discovery-and-monitoring.md#servertype) for
-  details pertaining to async and multi-threaded drivers.
+    details pertaining to async and multi-threaded drivers.
 - setName: A string with the expected replica set name, or null.
 - setVersion: absent or an integer.
 - electionId: absent, null, or an ObjectId.
@@ -123,10 +123,10 @@ Set up a listener to collect SDAM events published by the client, including even
 For each phase in the file:
 
 1. Parse the "responses" array. Pass in the responses in order to the driver code. If a response is the empty object
-   `{}`, simulate a network error.
+    `{}`, simulate a network error.
 2. Parse the "applicationErrors" array. For each element, simulate the given error as if it occurred while running an
-   application operation. Note that it is sufficient to construct a mock error and call the procedure which updates the
-   topology, e.g. `topology.handleApplicationError(address, generation, maxWireVersion, error)`.
+    application operation. Note that it is sufficient to construct a mock error and call the procedure which updates
+    the topology, e.g. `topology.handleApplicationError(address, generation, maxWireVersion, error)`.
 
 For non-monitoring tests, once all responses are processed, assert that the phase's "outcome" object is equivalent to
 the driver's current TopologyDescription.
@@ -160,79 +160,79 @@ Some of these cases should already be tested with the old protocol; in that case
 the new protocol.
 
 1. Configure the client with heartbeatFrequencyMS set to 500, overriding the default of 10000. Assert the client
-   processes hello and legacy hello replies more frequently (approximately every 500ms).
+    processes hello and legacy hello replies more frequently (approximately every 500ms).
 
 ### RTT Tests
 
 Run the following test(s) on MongoDB 4.4+.
 
 1. Test that RTT is continuously updated.
-   1. Create a client with `heartbeatFrequencyMS=500`, `appName=streamingRttTest`, and subscribe to server events.
+    1. Create a client with `heartbeatFrequencyMS=500`, `appName=streamingRttTest`, and subscribe to server events.
 
-   2. Run a find command to wait for the server to be discovered.
+    2. Run a find command to wait for the server to be discovered.
 
-   3. Sleep for 2 seconds. This must be long enough for multiple heartbeats to succeed.
+    3. Sleep for 2 seconds. This must be long enough for multiple heartbeats to succeed.
 
-   4. Assert that each `ServerDescriptionChangedEvent` includes a non-zero RTT.
+    4. Assert that each `ServerDescriptionChangedEvent` includes a non-zero RTT.
 
-   5. Configure the following failpoint to block hello or legacy hello commands for 250ms which should add extra latency
-      to each RTT check:
+    5. Configure the following failpoint to block hello or legacy hello commands for 250ms which should add extra latency
+        to each RTT check:
 
-      ```
-      db.adminCommand({
-          configureFailPoint: "failCommand",
-          mode: {times: 1000},
-          data: {
-            failCommands: ["hello"], // or the legacy hello command
-            blockConnection: true,
-            blockTimeMS: 500,
-            appName: "streamingRttTest",
-          },
-      });
-      ```
+        ```javascript
+        db.adminCommand({
+            configureFailPoint: "failCommand",
+            mode: {times: 1000},
+            data: {
+              failCommands: ["hello"], // or the legacy hello command
+              blockConnection: true,
+              blockTimeMS: 500,
+              appName: "streamingRttTest",
+            },
+        });
+        ```
 
-   6. Wait for the server's RTT to exceed 250ms. Eventually the average RTT should also exceed 500ms but we use 250ms to
-      speed up the test. Note that the
-      [Server Description Equality](../server-discovery-and-monitoring.md#server-description-equality) rule means that
-      ServerDescriptionChangedEvents will not be published. This test may need to use a driver specific helper to obtain
-      the latest RTT instead. If the RTT does not exceed 250ms after 10 seconds, consider the test failed.
+    6. Wait for the server's RTT to exceed 250ms. Eventually the average RTT should also exceed 500ms but we use 250ms to
+        speed up the test. Note that the
+        [Server Description Equality](../server-discovery-and-monitoring.md#server-description-equality) rule means that
+        ServerDescriptionChangedEvents will not be published. This test may need to use a driver specific helper to
+        obtain the latest RTT instead. If the RTT does not exceed 250ms after 10 seconds, consider the test failed.
 
-   7. Disable the failpoint:
+    7. Disable the failpoint:
 
-      ```
-      db.adminCommand({
-          configureFailPoint: "failCommand",
-          mode: "off",
-      });
-      ```
+        ```javascript
+        db.adminCommand({
+            configureFailPoint: "failCommand",
+            mode: "off",
+        });
+        ```
 
 ### Heartbeat Tests
 
 1. Test that `ServerHeartbeatStartedEvent` is emitted before the monitoring socket was created
-   1. Create a mock TCP server (example shown below) that pushes a `client connected` event to a shared array when a
-      client connects and a `client hello received` event when the server receives the client hello and then closes the
-      connection:
+    1. Create a mock TCP server (example shown below) that pushes a `client connected` event to a shared array when a
+        client connects and a `client hello received` event when the server receives the client hello and then closes
+        the connection:
 
-      ```
-      let events = [];
-      server = createServer(clientSocket => {
-        events.push('client connected');
+        ```javascript
+        let events = [];
+        server = createServer(clientSocket => {
+          events.push('client connected');
 
-        clientSocket.on('data', () => {
-          events.push('client hello received');
-          clientSocket.destroy();
+          clientSocket.on('data', () => {
+            events.push('client hello received');
+            clientSocket.destroy();
+          });
         });
-      });
-      server.listen(9999);
-      ```
+        server.listen(9999);
+        ```
 
-   2. Create a client with `serverSelectionTimeoutMS: 500` and listen to `ServerHeartbeatStartedEvent` and
-      `ServerHeartbeatFailedEvent`, pushing the event name to the same shared array as the mock TCP server
+    2. Create a client with `serverSelectionTimeoutMS: 500` and listen to `ServerHeartbeatStartedEvent` and
+        `ServerHeartbeatFailedEvent`, pushing the event name to the same shared array as the mock TCP server
 
-   3. Attempt to connect client to previously created TCP server, catching the error when the client fails to connect
+    3. Attempt to connect client to previously created TCP server, catching the error when the client fails to connect
 
-   4. Assert that the first four elements in the array are: :
+    4. Assert that the first four elements in the array are: :
 
-      ```
-      ['serverHeartbeatStartedEvent', 'client connected', 'client hello received', 'serverHeartbeatFailedEvent']
-      ```
+        ```javascript
+        ['serverHeartbeatStartedEvent', 'client connected', 'client hello received', 'serverHeartbeatFailedEvent']
+        ```

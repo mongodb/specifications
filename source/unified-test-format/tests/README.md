@@ -10,8 +10,8 @@ organized in the following directories:
 - `invalid`: These files do not validate against the schema and are used to test the schema itself.
 - `valid-pass`: These files validate against the schema and should pass when executed with a test runner.
 - `valid-fail`: These files validate against the schema but should produce runtime errors or failures when executed with
-  a test runner. Some do so by violating the "SHOULD" and "SHOULD NOT" guidance in the spec (e.g. referencing an
-  undefined entity).
+    a test runner. Some do so by violating the "SHOULD" and "SHOULD NOT" guidance in the spec (e.g. referencing an
+    undefined entity).
 
 ## Validating Test Files
 

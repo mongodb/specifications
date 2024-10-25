@@ -68,15 +68,16 @@ problem of benchmarking an operation over many iterations, such as 100,000 docum
 extreme forms of measurement:
 
 - measuring a single insertion 100,000 times -- in this case, the timing code is likely to be a greater proportion of
-  executed code, which could routinely evict the insertion code from CPU caches or mislead a JIT optimizer and throw off
-  results
+    executed code, which could routinely evict the insertion code from CPU caches or mislead a JIT optimizer and throw
+    off results
 - measuring 100,000 insertions one time -- in this case, the longer the timer runs, the higher the likelihood that an
-  external event occurs that affects the time of the run
+    external event occurs that affects the time of the run
 
 Therefore, we choose a middle ground:
 
 - measuring the same 1000 insertions over 100 iterations -- each timing run includes enough operations that insertion
-  code dominates timing code; unusual system events are likely to affect only a fraction of the 100 timing measurements
+    code dominates timing code; unusual system events are likely to affect only a fraction of the 100 timing
+    measurements
 
 With 100 timings of inserting the same 1000 documents, we build up a statistical distribution of the operation timing,
 allowing a more robust estimate of performance than a single measurement. (In practice, the number of iterations could
@@ -90,14 +91,14 @@ Each benchmark is structured into discrete setup/execute/teardown phases. Phases
 given in a subsequent section:
 
 - setup -- (ONCE PER MICRO-BENCHMARK) something to do once before any benchmarking, e.g. construct a client object, load
-  test data, insert data into a collection, etc.
+    test data, insert data into a collection, etc.
 - before task -- (ONCE PER ITERATION) something to do before every task iteration, e.g. drop a collection, or reload
-  test data (if the test run modifies it), etc.
+    test data (if the test run modifies it), etc.
 - do task -- (ONCE PER ITERATION) smallest amount of code necessary to execute the task; e.g. insert 1000 documents one
-  by one into the database, or retrieve 1000 document of test data from the database, etc.
+    by one into the database, or retrieve 1000 document of test data from the database, etc.
 - after task -- (ONCE PER ITERATION) something to do after every task iteration (if necessary)
 - teardown -- (ONCE PER MICRO-BENCHMARK) something done once after all benchmarking is complete (if necessary); e.g.
-  drop the test database
+    drop the test database
 
 The wall-clock execution time of each "do task" phase will be recorded. We use wall clock time to model user experience
 and as a lowest-common denominator across languages and threading models. Iteration timing should be done with a
@@ -619,26 +620,26 @@ TBD: generated datasets should be park in S3 or somewhere for retrieval by URL
 
 - 2016-08-13:
 
-  - Update corpus files to allow much greater compression of data
-  - Updated LDJSON corpus size to reflect revisions to the test data
-  - Published data files on GitHub and updated instructions on how to find datasets
-  - RunCommand and query benchmark can create collection objects during setup rather than before task. (No change on
-    actual benchmark.)
+    - Update corpus files to allow much greater compression of data
+    - Updated LDJSON corpus size to reflect revisions to the test data
+    - Published data files on GitHub and updated instructions on how to find datasets
+    - RunCommand and query benchmark can create collection objects during setup rather than before task. (No change on
+        actual benchmark.)
 
 - 2016-01-06:
 
-  - Clarify that 'bulk insert' means 'insert_many'
-  - Clarify that "create a collection" means using the 'create' command
-  - Add omitted "upload files" step to setup for GridFS multi-file download; also clarify that steps should be using the
-    default bucket in the 'perftest' database
+    - Clarify that 'bulk insert' means 'insert_many'
+    - Clarify that "create a collection" means using the 'create' command
+    - Add omitted "upload files" step to setup for GridFS multi-file download; also clarify that steps should be using the
+        default bucket in the 'perftest' database
 
 - 2015-12-23:
 
-  - Rename benchmark names away from MMA/weight class names
-  - Split BSON encoding and decoding micro-benchmarks
-  - Rename BSON micro-benchmarks to better match dataset names
-  - Move "Run Command" micro-benchmark out of composite
-  - Reduced amount of data held in memory and sent to/from the server to decrease memory pressure and increase number of
-    iterations in a reasonable time (e.g. file sizes and number of documents in certain datasets changed)
-  - Create empty collections/indexes during the 'before' phase when appropriate
-  - Updated data set sizes to account for changes in the source file structure/size
+    - Rename benchmark names away from MMA/weight class names
+    - Split BSON encoding and decoding micro-benchmarks
+    - Rename BSON micro-benchmarks to better match dataset names
+    - Move "Run Command" micro-benchmark out of composite
+    - Reduced amount of data held in memory and sent to/from the server to decrease memory pressure and increase number of
+        iterations in a reasonable time (e.g. file sizes and number of documents in certain datasets changed)
+    - Create empty collections/indexes during the 'before' phase when appropriate
+    - Updated data set sizes to account for changes in the source file structure/size

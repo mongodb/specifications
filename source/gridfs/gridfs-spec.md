@@ -195,16 +195,16 @@ A non-exhaustive list of acceptable deviations are as follows:
 
 - Using named parameters instead of an options hash. For instance,
 
-  ```javascript
-  id = bucket.upload_from_stream(filename, source, chunkSizeBytes: 16 * 1024);
-  ```
+    ```javascript
+    id = bucket.upload_from_stream(filename, source, chunkSizeBytes: 16 * 1024);
+    ```
 
 - Using a fluent style for constructing a GridFSBucket instance:
 
-  ```javascript
-  bucket = new GridFSBucket(database)
-    .withReadPreference(ReadPreference.Secondary);
-  ```
+    ```javascript
+    bucket = new GridFSBucket(database)
+      .withReadPreference(ReadPreference.Secondary);
+    ```
 
 When using a fluent-style builder, all options should be named rather than inventing a new word to include in the
 pipeline (like options). Required parameters are still required to be on the initiating constructor.
@@ -228,18 +228,18 @@ the user of another driver.
 A non-exhaustive list of acceptable naming deviations are as follows:
 
 - Using "bucketName" as an example, Java would use "bucketName" while Python would use "bucket_name". However, calling
-  it "bucketPrefix" would not be acceptable.
+    it "bucketPrefix" would not be acceptable.
 - Using "maxTimeMS" as an example, .NET would use "MaxTime" where its type is a TimeSpan structure that includes units.
-  However, calling it "MaximumTime" would not be acceptable.
+    However, calling it "MaximumTime" would not be acceptable.
 - Using "GridFSUploadOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to
-  call it "GridFSUploadArgs" or "GridFSUploadParams". However, calling it "UploadOptions" would not be acceptable.
+    call it "GridFSUploadArgs" or "GridFSUploadParams". However, calling it "UploadOptions" would not be acceptable.
 - Languages that use a different word than "Stream" to represent a streamed I/O abstraction may replace the word
-  "Stream" with their language's equivalent word. For example, open_upload_stream might be called open_upload_file or
-  open_upload_writer if appropriate.
+    "Stream" with their language's equivalent word. For example, open_upload_stream might be called open_upload_file or
+    open_upload_writer if appropriate.
 - Languages that support overloading MAY shorten the name of some methods as appropriate. For example,
-  download_to_stream and download_to_stream_by_name MAY be overloaded download_to_stream methods with different
-  parameter types. Implementers are encouraged not to shorten method names unnecessarily, because even if the shorter
-  names are not ambiguous today they might become ambiguous in the future as new features are added.
+    download_to_stream and download_to_stream_by_name MAY be overloaded download_to_stream methods with different
+    parameter types. Implementers are encouraged not to shorten method names unnecessarily, because even if the shorter
+    names are not ambiguous today they might become ambiguous in the future as new features are added.
 
 ## API
 
@@ -303,27 +303,27 @@ Creates a new GridFSBucket object, managing a GridFS bucket within the given dat
 GridFSBucket objects MUST allow the following options to be configurable:
 
 - **bucketName:** the name of this GridFS bucket. The files and chunks collection for this GridFS bucket are prefixed by
-  this name followed by a dot. Defaults to "fs". This allows multiple GridFS buckets, each with a unique name, to exist
-  within the same database.
+    this name followed by a dot. Defaults to "fs". This allows multiple GridFS buckets, each with a unique name, to
+    exist within the same database.
 - **chunkSizeBytes:** the number of bytes stored in chunks for new user files added through this GridFSBucket object.
-  This will not reformat existing files in the system that use a different chunk size. Defaults to 255 KiB.
+    This will not reformat existing files in the system that use a different chunk size. Defaults to 255 KiB.
 
 IF a driver supports configuring readConcern, readPreference or writeConcern at the database or collection level, then
 GridFSBucket objects MUST also allow the following options to be configurable:
 
 - **readConcern:** defaults to the read concern on the parent database (or client object if the parent database has no
-  read concern).
+    read concern).
 - **readPreference:** defaults to the read preference on the parent database (or client object if the parent database
-  has no read preference).
+    has no read preference).
 - **writeConcern:** defaults to the write concern on the parent database (or client object if the parent database has no
-  write concern).
+    write concern).
 
 The following option is transitional:
 
 - **disableMD5:** this allows users to disable MD5 when operating under FIPS restrictions. It is provided to allow a
-  transition period as drivers remove MD5 support. Until a driver removes MD5 support, drivers MUST support this option.
-  Following a driver's normal feature removal cycle, when MD5 support is removed, this option MUST be removed or
-  otherwise made into a no-op option.
+    transition period as drivers remove MD5 support. Until a driver removes MD5 support, drivers MUST support this
+    option. Following a driver's normal feature removal cycle, when MD5 support is removed, this option MUST be removed
+    or otherwise made into a no-op option.
 
 GridFSBucket instances are immutable. Their properties MUST NOT be changed after the instance has been created. If your
 driver provides a fluent way to provide new values for properties, these fluent methods MUST return new instances of
@@ -508,7 +508,7 @@ user file, for each n<sup>th</sup> section of the file, drivers create a chunk d
 - Files_id: the id generated for this stored file.
 - N: this is the n<sup>th</sup> section of the stored file, zero based.
 - Data: a section of file data, stored as BSON binary data with subtype 0x00. All chunks except the last one must be
-  exactly 'chunkSizeBytes' long. The last chunk can be smaller, and should only be as large as necessary.
+    exactly 'chunkSizeBytes' long. The last chunk can be smaller, and should only be as large as necessary.
 
 Historically, while streaming the user file, drivers computed an MD5 digest for the (now deprecated) 'md5' field of the
 files collection document. If drivers preserve this behavior for backwards compatibility, they MUST provide the

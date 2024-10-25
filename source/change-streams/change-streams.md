@@ -35,29 +35,29 @@ when checking these constraints.
 - A server error with code 43 (`CursorNotFound`)
 
 - For servers with wire version 9 or higher (server version 4.4 or higher), any server error with the
-  `ResumableChangeStreamError` error label.
+    `ResumableChangeStreamError` error label.
 
 - For servers with wire version less than 9, a server error with one of the following codes:
 
-  | Error Name                      | Error Code |
-  | ------------------------------- | ---------- |
-  | HostUnreachable                 | 6          |
-  | HostNotFound                    | 7          |
-  | NetworkTimeout                  | 89         |
-  | ShutdownInProgress              | 91         |
-  | PrimarySteppedDown              | 189        |
-  | ExceededTimeLimit               | 262        |
-  | SocketException                 | 9001       |
-  | NotWritablePrimary              | 10107      |
-  | InterruptedAtShutdown           | 11600      |
-  | InterruptedDueToReplStateChange | 11602      |
-  | NotPrimaryNoSecondaryOk         | 13435      |
-  | NotPrimaryOrSecondary           | 13436      |
-  | StaleShardVersion               | 63         |
-  | StaleEpoch                      | 150        |
-  | StaleConfig                     | 13388      |
-  | RetryChangeStream               | 234        |
-  | FailedToSatisfyReadPreference   | 133        |
+    | Error Name                      | Error Code |
+    | ------------------------------- | ---------- |
+    | HostUnreachable                 | 6          |
+    | HostNotFound                    | 7          |
+    | NetworkTimeout                  | 89         |
+    | ShutdownInProgress              | 91         |
+    | PrimarySteppedDown              | 189        |
+    | ExceededTimeLimit               | 262        |
+    | SocketException                 | 9001       |
+    | NotWritablePrimary              | 10107      |
+    | InterruptedAtShutdown           | 11600      |
+    | InterruptedDueToReplStateChange | 11602      |
+    | NotPrimaryNoSecondaryOk         | 13435      |
+    | NotPrimaryOrSecondary           | 13436      |
+    | StaleShardVersion               | 63         |
+    | StaleEpoch                      | 150        |
+    | StaleConfig                     | 13388      |
+    | RetryChangeStream               | 234        |
+    | FailedToSatisfyReadPreference   | 133        |
 
 An error on an aggregate command is not a resumable error. Only errors on a getMore command may be considered resumable
 errors.
@@ -720,26 +720,26 @@ MUST follow these steps:
 - Perform server selection.
 - Connect to selected server.
 - If there is a cached `resumeToken`:
-  - If the `ChangeStream` was started with `startAfter` and has yet to return a result document:
-    - The driver MUST set `startAfter` to the cached `resumeToken`.
-    - The driver MUST NOT set `resumeAfter`.
-    - The driver MUST NOT set `startAtOperationTime`. If `startAtOperationTime` was in the original aggregation command,
-      the driver MUST remove it.
-  - Else:
-    - The driver MUST set `resumeAfter` to the cached `resumeToken`.
-    - The driver MUST NOT set `startAfter`. If `startAfter` was in the original aggregation command, the driver MUST
-      remove it.
-    - The driver MUST NOT set `startAtOperationTime`. If `startAtOperationTime` was in the original aggregation command,
-      the driver MUST remove it.
+    - If the `ChangeStream` was started with `startAfter` and has yet to return a result document:
+        - The driver MUST set `startAfter` to the cached `resumeToken`.
+        - The driver MUST NOT set `resumeAfter`.
+        - The driver MUST NOT set `startAtOperationTime`. If `startAtOperationTime` was in the original aggregation command,
+            the driver MUST remove it.
+    - Else:
+        - The driver MUST set `resumeAfter` to the cached `resumeToken`.
+        - The driver MUST NOT set `startAfter`. If `startAfter` was in the original aggregation command, the driver MUST
+            remove it.
+        - The driver MUST NOT set `startAtOperationTime`. If `startAtOperationTime` was in the original aggregation command,
+            the driver MUST remove it.
 - Else if there is no cached `resumeToken` and the `ChangeStream` has a saved operation time (either from an originally
-  specified `startAtOperationTime` or saved from the original aggregation) and the max wire version is >= `7`:
-  - The driver MUST NOT set `resumeAfter`.
-  - The driver MUST NOT set `startAfter`.
-  - The driver MUST set `startAtOperationTime` to the value of the originally used `startAtOperationTime` or the one
-    saved from the original aggregation.
+    specified `startAtOperationTime` or saved from the original aggregation) and the max wire version is >= `7`:
+    - The driver MUST NOT set `resumeAfter`.
+    - The driver MUST NOT set `startAfter`.
+    - The driver MUST set `startAtOperationTime` to the value of the originally used `startAtOperationTime` or the one
+        saved from the original aggregation.
 - Else:
-  - The driver MUST NOT set `resumeAfter`, `startAfter`, or `startAtOperationTime`.
-  - The driver MUST use the original aggregation command to resume.
+    - The driver MUST NOT set `resumeAfter`, `startAfter`, or `startAtOperationTime`.
+    - The driver MUST use the original aggregation command to resume.
 
 When `resumeAfter` is specified the `ChangeStream` will return notifications starting with the oplog entry immediately
 *after* the provided token.
@@ -789,7 +789,7 @@ the following criteria:
 - The callback is set in the same manner as a callback used for receiving change documents.
 - The callback accepts a resume token as an argument.
 - The callback (or event) MAY include an optional ChangeDocument, which is unset when called with resume tokens sourced
-  from `postBatchResumeToken`.
+    from `postBatchResumeToken`.
 
 A possible interface for this callback MAY look like:
 
@@ -810,14 +810,14 @@ This MUST NOT be implemented in synchronous drivers. This MAY be implemented in 
 The following rules describe how to update the cached `resumeToken`:
 
 - When the `ChangeStream` is started:
-  - If `startAfter` is set, cache it.
-  - Else if `resumeAfter` is set, cache it.
-  - Else, `resumeToken` remains unset.
+    - If `startAfter` is set, cache it.
+    - Else if `resumeAfter` is set, cache it.
+    - Else, `resumeToken` remains unset.
 - When `aggregate` or `getMore` returns:
-  - If an empty batch was returned and a `postBatchResumeToken` was included, cache it.
+    - If an empty batch was returned and a `postBatchResumeToken` was included, cache it.
 - When returning a document to the user:
-  - If it's the last document in the batch and a `postBatchResumeToken` is included, cache it.
-  - Else, cache the `_id` of the document.
+    - If it's the last document in the batch and a `postBatchResumeToken` is included, cache it.
+    - Else, cache the `_id` of the document.
 
 ###### Not Blocking on Iteration
 
@@ -931,10 +931,10 @@ It was decided to remove this example from the specification for the following r
 
 - Tailable + awaitData cursors behave differently in existing supported drivers.
 - There are considerations to be made for languages that do not permit interruptible I/O (such as Java), where a change
-  stream which blocks forever in a separate thread would necessitate killing the thread.
+    stream which blocks forever in a separate thread would necessitate killing the thread.
 - There is something to be said for an API that allows cooperation by default. The model in which a call to next only
-  blocks until any response is returned (even an empty batch), allows for interruption and cooperation (e.g. interaction
-  with other event loops).
+    blocks until any response is returned (even an empty batch), allows for interruption and cooperation (e.g.
+    interaction with other event loops).
 
 ### Why is an allow list of error codes preferable to a deny list?
 
@@ -963,7 +963,7 @@ For example:
 
 - A client creates a `ChangeStream`, and calls `watch`
 - The `ChangeStream` sends out the initial `aggregate` call, and receives a response with no initial values. Because
-  there are no initial values, there is no latest resumeToken.
+    there are no initial values, there is no latest resumeToken.
 - The client's network is partitioned from the server, causing the client's `getMore` to time out
 - Changes occur on the server.
 - The network is unpartitioned

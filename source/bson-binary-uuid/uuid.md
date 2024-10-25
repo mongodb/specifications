@@ -43,7 +43,7 @@ All drivers MUST name operations, objects, and parameters as defined in the foll
 The following deviations are permitted:
 
 - Drivers can use the platform's name for a UUID. For instance, in C# the platform class is Guid, whereas in Java it is
-  UUID.
+    UUID.
 - Drivers can use a "to" prefix instead of an "as" prefix for the BsonBinary method names.
 
 ### Explicit encoding and decoding
@@ -177,103 +177,103 @@ The test plan consists of a series of prose tests. They all operate on the same 
 ### Explicit encoding
 
 1. Create a BsonBinary instance with the given UUID
-   - Assert that the BsonBinary instance's subtype is equal to 4 and data equal to the hex-encoded string
-     "00112233445566778899AABBCCDDEEFF"
+    - Assert that the BsonBinary instance's subtype is equal to 4 and data equal to the hex-encoded string
+        "00112233445566778899AABBCCDDEEFF"
 2. Create a BsonBinary instance with the given UUID and UuidRepresentation equal to STANDARD
-   - Assert that the BsonBinary instance's subtype is equal to 4 and data equal to the hex-encoded string
-     "00112233445566778899AABBCCDDEEFF"
+    - Assert that the BsonBinary instance's subtype is equal to 4 and data equal to the hex-encoded string
+        "00112233445566778899AABBCCDDEEFF"
 3. Create a BsonBinary instance with the given UUID and UuidRepresentation equal to JAVA_LEGACY
-   - Assert that the BsonBinary instance's subtype is equal to 3 and data equal to the hex-encoded string
-     "7766554433221100FFEEDDCCBBAA9988"
+    - Assert that the BsonBinary instance's subtype is equal to 3 and data equal to the hex-encoded string
+        "7766554433221100FFEEDDCCBBAA9988"
 4. Create a BsonBinary instance with the given UUID and UuidRepresentation equal to CSHARP_LEGACY
-   - Assert that the BsonBinary instance's subtype is equal to 3 and data equal to the hex-encoded string
-     "33221100554477668899AABBCCDDEEFF"
+    - Assert that the BsonBinary instance's subtype is equal to 3 and data equal to the hex-encoded string
+        "33221100554477668899AABBCCDDEEFF"
 5. Create a BsonBinary instance with the given UUID and UuidRepresentation equal to PYTHON_LEGACY
-   - Assert that the BsonBinary instance's subtype is equal to 3 and data equal to the hex-encoded string
-     "00112233445566778899AABBCCDDEEFF"
+    - Assert that the BsonBinary instance's subtype is equal to 3 and data equal to the hex-encoded string
+        "00112233445566778899AABBCCDDEEFF"
 6. Create a BsonBinary instance with the given UUID and UuidRepresentation equal to UNSPECIFIED
-   - Assert that an error is raised
+    - Assert that an error is raised
 
 ### Explicit Decoding
 
 1. Create a BsonBinary instance with subtype equal to 4 and data equal to the hex-encoded string
-   "00112233445566778899AABBCCDDEEFF"
-   1. Assert that a call to BsonBinary.asUuid() returns the given UUID
-   2. Assert that a call to BsonBinary.asUuid(STANDARD) returns the given UUID
-   3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
-   4. Assert that a call to BsonBinary.asUuid(JAVA_LEGACY) raises an error
-   5. Assert that a call to BsonBinary.asUuid(CSHARP_LEGACY) raises an error
-   6. Assert that a call to BsonBinary.asUuid(PYTHON_LEGACY) raises an error
+    "00112233445566778899AABBCCDDEEFF"
+    1. Assert that a call to BsonBinary.asUuid() returns the given UUID
+    2. Assert that a call to BsonBinary.asUuid(STANDARD) returns the given UUID
+    3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
+    4. Assert that a call to BsonBinary.asUuid(JAVA_LEGACY) raises an error
+    5. Assert that a call to BsonBinary.asUuid(CSHARP_LEGACY) raises an error
+    6. Assert that a call to BsonBinary.asUuid(PYTHON_LEGACY) raises an error
 2. Create a BsonBinary instance with subtype equal to 3 and data equal to the hex-encoded string
-   "7766554433221100FFEEDDCCBBAA9988"
-   1. Assert that a call to BsonBinary.asUuid() raises an error
-   2. Assert that a call to BsonBinary.asUuid(STANDARD) raised an error
-   3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
-   4. Assert that a call to BsonBinary.asUuid(JAVA_LEGACY) returns the given UUID
+    "7766554433221100FFEEDDCCBBAA9988"
+    1. Assert that a call to BsonBinary.asUuid() raises an error
+    2. Assert that a call to BsonBinary.asUuid(STANDARD) raised an error
+    3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
+    4. Assert that a call to BsonBinary.asUuid(JAVA_LEGACY) returns the given UUID
 3. Create a BsonBinary instance with subtype equal to 3 and data equal to the hex-encoded string
-   "33221100554477668899AABBCCDDEEFF"
-   1. Assert that a call to BsonBinary.asUuid() raises an error
-   2. Assert that a call to BsonBinary.asUuid(STANDARD) raised an error
-   3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
-   4. Assert that a call to BsonBinary.asUuid(CSHARP_LEGACY) returns the given UUID
+    "33221100554477668899AABBCCDDEEFF"
+    1. Assert that a call to BsonBinary.asUuid() raises an error
+    2. Assert that a call to BsonBinary.asUuid(STANDARD) raised an error
+    3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
+    4. Assert that a call to BsonBinary.asUuid(CSHARP_LEGACY) returns the given UUID
 4. Create a BsonBinary instance with subtype equal to 3 and data equal to the hex-encoded string
-   "00112233445566778899AABBCCDDEEFF"
-   1. Assert that a call to BsonBinary.asUuid() raises an error
-   2. Assert that a call to BsonBinary.asUuid(STANDARD) raised an error
-   3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
-   4. Assert that a call to BsonBinary.asUuid(PYTHON_LEGACY) returns the given UUID
+    "00112233445566778899AABBCCDDEEFF"
+    1. Assert that a call to BsonBinary.asUuid() raises an error
+    2. Assert that a call to BsonBinary.asUuid(STANDARD) raised an error
+    3. Assert that a call to BsonBinary.asUuid(UNSPECIFIED) raises an error
+    4. Assert that a call to BsonBinary.asUuid(PYTHON_LEGACY) returns the given UUID
 
 ### Implicit encoding
 
 1. Set the uuidRepresentation of the client to "javaLegacy". Insert a document with an "\_id" key set to the given
-   native UUID value.
-   - Assert that the actual value inserted is a BSON binary with subtype 3 and data equal to the hex-encoded string
-     "7766554433221100FFEEDDCCBBAA9988"
+    native UUID value.
+    - Assert that the actual value inserted is a BSON binary with subtype 3 and data equal to the hex-encoded string
+        "7766554433221100FFEEDDCCBBAA9988"
 2. Set the uuidRepresentation of the client to "charpLegacy". Insert a document with an "\_id" key set to the given
-   native UUID value.
-   - Assert that the actual value inserted is a BSON binary with subtype 3 and data equal to the hex-encoded string
-     "33221100554477668899AABBCCDDEEFF"
+    native UUID value.
+    - Assert that the actual value inserted is a BSON binary with subtype 3 and data equal to the hex-encoded string
+        "33221100554477668899AABBCCDDEEFF"
 3. Set the uuidRepresentation of the client to "pythonLegacy". Insert a document with an "\_id" key set to the given
-   native UUID value.
-   - Assert that the actual value inserted is a BSON binary with subtype 3 and data equal to the hex-encoded string
-     "00112233445566778899AABBCCDDEEFF"
+    native UUID value.
+    - Assert that the actual value inserted is a BSON binary with subtype 3 and data equal to the hex-encoded string
+        "00112233445566778899AABBCCDDEEFF"
 4. Set the uuidRepresentation of the client to "standard". Insert a document with an "\_id" key set to the given native
-   UUID value.
-   - Assert that the actual value inserted is a BSON binary with subtype 4 and data equal to the hex-encoded string
-     "00112233445566778899AABBCCDDEEFF"
+    UUID value.
+    - Assert that the actual value inserted is a BSON binary with subtype 4 and data equal to the hex-encoded string
+        "00112233445566778899AABBCCDDEEFF"
 5. Set the uuidRepresentation of the client to "unspecified". Insert a document with an "\_id" key set to the given
-   native UUID value.
-   - Assert that a BSON serialization exception is thrown
+    native UUID value.
+    - Assert that a BSON serialization exception is thrown
 
 ### Implicit Decoding
 
 1. Set the uuidRepresentation of the client to "javaLegacy". Insert a document containing two fields. The "standard"
-   field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD
-   UuidRepresentation. The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with
-   the given UUID and the JAVA_LEGACY UuidRepresentation. Find the document.
+    field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD
+    UuidRepresentation. The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with
+    the given UUID and the JAVA_LEGACY UuidRepresentation. Find the document.
 
-   1. Assert that the value of the "standard" field is of type BsonBinary and is equal to the inserted value.
-   2. Assert that the value of the "legacy" field is of the native UUID type and is equal to the given UUID
+    1. Assert that the value of the "standard" field is of type BsonBinary and is equal to the inserted value.
+    2. Assert that the value of the "legacy" field is of the native UUID type and is equal to the given UUID
 
-   Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
+    Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
 
 2. Set the uuidRepresentation of the client to "standard". Insert a document containing two fields. The "standard" field
-   should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD
-   UuidRepresentation. The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with
-   the given UUID and the PYTHON_LEGACY UuidRepresentation. Find the document.
+    should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD
+    UuidRepresentation. The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with
+    the given UUID and the PYTHON_LEGACY UuidRepresentation. Find the document.
 
-   1. Assert that the value of the "standard" field is of the native UUID type and is equal to the given UUID
-   2. Assert that the value of the "legacy" field is of type BsonBinary and is equal to the inserted value.
+    1. Assert that the value of the "standard" field is of the native UUID type and is equal to the given UUID
+    2. Assert that the value of the "legacy" field is of type BsonBinary and is equal to the inserted value.
 
 3. Set the uuidRepresentation of the client to "unspecified". Insert a document containing two fields. The "standard"
-   field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD
-   UuidRepresentation. The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with
-   the given UUID and the PYTHON_LEGACY UuidRepresentation. Find the document.
+    field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD
+    UuidRepresentation. The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with
+    the given UUID and the PYTHON_LEGACY UuidRepresentation. Find the document.
 
-   1. Assert that the value of the "standard" field is of type BsonBinary and is equal to the inserted value
-   2. Assert that the value of the "legacy" field is of type BsonBinary and is equal to the inserted value.
+    1. Assert that the value of the "standard" field is of type BsonBinary and is equal to the inserted value
+    2. Assert that the value of the "legacy" field is of type BsonBinary and is equal to the inserted value.
 
-   Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
+    Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
 
 Note: the assertions will be different in the release prior to the major release, to avoid breaking changes. Adjust
 accordingly!

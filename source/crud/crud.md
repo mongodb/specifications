@@ -61,20 +61,20 @@ A non-exhaustive list of acceptable deviations are as follows:
 - Using named parameters instead of an options hash. For instance, `collection.find({x:1}, sort: {a: -1})`.
 
 - When using an `Options` class, if multiple `Options` classes are structurally equatable, it is permissible to
-  consolidate them into one with a clear name. For instance, it would be permissible to use the name `UpdateOptions` as
-  the options for `UpdateOne` and `UpdateMany`.
+    consolidate them into one with a clear name. For instance, it would be permissible to use the name `UpdateOptions`
+    as the options for `UpdateOne` and `UpdateMany`.
 
 - Using a fluent style builder for find or aggregate:
 
-  ```typescript
-  collection.find({x: 1}).sort({a: -1}).skip(10);
-  ```
+    ```typescript
+    collection.find({x: 1}).sort({a: -1}).skip(10);
+    ```
 
-  When using a fluent-style builder, all options should be named rather than inventing a new word to include in the
-  pipeline (like options). Required parameters are still required to be on the initiating method.
+    When using a fluent-style builder, all options should be named rather than inventing a new word to include in the
+    pipeline (like options). Required parameters are still required to be on the initiating method.
 
-  In addition, it is imperative that documentation indicate when the order of operations is important. For instance,
-  skip and limit in find is order irrelevant where skip and limit in aggregate is not.
+    In addition, it is imperative that documentation indicate when the order of operations is important. For instance,
+    skip and limit in find is order irrelevant where skip and limit in aggregate is not.
 
 #### Naming
 
@@ -90,13 +90,13 @@ the user of another driver.
 A non-exhaustive list of acceptable naming deviations are as follows:
 
 - Using "batchSize" as an example, Java would use "batchSize" while Python would use "batch_size". However, calling it
-  "batchCount" would not be acceptable.
+    "batchCount" would not be acceptable.
 - Using "maxTimeMS" as an example, .NET would use "MaxTime" where it's type is a TimeSpan structure that includes units.
-  However, calling it "MaximumTime" would not be acceptable.
+    However, calling it "MaximumTime" would not be acceptable.
 - Using "FindOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to call it
-  "FindArgs" or "FindParams". However, calling it "QueryOptions" would not be acceptable.
+    "FindArgs" or "FindParams". However, calling it "QueryOptions" would not be acceptable.
 - Using "isOrdered" rather than "ordered". Some languages idioms prefer the use of "is", "has", or "was" and this is
-  acceptable.
+    acceptable.
 
 #### Timeouts
 
@@ -740,11 +740,11 @@ on views, and so the change was seen as a backwards-incompatible regression and 
 driver versions that include the reversion from `$collStats` back to `count` MUST document the following:
 
 - The 5.0-compat release accidentally broke estimatedDocumentCount on views by changing its implementation to use
-  `aggregate` and a `$collStats` stage instead of the `count` command.
+    `aggregate` and a `$collStats` stage instead of the `count` command.
 - The new release is fixing estimatedDocumentCount on views by reverting back to using `count` in its implementation.
 - Due to an oversight, the `count` command was omitted from the Stable API in server versions 5.0.0 - 5.0.8 and 5.1.0 -
-  5.3.1, so users of the Stable API with estimatedDocumentCount are recommended to upgrade their MongoDB clusters to
-  5.0.9 or 5.3.2 (if on Atlas) or set `apiStrict: false` when constructing their MongoClients.
+    5.3.1, so users of the Stable API with estimatedDocumentCount are recommended to upgrade their MongoDB clusters to
+    5.0.9 or 5.3.2 (if on Atlas) or set `apiStrict: false` when constructing their MongoClients.
 
 ##### countDocuments
 
@@ -1049,7 +1049,6 @@ class UpdateOptions {
    */
   upsert: Optional<Boolean>;
 
-
   /**
    * Map of parameter names and values. Values must be constant or closed
    * expressions that do not reference document fields. Parameters can then be
@@ -1071,6 +1070,18 @@ class UpdateOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+
+  /**
+   * Specify which document the operation updates if the query matches multiple
+   * documents. The first document matched by the sort order will be updated.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * The server will report an error if the caller explicitly provides a value with updateMany().
+   * This option is only supported by servers >= 8.0. Older servers will report an error for using this option.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  sort: Optional<Document>;
 }
 
 class ReplaceOptions {
@@ -1139,6 +1150,17 @@ class ReplaceOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+
+  /**
+   * Specify which document the operation replaces if the query matches multiple
+   * documents. The first document matched by the sort order will be replaced.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 8.0. Older servers will report an error for using this option.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  sort: Optional<Document>;
 }
 
 class DeleteOptions {
@@ -1320,6 +1342,17 @@ class ReplaceOneModel implements WriteModel {
   hint: Optional<(String | Document)>;
 
   /**
+   * Specify which document the operation replaces if the query matches multiple
+   * documents. The first document matched by the sort order will be replaced.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 8.0. Older servers will report an error for using this option.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  sort: Optional<Document>;
+
+  /**
    * When true, creates a new document if no document matches the query.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1380,6 +1413,17 @@ class UpdateOneModel implements WriteModel {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   hint: Optional<(String | Document)>;
+
+  /**
+   * Specify which document the operation updates if the query matches multiple
+   * documents. The first document matched by the sort order will be updated.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 8.0. Older servers will report an error for using this option.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/update/
+   */
+  sort: Optional<Document>;
 
   /**
    * When true, creates a new document if no document matches the query.
@@ -2430,6 +2474,8 @@ aforementioned allowance in the SemVer spec.
 
 ## Changelog
 
+- 2024-10-01: Add sort option to `replaceOne` and `updateOne`.
+
 - 2024-09-12: Specify that explain helpers support maxTimeMS.
 
 - 2024-02-20: Migrated from reStructuredText to Markdown.
@@ -2447,12 +2493,12 @@ aforementioned allowance in the SemVer spec.
 - 2022-01-27: Use optional return types for write commands and findAndModify
 
 - 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout
-  spec.
+    spec.
 
 - 2022-01-14: Add let to ReplaceOptions
 
 - 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge. Add let to FindOptions,
-  UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
+    UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
 
 - 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
 
@@ -2465,10 +2511,10 @@ aforementioned allowance in the SemVer spec.
 - 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 
 - 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of
-  server version.
+    server version.
 
 - 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise
-  an error on older server versions.
+    an error on older server versions.
 
 - 2020-03-06: Added hint option for DeleteOne, DeleteMany, and FindOneAndDelete operations.
 
@@ -2519,7 +2565,7 @@ aforementioned allowance in the SemVer spec.
 - 2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.
 
 - 2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne() previously used UpdateOptions, this may have BC
-  implications for drivers using option classes.
+    implications for drivers using option classes.
 
 - 2017-10-05: Removed useCursor option from AggregateOptions.
 
@@ -2540,7 +2586,7 @@ aforementioned allowance in the SemVer spec.
 - 2017-01-09: Removed modifiers from FindOptions and added in all options.
 
 - 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to
-  calculating batchSize for opcode writes.
+    calculating batchSize for opcode writes.
 
 - 2017-01-09: Reworded description of how default values are handled and when to send certain options.
 

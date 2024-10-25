@@ -141,7 +141,7 @@ Drivers SHOULD support the `filter`, `authorizedDatabases` and `comment` options
 MongoDB 3.6 introduced a `nameOnly` boolean option to the `listDatabases` database command, which limits the command
 result to only include database names. Consider the following example:
 
-```
+```javascript
 > db.getSiblingDB("admin").runCommand({listDatabases:1,nameOnly:true})
 {
     "databases" : [
@@ -190,17 +190,17 @@ The test plan should be executed against the following servers:
 The following scenarios should be run for each test environment:
 
 - Execute the method to enumerate full database information (e.g. `listDatabases()`)
-  - Verify that the method returns an Iterable of Document types
-  - Verify that all databases on the server are present in the result set
-  - Verify that the result set does not contain duplicates
+    - Verify that the method returns an Iterable of Document types
+    - Verify that all databases on the server are present in the result set
+    - Verify that the result set does not contain duplicates
 - Execute the method to enumerate database names (e.g. `listDatabaseNames()`)
-  - Verify that the method returns an Iterable of strings
-  - Verify that all databases on the server are present in the result set
-  - Verify that the result set does not contain duplicates
+    - Verify that the method returns an Iterable of strings
+    - Verify that all databases on the server are present in the result set
+    - Verify that the result set does not contain duplicates
 - Execute the method to enumerate MongoDatabase objects (e.g. `listMongoDatabases()`)
-  - Verify that the method returns an Iterable of MongoDatabase objects
-  - Verify that all databases on the server are present in the result set
-  - Verify that the result set does not contain duplicates
+    - Verify that the method returns an Iterable of MongoDatabase objects
+    - Verify that all databases on the server are present in the result set
+    - Verify that the result set does not contain duplicates
 
 ## Motivation for Change
 
@@ -239,7 +239,7 @@ array of database information documents.
 - 2024-07-26: Migrated from reStructuredText to Markdown. Removed note that applied to pre-3.6 servers.
 
 - 2022-10-05: Remove spec front matter and reformat changelog. Also reverts the minimum server version to 3.6, which is
-  where `nameOnly` and `filter` options were first introduced for `listDatabases`.
+    where `nameOnly` and `filter` options were first introduced for `listDatabases`.
 
 - 2022-08-17: Clarify the behavior of comment on pre-4.4 servers.
 

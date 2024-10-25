@@ -170,30 +170,30 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A [Conne
 properties:
 
 - **Single Endpoint:** A [Connection](#connection) MUST be associated with a single Endpoint. A
-  [Connection](#connection) MUST NOT be associated with multiple Endpoints.
+    [Connection](#connection) MUST NOT be associated with multiple Endpoints.
 - **Single Lifetime:** A [Connection](#connection) MUST NOT be used after it is closed.
 - **Single Owner:** A [Connection](#connection) MUST belong to exactly one Pool, and MUST NOT be shared across multiple
-  pools
+    pools
 - **Single Track:** A [Connection](#connection) MUST limit itself to one request / response at a time. A
-  [Connection](#connection) MUST NOT multiplex/pipeline requests to an Endpoint.
+    [Connection](#connection) MUST NOT multiplex/pipeline requests to an Endpoint.
 - **Monotonically Increasing ID:** A [Connection](#connection) MUST have an ID number associated with it.
-  [Connection](#connection) IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
-  for each new Connection.
+    [Connection](#connection) IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
+    for each new Connection.
 - **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a
-  MongoDB Handshake and Authentication as specified in the [Handshake](../mongodb-handshake/handshake.md),
-  [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
+    MongoDB Handshake and Authentication as specified in the [Handshake](../mongodb-handshake/handshake.md),
+    [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
 - **Perishable**: it is possible for a [Connection](#connection) to become **Perished**. A [Connection](#connection) is
-  considered perished if any of the following are true:
-  - **Stale:** The [Connection](#connection) 's generation does not match the generation of the parent pool
-  - **Idle:** The [Connection](#connection) is currently "available" (as defined below) and has been for longer than
-    **maxIdleTimeMS**.
-  - **Errored:** The [Connection](#connection) has experienced an error that indicates it is no longer recommended for
-    use. Examples include, but are not limited to:
-    - Network Error
-    - Network Timeout
-    - Endpoint closing the connection
-    - Driver-Side Timeout
-    - Wire-Protocol Error
+    considered perished if any of the following are true:
+    - **Stale:** The [Connection](#connection) 's generation does not match the generation of the parent pool
+    - **Idle:** The [Connection](#connection) is currently "available" (as defined below) and has been for longer than
+        **maxIdleTimeMS**.
+    - **Errored:** The [Connection](#connection) has experienced an error that indicates it is no longer recommended for
+        use. Examples include, but are not limited to:
+        - Network Error
+        - Network Timeout
+        - Endpoint closing the connection
+        - Driver-Side Timeout
+        - Wire-Protocol Error
 
 ```typescript
 interface Connection {
@@ -245,9 +245,9 @@ either receives a [Connection](#connection) or times out. A WaitQueue has the fo
 
 - **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
 - **Ordered/Fair**: When [Connections](#connection) are made available, they are issued out to threads in the order that
-  the threads entered the WaitQueue.
+    the threads entered the WaitQueue.
 - **Timeout aggressively:** Members of a WaitQueue MUST timeout if they are enqueued for longer than the computed
-  timeout and MUST leave the WaitQueue immediately in this case.
+    timeout and MUST leave the WaitQueue immediately in this case.
 
 The implementation details of a WaitQueue are left to the driver. Example implementations include:
 
@@ -261,27 +261,27 @@ Endpoint. The pool has the following properties:
 
 - **Thread Safe:** All Pool behaviors MUST be thread safe.
 - **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it
-  MUST immediately clear itself and update its pid
+    MUST immediately clear itself and update its pid
 - **Single Owner:** A Pool MUST be associated with exactly one Endpoint, and MUST NOT be shared between Endpoints.
 - **Emit Events and Log Messages:** A Pool MUST emit pool events and log messages when dictated by this spec (see
-  [Connection Pool Monitoring](#connection-pool-monitoring)). Users MUST be able to subscribe to emitted events and log
-  messages in a manner idiomatic to their language and driver.
+    [Connection Pool Monitoring](#connection-pool-monitoring)). Users MUST be able to subscribe to emitted events and
+    log messages in a manner idiomatic to their language and driver.
 - **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
-  - Checking in a [Connection](#connection) to the Pool automatically closes the [Connection](#connection)
-  - Attempting to check out a [Connection](#connection) from the Pool results in an Error
+    - Checking in a [Connection](#connection) to the Pool automatically closes the [Connection](#connection)
+    - Attempting to check out a [Connection](#connection) from the Pool results in an Error
 - **Clearable:** A Pool MUST be able to be cleared. Clearing the pool marks all pooled and checked out
-  [Connections](#connection) as stale and lazily closes them as they are checkedIn or encountered in checkOut.
-  Additionally, all requests are evicted from the WaitQueue and return errors that are considered non-timeout network
-  errors.
+    [Connections](#connection) as stale and lazily closes them as they are checkedIn or encountered in checkOut.
+    Additionally, all requests are evicted from the WaitQueue and return errors that are considered non-timeout network
+    errors.
 - **Pausable:** A Pool MUST be able to be paused and resumed. A Pool is paused automatically when it is cleared, and it
-  can be resumed by being marked as "ready". While the Pool is paused, it exhibits the following behaviors:
-  - Attempting to check out a [Connection](#connection) from the Pool results in a non-timeout network error
-  - Connections are not created in the background to satisfy minPoolSize
+    can be resumed by being marked as "ready". While the Pool is paused, it exhibits the following behaviors:
+    - Attempting to check out a [Connection](#connection) from the Pool results in a non-timeout network error
+    - Connections are not created in the background to satisfy minPoolSize
 - **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number
-  of [Connections](#connection) (including available and in use) MUST NOT exceed **maxPoolSize**
+    of [Connections](#connection) (including available and in use) MUST NOT exceed **maxPoolSize**
 - **Rate-limited:** A Pool MUST limit the number of [Connections](#connection) being
-  [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
-  [pool option](#connection-pool-options).
+    [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
+    [pool option](#connection-pool-options).
 
 ```typescript
 interface ConnectionPool {
@@ -388,7 +388,7 @@ it has been marked as "ready". SDAM will mark the pool as "ready" on each succes
 [Connection Pool Management](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#connection-pool-management)
 section in the SDAM specification for more information.
 
-```
+```text
 set generation to 0
 set state to "paused"
 emit PoolCreatedEvent and equivalent log message
@@ -402,7 +402,7 @@ following behavior changes:
 - In use [Connections](#connection) MUST be closed when they are checked in to the closed pool.
 - Attempting to check out a [Connection](#connection) MUST result in an error.
 
-```
+```text
 mark pool as "closed"
 for connection in availableConnections:
   close connection
@@ -418,7 +418,7 @@ background.
 If the pool is already "ready" when this method is invoked, then this method MUST immediately return and MUST NOT emit a
 PoolReadyEvent.
 
-```
+```text
 mark pool as "ready"
 emit PoolReadyEvent and equivalent log message
 allow background thread to create connections
@@ -433,7 +433,7 @@ connections before observing the PoolReadyEvent event.
 When creating a [Connection](#connection), the initial [Connection](#connection) is in a "pending" state. This only
 creates a "virtual" [Connection](#connection), and performs no I/O.
 
-```
+```text
 connection = new Connection()
 increment totalConnectionCount
 increment pendingConnectionCount
@@ -448,7 +448,7 @@ return connection
 Before a [Connection](#connection) can be marked as either "available" or "in use", it must be established. This process
 involves performing the initial handshake, handling OP_COMPRESSED, and performing authentication.
 
-```
+```text
 try:
   connect connection via TCP / TLS
   perform connection handshake
@@ -469,7 +469,7 @@ When a [Connection](#connection) is closed, it MUST first be marked as "closed",
 to close its underlying socket. The Driver SHOULD perform this teardown in a non-blocking manner, such as via the use of
 a background thread or async I/O.
 
-```
+```text
 original state = connection state
 set connection state to "closed"
 
@@ -492,7 +492,7 @@ A [Connection](#connection) is "available" if it is able to be checked out. A [C
 marked as "available" until it has been established. The pool MUST keep track of the number of currently available
 [Connections](#connection).
 
-```
+```text
 increment availableConnectionCount
 set connection state to "available"
 add connection to availableConnections
@@ -524,7 +524,7 @@ observable to the [Thread](#thread). Informally, this order guarantees that no [
 establishing a [Connection](#connection) when there is an "available" [Connection](#connection) established as a result
 of populating the Pool.
 
-```
+```text
 wait until pendingConnectionCount < maxConnecting and pool is "ready"
 create connection
 try:
@@ -574,7 +574,7 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
-```python
+```text
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
 emit ConnectionCheckOutStartedEvent and equivalent log message
@@ -658,7 +658,7 @@ any of the following are true:
 
 Otherwise, the [Connection](#connection) is marked as available.
 
-```
+```text
 emit ConnectionCheckedInEvent and equivalent log message
 if connection is perished OR pool is closed:
   close connection
@@ -743,9 +743,9 @@ A Pool SHOULD have a background Thread that is responsible for monitoring the st
 
 - Populate [Connections](#connection) to ensure that the pool always satisfies minPoolSize.
 - Remove and close perished available [Connections](#connection) including "in use" connections if
-  `interruptInUseConnections` option was set to true in the most recent pool clear.
+    `interruptInUseConnections` option was set to true in the most recent pool clear.
 - Apply timeouts to connection establishment per
-  [Client Side Operations Timeout: Background Connection Pooling](../client-side-operations-timeout/client-side-operations-timeout.md#background-connection-pooling).
+    [Client Side Operations Timeout: Background Connection Pooling](../client-side-operations-timeout/client-side-operations-timeout.md#background-connection-pooling).
 
 A pool SHOULD allow immediate scheduling of the next background thread iteration after a clear is performed.
 
@@ -1243,9 +1243,9 @@ Step-Down, which will be further addressed in our [Advanced Pooling Behaviors](#
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
 - ConnectionCreated adds a new "pending" [Connection](#connection), meaning the totalConnectionCount and
-  pendingConnectionCount increase by one
+    pendingConnectionCount increase by one
 - ConnectionReady establishes that the [Connection](#connection) is ready for use, meaning the availableConnectionCount
-  increases by one
+    increases by one
 
 ConnectionClosed indicates that the [Connection](#connection) is no longer a member of the pool, decrementing
 totalConnectionCount and potentially availableConnectionCount. After this point, the [Connection](#connection) is no
@@ -1301,15 +1301,15 @@ The distinction between the "paused" state and the "ready" state allows the pool
 endpoint it is associated with is available or not. This enables the following behaviors:
 
 1. The pool can halt the creation of background connection establishments until the endpoint becomes available again.
-   Without the "paused" state, the pool would have no way of determining when to begin establishing background
-   connections again, so it would just continually attempt, and often fail, to create connections until minPoolSize was
-   satisfied, even after repeated failures. This could unnecessarily waste resources both server and driver side.
+    Without the "paused" state, the pool would have no way of determining when to begin establishing background
+    connections again, so it would just continually attempt, and often fail, to create connections until minPoolSize
+    was satisfied, even after repeated failures. This could unnecessarily waste resources both server and driver side.
 2. The pool can evict requests that enter the WaitQueue after the pool was cleared but before the server was in a known
-   state again. Such requests can occur when a server is selected at the same time as it becomes marked as Unknown in
-   highly concurrent workloads. Without the "paused" state, the pool would attempt to service these requests, since it
-   would assume they were routed to the pool because its endpoint was available, not because of a race between SDAM and
-   Server Selection. These requests would then likely fail with potentially high latency, again wasting resources both
-   server and driver side.
+    state again. Such requests can occur when a server is selected at the same time as it becomes marked as Unknown in
+    highly concurrent workloads. Without the "paused" state, the pool would attempt to service these requests, since it
+    would assume they were routed to the pool because its endpoint was available, not because of a race between SDAM
+    and Server Selection. These requests would then likely fail with potentially high latency, again wasting resources
+    both server and driver side.
 
 ### Why not emit PoolCleared events and log messages when clearing a paused pool?
 
@@ -1357,10 +1357,10 @@ This specification does not dictate how SDAM Monitoring connections are managed.
 NOT use the client's regular Connection pool". Some possible solutions for this include:
 
 - Having each Endpoint representation in the driver create and manage a separate dedicated [Connection](#connection) for
-  monitoring purposes
+    monitoring purposes
 - Having each Endpoint representation in the driver maintain a separate pool of maxPoolSize 1 for monitoring purposes.
 - Having each Pool maintain a dedicated [Connection](#connection) for monitoring purposes, with an API to expose that
-  Connection.
+    Connection.
 
 ### Advanced Pooling Behaviors
 
@@ -1379,7 +1379,7 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 - 2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent
 
 - 2020-09-03: Clarify Connection states and definition. Require the use of a background thread and/or async I/O. Add
-  tests to ensure ConnectionReadyEvents are fired after ConnectionCreatedEvents.
+    tests to ensure ConnectionReadyEvents are fired after ConnectionCreatedEvents.
 
 - 2020-09-24: Introduce maxConnecting requirement
 

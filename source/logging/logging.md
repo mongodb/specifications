@@ -85,21 +85,21 @@ Drivers MUST support configuring where log messages should be output, including 
 - stderr
 
 - Output file (path MUST be configurable). For languages that are not relying on a logging interface or framework to
-  handle file support, the driver can choose to either support this directly (i.e. the driver allows the user to specify
-  a path and itself handles writing to that path), or to instead provide a straightforward, idiomatic way to
-  programmatically consume the messages and in turn write them to a file, e.g. via a Node.js
-  [stream](https://nodejs.org/api/stream.html), along with a documentation example of how to do this.
+    handle file support, the driver can choose to either support this directly (i.e. the driver allows the user to
+    specify a path and itself handles writing to that path), or to instead provide a straightforward, idiomatic way to
+    programmatically consume the messages and in turn write them to a file, e.g. via a Node.js
+    [stream](https://nodejs.org/api/stream.html), along with a documentation example of how to do this.
 
-  > **Fallback implementation method**: If the environment variable `MONGODB_LOG_PATH` is provided:
-  >
-  > - If the value is "stdout" (case-insensitive), log to stdout.
-  > - If the value is "stderr" (case-insensitive), log to stderr.
-  > - Else, if direct logging to files is supported, log to a file at the specified path. If the file already exists, it
-  >   MUST be appended to.
-  >
-  > If the variable is not provided or is set to an invalid value (which could be invalid for any reason, e.g. the path
-  > does not exist or is not writeable), the driver MUST log to stderr and the driver MAY attempt to warn the user about
-  > the misconfiguration via a log message or otherwise but MUST NOT throw an exception.
+    > **Fallback implementation method**: If the environment variable `MONGODB_LOG_PATH` is provided:
+    >
+    > - If the value is "stdout" (case-insensitive), log to stdout.
+    > - If the value is "stderr" (case-insensitive), log to stderr.
+    > - Else, if direct logging to files is supported, log to a file at the specified path. If the file already exists, it
+    >   MUST be appended to.
+    >
+    > If the variable is not provided or is set to an invalid value (which could be invalid for any reason, e.g. the path
+    > does not exist or is not writeable), the driver MUST log to stderr and the driver MAY attempt to warn the user about
+    > the misconfiguration via a log message or otherwise but MUST NOT throw an exception.
 
 #### Configurable Max Document Length
 
@@ -168,7 +168,7 @@ severe level if one is available, or the closest more severe level otherwise.
 For example:
 
 - If an Informational level is not available and Debug is, messages defined as Informational in a specification MUST be
-  emitted at Debug level.
+    emitted at Debug level.
 - If a Trace level is not available, Trace messages MUST be emitted at Debug level.
 
 #### Structured versus Unstructured Logging
@@ -224,7 +224,7 @@ Some log messages will include fields that are only present under particular cir
 server versions. When such a field is not present:
 
 - If the driver does structured logging, the field MUST be omitted from the message altogether, i.e. the field MUST not
-  be present with an explicit null value.
+    be present with an explicit null value.
 - If the driver does unstructured logging, the corresponding segment of the message string MUST be omitted altogether.
 
 #### Performance Considerations
@@ -282,30 +282,31 @@ of drivers for our internal teams, and improve our documentation around troubles
 
 1. Why have an option?
 
-   We considered a number of approaches for dealing with documents of potentially very large size in log messages, e.g.
-   command documents, including 1) always logging the full document, 2) only logging documents with the potential to be
-   large when the user opts in, and 3) truncating large documents by default, but allowing the user to adjust the
-   maximum length logged. We chose the third option as we felt it struck the best balance between concerns around
-   readability and usability of log messages. In the case where data is sufficiently small, the default behavior will
-   show the user the full data. In the case where data is large, the user will receive a readable message with truncated
-   data, but have the option to see more or all of the data.
+    We considered a number of approaches for dealing with documents of potentially very large size in log messages, e.g.
+    command documents, including 1) always logging the full document, 2) only logging documents with the potential to
+    be large when the user opts in, and 3) truncating large documents by default, but allowing the user to adjust the
+    maximum length logged. We chose the third option as we felt it struck the best balance between concerns around
+    readability and usability of log messages. In the case where data is sufficiently small, the default behavior will
+    show the user the full data. In the case where data is large, the user will receive a readable message with
+    truncated data, but have the option to see more or all of the data.
 
 2. Why are the units for max document length flexible?
 
-   String APIs vary across languages, and not all drivers will be able to easily and efficiently truncate strings in the
-   same exact manner. The important thing is that the option exists and that its default value is reasonable, and for
-   all possible unit choices (byte, code point, code unit, or grapheme) we felt 1000 was a reasonable default. See
-   [here](https://exploringjs.com/impatient-js/ch_unicode.html) for a helpful primer on related Unicode concepts.
+    String APIs vary across languages, and not all drivers will be able to easily and efficiently truncate strings in the
+    same exact manner. The important thing is that the option exists and that its default value is reasonable, and for
+    all possible unit choices (byte, code point, code unit, or grapheme) we felt 1000 was a reasonable default. See
+    [here](https://exploringjs.com/impatient-js/ch_unicode.html) for a helpful primer on related Unicode concepts.
 
 3. Why do we implement naive truncation rather than truncating the JSON so it is still valid?
 
-   Designing and implementing a truncation algorithm for JSON that outputs valid JSON, but fits in as much of the
-   original JSON as possible, would be non-trivial. The server team wrote an entire separate truncation design document
-   when they implemented this for their log messages. This is more of a necessity for the server where the entire log
-   message is JSON, but we don't know if parsing the documents included in log messages is something that users will
-   actually need to do. Furthermore, any users who want parseable documents have an escape hatch to do so: they can set
-   the max document length to a very large value. If we hear of use cases in the future for parsing the documents in log
-   messages, we could make an additive change to this specification to permit a smarter truncation algorithm.
+    Designing and implementing a truncation algorithm for JSON that outputs valid JSON, but fits in as much of the
+    original JSON as possible, would be non-trivial. The server team wrote an entire separate truncation design
+    document when they implemented this for their log messages. This is more of a necessity for the server where the
+    entire log message is JSON, but we don't know if parsing the documents included in log messages is something that
+    users will actually need to do. Furthermore, any users who want parseable documents have an escape hatch to do so:
+    they can set the max document length to a very large value. If we hear of use cases in the future for parsing the
+    documents in log messages, we could make an additive change to this specification to permit a smarter truncation
+    algorithm.
 
 ### Structured versus Unstructured Logging
 
@@ -329,35 +330,36 @@ to an invalid value the driver behaves as if the value were not specified at all
 not throw an error. We considered the following alternatives:
 
 1. Drivers could be required to throw an exception if a value is invalid: This was rejected because of concerns around
-   the implications for environments/applications where multiple versions of the driver or multiple drivers may be
-   present and where the validation logic may not match, meaning a value considered valid for one driver/version might
-   not be by another. Additionally, there is no obvious place to throw an exception from about invalid environment
-   variables; `MongoClient` constructors would be one possibility, but not all languages will support per-client
-   configuration so throwing there regarding an environment variable might be surprising to users.
+    the implications for environments/applications where multiple versions of the driver or multiple drivers may be
+    present and where the validation logic may not match, meaning a value considered valid for one driver/version might
+    not be by another. Additionally, there is no obvious place to throw an exception from about invalid environment
+    variables; `MongoClient` constructors would be one possibility, but not all languages will support per-client
+    configuration so throwing there regarding an environment variable might be surprising to users.
 
-   Note that these same concerns do not apply to logging options that are specified via driver API: there is no risk of
-   such options propagating to other drivers/driver versions present, and drivers can report exceptions at the point the
-   options are specified, either globally or per-client. Therefore, drivers MUST validate programmatic logging options
-   in a manner consistent with how they validate all other programmatic options, and if possible SHOULD prefer to throw
-   exceptions for invalid configuration.
+    Note that these same concerns do not apply to logging options that are specified via driver API: there is no risk of
+    such options propagating to other drivers/driver versions present, and drivers can report exceptions at the point
+    the options are specified, either globally or per-client. Therefore, drivers MUST validate programmatic logging
+    options in a manner consistent with how they validate all other programmatic options, and if possible SHOULD prefer
+    to throw exceptions for invalid configuration.
 
 2. Drivers could be required to log a warning if a value is invalid: While drivers MAY do this, requiring it was
-   rejected because depending on the language/framework log messages may not be a viable way to communicate a warning:
-   if a language's default behavior is to log nothing, or only log messages at a more severe level than `warn`, the user
-   will not actually receive the message unless it is logged at a level and component they have successfully enabled.
+    rejected because depending on the language/framework log messages may not be a viable way to communicate a warning:
+    if a language's default behavior is to log nothing, or only log messages at a more severe level than `warn`, the
+    user will not actually receive the message unless it is logged at a level and component they have successfully
+    enabled.
 
 ### Programmatic Configuration Taking Precedence
 
 We chose to have programmatic configuration win out over environment variables because:
 
 1. This allows applications built atop drivers (e.g. mongosh) to fully control the driver's logging behavior by setting
-   options for it programmatically.
+    options for it programmatically.
 2. This is consistent with how many drivers treat options specified both in a connection string and programmatically:
-   programmatic options win out.
+    programmatic options win out.
 3. It is straightforward for users to override this behavior (by writing logic to read in environment variables and
-   override programmatic defaults), but if we went with the opposite default, it would be more complicated for users to
-   override: not all languages will necessarily have an easy way to override/unset an environment variable from within
-   application code.
+    override programmatic defaults), but if we went with the opposite default, it would be more complicated for users
+    to override: not all languages will necessarily have an easy way to override/unset an environment variable from
+    within application code.
 
 ## Backwards Compatibility
 
@@ -414,6 +416,6 @@ on individual clients or for particular namespaces.
 - 2022-12-29: Fix typo in trace log level example
 
 - 2023-01-04: Elaborate on treatment of invalid values of environment variables. Permit drivers to omit direct support
-  for logging to file so long as they provide a straightforward way for users to consume the log messages
-  programmatically and write to a file themselves. Require that programmatic configuration take precedence over
-  environment variables.
+    for logging to file so long as they provide a straightforward way for users to consume the log messages
+    programmatically and write to a file themselves. Require that programmatic configuration take precedence over
+    environment variables.

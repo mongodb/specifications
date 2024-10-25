@@ -30,12 +30,12 @@ Drivers should test that `withTransaction` enforces a non-configurable timeout b
 transactions. Specifically, three cases should be checked:
 
 - If the callback raises an error with the TransientTransactionError label and the retry timeout has been exceeded,
-  `withTransaction` should propagate the error to its caller.
+    `withTransaction` should propagate the error to its caller.
 - If committing raises an error with the UnknownTransactionCommitResult label, and the retry timeout has been exceeded,
-  `withTransaction` should propagate the error to its caller.
+    `withTransaction` should propagate the error to its caller.
 - If committing raises an error with the TransientTransactionError label and the retry timeout has been exceeded,
-  `withTransaction` should propagate the error to its caller. This case may occur if the commit was internally retried
-  against a new primary after a failover and the second primary returned a NoSuchTransaction error response.
+    `withTransaction` should propagate the error to its caller. This case may occur if the commit was internally retried
+    against a new primary after a failover and the second primary returned a NoSuchTransaction error response.
 
 If possible, drivers should implement these tests without requiring the test runner to block for the full duration of
 the retry timeout. This might be done by internally modifying the timeout value used by `withTransaction` with some

@@ -25,17 +25,17 @@ parameters on how to apply the batch items and, of course, the batch items thems
 ### Generic Fields
 
 - `<write op>`: mandatory, with a string type, where `<write op>` can be `insert`, `update`, or `delete` and the content
-  string is a valid collection name against which the write should be directed. The `<write op>` must be the first key
-  in the document. For example:
+    string is a valid collection name against which the write should be directed. The `<write op>` must be the first key
+    in the document. For example:
 
 ```javascript
 db.runCommand{ { update: "users", ...
 ```
 
 - `writeConcern`: optional, with a valid write concern BSONObj type, which contains the journaling, replication, and/or
-  time out parameters that will be used at the end of the batch application. The default write concern for a mongod
-  server can be set as a replica set configuration option, or if there is no replica set default the fallback is
-  `{ w: 1 }`. For example:
+    time out parameters that will be used at the end of the batch application. The default write concern for a mongod
+    server can be set as a replica set configuration option, or if there is no replica set default the fallback is
+    `{ w: 1 }`. For example:
 
 ```javascript
 ..., writeConcern: { w: 2 }, ...
@@ -48,8 +48,8 @@ write at this time. In this protocol, there is no provision to ignore the respon
 a very condensed response when it sees that write concern (e.g. omits everything but the `ok` field).
 
 - `ordered`: optional, with a boolean type. If true, applies the batch's items in the same order the items appear, ie.
-  sequentially. If `ordered` is false, the server applies the batch items in no particular order -- possibly, in
-  parallel. The default value is true, sequential. For example:
+    sequentially. If `ordered` is false, the server applies the batch items in no particular order -- possibly, in
+    parallel. The default value is true, sequential. For example:
 
 ```javascript
 ..., ordered: false, ...
@@ -58,8 +58,9 @@ a very condensed response when it sees that write concern (e.g. omits everything
 - `metadata`: RESERVED FOR MONGOS USE, future use.
 
 - `failFast`: NOT YET USED, RESERVED FOR FUTURE USE. Optional, with a boolean type. If false, allows the batch to
-  continue processing even if some elements in the batch have errors. If true, the batch will stop on first error(s) it
-  detects (write concern will not be applied). Defaults to true for ordered batches, and false for unordered batches.
+    continue processing even if some elements in the batch have errors. If true, the batch will stop on first error(s)
+    it detects (write concern will not be applied). Defaults to true for ordered batches, and false for unordered
+    batches.
 
 ### Batch Items Format
 
@@ -68,7 +69,7 @@ We describe the array of batch items to be applied according to which type of wr
 <span id="insert"></span>
 
 - For inserts, `documents` array: mandatory, with an array of objects type. Objects must be valid for insertion. For
-  example:
+    example:
 
 ```javascript
 { insert: "coll",
@@ -80,8 +81,9 @@ We describe the array of batch items to be applied according to which type of wr
 <span id="update"></span>
 
 - For updates, an `updates` array: mandatory, with an array of update objects type. Update objects must contain the
-  query expression `q`, an update expression `u` fields, and, optionally, a boolean `multi` if several documents may be
-  changed, and a boolean `upsert` if updates can become inserts. Both optional fields default to false. For example:
+    query expression `q`, an update expression `u` fields, and, optionally, a boolean `multi` if several documents may
+    be changed, and a boolean `upsert` if updates can become inserts. Both optional fields default to false. For
+    example:
 
 ```javascript
 { update: "coll",
@@ -121,12 +123,12 @@ processed, two limits must be respected.
 Both of these limits can be found using hello():
 
 - `maxBsonObjectSize` : currently 16 MiB, this is the maximum size of writes (excluding command overhead) that should be
-  sent to the server. Documents to be inserted, query documents for updates and deletes, and update expression documents
-  must be \<= this size. Once these documents have been assembled into a write command the total size may exceed
-  `maxBsonObjectSize` by a maximum of 16 KiB, allowing users to insert documents up to `maxBsonObjectSize`.
+    sent to the server. Documents to be inserted, query documents for updates and deletes, and update expression
+    documents must be \<= this size. Once these documents have been assembled into a write command the total size may
+    exceed `maxBsonObjectSize` by a maximum of 16 KiB, allowing users to insert documents up to `maxBsonObjectSize`.
 - `maxWriteBatchSize` : this is the maximum number of inserts, updates, or deletes that can be included in a write
-  batch. If more than this number of writes are included, the server cannot guarantee space in the response document to
-  reply to the batch.
+    batch. If more than this number of writes are included, the server cannot guarantee space in the response document
+    to reply to the batch.
 
 If the batch is too large in size or bytes, the command may fail.
 
@@ -135,8 +137,8 @@ If the batch is too large in size or bytes, the command may fail.
 There are two types of responses to any command:
 
 - a `command failure`, which indicates the command itself did not complete successfully. Example command failures
-  include failure to authorize, failure to parse, operation aborted by user, and unexpected errors during execution
-  (these should be very rare).
+    include failure to authorize, failure to parse, operation aborted by user, and unexpected errors during execution
+    (these should be very rare).
 - successful command execution, which for write commands may include write errors.
 
 ### Command Failure Fields
@@ -160,25 +162,25 @@ The main body of a successful response is below:
 <span id="ok"></span>
 
 - `ok`: Mandatory field, (double)"1" if operation was executed. Does not mean successfully. For example, duplicate key
-  error will still set ok = 1
+    error will still set ok = 1
 
 <span id="n"></span>
 
 - `n`: Mandatory field, with a positive numeric type or zero. This field contains the aggregated number of documents
-  successfully affected by the entire write command. This includes the number of documents inserted, upserted, updated,
-  and deleted. We do not report on the individual number of documents affected by each batch item. If the application
-  would wish so, then the application should issue one-item batches.
+    successfully affected by the entire write command. This includes the number of documents inserted, upserted,
+    updated, and deleted. We do not report on the individual number of documents affected by each batch item. If the
+    application would wish so, then the application should issue one-item batches.
 
 <span id="writeErrors"></span>
 
 - `writeErrors`: Optional field, an array of write errors. For every batch write that had an error, there is one BSON
-  error document in the array describing the error. (See the [Error Document](#error-document) section.)
+    error document in the array describing the error. (See the [Error Document](#error-document) section.)
 
 <span id="writeConcernError"></span>
 
 - `writeConcernError`: Optional field, which may contain a BSON error document indicating an error occurred while
-  applying the write concern (or an error indicating that the write concern was not applied). (See the
-  [Error Document](#error-document) section.)
+    applying the write concern (or an error indicating that the write concern was not applied). (See the
+    [Error Document](#error-document) section.)
 
 ### Situational Fields
 
@@ -188,8 +190,8 @@ response information, as described below.
 <span id="nModified"></span>
 
 - `nModified`: Optional field, with a positive numeric type or zero. Zero is the default value. This field is only and
-  always present for batch updates. `nModified` is the physical number of documents affected by an update, while `n` is
-  the logical number of documents matched by the update's query. For example, if we have 100 documents like :
+    always present for batch updates. `nModified` is the physical number of documents affected by an update, while `n`
+    is the logical number of documents matched by the update's query. For example, if we have 100 documents like :
 
 ```javascript
 { bizName: "McD", employees: ["Alice", "Bob", "Carol"] }
@@ -201,12 +203,12 @@ businesses have been updated, and `nModified` is useful to know which businesses
 <span id="upserted"></span>
 
 - `upserted`: Optional field, with an array type. If any upserts occurred in the batch, the array contains a BSON
-  document listing the `index` and `_id` of the newly upserted document in the database.
+    document listing the `index` and `_id` of the newly upserted document in the database.
 
 <span id="lastOp"></span>
 
 - `lastOp`: MONGOD ONLY. Optional field, with a timestamp type, indicating the latest opTime on the server after all
-  documents were processed.
+    documents were processed.
 - `electionId`: MONGOD ONLY. Optional ObjectId field representing the last primary election Id.
 
 ### Error Document
@@ -220,9 +222,9 @@ For a write error or a write concern error, the following fields will appear in 
 <span id="errInfo"></span>
 
 - `errInfo`: Optional field, with a BSONObj format. This field contains structured information about an error that can
-  be processed programmatically. For example, if a request returns with a shard version error, we may report the proper
-  shard version as a sub-field here. For another example, if a write concern timeout occurred, the information
-  previously reported on `wtimeout` would be reported here. The format of this field depends on the code above.
+    be processed programmatically. For example, if a request returns with a shard version error, we may report the
+    proper shard version as a sub-field here. For another example, if a write concern timeout occurred, the information
+    previously reported on `wtimeout` would be reported here. The format of this field depends on the code above.
 
 <span id="errmsg"></span>
 
@@ -231,7 +233,7 @@ For a write error or a write concern error, the following fields will appear in 
 <span id="index"></span>
 
 - `index`: WRITE ERROR ONLY. The index of the erroneous batch item relative to request batch order. Batch items indexes
-  start with 0.
+    start with 0.
 
 ## Examples
 
@@ -489,7 +491,7 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 - 2024-07-31: Migrated from reStructuredText to Markdown.
 
 - 2024-06-04: Add FAQ entry outlining client-side `_id` value generation Update FAQ to indicate legacy opcodes were
-  removed
+    removed
 
 - 2022-10-05: Revise spec front matter and reformat changelog.
 
@@ -498,6 +500,6 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 - 2021-04-22: Updated to use hello command
 
 - 2014-05-15: Removed text related to bulk operations; see the Bulk API spec for bulk details. Clarified some
-  paragraphs; re-ordered the response field sections.
+    paragraphs; re-ordered the response field sections.
 
 - 2014-05-14: First public version

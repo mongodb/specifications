@@ -34,7 +34,7 @@ raise an error to the user during parsing if any of the following circumstances 
 6. Both `tlsAllowInvalidCertificates` and `tlsDisableCertificateRevocationCheck` appear in the URI options.
 7. Both `tlsDisableOCSPEndpointCheck` and `tlsDisableCertificateRevocationCheck` appear in the URI options.
 8. All instances of `tls` and `ssl` in the URI options do not have the same value. If all instances of `tls` and `ssl`
-   have the same value, an error MUST NOT be raised.
+    have the same value, an error MUST NOT be raised.
 
 ### directConnection URI option with multiple seeds or SRV URI
 

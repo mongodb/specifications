@@ -90,6 +90,14 @@ class UpdateOneModel implements WriteModel {
      * value is false.
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Specify which document the operation updates if the query matches multiple
+     * documents. The first document matched by the sort order will be updated.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    sort: Optional<Document>;
 }
 
 class UpdateManyModel implements WriteModel {
@@ -167,6 +175,14 @@ class ReplaceOneModel implements WriteModel {
      * value is false.
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Specify which document the operation replaces if the query matches multiple
+     * documents. The first document matched by the sort order will be replaced.
+     *
+     * This option is only sent if the caller explicitly provides a value.
+     */
+    sort: Optional<Document>;
 }
 
 class DeleteOneModel implements WriteModel {
@@ -219,7 +235,7 @@ defines the collection on which the operation should be performed. Drivers SHOUL
 is most idiomatic for its language. For example, drivers may:
 
 - Include a required `namespace` field on each `WriteModel` variant and accept a list of `WriteModel` objects for the
-  `models` parameter.
+    `models` parameter.
 - Accept a list of `(Namespace, WriteModel)` tuples for `models`.
 - Define the following pair class:
 
@@ -242,12 +258,12 @@ Drivers MUST throw an exception if the list provided for `models` is empty.
 #### Update vs. replace document validation
 
 Update documents provided in `UpdateOne` and `UpdateMany` write models are required only to contain atomic modifiers
-(i.e. keys that start with "$"). Drivers MUST throw an error if an update document is empty or if the document's first
-key does not start with "$". Drivers MUST rely on the server to return an error if any other entries in the update
+(i.e. keys that start with `$`). Drivers MUST throw an error if an update document is empty or if the document's first
+key does not start with `$`. Drivers MUST rely on the server to return an error if any other entries in the update
 document are not atomic modifiers. Drivers are not required to perform validation on update pipelines.
 
 Replacement documents provided in `ReplaceOne` write models are required not to contain atomic modifiers. Drivers MUST
-throw an error if a replacement document is nonempty and its first key starts with "$". Drivers MUST rely on the server
+throw an error if a replacement document is nonempty and its first key starts with `$`. Drivers MUST rely on the server
 to return an error if any other entries in the replacement document are atomic modifiers.
 
 ### Options
@@ -422,8 +438,9 @@ verbose results without inspecting the value provided for `verboseResults` in `B
 this in a number of ways, including:
 
 - Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document what will happen if a user
-  attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is false.
-  Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is false.
+    attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is
+    false. Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is
+    false.
 - Embed the verbose results in an optional type:
 
 ```typescript
@@ -457,8 +474,9 @@ class VerboseResults {
 ```
 
 - Define separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `SummaryBulkWriteResult` MUST only
-  contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
-  fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult` otherwise.
+    contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
+    fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult`
+    otherwise.
 
 #### Individual results
 
@@ -598,6 +616,11 @@ returned. This field is optional and defaults to false on the server.
 value for `verboseResults`, drivers MUST define `errorsOnly` as the opposite of `verboseResults`. If the user did not
 specify a value for `verboseResults`, drivers MUST define `errorsOnly` as `true`.
 
+Drivers MUST return a client-side error if `verboseResults` is true with an unacknowledged write concern containing the
+following message:
+
+> Cannot request unacknowledged write concern and verbose results
+
 ### `ordered`
 
 The `ordered` field defines whether writes should be executed in the order in which they were specified, and, if an
@@ -605,6 +628,11 @@ error occurs, whether the server should halt execution of further writes. It is 
 server. Drivers MUST explicitly define `ordered` as `true` in the `bulkWrite` command if a value is not specified in
 `BulkWriteOptions`. This is required to avoid inconsistencies between server and driver behavior if the server default
 changes in the future.
+
+Drivers MUST return a client-side error if `ordered` is true (including when default is applied) with an unacknowledged
+write concern containing the following message:
+
+> Cannot request unacknowledged write concern and ordered writes
 
 ### Size Limits
 
@@ -616,7 +644,7 @@ if a limit is exceeded. However, when an unacknowledged write concern is used, d
 following limits is exceeded:
 
 - The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the `document` field of an
-  `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
+    `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
 - The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.
 - The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.
 
@@ -658,7 +686,7 @@ operation-agnostic command field bytes (e.g. `txnNumber`, `lsid`). Drivers MUST 
 sequence to `maxMessageSizeBytes - 1000` to account for this overhead. The following pseudocode demonstrates how to
 apply this limit in batch-splitting logic:
 
-```
+```javascript
 MESSAGE_OVERHEAD_BYTES = 1000
 
 bulkWriteCommand = Document { "bulkWrite": 1 }
@@ -730,9 +758,9 @@ Drivers MUST record the summary count fields in a `BulkWriteResult` to be return
 `BulkWriteException` if the response indicates that at least one write was successful:
 
 - For ordered bulk writes, at least one write was successful if `nErrors` is 0 or if the `idx` value for the write error
-  returned in the results cursor is greater than 0.
+    returned in the results cursor is greater than 0.
 - For unordered bulk writes, at least one write was successful if `nErrors` is less than the number of operations that
-  were included in the `bulkWrite` command.
+    were included in the `bulkWrite` command.
 
 Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if it cannot be determined that at least one
 write was successfully performed.
@@ -908,6 +936,10 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-10-07: Error if `w:0` is used with `ordered=true` or `verboseResults=true`.
+
+- 2024-10-01: Add sort option to `replaceOne` and `updateOne`.
 
 - 2024-09-30: Define more options for modeling summary vs. verbose results.
 

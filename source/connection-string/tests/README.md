@@ -21,18 +21,18 @@ have the following keys:
 - `uri`: A string containing the URI to be parsed.
 - `valid:` A boolean indicating if the URI should be considered valid.
 - `warning:` A boolean indicating whether URI parsing should emit a warning (independent of whether or not the URI is
-  valid).
+    valid).
 - `hosts`: An array of host objects, each of which have the following keys:
-  - `type`: A string denoting the type of host. Possible values are "ipv4", "ip_literal", "hostname", and "unix".
-    Asserting the type is *optional*.
-  - `host`: A string containing the parsed host.
-  - `port`: An integer containing the parsed port number.
+    - `type`: A string denoting the type of host. Possible values are "ipv4", "ip_literal", "hostname", and "unix".
+        Asserting the type is *optional*.
+    - `host`: A string containing the parsed host.
+    - `port`: An integer containing the parsed port number.
 - `auth`: An object containing the following keys:
-  - `username`: A string containing the parsed username. For auth mechanisms that do not utilize a password, this may be
-    the entire `userinfo` token (as discussed in [RFC 2396](https://www.ietf.org/rfc/rfc2396.txt)).
-  - `password`: A string containing the parsed password.
-  - `db`: A string containing the parsed authentication database. For legacy implementations that support namespaces
-    (databases and collections) this may be the full namespace eg: `<db>.<coll>`
+    - `username`: A string containing the parsed username. For auth mechanisms that do not utilize a password, this may be
+        the entire `userinfo` token (as discussed in [RFC 2396](https://www.ietf.org/rfc/rfc2396.txt)).
+    - `password`: A string containing the parsed password.
+    - `db`: A string containing the parsed authentication database. For legacy implementations that support namespaces
+        (databases and collections) this may be the full namespace eg: `<db>.<coll>`
 - `options`: An object containing key/value pairs for each parsed query string option.
 
 If a test case includes a null value for one of these keys (e.g. `auth: ~`, `port: ~`), no assertion is necessary. This

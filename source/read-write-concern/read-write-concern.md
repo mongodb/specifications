@@ -116,10 +116,10 @@ If the `Client`, `Database`, or `Collection` being operated on either has no `Re
 default `ReadConcern` - `readconcern>: { }`:
 
 - If the `ReadConcern` specified for the command is the server default `readConcern: { }`, the driver MUST omit it when
-  sending the command.
+    sending the command.
 - If the `ReadConcern` specified for the command is any `ReadConcern` besides the server default, including an
-  explicitly specified `ReadConcern` of `readConcern: { level: "local" }`, the driver MUST include the `ReadConcern`
-  when sending the command.
+    explicitly specified `ReadConcern` of `readConcern: { level: "local" }`, the driver MUST include the `ReadConcern`
+    when sending the command.
 
 If the `Client`, `Database`, or `Collection` being operated on has a non-default `ReadConcern` specified, then the
 driver MUST include the command's `ReadConcern` when sending the command. This includes if the command specifies the
@@ -175,16 +175,16 @@ Options
 
 For example:
 
-```
+```text
 mongodb://server:27017/db?readConcernLevel=majority
 ```
 
 #### Errors
 
 - MaxWireVersion \< 4 Only the server's default `ReadConcern` is support by MaxWireVersion \< 4. When using other
-  `readConcernLevels` with clients reporting `MaxWireVersion` \< 4, the driver MUST raise an error. This check MUST
-  happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately
-  define a `ReadPreference` such that intermittent errors do not occur.
+    `readConcernLevels` with clients reporting `MaxWireVersion` \< 4, the driver MUST raise an error. This check MUST
+    happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately
+    define a `ReadPreference` such that intermittent errors do not occur.
 
 > [!NOTE]
 > `ReadConcern` is only supported for commands.
@@ -492,7 +492,7 @@ Options
 
 For example:
 
-```
+```text
 mongodb://server:27017/db?w=3
 
 mongodb://server:27017/db?journal=true
@@ -516,7 +516,7 @@ Below are English descriptions of other items that should be tested:
 ### ReadConcern
 
 1. Commands supporting a read concern MUST raise an error when MaxWireVersion is less than 4 and a non-default,
-   non-local read concern is specified.
+    non-local read concern is specified.
 2. Commands supporting a read concern MUST NOT send the default read concern to the server.
 3. Commands supporting a read concern MUST send any non-default read concern to the server.
 
@@ -524,7 +524,7 @@ Below are English descriptions of other items that should be tested:
 
 1. Commands supporting a write concern MUST NOT send the default write concern to the server.
 2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server, either in the
-   command or as a getLastError.
+    command or as a getLastError.
 3. On ServerVersion less than 2.6, drivers MUST NOT send a getLastError command for an Unacknowledged write concern.
 4. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
 5. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
@@ -559,15 +559,15 @@ instance, we send it.
 - 2016-06-17: Added "linearizable" to ReadConcern levels.
 
 - 2016-07-15: Command-specific helper methods for commands that write SHOULD check the server's MaxWireVersion and
-  decide whether to send writeConcern. Advise drivers to parse server replies for writeConcernError and raise an
-  exception if found, only in command-specific helper methods that take a writeConcern parameter, not in generic command
-  methods. Don't mention obscure commands with no helpers.
+    decide whether to send writeConcern. Advise drivers to parse server replies for writeConcernError and raise an
+    exception if found, only in command-specific helper methods that take a writeConcern parameter, not in generic
+    command methods. Don't mention obscure commands with no helpers.
 
 - 2016-08-06: Further clarify that command-specific helper methods for commands that write take write concern options in
-  their parameter lists, and relax from SHOULD to MAY.
+    their parameter lists, and relax from SHOULD to MAY.
 
 - 2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns an error if writeConcern is included with
-  MongoDB 3.5+. See [SERVER-27891](https://jira.mongodb.org/browse/SERVER-27891).
+    MongoDB 3.5+. See [SERVER-27891](https://jira.mongodb.org/browse/SERVER-27891).
 
 - 2017-11-17: Added list of commands that support readConcern
 

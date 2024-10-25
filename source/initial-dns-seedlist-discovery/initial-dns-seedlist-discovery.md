@@ -30,7 +30,7 @@ The connection string parser in the driver is extended with a new protocol `mong
 step before it considers the connection string and SDAM specifications. In this protocol, the comma separated list of
 host names is replaced with a single host name. The format is:
 
-```
+```text
 mongodb+srv://{hostname}/{options} 
 ```
 
@@ -41,25 +41,25 @@ For the purposes of this document, `{hostname}` will be divided using the follow
 has:
 
 1. Three or more `.` separated parts, then the left-most part is the `{subdomain}` and the remaining portion is the
-   `{domainname}`.
+    `{domainname}`.
 
-   - Examples:
-     - `{hostname}` = `cluster_1.tests.mongodb.co.uk`
+    - Examples:
+        - `{hostname}` = `cluster_1.tests.mongodb.co.uk`
 
-       - `{subdomain}` = `cluster_1`
-       - `{domainname}` = `tests.mongodb.co.uk`
+            - `{subdomain}` = `cluster_1`
+            - `{domainname}` = `tests.mongodb.co.uk`
 
-     - `{hostname}` = `hosts_34.example.com`
+        - `{hostname}` = `hosts_34.example.com`
 
-       - `{subdomain}` = `hosts_34`
-       - `{domainname}` = `example.com`
+            - `{subdomain}` = `hosts_34`
+            - `{domainname}` = `example.com`
 
 2. One or two `.` separated part(s), then the `{hostname}` is equivalent to the `{domainname}`, and there is no
-   subdomain.
+    subdomain.
 
-   - Examples:
-     - `{hostname}` = `{domainname}` = `localhost`
-     - `{hostname}` = `{domainname}` = `mongodb.local`
+    - Examples:
+        - `{hostname}` = `{domainname}` = `localhost`
+        - `{hostname}` = `{domainname}` = `mongodb.local`
 
 Only `{domainname}` is used during SRV record verification and `{subdomain}` is ignored.
 
@@ -180,13 +180,13 @@ concert with SRV or TXT records.
 
 If we provide the following URI:
 
-```
+```text
 mongodb+srv://server.mongodb.com/
 ```
 
 The driver needs to request the DNS server for the SRV record `_mongodb._tcp.server.mongodb.com`. This could return:
 
-```
+```dns
 Record                            TTL   Class    Priority Weight Port  Target
 _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27317 mongodb1.mongodb.com.
 _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27017 mongodb2.mongodb.com.
@@ -197,27 +197,27 @@ The returned host names (`mongodb1.mongodb.com` and `mongodb2.mongodb.com`) must
 
 The driver also needs to request the DNS server for the TXT records on `server.mongodb.com`. This could return:
 
-```
+```dns
 Record              TTL   Class    Text
 server.mongodb.com. 86400 IN TXT   "replicaSet=replProduction&authSource=authDB"
 ```
 
 From the DNS results, the driver now MUST treat the host information as if the following URI was used instead:
 
-```
+```text
 mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replicaSet=replProduction&authSource=authDB
 ```
 
 If we provide the following URI with the same DNS (SRV and TXT) records:
 
-```
+```text
 mongodb+srv://server.mongodb.com/?authSource=otherDB
 ```
 
 Then the default in the TXT record for `authSource` is not used as the value in the connection string overrides it. The
 Client MUST treat the host information as if the following URI was used instead:
 
-```
+```text
 mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replicaSet=replProduction&authSource=otherDB
 ```
 
@@ -284,48 +284,48 @@ In the future we could consider using the priority and weight fields of the SRV 
 ## ChangeLog
 
 - 2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
-  matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now
-  refers to the entire hostname, not just the `{subdomain}`.
+    matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now
+    refers to the entire hostname, not just the `{subdomain}`.
 
 - 2024-03-06: Migrated from reStructuredText to Markdown.
 
 - 2022-10-05: Revise spec front matter and reformat changelog.
 
 - 2021-10-14: Add `srvMaxHosts` MongoClient option and restructure Seedlist Discovery section. Improve documentation for
-  the `srvServiceName` MongoClient option and add a new URI Validation section.
+    the `srvServiceName` MongoClient option and add a new URI Validation section.
 
 - 2021-09-15: Clarify that service name only defaults to `mongodb`, and should be defined by the `srvServiceName` URI
-  option.
+    option.
 
 - 2021-04-15: Adding in behaviour for load balancer mode.
 
 - 2019-03-07: Clarify that CNAME is not supported
 
 - 2018-02-08: Clarify that `{options}}` in the [Specification](#specification) section includes all the optional
-  elements from the Connection String specification.
+    elements from the Connection String specification.
 
 - 2017-11-21: Add clause that using `mongodb+srv://` implies enabling TLS. Add restriction that only `authSource` and
-  `replicaSet` are allows in TXT records. Add restriction that only one TXT record is supported share the same parent
-  domain name as the given host name.
+    `replicaSet` are allows in TXT records. Add restriction that only one TXT record is supported share the same parent
+    domain name as the given host name.
 
 - 2017-11-17: Add new rule that indicates that host names in returned SRV records MUST share the same parent domain name
-  as the given host name. Remove language and tests for non-ASCII characters.
+    as the given host name. Remove language and tests for non-ASCII characters.
 
 - 2017-11-07: Clarified that all parts of listable options such as readPreferenceTags are ignored if they are also
-  present in options to the MongoClient constructor. Clarified which host names to use for SRV and TXT DNS queries.
+    present in options to the MongoClient constructor. Clarified which host names to use for SRV and TXT DNS queries.
 
 - 2017-11-01: Clarified that individual TXT records can have multiple strings.
 
 - 2017-10-31: Added a clause that specifying two host names with a `mongodb+srv://` URI is not allowed. Added a few more
-  test cases.
+    test cases.
 
 - 2017-10-18: Removed prohibition of raising DNS related errors when parsing the URI.
 
 - 2017-10-04: Removed from [Future Work](#future-work) the line about multiple MongoS discovery. The current
-  specification already allows for it, as multiple host names which are all MongoS servers is already allowed under
-  SDAM. And this specification does not modify SDAM. Added support for connection string options through TXT records.
+    specification already allows for it, as multiple host names which are all MongoS servers is already allowed under
+    SDAM. And this specification does not modify SDAM. Added support for connection string options through TXT records.
 
 - 2017-09-19: Clarify that host names in `mongodb+srv://` URLs work like normal host specifications.
 
 - 2017-09-01: Updated test plan with YAML tests, and moved prose tests for URI parsing into invalid-uris.yml in the
-  Connection String Spec tests.
+    Connection String Spec tests.

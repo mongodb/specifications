@@ -68,7 +68,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 **2.3 OIDC Callback Returns Missing Data**
 
 - Create an OIDC configured client with an OIDC callback that returns data not conforming to the `OIDCCredential` with
-  missing fields.
+    missing fields.
 - Perform a `find` operation that fails.
 - Close the client.
 
@@ -76,13 +76,13 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 - Create an OIDC configured client with an OIDC callback and auth mechanism property `ENVIRONMENT:test`.
 - Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
-  connection.
+    connection.
 
 **2.5 Invalid use of ALLOWED_HOSTS**
 
 - Create an OIDC configured client with auth mechanism properties `{"ENVIRONMENT": "azure", "ALLOWED_HOSTS": []}`.
 - Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
-  connection.
+    connection.
 
 ### (3) Authentication Failure
 
@@ -296,7 +296,7 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 **1.4 Multiple Principal User 2**
 
 - Create an OIDC configured client with `MONGODB_URI_MULTI` and username of `test_user2@${OIDC_DOMAIN}`. that reads the
-  `test_user2` token file.
+    `test_user2` token file.
 - Perform a `find` operation that succeeds.
 - Close the client.
 
@@ -312,15 +312,15 @@ Drivers MUST be able to authenticate using OIDC callback(s) when there is one pr
 - Assert that a `find` operation fails with a client-side error.
 - Close the client.
 - Create a client that uses the URL `mongodb://localhost/?authMechanism=MONGODB-OIDC&ignored=example.com`, a human
-  callback, and an `ALLOWED_HOSTS` that contains `["example.com"]`.
+    callback, and an `ALLOWED_HOSTS` that contains `["example.com"]`.
 - Assert that a `find` operation fails with a client-side error.
 - Close the client.
 
 **1.7 Allowed Hosts in Connection String Ignored**
 
 - Create an OIDC configured client with the connection string:
-  `mongodb+srv://example.com/?authMechanism=MONGODB-OIDC&authMechanismProperties=ALLOWED_HOSTS:%5B%22example.com%22%5D`
-  and a Human Callback.
+    `mongodb+srv://example.com/?authMechanism=MONGODB-OIDC&authMechanismProperties=ALLOWED_HOSTS:%5B%22example.com%22%5D`
+    and a Human Callback.
 - Assert that the creation of the client raises a configuration error.
 
 **1.8 Machine IdP with Human Callback**
@@ -331,7 +331,7 @@ This test uses the machine user with a human callback, ensuring that the missing
 `PrincipalStepRequest` response is handled by the driver.
 
 - Create an OIDC configured client with `MONGODB_URI_SINGLE` and a username of `test_machine` that uses the
-  `test_machine` token.
+    `test_machine` token.
 - Perform a find operation that succeeds.
 - Close the client.
 
@@ -341,13 +341,13 @@ This test uses the machine user with a human callback, ensuring that the missing
 
 - Create an OIDC configured client with a human callback that validates its inputs and returns a valid access token.
 - Perform a `find` operation that succeeds. Verify that the human callback was called with the appropriate inputs,
-  including the timeout parameter if possible.
+    including the timeout parameter if possible.
 - Close the client.
 
 **2.2 Human Callback Returns Missing Data**
 
 - Create an OIDC configured client with a human callback that returns data not conforming to the `OIDCCredential` with
-  missing fields.
+    missing fields.
 - Perform a `find` operation that fails.
 - Close the client.
 
@@ -447,8 +447,8 @@ This test uses the machine user with a human callback, ensuring that the missing
 **4.1 Succeeds**
 
 - Create an OIDC configured client and add an event listener. The following assumes that the driver does not emit
-  `saslStart` or `saslContinue` events. If the driver does emit those events, ignore/filter them for the purposes of
-  this test.
+    `saslStart` or `saslContinue` events. If the driver does emit those events, ignore/filter them for the purposes of
+    this test.
 - Perform a `find` operation that succeeds.
 - Assert that the human callback has been called once.
 - Clear the listener state if possible.
@@ -472,7 +472,7 @@ This test uses the machine user with a human callback, ensuring that the missing
 - Perform another find operation that succeeds.
 - Assert that the human callback has been called twice.
 - Assert that the ordering of list started events is \[`find`\], , `find`. Note that if the listener stat could not be
-  cleared then there will and be extra `find` command.
+    cleared then there will and be extra `find` command.
 - Assert that the list of command succeeded events is \[`find`\].
 - Assert that a `find` operation failed once during the command execution.
 - Close the client.
@@ -532,7 +532,7 @@ This test uses the machine user with a human callback, ensuring that the missing
 **4.4 Fails**
 
 - Create an OIDC configured client that returns invalid refresh tokens and returns invalid access tokens after the first
-  access.
+    access.
 - Perform a find operation that succeeds (to force a speculative auth).
 - Assert that the human callback has been called once.
 - Force a reauthenication using a failCommand of the form:
