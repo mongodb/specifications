@@ -1042,6 +1042,7 @@ system?") it is a potential area of growth for the future.
 
 ## Changelog
 
+- 2024-10-28: Removed deprecated fields from tests: `md5`, `contentType`, `aliases`
 - 2024-02-27: Migrated from reStructuredText to Markdown.
 - 2016-05-10: Support custom file ids
 - 2016-10-07: Drivers SHOULD handle any numeric type of length and chunkSize
