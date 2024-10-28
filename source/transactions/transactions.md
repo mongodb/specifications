@@ -64,10 +64,7 @@ string error labels. Drivers may also add error labels to errors that they retur
 
 #### Transient Transaction Error
 
-Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
-error encountered running any command other than commitTransaction in a transaction. If a network error occurs while
-running the commitTransaction command then it is not known whether the transaction committed or not, and thus the
-"TransientTransactionError" label MUST NOT be added.
+Any command or network error that includes the "TransientTransactionError" error label in the "errorLabels" field.
 
 ### **Naming variations**
 
@@ -675,12 +672,14 @@ contents of the document.
 Starting in MongoDB 4.0, any command error may include a top level "errorLabels" field. The field contains an array of
 string error labels.
 
-### TransientTransactionError
+### Transient Transaction Error
 
 Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
 error or server selection error encountered running any command besides commitTransaction in a transaction. In the case
 of command errors, the server adds the label; in the case of network errors or server selection errors where the client
-receives no server reply, the client adds the label.
+receives no server reply, the client MUST add the label. If a network error occurs while running the commitTransaction
+command then it is not known whether the transaction committed or not, and thus the "TransientTransactionError" label
+MUST NOT be added.
 
 #### Retrying transactions that fail with TransientTransactionError
 
@@ -1072,6 +1071,9 @@ has been disabled, drivers can readily trust that a majority write concern is du
 objective of avoiding duplicate commits.
 
 ## **Changelog**
+
+
+- 2024-10-28: Clarify when drivers must add TransientTransactionError label.
 
 - 2024-10-28: Note read preference must always be primary in a transaction.
 
