@@ -229,8 +229,6 @@ with client.start_session() as s:
         coll.find_one(session=s)  # Error: "read preference in a transaction must be primary"
 ```
 
-In the future, we might relax this restriction and allow any read preference on a transaction.
-
 #### maxCommitTimeMS
 
 NOTE: This option is deprecated in favor of
@@ -925,6 +923,11 @@ won't be possible in the future for startTransaction to check that the read pref
 application will perform in the transaction. Therefore, we specify now that the readPreference must be checked
 per-operation. (However, we have not completely planned how read preference validation will behave in MongoDB 4.2.)
 
+*Update 28.Oct.20214*
+
+Note this section is retained in the spec for historical reasons and that the read preference in transactions must
+always be primary.
+
 ### Users cannot pass readConcern or writeConcern to operations in transactions
 
 For drivers that allow readConcern and/or writeConcern to be passed to a particular operation, If the driver did not
@@ -1069,7 +1072,10 @@ objective of avoiding duplicate commits.
 
 ## **Changelog**
 
+
 - 2024-10-28: Clarify when drivers must add TransientTransactionError label.
+
+- 2024-10-28: Note read preference must always be primary in a transaction.
 
 - 2024-05-08: Add bulkWrite to the list of commands allowed in transactions.
 

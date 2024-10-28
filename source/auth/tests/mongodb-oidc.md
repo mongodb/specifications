@@ -21,7 +21,7 @@ ______________________________________________________________________
 Drivers MUST run the machine prose tests when `OIDC_TOKEN_DIR` is set. Drivers can either set the `ENVIRONMENT:test`
 auth mechanism property, or use a custom callback that also reads the file.
 
-Drivers can also choose to run the machine prose tests on GCP or Azure VMs.
+Drivers can also choose to run the machine prose tests on GCP or Azure VMs, or on the Kubernetes clusters.
 
 Drivers MUST implement all prose tests in this section. Unless otherwise noted, all `MongoClient` instances MUST be
 configured with `retryReads=false`.

@@ -76,7 +76,7 @@ repos:
   rev: "v2.3.0"
   hooks:
   - id: codespell
-    args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te,checkin"]
+    args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te,checkin,aks"]
     exclude: |
             (?x)^(.*\.rst
             )$
