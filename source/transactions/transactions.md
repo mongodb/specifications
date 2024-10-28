@@ -1072,7 +1072,6 @@ objective of avoiding duplicate commits.
 
 ## **Changelog**
 
-
 - 2024-10-28: Clarify when drivers must add TransientTransactionError label.
 
 - 2024-10-28: Note read preference must always be primary in a transaction.
