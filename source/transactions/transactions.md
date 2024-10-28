@@ -1069,6 +1069,8 @@ objective of avoiding duplicate commits.
 
 ## **Changelog**
 
+- 2024-10-28: Clarify when drivers must add TransientTransactionError label.
+
 - 2024-05-08: Add bulkWrite to the list of commands allowed in transactions.
 
 - 2024-02-15: Migrated from reStructuredText to Markdown.
