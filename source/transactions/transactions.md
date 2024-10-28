@@ -64,10 +64,7 @@ string error labels. Drivers may also add error labels to errors that they retur
 
 #### Transient Transaction Error
 
-Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
-error encountered running any command other than commitTransaction in a transaction. If a network error occurs while
-running the commitTransaction command then it is not known whether the transaction committed or not, and thus the
-"TransientTransactionError" label MUST NOT be added.
+Any command or network error that includes the "TransientTransactionError" error label in the "errorLabels" field.
 
 ### **Naming variations**
 
@@ -231,8 +228,6 @@ with client.start_session() as s:
         coll.insert_one({}, session=s)
         coll.find_one(session=s)  # Error: "read preference in a transaction must be primary"
 ```
-
-In the future, we might relax this restriction and allow any read preference on a transaction.
 
 #### maxCommitTimeMS
 
@@ -677,12 +672,14 @@ contents of the document.
 Starting in MongoDB 4.0, any command error may include a top level "errorLabels" field. The field contains an array of
 string error labels.
 
-### TransientTransactionError
+### Transient Transaction Error
 
 Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
 error or server selection error encountered running any command besides commitTransaction in a transaction. In the case
 of command errors, the server adds the label; in the case of network errors or server selection errors where the client
-receives no server reply, the client adds the label.
+receives no server reply, the client MUST add the label. If a network error occurs while running the commitTransaction
+command then it is not known whether the transaction committed or not, and thus the "TransientTransactionError" label
+MUST NOT be added.
 
 #### Retrying transactions that fail with TransientTransactionError
 
@@ -926,6 +923,11 @@ won't be possible in the future for startTransaction to check that the read pref
 application will perform in the transaction. Therefore, we specify now that the readPreference must be checked
 per-operation. (However, we have not completely planned how read preference validation will behave in MongoDB 4.2.)
 
+*Update 28.Oct.20214*
+
+Note this section is retained in the spec for historical reasons and that the read preference in transactions must
+always be primary.
+
 ### Users cannot pass readConcern or writeConcern to operations in transactions
 
 For drivers that allow readConcern and/or writeConcern to be passed to a particular operation, If the driver did not
@@ -1069,6 +1071,11 @@ has been disabled, drivers can readily trust that a majority write concern is du
 objective of avoiding duplicate commits.
 
 ## **Changelog**
+
+
+- 2024-10-28: Clarify when drivers must add TransientTransactionError label.
+
+- 2024-10-28: Note read preference must always be primary in a transaction.
 
 - 2024-05-08: Add bulkWrite to the list of commands allowed in transactions.
 
