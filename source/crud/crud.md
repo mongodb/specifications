@@ -815,6 +815,12 @@ database-level aggregation will allow users to receive a cursor from these colle
 
 ##### Insert, Update, Replace, Delete, and Bulk Writes
 
+###### Generated identifiers
+
+The insert and bulk insert operations described below MUST generate identifiers for all documents that do not already
+have them. These identifiers SHOULD be prepended to the document so they are the first field, in order to prevent the
+server from spending time re-ordering the document.
+
 ```typescript
 interface Collection {
 
@@ -2473,6 +2479,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-10-28: Clarified that generated identifiers should be prepended to documents.
 
 - 2024-10-01: Add sort option to `replaceOne` and `updateOne`.
 
