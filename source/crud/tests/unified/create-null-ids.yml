@@ -1,0 +1,288 @@
+description: CRUD ID Type Tests
+schemaVersion: '1.0'
+createEntities:
+  - client:
+      id: client
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: database
+      client: client
+      databaseName: crud_id
+  - collection:
+      id: collection
+      database: database
+      collectionName: type_tests
+tests:
+  - description: inserting _id with type undefined via insertOne
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: insertOne
+        object: collection
+        arguments:
+          document:
+            _id:
+              $undefined: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id:
+              $undefined: true
+  - description: inserting _id with type undefined via insertMany
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: insertMany
+        object: collection
+        arguments:
+          documents:
+            - _id:
+                $undefined: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id:
+              $undefined: true
+  - description: inserting _id with type undefined via updateOne
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: updateOne
+        object: collection
+        arguments:
+          filter:
+            _id:
+              $undefined: true
+          update:
+            $unset:
+              a: ''
+          upsert: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id:
+              $undefined: true
+  - description: inserting _id with type undefined via updateMany
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: updateMany
+        object: collection
+        arguments:
+          filter:
+            _id:
+              $undefined: true
+          update:
+            $unset:
+              a: ''
+          upsert: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id:
+              $undefined: true
+  - description: inserting _id with type undefined via replaceOne
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: replaceOne
+        object: collection
+        arguments:
+          filter: {}
+          replacement:
+            _id:
+              $undefined: true
+          upsert: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id:
+              $undefined: true
+  - description: inserting _id with type undefined via bulkWrite
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: bulkWrite
+        object: collection
+        arguments:
+          requests:
+            - insertOne:
+                document:
+                  _id:
+                    $undefined: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id:
+              $undefined: true
+  - description: inserting _id with type undefined via clientBulkWrite
+    runOnRequirements:
+      - minServerVersion: '8.0'
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: clientBulkWrite
+        object: client
+        arguments:
+          models:
+            - insertOne:
+                namespace: crud_id.type_tests
+                document:
+                  _id:
+                    $undefined: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id:
+              $undefined: true
+  - description: inserting _id with type null via insertOne
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: insertOne
+        object: collection
+        arguments:
+          document:
+            _id: null
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id: null
+  - description: inserting _id with type null via insertMany
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: insertMany
+        object: collection
+        arguments:
+          documents:
+            - _id: null
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id: null
+  - description: inserting _id with type null via updateOne
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: updateOne
+        object: collection
+        arguments:
+          filter:
+            _id: null
+          update:
+            $unset:
+              a: ''
+          upsert: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id: null
+  - description: inserting _id with type null via updateMany
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: updateMany
+        object: collection
+        arguments:
+          filter:
+            _id: null
+          update:
+            $unset:
+              a: ''
+          upsert: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id: null
+  - description: inserting _id with type null via replaceOne
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: replaceOne
+        object: collection
+        arguments:
+          filter: {}
+          replacement:
+            _id: null
+          upsert: true
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id: null
+  - description: inserting _id with type null via bulkWrite
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: bulkWrite
+        object: collection
+        arguments:
+          requests:
+            - insertOne:
+                document:
+                  _id: null
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id: null
+  - description: inserting _id with type null via clientBulkWrite
+    runOnRequirements:
+      - minServerVersion: '8.0'
+    operations:
+      - name: dropCollection
+        object: database
+        arguments:
+          collection: type_tests
+      - name: clientBulkWrite
+        object: client
+        arguments:
+          models:
+            - insertOne:
+                namespace: crud_id.type_tests
+                document:
+                  _id: null
+    outcome:
+      - databaseName: crud_id
+        collectionName: type_tests
+        documents:
+          - _id: null
