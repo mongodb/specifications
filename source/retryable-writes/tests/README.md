@@ -66,7 +66,7 @@ allow the fail point to trigger on the second command.
 ## Command Construction Tests
 
 Command construction tests asserting on the absence or presence of the `txnNumber` field have been replaced by command
-event assertions in the [unified tests](unified).
+event assertions in the retryable writes unified tests.
 
 ## Prose Tests
 
