@@ -1,15 +1,15 @@
 {
   "description": "unacknowledged write does not set txnNumber",
-  "schemaVersion": 1,
+  "schemaVersion": "1.0",
   "runOnRequirements": [
     {
-      "minServerVersion": 3.6
+      "minServerVersion": "3.6"
     },
     {
       "topologies": [
         "replicaset",
         "sharded",
-        "loadbalanced"
+        "load-balanced"
       ]
     }
   ],

@@ -79,11 +79,12 @@
           "client": "client0",
           "events": [
             {
-              "commandStartedEvent": null,
-              "commandName": "delete",
-              "command": {
-                "txnNumber": {
-                  "$$exists": false
+              "commandStartedEvent": {
+                "commandName": "delete",
+                "command": {
+                  "txnNumber": {
+                    "$$exists": false
+                  }
                 }
               }
             }

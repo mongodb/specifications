@@ -65,23 +65,8 @@ allow the fail point to trigger on the second command.
 
 ## Command Construction Tests
 
-Tests asserting that unsupported commands do not include a `txnNumber` field are included in the [unified tests](unified) for retryable writes.
-
-Drivers should test that transactions IDs are always included in commands for supported write operations:
-
-- Supported single-statement write operations
-    - `insertOne()`
-    - `updateOne()`
-    - `replaceOne()`
-    - `deleteOne()`
-    - `findOneAndDelete()`
-    - `findOneAndReplace()`
-    - `findOneAndUpdate()`
-- Supported multi-statement write operations
-    - `insertMany()` with `ordered=true`
-    - `insertMany()` with `ordered=false`
-    - `bulkWrite()` with `ordered=true` (no `UpdateMany` or `DeleteMany`)
-    - `bulkWrite()` with `ordered=false` (no `UpdateMany` or `DeleteMany`)
+Command construction tests asserting on the absence or presence of the `txnNumber` field have been replaced by command
+event assertions in the [unified tests](unified).
 
 ## Prose Tests
 

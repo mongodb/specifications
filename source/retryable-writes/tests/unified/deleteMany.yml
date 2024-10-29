@@ -51,7 +51,7 @@ tests:
     expectEvents:
       - client: client0
         events:
-        - commandStartedEvent:
-          commandName: delete
-          command:
-            txnNumber: { $$exists: false }
+          - commandStartedEvent:
+              commandName: delete
+              command:
+                txnNumber: { $$exists: false }

@@ -1,13 +1,13 @@
 description: "aggregate with $out/$merge does not set txnNumber"
 
-schemaVersion: 1.0
+schemaVersion: "1.0"
 
 runOnRequirements:
-  - minServerVersion: 3.6
+  - minServerVersion: "3.6"
   - topologies:
       - replicaset
       - sharded
-      - loadbalanced
+      - load-balanced
 
 createEntities:
   - client:
@@ -33,10 +33,12 @@ tests:
             - { $match: { _id: { $gt: 1 } } }
             - { $out: other_test_collection }
     expectEvents:
-      - commandStartedEvent:
-          commandName: aggregate
-          command:
-            txnNumber: { $$exists: false }
+      - client: client0
+        events:
+          - commandStartedEvent:
+              commandName: aggregate
+              command:
+                txnNumber: { $$exists: false }
   - description: "aggregate with $merge does not set txnNumber"
     operations:
       - object: *collection0
@@ -47,7 +49,9 @@ tests:
             - { $match: { _id: { $gt: 1 } } }
             - { $merge: { into: other_test_collection } }
     expectEvents:
-      - commandStartedEvent:
-          commandName: aggregate
-          command:
-            txnNumber: { $$exists: false }
+      - client: client0
+        events:
+          - commandStartedEvent:
+              commandName: aggregate
+              command:
+                txnNumber: { $$exists: false }
