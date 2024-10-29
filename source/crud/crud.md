@@ -993,7 +993,14 @@ cursor. Due to the special case, `findOne` does not support the following option
 - `limit`: drivers MUST set `limit` to 1 in the `find` command created for a `findOne` operation
 - `noCursorTimeout`: with a `limit` of 1 and no `batchSize`, there will not be an open cursor on the server
 
-##### Combining Limit and Batch Size for the Wire Protocol
+##### Setting limit and batchSize options for find commands
+
+When users specify both `limit` and `batchSize` options with the same value, the server returns all results in the
+first batch, but still leaves an open cursor that needs to be closed using the `killCursors` command. To avoid this,
+drivers MUST send a value of `limit + 1` for `batchSize` in the resulting `find` command. This eliminates the open
+cursor issue.
+
+##### Combining Limit and Batch Size for OP_QUERY
 
 The OP_QUERY wire protocol only contains a numberToReturn value which drivers must calculate to get expected limit and
 batch size behavior. Subsequent calls to OP_GET_MORE should use the user-specified batchSize or default to 0. If the
