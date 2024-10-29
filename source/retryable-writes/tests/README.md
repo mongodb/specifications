@@ -65,24 +65,7 @@ allow the fail point to trigger on the second command.
 
 ## Command Construction Tests
 
-Drivers should also assert that command documents are properly constructed with or without a transaction ID, depending
-on whether the write operation is supported.
-[Command Logging and Monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) may be used to
-check for the presence of a `txnNumber` field in the command document. Note that command documents may always include an
-`lsid` field per the [Driver Session](../../sessions/driver-sessions.md) specification.
-
-These tests may be run against both a replica set and shard cluster.
-
-Drivers should test that transaction IDs are never included in commands for unsupported write operations:
-
-- Write commands with unacknowledged write concerns (e.g. `{w: 0}`)
-- Unsupported single-statement write operations
-    - `updateMany()`
-    - `deleteMany()`
-- Unsupported multi-statement write operations
-    - `bulkWrite()` that includes `UpdateMany` or `DeleteMany`
-- Unsupported write commands
-    - `aggregate` with write stage (e.g. `$out`, `$merge`)
+Tests asserting that unsupported commands do not include a `txnNumber` field are included in the [unified tests](unified) for retryable writes.
 
 Drivers should test that transactions IDs are always included in commands for supported write operations:
 

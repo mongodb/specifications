@@ -926,6 +926,57 @@
           ]
         }
       ]
+    },
+    {
+      "description": "collection bulkWrite with updateMany and deleteMany does not set txnNumber",
+      "operations": [
+        {
+          "object": "collection0",
+          "name": "bulkWrite",
+          "arguments": {
+            "requests": {
+              "updateMany": {
+                "filter": {},
+                "update": {
+                  "$set": {
+                    "x": 1
+                  }
+                }
+              },
+              "deleteMany": {
+                "filter": {}
+              }
+            }
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "update",
+                "command": {
+                  "txnNumber": {
+                    "$$exists": false
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "delete",
+                "command": {
+                  "txnNumber": {
+                    "$$exists": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
