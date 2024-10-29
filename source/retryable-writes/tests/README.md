@@ -265,6 +265,8 @@ debugger, code coverage tool, etc.
 
 ## Changelog
 
+- 2024-10-29: Convert command construction tests to unified format.
+
 - 2024-05-30: Migrated from reStructuredText to Markdown.
 
 - 2024-02-27: Convert legacy retryable writes tests to unified format.
