@@ -1241,10 +1241,11 @@ if and only if the error is "node is shutting down" or the error originated from
 and [other transient errors](#other-transient-errors) and
 [Why close connections when a node is shutting down?](#why-close-connections-when-a-node-is-shutting-down).)
 
-##### Authentication errors
+##### Authentication and Handshake errors
 
-If the authentication handshake fails for a connection, drivers MUST mark the server Unknown and clear the server's
-connection pool if the TopologyType is not LoadBalanced. (See
+If the driver encounters errors when establishing application connections (this includes the initial handshake and
+authentication), the driver MUST drivers MUST mark the server Unknown and clear the server's connection pool if the
+TopologyType is not LoadBalanced. (See
 [Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
 
 ### Monitoring SDAM events

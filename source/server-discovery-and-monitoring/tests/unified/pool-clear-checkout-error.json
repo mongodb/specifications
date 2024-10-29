@@ -23,6 +23,11 @@
   "tests": [
     {
       "description": "Pool is cleared before connection is closed (authentication error)",
+      "runOnRequirements": [
+        {
+          "auth": true
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",
