@@ -11,17 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: '3.x'
       - name: Set up npm
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 12
+          node-version: lts/*
       - name: Install dependencies
         run: |
+          npm init -y && npm install js-yaml
           npm install -g js-yaml
           pip3 install pymongo pyyaml jinja2
       - name: Regenerate JSON test files
@@ -31,8 +32,8 @@ jobs:
           python3 ./source/client-side-encryption/etc/generate-test.py ./source/client-side-encryption/etc/test-templates/*.template ./source/client-side-encryption/tests/legacy
           python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests
           python3 ./source/etc/generate-handshakeError-tests.py
+          node ./source/etc/generate-crud-id-type-tests.mjs
           cd source && make -B
-
       - name: "Commit the changes"
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

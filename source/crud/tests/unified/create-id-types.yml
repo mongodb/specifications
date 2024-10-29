@@ -1,0 +1,903 @@
+description: CRUD ID Type Tests
+schemaVersion: '1.0'
+createEntities:
+  - client:
+      id: client
+      observeEvents: [commandStartedEvent]
+  - database:
+      id: database
+      client: client
+      databaseName: crud_id
+  - collection:
+      id: collection
+      database: database
+      collectionName: type_tests
+tests:
+  - description: inserting _id with type double via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$numberDouble: NaN}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDouble: NaN}}]}
+  - description: inserting _id with type double via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$numberDouble: NaN}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDouble: NaN}}]}
+  - description: inserting _id with type double via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$numberDouble: NaN}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDouble: NaN}}]}
+  - description: inserting _id with type double via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$numberDouble: NaN}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDouble: NaN}}]}
+  - description: inserting _id with type double via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$numberDouble: NaN}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDouble: NaN}}]}
+  - description: inserting _id with type double via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$numberDouble: NaN}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDouble: NaN}}]}
+  - description: inserting _id with type double via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$numberDouble: NaN}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDouble: NaN}}]}
+  - description: inserting _id with type string via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: ''}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: ''}]}
+  - description: inserting _id with type string via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: ''}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: ''}]}
+  - description: inserting _id with type string via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: ''}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: ''}]}
+  - description: inserting _id with type string via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: ''}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: ''}]}
+  - description: inserting _id with type string via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: ''}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: ''}]}
+  - description: inserting _id with type string via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: ''}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: ''}]}
+  - description: inserting _id with type string via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: ''}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: ''}]}
+  - description: inserting _id with type object via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {}}]}
+  - description: inserting _id with type object via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {}}]}
+  - description: inserting _id with type object via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {}}]}
+  - description: inserting _id with type object via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {}}]}
+  - description: inserting _id with type object via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {}}]}
+  - description: inserting _id with type object via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {}}]}
+  - description: inserting _id with type object via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {}}]}
+  - description: inserting _id with type binData via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$binary: {base64: '', subType: '00'}}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}
+  - description: inserting _id with type binData via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}
+  - description: inserting _id with type binData via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$binary: {base64: '', subType: '00'}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}
+  - description: inserting _id with type binData via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$binary: {base64: '', subType: '00'}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}
+  - description: inserting _id with type binData via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$binary: {base64: '', subType: '00'}}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}
+  - description: inserting _id with type binData via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$binary: {base64: '', subType: '00'}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}
+  - description: inserting _id with type binData via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$binary: {base64: '', subType: '00'}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$binary: {base64: '', subType: '00'}}}]}
+  - description: inserting _id with type undefined via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$undefined: true}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$undefined: true}}]}
+  - description: inserting _id with type undefined via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$undefined: true}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$undefined: true}}]}
+  - description: inserting _id with type undefined via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$undefined: true}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$undefined: true}}]}
+  - description: inserting _id with type undefined via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$undefined: true}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$undefined: true}}]}
+  - description: inserting _id with type undefined via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$undefined: true}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$undefined: true}}]}
+  - description: inserting _id with type undefined via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$undefined: true}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$undefined: true}}]}
+  - description: inserting _id with type undefined via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$undefined: true}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$undefined: true}}]}
+  - description: inserting _id with type objectId via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$oid: 507f1f77bcf86cd799439011}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}
+  - description: inserting _id with type objectId via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}
+  - description: inserting _id with type objectId via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$oid: 507f1f77bcf86cd799439011}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}
+  - description: inserting _id with type objectId via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$oid: 507f1f77bcf86cd799439011}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}
+  - description: inserting _id with type objectId via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$oid: 507f1f77bcf86cd799439011}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}
+  - description: inserting _id with type objectId via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$oid: 507f1f77bcf86cd799439011}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}
+  - description: inserting _id with type objectId via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$oid: 507f1f77bcf86cd799439011}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$oid: 507f1f77bcf86cd799439011}}]}
+  - description: inserting _id with type bool via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: false}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: false}]}
+  - description: inserting _id with type bool via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: false}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: false}]}
+  - description: inserting _id with type bool via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: false}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: false}]}
+  - description: inserting _id with type bool via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: false}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: false}]}
+  - description: inserting _id with type bool via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: false}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: false}]}
+  - description: inserting _id with type bool via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: false}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: false}]}
+  - description: inserting _id with type bool via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: false}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: false}]}
+  - description: inserting _id with type date via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$date: {$numberLong: '0'}}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$date: {$numberLong: '0'}}}]}
+  - description: inserting _id with type date via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$date: {$numberLong: '0'}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$date: {$numberLong: '0'}}}]}
+  - description: inserting _id with type date via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$date: {$numberLong: '0'}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$date: {$numberLong: '0'}}}]}
+  - description: inserting _id with type date via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$date: {$numberLong: '0'}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$date: {$numberLong: '0'}}}]}
+  - description: inserting _id with type date via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$date: {$numberLong: '0'}}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$date: {$numberLong: '0'}}}]}
+  - description: inserting _id with type date via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$date: {$numberLong: '0'}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$date: {$numberLong: '0'}}}]}
+  - description: inserting _id with type date via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$date: {$numberLong: '0'}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$date: {$numberLong: '0'}}}]}
+  - description: inserting _id with type null via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: null}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: null}]}
+  - description: inserting _id with type null via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: null}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: null}]}
+  - description: inserting _id with type null via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: null}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: null}]}
+  - description: inserting _id with type null via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: null}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: null}]}
+  - description: inserting _id with type null via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: null}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: null}]}
+  - description: inserting _id with type null via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: null}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: null}]}
+  - description: inserting _id with type null via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: null}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: null}]}
+  - description: inserting _id with type dbPointer via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}
+  - description: inserting _id with type dbPointer via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}
+  - description: inserting _id with type dbPointer via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}
+  - description: inserting _id with type dbPointer via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}
+  - description: inserting _id with type dbPointer via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}
+  - description: inserting _id with type dbPointer via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}
+  - description: inserting _id with type dbPointer via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$dbPointer: {$ref: a.b, $id: {$oid: 507f1f77bcf86cd799439011}}}}]}
+  - description: inserting _id with type javascript via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$code: ''}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: ''}}]}
+  - description: inserting _id with type javascript via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$code: ''}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: ''}}]}
+  - description: inserting _id with type javascript via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$code: ''}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: ''}}]}
+  - description: inserting _id with type javascript via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$code: ''}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: ''}}]}
+  - description: inserting _id with type javascript via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$code: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: ''}}]}
+  - description: inserting _id with type javascript via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$code: ''}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: ''}}]}
+  - description: inserting _id with type javascript via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$code: ''}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: ''}}]}
+  - description: inserting _id with type javascriptWithScope via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$code: '', $scope: {}}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: '', $scope: {}}}]}
+  - description: inserting _id with type javascriptWithScope via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$code: '', $scope: {}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: '', $scope: {}}}]}
+  - description: inserting _id with type javascriptWithScope via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$code: '', $scope: {}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: '', $scope: {}}}]}
+  - description: inserting _id with type javascriptWithScope via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$code: '', $scope: {}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: '', $scope: {}}}]}
+  - description: inserting _id with type javascriptWithScope via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$code: '', $scope: {}}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: '', $scope: {}}}]}
+  - description: inserting _id with type javascriptWithScope via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$code: '', $scope: {}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: '', $scope: {}}}]}
+  - description: inserting _id with type javascriptWithScope via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$code: '', $scope: {}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$code: '', $scope: {}}}]}
+  - description: inserting _id with type symbol via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$symbol: ''}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$symbol: ''}}]}
+  - description: inserting _id with type symbol via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$symbol: ''}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$symbol: ''}}]}
+  - description: inserting _id with type symbol via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$symbol: ''}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$symbol: ''}}]}
+  - description: inserting _id with type symbol via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$symbol: ''}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$symbol: ''}}]}
+  - description: inserting _id with type symbol via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$symbol: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$symbol: ''}}]}
+  - description: inserting _id with type symbol via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$symbol: ''}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$symbol: ''}}]}
+  - description: inserting _id with type symbol via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$symbol: ''}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$symbol: ''}}]}
+  - description: inserting _id with type int via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$numberInt: '0'}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberInt: '0'}}]}
+  - description: inserting _id with type int via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$numberInt: '0'}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberInt: '0'}}]}
+  - description: inserting _id with type int via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$numberInt: '0'}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberInt: '0'}}]}
+  - description: inserting _id with type int via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$numberInt: '0'}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberInt: '0'}}]}
+  - description: inserting _id with type int via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$numberInt: '0'}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberInt: '0'}}]}
+  - description: inserting _id with type int via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$numberInt: '0'}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberInt: '0'}}]}
+  - description: inserting _id with type int via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$numberInt: '0'}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberInt: '0'}}]}
+  - description: inserting _id with type timestamp via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$timestamp: {t: 0, i: 0}}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}
+  - description: inserting _id with type timestamp via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}
+  - description: inserting _id with type timestamp via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$timestamp: {t: 0, i: 0}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}
+  - description: inserting _id with type timestamp via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$timestamp: {t: 0, i: 0}}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}
+  - description: inserting _id with type timestamp via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$timestamp: {t: 0, i: 0}}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}
+  - description: inserting _id with type timestamp via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$timestamp: {t: 0, i: 0}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}
+  - description: inserting _id with type timestamp via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$timestamp: {t: 0, i: 0}}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$timestamp: {t: 0, i: 0}}}]}
+  - description: inserting _id with type long via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$numberLong: '0'}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberLong: '0'}}]}
+  - description: inserting _id with type long via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$numberLong: '0'}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberLong: '0'}}]}
+  - description: inserting _id with type long via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$numberLong: '0'}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberLong: '0'}}]}
+  - description: inserting _id with type long via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$numberLong: '0'}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberLong: '0'}}]}
+  - description: inserting _id with type long via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$numberLong: '0'}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberLong: '0'}}]}
+  - description: inserting _id with type long via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$numberLong: '0'}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberLong: '0'}}]}
+  - description: inserting _id with type long via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$numberLong: '0'}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberLong: '0'}}]}
+  - description: inserting _id with type decimal via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$numberDecimal: '0'}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDecimal: '0'}}]}
+  - description: inserting _id with type decimal via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$numberDecimal: '0'}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDecimal: '0'}}]}
+  - description: inserting _id with type decimal via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$numberDecimal: '0'}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDecimal: '0'}}]}
+  - description: inserting _id with type decimal via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$numberDecimal: '0'}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDecimal: '0'}}]}
+  - description: inserting _id with type decimal via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$numberDecimal: '0'}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDecimal: '0'}}]}
+  - description: inserting _id with type decimal via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$numberDecimal: '0'}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDecimal: '0'}}]}
+  - description: inserting _id with type decimal via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$numberDecimal: '0'}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$numberDecimal: '0'}}]}
+  - description: inserting _id with type minKey via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$minKey: 1}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$minKey: 1}}]}
+  - description: inserting _id with type minKey via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$minKey: 1}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$minKey: 1}}]}
+  - description: inserting _id with type minKey via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$minKey: 1}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$minKey: 1}}]}
+  - description: inserting _id with type minKey via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$minKey: 1}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$minKey: 1}}]}
+  - description: inserting _id with type minKey via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$minKey: 1}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$minKey: 1}}]}
+  - description: inserting _id with type minKey via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$minKey: 1}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$minKey: 1}}]}
+  - description: inserting _id with type minKey via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$minKey: 1}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$minKey: 1}}]}
+  - description: inserting _id with type maxKey via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$maxKey: 1}}}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$maxKey: 1}}]}
+  - description: inserting _id with type maxKey via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$maxKey: 1}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$maxKey: 1}}]}
+  - description: inserting _id with type maxKey via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: {$maxKey: 1}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$maxKey: 1}}]}
+  - description: inserting _id with type maxKey via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: {$maxKey: 1}}, update: {$unset: {a: ''}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$maxKey: 1}}]}
+  - description: inserting _id with type maxKey via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$maxKey: 1}}, upsert: true}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$maxKey: 1}}]}
+  - description: inserting _id with type maxKey via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$maxKey: 1}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$maxKey: 1}}]}
+  - description: inserting _id with type maxKey via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$maxKey: 1}}}}]}}
+    outcome:
+      - {databaseName: crud_id, collectionName: type_tests, documents: [{_id: {$maxKey: 1}}]}
+  - description: drivers should not prevent _id with type regex to insert via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: {$regularExpression: {pattern: abc, options: i}}}}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type regex to insert via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: {$regularExpression: {pattern: abc, options: i}}}]}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type regex to insert via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: {$regularExpression: {pattern: abc, options: i}}}, upsert: true}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type regex to insert via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: {$regularExpression: {pattern: abc, options: i}}}}}]}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type regex to insert via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: {$regularExpression: {pattern: abc, options: i}}}}}]}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type array to insert via insertOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertOne, object: collection, arguments: {document: {_id: []}}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type array to insert via insertMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: insertMany, object: collection, arguments: {documents: [{_id: []}]}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type array to insert via updateOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateOne, object: collection, arguments: {filter: {_id: []}, update: {$unset: {a: ''}}, upsert: true}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type array to insert via updateMany
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: updateMany, object: collection, arguments: {filter: {_id: []}, update: {$unset: {a: ''}}, upsert: true}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type array to insert via replaceOne
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: replaceOne, object: collection, arguments: {filter: {}, replacement: {_id: []}, upsert: true}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type array to insert via bulkWrite
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: bulkWrite, object: collection, arguments: {requests: [{insertOne: {document: {_id: []}}}]}, expectError: {isClientError: false}}
+  - description: drivers should not prevent _id with type array to insert via clientBulkWrite
+    runOnRequirements:
+      - {minServerVersion: '8.0'}
+    operations:
+      - {name: dropCollection, object: database, arguments: {collection: type_tests}}
+      - {name: clientBulkWrite, object: client, arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: {_id: []}}}]}, expectError: {isClientError: false}}

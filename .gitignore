@@ -13,4 +13,5 @@ docs_build
 .pytest_cache
 node_modules
 package-lock.json
+package.json
 site
