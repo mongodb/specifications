@@ -188,6 +188,18 @@ interface Collection {
    */
   find(filter: Document, options: Optional<FindOptions>): Iterable<Document>;
 
+  /**
+   * Find a document matching the model.
+   *
+   * Note: The filter parameter below equates to the $query meta operator. It cannot
+   * contain other meta operators like $maxScan. However, do not validate this document
+   * as it would be impossible to be forwards and backwards compatible. Let the server
+   * handle the validation.
+   *
+   * @see https://www.mongodb.com/docs/manual/core/read-operations-introduction/
+   */
+  findOne(filter: Document, options: Optional<FindOneOptions>): Document;
+
 }
 
 interface Database {
@@ -712,6 +724,194 @@ class FindOptions {
    */
   let: Optional<Document>;
 }
+
+class FindOneOptions {
+
+  /**
+   * Enables writing to temporary files on the server. When set to true, the server
+   * can write temporary data to disk while executing the find operation.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default
+   * is to not send a value.
+   *
+   * This option is only supported by servers >= 4.4. Older servers >= 3.2 will report an error for using this option.
+   * For servers < 3.2, the driver MUST raise an error if the caller explicitly provides a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  allowDiskUse: Optional<Boolean>;
+
+  /**
+   * Get partial results from a mongos if some shards are down (instead of throwing an error).
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * For servers < 3.2, the Partial wire protocol flag is used and defaults to false.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  allowPartialResults: Optional<Boolean>;
+
+  /**
+   * Specifies a collation.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  collation: Optional<Document>;
+
+  /**
+   * Enables users to specify an arbitrary comment to help trace the operation through
+   * the database profiler, currentOp and logs. The default is to not send a value.
+   *
+   * The comment can be any valid BSON type for server versions 4.4 and above.
+   * Server versions prior to 4.4 only support string as comment,
+   * and providing a non-string type will result in a server-side error.
+   *
+   * If a comment is provided, drivers MUST attach this comment to all
+   * subsequent getMore commands run on the same cursor for server
+   * versions 4.4 and above. For server versions below 4.4 drivers MUST NOT
+   * attach a comment to getMore commands.
+   */
+  comment: Optional<any>;
+
+  /**
+   * The index to use. Specify either the index name as a string or the index key pattern.
+   * If specified, then the query system will only consider plans using the hinted index.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  hint: Optional<(String | Document)>;
+
+  /**
+   * The exclusive upper bound for a specific index.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  max: Optional<Document>;
+
+  /**
+   * The maximum amount of time for the server to wait on new documents to satisfy a tailable cursor
+   * query. This only applies to a TAILABLE_AWAIT cursor. When the cursor is not a TAILABLE_AWAIT cursor,
+   * this option is ignored.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the OP_GET_MORE wire protocol.
+   *
+   * Note: This option is specified as "maxTimeMS" in the getMore command and not provided as part of the
+   * initial find command.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  maxAwaitTimeMS: Optional<Int64>;
+
+  /**
+   * Maximum number of documents or index keys to scan when executing the query.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   * @deprecated 4.0
+   */
+  maxScan: Optional<Int64>;
+
+  /**
+   * The maximum amount of time to allow the query to run.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * NOTE: This option is deprecated in favor of timeoutMS.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  maxTimeMS: Optional<Int64>;
+
+  /**
+   * The inclusive lower bound for a specific index.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  min: Optional<Document>;
+
+  /**
+   * Enables optimization when querying the oplog for a range of ts values
+   *
+   * Note: this option is intended for internal replication use only.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * For servers < 3.2, the OplogReplay wire protocol flag is used and defaults to false.
+   * For servers >= 4.4, the server will ignore this option if set (see: SERVER-36186).
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   * @deprecated 4.4
+   */
+  oplogReplay: Optional<Boolean>;
+
+  /**
+   * Limits the fields to return for all matching documents.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  projection: Optional<Document>;
+
+  /**
+   * If true, returns only the index keys in the resulting documents.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  returnKey: Optional<Boolean>;
+
+  /**
+   * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  showRecordId: Optional<Boolean>;
+
+  /**
+   * The number of documents to skip before returning.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * For servers < 3.2, this is a wire protocol parameter that defaults to 0.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  skip: Optional<Int64>;
+
+  /**
+   * The order in which to return matching documents.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  sort: Optional<Document>;
+
+  /**
+   * Map of parameter names and values. Values must be constant or closed
+   * expressions that do not reference document fields. Parameters can then be
+   * accessed as variables in an aggregate expression context (e.g. "$$var").
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  let: Optional<Document>;
+}
 ```
 
 ##### Count API Details
@@ -782,6 +982,16 @@ filter, skip, and limit are added as options to the `aggregate` command.
 
 In the event this aggregation is run against an empty collection, an empty array will be returned with no `n` field.
 Drivers MUST interpret this result as a `0` count.
+
+##### findOne API details
+
+The `findOne` operation is implemented using a `find` operation, but only returns the first document returned in the
+cursor. Due to the special case, `findOne` does not support the following options supported in `find`:
+
+- `batchSize`: drivers MUST NOT set a `batchSize` in the `find` command created for a `findOne` operation
+- `cursorType`: `findOne` only supports non-tailable cursors
+- `limit`: drivers MUST set `limit` to 1 in the `find` command created for a `findOne` operation
+- `noCursorTimeout`: with a `limit` of 1 and no `batchSize`, there will not be an open cursor on the server
 
 ##### Combining Limit and Batch Size for the Wire Protocol
 
@@ -2397,12 +2607,6 @@ update and delete. This generally causes some issues for new developers and is a
 developers. The safest way to combat this without introducing discrepancies between drivers/driver versions or breaking
 backwards compatibility was to use multiple methods, each signifying the number of documents that could be affected.
 
-Q: Speaking of "One", where is `findOne`?
-
-If your driver wishes to offer a `findOne` method, that is perfectly fine. If you choose to implement `findOne`, please
-keep to the naming conventions followed by the `FindOptions` and keep in mind that certain things don't make sense like
-limit (which should be -1), tailable, awaitData, etc...
-
 Q: What considerations have been taken for the eventual merging of query and the aggregation framework?
 
 In the future, it is probable that a new query engine (QE) will look very much like the aggregation framework. Given
@@ -2495,6 +2699,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-11-05: Define `findOne` operation as optional.
 
 - 2024-11-04: Always send a value for `bypassDocumentValidation` if it was specified.
 
