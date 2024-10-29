@@ -145,13 +145,13 @@ encoded BSON document containing encrypted ciphertext and metadata.
 
 **Client-Side Field Level Encryption (CSFLE)**
 
-CSFLE is the first version of In-Use Encryption. CSFLE is almost entirely client-side with the
-exception of server-side JSON schema.
+CSFLE is the first version of In-Use Encryption. CSFLE is almost entirely client-side with the exception of server-side
+JSON schema.
 
 **Queryable Encryption (QE)**
 
-Queryable Encryption the second version of In-Use Encryption. Data is encrypted client-side. Queryable
-Encryption supports indexed encrypted fields, which are further processed server-side.
+Queryable Encryption the second version of In-Use Encryption. Data is encrypted client-side. Queryable Encryption
+supports indexed encrypted fields, which are further processed server-side.
 
 **In-Use Encryption**
 
@@ -2228,9 +2228,9 @@ include the needed CA certificates.
 
 There is no technical limitation to having a separate CSFLE field and Queryable Encryption field in the same collection.
 Prohibiting CSFLE and Queryable Encryption in the same collection reduces complexity. From the product perspective, a
-random CSFLE field and a non-queryable Queryable Encryption field have the same behavior and similar security guarantees.
-A deterministic CSFLE field leaks more information then a deterministic Queryable Encryption field. There is not a
-compelling use case to use both CSFLE and Queryable Encryption in the same collection.
+random CSFLE field and a non-queryable Queryable Encryption field have the same behavior and similar security
+guarantees. A deterministic CSFLE field leaks more information then a deterministic Queryable Encryption field. There is
+not a compelling use case to use both CSFLE and Queryable Encryption in the same collection.
 
 ### Is it an error to set schemaMap and encryptedFieldsMap?
 
