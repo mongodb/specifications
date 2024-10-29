@@ -2765,7 +2765,9 @@ actual: [ { x: 1, y: 1 }, { x: 2, y: 2 } ]
 Contexts where one might encounter a root-level document include:
 
 - `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)
+
 - `reply` for [CommandSucceededEvent](#expectedEvent_commandSucceededEvent)
+
 - [expectResult](#operation_expectResult) for operations that return a document. Operations include:
 
     - findOneAndDelete, [findOneAndReplace](#findoneandreplace-and-findoneandupdate), and
@@ -2783,8 +2785,11 @@ Contexts where one might encounter a root-level document include:
     - [runCursorCommand](#runcursorcommand)
 
 - [errorResponse](#expectedError_errorResponse) for [expectedError](#expectederror)
+
 - `writeErrors` object values for [expectedError](#expectederror)
+
 - `writeConcernErrors` array elements for [expectedError](#expectederror)
+
 - `data` for [expectedLogMessage](#expectedlogmessage)
 
 #### Document Key Order Variation
