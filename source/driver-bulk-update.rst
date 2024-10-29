@@ -353,20 +353,6 @@ but simply serve as an indication that the write concern has not been met.
 
 If there is no write concern error the bulk result's "writeConcernErrors" array is empty.
 
-When the bulk operation is implemented using legacy opcodes, no server error
-code is available. The server's getlasterror response is like:
-
-.. code:: javascript
-
-  {
-    "ok" : 1,
-    "wtimeout": true,
-    "err": "timeout"
-  }
-
-In this case the driver must construct a writeConcernErrors array containing one error document with code 64,
-and the "err" field from the getlasterror response as the errmsg.
-
 An example with "w: 5" and fewer than 5 replicas:
 
 .. code:: javascript
