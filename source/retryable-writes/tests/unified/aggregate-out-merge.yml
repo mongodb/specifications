@@ -43,16 +43,23 @@ tests:
     runOnRequirements:
       - minServerVersion: "4.1.11"
     operations:
+      # The output collection must already exist for $merge on a sharded cluster
+      - object: *database0
+        name: createCollection
+        arguments:
+          collection: &outputCollection outputCollection
       - object: *collection0
         name: aggregate
         arguments:
           pipeline:
             - { $sort: { x: 1 } }
             - { $match: { _id: { $gt: 1 } } }
-            - { $merge: { into: other_test_collection } }
+            - { $merge: { into: *outputCollection } }
     expectEvents:
       - client: client0
         events:
+          - commandStartedEvent:
+              commandName: create
           - commandStartedEvent:
               commandName: aggregate
               command:
