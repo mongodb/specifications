@@ -237,6 +237,7 @@ created_key_id = clientencryption.create_data_key("aws", opts)
 opts = EncryptOpts(key_id=created_key_id,
     algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Random")
 encrypted = clientencryption.encrypt("secret text", opts)
+# Decryption does not require the key ID or algorithm. The ciphertext indicates the key ID and algorithm used.
 decrypted = clientencryption.decrypt(encrypted)
 ```
 
