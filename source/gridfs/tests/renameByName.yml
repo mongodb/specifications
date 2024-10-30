@@ -110,4 +110,4 @@ tests:
         arguments:
           filename: missing-file
           newFilename: newfilename
-        expectError: { isError: true } # FileNotFound
+        expectError: { isClientError: true } # FileNotFound

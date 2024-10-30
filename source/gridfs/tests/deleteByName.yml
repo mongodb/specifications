@@ -99,4 +99,4 @@ tests:
         object: *bucket0
         arguments:
           filename: missing-file
-        expectError: { isError: true } # FileNotFound
+        expectError: { isClientError: true } # FileNotFound

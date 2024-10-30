@@ -221,7 +221,7 @@
             "filename": "missing-file"
           },
           "expectError": {
-            "isError": true
+            "isClientError": true
           }
         }
       ]
