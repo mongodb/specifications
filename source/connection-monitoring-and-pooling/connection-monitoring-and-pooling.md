@@ -1424,8 +1424,6 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 ## Changelog
 
-- 2024-01-23: Migrated from reStructuredText to Markdown.
-
 - 2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent
 
 - 2020-09-03: Clarify Connection states and definition. Require the use of a background thread and/or async I/O. Add
@@ -1456,5 +1454,9 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 - 2023-08-04: Add durations to connection pool events.
 
 - 2023-10-04: Commit to the currently specified requirements regarding durations in events.
+
+- 2024-01-23: Migrated from reStructuredText to Markdown.
+
+- 2024-10-30: Attempt pending reads during connection check-out for sockets that have timed out.
 
 ______________________________________________________________________
