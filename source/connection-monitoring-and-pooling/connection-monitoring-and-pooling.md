@@ -574,6 +574,51 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
+If an operation times out the socket while awaiting a server response, the driver MUST mark the connection as "pending." 
+When this connection is next checked out the driver MUST attempt to complete the read. This process should continue 
+until the response is successfully read or the cumulative `pendingResponseTimeoutLimit` of 400ms is reached. If the `pendingResponseTimeoutLimit` is reached, the connection MUST be closed.
+
+```python 
+def await_pending_read(pool, conn):
+  # If there are no bytes pending read, do nothing
+  if conn.await_remaining_bytes is None:
+    return None
+
+  size = conn.await_remaining_bytes
+  check_in = False
+
+  try:
+    start_time = current_time()
+
+    if size == 0:
+      size_buf = conn.read_bytes(4)
+      if size_buf is None:
+        conn.remaining_time_for_pending_read -= time_since(start_time)
+        check_in = True
+        raise Exception("Error reading the message size")
+
+      size = conn.parse_message_size(size_buf) - 4
+
+    bytes_read = conn.discard_bytes(size)
+    if bytes_read < size:
+      # If the read times out, record the bytes left to read before exiting
+      if bytes_read == 0 and conn.is_timeout_error():
+        conn.await_remaining_bytes += size
+        conn.remaining_for_pending_read -= time_since(start_time)
+
+        check_in = True
+        raise Exception(f"Error discarding {size} byte message")
+
+      conn.await_remaining_bytes = None
+      conn.remaining_time = None
+
+  finally:
+    if conn.remaining_time is not None and conn.remaining_time < 0:
+      conn.close()
+    elif check_in:
+      pool.check_in(conn)
+```
+
 ```python
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
@@ -631,6 +676,11 @@ if connection state is "pending":
     decrement pendingConnectionCount
 else:
     decrement availableConnectionCount
+
+error = await_pending_read(pool, connection)
+if error:
+  return error
+
 set connection state to "in use"
 
 # If there is no background thread, the pool MUST ensure that
