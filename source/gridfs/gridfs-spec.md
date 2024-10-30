@@ -649,6 +649,32 @@ orphaned chunks with files_id equal to id before raising the error.
 
 If a networking or server error occurs, drivers MUST raise an error.
 
+### File deletion by filename
+
+To rename all revisions of a stored file with the specified filename, drivers SHOULD provide the method
+`delete_by_name`:
+
+```javascript
+class GridFSBucket {
+
+  /**
+   * Deletes all stored files with the specified @filename from a GridFS bucket.
+   */
+  void delete_by_name(string filename);
+
+}
+```
+
+This method is an optimisation over deleting each revision of a stored file individually.
+
+**Implementation details:**
+
+Drivers MUST first find the `_id` field of all files collection documents with the given filename. Drivers MUST then
+delete all chunks with `files_id` in the found ids that was just deleted. Drivers MUST then delete all files collection
+documents with the found ids.
+
+If there are no files collection documents with the given filename, drivers MUST raise an error.
+
 ### Generic Find on Files Collection
 
 ```javascript
@@ -821,10 +847,33 @@ Sets the filename field in the stored file's files collection document to the ne
 Drivers construct and execute an update_one command on the files collection using `{ _id: @id }` as the filter and
 `{ $set : { filename : "new_filename" } }` as the update parameter.
 
-To rename multiple revisions of the same filename, users must retrieve the full list of files collection documents for a
-given filename and execute "rename" on each corresponding `_id`.
+If `renameByName` is not implemented to rename multiple revisions of the same filename, users must retrieve the full
+list of files collection documents for a given filename and execute "rename" on each corresponding `_id`.
 
 If there is no file with the given id, drivers MUST raise an error.
+
+### Renaming stored files by filename
+
+To rename all revisions of a stored file with the specified filename, drivers SHOULD provide the method
+`rename_by_name`:
+
+```javascript
+class GridFSBucket {
+
+  /**
+   * Renames all revisions of the stored file with the specified @filename.
+   */
+  void rename_by_name(string filename, string new_filename);
+
+}
+```
+
+**Implementation details:**
+
+Drivers construct and execute an update_many command on the files collection using `{ filename: @filename }` as the
+filter and `{ $set : { filename : "new_filename" } }` as the update parameter.
+
+If there is no file with the given filename, drivers MUST raise an error.
 
 ### Dropping an entire GridFS bucket
 
@@ -1042,6 +1091,7 @@ system?") it is a potential area of growth for the future.
 
 ## Changelog
 
+- 2024-10-30: Add `delete_by_name` and `rename_by_name`
 - 2024-10-28: Removed deprecated fields from tests: `md5`, `contentType`, `aliases`
 - 2024-02-27: Migrated from reStructuredText to Markdown.
 - 2016-05-10: Support custom file ids
