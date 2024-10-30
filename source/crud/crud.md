@@ -985,10 +985,9 @@ cursor. Due to the special case, `findOne` does not support the following option
 
 ##### Setting limit and batchSize options for find commands
 
-When users specify both `limit` and `batchSize` options with the same value, the server returns all results in the
-first batch, but still leaves an open cursor that needs to be closed using the `killCursors` command. To avoid this,
-drivers MUST send a value of `limit + 1` for `batchSize` in the resulting `find` command. This eliminates the open
-cursor issue.
+When users specify both `limit` and `batchSize` options with the same value, the server returns all results in the first
+batch, but still leaves an open cursor that needs to be closed using the `killCursors` command. To avoid this, drivers
+MUST send a value of `limit + 1` for `batchSize` in the resulting `find` command. This eliminates the open cursor issue.
 
 ##### Combining Limit and Batch Size for OP_QUERY
 
