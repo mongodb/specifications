@@ -1,5 +1,5 @@
 {
-  "description": "CRUD ID Type Tests",
+  "description": "create-null-ids",
   "schemaVersion": "1.0",
   "createEntities": [
     {
@@ -25,40 +25,37 @@
       }
     }
   ],
+  "initialData": [
+    {
+      "collectionName": "type_tests",
+      "databaseName": "crud_id",
+      "documents": []
+    }
+  ],
   "tests": [
     {
       "description": "inserting _id with type undefined via insertOne",
       "operations": [
         {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
-        {
           "name": "insertOne",
           "object": "collection",
           "arguments": {
             "document": {
-              "_id": {
-                "$undefined": true
-              }
+              "_id": null
             }
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
               "_id": {
-                "$undefined": true
+                "$type": "undefined"
               }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
@@ -66,37 +63,27 @@
       "description": "inserting _id with type undefined via insertMany",
       "operations": [
         {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
-        {
           "name": "insertMany",
           "object": "collection",
           "arguments": {
             "documents": [
               {
-                "_id": {
-                  "$undefined": true
-                }
+                "_id": null
               }
             ]
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
               "_id": {
-                "$undefined": true
+                "$type": "undefined"
               }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
@@ -104,20 +91,11 @@
       "description": "inserting _id with type undefined via updateOne",
       "operations": [
         {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
-        {
           "name": "updateOne",
           "object": "collection",
           "arguments": {
             "filter": {
-              "_id": {
-                "$undefined": true
-              }
+              "_id": null
             },
             "update": {
               "$unset": {
@@ -126,19 +104,18 @@
             },
             "upsert": true
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
               "_id": {
-                "$undefined": true
+                "$type": "undefined"
               }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
@@ -146,20 +123,11 @@
       "description": "inserting _id with type undefined via updateMany",
       "operations": [
         {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
-        {
           "name": "updateMany",
           "object": "collection",
           "arguments": {
             "filter": {
-              "_id": {
-                "$undefined": true
-              }
+              "_id": null
             },
             "update": {
               "$unset": {
@@ -168,19 +136,18 @@
             },
             "upsert": true
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
               "_id": {
-                "$undefined": true
+                "$type": "undefined"
               }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
@@ -188,50 +155,33 @@
       "description": "inserting _id with type undefined via replaceOne",
       "operations": [
         {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
-        {
           "name": "replaceOne",
           "object": "collection",
           "arguments": {
             "filter": {},
             "replacement": {
-              "_id": {
-                "$undefined": true
-              }
+              "_id": null
             },
             "upsert": true
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
               "_id": {
-                "$undefined": true
+                "$type": "undefined"
               }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
     {
       "description": "inserting _id with type undefined via bulkWrite",
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "bulkWrite",
           "object": "collection",
@@ -240,27 +190,24 @@
               {
                 "insertOne": {
                   "document": {
-                    "_id": {
-                      "$undefined": true
-                    }
+                    "_id": null
                   }
                 }
               }
             ]
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
               "_id": {
-                "$undefined": true
+                "$type": "undefined"
               }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
@@ -273,13 +220,6 @@
       ],
       "operations": [
         {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
-        {
           "name": "clientBulkWrite",
           "object": "client",
           "arguments": {
@@ -288,40 +228,30 @@
                 "insertOne": {
                   "namespace": "crud_id.type_tests",
                   "document": {
-                    "_id": {
-                      "$undefined": true
-                    }
+                    "_id": null
                   }
                 }
               }
             ]
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
               "_id": {
-                "$undefined": true
+                "$type": "undefined"
               }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
     {
       "description": "inserting _id with type null via insertOne",
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "insertOne",
           "object": "collection",
@@ -330,30 +260,24 @@
               "_id": null
             }
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
-              "_id": null
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$type": "null"
+              }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
     {
       "description": "inserting _id with type null via insertMany",
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "insertMany",
           "object": "collection",
@@ -364,30 +288,24 @@
               }
             ]
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
-              "_id": null
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$type": "null"
+              }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
     {
       "description": "inserting _id with type null via updateOne",
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "updateOne",
           "object": "collection",
@@ -402,30 +320,24 @@
             },
             "upsert": true
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
-              "_id": null
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$type": "null"
+              }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
     {
       "description": "inserting _id with type null via updateMany",
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "updateMany",
           "object": "collection",
@@ -440,30 +352,24 @@
             },
             "upsert": true
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
-              "_id": null
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$type": "null"
+              }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
     {
       "description": "inserting _id with type null via replaceOne",
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "replaceOne",
           "object": "collection",
@@ -474,30 +380,24 @@
             },
             "upsert": true
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
-              "_id": null
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$type": "null"
+              }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
     {
       "description": "inserting _id with type null via bulkWrite",
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "bulkWrite",
           "object": "collection",
@@ -512,17 +412,18 @@
               }
             ]
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
-              "_id": null
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$type": "null"
+              }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     },
@@ -534,13 +435,6 @@
         }
       ],
       "operations": [
-        {
-          "name": "dropCollection",
-          "object": "database",
-          "arguments": {
-            "collection": "type_tests"
-          }
-        },
         {
           "name": "clientBulkWrite",
           "object": "client",
@@ -556,17 +450,18 @@
               }
             ]
           }
-        }
-      ],
-      "outcome": [
+        },
         {
-          "databaseName": "crud_id",
-          "collectionName": "type_tests",
-          "documents": [
-            {
-              "_id": null
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$type": "null"
+              }
             }
-          ]
+          },
+          "expectResult": 1
         }
       ]
     }
