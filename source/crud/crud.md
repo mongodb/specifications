@@ -176,11 +176,6 @@ interface Collection {
   /**
    * Finds the documents matching the model.
    *
-   * Note: The filter parameter below equates to the $query meta operator. It cannot
-   * contain other meta operators like $maxScan. However, do not validate this document
-   * as it would be impossible to be forwards and backwards compatible. Let the server
-   * handle the validation.
-   *
    * Note: result iteration should be backed by a cursor. Depending on the implementation,
    * the cursor may back the returned Iterable instance or an iterator that it produces.
    *
@@ -190,11 +185,6 @@ interface Collection {
 
   /**
    * Find a document matching the model.
-   *
-   * Note: The filter parameter below equates to the $query meta operator. It cannot
-   * contain other meta operators like $maxScan. However, do not validate this document
-   * as it would be impossible to be forwards and backwards compatible. Let the server
-   * handle the validation.
    *
    * @see https://www.mongodb.com/docs/manual/tutorial/query-documents/
    */
