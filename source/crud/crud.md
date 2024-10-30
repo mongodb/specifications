@@ -184,7 +184,7 @@ interface Collection {
    * Note: result iteration should be backed by a cursor. Depending on the implementation,
    * the cursor may back the returned Iterable instance or an iterator that it produces.
    *
-   * @see https://www.mongodb.com/docs/manual/core/read-operations-introduction/
+   * @see https://www.mongodb.com/docs/manual/tutorial/query-documents/
    */
   find(filter: Document, options: Optional<FindOptions>): Iterable<Document>;
 
@@ -196,7 +196,7 @@ interface Collection {
    * as it would be impossible to be forwards and backwards compatible. Let the server
    * handle the validation.
    *
-   * @see https://www.mongodb.com/docs/manual/core/read-operations-introduction/
+   * @see https://www.mongodb.com/docs/manual/tutorial/query-documents/
    */
   findOne(filter: Document, options: Optional<FindOneOptions>): Document;
 
