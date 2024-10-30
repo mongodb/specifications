@@ -81,7 +81,7 @@
                   "collection": {
                     "$$type": "string"
                   },
-                  "batchSize": 1
+                  "batchSize": 3
                 },
                 "commandName": "getMore",
                 "databaseName": "cursors"
