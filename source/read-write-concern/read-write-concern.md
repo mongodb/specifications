@@ -536,8 +536,6 @@ instance, we send it.
 
 ## Changelog
 
-- 2024-08-23: Migrated from reStructuredText to Markdown.
-
 - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion \< 4.
 
 - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
@@ -578,6 +576,11 @@ instance, we send it.
 - 2022-01-19: Deprecate wTimeoutMS in favor of timeoutMS.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
+
+- 2024-08-23: Migrated from reStructuredText to Markdown.
+
+- 2024-10-30: Remove reference to getLastError
+
 
 [^1]: This is only possible in a sharded cluster. When a write is routed to multiple shards and more than one shard
     returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernFailed" error
