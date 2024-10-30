@@ -512,8 +512,8 @@ Below are English descriptions of other items that should be tested:
 1. Commands supporting a write concern MUST NOT send the default write concern to the server.
 2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server in the
     command.
-4. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
-5. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
+3. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
+4. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
 
 ## Reference Implementation
 
@@ -580,7 +580,6 @@ instance, we send it.
 - 2024-08-23: Migrated from reStructuredText to Markdown.
 
 - 2024-10-30: Remove reference to getLastError
-
 
 [^1]: This is only possible in a sharded cluster. When a write is routed to multiple shards and more than one shard
     returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernFailed" error

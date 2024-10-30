@@ -484,8 +484,8 @@ It must convert that request into write operations + gle's and use the old op co
 
 ### Are we discontinuing the use of getLastError?
 
-Yes but as of 2.6 the existing getLastError behavior is supported for backward compatibility. Note
-also that `getLastError` was removed in server version 5.1.
+Yes but as of 2.6 the existing getLastError behavior is supported for backward compatibility. Note also that
+`getLastError` was removed in server version 5.1.
 
 ## Changelog
 
