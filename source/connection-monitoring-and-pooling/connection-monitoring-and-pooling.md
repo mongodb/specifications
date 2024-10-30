@@ -612,10 +612,10 @@ def await_pending_read(pool, conn):
         raise Exception(f"Error discarding {size} byte message")
 
       conn.await_remaining_bytes = None
-      conn.remaining_time = None
+      conn.remaining_time_for_pending_read = None
 
   finally:
-    if conn.remaining_time is not None and conn.remaining_time < 0:
+    if conn.remaining_time_for_pending_read is not None and conn.remaining_time_for_pending_read < 0:
       conn.close()
     elif check_in:
       pool.check_in(conn)
