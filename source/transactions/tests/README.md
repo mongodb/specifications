@@ -73,8 +73,12 @@ driver, use command monitoring instead.
         assert len(addresses) > 1
     ```
 
+3. Test that `PoolClearedError` has `TransientTransactionError` label. Since there is no simple way to trigger
+    `PoolClearedError`, this test should be implemented in a way that suites each driver the best.
+
 ## Changelog
 
+- 2024-10-31: Add test for PoolClearedError.
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 - 2024-02-07: Converted legacy transaction tests to unified format and moved the legacy test format docs to a separate
     file.
