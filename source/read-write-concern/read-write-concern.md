@@ -298,19 +298,6 @@ writeConcern = { w: 0, wtimeoutMS: 100 }; // Unacknowledged
 
 #### On the Wire
 
-##### OP_INSERT, OP_DELETE, OP_UPDATE
-
-`WriteConcern` is implemented by sending the `getLastError` (GLE) command directly after the operation. Drivers SHOULD
-piggy-back the GLE onto the same buffer as the operation. Regardless, GLE MUST be sent on the same connection as the
-initial write operation.
-
-When a user has not specified a `WriteConcern` or has specified the server's default `WriteConcern`, drivers MUST send
-the GLE command without arguments. For example: `{ getLastError: 1 }`
-
-Drivers MUST NOT send a GLE for an `Unacknowledged WriteConcern`. In this instance, the server will not send a reply.
-
-See the `getLastError` command documentation for other formatting.
-
 ##### Write Commands
 
 The `insert`, `delete`, and `update` commands take a named parameter, `writeConcern`. See the command documentation for
@@ -523,9 +510,8 @@ Below are English descriptions of other items that should be tested:
 ### WriteConcern
 
 1. Commands supporting a write concern MUST NOT send the default write concern to the server.
-2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server, either in the
-    command or as a getLastError.
-3. On ServerVersion less than 2.6, drivers MUST NOT send a getLastError command for an Unacknowledged write concern.
+2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server in the
+    command.
 4. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
 5. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
 

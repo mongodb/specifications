@@ -484,9 +484,12 @@ It must convert that request into write operations + gle's and use the old op co
 
 ### Are we discontinuing the use of getLastError?
 
-Yes but as of 2.6 the existing getLastError behavior is supported for backward compatibility.
+Yes but as of 2.6 the existing getLastError behavior is supported for backward compatibility. Note
+also that `getLastError` was removed in server version 5.1.
 
 ## Changelog
+
+- 2024-10-30: Add note that getLastError has been removed from the server.
 
 - 2024-07-31: Migrated from reStructuredText to Markdown.
 
