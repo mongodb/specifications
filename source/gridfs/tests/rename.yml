@@ -75,4 +75,4 @@ tests:
         arguments:
           id: { "$oid": "000000000000000000000003" }
           newFilename: newfilename
-        expectError: { isError: true } # FileNotFound
+        expectError: { isClientError: true } # FileNotFound
