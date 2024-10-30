@@ -819,7 +819,8 @@ database-level aggregation will allow users to receive a cursor from these colle
 
 The insert and bulk insert operations described below MUST generate identifiers for all documents that do not already
 have them. These identifiers SHOULD be prepended to the document so they are the first field, in order to prevent the
-server from spending time re-ordering the document.
+server from spending time re-ordering the document. If a document already has a user-provided identifier, the driver MAY
+re-order the document so the identifier is the first field.
 
 ```typescript
 interface Collection {
