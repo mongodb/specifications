@@ -22,7 +22,7 @@ initialData:
 
 tests:
 
-  - description: inserting _id with type undefined via insertOne
+  - description: inserting _id with type null via insertOne
     operations:
       - name: insertOne
         object: *collection
@@ -31,129 +31,57 @@ tests:
       # this is to avoid client side type conversions (potentially common: undefined -> null)
       - name: countDocuments
         object: *collection
-        arguments: {filter: {_id: {$type: undefined}}}
-        expectResult: 1
-
-  - description: inserting _id with type undefined via insertMany
-    operations:
-      - name: insertMany
-        object: *collection
-        arguments: {documents: [*null_id]}
-      - name: countDocuments
-        object: *collection
-        arguments: {filter: {_id: {$type: undefined}}}
-        expectResult: 1
-
-  - description: inserting _id with type undefined via updateOne
-    operations:
-      - name: updateOne
-        object: *collection
-        arguments: {filter: *null_id, update: {$unset: {a: ''}}, upsert: true}
-      - name: countDocuments
-        object: *collection
-        arguments: {filter: {_id: {$type: undefined}}}
-        expectResult: 1
-
-  - description: inserting _id with type undefined via updateMany
-    operations:
-      - name: updateMany
-        object: *collection
-        arguments: {filter: *null_id, update: {$unset: {a: ''}}, upsert: true}
-      - name: countDocuments
-        object: *collection
-        arguments: {filter: {_id: {$type: undefined}}}
-        expectResult: 1
-
-  - description: inserting _id with type undefined via replaceOne
-    operations:
-      - name: replaceOne
-        object: *collection
-        arguments: {filter: {}, replacement: *null_id, upsert: true}
-      - name: countDocuments
-        object: *collection
-        arguments: {filter: {_id: {$type: undefined}}}
-        expectResult: 1
-
-  - description: inserting _id with type undefined via bulkWrite
-    operations:
-      - name: bulkWrite
-        object: *collection
-        arguments: {requests: [{insertOne: {document: *null_id}}]}
-      - name: countDocuments
-        object: *collection
-        arguments: {filter: {_id: {$type: undefined}}}
-        expectResult: 1
-
-  - description: inserting _id with type undefined via clientBulkWrite
-    runOnRequirements:
-      - minServerVersion: '8.0'
-    operations:
-      - name: clientBulkWrite
-        object: client
-        arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: *null_id}}]}
-      - name: countDocuments
-        object: *collection
-        arguments: {filter: {_id: {$type: undefined}}}
-        expectResult: 1
-
-  - description: inserting _id with type null via insertOne
-    operations:
-      - name: insertOne
-        object: *collection
-        arguments: {document: &undefined_id {_id: null}}
-      - name: countDocuments
-        object: *collection
-        arguments: {filter: {_id: {$type: 'null'}}}
+        arguments: {filter: &null_id_filter {_id: {$type: 'null'}}}
         expectResult: 1
 
   - description: inserting _id with type null via insertMany
     operations:
       - name: insertMany
         object: *collection
-        arguments: {documents: [*undefined_id]}
+        arguments: {documents: [*null_id]}
       - name: countDocuments
         object: *collection
-        arguments: {filter: {_id: {$type: 'null'}}}
+        arguments: {filter: *null_id_filter}
         expectResult: 1
 
   - description: inserting _id with type null via updateOne
     operations:
       - name: updateOne
         object: *collection
-        arguments: {filter: *undefined_id, update: {$unset: {a: ''}}, upsert: true}
+        arguments: {filter: *null_id, update: {$unset: {a: ''}}, upsert: true}
       - name: countDocuments
         object: *collection
-        arguments: {filter: {_id: {$type: 'null'}}}
+        arguments: {filter: *null_id_filter}
         expectResult: 1
 
   - description: inserting _id with type null via updateMany
     operations:
       - name: updateMany
         object: *collection
-        arguments: {filter: *undefined_id, update: {$unset: {a: ''}}, upsert: true}
+        arguments: {filter: *null_id, update: {$unset: {a: ''}}, upsert: true}
       - name: countDocuments
         object: *collection
-        arguments: {filter: {_id: {$type: 'null'}}}
+        arguments: {filter: *null_id_filter}
         expectResult: 1
 
   - description: inserting _id with type null via replaceOne
     operations:
       - name: replaceOne
         object: *collection
-        arguments: {filter: {}, replacement: *undefined_id, upsert: true}
+        arguments: {filter: {}, replacement: *null_id, upsert: true}
       - name: countDocuments
         object: *collection
-        arguments: {filter: {_id: {$type: 'null'}}}
+        arguments: {filter: *null_id_filter}
         expectResult: 1
 
   - description: inserting _id with type null via bulkWrite
     operations:
       - name: bulkWrite
         object: *collection
-        arguments: {requests: [{insertOne: {document: *undefined_id}}]}
+        arguments: {requests: [{insertOne: {document: *null_id}}]}
       - name: countDocuments
         object: *collection
-        arguments: {filter: {_id: {$type: 'null'}}}
+        arguments: {filter: *null_id_filter}
         expectResult: 1
 
   - description: inserting _id with type null via clientBulkWrite
@@ -162,8 +90,80 @@ tests:
     operations:
       - name: clientBulkWrite
         object: client
+        arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: *null_id}}]}
+      - name: countDocuments
+        object: *collection
+        arguments: {filter: *null_id_filter}
+        expectResult: 1
+
+  - description: inserting _id with type undefined via insertOne
+    operations:
+      - name: insertOne
+        object: *collection
+        arguments: {document: &undefined_id {_id: { $undefined: true }}}
+      - name: countDocuments
+        object: *collection
+        arguments: {filter: &undefined_id_filter {_id: {$type: 'undefined'}}}
+        expectResult: 1
+
+  - description: inserting _id with type undefined via insertMany
+    operations:
+      - name: insertMany
+        object: *collection
+        arguments: {documents: [*undefined_id]}
+      - name: countDocuments
+        object: *collection
+        arguments: {filter: *undefined_id_filter}
+        expectResult: 1
+
+  - description: inserting _id with type undefined via updateOne
+    operations:
+      - name: updateOne
+        object: *collection
+        arguments: {filter: *undefined_id, update: {$unset: {a: ''}}, upsert: true}
+      - name: countDocuments
+        object: *collection
+        arguments: {filter: *undefined_id_filter}
+        expectResult: 1
+
+  - description: inserting _id with type undefined via updateMany
+    operations:
+      - name: updateMany
+        object: *collection
+        arguments: {filter: *undefined_id, update: {$unset: {a: ''}}, upsert: true}
+      - name: countDocuments
+        object: *collection
+        arguments: {filter: *undefined_id_filter}
+        expectResult: 1
+
+  - description: inserting _id with type undefined via replaceOne
+    operations:
+      - name: replaceOne
+        object: *collection
+        arguments: {filter: {}, replacement: *undefined_id, upsert: true}
+      - name: countDocuments
+        object: *collection
+        arguments: {filter: *undefined_id_filter}
+        expectResult: 1
+
+  - description: inserting _id with type undefined via bulkWrite
+    operations:
+      - name: bulkWrite
+        object: *collection
+        arguments: {requests: [{insertOne: {document: *undefined_id}}]}
+      - name: countDocuments
+        object: *collection
+        arguments: {filter: *undefined_id_filter}
+        expectResult: 1
+
+  - description: inserting _id with type undefined via clientBulkWrite
+    runOnRequirements:
+      - minServerVersion: '8.0'
+    operations:
+      - name: clientBulkWrite
+        object: client
         arguments: {models: [{insertOne: {namespace: crud_id.type_tests, document: *undefined_id}}]}
       - name: countDocuments
         object: *collection
-        arguments: {filter: {_id: {$type: 'null'}}}
+        arguments: {filter: *undefined_id_filter}
         expectResult: 1
