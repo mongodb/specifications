@@ -576,7 +576,9 @@ availableConnectionCount MUST be decremented.
 
 If an operation times out the socket while awaiting a server response, the driver MUST mark the connection as "pending." 
 When this connection is next checked out the driver MUST attempt to complete the read. This process should continue 
-until the response is successfully read or the cumulative `pendingResponseTimeoutLimit` of 400ms is reached. If the `pendingResponseTimeoutLimit` is reached, the connection MUST be closed.
+until the response is successfully read or the cumulative `pendingResponseTimeoutLimit` of 400ms is reached. If the `pendingResponseTimeoutLimit` is reached, the connection MUST be closed. The goal of this procedure is to minimize 
+connection churn by attempting to empty server responses under CSOT conditions (e.g. a socket timeout) rather than 
+strictly closing a connection.
 
 ```python 
 def await_pending_read(pool, conn):
