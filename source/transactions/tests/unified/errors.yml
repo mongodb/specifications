@@ -1,6 +1,6 @@
 description: errors
 
-schemaVersion: '1.4' # For `serverless` in `runOnRequirements`
+schemaVersion: '1.3'
 
 runOnRequirements:
   -
@@ -110,9 +110,6 @@ tests:
           errorContains: 'transaction already in progress'
   -
     description: 'write conflict commit'
-    runOnRequirements:
-      # Serverless sets empty `codeName` on failpoint errors. Remove once CLOUDP-280424 is fixed.
-      - serverless: forbid
     operations:
       -
         object: *session0
@@ -154,9 +151,6 @@ tests:
             - UnknownTransactionCommitResult
   -
     description: 'write conflict abort'
-    runOnRequirements:
-      # Serverless sets empty `codeName` on failpoint errors. Remove once CLOUDP-280424 is fixed.
-      - serverless: forbid
     operations:
       -
         object: *session0
