@@ -58,3 +58,16 @@ tests:
           sort: { _id: 1 }
           skip: 2
         expectResult: { _id: 5, x: 55 }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: { _id: { $gt: 2 } }
+                sort: { _id: 1 }
+                skip: 2
+                batchSize: { $$exists: false }
+                limit: 1
+              commandName: find
+              databaseName: *database0Name

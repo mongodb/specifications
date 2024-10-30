@@ -121,6 +121,35 @@
             "x": 55
           }
         }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "coll0",
+                  "filter": {
+                    "_id": {
+                      "$gt": 2
+                    }
+                  },
+                  "sort": {
+                    "_id": 1
+                  },
+                  "skip": 2,
+                  "batchSize": {
+                    "$$exists": false
+                  },
+                  "limit": 1
+                },
+                "commandName": "find",
+                "databaseName": "find-tests"
+              }
+            }
+          ]
+        }
       ]
     }
   ]
