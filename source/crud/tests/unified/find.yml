@@ -129,6 +129,7 @@ tests:
                 find: *collection0Name
                 filter: { _id: { $gt: 1 } }
                 limit: 4
+                # Drivers use limit + 1 for batchSize to ensure the server closes the cursor
                 batchSize: 5
               commandName: find
               databaseName: *database0Name
