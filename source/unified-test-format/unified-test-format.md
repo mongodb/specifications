@@ -775,8 +775,7 @@ The structure of this object is as follows:
 
 <span id="test_operations"></span>
 
-- `operations`: Required array of one or more [operation](#operation) objects. List of operations to be executed for the
-    test case.
+- `operations`: Required array of [operation](#operation) objects. List of operations to be executed for the test case.
 
 <span id="test_expectEvents"></span>
 
@@ -3550,6 +3549,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-10-31: Test operations array may be empty.
 
 - 2024-10-29: List more examples of root-level documents
 
