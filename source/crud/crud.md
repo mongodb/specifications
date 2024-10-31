@@ -983,6 +983,9 @@ cursor. Due to the special case, `findOne` does not support the following option
 - `limit`: drivers MUST set `limit` to 1 in the `find` command created for a `findOne` operation
 - `noCursorTimeout`: with a `limit` of 1 and no `batchSize`, there will not be an open cursor on the server
 
+To ensure that the cursor is closed regardless of the default server `batchSize`, drivers MUST also set
+`singleBatch: true` in the `find` command.
+
 ##### Setting limit and batchSize options for find commands
 
 When users specify both `limit` and `batchSize` options with the same value, the server returns all results in the first

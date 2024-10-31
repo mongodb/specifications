@@ -45,6 +45,7 @@ tests:
                 filter: { _id: 1 }
                 batchSize: { $$exists: false }
                 limit: 1
+                singleBatch: true
               commandName: find
               databaseName: *database0Name
   -
@@ -69,5 +70,6 @@ tests:
                 skip: 2
                 batchSize: { $$exists: false }
                 limit: 1
+                singleBatch: true
               commandName: find
               databaseName: *database0Name
