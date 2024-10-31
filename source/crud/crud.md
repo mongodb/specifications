@@ -188,7 +188,7 @@ interface Collection {
    *
    * @see https://www.mongodb.com/docs/manual/tutorial/query-documents/
    */
-  findOne(filter: Document, options: Optional<FindOneOptions>): Document;
+  findOne(filter: Document, options: Optional<FindOneOptions>): Optional<Document>;
 
 }
 
