@@ -737,3 +737,15 @@ that `firstEvent.operationId` is equal to `secondEvent.operationId`. Assert both
 To force completion of the `w:0` writes, execute `coll.countDocuments` and expect the returned count is
 `maxMessageSizeBytes / maxBsonObjectSize + 1`. This is intended to avoid incomplete writes interfering with other tests
 that may use this collection.
+
+### 16. Generated document identifiers are the first field in their document
+
+Construct a `MongoClient` (referred to as `client`) with
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
+CommandStartedEvents. For each of `insertOne`, client `bulkWrite`, and collection `bulkWrite`, do the following:
+
+- Execute the command with a document that does not contain an `_id` field.
+- If possible, capture the wire protocol message (referred to as `request`) of the command and assert that the first
+    field of `request.documents[0]` is `_id`.
+- Otherwise, capture the CommandStartedEvent (referred to as `event`) emitted by the command and assert that the first
+    field of `event.command.documents[0]` is `_id`.
