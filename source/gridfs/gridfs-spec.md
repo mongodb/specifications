@@ -671,7 +671,7 @@ This method is an optimisation over deleting each revision of a stored file indi
 
 Drivers MUST first find the `_id` field of all files collection documents with the given filename. Drivers MUST then
 delete all files collection documents with the found ids. Drivers MUST then delete all chunks with `files_id` in the
-found ids that was just deleted.
+found ids that were just deleted.
 
 If there are no files collection documents with the given filename, drivers MUST raise an error.
 
