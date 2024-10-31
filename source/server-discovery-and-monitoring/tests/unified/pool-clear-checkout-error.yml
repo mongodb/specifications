@@ -87,7 +87,7 @@ tests:
           - connectionClosedEvent: {}
           - connectionCheckOutFailedEvent: {}
 
-  - description: Pool is cleared connection is closed (handshake error)
+  - description: Pool is cleared before connection is closed (handshake error)
     runOnRequirements:
     - topologies: [ single ]
     operations:
