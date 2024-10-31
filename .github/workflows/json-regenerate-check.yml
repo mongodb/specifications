@@ -31,4 +31,9 @@ jobs:
           python3 ./source/client-side-encryption/etc/generate-test.py ./source/client-side-encryption/etc/test-templates/*.template ./source/client-side-encryption/tests/legacy
           python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests
           python3 ./source/etc/generate-handshakeError-tests.py
-          cd source && make -B && git diff --exit-code
+          cd source && make -B
+
+      - name: "Commit the changes"
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update generated files"

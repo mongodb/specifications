@@ -762,6 +762,11 @@ if (limit) {
 pipeline.push({'$group': {'_id': 1, 'n': {'$sum': 1}}})
 ```
 
+Due to countDocuments using the `$match` aggregation pipeline stage, certain query operators cannot be used in
+countDocuments. This includes the `$where` and `$near` query operators, among others. Drivers MUST document these
+[restrictions](https://www.mongodb.com/docs/manual/reference/operator/aggregation/match/#restrictions) in their
+documentation.
+
 The count of documents is returned in the `n` field, similar to the `count` command. countDocuments options other than
 filter, skip, and limit are added as options to the `aggregate` command.
 
@@ -2480,6 +2485,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-10-30: Document query limitations in `countDocuments`.
 
 - 2024-10-28: Clarified that generated identifiers should be prepended to documents.
 

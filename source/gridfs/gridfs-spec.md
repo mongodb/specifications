@@ -7,7 +7,7 @@ ______________________________________________________________________
 
 ## Abstract
 
-GridFS is a convention drivers use to store and retrieve BSON binary data (type "x05") that exceeds MongoDB"s
+GridFS is a convention drivers use to store and retrieve BSON binary data (type "x05") that exceeds MongoDB's
 BSON-document size limit of 16 MiB. When this data, called a **user file**, is written to the system, GridFS divides the
 file into **chunks** that are stored as distinct documents in a **chunks collection**. To retrieve a stored file, GridFS
 locates and returns all of its component chunks. Internally, GridFS creates a **files collection document** for each
@@ -30,7 +30,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 **Bucket name**
 
-A prefix under which a GridFS system"s collections are stored. Collection names for the files and chunks collections are
+A prefix under which a GridFS system's collections are stored. Collection names for the files and chunks collections are
 prefixed with the bucket name. The bucket name MUST be configurable by the user. Multiple buckets may exist within a
 single database. The default bucket name is "fs".
 
@@ -621,7 +621,7 @@ the point at which the application stopped reading won't be detected by the driv
 class GridFSBucket {
 
   /**
-   * Given a @id, delete this stored file"s files collection document and
+   * Given a @id, delete this stored file's files collection document and
    * associated chunks from a GridFS bucket.
    */
   void delete(TFileId id);
@@ -629,17 +629,17 @@ class GridFSBucket {
 }
 ```
 
-Deletes the stored file"s files collection document and associated chunks from the underlying database.
+Deletes the stored file's files collection document and associated chunks from the underlying database.
 
-As noted for download(), drivers that previously used id"s of a different type MAY implement a delete() method that
+As noted for download(), drivers that previously used id's of a different type MAY implement a delete() method that
 accepts that type, but MUST mark that method as deprecated.
 
 **Implementation details:**
 
 There is an inherent race condition between the chunks and files collections. Without some transaction-like behavior
 between these two collections, it is always possible for one client to delete a stored file while another client is
-attempting a read of the stored file. For example, imagine client A retrieves a stored file"s files collection document,
-client B deletes the stored file, then client A attempts to read the stored file"s chunks. Client A wouldn"t find any
+attempting a read of the stored file. For example, imagine client A retrieves a stored file's files collection document,
+client B deletes the stored file, then client A attempts to read the stored file's chunks. Client A wouldn"t find any
 chunks for the given stored file. To minimize the window of vulnerability of reading a stored file that is the process
 of being deleted, drivers MUST first delete the files collection document for a stored file, then delete its associated
 chunks.
@@ -798,7 +798,7 @@ return the bytes of the file in `[start, end)`. If "start" and "end" are equal n
 If either "start" or "end" is invalid, drivers MUST raise an error. These values are considered invalid if they are
 negative, greater than the file length, or if "start" is greater than "end".
 
-When performing partial reads, drivers SHOULD use the file"s "chunkSize" to calculate which chunks contain the desired
+When performing partial reads, drivers SHOULD use the file's "chunkSize" to calculate which chunks contain the desired
 section and avoid reading unneeded documents from the "chunks" collection.
 
 ### Renaming stored files
@@ -814,7 +814,7 @@ class GridFSBucket {
 }
 ```
 
-Sets the filename field in the stored file"s files collection document to the new filename.
+Sets the filename field in the stored file's files collection document to the new filename.
 
 **Implementation details:**
 
@@ -1042,6 +1042,7 @@ system?") it is a potential area of growth for the future.
 
 ## Changelog
 
+- 2024-10-28: Removed deprecated fields from tests: `md5`, `contentType`, `aliases`
 - 2024-02-27: Migrated from reStructuredText to Markdown.
 - 2016-05-10: Support custom file ids
 - 2016-10-07: Drivers SHOULD handle any numeric type of length and chunkSize
