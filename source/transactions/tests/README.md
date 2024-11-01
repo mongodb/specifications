@@ -86,7 +86,7 @@ these tests do not run against a standalone server.
 - Create a MongoClient running against a configured sharded/replica set/load balanced cluster.
 - Start a new session on the client.
 - Start a transaction on the session.
-- Instatiate a collection object in the driver with a default write concern of `{ w: 0 }`.
+- Instantiate a collection object in the driver with a default write concern of `{ w: 0 }`.
 - Insert the document `{ n: 1 }` on the instantiated collection.
 - Commit the transaction.
 - End the session.
