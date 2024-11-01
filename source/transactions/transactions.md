@@ -641,7 +641,7 @@ Drivers MUST unpin a ClientSession in the following situations:
     be unpinned before performing server selection for the first operation of the new transaction.
 5. A non-transactional operation is performed using the ClientSession. The session MUST be unpinned before performing
     server selection for the operation.
-6. The ClientSession is ended either explicitly via [endSession](../sessions/driver-sessions.md#endSession) method, or
+6. The ClientSession is ended either explicitly via `endSession` method, or
     implicitly when supported by the driver.
 
 Note that committing a transaction on a pinned ClientSession MUST NOT unpin the session as `commitTransaction` may be
