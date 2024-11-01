@@ -19,7 +19,10 @@ initialData:
     databaseName: *database0Name
     documents:
       - { _id: 1, json: '{ "x": 1, "y": 2 }' }
-      - { _id: 2, json: '{ "x" }' }
+      # Documents with non-objects or invalid JSON
+      - { _id: 2, json: '1' }
+      - { _id: 3, json: '[ "foo" ]' }
+      - { _id: 4, json: '{ "x" }' }
 
 tests:
   - description: matchAsDocument with non-matching filter
@@ -52,7 +55,7 @@ tests:
         expectResult:
           - { _id: 1, json: { $$matchAsDocument: { x: 1 } } }
   -
-    description: matchAsDocument fails to decode Extended JSON
+    description: matchAsDocument expects JSON object but given scalar
     operations:
       - name: find
         object: *collection0
@@ -60,4 +63,26 @@ tests:
           filter: { _id : 2 }
           limit: 1
         expectResult:
-          - { _id: 2, json: { $$matchAsDocument: { x: 1 } } }
+          # The following $$matchAsRoot expression would match any document, so
+          # this ensures the failure is due to the actual value.
+          - { _id: 2, json: &match_any_document { $$matchAsDocument: { $$matchAsRoot: { } } } }
+  -
+    description: matchAsDocument expects JSON object but given array
+    operations:
+      - name: find
+        object: *collection0
+        arguments:
+          filter: { _id : 3 }
+          limit: 1
+        expectResult:
+          - { _id: 3, json: *match_any_document }
+  -
+    description: matchAsDocument fails to decode Extended JSON
+    operations:
+      - name: find
+        object: *collection0
+        arguments:
+          filter: { _id : 4 }
+          limit: 1
+        expectResult:
+          - { _id: 4, json: *match_any_document }
