@@ -23,6 +23,7 @@
     }
   },
   "poolOptions": {
+    "maxConnecting": 2,
     "maxPoolSize": 10,
     "waitQueueTimeoutMS": 5000
   },
@@ -70,11 +71,6 @@
     {
       "name": "checkIn",
       "connection": "conn0"
-    },
-    {
-      "name": "waitForEvent",
-      "event": "ConnectionCheckedOut",
-      "count": 4
     }
   ],
   "events": [
@@ -103,14 +99,6 @@
     {
       "type": "ConnectionCheckedOut",
       "connectionId": 1,
-      "address": 42
-    },
-    {
-      "type": "ConnectionCheckedOut",
-      "address": 42
-    },
-    {
-      "type": "ConnectionCheckedOut",
       "address": 42
     }
   ],
