@@ -81,7 +81,7 @@ driver, use command monitoring instead.
 These prose tests ensure drivers handle options inside a transaction where the unified tests do not suffice.
 Ensure these tests do not run against a standalone server.
 
-**1.0 Write concern not inherited from collection object inside transaction.
+### 1.0 Write concern not inherited from collection object inside transaction.
 
 - Create a MongoClient running against a configured sharded/replica set/load balanced cluster.
 - Start a new session on the client.
