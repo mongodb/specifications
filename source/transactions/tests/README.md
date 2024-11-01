@@ -76,10 +76,10 @@ driver, use command monitoring instead.
 3. Test that `PoolClearedError` has `TransientTransactionError` label. Since there is no simple way to trigger
     `PoolClearedError`, this test should be implemented in a way that suites each driver the best.
 
-## Options Used Inside Transaction Prose Tests.
+## Options Inside Transaction Prose Tests.
 
-These prose tests ensure drivers handle options inside a transaction where the unified tests do not suffice.
-Ensure these tests do not run against a standalone server.
+These prose tests ensure drivers handle options inside a transaction where the unified tests do not suffice. Ensure
+these tests do not run against a standalone server.
 
 ### 1.0 Write concern not inherited from collection object inside transaction.
 
