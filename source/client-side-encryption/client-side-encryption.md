@@ -1325,8 +1325,7 @@ client = MongoClient(auto_encryption_opts=opts)
 opts = ClientEncryptionOpts (
    key_vault_client=client,
    key_vault_namespace="keyvault.datakeys",
-   kms_providers=kms,
-   bypass_auto_encryption=True)
+   kms_providers=kms)
 client_encryption = ClientEncryption(opts)
 
 accounts = client.db.accounts
