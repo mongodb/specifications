@@ -897,19 +897,6 @@ recording the summary counts. We expect that most users are not interested in th
 and that most users will rely on defaults, so `verboseResults` defaults to `false` to improve performance in the common
 case.
 
-### Why should drivers send `bypassDocumentValidation: false` for `bulkWrite`?
-
-[DRIVERS-450](https://jira.mongodb.org/browse/DRIVERS-450) introduced a requirement that drivers only send a value for
-`bypassDocumentValidation` on write commands if it was specified as true. The original motivation for this change is not
-documented. This specification requires that drivers send `bypassDocumentValidation` in the `bulkWrite` command if it is
-set by the user in `BulkWriteOptions`, regardless of its value.
-
-Explicitly defining `bypassDocumentValidation: false` aligns with the server's default to perform schema validation and
-thus has no effect. However, checking the value of an option that the user specified and omitting it from the command
-document if it matches the server's default creates unnecessary work for drivers. Always sending the user's specified
-value also safeguards against the unlikely event that the server changes the default value for
-`bypassDocumentValidation` in the future.
-
 ### Why is providing access to the raw server response when a command error occurs required?
 
 This allows users to access new error fields that the server may add in the future without needing to upgrade their
