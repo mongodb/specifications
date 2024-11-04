@@ -934,7 +934,7 @@ class BulkWriteOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_INSERT, OP_UPDATE, or OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -969,7 +969,7 @@ class InsertOneOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -991,7 +991,7 @@ class InsertManyOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -1031,7 +1031,7 @@ class UpdateOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -1111,7 +1111,7 @@ class ReplaceOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -1993,7 +1993,7 @@ class FindOneAndReplaceOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    */
   bypassDocumentValidation: Optional<Boolean>;
@@ -2111,7 +2111,7 @@ class FindOneAndUpdateOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    */
   bypassDocumentValidation: Optional<Boolean>;
@@ -2495,6 +2495,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-11-04: Always send a value for `bypassDocumentValidation` if it was specified.
 
 - 2024-11-01: Add hint to DistinctOptions
 
