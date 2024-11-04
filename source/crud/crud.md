@@ -427,6 +427,16 @@ class DistinctOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+
+  /**
+   * The index to use. Specify either the index name as a string or the index key pattern.
+   * If specified, then the query system will only consider plans using the hinted index.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  hint: Optional<(String | Document)>;
 }
 
 enum CursorType {
@@ -2487,6 +2497,8 @@ aforementioned allowance in the SemVer spec.
 ## Changelog
 
 - 2024-11-04: Always send a value for `bypassDocumentValidation` if it was specified.
+
+- 2024-11-01: Add hint to DistinctOptions
 
 - 2024-10-30: Document query limitations in `countDocuments`.
 
