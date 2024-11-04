@@ -33,7 +33,7 @@ disallowed_re = re.compile(
         td[\s>] |
         tr> |
         !-- )
-""",
+    """,
     re.VERBOSE,
 )
 
