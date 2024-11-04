@@ -31,12 +31,12 @@ pseudo-specification provides such tests.
 
 ### Non-Goals
 
-- Replace or extend the official BSON spec at <http://bsonspec.org>.
+- Replace or extend the official BSON spec at <https://bsonspec.org>.
 - Provide a formal specification for `extjson`.
 
 ## Specification
 
-The specification for BSON lives at <http://bsonspec.org>. The `extjson` format specification is
+The specification for BSON lives at <https://bsonspec.org>. The `extjson` format specification is
 [here](../extended-json/extended-json.md).
 
 ## Test Plan
