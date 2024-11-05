@@ -59,7 +59,7 @@ retrieve the abstracted value as a different type (e.g. casting it). `double x =
 ### BSON Decimal128 implementation details
 
 The `BSON Decimal128` data type implements the
-[Decimal Arithmetic Encodings](http://speleotrove.com/decimal/decbits.html) specification, with certain exceptions
+[Decimal Arithmetic Encodings](https://speleotrove.com/decimal/decbits.html) specification, with certain exceptions
 around value integrity and the coefficient encoding. When a value cannot be represented exactly, the value will be
 rejected.
 
@@ -67,7 +67,7 @@ The coefficient MUST be stored as an unsigned binary integer (BID) rather than t
 the specification. See either the `IEEE Std 754-2008` spec or the driver examples for further detail.
 
 The specification defines several statuses which are meant to signal exceptional
-[circumstances](http://speleotrove.com/decimal/daexcep.html), such as when overflowing occurs, and how to handle them.
+[circumstances](https://speleotrove.com/decimal/daexcep.html), such as when overflowing occurs, and how to handle them.
 
 `BSON Decimal128` Value Objects MUST implement these actions for these exceptions:
 
@@ -153,8 +153,8 @@ user will then create a new Decimal128 Value Object and optionally overwrite the
 
 ### From String Representation
 
-For finite numbers, we will use the definition at <http://speleotrove.com/decimal/daconvs.html>. It has been modified to
-account for a different NaN representation and whitespace rules and copied here:
+For finite numbers, we will use the definition at <https://speleotrove.com/decimal/daconvs.html>. It has been modified
+to account for a different NaN representation and whitespace rules and copied here:
 
 ```text
 Strings which are acceptable for conversion to the abstract representation of
@@ -228,7 +228,7 @@ Notes:
 
 ### To String Representation
 
-For finite numbers, we will use the definition at <http://speleotrove.com/decimal/daconvs.html>. It has been copied
+For finite numbers, we will use the definition at <https://speleotrove.com/decimal/daconvs.html>. It has been copied
 here:
 
 ```text
@@ -326,7 +326,7 @@ BSON/Extended JSON Decimal128.
 See the [BSON Corpus](../bson-corpus/bson-corpus.md) for tests.
 
 Most of the tests are converted from the
-[General Decimal Arithmetic Testcases](http://speleotrove.com/decimal/dectest.html).
+[General Decimal Arithmetic Testcases](https://speleotrove.com/decimal/dectest.html).
 
 ## Q&A
 
