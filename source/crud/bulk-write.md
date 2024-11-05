@@ -638,15 +638,16 @@ write concern containing the following message:
 
 The server reports a `maxBsonObjectSize` in its `hello` response. This value defines the maximum size for documents that
 are inserted into the database. Documents that are sent to the server but are not intended to be inserted into the
-database (e.g. command documents) have a size limit of `maxBsonObjectSize + 16KiB`. When an acknowledged write concern
-is used, drivers MUST NOT perform any checks related to these size limits and MUST rely on the server to raise an error
-if a limit is exceeded. However, when an unacknowledged write concern is used, drivers MUST raise an error if one of the
-following limits is exceeded:
+database (e.g. command documents) have a size limit of `maxBsonObjectSize + 16KiB`. The following table specifies the
+size limits and the client behavior with regard to validating sizes depending on whether a server acknowledgement
+is expected:
 
-- The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the `document` field of an
-    `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
-- The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.
-- The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.
+| Size limit                                                                                                                                                                                 | Acknowledgement expected                                                                                                                                                         | Acknowledgement not expected |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
+| The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the `document` field of an `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`. | MUST NOT validate, MUST rely on the server validation. This is to allow the server to proceed with the rest of the individual operations even if some of them violate the limit. | MUST validate.               |
+| The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.                                                                                                       | MUST NOT validate, MUST rely on the server validation. This is to allow the server to proceed with the rest of the individual operations even if some of them violate the limit. | MUST validate.               |
+| The size of an entry in the `nsInfo` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.                                                                                                    | MAY rely on the server validation.                                                                                                                                               | MUST validate.               |
+| The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.                                                                                                  | MAY rely on the server validation.                                                                                                                                               | MUST validate.               |
 
 See [SERVER-10643](https://jira.mongodb.org/browse/SERVER-10643) for more details on these size limits.
 
@@ -923,6 +924,8 @@ Drivers are required to use this value even if they are capable of determining t
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
 ## **Changelog**
+
+- 2024-11-05: Updated the requirements regarding the size validation.
 
 - 2024-10-07: Error if `w:0` is used with `ordered=true` or `verboseResults=true`.
 
