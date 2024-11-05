@@ -855,7 +855,7 @@ Assume an exposition-only function $GetEncryptedFields(opts, collName, dbName, a
 options, $collName$ is the name of the collection, $dbName$ is the name of the database associated with that collection,
 and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by:
 
-1. Let $QualName$ be the string formed by joining$dbName$ and $collName$ with an ASCII dot `"."`.
+1. Let $QualName$ be the string formed by joining $dbName$ and $collName$ with an ASCII dot `"."`.
 2. If $opts$ contains an `"encryptedFields"` property, then $EF$ is the value of that property.
 3. Otherwise, if `AutoEncryptionOptions.encryptedFieldsMap` contains an element named by $QualName$, then $EF$ is the
     value of that element.
