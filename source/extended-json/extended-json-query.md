@@ -9,9 +9,11 @@ for the following features:
 
 - Trailing commas after the last value in an object
 
-- NumberLong values in quotation marks
+- NumberLong values in quotation marks (aka "double quote")
+  - Apostrophe (aka "single quote") is not supported
 
 - Dates constructed with `new Date()` including an `ISODate` format
+  - Including support for pre-epoch dates
 
 - Regex pattern enclosed in slashes
 
