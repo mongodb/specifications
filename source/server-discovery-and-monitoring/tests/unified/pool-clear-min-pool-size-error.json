@@ -23,8 +23,6 @@
       "description": "Pool is cleared on authentication error during minPoolSize population",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.4",
-          "serverless": "forbid",
           "auth": true
         }
       ],

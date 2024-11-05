@@ -18,9 +18,7 @@ tests:
   - description: Pool is cleared on authentication error during minPoolSize population
     runOnRequirements:
       # failCommand appName requirements
-      - minServerVersion: "4.4"
-        serverless: forbid
-        auth: true
+      - auth: true
     operations:
       - name: failPoint
         object: testRunner
