@@ -638,16 +638,10 @@ write concern containing the following message:
 
 The server reports a `maxBsonObjectSize` in its `hello` response. This value defines the maximum size for documents that
 are inserted into the database. Documents that are sent to the server but are not intended to be inserted into the
-database (e.g. command documents) have a size limit of `maxBsonObjectSize + 16KiB`. The following table specifies the
-size limits and the client behavior with regard to validating sizes depending on whether a server acknowledgement
-is expected:
-
-| Size limit                                                                                                                                                                                 | Acknowledgement expected                                                                                                                                                         | Acknowledgement not expected |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
-| The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the `document` field of an `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`. | MUST NOT validate, MUST rely on the server validation. This is to allow the server to proceed with the rest of the individual operations even if some of them violate the limit. | MUST validate.               |
-| The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.                                                                                                       | MUST NOT validate, MUST rely on the server validation. This is to allow the server to proceed with the rest of the individual operations even if some of them violate the limit. | MUST validate.               |
-| The size of an entry in the `nsInfo` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.                                                                                                    | MAY rely on the server validation.                                                                                                                                               | MUST validate.               |
-| The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.                                                                                                  | MAY rely on the server validation.                                                                                                                                               | MUST validate.               |
+database (e.g. command documents) have a size limit of `maxBsonObjectSize + 16KiB`. Clients MUST NOT validate the size
+of BSON documents against these limits, and MUST rely on server validation, following the
+["Where possible, depend on server to return errors"](https://github.com/mongodb/specifications/blob/f8dbd2469f18d093f917efa1f758024bca5d3aaa/source/driver-mantras.md#where-possible-depend-on-server-to-return-errors)
+mantra. For simplicity, this requirement remains in force even when a server acknowledgement is not expected.
 
 See [SERVER-10643](https://jira.mongodb.org/browse/SERVER-10643) for more details on these size limits.
 
