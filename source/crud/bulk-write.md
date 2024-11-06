@@ -634,12 +634,10 @@ write concern containing the following message:
 
 > Cannot request unacknowledged write concern and ordered writes
 
-### Size Limits
+### BSON Document Size Limit
 
-The server reports a `maxBsonObjectSize` in its `hello` response. This value defines the maximum size for documents that
-are inserted into the database. Documents that are sent to the server but are not intended to be inserted into the
-database (e.g. command documents) have a size limit of `maxBsonObjectSize + 16KiB`. Clients MUST NOT validate the size
-of BSON documents against these limits, and MUST rely on server validation, following the
+The server limits the size of a BSON document. Clients MUST NOT validate the size
+of a BSON document, and MUST rely on server validation, following the
 ["Where possible, depend on server to return errors"](https://github.com/mongodb/specifications/blob/f8dbd2469f18d093f917efa1f758024bca5d3aaa/source/driver-mantras.md#where-possible-depend-on-server-to-return-errors)
 mantra. For simplicity, this requirement remains in force even when a server acknowledgement is not expected.
 
