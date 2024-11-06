@@ -634,15 +634,6 @@ write concern containing the following message:
 
 > Cannot request unacknowledged write concern and ordered writes
 
-### BSON Document Size Limit
-
-The server limits the size of a BSON document. Clients MUST NOT validate the size
-of a BSON document, and MUST rely on server validation, following the
-["Where possible, depend on server to return errors"](https://github.com/mongodb/specifications/blob/f8dbd2469f18d093f917efa1f758024bca5d3aaa/source/driver-mantras.md#where-possible-depend-on-server-to-return-errors)
-mantra. For simplicity, this requirement remains in force even when a server acknowledgement is not expected.
-
-See [SERVER-10643](https://jira.mongodb.org/browse/SERVER-10643) for more details on these size limits.
-
 ## Auto-Encryption
 
 If `MongoClient.bulkWrite` is called on a `MongoClient` configured with `AutoEncryptionOpts`, drivers MUST return an
@@ -914,6 +905,15 @@ number was determined by constructing `OP_MSG` messages with various fields atta
 
 Drivers are required to use this value even if they are capable of determining the exact size of the message prior to
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
+
+### Why is there no requirement to validate the size of a BSON document?
+
+In accordance with the
+["_Where possible, depend on server to return errors_"](https://github.com/mongodb/specifications/blob/f8dbd2469f18d093f917efa1f758024bca5d3aaa/source/driver-mantras.md#where-possible-depend-on-server-to-return-errors)
+mantra, drivers should rely on the server validating the size. Such reliance is not possible when a server
+acknowledgement is not expected, but for simplicity and given that unacknowledged writes does not provide a way to know
+whether a write succeeded on the server, it does not seem necessary to help an application with that info
+in the specific situation when the BSON document size limit is exceeded.  
 
 ## **Changelog**
 
