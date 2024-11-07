@@ -81,6 +81,10 @@ tests:
               command:
                 txnNumber: { $$exists: true }
           - commandStartedEvent:
+              commandName: insert
+              command:
+                txnNumber: { $$exists: true }
+          - commandStartedEvent:
               commandName: update
               command:
                 txnNumber: { $$exists: true }
@@ -285,6 +289,10 @@ tests:
     expectEvents:
       - client: client0
         events:
+          - commandStartedEvent:
+              commandName: insert
+              command:
+                txnNumber: { $$exists: true }
           - commandStartedEvent:
               commandName: insert
               command:
@@ -522,11 +530,13 @@ tests:
         name: bulkWrite
         arguments:
           requests:
-            updateMany:
-              filter: {}
-              update: { $set: { x: 1 } }
-            deleteMany:
-              filter: {}
+            - 
+              updateMany:
+                filter: {}
+                update: { $set: { x: 1 } }
+            - 
+              deleteMany:
+                filter: {}
     expectEvents:
       - client: client0
         events:
