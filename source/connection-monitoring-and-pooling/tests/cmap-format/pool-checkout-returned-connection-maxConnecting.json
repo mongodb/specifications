@@ -71,6 +71,10 @@
     {
       "name": "checkIn",
       "connection": "conn0"
+    },
+    {
+      "name": "wait",
+      "ms": 100
     }
   ],
   "events": [

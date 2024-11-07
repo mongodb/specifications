@@ -50,6 +50,9 @@ operations:
   # out the idle connection before the two new connections are ready.
   - name: checkIn
     connection: conn0
+  # Wait for 100ms to let one of the blocked checkOut operations complete.
+  - name: wait
+    ms: 100
 events:
   # main thread checking out a Connection and holding it
   - type: ConnectionCreated
