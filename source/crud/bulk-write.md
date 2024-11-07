@@ -912,8 +912,8 @@ In accordance with the
 ["_Where possible, depend on server to return errors_"](https://github.com/mongodb/specifications/blob/f8dbd2469f18d093f917efa1f758024bca5d3aaa/source/driver-mantras.md#where-possible-depend-on-server-to-return-errors)
 mantra, drivers should rely on the server validating the size. Such reliance is not possible when a server
 acknowledgement is not expected, but for simplicity and given that unacknowledged writes does not provide a way to know
-whether a write succeeded on the server, it does not seem necessary to help an application with that info
-in the specific situation when the BSON document size limit is exceeded.  
+whether a write succeeded on the server, it does not seem necessary to help an application with that info in the
+specific situation when the BSON document size limit is exceeded.
 
 ## **Changelog**
 
