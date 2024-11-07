@@ -203,6 +203,19 @@ Drivers MUST raise an error if the user provides or if defaults would result in 
 Driver Sessions spec disallows using unacknowledged writes in a session. The error message MUST contain "transactions do
 not support unacknowledged write concerns".
 
+If a higher level object, such as a Collection, is created inside a transaction, their write concern option MUST be
+ignored if provided and the transaction level write concern used instead. An example of expected behaviour is:
+
+```python
+client = MongoClient("mongodb://host/?readPreference=nearest")
+coll = client.db.test
+with client.start_session() as s:
+    with s.start_transaction():
+        w_0_coll = db.get_collection("w_0_coll", writeConcern=WriteConcern(w=0))
+        # This is allowed, the write concern of the transaction is used instead of w=0 from the collection.
+        w_0_coll.insert_one({}, session=s)
+```
+
 #### readPreference
 
 The read preference to use for all read operations in this transaction.
@@ -1073,6 +1086,8 @@ has been disabled, drivers can readily trust that a majority write concern is du
 objective of avoiding duplicate commits.
 
 ## **Changelog**
+
+- 2024-11-01: Clarify collection options inside txn.
 
 - 2024-11-01: Specify that ClientSession must be unpinned when ended.
 
