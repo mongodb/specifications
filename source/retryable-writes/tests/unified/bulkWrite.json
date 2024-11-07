@@ -141,6 +141,16 @@
             },
             {
               "commandStartedEvent": {
+                "commandName": "insert",
+                "command": {
+                  "txnNumber": {
+                    "$$exists": true
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
                 "commandName": "update",
                 "command": {
                   "txnNumber": {
@@ -555,6 +565,16 @@
         {
           "client": "client0",
           "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "command": {
+                  "txnNumber": {
+                    "$$exists": true
+                  }
+                }
+              }
+            },
             {
               "commandStartedEvent": {
                 "commandName": "insert",
@@ -991,19 +1011,23 @@
           "object": "collection0",
           "name": "bulkWrite",
           "arguments": {
-            "requests": {
-              "updateMany": {
-                "filter": {},
-                "update": {
-                  "$set": {
-                    "x": 1
+            "requests": [
+              {
+                "updateMany": {
+                  "filter": {},
+                  "update": {
+                    "$set": {
+                      "x": 1
+                    }
                   }
                 }
               },
-              "deleteMany": {
-                "filter": {}
+              {
+                "deleteMany": {
+                  "filter": {}
+                }
               }
-            }
+            ]
           }
         }
       ],
