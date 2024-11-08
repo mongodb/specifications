@@ -1374,6 +1374,8 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 ## Changelog
 
+- 2024-11-01: Fixed race condition in pool-checkout-returned-connection-maxConnecting.yml test.
+
 - 2024-01-23: Migrated from reStructuredText to Markdown.
 
 - 2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent
