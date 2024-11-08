@@ -510,10 +510,7 @@ Below are English descriptions of other items that should be tested:
 ### WriteConcern
 
 1. Commands supporting a write concern MUST NOT send the default write concern to the server.
-2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server in the
-    command.
-3. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
-4. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
+2. Commands supporting a write concern MUST send any non-default write concern to the server in the command.
 
 ## Reference Implementation
 
