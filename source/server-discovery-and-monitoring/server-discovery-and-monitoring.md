@@ -204,7 +204,7 @@ Fields:
     (`electionId`, `setVersion`) tuple.
 - `maxSetVersion`: an integer or null. The largest setVersion ever reported by a primary. It may not monotonically
     increase, as electionId takes precedence in ordering Default null. Part of the (`electionId`, `setVersion`) tuple.
-- `servers`: a set of ServerDescription instances. Default contains one server: "localhost:27017", ServerType Unknown.
+- `servers`: a set of ServerDescription instances, one for each of the servers in the topology.
 - `stale`: a boolean for single-threaded clients, whether the topology must be re-scanned. (Not related to
     maxStalenessSeconds, nor to stale primaries.)
 - `compatible`: a boolean. False if any server's wire protocol version range is incompatible with the client's. Default
@@ -1920,6 +1920,8 @@ Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6 contr
 oversaw the specification process.
 
 ## Changelog
+
+- 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
 
 - 2024-10-29: Removed references to `getLastError`
 

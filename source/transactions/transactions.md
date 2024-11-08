@@ -64,7 +64,8 @@ string error labels. Drivers may also add error labels to errors that they retur
 
 #### Transient Transaction Error
 
-Any command or network error that includes the "TransientTransactionError" error label in the "errorLabels" field.
+Any command, network, or driver error that includes the "TransientTransactionError" error label in the "errorLabels"
+field.
 
 ### **Naming variations**
 
@@ -201,6 +202,19 @@ If the user supplies an explicit writeConcern via a method option, the driver MU
 Drivers MUST raise an error if the user provides or if defaults would result in an unacknowledged writeConcern. The
 Driver Sessions spec disallows using unacknowledged writes in a session. The error message MUST contain "transactions do
 not support unacknowledged write concerns".
+
+If a higher level object, such as a Collection, is created inside a transaction, their write concern option MUST be
+ignored if provided and the transaction level write concern used instead. An example of expected behaviour is:
+
+```python
+client = MongoClient("mongodb://host/?readPreference=nearest")
+coll = client.db.test
+with client.start_session() as s:
+    with s.start_transaction():
+        w_0_coll = db.get_collection("w_0_coll", writeConcern=WriteConcern(w=0))
+        # This is allowed, the write concern of the transaction is used instead of w=0 from the collection.
+        w_0_coll.insert_one({}, session=s)
+```
 
 #### readPreference
 
@@ -640,6 +654,7 @@ Drivers MUST unpin a ClientSession in the following situations:
     be unpinned before performing server selection for the first operation of the new transaction.
 5. A non-transactional operation is performed using the ClientSession. The session MUST be unpinned before performing
     server selection for the operation.
+6. The ClientSession is ended either explicitly via `endSession` method, or implicitly when supported by the driver.
 
 Note that committing a transaction on a pinned ClientSession MUST NOT unpin the session as `commitTransaction` may be
 called multiple times.
@@ -673,12 +688,13 @@ string error labels.
 
 ### Transient Transaction Error
 
-Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
-error or server selection error encountered running any command besides commitTransaction in a transaction. In the case
-of command errors, the server adds the label; in the case of network errors or server selection errors where the client
-receives no server reply, the client MUST add the label. If a network error occurs while running the commitTransaction
-command then it is not known whether the transaction committed or not, and thus the "TransientTransactionError" label
-MUST NOT be added.
+- Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. In the case of
+    command errors, the server adds the label.
+- Any network error or server selection error encountered running any command besides commitTransaction in a
+    transaction. In the case of network errors or server selection errors where the client receives no server reply, the
+    client MUST add the label. If a network error occurs while running the commitTransaction command then it is not
+    known whether the transaction committed or not, and thus the "TransientTransactionError" label MUST NOT be added.
+- `PoolClearedError`. Driver MUST add the label to this error.
 
 #### Retrying transactions that fail with TransientTransactionError
 
@@ -1071,7 +1087,11 @@ objective of avoiding duplicate commits.
 
 ## **Changelog**
 
-- 2024-10-28: Clarify when drivers must add TransientTransactionError label.
+- 2024-11-01: Clarify collection options inside txn.
+
+- 2024-11-01: Specify that ClientSession must be unpinned when ended.
+
+- 2024-10-31: Clarify when drivers must add TransientTransactionError label.
 
 - 2024-10-28: Note read preference must always be primary in a transaction.
 

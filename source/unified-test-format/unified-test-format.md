@@ -775,8 +775,7 @@ The structure of this object is as follows:
 
 <span id="test_operations"></span>
 
-- `operations`: Required array of one or more [operation](#operation) objects. List of operations to be executed for the
-    test case.
+- `operations`: Required array of [operation](#operation) objects. List of operations to be executed for the test case.
 
 <span id="test_expectEvents"></span>
 
@@ -1020,7 +1019,8 @@ The structure of this object is as follows:
     The structure of this object is as follows:
 
     - `command`: Optional document. A value corresponding to the expected command document. Test runners MUST follow the
-        rules in [Evaluating Matches](#evaluating-matches) when processing this assertion.
+        rules in [Evaluating Matches](#evaluating-matches) when processing this assertion and match the value as a
+        root-level document.
     - `commandName`: Optional string. Test runners MUST assert that the command name matches this value.
     - `databaseName`: Optional string. Test runners MUST assert that the database name matches this value. The YAML file
         SHOULD use an [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for this value (e.g.
@@ -1036,7 +1036,8 @@ The structure of this object is as follows:
     The structure of this object is as follows:
 
     - `reply`: Optional document. A value corresponding to the expected reply document. Test runners MUST follow the rules
-        in [Evaluating Matches](#evaluating-matches) when processing this assertion.
+        in [Evaluating Matches](#evaluating-matches) when processing this assertion and match the value as a root-level
+        document.
     - `commandName`: Optional string. Test runners MUST assert that the command name matches this value.
     - `databaseName`: Optional string. Test runners MUST assert that the database name matches this value. The YAML file
         SHOULD use an [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for this value (e.g.
@@ -1663,6 +1664,10 @@ below.
 When executing an `aggregate` operation, the test runner MUST fully iterate the result. This will ensure consistent
 behavior between drivers that eagerly create a server-side cursor and those that do so lazily when iteration begins.
 
+When evaluating the iterated result for [expectResult](#operation_expectResult), the number of actual and expected
+documents MUST be equal and each document value within the `expectResult` array MUST be matched as a root-level document
+(for [Evaluating Matches](#evaluating-matches)).
+
 #### bulkWrite
 
 These considerations only apply to the `MongoCollection.bulkWrite` method. See [clientBulkWrite](#clientbulkwrite) for
@@ -1765,11 +1770,18 @@ This operation proxies the collection's `dropSearchIndex` helper with the same a
 When executing a `find` operation, the test runner MUST fully iterate the result. This will ensure consistent behavior
 between drivers that eagerly create a server-side cursor and those that do so lazily when iteration begins.
 
+When evaluating the iterated result for [expectResult](#operation_expectResult), the number of actual and expected
+documents MUST be equal and each document value within the `expectResult` array MUST be matched as a root-level document
+(for [Evaluating Matches](#evaluating-matches)).
+
 #### findOneAndReplace and findOneAndUpdate
 
 The `returnDocument` option for `findOneAndReplace` and `findOneAndUpdate` is documented as an enum with possible values
 "Before" and "After". Test files SHOULD express `returnDocument` as a string and test runners MUST raise an error if its
 value does not case-insensitively match either enum value.
+
+When evaluating the result for [expectResult](#operation_expectResult), the document MUST be matched as a root-level
+document (for [Evaluating Matches](#evaluating-matches)).
 
 #### insertMany
 
@@ -1897,7 +1909,8 @@ first position (e.g. `rewind` in PHP).
 #### iterateUntilDocumentOrError
 
 Iterates the cursor until either a single document is returned or an error is raised. This operation takes no arguments.
-If [expectResult](#operation_expectResult) is specified, it SHOULD be a single document.
+If [expectResult](#operation_expectResult) is specified, it SHOULD be a single document and MUST be matched as a
+root-level document according to the rules in [Evaluating Matches](#evaluating-matches).
 
 Some specification sections (e.g.
 [Iterating the Change Stream](../change-streams/tests/README.md#iterating-the-change-stream)) caution drivers that
@@ -2709,15 +2722,7 @@ actual value of `1.0` (e.g. `ok` field in a server response) but would not match
 #### Allowing Extra Fields in Root-level Documents
 
 When matching root-level documents, test runners MUST permit the actual document to contain additional fields not
-present in the expected document. Examples of root-level documents include, but are not limited to:
-
-- `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)
-- `reply` for [CommandSucceededEvent](#expectedEvent_commandSucceededEvent)
-- [expectResult](#operation_expectResult) for `findOneAndUpdate` [Collection Operations](#collection-operations)
-- [expectResult](#operation_expectResult) for [iterateUntilDocumentOrError](#iterateuntildocumentorerror)
-- [expectedError_errorResponse](#expectedError_errorResponse)
-- each array element in [expectResult](#operation_expectResult) for [find](#find) or
-    [collection_aggregate](#collection_aggregate) [Collection Operations](#collection-operations)
+present in the expected document.
 
 For example, the following documents match:
 
@@ -2745,14 +2750,46 @@ is not always feasible or relevant for a test to exhaustively specify all fields
 time in `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)).
 
 When the expected value is an array, test runners MUST differentiate between an array of values, which may be documents,
-(e.g. `distinct`) and an array of root-level documents (e.g. `find`, `aggregate`). For example, the following array of
-documents would not match if returned by `distinct`, but would match if returned via `find` (after iterating the
-cursor):
+(e.g. `distinct`) and an array of root-level documents derived from an iterable result (e.g. `find`, `aggregate`). For
+example, the following array of documents would not match if returned by `distinct`, but would match if returned via
+`find` (after iterating the cursor):
 
 ```yaml
 expected: [ { x: 1 }, { x: 2 } ]
 actual: [ { x: 1, y: 1 }, { x: 2, y: 2 } ]
 ```
+
+##### Examples of Root-level Documents
+
+Contexts where one might encounter a root-level document include:
+
+- `command` for [CommandStartedEvent](#expectedEvent_commandStartedEvent)
+
+- `reply` for [CommandSucceededEvent](#expectedEvent_commandSucceededEvent)
+
+- [expectResult](#operation_expectResult) for operations that return a document. Operations include:
+
+    - findOneAndDelete, [findOneAndReplace](#findoneandreplace-and-findoneandupdate), and
+        [findOneAndUpdate](#findoneandreplace-and-findoneandupdate)
+    - [iterateUntilDocumentOrError](#iterateuntildocumentorerror)
+    - [iterateOnce](#iterateonce)
+
+- [expectResult](#operation_expectResult) array elements for operations that return an iterable of documents. Operations
+    include:
+
+    - [aggregate](#aggregate)
+    - [find](#find))
+    - [listCollections](#listcollections), listDatabases, and listIndexes
+    - [listSearchIndexes](#listsearchindexes)
+    - [runCursorCommand](#runcursorcommand)
+
+- [errorResponse](#expectedError_errorResponse) for [expectedError](#expectederror)
+
+- `writeErrors` object values for [expectedError](#expectederror)
+
+- `writeConcernErrors` array elements for [expectedError](#expectederror)
+
+- `data` for [expectedLogMessage](#expectedlogmessage)
 
 #### Document Key Order Variation
 
@@ -2861,6 +2898,8 @@ the test runner MUST fetch that entity and assert that the actual value matches 
 [Evaluating Matches](#evaluating-matches); otherwise, the test runner MUST raise an error for an undefined or mistyped
 entity. The YAML file SHOULD use an [alias node](https://yaml.org/spec/1.2/spec.html#id2786196) for the entity name.
 
+This operator does not influence whether or not an actual document value is considered a root-level document.
+
 This operator is primarily used to assert identifiers for uploaded GridFS files.
 
 An example of this operator follows:
@@ -2910,6 +2949,8 @@ excluding an array element because
 [Arrays Must Contain the Same Number of Elements](#arrays-must-contain-the-same-number-of-elements). The test runner
 MUST assert that the actual value either does not exist or matches the expected value. Matching the expected value MUST
 use the standard rules in [Evaluating Matches](#evaluating-matches), which means that it may contain special operators.
+
+This operator does not influence whether or not an actual document value is considered a root-level document.
 
 This operator is primarily used to assert driver-optional fields from the CRUD spec (e.g. `insertedId` for
 InsertOneResult, `writeResult` for BulkWriteException).
@@ -2980,9 +3021,13 @@ Syntax:
 
 This operator may be used anywhere a matched value is expected (including [expectResult](#operation_expectResult)) and
 the actual value is an extended JSON string. The test runner MUST parse the actual value into a BSON document and match
-it against the expected value. Matching the expected value MUST use the standard rules in
-[Evaluating Matches](#evaluating-matches), which means that it may contain special operators. This operator is primarily
-used to assert on extended JSON commands and command replies included in log messages.
+it against the expected value.
+
+Matching the expected value MUST use the standard rules in [Evaluating Matches](#evaluating-matches), which means that
+it may contain special operators. The actual value MUST NOT be considered a root-level document (i.e. extra fields are
+not permitted); however, [$$matchAsRoot](#matchasroot) may be used to change that behavior.
+
+This operator is primarily used to assert on extended JSON commands and command replies included in log messages.
 
 ##### $$matchAsRoot
 
@@ -3504,6 +3549,10 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-10-31: Test operations array may be empty.
+
+- 2024-10-29: List more examples of root-level documents
 
 - 2024-10-24: Document `namespace` option for `failCommand` fail point.
 

@@ -79,7 +79,7 @@ An external service providing fixed-size encryption/decryption. Only data keys a
 
 A map of KMS providers to credentials. Configured client-side. Example:
 
-```python
+```javascript
 kms_providers = {
    "aws": {
       "accessKeyId": AWS_KEYID,
@@ -93,19 +93,18 @@ kms_providers = {
 
 **KMS provider**
 
-A configured KMS. Identified by a key in the KMS providers map. The key has the form "<KMS provider type>" or
-"<KMS provider type>:<KMS
-provider name>". Examples: "aws" or "aws:myname". In [libmongocrypt](#libmongocrypt), the key
+A configured KMS. Identified by a key in the KMS providers map. The key has the form `<KMS provider type>` or
+`<KMS provider type>:<KMS provider name>`. Examples: `aws` or `aws:myname`. In [libmongocrypt](#libmongocrypt), the key
 is referred to as the KMS ID.
 
 **KMS provider type**
 
-The type of backing KMS. Identified by the string: "aws", "azure", "gcp", "kmip", or "local".
+The type of backing KMS. Identified by the string: `aws`, `azure`, `gcp`, `kmip`, or `local`.
 
 **KMS provider name**
 
 An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the same KMS provider type
-(e.g. "aws:name1" and "aws:name2" can refer to different AWS accounts).
+(e.g. `aws:name1` and `aws:name2` can refer to different AWS accounts).
 
 **Customer Master Key (CMK)**
 
@@ -143,19 +142,19 @@ See also:
 One of the data formats of [BSON binary encrypted](../bson-binary-encrypted/binary-encrypted.md), representing an
 encoded BSON document containing encrypted ciphertext and metadata.
 
-**FLE**
+**Client-Side Field Level Encryption (CSFLE)**
 
-FLE is the first version of Client-Side Field Level Encryption. FLE is almost entirely client-side with the exception of
-server-side JSON schema.
+CSFLE is the first version of In-Use Encryption. CSFLE is almost entirely client-side with the exception of server-side
+JSON schema.
 
-**Queryable Encryption**
+**Queryable Encryption (QE)**
 
-Queryable Encryption the second version of Client-Side Field Level Encryption. Data is encrypted client-side. Queryable
-Encryption supports indexed encrypted fields, which are further processed server-side.
+Queryable Encryption the second version of In-Use Encryption. Data is encrypted client-side. Queryable Encryption
+supports indexed encrypted fields, which are further processed server-side.
 
 **In-Use Encryption**
 
-Is an umbrella term describing the both FLE and Queryable Encryption.
+Is an umbrella term describing the both CSFLE and Queryable Encryption.
 
 **encryptedFields**
 
@@ -237,6 +236,7 @@ created_key_id = clientencryption.create_data_key("aws", opts)
 opts = EncryptOpts(key_id=created_key_id,
     algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Random")
 encrypted = clientencryption.encrypt("secret text", opts)
+# Decryption does not require the key ID or algorithm. The ciphertext indicates the key ID and algorithm used.
 decrypted = clientencryption.decrypt(encrypted)
 ```
 
@@ -854,7 +854,7 @@ Assume an exposition-only function $GetEncryptedFields(opts, collName, dbName, a
 options, $collName$ is the name of the collection, $dbName$ is the name of the database associated with that collection,
 and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by:
 
-1. Let $QualName$ be the string formed by joining$dbName$ and $collName$ with an ASCII dot `"."`.
+1. Let $QualName$ be the string formed by joining $dbName$ and $collName$ with an ASCII dot `"."`.
 2. If $opts$ contains an `"encryptedFields"` property, then $EF$ is the value of that property.
 3. Otherwise, if `AutoEncryptionOptions.encryptedFieldsMap` contains an element named by $QualName$, then $EF$ is the
     value of that element.
@@ -1325,8 +1325,7 @@ client = MongoClient(auto_encryption_opts=opts)
 opts = ClientEncryptionOpts (
    key_vault_client=client,
    key_vault_namespace="keyvault.datakeys",
-   kms_providers=kms,
-   bypass_auto_encryption=True)
+   kms_providers=kms)
 client_encryption = ClientEncryption(opts)
 
 accounts = client.db.accounts
@@ -2223,17 +2222,17 @@ KMIP support in the MongoDB server is a precedent. The server supports `--kmipSe
 TLS options may be useful for the AWS, Azure, and GCP KMS providers in a case where the default trust store does not
 include the needed CA certificates.
 
-### Why is it an error to have an FLE 1 and Queryable Encryption field in the same collection?
+### Why is it an error to have an CSFLE and Queryable Encryption field in the same collection?
 
-There is no technical limitation to having a separate FLE field and Queryable Encryption field in the same collection.
-Prohibiting FLE and Queryable Encryption in the same collection reduces complexity. From the product perspective, a
-random FLE field and a non-queryable Queryable Encryption field have the same behavior and similar security guarantees.
-A deterministic FLE field leaks more information then a deterministic Queryable Encryption field. There is not a
-compelling use case to use both FLE and Queryable Encryption in the same collection.
+There is no technical limitation to having a separate CSFLE field and Queryable Encryption field in the same collection.
+Prohibiting CSFLE and Queryable Encryption in the same collection reduces complexity. From the product perspective, a
+random CSFLE field and a non-queryable Queryable Encryption field have the same behavior and similar security
+guarantees. A deterministic CSFLE field leaks more information then a deterministic Queryable Encryption field. There is
+not a compelling use case to use both CSFLE and Queryable Encryption in the same collection.
 
 ### Is it an error to set schemaMap and encryptedFieldsMap?
 
-No. FLE and Queryable Encryption fields can coexist in different collections. The same collection cannot be in the
+No. CSFLE and Queryable Encryption fields can coexist in different collections. The same collection cannot be in the
 `encryptedFieldsMap` and `schemaMap`. [libmongocrypt](#libmongocrypt) will error if the same collection is specified in
 a `schemaMap` and `encryptedFieldsMap`.
 

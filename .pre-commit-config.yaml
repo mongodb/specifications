@@ -45,6 +45,11 @@ repos:
     types: [markdown]
     language: system
     entry: python3 scripts/check_links.py
+  - id: markdown-html-check
+    name: markdown-html-check
+    types: [markdown]
+    language: system
+    entry: python3 scripts/check_md_html.py
 
 - repo: https://github.com/tcort/markdown-link-check
   rev: v3.12.2

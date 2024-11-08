@@ -7,7 +7,7 @@ ______________________________________________________________________
 
 ## Abstract
 
-GridFS is a convention drivers use to store and retrieve BSON binary data (type "x05") that exceeds MongoDB"s
+GridFS is a convention drivers use to store and retrieve BSON binary data (type "x05") that exceeds MongoDB's
 BSON-document size limit of 16 MiB. When this data, called a **user file**, is written to the system, GridFS divides the
 file into **chunks** that are stored as distinct documents in a **chunks collection**. To retrieve a stored file, GridFS
 locates and returns all of its component chunks. Internally, GridFS creates a **files collection document** for each
@@ -30,7 +30,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 **Bucket name**
 
-A prefix under which a GridFS system"s collections are stored. Collection names for the files and chunks collections are
+A prefix under which a GridFS system's collections are stored. Collection names for the files and chunks collections are
 prefixed with the bucket name. The bucket name MUST be configurable by the user. Multiple buckets may exist within a
 single database. The default bucket name is "fs".
 
@@ -621,7 +621,7 @@ the point at which the application stopped reading won't be detected by the driv
 class GridFSBucket {
 
   /**
-   * Given a @id, delete this stored file"s files collection document and
+   * Given a @id, delete this stored file's files collection document and
    * associated chunks from a GridFS bucket.
    */
   void delete(TFileId id);
@@ -629,17 +629,17 @@ class GridFSBucket {
 }
 ```
 
-Deletes the stored file"s files collection document and associated chunks from the underlying database.
+Deletes the stored file's files collection document and associated chunks from the underlying database.
 
-As noted for download(), drivers that previously used id"s of a different type MAY implement a delete() method that
+As noted for download(), drivers that previously used id's of a different type MAY implement a delete() method that
 accepts that type, but MUST mark that method as deprecated.
 
 **Implementation details:**
 
 There is an inherent race condition between the chunks and files collections. Without some transaction-like behavior
 between these two collections, it is always possible for one client to delete a stored file while another client is
-attempting a read of the stored file. For example, imagine client A retrieves a stored file"s files collection document,
-client B deletes the stored file, then client A attempts to read the stored file"s chunks. Client A wouldn"t find any
+attempting a read of the stored file. For example, imagine client A retrieves a stored file's files collection document,
+client B deletes the stored file, then client A attempts to read the stored file's chunks. Client A wouldn"t find any
 chunks for the given stored file. To minimize the window of vulnerability of reading a stored file that is the process
 of being deleted, drivers MUST first delete the files collection document for a stored file, then delete its associated
 chunks.
@@ -648,6 +648,32 @@ If there is no such file listed in the files collection, drivers MUST raise an e
 orphaned chunks with files_id equal to id before raising the error.
 
 If a networking or server error occurs, drivers MUST raise an error.
+
+### File deletion by filename
+
+To rename all revisions of a stored file with the specified filename, drivers SHOULD provide the method
+`delete_by_name`:
+
+```javascript
+class GridFSBucket {
+
+  /**
+   * Deletes all stored files with the specified @filename from a GridFS bucket.
+   */
+  void delete_by_name(string filename);
+
+}
+```
+
+This method is an optimisation over deleting each revision of a stored file individually.
+
+**Implementation details:**
+
+Drivers MUST first find the `_id` field of all files collection documents with the given filename. Drivers MUST then
+delete all files collection documents with the found ids. Drivers MUST then delete all chunks with `files_id` in the
+found ids that were just deleted.
+
+If there are no files collection documents with the given filename, drivers MUST raise an error.
 
 ### Generic Find on Files Collection
 
@@ -798,7 +824,7 @@ return the bytes of the file in `[start, end)`. If "start" and "end" are equal n
 If either "start" or "end" is invalid, drivers MUST raise an error. These values are considered invalid if they are
 negative, greater than the file length, or if "start" is greater than "end".
 
-When performing partial reads, drivers SHOULD use the file"s "chunkSize" to calculate which chunks contain the desired
+When performing partial reads, drivers SHOULD use the file's "chunkSize" to calculate which chunks contain the desired
 section and avoid reading unneeded documents from the "chunks" collection.
 
 ### Renaming stored files
@@ -814,17 +840,40 @@ class GridFSBucket {
 }
 ```
 
-Sets the filename field in the stored file"s files collection document to the new filename.
+Sets the filename field in the stored file's files collection document to the new filename.
 
 **Implementation details:**
 
 Drivers construct and execute an update_one command on the files collection using `{ _id: @id }` as the filter and
 `{ $set : { filename : "new_filename" } }` as the update parameter.
 
-To rename multiple revisions of the same filename, users must retrieve the full list of files collection documents for a
-given filename and execute "rename" on each corresponding `_id`.
+If `renameByName` is not implemented to rename multiple revisions of the same filename, users must retrieve the full
+list of files collection documents for a given filename and execute "rename" on each corresponding `_id`.
 
 If there is no file with the given id, drivers MUST raise an error.
+
+### Renaming stored files by filename
+
+To rename all revisions of a stored file with the specified filename, drivers SHOULD provide the method
+`rename_by_name`:
+
+```javascript
+class GridFSBucket {
+
+  /**
+   * Renames all revisions of the stored file with the specified @filename.
+   */
+  void rename_by_name(string filename, string new_filename);
+
+}
+```
+
+**Implementation details:**
+
+Drivers construct and execute an update_many command on the files collection using `{ filename: @filename }` as the
+filter and `{ $set : { filename : "new_filename" } }` as the update parameter.
+
+If there is no file with the given filename, drivers MUST raise an error.
 
 ### Dropping an entire GridFS bucket
 
@@ -1042,6 +1091,7 @@ system?") it is a potential area of growth for the future.
 
 ## Changelog
 
+- 2024-10-30: Add `delete_by_name` and `rename_by_name`
 - 2024-10-28: Removed deprecated fields from tests: `md5`, `contentType`, `aliases`
 - 2024-02-27: Migrated from reStructuredText to Markdown.
 - 2016-05-10: Support custom file ids

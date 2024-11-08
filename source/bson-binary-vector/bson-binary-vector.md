@@ -1,6 +1,6 @@
 # BSON Binary Subtype 9 - Vector
 
-- Status: Pending
+- Status: Accepted
 - Minimum Server Version: N/A
 
 ______________________________________________________________________

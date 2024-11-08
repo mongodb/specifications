@@ -506,13 +506,13 @@ test.
     - Expect that exactly one document is returned with the "masterKey.provider" equal to `provider_name`.
 
     - Check that `client` captured a command_started event for the `insert` command containing a majority writeConcern.
-2. Call `client_encryption.encrypt()` with the value "hello \<provider_name>", the algorithm
+2. Call `client_encryption.encrypt()` with the value `"hello <provider_name>"`, the algorithm
     `AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic`, and the `key_id` of `datakey_id`.
     - Expect the return value to be a BSON binary subtype 6, referred to as `encrypted`.
     - Use `client_encrypted` to insert `{ _id: "<provider_name>", "value": <encrypted> }` into `db.coll`.
-    - Use `client_encrypted` to run a find querying with `_id` of "\<provider_name>" and expect `value` to be "hello
-        \<provider_name>".
-3. Call `client_encryption.encrypt()` with the value "hello \<provider_name>", the algorithm
+    - Use `client_encrypted` to run a find querying with `_id` of `"<provider_name>"` and expect `value` to be
+        `"hello <provider_name>"`.
+3. Call `client_encryption.encrypt()` with the value `"hello <provider_name>"`, the algorithm
     `AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic`, and the `key_alt_name` of `<provider_name>_altname`.
     - Expect the return value to be a BSON binary subtype 6. Expect the value to exactly match the value of `encrypted`.
 4. Test explicit encrypting an auto encrypted field.
@@ -542,7 +542,7 @@ Run the following tests twice, parameterized by a boolean `withExternalKeyVault`
     Configure both objects with `keyVaultNamespace` set to `keyvault.datakeys`.
 
     Configure `client_encrypted` to use the schema [external/external-schema.json](../external/external-schema.json) for
-    `db.coll` by setting a schema map like: `{ "db.coll": <contents of external-schema.json>}`
+    `db.coll` by setting a schema map like: `{ "db.coll": <contents of external-schema.json> }`
 
     If `withExternalKeyVault == true`, configure both objects with an external key vault client. The external client MUST
     connect to the same MongoDB cluster that is being tested against, except it MUST use the username `fake-user` and
@@ -1013,7 +1013,7 @@ mongocryptd.
     Configure with the `keyVaultNamespace` set to `keyvault.datakeys`.
 
     Configure `client_encrypted` to use the schema [external/external-schema.json](../external/external-schema.json) for
-    `db.coll` by setting a schema map like: `{ "db.coll": <contents of external-schema.json>}`
+    `db.coll` by setting a schema map like: `{ "db.coll": <contents of external-schema.json> }`
 
     Configure the following `extraOptions`:
 
@@ -1063,7 +1063,7 @@ The following tests that setting `mongocryptdBypassSpawn=true` really does bypas
     Configure with the `keyVaultNamespace` set to `keyvault.datakeys`.
 
     Configure `client_encrypted` to use the schema [external/external-schema.json](../external/external-schema.json) for
-    `db.coll` by setting a schema map like: `{ "db.coll": <contents of external-schema.json>}`
+    `db.coll` by setting a schema map like: `{ "db.coll": <contents of external-schema.json> }`
 
     Configure the following `extraOptions`:
 

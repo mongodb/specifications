@@ -215,7 +215,7 @@ normally.
 
 ### Connection strings, and results
 
-- <mongodb://localhost:27017/?compressors=snappy>
+- `mongodb://localhost:27017/?compressors=snappy`
 
     mongod should have logged the following (the exact log output may differ depending on server version):
 
@@ -266,7 +266,7 @@ normally.
     { "ok" : 1 }
     ```
 
-- <mongodb://localhost:27017/?compressors=snoopy>
+- `mongodb://localhost:27017/?compressors=snoopy`
 
     mongod should have logged the following:
 
@@ -287,7 +287,7 @@ normally.
     { "ok" : 1 }
     ```
 
-- <mongodb://localhost:27017/?compressors=snappy,zlib>
+- `mongodb://localhost:27017/?compressors=snappy,zlib`
 
     mongod should have logged the following:
 
@@ -301,7 +301,7 @@ normally.
     { "ok" : 1 }
     ```
 
-- <mongodb://localhost:27017/?compressors=zlib,snappy>
+- `mongodb://localhost:27017/?compressors=zlib,snappy`
 
     mongod should have logged the following:
 

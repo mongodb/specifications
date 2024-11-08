@@ -427,6 +427,16 @@ class DistinctOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+
+  /**
+   * The index to use. Specify either the index name as a string or the index key pattern.
+   * If specified, then the query system will only consider plans using the hinted index.
+   *
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  hint: Optional<(String | Document)>;
 }
 
 enum CursorType {
@@ -762,6 +772,11 @@ if (limit) {
 pipeline.push({'$group': {'_id': 1, 'n': {'$sum': 1}}})
 ```
 
+Due to countDocuments using the `$match` aggregation pipeline stage, certain query operators cannot be used in
+countDocuments. This includes the `$where` and `$near` query operators, among others. Drivers MUST document these
+[restrictions](https://www.mongodb.com/docs/manual/reference/operator/aggregation/match/#restrictions) in their
+documentation.
+
 The count of documents is returned in the `n` field, similar to the `count` command. countDocuments options other than
 filter, skip, and limit are added as options to the `aggregate` command.
 
@@ -814,6 +829,13 @@ database-level aggregation will allow users to receive a cursor from these colle
 #### Write
 
 ##### Insert, Update, Replace, Delete, and Bulk Writes
+
+###### Generated identifiers
+
+The insert and bulk insert operations described below MUST generate identifiers for all documents that do not already
+have them. These identifiers SHOULD be prepended to the document so they are the first field, in order to prevent the
+server from spending time re-ordering the document. If a document already has a user-provided identifier, the driver MAY
+re-order the document so the identifier is the first field.
 
 ```typescript
 interface Collection {
@@ -912,7 +934,7 @@ class BulkWriteOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_INSERT, OP_UPDATE, or OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -947,7 +969,7 @@ class InsertOneOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -969,7 +991,7 @@ class InsertManyOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -1009,7 +1031,7 @@ class UpdateOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -1089,7 +1111,7 @@ class ReplaceOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    */
@@ -1971,7 +1993,7 @@ class FindOneAndReplaceOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    */
   bypassDocumentValidation: Optional<Boolean>;
@@ -2089,7 +2111,7 @@ class FindOneAndUpdateOptions {
   /**
    * If true, allows the write to opt-out of document level validation.
    *
-   * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
+   * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    */
   bypassDocumentValidation: Optional<Boolean>;
@@ -2473,6 +2495,14 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-11-04: Always send a value for `bypassDocumentValidation` if it was specified.
+
+- 2024-11-01: Add hint to DistinctOptions
+
+- 2024-10-30: Document query limitations in `countDocuments`.
+
+- 2024-10-28: Clarified that generated identifiers should be prepended to documents.
 
 - 2024-10-01: Add sort option to `replaceOne` and `updateOne`.
 
