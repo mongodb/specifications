@@ -634,22 +634,6 @@ write concern containing the following message:
 
 > Cannot request unacknowledged write concern and ordered writes
 
-### Size Limits
-
-The server reports a `maxBsonObjectSize` in its `hello` response. This value defines the maximum size for documents that
-are inserted into the database. Documents that are sent to the server but are not intended to be inserted into the
-database (e.g. command documents) have a size limit of `maxBsonObjectSize + 16KiB`. When an acknowledged write concern
-is used, drivers MUST NOT perform any checks related to these size limits and MUST rely on the server to raise an error
-if a limit is exceeded. However, when an unacknowledged write concern is used, drivers MUST raise an error if one of the
-following limits is exceeded:
-
-- The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the `document` field of an
-    `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
-- The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.
-- The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.
-
-See [SERVER-10643](https://jira.mongodb.org/browse/SERVER-10643) for more details on these size limits.
-
 ## Auto-Encryption
 
 If `MongoClient.bulkWrite` is called on a `MongoClient` configured with `AutoEncryptionOpts`, drivers MUST return an
@@ -922,7 +906,18 @@ number was determined by constructing `OP_MSG` messages with various fields atta
 Drivers are required to use this value even if they are capable of determining the exact size of the message prior to
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
+### Why is there no requirement to validate the size of a BSON document?
+
+Following
+["_Where possible, depend on server to return errors_"](https://github.com/mongodb/specifications/blob/f8dbd2469f18d093f917efa1f758024bca5d3aaa/source/driver-mantras.md#where-possible-depend-on-server-to-return-errors),
+drivers should rely on the server to return errors about exceeded size limits. Such reliance is not possible for
+unacknowledged writes. This specification previously required drivers to check size limits for unacknowledged writes.
+The requirement has since been removed. Checking size limits complicates some driver implementations. Returning a driver
+error in this specific situation does not seem helpful enough to require size checks.
+
 ## **Changelog**
+
+- 2024-11-05: Updated the requirements regarding the size validation.
 
 - 2024-10-07: Error if `w:0` is used with `ordered=true` or `verboseResults=true`.
 
