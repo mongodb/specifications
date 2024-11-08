@@ -1304,7 +1304,12 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
         hostname that does not match any of list of allowed hosts, the driver MUST raise a client-side error without
         invoking any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname
         check MUST be performed after SRV record resolution, if applicable. This property is only required for drivers
-        that support the [Human Authentication Flow](#human-authentication-flow).
+        that support the [Human Authentication Flow](#human-authentication-flow).\
+        The default list of ALLOWED_HOSTS MUST
+        NOT be applied when using an [OIDC Callback](#oidc-callback) or `ENVIRONMENT`. There is no host restriction
+        applied to machine callbacks.\
+        The driver MUST raise an error if `ALLOWED_HOSTS` along with an
+        [OIDC Callback](#oidc-callback) or `ENVIRONMENT`, so the user is made aware that it will not be applied.
 
 <span id="built-in-provider-integrations"/>
 
@@ -2133,6 +2138,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2024-11-08: Add clarification on the handling of `ALLOWED_HOSTS` for OIDC machine callbacks.
 
 - 2024-10-02: Add Kubernetes built-in OIDC provider integration.
 
