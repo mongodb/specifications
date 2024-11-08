@@ -871,7 +871,8 @@ if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
         topologyDescription.maxSetVersion = serverDescription.setVersion
     else:
         # Stale primary.
-        # replace serverDescription with a default ServerDescription of type "Unknown"
+        # replace serverDescription with a default ServerDescription of type "Unknown" and an error
+        # field describing that that primary was stale
         checkIfHasPrimary()
         return
 else:
@@ -889,7 +890,9 @@ else:
             )
         ):
             # Stale primary.
-            # replace serverDescription with a default ServerDescription of type "Unknown"
+            # replace serverDescription with a default ServerDescription of type "Unknown" and an
+            # error field describing that that primary was stale
+
             checkIfHasPrimary()
             return
 
@@ -921,9 +924,11 @@ checkIfHasPrimary()
 ```
 
 A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
-should be none or one) and replaces its description with a default ServerDescription of type "Unknown." A multi-threaded
-client MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
-possible.
+should be none or one) and replaces its description with a default ServerDescription of type "Unknown". Additionally,
+the `error` field of the `ServerDescription` object MUST include a descriptive error explaining that it was invalidated
+because the primary was determined to be stale. Drivers MAY additionally specify whether this was due to an electionId
+or setVersion mismatch. A multi-threaded client MUST
+[request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
 the connections are all bad because the old primary has closed its sockets. If the old primary server version is 4.2 or
