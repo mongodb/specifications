@@ -1921,9 +1921,9 @@ oversaw the specification process.
 
 ## Changelog
 
-- 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
+- 2024-11-11: Removed references to `getLastError`
 
-- 2024-10-29: Removed references to `getLastError`
+- 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
 
 - 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
 

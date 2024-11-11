@@ -489,7 +489,7 @@ Yes but as of 2.6 the existing getLastError behavior is supported for backward c
 
 ## Changelog
 
-- 2024-10-30: Add note that getLastError has been removed from the server.
+- 2024-11-11: Add note that getLastError has been removed from the server.
 
 - 2024-07-31: Migrated from reStructuredText to Markdown.
 
