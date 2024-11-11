@@ -1109,7 +1109,7 @@ def parseGle(response):
     if "err" in response:
         handleError(CommandError(response, response["err"], response["code"]))
 
-# Parse response to any command besides getLastError.
+# Parse response to any command
 def parseCommandResponse(response):
     if not response["ok"]:
         handleError(CommandError(response, response["errmsg"], response["code"]))
@@ -1169,8 +1169,8 @@ operation needs the server sooner than that, then a re-check will be triggered b
 
 ##### "not writable primary" and "node is recovering"
 
-These errors are detected from a getLastError response, write command response, or query response. Clients MUST check if
-the server error is a "node is recovering" error or a "not writable primary" error.
+These errors are detected from a write command response or query response. Clients MUST check if the server error is a
+"node is recovering" error or a "not writable primary" error.
 
 If the response includes an error code, it MUST be solely used to determine if error is a "node is recovering" or "not
 writable primary" error. Clients MUST match the errors by the numeric error code and not by the code name, as the code
@@ -1920,6 +1920,8 @@ Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6 contr
 oversaw the specification process.
 
 ## Changelog
+
+- 2024-11-11: Removed references to `getLastError`
 
 - 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
 
