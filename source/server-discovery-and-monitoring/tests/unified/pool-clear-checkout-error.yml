@@ -44,7 +44,6 @@ tests:
                   - connectionCheckOutStartedEvent
                   - poolClearedEvent
                   - connectionClosedEvent
-                  - connectionCheckOutFailedEvent
                 uriOptions:
                   retryWrites: false
                   appname: authErrorTest
@@ -85,7 +84,6 @@ tests:
           - connectionCheckOutStartedEvent: {}
           - poolClearedEvent: {}
           - connectionClosedEvent: {}
-          - connectionCheckOutFailedEvent: {}
 
   - description: Pool is cleared before connection is closed (handshake error)
     runOnRequirements:
@@ -102,7 +100,6 @@ tests:
                   - connectionCheckOutStartedEvent
                   - poolClearedEvent
                   - connectionClosedEvent
-                  - connectionCheckOutFailedEvent
                   - topologyDescriptionChangedEvent
                 uriOptions:
                   retryWrites: false
@@ -176,5 +173,4 @@ tests:
           - connectionCheckOutStartedEvent: {}
           - poolClearedEvent: {}
           - connectionClosedEvent: {}
-          - connectionCheckOutFailedEvent: {}
 

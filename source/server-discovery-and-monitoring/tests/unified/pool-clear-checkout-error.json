@@ -61,8 +61,7 @@
                   "observeEvents": [
                     "connectionCheckOutStartedEvent",
                     "poolClearedEvent",
-                    "connectionClosedEvent",
-                    "connectionCheckOutFailedEvent"
+                    "connectionClosedEvent"
                   ],
                   "uriOptions": {
                     "retryWrites": false,
@@ -140,9 +139,6 @@
             },
             {
               "connectionClosedEvent": {}
-            },
-            {
-              "connectionCheckOutFailedEvent": {}
             }
           ]
         }
@@ -171,7 +167,6 @@
                     "connectionCheckOutStartedEvent",
                     "poolClearedEvent",
                     "connectionClosedEvent",
-                    "connectionCheckOutFailedEvent",
                     "topologyDescriptionChangedEvent"
                   ],
                   "uriOptions": {
@@ -292,9 +287,6 @@
             },
             {
               "connectionClosedEvent": {}
-            },
-            {
-              "connectionCheckOutFailedEvent": {}
             }
           ]
         }
