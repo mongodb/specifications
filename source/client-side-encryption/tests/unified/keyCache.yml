@@ -1,6 +1,6 @@
 description: keyCache-explicit
 
-schemaVersion: "1.18"
+schemaVersion: "1.22"
 
 runOnRequirements:
   - csfle: true
