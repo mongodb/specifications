@@ -925,9 +925,9 @@ checkIfHasPrimary()
 
 A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
 should be none or one) and replaces its description with a default ServerDescription of type "Unknown". Additionally,
-the `error` field of the `ServerDescription` object MUST include a descriptive error explaining that it was invalidated
-because the primary was determined to be stale. Drivers MAY additionally specify whether this was due to an electionId
-or setVersion mismatch. A multi-threaded client MUST
+the `error` field of the new `ServerDescription` object MUST include a descriptive error explaining that it was
+invalidated because the primary was determined to be stale. Drivers MAY additionally specify whether this was due to an
+electionId or setVersion mismatch. A multi-threaded client MUST
 [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
