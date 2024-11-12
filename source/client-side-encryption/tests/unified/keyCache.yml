@@ -52,7 +52,7 @@ initialData:
         }
 
 tests:
-  - description: can explicitly decrypt with a named KMS provider
+  - description: decrypt, wait, and decrypt again
     operations:
       - name: decrypt
         object: *clientEncryption0
