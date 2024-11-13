@@ -63,10 +63,9 @@ insert command (because all documents in the first command will be processed in 
 or delete that is split into two commands, the `skip` should be set to the number of statements in the first command to
 allow the fail point to trigger on the second command.
 
-## Command Construction Tests
+## ~~Command Construction Tests~~
 
-Command construction tests asserting on the absence or presence of the `txnNumber` field have been replaced by command
-event assertions in the retryable writes unified tests.
+The command construction prose tests have been removed in favor of command event assertions in the unified format tests.
 
 ## Prose Tests
 
