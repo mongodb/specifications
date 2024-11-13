@@ -179,14 +179,14 @@ interface Collection {
    * Note: result iteration should be backed by a cursor. Depending on the implementation,
    * the cursor may back the returned Iterable instance or an iterator that it produces.
    *
-   * @see https://www.mongodb.com/docs/manual/tutorial/query-documents/
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
   find(filter: Document, options: Optional<FindOptions>): Iterable<Document>;
 
   /**
    * Find a document matching the model.
    *
-   * @see https://www.mongodb.com/docs/manual/tutorial/query-documents/
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
   findOne(filter: Document, options: Optional<FindOneOptions>): Optional<Document>;
 
