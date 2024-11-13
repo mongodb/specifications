@@ -113,7 +113,7 @@ naively by simply truncating the output at the required length; i.e. do not atte
 the output is still valid JSON. Truncated extended JSON MUST have a trailing ellipsis `...` appended to indicate to the
 user that truncation occurred. The ellipsis MUST NOT count toward the max length.
 
-> **Fallback Implementation method**: Environment variable `MONGOB_LOG_MAX_DOCUMENT_LENGTH`. When unspecified, any
+> **Fallback Implementation method**: Environment variable `MONGODB_LOG_MAX_DOCUMENT_LENGTH`. When unspecified, any
 > extended JSON representation of a document which is longer than the default max length MUST be truncated to that
 > length. When set to an integer value, any extended JSON document longer than that value MUST be truncated to that
 > length. If a variable is set to an invalid value, it MUST be treated as if it were not specified at all, and the
