@@ -2513,7 +2513,7 @@ aforementioned allowance in the SemVer spec.
 
 ## Changelog
 
-- 2024-11-05: Define `findOne` operation as optional.
+- 2024-11-13: Define `findOne` operation as optional, and add guidance on `limit` and `batchSize` for `find` operations.
 
 - 2024-11-04: Always send a value for `bypassDocumentValidation` if it was specified.
 
