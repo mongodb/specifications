@@ -226,7 +226,8 @@ Fields:
     field in the server's hello or legacy hello response, in the case that the server reports an address different from
     the address the client uses.
 
-- (=) `error`: information about the last error related to this server. Default null.
+- (=) `error`: information about the last error related to this server. Default null. MUST contain
+  or be able to produce a string describing the error.
 
 - `roundTripTime`: the duration of the hello or legacy hello call. Default null.
 
@@ -908,7 +909,8 @@ else:
 for each server in topologyDescription.servers:
     if server.address != serverDescription.address:
         if server.type is RSPrimary:
-            # See note below about invalidating an old primary.
+            # See note below about invalidating an old primary and an error field describing that
+            # the primary was stale
             replace the server with a default ServerDescription of type "Unknown"
 
 for each address in serverDescription's "hosts", "passives", and "arbiters":
