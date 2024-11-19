@@ -130,9 +130,11 @@ described in [RFC8252](https://datatracker.ietf.org/doc/html/rfc8252).[^4] The a
     1. The application MUST add a `state` parameter containing cryptographically random data
         ([RFC6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1) specifies this as optional but
         recommended).
-    2. The application MAY allow the user to indicate that it should add a `nonce` parameter containing
-        cryptographically random data to the authentication request, as defined in the OpenID connect specification,
-        which is then later embedded in the ID token itself.
+    2. The application SHOULD allow the user to indicate that it should add a `nonce` parameter containing
+        cryptographically random data to the authentication request, as defined in the OpenID Connect specification,
+        which is then later embedded in the ID token itself. This option SHOULD be on-by-default. (Some Identity
+        Providers may effectively require a `nonce` option, but since it is an OpenID Connect feature and not an OAuth
+        2.0 feature, we allow users to disable this if their Identity Provider does not support it.)
 4. The application SHOULD, instead of directly presenting the URL from the previous step to the user, register that URL
     as an outgoing HTTP 307 redirect from the local HTTP server. The redirect base URL SHOULD contain a piece of
     cryptographically random data. The advantages of this approach are that:
