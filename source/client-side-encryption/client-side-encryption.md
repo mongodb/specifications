@@ -376,6 +376,7 @@ class AutoEncryptionOpts {
    // Set bypassQueryAnalysis to true to use explicit encryption on indexed fields
    // without the MongoDB Enterprise Advanced licensed crypt_shared library.
    bypassQueryAnalysis: Optional<Boolean>; // Default false.
+   keyExpirationMS: Optional<Uint64>; // Default 60000.
 }
 ```
 
@@ -1048,6 +1049,7 @@ interface ClientEncryptionOpts {
    keyVaultNamespace: String;
    kmsProviders: KMSProviders;
    tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
+   keyExpirationMS: Optional<Uint64>; // Default 60000.
 };
 
 interface KMSProvidersTLSOptions {
