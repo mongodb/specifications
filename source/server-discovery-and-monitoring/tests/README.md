@@ -71,8 +71,8 @@ following keys:
 
 - type: A ServerType name, like "RSSecondary". See [ServerType](../server-discovery-and-monitoring.md#servertype) for
     details pertaining to async and multi-threaded drivers.
-- error: An optional object with a with a string field containing a string that must be matched
-  against the message in the actual `ServerDescription.error`
+- error: An optional object with a with a string field containing a string that must be a substring of the message on
+    the `ServerDescription.error` object
 - setName: A string with the expected replica set name, or null.
 - setVersion: absent or an integer.
 - electionId: absent, null, or an ObjectId.

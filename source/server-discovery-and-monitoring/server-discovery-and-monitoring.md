@@ -226,8 +226,9 @@ Fields:
     field in the server's hello or legacy hello response, in the case that the server reports an address different from
     the address the client uses.
 
-- (=) `error`: information about the last error related to this server. Default null. MUST contain
-  or be able to produce a string describing the error.
+- (=) `error`: information about the last error related to this server. Default null. MUST contain or be able to produce
+    a string describing the error. The name of the field containing the string describing the error SHOULD be what is
+    most idiomatic for each driver.
 
 - `roundTripTime`: the duration of the hello or legacy hello call. Default null.
 
