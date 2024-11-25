@@ -726,6 +726,10 @@ estimatedDocumentCount helper returns an estimate of the count of documents in t
 rather than counting the documents or consulting an index. The countDocuments helper counts the documents that match the
 provided query filter using an aggregation pipeline.
 
+Due to countDocuments using the $match aggregation pipeline stage, certain query operators cannot be used in
+countDocuments. This includes the $where and $near query operators, among others. Details can be found in the
+documentation for the $match aggregation pipeline stage.
+
 The count() helper is deprecated. It has always been implemented using the `count` command. The behavior of the count
 command differs depending on the options passed to it and may or may not provide an accurate count. When no query filter
 is provided the count command provides an estimate using collection metadata. Even when provided with a query filter the
