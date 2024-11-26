@@ -90,6 +90,11 @@ with sessions.
 
 Any network exception writing to or reading from a socket (e.g. a socket timeout or error).
 
+**SDAM**
+
+An abbreviated form of "Server Discovery and Monitoring", specification defined in
+[Server Discovery and Monitoring Specification](../server-discovery-and-monitoring/server-discovery-and-monitoring.md).
+
 ## Specification
 
 Drivers currently have no concept of a session. The driver API will be expanded to provide a way for applications to
