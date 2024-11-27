@@ -5,7 +5,7 @@
 ## Abstract
 
 MongoDB offers OpenID Connect (OIDC) authentication and authorization for database users. OIDC auth in clients generally
-falls into one of two categories; either Workflow OIDC targeting programmatic users, which is
+falls into one of two categories: either Workflow OIDC targeting programmatic users, which is
 [fully specified here](https://github.com/mongodb/specifications/blob/master/source/auth/auth.md#mongodb-oidc) and does
 not involve user interaction, or Workforce OIDC targeting human users, which authenticate explicitly through means such
 as browsers.
@@ -80,7 +80,7 @@ Currently, users who connect to a host other than localhost or an Atlas hostname
 able to do so by setting the `ALLOWED_HOSTS` flag (specified in the drivers auth spec). In the future, MongoDB is hoping
 to support Demonstrating Proof of Possession (DPoP, [RFC9449](https://datatracker.ietf.org/doc/html/rfc9449)) that will
 allow lifting this restriction. The goal here is to prevent users from connecting to untrusted endpoints that will
-advertise attacker-controlled IdP metadata and and intercept tokens intended for other clusters (or even other OIDC
+advertise attacker-controlled IdP metadata and intercept tokens intended for other clusters (or even other OIDC
 endpoints in general).
 
 We would also like to generally adopt [RFC8707](https://datatracker.ietf.org/doc/html/rfc8707), but have not decided on
