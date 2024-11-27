@@ -247,7 +247,7 @@ either receives a [Connection](#connection) or times out. A WaitQueue has the fo
 - **Ordered/fair**: When [Connections](#connection) are made available, they SHOULD be issued out to threads in the
     order that the threads entered the WaitQueue. If this is behavior poses too much of an implementation burden, then
     at the very least threads that have entered the queue more recently MUST NOT be intentionally prioritized over those
-    that entered it earlier. 
+    that entered it earlier.
 - **Timeout aggressively:** Members of a WaitQueue MUST timeout if they are enqueued for longer than the computed
     timeout and MUST leave the WaitQueue immediately in this case.
 
