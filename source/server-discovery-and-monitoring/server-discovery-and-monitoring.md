@@ -490,11 +490,11 @@ If the client experiences any error when checking a server, it stores error info
 field. The message contained in this field MUST contain the substrings detailed in the table below when the
 ServerDescription is changed to Unknown in the circumstances outlined.
 
-| circumstance                                                         | error substring                                  |
-| -------------------------------------------------------------------- | ------------------------------------------------ |
-| RSPrimary with a stale electionId is discovered                      | `'marked stale due to electionId mismatch'`      |
-| RSPrimary with a stale setVersion is discovered                      | `'marked stale due to setVersion mismatch'`      |
-| A more current RSPrimary is discovered alongside an existing primary | `'marked stale due to discovery of new primary'` |
+| circumstance                                                         | error substring                                          |
+| -------------------------------------------------------------------- | -------------------------------------------------------- |
+| RSPrimary with a stale electionId is discovered                      | `'primary marked stale due to electionId mismatch'`      |
+| RSPrimary with a stale setVersion is discovered                      | `'primary marked stale due to setVersion mismatch'`      |
+| A more current RSPrimary is discovered alongside an existing primary | `'primary marked stale due to discovery of new primary'` |
 
 #### roundTripTime
 
