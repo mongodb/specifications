@@ -227,8 +227,7 @@ Fields:
     the address the client uses.
 
 - (=) `error`: information about the last error related to this server. Default null. MUST contain or be able to produce
-    a string describing the error. The name of the field containing the string describing the error SHOULD be what is
-    most idiomatic for each driver.
+    a string describing the error.
 
 - `roundTripTime`: the duration of the hello or legacy hello call. Default null.
 
@@ -490,11 +489,9 @@ If the client experiences any error when checking a server, it stores error info
 field. The message contained in this field MUST contain the substrings detailed in the table below when the
 ServerDescription is changed to Unknown in the circumstances outlined.
 
-| circumstance                                                         | error substring                                          |
-| -------------------------------------------------------------------- | -------------------------------------------------------- |
-| RSPrimary with a stale electionId is discovered                      | `'primary marked stale due to electionId mismatch'`      |
-| RSPrimary with a stale setVersion is discovered                      | `'primary marked stale due to setVersion mismatch'`      |
-| A more current RSPrimary is discovered alongside an existing primary | `'primary marked stale due to discovery of new primary'` |
+| circumstance                                               | error substring                                                |
+| ---------------------------------------------------------- | -------------------------------------------------------------- |
+| RSPrimary with a stale electionId/setVersion is discovered | `'primary marked stale due to electionId/setVersion mismatch'` |
 
 #### roundTripTime
 
@@ -941,8 +938,9 @@ A note on invalidating the old primary: when a new primary is discovered, the cl
 should be none or one) and replaces its description with a default ServerDescription of type "Unknown". Additionally,
 the `error` field of the new `ServerDescription` object MUST include a descriptive error explaining that it was
 invalidated because the primary was determined to be stale. Drivers MAY additionally specify whether this was due to an
-electionId or setVersion mismatch. A multi-threaded client MUST
-[request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as possible.
+electionId or setVersion mismatch as described in the [ServerDescripion.error section](#error). A multi-threaded client
+MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
+possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
 the connections are all bad because the old primary has closed its sockets. If the old primary server version is 4.2 or
