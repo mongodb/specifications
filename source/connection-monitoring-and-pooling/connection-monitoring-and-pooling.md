@@ -1261,10 +1261,10 @@ these fields would allow for faster diagnosis of issues in the connection pool, 
 from occurring.
 
 Additionally, these options have the effect of prioritizing newer requests over older requests, which is not necessarily
-the behavior that users want. For example, consider a situation when a waitQueue is full, and a request for
-[Connection](#connection) gets rejected. Then a spot opens in the waitQueue, and a newer request gets accepted. One may
+the behavior that users want. For example, consider a situation when a WaitQueue is full, and a request for
+[Connection](#connection) gets rejected. Then a spot opens in the WaitQueue, and a newer request gets accepted. One may
 say that the newer request was prioritized over the older one, which violates the fairness recommendation that the
-waitQueue normally adheres to.
+WaitQueue normally adheres to.
 
 Because of these issues, it does not make sense to
 [go against driver mantras and provide an additional knob](../driver-mantras.md#). We may eventually pursue an
