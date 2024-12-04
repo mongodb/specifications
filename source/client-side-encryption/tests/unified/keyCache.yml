@@ -62,7 +62,7 @@ tests:
       - name: wait
         object: testRunner
         arguments:
-          ms: 2
+          ms: 50 # Wait long enough to account for coarse time resolution on Windows (CDRIVER-4526).
       - name: decrypt
         object: *clientEncryption0
         arguments:
