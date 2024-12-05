@@ -74,18 +74,6 @@ Using a well-tested and standards-compliant third-party library for core OIDC lo
 highly recommended. If this is not possible, implementers need to pay special attention to the specifications referenced
 in this document.
 
-## Endpoint restrictions
-
-Currently, users who connect to a host other than localhost or an Atlas hostname need to explicitly opt-in into being
-able to do so by setting the `ALLOWED_HOSTS` flag (specified in the drivers auth spec). In the future, MongoDB is hoping
-to support Demonstrating Proof of Possession (DPoP, [RFC9449](https://datatracker.ietf.org/doc/html/rfc9449)) that will
-allow lifting this restriction. The goal here is to prevent users from connecting to untrusted endpoints that will
-advertise attacker-controlled IdP metadata and intercept tokens intended for other clusters (or even other OIDC
-endpoints in general).
-
-We would also like to generally adopt [RFC8707](https://datatracker.ietf.org/doc/html/rfc8707), but have not decided on
-a specific format for expressing the MongoDB endpoints as resources.
-
 ## Token management
 
 After a successful authentication, applications SHOULD periodically attempt to use the OIDC token refresh mechanism in
@@ -114,7 +102,7 @@ described in [RFC8252](https://datatracker.ietf.org/doc/html/rfc8252).[^4] The a
 
 1. Generate a code challenge for PKCE using cryptographically random data, as described in
     [RFC7636](https://datatracker.ietf.org/doc/html/rfc7636).
-2. Spin up a local HTTP server. The default (incoming) redirect URL for MongoDB applications is
+2. Launch a local HTTP server. The default (incoming) redirect URL for MongoDB applications is
     `http://localhost:27097/redirect`, which MAY be configurable. If the application allows configuring the URL, the
     port MAY be specified as `0` to allow listening on an arbitrary port. The application listens on the host and port
     listed in the URL. The application MUST listen on all addresses that the hostname resolves to through
@@ -224,7 +212,7 @@ It is recommended to log the following events for diagnostic purposes:
     Practice
 - [Risk of phishing Access Tokens from clients using OIDC Authentication](https://docs.google.com/document/d/1TdcBtRu4yNXQkI7ZdKWZlSIaWs29tIQblyS3805nK1A/edit?tab=t.0)
 
-# Appendix: Multiple MongoClients
+# Appendix A: Multiple MongoClients
 
 Some applications may require support for multiple concurrent MongoClients using the same OIDC tokens. In this case, a
 token set (access token, ID token and refresh token) may be re-used, if and only if:
@@ -241,6 +229,18 @@ The Developer Tools team maintains an implementation that integrates with multip
 [https://github.com/mongodb-js/oidc-plugin](https://github.com/mongodb-js/oidc-plugin), which can be used as a reference
 implementation (and which can generally be used in other applications based on the Node.js driver, although as a
 standalone package it is not considered a supported product of MongoDB).
+
+# Appendix B: Future intentions for endpoint restrictions
+
+Currently, users who connect to a host other than localhost or an Atlas hostname need to specify this host in the
+`ALLOWED_HOSTS` auth mechanism property. In the future, MongoDB is hoping to support Demonstrating Proof of Possession
+(DPoP, [RFC9449](https://datatracker.ietf.org/doc/html/rfc9449)) which will allow lifting this restriction. The goal
+here of either of these mechanisms is to prevent users from connecting to untrusted endpoints that could advertise
+attacker-controlled IdP metadata and intercept tokens intended for other clusters (or even non-MongoDB OIDC
+applications).
+
+We would also like to adopt [RFC8707](https://datatracker.ietf.org/doc/html/rfc8707), but have not decided on a specific
+format for expressing MongoDB clusters as resource URLs.
 
 ## Changelog
 
