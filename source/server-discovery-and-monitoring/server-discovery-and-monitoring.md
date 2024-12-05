@@ -226,7 +226,8 @@ Fields:
     field in the server's hello or legacy hello response, in the case that the server reports an address different from
     the address the client uses.
 
-- (=) `error`: information about the last error related to this server. Default null.
+- (=) `error`: information about the last error related to this server. Default null. MUST contain or be able to produce
+    a string describing the error.
 
 - `roundTripTime`: the duration of the hello or legacy hello call. Default null.
 
@@ -485,7 +486,12 @@ removed once the primary is checked.
 #### error
 
 If the client experiences any error when checking a server, it stores error information in the ServerDescription's error
-field.
+field. The message contained in this field MUST contain the substrings detailed in the table below when the
+ServerDescription is changed to Unknown in the circumstances outlined.
+
+| circumstance                                               | error substring                                                |
+| ---------------------------------------------------------- | -------------------------------------------------------------- |
+| RSPrimary with a stale electionId/setVersion is discovered | `'primary marked stale due to electionId/setVersion mismatch'` |
 
 #### roundTripTime
 
@@ -863,38 +869,46 @@ else if topologyDescription.setName != serverDescription.setName:
 
 if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
     # Null values for both electionId and setVersion are always considered less than
-    if serverDescription.electionId > topologyDescription.maxElectionId or (
-        serverDescription.electionId == topologyDescription.maxElectionId
-        and serverDescription.setVersion >= topologyDescription.maxSetVersion
-    ):
-        topologyDescription.maxElectionId = serverDescription.electionId
-        topologyDescription.maxSetVersion = serverDescription.setVersion
-    else:
-        # Stale primary.
-        # replace serverDescription with a default ServerDescription of type "Unknown"
+    if serverDescription.electionId < topologyDescription.maxElectionId:
+        # Stale primary due to electionId mismatch
+        # replace serverDescription with a default ServerDescription of type "Unknown" and an error
+        # field with a message containing the substring "primary marked stale due to mismatched electionId"
         checkIfHasPrimary()
         return
-else:
-    # Maintain old comparison rules, namely setVersion is checked before electionId
-    if serverDescription.setVersion is not null and serverDescription.electionId is not null:
-        if (
-            topologyDescription.maxSetVersion is not null
-            and topologyDescription.maxElectionId is not null
-            and (
-                topologyDescription.maxSetVersion > serverDescription.setVersion
-                or (
-                    topologyDescription.maxSetVersion == serverDescription.setVersion
-                    and topologyDescription.maxElectionId > serverDescription.electionId
-                )
-            )
-        ):
-            # Stale primary.
-            # replace serverDescription with a default ServerDescription of type "Unknown"
+    elif serverDescription.electionId == topologyDescription.maxElectionId :
+        if serverDescription.setVersion < topology.maxSetVersion:
+            # Stale primary due to setVersion mismatch
+            # replace serverDescription with a default ServerDescription of type "Unknown" and an error
+            # field with a message containing the substring "primary marked stale due to mismatched setVersion"
             checkIfHasPrimary()
             return
-
+        else:
+            topologyDescription.maxElectionId = serverDescription.electionId
+            topologyDescription.maxSetVersion = serverDescription.setVersion
+    else:
         topologyDescription.maxElectionId = serverDescription.electionId
+        topologyDescription.maxSetVersion = serverDescription.setVersion
 
+
+else:
+    # Maintain old comparison rules, namely setVersion is checked before electionId
+    if serverDescription.setVersion is not null and serverDescription.electionId is not null
+    and topologyDescription.maxSetVersion is not null and topologyDescription.maxElectionId is not
+    null:
+        if topologyDescription.maxSetVersion > serverDescription.setVersion:
+            # replace serverDescription with a default ServerDescription of type "Unknown" and an
+            # error field with a message containing the substring "primary marked stale due to mismatched setVersion"
+            checkIfHasPrimary()
+            return
+        elif topologyDescription.maxSetVersion == serverDescription.setVersion &&
+        topologyDescription.maxElectionId > serverDescription.electionId:
+            # Stale primary due to electionId mismatch
+            # replace serverDescription with a default ServerDescription of type "Unknown" and an error
+            # field with a message containing the substring "primary marked stale due to mismatched electionId"
+            checkIfHasPrimary()
+            return
+        else:
+            topologyDescription.maxElectionId = serverDescription.electionId
     if serverDescription.setVersion is not null and (
         topologyDescription.maxSetVersion is null
         or serverDescription.setVersion > topologyDescription.maxSetVersion
@@ -905,9 +919,9 @@ else:
 for each server in topologyDescription.servers:
     if server.address != serverDescription.address:
         if server.type is RSPrimary:
-            # See note below about invalidating an old primary.
-            replace the server with a default ServerDescription of type "Unknown"
-
+            # See note below about invalidating an old primary
+            # Replace the server with a default ServerDescription of type "Unknown" and an error field
+            # with a message containing the substring "primary marked stale due to discovery of newer primary"
 for each address in serverDescription's "hosts", "passives", and "arbiters":
     if address is not in topologyDescription.servers:
         add new default ServerDescription of type "Unknown"
@@ -921,8 +935,11 @@ checkIfHasPrimary()
 ```
 
 A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
-should be none or one) and replaces its description with a default ServerDescription of type "Unknown." A multi-threaded
-client MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
+should be none or one) and replaces its description with a default ServerDescription of type "Unknown". Additionally,
+the `error` field of the new `ServerDescription` object MUST include a descriptive error explaining that it was
+invalidated because the primary was determined to be stale. Drivers MAY additionally specify whether this was due to an
+electionId or setVersion mismatch as described in the [ServerDescripion.error section](#error). A multi-threaded client
+MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
 possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
