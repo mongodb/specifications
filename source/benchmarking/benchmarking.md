@@ -725,9 +725,8 @@ TBD: spec system to hold scores over time
 TBD: generated datasets should be park in S3 or somewhere for retrieval by URL
 
 ## Changelog
-- 2024-11-19:
-    - Add Client and Collection BulkWrite benchmarks
-    - Use inline code syntax for all text in single quotes.
+
+- 2024-12-23: Add Client and Collection BulkWrite benchmarks
 
 - 2024-01-22: Migrated from reStructuredText to Markdown.
 
