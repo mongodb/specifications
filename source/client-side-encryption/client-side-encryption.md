@@ -112,7 +112,7 @@ The underlying key the KMS service uses to encrypt and decrypt. See
 [AWS KMS Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys) for an AWS-specific
 example (other KMS providers work similarly).
 
-The master key is also sometimes referred to as a Customer Master Key (KMS key).
+The master key is also sometimes referred to as a Customer Master Key (CMK).
 
 **schema**
 
