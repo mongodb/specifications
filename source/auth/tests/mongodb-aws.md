@@ -21,6 +21,10 @@ SecretAccessKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 Token=AQoDYXdzEJr...<remainder of security token>
 ```
 
+If the driver supports user provided custom AWS credential providers, then the driver MUST also test the above scenarios
+2-6 with a user provided `AWS_CREDENTIAL_PROVIDER` auth mechanism property. This value MUST be the default credential
+provider from the AWS SDK. If the default provider does not cover all scenarios above, those not covered MAY be skipped.
+
 ## Regular credentials
 
 Drivers MUST be able to authenticate by providing a valid access key id and secret access key pair as the username and

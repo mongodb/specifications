@@ -987,6 +987,22 @@ those credentials will be used by default if AWS auth environment variables are 
 application. Alternatively, you can create an AWS profile specifically for your MongoDB credentials and set the
 `AWS_PROFILE` environment variable to that profile name."
 
+##### Custom Credential Providers
+
+Drivers that choose you use the AWS SDK to fetch credentials MAY also allow users to provide a custom credential
+provider as an option to the `MongoClient`. The interface for the option provided depends on the individual language SDK
+and drivers MUST consult AWS SDK documentation to determine that format when implementing. The name of the option MUST
+be `AWS_CREDENTIAL_PROVIDER` and be part of the authentication mechanism properties options that can be provided to the
+client.
+
+Drivers that implement this MAY choose to implement the following scenarios when applicable in their labguage's SDK:
+
+1. The default SDK credential provider.
+2. A custom credential provider chain.
+3. A single credential provider of any available SDK options provided by the SDK.
+
+##### Credential Fetching Order
+
 The order in which Drivers MUST search for credentials is:
 
 1. The URI
@@ -1305,6 +1321,10 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
         invoking any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname
         check MUST be performed after SRV record resolution, if applicable. This property is only required for drivers
         that support the [Human Authentication Flow](#human-authentication-flow).
+
+    - AWS_CREDENTIAL_PROVIDER
+
+        A function or object from the AWS SDK that can be used to return AWS credentials.
 
 <span id="built-in-provider-integrations"/>
 
@@ -2133,6 +2153,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2025-01-29: Add support for custom AWS credential providers.
 
 - 2024-10-02: Add Kubernetes built-in OIDC provider integration.
 
