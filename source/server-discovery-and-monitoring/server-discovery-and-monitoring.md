@@ -921,7 +921,7 @@ for each server in topologyDescription.servers:
         if server.type is RSPrimary:
             # See note below about invalidating an old primary
             # Replace the server with a default ServerDescription of type "Unknown" and an error field
-            # with a message containing the substring "primary marked stale due to electionId/setVersion mismatch"
+            # with a message containing the substring "primary marked stale due to discovery of newer primary"
 for each address in serverDescription's "hosts", "passives", and "arbiters":
     if address is not in topologyDescription.servers:
         add new default ServerDescription of type "Unknown"
