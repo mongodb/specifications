@@ -108,8 +108,9 @@ An optional name to identify a KMS provider. Enables configuring multiple KMS pr
 
 **Customer Master Key (CMK)**
 
-The underlying key AWS KMS uses to encrypt and decrypt. See
-[AWS Key Management Service Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys).
+The underlying key the KMS service uses to encrypt and decrypt. See
+[AWS KMS Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys) for an AWS-specific 
+example (other KMS providers work similarly).
 
 **schema**
 
