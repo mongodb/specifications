@@ -492,6 +492,7 @@ ServerDescription is changed to Unknown in the circumstances outlined.
 | circumstance                                               | error substring                                                |
 | ---------------------------------------------------------- | -------------------------------------------------------------- |
 | RSPrimary with a stale electionId/setVersion is discovered | `'primary marked stale due to electionId/setVersion mismatch'` |
+| New primary is elected/discovered                          | `'primary marked stale due to discovery of newer primary'`     |
 
 #### roundTripTime
 
