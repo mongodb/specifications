@@ -106,11 +106,13 @@ The type of backing KMS. Identified by the string: `aws`, `azure`, `gcp`, `kmip`
 An optional name to identify a KMS provider. Enables configuring multiple KMS providers with the same KMS provider type
 (e.g. `aws:name1` and `aws:name2` can refer to different AWS accounts).
 
-**Customer Master Key (CMK)**
+**Master Key**
 
 The underlying key the KMS service uses to encrypt and decrypt. See
-[AWS KMS Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys) for an AWS-specific 
+[AWS KMS Concepts](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys) for an AWS-specific
 example (other KMS providers work similarly).
+
+The master key is also sometimes referred to as a Customer Master Key (KMS key).
 
 **schema**
 
@@ -228,7 +230,7 @@ opts = ClientEncryptionOpts(kms_providers=kms, key_vault_namespace="db.datakeys"
 clientencryption = ClientEncryption(client, opts)
 
 # Use a ClientEncryption to create new data keys.
-# The master key identifies the CMK on AWS KMS to use for encrypting the data key.
+# The master key identifies the KMS key on AWS KMS to use for encrypting the data key.
 master_key = open("./aws_masterkey.json", "r").read()
 opts = DataKeyOpts (master_key=master_key)
 created_key_id = clientencryption.create_data_key("aws", opts)
@@ -1096,7 +1098,7 @@ type "aws", the masterKey is required and has the following fields:
 ```typescript
 {
    region: String,
-   key: String, // The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+   key: String, // The Amazon Resource Name (ARN) to the AWS customer master key (KMS key).
    endpoint: Optional<String> // An alternate host identifier to send KMS requests to. May include port number. Defaults to "kms.<region>.amazonaws.com"
 }
 ```
