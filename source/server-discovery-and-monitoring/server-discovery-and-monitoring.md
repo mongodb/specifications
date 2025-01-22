@@ -1939,14 +1939,6 @@ oversaw the specification process.
 
 ## Changelog
 
-- 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
-
-- 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
-
-- 2024-08-09: Updated wire versions in tests to 4.0+.
-
-- 2024-05-08: Migrated from reStructuredText to Markdown.
-
 - 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
 
 - 2015-10-09: Specify electionID comparison method.
@@ -2027,6 +2019,17 @@ oversaw the specification process.
 - 2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
 
 - 2024-01-17: Add section on expected client close behaviour
+
+- 2024-05-08: Migrated from reStructuredText to Markdown.
+
+- 2024-08-09: Updated wire versions in tests to 4.0+.
+
+- 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
+
+- 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
+
+- 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionID or setVersion is
+    discovered.
 
 ______________________________________________________________________
 
