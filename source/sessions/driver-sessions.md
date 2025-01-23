@@ -934,7 +934,7 @@ has risks that do not justify the potential guaranteed `ServerSession` allocatio
 
 ## Changelog
 
-- 2024-11-21: Drivers MUST NOT gossip $clusterTime on SDAM commands.
+- 2025-02-24: Drivers MUST NOT gossip $clusterTime on SDAM commands.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2017-09-13: If causalConsistency option is omitted assume true
 - 2017-09-16: Omit session ID when opening and authenticating a connection

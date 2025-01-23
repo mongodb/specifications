@@ -49,7 +49,6 @@ This test applies to drivers with session pools.
 
 ### 3. `$clusterTime` in commands
 
-- Turn `heartbeatFrequencyMS` up to a very large number.
 - Register a command-started and a command-succeeded APM listener. If the driver has no APM support, inspect
     commands/replies in another idiomatic way, such as monkey-patching or a mock server.
 - Send a `ping` command to the server with the generic `runCommand` method.
@@ -58,8 +57,7 @@ This test applies to drivers with session pools.
 - Record the `$clusterTime`, if any, in the reply passed to the command-succeeded APM listener.
 - Send another `ping` command.
 - Assert that `$clusterTime` in the command passed to the command-started listener, if any, equals the `$clusterTime` in
-    the previous server reply. (Turning `heartbeatFrequencyMS` up prevents an intervening heartbeat from advancing the
-    `$clusterTime` between these final two steps.)
+    the previous server reply.
 
 Repeat the above for:
 
@@ -241,19 +239,20 @@ and configure a `MongoClient` with default options.
 ### 20. Drivers do not gossip `$clusterTime` on SDAM commands.
 
 - Skip this test when connected to a deployment that does not support cluster times
-- Create a client, C1, with a small heartbeatFrequencyMS
-    - `c1 = MongoClient(heartbeatFrequencyMS=10)`
+- Create a client, C1, directly connected to a writable server and a small heartbeatFrequencyMS
+    - `c1 = MongoClient(directConnection=True, heartbeatFrequencyMS=10)`
 - Run a ping command using C1 and record the `$clusterTime` in the response, as `clusterTime`.
     - `clusterTime = c1.admin.command({"ping": 1})["$clusterTime"]`
 - Using a separate client, C2, run an insert to advance the cluster time
     - `c2.test.test.insert_one({"advance": "$clusterTime"})`
-- Next, wait until the client C1 processes at least 1 SDAM heartbeat
+- Next, wait until the client C1 processes the next pair of SDAM heartbeat started + succeeded events.
     - If possible, assert the SDAM heartbeats do not send `$clusterTime`
 - Run a ping command using C1 and assert that `$clusterTime` sent is the same as the `clusterTime` recorded earlier.
     This assertion proves that C1's `$clusterTime` was not advanced by gossiping through SDAM.
 
 ## Changelog
 
+- 2025-02-24: Test drivers do not gossip $clusterTime on SDAM.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2019-05-15: Initial version.
 - 2021-06-15: Added snapshot-session tests. Introduced legacy and unified folders.
