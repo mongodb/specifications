@@ -558,7 +558,7 @@ Run the following tests twice, parameterized by a boolean `withExternalKeyVault`
 
 ### 4. BSON Size Limits and Batch Splitting
 
-First, perform the setup.
+#### Setup
 
 1. Create a MongoClient without encryption enabled (referred to as `client`).
 
@@ -578,6 +578,8 @@ First, perform the setup.
 
     Configure with the `keyVaultNamespace` set to `keyvault.datakeys`.
 
+#### Case 1
+
 Using `client_encrypted` perform the following operations:
 
 1. Insert `{ "_id": "over_2mib_under_16mib", "unencrypted": <the string "a" repeated 2097152 times> }`.
@@ -592,7 +594,22 @@ Using `client_encrypted` perform the following operations:
     auto encryption this document is under the 2 MiB limit. After encryption it exceeds the 2 MiB limit, but does NOT
     exceed the 16 MiB limit.
 
-3. Bulk insert the following:
+3. Insert `{ "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times>`.
+
+    Expect this to succeed since this is still (just) under the `maxBsonObjectSize` limit.
+
+4. Insert the document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
+    `{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }`
+
+    Expect this to fail since encryption results in a document exceeding the `maxBsonObjectSize` limit.
+
+Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that
+setting maxWriteBatchSize=1 and inserting the two documents `{ "_id": "a" }, { "_id": "b" }` with `client_encrypted`
+splits the operation into two inserts.
+
+#### Case 2
+
+1. Use collection bulkWrite to bulk insert the following:
 
     - `{ "_id": "over_2mib_1", "unencrypted": <the string "a" repeated (2097152) times> }`
     - `{ "_id": "over_2mib_2", "unencrypted": <the string "a" repeated (2097152) times> }`
@@ -600,7 +617,7 @@ Using `client_encrypted` perform the following operations:
     Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
     [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
-4. Bulk insert the following:
+2. Use collection bulkWrite to insert the following:
 
     - The document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
         `{ "_id": "encryption_exceeds_2mib_1", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }`
@@ -610,18 +627,28 @@ Using `client_encrypted` perform the following operations:
     Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
     [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
-5. Insert `{ "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times>`.
 
-    Expect this to succeed since this is still (just) under the `maxBsonObjectSize` limit.
+#### Case 3
 
-6. Insert the document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
-    `{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }`
+1. Using `client`, drop and create the collection `db.coll` configured with the included JSON schema
+    [limits/limits-encryptedFields.json](../limits/limits-encryptedFields.json).
+2. Use collection bulkWrite to bulk insert the following:
 
-    Expect this to fail since encryption results in a document exceeding the `maxBsonObjectSize` limit.
+    - `{ "_id": "over_2mib_3", "unencrypted": <the string "a" repeated (2097152 - 1500) times> }`
+    - `{ "_id": "over_2mib_4", "unencrypted": <the string "a" repeated (2097152 - 1500) times> }`
 
-Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that
-setting maxWriteBatchSize=1 and inserting the two documents `{ "_id": "a" }, { "_id": "b" }` with `client_encrypted`
-splits the operation into two inserts.
+    Expect the bulk write to succeed and split after first doc (i.e. two bulkWrite commands occur). This may be verified using
+    [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
+
+3. Use collection bulkWrite to insert the following:
+
+    - The document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
+        `{ "_id": "encryption_exceeds_2mib_3", "unencrypted": < the string "a" repeated (2097152 - 2000 - 1500) times > }`
+    - The document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
+        `{ "_id": "encryption_exceeds_2mib_4", "unencrypted": < the string "a" repeated (2097152 - 2000 - 1500) times > }`
+
+    Expect the bulk write to succeed and split after first doc (i.e. two bulkWrite commands occur). This may be verified using
+    [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
 ### 5. Views Are Prohibited
 
