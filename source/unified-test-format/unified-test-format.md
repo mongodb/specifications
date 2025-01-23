@@ -534,6 +534,14 @@ The structure of this object is as follows:
         client.
     - `serverApi`: Optional [serverApi](#serverapi) object.
 
+    <span id="entity_client_autoEncryptOpts"></span>
+
+    - `autoEncryptOpts`: Optional object with the following fields:
+        - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
+        - `keyVaultNamespace`: Optional, a namespace to the key vault collection. Defaults to "keyvault.datakeys".
+        - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
+            Defaults to `false`.
+
 <span id="entity_clientEncryption"></span>
 
 - `clientEncryption`: Optional object. Defines a ClientEncryption object.
@@ -1307,6 +1315,8 @@ The structure of this object is as follows:
 - `readConcern`: Optional object. See [commonOptions_readConcern](#commonOptions_readConcern).
 - `readPreference`: Optional object. See [commonOptions_readPreference](#commonOptions_readPreference).
 - `writeConcern`: Optional object. See [commonOptions_writeConcern](#commonOptions_writeConcern).
+- `encryptedFields`: Optional object. See
+    [Client Side Encryption: `encryptedFields`](../client-side-encryption/client-side-encryption.md#encryptedFields)
 
 ### Common Options
 
@@ -2780,7 +2790,7 @@ Contexts where one might encounter a root-level document include:
     include:
 
     - [aggregate](#aggregate)
-    - [find](#find))
+    - [find](#find)
     - [listCollections](#listcollections), listDatabases, and listIndexes
     - [listSearchIndexes](#listsearchindexes)
     - [runCursorCommand](#runcursorcommand)
@@ -3522,19 +3532,6 @@ would need to represent streams as entities and support IO operations to directl
 entity. This may not be worth the added complexity if the existing operations provide adequate test coverage for GridFS
 implementations.
 
-### Support Client-side Encryption integration tests
-
-Supporting client-side encryption spec tests will require the following changes to the test format:
-
-- `json_schema` will need to be specified when creating a collection, via either the collection entity definition or
-    [initialData](#initialData).
-- `key_vault_data` can be expressed via [initialData](#initialData)
-- `autoEncryptOpts` will need to be specified when defining a client entity. Preparation of this field may require
-    reading AWS credentials from environment variables.
-
-The process for executing tests should not require significant changes, but test files will need to express a dependency
-on mongocryptd.
-
 ### Incorporate referenced entity operations into the schema version
 
 The [Schema Version](#schema-version) is not impacted by changes to operations defined in other specs and referenced in
@@ -3551,6 +3548,10 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-01-21: **Schema version 1.23.**
+
+    Support queryable encryption.
 
 - 2024-11-12: **Schema version 1.22.**
 
