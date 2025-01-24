@@ -933,10 +933,8 @@ checkIfHasPrimary()
 A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
 should be none or one) and replaces its description with a default ServerDescription of type "Unknown". Additionally,
 the `error` field of the new `ServerDescription` object MUST include a descriptive error explaining that it was
-invalidated because the primary was determined to be stale. Drivers MAY additionally specify whether this was due to an
-electionId or setVersion mismatch as described in the [ServerDescripion.error section](#error). A multi-threaded client
-MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
-possible.
+invalidated because the primary was determined to be stale. A multi-threaded client MUST
+[request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
 the connections are all bad because the old primary has closed its sockets. If the old primary server version is 4.2 or
@@ -947,6 +945,8 @@ See [replica set monitoring with and without a primary](#replica-set-monitoring-
 If the server is primary with an obsolete electionId or setVersion, it is likely a stale primary that is going to step
 down. Mark it Unknown and let periodic monitoring detect when it becomes secondary. See
 [using electionId and setVersion to detect stale primaries](#using-electionid-and-setversion-to-detect-stale-primaries).
+Drivers MAY additionally specify whether this was due to an electionId or setVersion mismatch as described in the
+[ServerDescripion.error section](#error).
 
 A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is
 not equal to "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the
