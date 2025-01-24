@@ -662,7 +662,6 @@ these if it is possible to do so using the driver's existing test infrastructure
     `min(remaining computedServerSelectionTimeout, connectTimeoutMS)` should apply to socket establishment.
 - For drivers that have control over OCSP behavior, `min(remaining computedServerSelectionTimeout, 5 seconds)` should
     apply to HTTP requests against OCSP responders.
-- If `timeoutMS` is unset, operations fail after two non-consecutive socket timeouts.
 - The remaining `timeoutMS` value should apply to HTTP requests against KMS servers for CSFLE.
 - The remaining `timeoutMS` value should apply to commands sent to mongocryptd as part of automatic encryption.
 - When doing `minPoolSize` maintenance, `connectTimeoutMS` is used as the timeout for socket establishment.

@@ -53,18 +53,6 @@ ServerDescription's error field.
 
 Clients MUST NOT depend on any particular field order in these responses.
 
-### getLastError
-
-GLE response after OP_INSERT on an arbiter, secondary, recovering member, or ghost:
-
-> {ok: 1, err: "not writable primary"}
-
-[Possible GLE response in MongoDB 2.6](https://jira.mongodb.org/browse/SERVER-9617) during failover:
-
-> {ok: 1, err: "replicatedToNum called but not master anymore"}
-
-Note that this error message contains "not master" but does not start with it.
-
 ### Write command
 
 Response to an "insert" command on an arbiter, secondary, recovering member, or ghost:

@@ -63,42 +63,9 @@ insert command (because all documents in the first command will be processed in 
 or delete that is split into two commands, the `skip` should be set to the number of statements in the first command to
 allow the fail point to trigger on the second command.
 
-## Command Construction Tests
+## ~~Command Construction Tests~~
 
-Drivers should also assert that command documents are properly constructed with or without a transaction ID, depending
-on whether the write operation is supported.
-[Command Logging and Monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) may be used to
-check for the presence of a `txnNumber` field in the command document. Note that command documents may always include an
-`lsid` field per the [Driver Session](../../sessions/driver-sessions.md) specification.
-
-These tests may be run against both a replica set and shard cluster.
-
-Drivers should test that transaction IDs are never included in commands for unsupported write operations:
-
-- Write commands with unacknowledged write concerns (e.g. `{w: 0}`)
-- Unsupported single-statement write operations
-    - `updateMany()`
-    - `deleteMany()`
-- Unsupported multi-statement write operations
-    - `bulkWrite()` that includes `UpdateMany` or `DeleteMany`
-- Unsupported write commands
-    - `aggregate` with write stage (e.g. `$out`, `$merge`)
-
-Drivers should test that transactions IDs are always included in commands for supported write operations:
-
-- Supported single-statement write operations
-    - `insertOne()`
-    - `updateOne()`
-    - `replaceOne()`
-    - `deleteOne()`
-    - `findOneAndDelete()`
-    - `findOneAndReplace()`
-    - `findOneAndUpdate()`
-- Supported multi-statement write operations
-    - `insertMany()` with `ordered=true`
-    - `insertMany()` with `ordered=false`
-    - `bulkWrite()` with `ordered=true` (no `UpdateMany` or `DeleteMany`)
-    - `bulkWrite()` with `ordered=false` (no `UpdateMany` or `DeleteMany`)
+The command construction prose tests have been removed in favor of command event assertions in the unified format tests.
 
 ## Prose Tests
 
@@ -296,6 +263,8 @@ debugger, code coverage tool, etc.
 7. Disable the fail point on `s0`.
 
 ## Changelog
+
+- 2024-10-29: Convert command construction tests to unified format.
 
 - 2024-05-30: Migrated from reStructuredText to Markdown.
 

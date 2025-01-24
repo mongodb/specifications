@@ -10,7 +10,7 @@ due to the cost of calling between the native language and the C library.
 A handle to libmongocrypt (`mongocrypt_t`) is needed for the benchmark. In the public driver API, `mongocrypt_t` is an
 implementation detail contained in a `MongoClient`. The bindings API may more directly interface `mongocrypt_t`.
 Example: the Java bindings API contains a
-[MongoCrypt class](https://github.com/mongodb/libmongocrypt/blob/master/bindings/java/mongocrypt/src/main/java/com/mongodb/crypt/capi/MongoCrypt.java)
+[MongoCrypt class](https://github.com/mongodb/mongo-java-driver/blob/main/mongodb-crypt/src/main/com/mongodb/internal/crypt/capi/MongoCrypt.java)
 closely wrapping the `mongocrypt_t`.
 
 If possible, drivers are encouraged to use the bindings API and mock responses from the MongoDB server. This may help to

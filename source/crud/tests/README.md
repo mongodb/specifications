@@ -370,56 +370,15 @@ Assert that a CommandStartedEvent was observed for the `killCursors` command.
 
 ### 10. `MongoClient.bulkWrite` returns error for unacknowledged too-large insert
 
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
-
-Construct a `MongoClient` (referred to as `client`).
-
-Perform a `hello` command using `client` and record the following values from the response: `maxBsonObjectSize`.
-
-Then, construct the following document (referred to as `document`):
-
-```javascript
-{
-  "a": "b".repeat(maxBsonObjectSize)
-}
-```
+Removed.
 
 #### With insert
 
-Construct the following write model (referred to as `model`):
-
-```javascript
-InsertOne: {
-  "namespace": "db.coll",
-  "document": document
-}
-```
-
-Construct as list of write models (referred to as `models`) with the one `model`.
-
-Call `MongoClient.bulkWrite` with `models`. Pass `BulkWriteOptions` with `ordered` set to `false` and `writeConcern` set
-to an unacknowledged write concern.
-
-Expect a client-side error due the size.
+Removed.
 
 #### With replace
 
-Construct the following write model (referred to as `model`):
-
-```javascript
-ReplaceOne: {
-  "namespace": "db.coll",
-  "filter": {},
-  "replacement": document
-}
-```
-
-Construct as list of write models (referred to as `models`) with the one `model`.
-
-Call `MongoClient.bulkWrite` with `models`. Pass `BulkWriteOptions` with `ordered` set to `false` and `writeConcern` set
-to an unacknowledged write concern.
-
-Expect a client-side error due the size.
+Removed.
 
 ### 11. `MongoClient.bulkWrite` batch splits when the addition of a new namespace exceeds the maximum message size
 

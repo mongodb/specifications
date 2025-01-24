@@ -397,11 +397,11 @@ placeholders as appropriate:
 
 In addition to the common fields, command succeeded messages MUST contain the following key-value pairs:
 
-| Key        | Suggested Type | Value                                                                                                                                                                                                                                                                                                   |
-| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| message    | String         | "Command succeeded"                                                                                                                                                                                                                                                                                     |
-| durationMS | Int            | The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply from the server and MAY include BSON serialization and/or deserialization.                                                                                          |
-| reply      | String         | Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the [logging specification](../logging/logging.md#configurable-max-document-length), and MUST be replaced with an empty document "{ }" if the command is considered sensitive. |
+| Key        | Suggested Type     | Value                                                                                                                                                                                                                                                                                                   |
+| ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| message    | String             | "Command succeeded"                                                                                                                                                                                                                                                                                     |
+| durationMS | Int32/Int64/Double | The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply from the server and MAY include BSON serialization and/or deserialization.                                                                                          |
+| reply      | String             | Relaxed extJSON representation of the reply. This document MUST be truncated appropriately according to rules defined in the [logging specification](../logging/logging.md#configurable-max-document-length), and MUST be replaced with an empty document "{ }" if the command is considered sensitive. |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -415,11 +415,11 @@ placeholders as appropriate:
 
 In addition to the common fields, command failed messages MUST contain the following key-value pairs:
 
-| Key        | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                                                                 |
-| ---------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| message    | String         | "Command failed"                                                                                                                                                                                                                                                                                                                                                                                      |
-| durationMS | Int            | The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply from the server and MAY include BSON serialization and/or deserialization.                                                                                                                                                                                        |
-| failure    | Flexible       | The error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null. |
+| Key        | Suggested Type     | Value                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| message    | String             | "Command failed"                                                                                                                                                                                                                                                                                                                                                                                      |
+| durationMS | Int32/Int64/Double | The execution time for the command in milliseconds. The calculated value MUST be the time to send the message and receive the reply from the server and MAY include BSON serialization and/or deserialization.                                                                                                                                                                                        |
+| failure    | Flexible           | The error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null. |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -443,6 +443,8 @@ released. Requiring the retention of this buffer until command completion could 
 penalties, particularly when event listeners are introduced.
 
 ## Changelog
+
+- 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 
 - 2024-09-11: Migrated from reStructuredText to Markdown.
 

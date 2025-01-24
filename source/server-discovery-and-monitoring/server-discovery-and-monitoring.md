@@ -1122,7 +1122,7 @@ def parseGle(response):
     if "err" in response:
         handleError(CommandError(response, response["err"], response["code"]))
 
-# Parse response to any command besides getLastError.
+# Parse response to any command
 def parseCommandResponse(response):
     if not response["ok"]:
         handleError(CommandError(response, response["errmsg"], response["code"]))
@@ -1182,8 +1182,8 @@ operation needs the server sooner than that, then a re-check will be triggered b
 
 ##### "not writable primary" and "node is recovering"
 
-These errors are detected from a getLastError response, write command response, or query response. Clients MUST check if
-the server error is a "node is recovering" error or a "not writable primary" error.
+These errors are detected from a write command response or query response. Clients MUST check if the server error is a
+"node is recovering" error or a "not writable primary" error.
 
 If the response includes an error code, it MUST be solely used to determine if error is a "node is recovering" or "not
 writable primary" error. Clients MUST match the errors by the numeric error code and not by the code name, as the code
@@ -1254,11 +1254,11 @@ if and only if the error is "node is shutting down" or the error originated from
 and [other transient errors](#other-transient-errors) and
 [Why close connections when a node is shutting down?](#why-close-connections-when-a-node-is-shutting-down).)
 
-##### Authentication errors
+##### Authentication and Handshake errors
 
-If the authentication handshake fails for a connection, drivers MUST mark the server Unknown and clear the server's
-connection pool if the TopologyType is not LoadBalanced. (See
-[Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
+If the driver encounters errors when establishing application connections (this includes the initial handshake and
+authentication), the driver MUST mark the server Unknown and clear the server's connection pool if the TopologyType is
+not LoadBalanced. (See [Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
 
 ### Monitoring SDAM events
 
@@ -2022,6 +2022,8 @@ oversaw the specification process.
 - 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
 
 - 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
+
+- 2024-11-11: Removed references to `getLastError`
 
 - 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionId or setVersion is
     discovered.

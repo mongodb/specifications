@@ -582,6 +582,8 @@ The structure of this object is as follows:
             See the [Client-Side Encryption test README](../client-side-encryption/tests/README.md#credentials) for
             instructions to obtain test credentials.
 
+        - `keyExpirationMS`: Optional integer. The cache expiration time for data encryption keys.
+
 <span id="entity_database"></span>
 
 - `database`: Optional object. Defines a Database object.
@@ -3549,6 +3551,10 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2024-11-12: **Schema version 1.22.**
+
+    Add `keyExpirationMS` to `clientEncryption` entity.
 
 - 2024-10-31: Test operations array may be empty.
 

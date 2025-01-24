@@ -176,17 +176,19 @@ interface Collection {
   /**
    * Finds the documents matching the model.
    *
-   * Note: The filter parameter below equates to the $query meta operator. It cannot
-   * contain other meta operators like $maxScan. However, do not validate this document
-   * as it would be impossible to be forwards and backwards compatible. Let the server
-   * handle the validation.
-   *
    * Note: result iteration should be backed by a cursor. Depending on the implementation,
    * the cursor may back the returned Iterable instance or an iterator that it produces.
    *
-   * @see https://www.mongodb.com/docs/manual/core/read-operations-introduction/
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
   find(filter: Document, options: Optional<FindOptions>): Iterable<Document>;
+
+  /**
+   * Find a document matching the model.
+   *
+   * @see https://www.mongodb.com/docs/manual/reference/command/find/
+   */
+  findOne(filter: Document, options: Optional<FindOneOptions>): Optional<Document>;
 
 }
 
@@ -712,6 +714,8 @@ class FindOptions {
    */
   let: Optional<Document>;
 }
+
+type FindOneOptions = Omit<FindOptions, 'batchSize' | 'cursorType' | 'limit' | 'noCursorTimeout'>;
 ```
 
 ##### Count API Details
@@ -783,7 +787,26 @@ filter, skip, and limit are added as options to the `aggregate` command.
 In the event this aggregation is run against an empty collection, an empty array will be returned with no `n` field.
 Drivers MUST interpret this result as a `0` count.
 
-##### Combining Limit and Batch Size for the Wire Protocol
+##### findOne API details
+
+The `findOne` operation is implemented using a `find` operation, but only returns the first document returned in the
+cursor. Due to the special case, `findOne` does not support the following options supported in `find`:
+
+- `batchSize`: drivers MUST NOT set a `batchSize` in the `find` command created for a `findOne` operation
+- `cursorType`: `findOne` only supports non-tailable cursors
+- `limit`: drivers MUST set `limit` to 1 in the `find` command created for a `findOne` operation
+- `noCursorTimeout`: with a `limit` of 1 and no `batchSize`, there will not be an open cursor on the server
+
+To ensure that the cursor is closed regardless of the default server `batchSize`, drivers MUST also set
+`singleBatch: true` in the `find` command.
+
+##### Setting limit and batchSize options for find commands
+
+When users specify both `limit` and `batchSize` options with the same value, the server returns all results in the first
+batch, but still leaves an open cursor that needs to be closed using the `killCursors` command. To avoid this, drivers
+MUST send a value of `limit + 1` for `batchSize` in the resulting `find` command. This eliminates the open cursor issue.
+
+##### Combining Limit and Batch Size for OP_QUERY
 
 The OP_QUERY wire protocol only contains a numberToReturn value which drivers must calculate to get expected limit and
 batch size behavior. Subsequent calls to OP_GET_MORE should use the user-specified batchSize or default to 0. If the
@@ -2397,12 +2420,6 @@ update and delete. This generally causes some issues for new developers and is a
 developers. The safest way to combat this without introducing discrepancies between drivers/driver versions or breaking
 backwards compatibility was to use multiple methods, each signifying the number of documents that could be affected.
 
-Q: Speaking of "One", where is `findOne`?
-
-If your driver wishes to offer a `findOne` method, that is perfectly fine. If you choose to implement `findOne`, please
-keep to the naming conventions followed by the `FindOptions` and keep in mind that certain things don't make sense like
-limit (which should be -1), tailable, awaitData, etc...
-
 Q: What considerations have been taken for the eventual merging of query and the aggregation framework?
 
 In the future, it is probable that a new query engine (QE) will look very much like the aggregation framework. Given
@@ -2495,6 +2512,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2024-11-13: Define `findOne` operation as optional, and add guidance on `limit` and `batchSize` for `find` operations.
 
 - 2024-11-04: Always send a value for `bypassDocumentValidation` if it was specified.
 

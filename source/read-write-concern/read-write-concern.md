@@ -298,19 +298,6 @@ writeConcern = { w: 0, wtimeoutMS: 100 }; // Unacknowledged
 
 #### On the Wire
 
-##### OP_INSERT, OP_DELETE, OP_UPDATE
-
-`WriteConcern` is implemented by sending the `getLastError` (GLE) command directly after the operation. Drivers SHOULD
-piggy-back the GLE onto the same buffer as the operation. Regardless, GLE MUST be sent on the same connection as the
-initial write operation.
-
-When a user has not specified a `WriteConcern` or has specified the server's default `WriteConcern`, drivers MUST send
-the GLE command without arguments. For example: `{ getLastError: 1 }`
-
-Drivers MUST NOT send a GLE for an `Unacknowledged WriteConcern`. In this instance, the server will not send a reply.
-
-See the `getLastError` command documentation for other formatting.
-
 ##### Write Commands
 
 The `insert`, `delete`, and `update` commands take a named parameter, `writeConcern`. See the command documentation for
@@ -523,11 +510,7 @@ Below are English descriptions of other items that should be tested:
 ### WriteConcern
 
 1. Commands supporting a write concern MUST NOT send the default write concern to the server.
-2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server, either in the
-    command or as a getLastError.
-3. On ServerVersion less than 2.6, drivers MUST NOT send a getLastError command for an Unacknowledged write concern.
-4. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
-5. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
+2. Commands supporting a write concern MUST send any non-default write concern to the server in the command.
 
 ## Reference Implementation
 
@@ -549,8 +532,6 @@ don't send one and if a user does specify a `ReadConcern`, we do send one. If th
 instance, we send it.
 
 ## Changelog
-
-- 2024-08-23: Migrated from reStructuredText to Markdown.
 
 - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion \< 4.
 
@@ -592,6 +573,10 @@ instance, we send it.
 - 2022-01-19: Deprecate wTimeoutMS in favor of timeoutMS.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
+
+- 2024-08-23: Migrated from reStructuredText to Markdown.
+
+- 2024-10-30: Remove reference to getLastError
 
 [^1]: This is only possible in a sharded cluster. When a write is routed to multiple shards and more than one shard
     returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernFailed" error

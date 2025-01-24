@@ -244,8 +244,10 @@ A concept that represents pending requests for [Connections](#connection). When 
 either receives a [Connection](#connection) or times out. A WaitQueue has the following traits:
 
 - **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
-- **Ordered/Fair**: When [Connections](#connection) are made available, they are issued out to threads in the order that
-    the threads entered the WaitQueue.
+- **Ordered/fair**: When [Connections](#connection) are made available, they SHOULD be issued out to threads in the
+    order that the threads entered the WaitQueue. If this is behavior poses too much of an implementation burden, then
+    at the very least threads that have entered the queue more recently MUST NOT be intentionally prioritized over those
+    that entered it earlier.
 - **Timeout aggressively:** Members of a WaitQueue MUST timeout if they are enqueued for longer than the computed
     timeout and MUST leave the WaitQueue immediately in this case.
 
@@ -557,7 +559,7 @@ MUST wait to service the request until neither of those two conditions are met o
 becomes available, re-entering the checkOut loop in either case. This waiting MUST NOT prevent
 [Connections](#connection) from being checked into the pool. Additionally, the Pool MUST NOT service any newer checkOut
 requests before fulfilling the original one which could not be fulfilled. For drivers that implement the WaitQueue via a
-fair semaphore, a condition variable may also be needed to to meet this requirement. Waiting on the condition variable
+fair semaphore, a condition variable may also be needed to meet this requirement. Waiting on the condition variable
 SHOULD also be limited by the WaitQueueTimeout, if the driver supports one and it was specified by the user.
 
 If the pool is "closed" or "paused", any attempt to check out a [Connection](#connection) MUST throw an Error. The error
@@ -1103,11 +1105,11 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                | Suggested Type | Value                                                                               |
-| ------------------ | -------------- | ----------------------------------------------------------------------------------- |
-| message            | String         | "Connection ready"                                                                  |
-| driverConnectionId | Int64          | The driver-generated ID for the connection as defined in [Connection](#connection). |
-| durationMS         | Int64          | `ConnectionReadyEvent.duration` converted to milliseconds.                          |
+| Key                | Suggested Type     | Value                                                                               |
+| ------------------ | ------------------ | ----------------------------------------------------------------------------------- |
+| message            | String             | "Connection ready"                                                                  |
+| driverConnectionId | Int64              | The driver-generated ID for the connection as defined in [Connection](#connection). |
+| durationMS         | Int32/Int64/Double | `ConnectionReadyEvent.duration` converted to milliseconds.                          |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1149,12 +1151,12 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key        | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                              |
-| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| message    | String         | "Connection checkout failed"                                                                                                                                                                                                                                                                                                                                       |
-| reason     | String         | A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed" |
-| error      | Flexible       | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                              |
-| durationMS | Int64          | `ConnectionCheckOutFailedEvent.duration` converted to milliseconds.                                                                                                                                                                                                                                                                                                |
+| Key        | Suggested Type     | Value                                                                                                                                                                                                                                                                                                                                                              |
+| ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| message    | String             | "Connection checkout failed"                                                                                                                                                                                                                                                                                                                                       |
+| reason     | String             | A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed" |
+| error      | Flexible           | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                              |
+| durationMS | Int32/Int64/Double | `ConnectionCheckOutFailedEvent.duration` converted to milliseconds.                                                                                                                                                                                                                                                                                                |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1166,11 +1168,11 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                | Suggested Type | Value                                                                               |
-| ------------------ | -------------- | ----------------------------------------------------------------------------------- |
-| message            | String         | "Connection checked out"                                                            |
-| driverConnectionId | Int64          | The driver-generated ID for the connection as defined in [Connection](#connection). |
-| durationMS         | Int64          | `ConnectionCheckedOutEvent.duration` converted to milliseconds.                     |
+| Key                | Suggested Type     | Value                                                                               |
+| ------------------ | ------------------ | ----------------------------------------------------------------------------------- |
+| message            | String             | "Connection checked out"                                                            |
+| driverConnectionId | Int64              | The driver-generated ID for the connection as defined in [Connection](#connection). |
+| durationMS         | Int32/Int64/Double | `ConnectionCheckedOutEvent.duration` converted to milliseconds.                     |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1258,12 +1260,11 @@ These options were originally only implemented in three drivers (Java, C#, and P
 these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error
 from occurring.
 
-Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily
-the behavior that users want. They can also result in cases where queue access oscillates back and forth between full
-and not full. If a driver has a full waitQueue, then all requests for [Connections](#connection) will be rejected. If
-the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no
-longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness
-guarantee that the waitQueue normally provides.
+Additionally, these options have the effect of prioritizing newer requests over older requests, which is not necessarily
+the behavior that users want. For example, consider a situation when a WaitQueue is full, and a request for
+[Connection](#connection) gets rejected. Then a spot opens in the WaitQueue, and a newer request gets accepted. One may
+say that the newer request was prioritized over the older one, which violates the fairness recommendation that the
+WaitQueue normally adheres to.
 
 Because of these issues, it does not make sense to
 [go against driver mantras and provide an additional knob](../driver-mantras.md#). We may eventually pursue an
@@ -1373,6 +1374,12 @@ Exhaust Cursors may require changes to how we close [Connections](#connection) i
 to close and remove from its pool a [Connection](#connection) which has unread exhaust messages.
 
 ## Changelog
+
+- 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
+
+- 2024-11-27: Relaxed the WaitQueue fairness requirement.
+
+- 2024-11-01: Fixed race condition in pool-checkout-returned-connection-maxConnecting.yml test.
 
 - 2024-01-23: Migrated from reStructuredText to Markdown.
 
