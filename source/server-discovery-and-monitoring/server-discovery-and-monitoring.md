@@ -878,8 +878,8 @@ if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
         topologyDescription.maxSetVersion = serverDescription.setVersion
     else:
         # Stale primary.
-        # replace serverDescription with a default ServerDescription of type "Unknown" and an error
-        # field with a message containing the substring "primary marked stale due to electionId/setVersion mismatch"
+        # The error field MUST include the substring "primary marked stale due to electionId/setVersion mismatch"
+         replace serverDescription with a default ServerDescription of type "Unknown"
         checkIfHasPrimary()
         return
 else:
@@ -897,8 +897,8 @@ else:
             )
         ):
             # Stale primary.
-            # replace serverDescription with a default ServerDescription of type "Unknown" and an error
-            # field with a message containing the substring "primary marked stale due to electionId/setVersion mismatch"
+            # The error field MUST include the substring "primary marked stale due to electionId/setVersion mismatch"
+            replace serverDescription with a default ServerDescription of type "Unknown" 
             checkIfHasPrimary()
             return
 
@@ -915,8 +915,8 @@ for each server in topologyDescription.servers:
     if server.address != serverDescription.address:
         if server.type is RSPrimary:
             # See note below about invalidating an old primary.
-            # replace the server with a default ServerDescription of type "Unknown"
-            # and an error field with a message containing the subsring "primary marked stale due to discovery of newer primary"
+            # the error field MUST include the substring "primary marked stale due to discovery of newer primary"
+            replace the server with a default ServerDescription of type "Unknown"
 
 for each address in serverDescription's "hosts", "passives", and "arbiters":
     if address is not in topologyDescription.servers:
@@ -2023,7 +2023,7 @@ oversaw the specification process.
 
 - 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
 
-- 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionID or setVersion is
+- 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionId or setVersion is
     discovered.
 
 ______________________________________________________________________
