@@ -121,6 +121,16 @@ class ChangeStreamDocument {
   ns: Document;
 
   /**
+   * Only present for ops of type 'create'.
+   * Only present when the `showExpandedEvents` change stream option is enabled.
+   * 
+   * The type of the newly created object.
+   * 
+   * @since 8.1.0
+   */
+  nsType: "collection" | "timeseries" | "view" | null;
+
+  /**
    * Only present for ops of type 'rename'.
    *
    * The namespace, in the same format as `ns`, that a collection has been renamed to.
@@ -1005,6 +1015,8 @@ There should be no backwards compatibility concerns.
 - RUBY (RUBY-1228)
 
 ## Changelog
+
+- 2025-01-29: Add `nsType` to `ChangeStreamDocument`.
 
 - 2024-02-09: Migrated from reStructuredText to Markdown.
 
