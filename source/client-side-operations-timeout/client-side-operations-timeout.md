@@ -670,6 +670,7 @@ timeout for each database operation. This would mimic using `timeoutMode=ITERATI
 
 ## Changelog
 
+- 2024-01-29: Adjust getMore maxTimeMS Calculation for tailable awaitData Cursors
 - 2024-09-12: Specify that explain helpers support support timeoutMS.
 - 2023-12-07: Migrated from reStructuredText to Markdown.
 - 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.
