@@ -334,10 +334,10 @@ resulting cursor but MUST NOT append a `maxTimeMS` field to any commands.
 ##### Tailable awaitData Cursors
 
 If `timeoutMS` is set, drivers MUST apply it to the original operation. Drivers MUST also apply the original `timeoutMS`
-value to each `next` call on the resulting cursor but MUST NOT use it to derive a `maxTimeMS` value for `getMore`
-commands. Helpers for operations that create tailable awaitData cursors MUST also support the `maxAwaitTimeMS` option.
-Drivers MUST error if this option is set, `timeoutMS` is set to a non-zero value, and `maxAwaitTimeMS` is greater than
-or equal to `timeoutMS`. If this option is set, drivers MUST use it as the `maxTimeMS` field on `getMore` commands.
+value to each `next` call on the resulting cursor. Helpers for operations that create tailable awaitData cursors MUST
+also support the `maxAwaitTimeMS` option. Drivers MUST error if this option is set, `timeoutMS` is set to a non-zero
+value, and `maxAwaitTimeMS` is greater than or equal to `timeoutMS`. If this option is set, drivers MUST use
+`min(maxAwaitTimeMS, remaining timeoutMS)` as the `maxTimeMS`` field on `getMore` commands.
 
 See [Tailable cursor behavior](#tailable-cursor-behavior) for rationale regarding both non-awaitData and awaitData
 cursors.
@@ -599,6 +599,11 @@ timeouts, while the `maxAwaitTimeMS` option is used as the `maxTimeMS` field for
 distinct meanings, so supporting both yields a more robust, albeit verbose, API. Drivers error if `maxAwaitTimeMS` is
 greater than or equal to `timeoutMS` because in that case, `getMore` requests would not succeed if the batch was empty:
 the server would wait for `maxAwaitTimeMS`, but the driver would close the socket after `timeoutMS`.
+
+For tailable awaitData cursors we use the `min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` to allow the
+server more opportunities to respond with an empty batch before a client-side timeout. Additionally, this change is
+required to prevent an unnecessary client-side timeout during a pending read when checking out a connection. For
+example, maxAwaitTimeMS=1000 and remaining timeoutMS=100 will cause a pending read to hang for 900ms.
 
 ### Change stream behavior
 
