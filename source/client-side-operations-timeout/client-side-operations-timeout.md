@@ -337,7 +337,7 @@ If `timeoutMS` is set, drivers MUST apply it to the original operation. Drivers 
 value to each `next` call on the resulting cursor. Helpers for operations that create tailable awaitData cursors MUST
 also support the `maxAwaitTimeMS` option. Drivers MUST error if this option is set, `timeoutMS` is set to a non-zero
 value, and `maxAwaitTimeMS` is greater than or equal to `timeoutMS`. If this option is set, drivers MUST use
-`min(maxAwaitTimeMS, remaining timeoutMS)` as the `maxTimeMS` field on `getMore` commands.
+`min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` as the `maxTimeMS` field on `getMore` commands.
 
 See [Tailable cursor behavior](#tailable-cursor-behavior) for rationale regarding both non-awaitData and awaitData
 cursors.
