@@ -989,10 +989,10 @@ application. Alternatively, you can create an AWS profile specifically for your 
 
 ##### Custom Credential Providers
 
-Drivers that choose to use the AWS SDK to fetch credentials MAY also allow users to provide a custom credential
-provider as an option to the `MongoClient`. The interface for the option provided depends on the individual language SDK
-and drivers MUST consult AWS SDK documentation to determine that format when implementing. The name of the option MUST
-be `AWS_CREDENTIAL_PROVIDER` and be part of the authentication mechanism properties options that can be provided to the
+Drivers that choose to use the AWS SDK to fetch credentials MAY also allow users to provide a custom credential provider
+as an option to the `MongoClient`. The interface for the option provided depends on the individual language SDK and
+drivers MUST consult AWS SDK documentation to determine that format when implementing. The name of the option MUST be
+`AWS_CREDENTIAL_PROVIDER` and be part of the authentication mechanism properties options that can be provided to the
 client.
 
 Drivers that implement this MAY choose to implement the following scenarios when applicable in their language's SDK:
