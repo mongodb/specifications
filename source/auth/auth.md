@@ -995,7 +995,7 @@ and drivers MUST consult AWS SDK documentation to determine that format when imp
 be `AWS_CREDENTIAL_PROVIDER` and be part of the authentication mechanism properties options that can be provided to the
 client.
 
-Drivers that implement this MAY choose to implement the following scenarios when applicable in their labguage's SDK:
+Drivers that implement this MAY choose to implement the following scenarios when applicable in their language's SDK:
 
 1. The default SDK credential provider.
 2. A custom credential provider chain.
