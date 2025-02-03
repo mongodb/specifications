@@ -29,7 +29,7 @@ Each JSON file contains three top-level keys.
 
 - `description`: string describing the test.
 - `valid`: boolean indicating if the vector, dtype, and padding should be considered a valid input.
-- `vector`: list of numbers
+- `vector`: (required if valid is true) list of numbers
 - `dtype_hex`: string defining the data type in hex (e.g. "0x10", "0x27")
 - `dtype_alias`: (optional) string defining the data dtype, perhaps as Enum.
 - `padding`: (optional) integer for byte padding. Defaults to 0.
