@@ -630,7 +630,7 @@ splits the operation into two inserts.
 
 #### Case 3
 
-1. Using `client`, drop and create the collection `db.coll` configured with the included JSON schema
+1. Using `client`, drop and create the collection `db.coll2` configured with the included JSON schema
     [limits/limits-encryptedFields.json](../limits/limits-encryptedFields.json).
 2. Use collection bulkWrite to bulk insert the following:
 
