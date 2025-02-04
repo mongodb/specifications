@@ -184,7 +184,8 @@ Drivers MUST validate vector metadata and raise an error if any invariant is vio
 
 - Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within \[0, 7\] for PACKED_BIT.
 - A PACKED_BIT vector MUST NOT be empty if padding is in the range \[1, 7\].
-- When unpacking binary data into a FLOAT32 Vector structure, the length of the binary data following the dtype and padding MUST be a multiple of 4 bytes.
+- When unpacking binary data into a FLOAT32 Vector structure, the length of the binary data following the dtype and
+padding MUST be a multiple of 4 bytes.
 
 Drivers MUST perform this validation when a numeric vector and padding are provided through the API, and when unpacking
 binary data (BSON or similar) into a Vector structure.
