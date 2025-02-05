@@ -3551,7 +3551,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2025-01-21: **Schema version 1.23.**
 
-    Support queryable encryption.
+    Support automatic encryption. Add `autoEncryptOpts` to `client` entity.
 
 - 2024-11-12: **Schema version 1.22.**
 
