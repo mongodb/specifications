@@ -334,10 +334,10 @@ resulting cursor but MUST NOT append a `maxTimeMS` field to any commands.
 ##### Tailable awaitData Cursors
 
 If `timeoutMS` is set, drivers MUST apply it to the original operation. Drivers MUST also apply the original `timeoutMS`
-value to each `next` call on the resulting cursor but MUST NOT use it to derive a `maxTimeMS` value for `getMore`
-commands. Helpers for operations that create tailable awaitData cursors MUST also support the `maxAwaitTimeMS` option.
-Drivers MUST error if this option is set, `timeoutMS` is set to a non-zero value, and `maxAwaitTimeMS` is greater than
-or equal to `timeoutMS`. If this option is set, drivers MUST use it as the `maxTimeMS` field on `getMore` commands.
+value to each `next` call on the resulting cursor. Helpers for operations that create tailable awaitData cursors MUST
+also support the `maxAwaitTimeMS` option. Drivers MUST error if this option is set, `timeoutMS` is set to a non-zero
+value, and `maxAwaitTimeMS` is greater than or equal to `timeoutMS`. If this option is set, drivers MUST use
+`min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` as the `maxTimeMS` field on `getMore` commands.
 
 See [Tailable cursor behavior](#tailable-cursor-behavior) for rationale regarding both non-awaitData and awaitData
 cursors.
@@ -600,6 +600,11 @@ distinct meanings, so supporting both yields a more robust, albeit verbose, API.
 greater than or equal to `timeoutMS` because in that case, `getMore` requests would not succeed if the batch was empty:
 the server would wait for `maxAwaitTimeMS`, but the driver would close the socket after `timeoutMS`.
 
+For tailable awaitData cursors we use the `min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` to allow the
+server more opportunities to respond with an empty batch before a client-side timeout. Additionally, this change is
+required to prevent an unnecessary client-side timeout during a pending read when checking out a connection. For
+example, maxAwaitTimeMS=1000 and remaining timeoutMS=100 will cause a pending read to hang for 900ms.
+
 ### Change stream behavior
 
 Change streams internally behave as tailable awaitData cursors, so the behavior of the `timeoutMS` option is the same
@@ -665,6 +670,7 @@ timeout for each database operation. This would mimic using `timeoutMode=ITERATI
 
 ## Changelog
 
+- 2024-01-29: Adjust getMore maxTimeMS Calculation for tailable awaitData Cursors
 - 2024-09-12: Specify that explain helpers support support timeoutMS.
 - 2023-12-07: Migrated from reStructuredText to Markdown.
 - 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.
