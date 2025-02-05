@@ -253,3 +253,7 @@ reasons. If so, they MUST not impose any additional constraints on data length o
 ## Test Plan
 
 See the [README](tests/README.md) for tests.
+
+## Changelog
+
+- 2025-02-05: Text clarifications, no technical change.
