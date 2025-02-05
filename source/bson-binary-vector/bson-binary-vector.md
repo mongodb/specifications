@@ -153,8 +153,9 @@ Drivers MUST NOT generate Vectors with unnecessary trailing bytes or with unused
 The contents of individual elements MUST NOT be considered when checking the validity of a Vector. Unused bits in the
 final byte are not considered part of any element.
 
-Drivers MUST validate Vector metadata when provided through the API, to avoid generating invalid Vector byte strings.
-For example, if a PACKED_BIT Vector is constructed from a byte array paired with a Padding value:
+Drivers MUST validate Vector metadata when provided through the API, to avoid generating byte strings that any
+conforming implementation would consider invalid. For example, if a PACKED_BIT Vector is constructed from a byte array
+paired with a Padding value:
 
 - The driver MUST ensure Padding is zero if the byte array is empty
 - The driver MUST ensure the unused bits in the final byte are zero
