@@ -247,7 +247,7 @@ reasons. If so, they MUST not impose any additional constraints on data length o
 
     - Header bytes: INT8
     - Data bytes: `0xff 0x00 0x01`
-    - Unpacked representation, 3 elements: `[-1, 0, 1]`
+    - Integer elements: `[-1, 0, 1]`
 
 - `0x27 0x00 0x00 0x00 0x80 0x3f 0x34 0x12 0x80 0x7f`
 
@@ -255,7 +255,8 @@ reasons. If so, they MUST not impose any additional constraints on data length o
     - Data bytes: `0x00 0x00 0x80 0x3f 0x34 0x12 0x80 0x7f`
         - The same bytes as two 32-bit words, least significant byte first: `0x3f800000 0x7f801234`
         - The same 32-bit words interpreted as IEEE 754 `binary32`: `1.0 NaN(0x001234)`
-    - Unpacked representation, 2 elements: `[1.0, NaN]`
+    - Floating point elements: `[1.0, NaN]`
+    - Converted to Array, represented as Relaxed Extended JSON: `[1.0, {"$numberDouble": "NaN"}]`
 
 ## Test Plan
 
