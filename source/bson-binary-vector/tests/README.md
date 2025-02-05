@@ -50,9 +50,10 @@ MUST assert that the input float array is the same after encoding and decoding.
 
 #### To prove correct in an invalid case (`valid:false`), one MUST
 
-- when the vector field exists, raise an exception for encoding a document from the numeric values, dtype, and padding.
-- when the canonical_bson field exists, raise an exception for decoding it, as the field contains corrupted data that
-    can't be decoded into a vector.
+- if the vector field is present, raise an exception when attempting to encode a document from the numeric values,
+    dtype, and padding.
+- if the canonical_bson field is present, raise an exception when attempting to deserialize it into the corresponding
+    numeric values, as the field contains corrupted data.
 
 ## FAQ
 
