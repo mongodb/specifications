@@ -146,9 +146,10 @@ Drivers MUST reject Vectors with invalid header bytes.
 
 Drivers SHOULD reject Vectors with any unused bits in the final byte set to `1`.
 
-Drivers SHOULD reject Vectors with unnecessary trailing bytes.
+Drivers SHOULD reject Vectors with extra bytes after the last complete multi-byte element.
 
-Drivers MUST NOT generate Vectors with unnecessary trailing bytes or with unused bits in the final byte set to `1`.
+Drivers MUST NOT generate Vectors with extra bytes after the last complete element, or with unused bits in the final
+byte set to `1`.
 
 The contents of individual elements MUST NOT be considered when checking the validity of a Vector. Unused bits in the
 final byte are not considered part of any element.
