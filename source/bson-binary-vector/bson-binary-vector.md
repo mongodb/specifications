@@ -61,10 +61,10 @@ an alternative collection type with improved performance and limited complexity.
     padding for alignment is not supported, as this would impact comparison stability.
 - Vectors do not include any data compression features. Applications may see benefit from careful choice of an external
     compression algorithm.
-- Vectors do not provide any new comparison methods. Identical Vector values must compare as identical encoded BSON
-    Binary byte strings. Vectors are never equal to Arrays, even when they represent the same numeric elements.
-- Vectors do not guarantee that element types defined in the future will always be scalar numbers, only that Vector
-    elements always have identical type and size.
+- Vectors do not provide any new comparison methods beyond byte-equality. Vectors are never equal to Arrays, even when
+    they represent the same numeric elements. Vectors of different element types are not comparable.
+- Vectors do not guarantee that element types defined in the future will always be scalar numbers, only that elements of
+    a Vector always have identical type and size.
 
 ## Specification
 
@@ -73,8 +73,6 @@ an alternative collection type with improved performance and limited complexity.
 - This specification defines the meaning of the data bytes in BSON Binary items of subtype `9`.
 - The first two data bytes form a header, with meaning defined here.
 - This specification defines validity criteria for accepting or rejecting byte strings.
-- Drivers may optionally implement conversions between BSON Array and Vector types. This specification defines rules
-    that must be followed when conversions are implemented.
 - This specification includes JSON tests with valid documents, invalid documents, and expected conversion results.
 - Drivers SHOULD provide low-overhead APIs for producing and consuming Vector data in the closest compatible language
     types, without conversions more expensive than copying or byte-swapping. These APIs are not standardized across
@@ -105,6 +103,8 @@ Drivers MAY choose to interpret the header bytes as a structure with internal fi
 | 5 bits | Second byte, most significant part  | (reserved)  |
 | 3 bits | Second byte, least significant part | Padding     |
 
+Reserved bits MUST be zero.
+
 The generic interpretation of Padding refers to the number of items that should be ignored from what would have been the
 end of the Vector, regardless of item size and bit order.
 
@@ -134,30 +134,36 @@ end of the Vector, regardless of item size and bit order.
 | 14        | (reserved for 384) |
 | 15        | (reserved for 512) |
 
+Reserved type and size codes MUST NOT be used.
+
 ### Validity Criteria
 
 To be valid, a Vector MUST be 2 bytes long or longer. Its header MUST be one of the valid bit patterns above. In
-particular, the second byte MUST be nonzero only as necessary to represent Padding values between 0 and 7 for
+particular, the second byte MUST be nonzero only as necessary to represent Padding values between 0 and 7 in non-empty
 PACKED_BITS vectors. Vectors with no elements MUST have a Padding value of 0.
 
-When Padding is nonzero, drivers SHOULD ensure the unused bits in the final byte are zero.
+Drivers MUST reject Vectors with invalid header bytes.
+
+Drivers SHOULD reject Vectors with any unused bits in the final byte set to `1`.
+
+Drivers SHOULD reject Vectors with unnecessary trailing bytes.
+
+Drivers MUST NOT generate Vectors with unnecessary trailing bytes or with unused bits in the final byte set to `1`.
 
 The contents of individual elements MUST NOT be considered when checking the validity of a Vector. Unused bits in the
 final byte are not considered part of any element.
 
-Vectors MUST NOT include any unnecessary trailing bytes. For example, FLOAT32 Vectors must include an exact multiple of
-4 bytes after the 2-byte header.
-
-Drivers MUST validate Vector metadata when provided through the API. For example, if a PACKED_BIT Vector is constructed
-from a byte array paired with a Padding value:
+Drivers MUST validate Vector metadata when provided through the API, to avoid generating invalid Vector byte strings.
+For example, if a PACKED_BIT Vector is constructed from a byte array paired with a Padding value:
 
 - The driver MUST ensure Padding is zero if the byte array is empty
-- The driver SHOULD ensure the unused bits in the final byte are zero
-- If the API allows Padding values outside the valid range of 0..7 inclusve, these must be rejected at runtime.
+- The driver MUST ensure the unused bits in the final byte are zero
+- If the API allows Padding values outside the valid range of 0..7 inclusive, these MUST be rejected at runtime.
 
-Drivers MUST validate Vector metadata when creating an API representation from a stored BSON Binary item. A PACKED_BIT
-value would have its Padding and length validated as above. A FLOAT32 Vector would be rejected for a nonzero second
-header byte, or a length that isn't 2 plus a multiple of 4.
+Drivers MUST validate Vector byte strings when creating an API representation from a stored BSON Binary item. A
+PACKED_BIT value would have its Padding and length validated as above, and SHOULD have its unused bits checked for zero.
+A FLOAT32 Vector MUST be rejected for a nonzero second header byte, and it SHOULD be rejected for a length that isn't 2
+plus a multiple of 4.
 
 ### Type Conversions
 
