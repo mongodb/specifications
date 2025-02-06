@@ -35,29 +35,7 @@
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "coll0",
-        "collectionOptions": {
-          "encryptedFields": {
-            "fields": [
-              {
-                "keyId": {
-                  "$binary": {
-                    "base64": "EjRWeBI0mHYSNBI0VniQEg==",
-                    "subType": "04"
-                  }
-                },
-                "path": "encryptedInt",
-                "bsonType": "int",
-                "queries": {
-                  "queryType": "equality",
-                  "contention": {
-                    "$numberLong": "0"
-                  }
-                }
-              }
-            ]
-          }
-        }
+        "collectionName": "coll0"
       }
     },
     {
@@ -112,6 +90,33 @@
           }
         }
       ]
+    },
+    {
+      "databaseName": "crud-tests",
+      "collectionName": "coll0",
+      "documents": [],
+      "createOptions": {
+        "encryptedFields": {
+          "fields": [
+            {
+              "keyId": {
+                "$binary": {
+                  "base64": "EjRWeBI0mHYSNBI0VniQEg==",
+                  "subType": "04"
+                }
+              },
+              "path": "encryptedInt",
+              "bsonType": "int",
+              "queries": {
+                "queryType": "equality",
+                "contention": {
+                  "$numberLong": "0"
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "_yamlAnchors": {

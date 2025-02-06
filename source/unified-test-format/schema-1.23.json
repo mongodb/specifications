@@ -937,9 +937,6 @@
         },
         "timeoutMS": {
           "type": "integer"
-        },
-        "encryptedFields": {
-          "type": "object"
         }
       }
     },

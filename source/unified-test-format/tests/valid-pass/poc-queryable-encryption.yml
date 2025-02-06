@@ -23,14 +23,6 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name coll0
-      collectionOptions:
-        encryptedFields:
-          fields:
-            - keyId:
-                $binary: {'base64': 'EjRWeBI0mHYSNBI0VniQEg==', 'subType': '04'}
-              path: 'encryptedInt'
-              bsonType: 'int'
-              queries: {'queryType': 'equality', 'contention': {'$numberLong': '0'}}
   - database:
       id: &database1 database1
       client: *client0
@@ -52,6 +44,17 @@ initialData:
         status: 1
         masterKey:
           provider: local
+  - databaseName: *database0Name
+    collectionName: *collection0Name
+    documents: []
+    createOptions:
+      encryptedFields:
+        fields:
+          - keyId:
+              $binary: {'base64': 'EjRWeBI0mHYSNBI0VniQEg==', 'subType': '04'}
+            path: 'encryptedInt'
+            bsonType: 'int'
+            queries: {'queryType': 'equality', 'contention': {'$numberLong': '0'}}
 
 tests:
   - description: insert, replace, and find with queryable encryption
