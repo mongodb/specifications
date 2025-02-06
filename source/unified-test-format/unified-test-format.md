@@ -1315,8 +1315,6 @@ The structure of this object is as follows:
 - `readConcern`: Optional object. See [commonOptions_readConcern](#commonOptions_readConcern).
 - `readPreference`: Optional object. See [commonOptions_readPreference](#commonOptions_readPreference).
 - `writeConcern`: Optional object. See [commonOptions_writeConcern](#commonOptions_writeConcern).
-- `encryptedFields`: Optional object. See
-    [Client Side Encryption: `encryptedFields`](../client-side-encryption/client-side-encryption.md#encryptedFields)
 
 ### Common Options
 
@@ -3551,7 +3549,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2025-01-21: **Schema version 1.23.**
 
-    Support queryable encryption.
+    Support automatic encryption. Add `autoEncryptOpts` to `client` entity.
 
 - 2024-11-12: **Schema version 1.22.**
 

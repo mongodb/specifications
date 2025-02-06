@@ -188,14 +188,20 @@
               "type": "boolean"
             },
             "autoEncryptOpts": {
-              "keyVaultNamespace": {
-                "type": "string"
-              },
-              "bypassAutoEncryption": {
-                "type": "boolean"
-              },
-              "kmsProviders": {
-                "$ref": "#/definitions/kmsProviders"
+              "type": "object",
+              "required": [
+                "kmsProviders"
+              ],
+              "properties": {
+                "keyVaultNamespace": {
+                  "type": "string"
+                },
+                "bypassAutoEncryption": {
+                  "type": "boolean"
+                },
+                "kmsProviders": {
+                  "$ref": "#/definitions/kmsProviders"
+                }
               }
             }
           }
@@ -931,9 +937,6 @@
         },
         "timeoutMS": {
           "type": "integer"
-        },
-        "encryptedFields": {
-          "type": "object"
         }
       }
     },
