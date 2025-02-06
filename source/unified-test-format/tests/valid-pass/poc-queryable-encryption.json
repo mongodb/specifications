@@ -1,5 +1,5 @@
 {
-  "description": "client bulkWrite updateOne-sort",
+  "description": "poc-queryable-encryption",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -17,12 +17,7 @@
         "autoEncryptOpts": {
           "kmsProviders": {
             "local": {
-              "key": {
-                "$binary": {
-                  "base64": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk",
-                  "subType": "00"
-                }
-              }
+              "key": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk"
             }
           }
         }
@@ -32,36 +27,14 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "crud-tests"
+        "databaseName": "poc-queryable-encryption"
       }
     },
     {
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "coll0",
-        "collectionOptions": {
-          "encryptedFields": {
-            "fields": [
-              {
-                "keyId": {
-                  "$binary": {
-                    "base64": "EjRWeBI0mHYSNBI0VniQEg==",
-                    "subType": "04"
-                  }
-                },
-                "path": "encryptedInt",
-                "bsonType": "int",
-                "queries": {
-                  "queryType": "equality",
-                  "contention": {
-                    "$numberLong": "0"
-                  }
-                }
-              }
-            ]
-          }
-        }
+        "collectionName": "coll0"
       }
     },
     {
@@ -113,6 +86,33 @@
           }
         }
       ]
+    },
+    {
+      "databaseName": "poc-queryable-encryption",
+      "collectionName": "coll0",
+      "documents": [],
+      "createOptions": {
+        "encryptedFields": {
+          "fields": [
+            {
+              "keyId": {
+                "$binary": {
+                  "base64": "EjRWeBI0mHYSNBI0VniQEg==",
+                  "subType": "04"
+                }
+              },
+              "path": "encryptedInt",
+              "bsonType": "int",
+              "queries": {
+                "queryType": "equality",
+                "contention": {
+                  "$numberLong": "0"
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "tests": [
@@ -160,7 +160,7 @@
       "outcome": [
         {
           "collectionName": "coll0",
-          "databaseName": "crud-tests",
+          "databaseName": "poc-queryable-encryption",
           "documents": [
             {
               "_id": 1,
