@@ -7,25 +7,77 @@ ______________________________________________________________________
 
 ## Abstract
 
-This document describes the subtype of the Binary BSON type used for efficient storage and retrieval of vectors. Vectors
-here refer to densely packed arrays of numbers, all of the same type.
+This document describes a new *Vector* subtype (9) for BSON Binary items, used to compactly represent ordered
+collections of uniformly-typed elements. A framework is presented for future type extensibility, but adoption complexity
+is limited by allowing support for only a restricted set of element types at first:
 
-## Motivation
+- 1-bit unsigned integers
+- 8-bit signed integers
+- 32-bit floating point
 
-These representations correspond to the numeric types supported by popular numerical libraries for vector processing,
-such as NumPy, PyTorch, TensorFlow and Apache Arrow. Storing and retrieving vector data using the same densely packed
-format used by these libraries can result in significant memory savings and processing efficiency.
-
-### META
+## Meta
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
 "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
+Hexadecimal values are shown here with a `0x` prefix.
+
+## Terms
+
+*BSON Array* - Arrays are a fundamental container type in BSON for ordered sequences, implemented as item type `4`. Each
+element can have an arbitrary data type. The encoding is relatively high-overhead, due to both the non-uniform types and
+the required element name strings.
+
+*BSON Binary* - BSON Binary items (type `5`) are a container for a variable-length byte sequence with extensible
+interpretation, according to an 8-bit *subtype*.
+
+*BSON Binary Vector* - A BSON Binary item of subtype `9`. Also referred to here as a Vector.
+
+## Motivation for Change
+
+BSON does not on its own provide a densely packed encoding for numeric data of uniform element type. Numbers stored in a
+BSON Array have high space overhead, owing to the item name and type included with each value. This specification offers
+an alternative data format with improved performance and limited complexity.
+
+### Goals
+
+- Vectors provide improved resource efficiency compared to BSON Arrays.
+- Every Vector is guaranteed to represent a sequence of elements with uniform type and size.
+- Vectors may be reliably compared for equality by comparing their encoded BSON Binary representation.
+- Implementation complexity should be minimal.
+
+### Non-Goals
+
+- No changes to Extended JSON representation are defined. Vectors will serialize to generic Binary items with base64
+    encoding: `{"$binary": {"base64": ... , "subType": "9" }}`.
+- The Vector is a 1-dimensional container. Applications may implement multi-dimensional arrays efficiently by bundling a
+    Vector with additional metadata, but this usage is not standardized here.
+- Comprehensive support for all possible data types and bit/byte ordering is not a goal. This specification prefers to
+    reduce complexity by limiting the set of allowed types and providing no unnecessary data formatting options.
+- Vectors within a BSON document are NOT designed for "zero copy" access by direct architecture-specific load or store.
+    Typically multi-byte values will not be aligned as required, and they may need byte order conversion. Internal
+    padding for alignment is not supported, as this would impact comparison stability.
+- Vectors do not include any data compression features. Applications may see benefit from careful choice of an external
+    compression algorithm.
+- Vectors do not provide any new comparison methods beyond byte-equality. Vectors are never equal to Arrays, even when
+    they represent the same numeric elements. Vectors of different element types are not comparable.
+- Vectors do not guarantee that element types defined in the future will always be scalar numbers, only that elements of
+    a Vector always have identical type and size.
+
 ## Specification
 
-This specification introduces a new BSON binary subtype, the vector, with value `9`.
+### Scope
 
-Drivers SHOULD provide idiomatic APIs to translate between arrays of numbers and this BSON Binary specification.
+- This specification defines the meaning of the data bytes in BSON Binary items of subtype `9`.
+- The first two data bytes form a header, with meaning defined here.
+- This specification defines validity criteria for accepting or rejecting byte strings.
+- This specification includes JSON tests with valid documents, invalid documents, and expected conversion results.
+- Drivers SHOULD provide low-overhead APIs for producing and consuming Vector data in the closest compatible language
+    types, without conversions more expensive than copying or byte-swapping. These APIs are not standardized across
+    languages.
+- Drivers SHOULD provide facilities for converting between BSON Binary Vector and BSON Array representations. When they
+    choose to do so, they MUST ensure compliance using the provided tests. Drivers MUST NOT automatically convert
+    between representations.
 
 ### Data Types (dtypes)
 
@@ -246,6 +298,8 @@ See the [README](tests/README.md) for tests.
         [numpy.unpackbits](https://numpy.org/doc/2.0/reference/generated/numpy.unpackbits.html#numpy.unpackbits).
 
 ## Changelog
+
+- 2025-02-07: Documented goals, non-goals, terms, and scope.
 
 - 2025-02-04: Update validation for decoding into a FLOAT32 vector.
 
