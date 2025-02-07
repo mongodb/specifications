@@ -3,7 +3,8 @@ description: poc-queryable-encryption
 schemaVersion: "1.23"
 
 runOnRequirements:
-  - minServerVersion: "8.0"
+  - minServerVersion: "7.0"
+     csfle: true
 
 createEntities:
   - client:
@@ -37,7 +38,7 @@ initialData:
   - databaseName: *database1Name
     collectionName: *collection1Name
     documents:
-      - _id: { $binary: { base64: EjRWeBI0mHYSNBI0VniQEg==, subType: "04" } }
+      - _id: &keyid { $binary: { base64: EjRWeBI0mHYSNBI0VniQEg==, subType: "04" } }
         keyMaterial: { $binary: { base64: sHe0kz57YW7v8g9VP9sf/+K1ex4JqKc5rf/URX3n3p8XdZ6+15uXPaSayC6adWbNxkFskuMCOifDoTT+rkqMtFkDclOy884RuGGtUysq3X7zkAWYTKi8QAfKkajvVbZl2y23UqgVasdQu3OVBQCrH/xY00nNAs/52e958nVjBuzQkSb1T8pKJAyjZsHJ60+FtnfafDZSTAIBJYn7UWBCwQ==, subType: "00" } }
         creationDate: { $date: { $numberLong: "1641024000000" } }
         updateDate: { $date: { $numberLong: "1641024000000" } }
@@ -50,8 +51,7 @@ initialData:
     createOptions:
       encryptedFields:
         fields:
-          - keyId:
-              $binary: {'base64': 'EjRWeBI0mHYSNBI0VniQEg==', 'subType': '04'}
+          - keyId: *keyid
             path: 'encryptedInt'
             bsonType: 'int'
             queries: {'queryType': 'equality', 'contention': {'$numberLong': '0'}}

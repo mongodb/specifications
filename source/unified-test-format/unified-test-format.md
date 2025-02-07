@@ -538,7 +538,7 @@ The structure of this object is as follows:
 
     - `autoEncryptOpts`: Optional object with the following fields:
         - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
-        - `keyVaultNamespace`: Optional, a namespace to the key vault collection. Defaults to "keyvault.datakeys".
+        - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
         - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
             Defaults to `false`.
 
