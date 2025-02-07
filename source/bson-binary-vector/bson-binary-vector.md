@@ -246,7 +246,7 @@ reasons. If so, they MUST not impose any additional constraints on data length o
 
 - `0x03 0x00 0xff 0x00 0x01`
 
-    - Header bytes: INT8
+    - Header: INT8
     - Data bytes: `0xff 0x00 0x01`
     - Integer elements: `[-1, 0, 1]`
 
