@@ -349,8 +349,8 @@ Driver `watch` helpers MUST support both `timeoutMS` and `maxAwaitTimeMS` option
 `timeoutMS`. These helpers MUST NOT support the `timeoutMode` option as change streams are an abstraction around
 tailable-awaitData cursors, so they implicitly use `ITERATION` mode. If set, drivers MUST apply the `timeoutMS` option
 to the initial `aggregate` operation. Drivers MUST also apply the original `timeoutMS` value to each `next` call on the
-change stream but MUST NOT use it to derive a `maxTimeMS` field for `getMore` commands. If the `maxAwaitTimeMS` option
-is set, drivers MUST use it as the `maxTimeMS` field on `getMore` commands.
+change stream. If this option is set, drivers MUST use `min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` as
+the `maxTimeMS` field on `getMore` commands.
 
 If a `next` call fails with a timeout error, drivers MUST NOT invalidate the change stream. The subsequent `next` call
 MUST perform a resume attempt to establish a new change stream on the server. Any errors from the `aggregate` operation
