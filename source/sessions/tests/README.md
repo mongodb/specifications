@@ -238,6 +238,20 @@ and configure a `MongoClient` with default options.
 - Attempt to send a write command to the server (e.g., `insertOne`) with the explicit session passed in
 - Assert that a client-side error is generated indicating that sessions are not supported
 
+### 20. Drivers do not gossip `$clusterTime` on SDAM commands.
+
+- Skip this test when connected to a deployment that does not support cluster times
+- Create a client, C1, with a small heartbeatFrequencyMS
+    - `c1 = MongoClient(heartbeatFrequencyMS=10)`
+- Run a ping command using C1 and record the `$clusterTime` in the response, as `clusterTime`.
+    - `clusterTime = c1.admin.command({"ping": 1})["$clusterTime"]`
+- Using a separate client, C2, run an insert to advance the cluster time
+    - `c2.test.test.insert_one({"advance": "$clusterTime"})`
+- Next, wait until the client C1 processes at least 1 SDAM heartbeat
+    - If possible, assert the SDAM heartbeats do not send `$clusterTime`
+- Run a ping command using C1 and assert that `$clusterTime` sent is the same as the `clusterTime` recorded earlier.
+    This assertion proves that C1's `$clusterTime` was not advanced by gossiping through SDAM.
+
 ## Changelog
 
 - 2024-05-08: Migrated from reStructuredText to Markdown.
