@@ -48,7 +48,7 @@ an alternative data format with improved performance and limited complexity.
 
 ### Non-Goals
 
-- No changes to Extended JSON representation are defined. Vectors will serialize to generic Binary items with base64
+- No changes to Extended JSON representation are defined. Vectors will serialize to Binary items with base64
     encoding: `{"$binary": {"base64": ... , "subType": "9" }}`.
 - The Vector is a 1-dimensional container. Applications may implement multi-dimensional arrays efficiently by bundling a
     Vector with additional metadata, but this usage is not standardized here.
