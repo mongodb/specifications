@@ -601,9 +601,7 @@ greater than or equal to `timeoutMS` because in that case, `getMore` requests wo
 the server would wait for `maxAwaitTimeMS`, but the driver would close the socket after `timeoutMS`.
 
 For tailable awaitData cursors we use the `min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` to allow the
-server more opportunities to respond with an empty batch before a client-side timeout. Additionally, this change is
-required to prevent an unnecessary client-side timeout during a pending read when checking out a connection. For
-example, maxAwaitTimeMS=1000 and remaining timeoutMS=100 will cause a pending read to hang for 900ms.
+server more opportunities to respond with an empty batch before a client-side timeout
 
 ### Change stream behavior
 
