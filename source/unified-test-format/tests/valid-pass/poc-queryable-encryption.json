@@ -3,7 +3,8 @@
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
-      "minServerVersion": "8.0"
+      "minServerVersion": "7.0",
+      "csfle": true
     }
   ],
   "createEntities": [
@@ -25,29 +26,29 @@
     },
     {
       "database": {
-        "id": "database0",
+        "id": "encryptedDB",
         "client": "client0",
         "databaseName": "poc-queryable-encryption"
       }
     },
     {
       "collection": {
-        "id": "collection0",
-        "database": "database0",
-        "collectionName": "coll0"
+        "id": "encryptedColl",
+        "database": "encryptedDB",
+        "collectionName": "encrypted"
       }
     },
     {
       "database": {
-        "id": "database1",
+        "id": "keyvaultDB",
         "client": "client0",
         "databaseName": "keyvault"
       }
     },
     {
       "collection": {
-        "id": "collection1",
-        "database": "database0",
+        "id": "datakeysColl",
+        "database": "keyvaultDB",
         "collectionName": "datakeys"
       }
     }
@@ -89,7 +90,7 @@
     },
     {
       "databaseName": "poc-queryable-encryption",
-      "collectionName": "coll0",
+      "collectionName": "encrypted",
       "documents": [],
       "createOptions": {
         "encryptedFields": {
@@ -120,7 +121,7 @@
       "description": "insert, replace, and find with queryable encryption",
       "operations": [
         {
-          "object": "collection0",
+          "object": "encryptedColl",
           "name": "insertOne",
           "arguments": {
             "document": {
@@ -130,7 +131,7 @@
           }
         },
         {
-          "object": "collection0",
+          "object": "encryptedColl",
           "name": "replaceOne",
           "arguments": {
             "filter": {
@@ -142,7 +143,7 @@
           }
         },
         {
-          "object": "collection0",
+          "object": "encryptedColl",
           "name": "find",
           "arguments": {
             "filter": {
@@ -159,7 +160,7 @@
       ],
       "outcome": [
         {
-          "collectionName": "coll0",
+          "collectionName": "encrypted",
           "databaseName": "poc-queryable-encryption",
           "documents": [
             {
