@@ -204,13 +204,19 @@
                   "$ref": "#/definitions/kmsProviders"
                 },
                 "schemaMap": {
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
                 },
                 "extraOptions": {
                   "type": "object"
                 },
                 "encryptedFieldsMap": {
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
                 },
                 "bypassQueryAnalysis": {
                   "type": "boolean"
