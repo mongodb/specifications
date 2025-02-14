@@ -11,10 +11,6 @@
     {
       "client": {
         "id": "client0",
-        "observeEvents": [
-          "commandStartedEvent",
-          "commandSucceededEvent"
-        ],
         "autoEncryptOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {

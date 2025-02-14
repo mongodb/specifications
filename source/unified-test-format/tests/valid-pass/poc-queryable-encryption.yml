@@ -9,9 +9,6 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
-      observeEvents:
-        - commandStartedEvent
-        - commandSucceededEvent
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
