@@ -541,6 +541,11 @@ The structure of this object is as follows:
         - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
         - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
             Defaults to `false`.
+        - `schemaMap`: Optional object. Maps namespaces to encrypted fields.
+        - `encryptedFieldsMap`: Optional object. Specifies which fields to automatically encrypt and the types of queries allowed on those fields.
+        - `extraOptions`: Optional object. Configuration options for the encryption library.
+        - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
+        - `keyExpirationMS`: Optional integer. Sets how long data encryption keys are cached. Defaults to 60,000.
 
 <span id="entity_clientEncryption"></span>
 
