@@ -3413,3 +3413,258 @@ Repeat this test with the `azure` and `gcp` masterKeys.
 2. Call `client_encryption.createDataKey()` with "aws" as the provider. Expect this to fail.
 
 Repeat this test with the `azure` and `gcp` masterKeys.
+
+### 25. Test $lookup
+
+This test requires libmongocrypt 1.13.0. Unless otherwise noted, tests require mongocryptd/crypt_shared 8.1+.
+
+The syntax `<filename.json>` is used to refer to files in
+[source/client-side-encryption/etc/data/lookup](/source/client-side-encryption/etc/data/lookup/).
+
+#### Setup
+
+Create an unencrypted MongoClient. Drop database `db`.
+
+Insert `<key-doc.json>` into `db.keyvault`.
+
+Create the following collections:
+
+- `db.csfle` with options: `{ "validator": { "$jsonSchema": "<schema-csfle.json>"}}`.
+- `db.csfle2` with options: `{ "validator": { "$jsonSchema": "<schema-csfle2.json>"}}`.
+- `db.qe` with options: `{ "encryptedFields": "<schema-qe.json>"}`.
+- `db.qe2` with options: `{ "encryptedFields": "<schema-qe2.json>"}`.
+- `db.no_schema` with no options.
+- `db.no_schema2` with no options.
+
+Create an encrypted MongoClient configured with:
+
+```python
+AutoEncryptionOpts(
+    keyVaultNamespace="db.keyvault",
+    kmsProviders={"local": { "key": "<base64 decoding of LOCAL_MASTERKEY>" }}
+)
+```
+
+Insert documents with the encrypted MongoClient:
+
+- `{"csfle": "csfle"}` into `db.csfle`
+    - Use the unencrypted client to retrieve it. Assert the `csfle` field is BSON binary.
+- `{"csfle2": "csfle2"}` into `db.csfle2`
+    - Use the unencrypted client to retrieve it. Assert the `csfle2` field is BSON binary.
+- `{"qe": "qe"}` into `db.qe`
+    - Use the unencrypted client to retrieve it. Assert the `qe` field is BSON binary.
+- `{"qe2": "qe2"}` into `db.qe2`
+    - Use the unencrypted client to retrieve it. Assert the `qe2` field is BSON binary.
+- `{"no_schema": "no_schema"}` into `db.no_schema`
+- `{"no_schema2": "no_schema2"}` into `db.no_schema2`
+
+#### Case 1: `db.csfle` joins `db.no_schema`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.csfle` with the following pipeline:
+
+```json
+[
+    {"$match" : {"csfle" : "csfle"}},
+    {
+        "$lookup" : {
+            "from" : "no_schema",
+            "as" : "matched",
+            "pipeline" : [ {"$match" : {"no_schema" : "no_schema"}}, {"$project" : {"_id" : 0}} ]
+        }
+    },
+    {"$project" : {"_id" : 0}}
+]
+```
+
+Expect one document to be returned matching: `{"csfle" : "csfle", "matched" : [ {"no_schema" : "no_schema"} ]}`.
+
+#### Case 2: `db.qe` joins `db.no_schema`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.qe` with the following pipeline:
+
+```json
+[
+    {"$match" : {"qe" : "qe"}},
+    {
+       "$lookup" : {
+          "from" : "no_schema",
+          "as" : "matched",
+          "pipeline" :
+             [ {"$match" : {"no_schema" : "no_schema"}}, {"$project" : {"_id" : 0, "__safeContent__" : 0}} ]
+       }
+    },
+    {"$project" : {"_id" : 0, "__safeContent__" : 0}}
+]
+```
+
+Expect one document to be returned matching: `{"qe" : "qe", "matched" : [ {"no_schema" : "no_schema"} ]}`.
+
+#### Case 3: `db.no_schema` joins `db.csfle`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.no_schema` with the following pipeline:
+
+```json
+[
+    {"$match" : {"no_schema" : "no_schema"}},
+    {
+        "$lookup" : {
+            "from" : "csfle",
+            "as" : "matched",
+            "pipeline" : [ {"$match" : {"csfle" : "csfle"}}, {"$project" : {"_id" : 0}} ]
+        }
+    },
+    {"$project" : {"_id" : 0}}
+]
+```
+
+Expect one document to be returned matching: `{"no_schema" : "no_schema", "matched" : [ {"csfle" : "csfle"} ]}`.
+
+#### Case 4: `db.no_schema` joins `db.qe`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.no_schema` with the following pipeline:
+
+```json
+[
+   {"$match" : {"no_schema" : "no_schema"}},
+   {
+      "$lookup" : {
+         "from" : "qe",
+         "as" : "matched",
+         "pipeline" : [ {"$match" : {"qe" : "qe"}}, {"$project" : {"_id" : 0, "__safeContent__" : 0}} ]
+      }
+   },
+   {"$project" : {"_id" : 0}}
+]
+```
+
+Expect one document to be returned matching: `{"no_schema" : "no_schema", "matched" : [ {"qe" : "qe"} ]}`.
+
+#### Case 5: `db.csfle` joins `db.csfle2`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.csfle` with the following pipeline:
+
+```json
+[
+   {"$match" : {"csfle" : "csfle"}},
+   {
+      "$lookup" : {
+         "from" : "csfle2",
+         "as" : "matched",
+         "pipeline" : [ {"$match" : {"csfle2" : "csfle2"}}, {"$project" : {"_id" : 0}} ]
+      }
+   },
+   {"$project" : {"_id" : 0}}
+]
+```
+
+Expect one document to be returned matching: `{"csfle" : "csfle", "matched" : [ {"csfle2" : "csfle2"} ]}`.
+
+#### Case 6: `db.qe` joins `db.qe2`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.qe` with the following pipeline:
+
+```json
+[
+   {"$match" : {"qe" : "qe"}},
+   {
+      "$lookup" : {
+         "from" : "qe2",
+         "as" : "matched",
+         "pipeline" : [ {"$match" : {"qe2" : "qe2"}}, {"$project" : {"_id" : 0, "__safeContent__" : 0}} ]
+      }
+   },
+   {"$project" : {"_id" : 0, "__safeContent__" : 0}}
+]
+```
+
+Expect one document to be returned matching: `{"qe" : "qe", "matched" : [ {"qe2" : "qe2"} ]}`.
+
+#### Case 7: `db.no_schema` joins `db.no_schema2`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.no_schema` with the following pipeline:
+
+```json
+[
+    {"$match" : {"no_schema" : "no_schema"}},
+    {
+        "$lookup" : {
+            "from" : "no_schema2",
+            "as" : "matched",
+            "pipeline" : [ {"$match" : {"no_schema2" : "no_schema2"}}, {"$project" : {"_id" : 0}} ]
+        }
+    },
+    {"$project" : {"_id" : 0}}
+]
+```
+
+Expect one document to be returned matching:
+`{"no_schema" : "no_schema", "matched" : [ {"no_schema2" : "no_schema2"} ]}`.
+
+#### Case 8: `db.csfle` joins `db.qe`
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.csfle` with the following pipeline:
+
+```json
+[
+    {"$match" : {"csfle" : "qe"}},
+    {
+        "$lookup" : {
+            "from" : "qe",
+            "as" : "matched",
+            "pipeline" : [ {"$match" : {"qe" : "qe"}}, {"$project" : {"_id" : 0}} ]
+        }
+    },
+    {"$project" : {"_id" : 0}}
+]
+```
+
+Expect an exception to be thrown with a message containing the substring `not supported`.
+
+#### Case 9: test error with \<8.1
+
+This case requires mongocryptd/crypt_shared \<8.1.
+
+Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
+schema caching from impacting the test).
+
+Run an aggregate operation on `db.csfle` with the following pipeline:
+
+```json
+[
+    {"$match" : {"csfle" : "csfle"}},
+    {
+        "$lookup" : {
+            "from" : "no_schema",
+            "as" : "matched",
+            "pipeline" : [ {"$match" : {"no_schema" : "no_schema"}}, {"$project" : {"_id" : 0}} ]
+        }
+    },
+    {"$project" : {"_id" : 0}}
+]
+```
+
+Expect an exception to be thrown with a message containing the substring `Upgrade`.
