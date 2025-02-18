@@ -334,10 +334,10 @@ resulting cursor but MUST NOT append a `maxTimeMS` field to any commands.
 ##### Tailable awaitData Cursors
 
 If `timeoutMS` is set, drivers MUST apply it to the original operation. Drivers MUST also apply the original `timeoutMS`
-value to each `next` call on the resulting cursor but MUST NOT use it to derive a `maxTimeMS` value for `getMore`
-commands. Helpers for operations that create tailable awaitData cursors MUST also support the `maxAwaitTimeMS` option.
-Drivers MUST error if this option is set, `timeoutMS` is set to a non-zero value, and `maxAwaitTimeMS` is greater than
-or equal to `timeoutMS`. If this option is set, drivers MUST use it as the `maxTimeMS` field on `getMore` commands.
+value to each `next` call on the resulting cursor. Helpers for operations that create tailable awaitData cursors MUST
+also support the `maxAwaitTimeMS` option. Drivers MUST error if this option is set, `timeoutMS` is set to a non-zero
+value, and `maxAwaitTimeMS` is greater than or equal to `timeoutMS`. If this option is set, drivers MUST use
+`min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` as the `maxTimeMS` field on `getMore` commands.
 
 See [Tailable cursor behavior](#tailable-cursor-behavior) for rationale regarding both non-awaitData and awaitData
 cursors.
@@ -349,8 +349,8 @@ Driver `watch` helpers MUST support both `timeoutMS` and `maxAwaitTimeMS` option
 `timeoutMS`. These helpers MUST NOT support the `timeoutMode` option as change streams are an abstraction around
 tailable-awaitData cursors, so they implicitly use `ITERATION` mode. If set, drivers MUST apply the `timeoutMS` option
 to the initial `aggregate` operation. Drivers MUST also apply the original `timeoutMS` value to each `next` call on the
-change stream but MUST NOT use it to derive a `maxTimeMS` field for `getMore` commands. If the `maxAwaitTimeMS` option
-is set, drivers MUST use it as the `maxTimeMS` field on `getMore` commands.
+change stream. If this option is set, drivers MUST use `min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` as
+the `maxTimeMS` field on `getMore` commands.
 
 If a `next` call fails with a timeout error, drivers MUST NOT invalidate the change stream. The subsequent `next` call
 MUST perform a resume attempt to establish a new change stream on the server. Any errors from the `aggregate` operation
@@ -600,6 +600,9 @@ distinct meanings, so supporting both yields a more robust, albeit verbose, API.
 greater than or equal to `timeoutMS` because in that case, `getMore` requests would not succeed if the batch was empty:
 the server would wait for `maxAwaitTimeMS`, but the driver would close the socket after `timeoutMS`.
 
+For tailable awaitData cursors we use the `min(maxAwaitTimeMS, remaining timeoutMS - minRoundTripTime)` to allow the
+server more opportunities to respond with an empty batch before a client-side timeout
+
 ### Change stream behavior
 
 Change streams internally behave as tailable awaitData cursors, so the behavior of the `timeoutMS` option is the same
@@ -665,6 +668,7 @@ timeout for each database operation. This would mimic using `timeoutMode=ITERATI
 
 ## Changelog
 
+- 2024-01-29: Adjust getMore maxTimeMS calculation for tailable awaitData cursors.
 - 2024-09-12: Specify that explain helpers support support timeoutMS.
 - 2023-12-07: Migrated from reStructuredText to Markdown.
 - 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.

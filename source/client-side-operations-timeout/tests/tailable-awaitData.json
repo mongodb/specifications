@@ -3,7 +3,8 @@
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.4"
+      "minServerVersion": "4.4",
+      "serverless": "forbid"
     }
   ],
   "createEntities": [
@@ -411,6 +412,114 @@
                     ]
                   },
                   "collection": "coll"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "apply remaining timeoutMS if less than maxAwaitTimeMS ",
+      "operations": [
+        {
+          "name": "createFindCursor",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "cursorType": "tailableAwait",
+            "batchSize": 1,
+            "maxAwaitTimeMS": 100
+          },
+          "saveResultAsEntity": "tailableCursor"
+        },
+        {
+          "name": "iterateOnce",
+          "object": "tailableCursor",
+          "arguments": {
+            "timeoutMS": 50
+          }
+        },
+        {
+          "name": "iterateOnce",
+          "object": "tailableCursor",
+          "arguments": {
+            "timeoutMS": 50
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "databaseName": "test"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore",
+                "databaseName": "test",
+                "command": {
+                  "maxTimeMS": {
+                    "$$lte": 50
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "apply maxAwaitTimeMS if less than remaining timeout",
+      "operations": [
+        {
+          "name": "createFindCursor",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "cursorType": "tailableAwait",
+            "batchSize": 1,
+            "maxAwaitTimeMS": 50
+          },
+          "saveResultAsEntity": "tailableCursor"
+        },
+        {
+          "name": "iterateOnce",
+          "object": "tailableCursor",
+          "arguments": {
+            "timeoutMS": 100
+          }
+        },
+        {
+          "name": "iterateOnce",
+          "object": "tailableCursor",
+          "arguments": {
+            "timeoutMS": 100
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "databaseName": "test"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore",
+                "databaseName": "test",
+                "command": {
+                  "maxTimeMS": {
+                    "$$lte": 50
+                  }
                 }
               }
             }
