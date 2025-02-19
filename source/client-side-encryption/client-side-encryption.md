@@ -380,6 +380,9 @@ class AutoEncryptionOpts {
    // without the MongoDB Enterprise Advanced licensed crypt_shared library.
    bypassQueryAnalysis: Optional<Boolean>; // Default false.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
+   // Depending on the language's AWS SDK, this is a function or object used to fetch
+   // credentials from the environment or identity provider.
+   awsCredentialProvider: Optional<Function> | Optional<Object>;
 }
 ```
 
@@ -593,11 +596,14 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
     [ClientEncryptionOpts](#ClientEncryptionOpts) or [AutoEncryptionOpts](#AutoEncryptionOpts).
 2. Initialize $P$ to an empty [KMSProviders](#kmsproviders) object.
 3. If $K$ contains an `aws` property, and that property is an empty map:
-    1. Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
-        [the obtaining-AWS-credentials section from the Driver Authentication specification](../auth/auth.md#obtaining-credentials),
-        but ignoring the case of loading the credentials from a URI
-    2. If credentials $C$ were successfully loaded, create a new [AWSKMSOptions](#AWSKMSOptions) map from $C$ and insert
-        that map onto $P$ as the `aws` property.
+    1. If a custom credential provider is supplied via the `awsCredentialProvider` auto encryption option, use that to fetch the
+        credentials from AWS.
+    2. Otherwise:
+        1. Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
+           [the obtaining-AWS-credentials section from the Driver Authentication specification](../auth/auth.md#obtaining-credentials),
+           but ignoring the case of loading the credentials from a URI
+        2. If credentials $C$ were successfully loaded, create a new [AWSKMSOptions](#AWSKMSOptions) map from $C$ and insert
+           that map onto $P$ as the `aws` property.
 4. If $K$ contains an `gcp` property, and that property is an empty map:
     1. Attempt to obtain credentials $C$ from the environment logic as is detailed in
         [Obtaining GCP Credentials](#obtaining-gcp-credentials).
