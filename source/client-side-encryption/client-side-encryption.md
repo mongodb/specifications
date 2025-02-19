@@ -596,14 +596,14 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
     [ClientEncryptionOpts](#ClientEncryptionOpts) or [AutoEncryptionOpts](#AutoEncryptionOpts).
 2. Initialize $P$ to an empty [KMSProviders](#kmsproviders) object.
 3. If $K$ contains an `aws` property, and that property is an empty map:
-    1. If a custom credential provider is supplied via the `awsCredentialProvider` auto encryption option, use that to fetch the
-        credentials from AWS.
+    1. If a custom credential provider is supplied via the `awsCredentialProvider` auto encryption option, use that to
+        fetch the credentials from AWS.
     2. Otherwise:
         1. Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
-           [the obtaining-AWS-credentials section from the Driver Authentication specification](../auth/auth.md#obtaining-credentials),
-           but ignoring the case of loading the credentials from a URI
+            [the obtaining-AWS-credentials section from the Driver Authentication specification](../auth/auth.md#obtaining-credentials),
+            but ignoring the case of loading the credentials from a URI
         2. If credentials $C$ were successfully loaded, create a new [AWSKMSOptions](#AWSKMSOptions) map from $C$ and insert
-           that map onto $P$ as the `aws` property.
+            that map onto $P$ as the `aws` property.
 4. If $K$ contains an `gcp` property, and that property is an empty map:
     1. Attempt to obtain credentials $C$ from the environment logic as is detailed in
         [Obtaining GCP Credentials](#obtaining-gcp-credentials).
@@ -1285,6 +1285,11 @@ non-applicable queryType.
 
 rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
 non-applicable algorithm.
+
+### Custom AWS Credential Provider
+
+When using a `ClientEncryption` object directly and a custom AWS credential provider is specified as an auth mechanism
+property on the `MongoClient`, that provider must be used to fetch the credentials for the KMS requests.
 
 ## User facing API: When Auto Encryption Fails
 
@@ -2425,6 +2430,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2024-02-19: Add custom options AWS credential provider.
 
 - 2024-10-09: Add retry prose test.
 
