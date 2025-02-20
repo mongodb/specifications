@@ -480,8 +480,8 @@ See
 
 The `credentialProviders` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
 [AutoEncryptionOpts](#AutoEncryptionOpts). Current support is for AWS only, but is designed to be able to accomodate
-additional providers in the future. If a custom credential provider is present, it MUST be used instead of the
-default flow for fetching automatic credentials.
+additional providers in the future. If a custom credential provider is present, it MUST be used instead of the default
+flow for fetching automatic credentials.
 
 ```typescript
 interface CredentialProviders {
@@ -498,10 +498,10 @@ The following shows an example object of `CredentialProviders` for Node.js:
 ```typescript
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-{
-   // Acquire credentials for AWS:
-   aws: fromNodeProviderChain()
-}
+const creentialProviders = {
+  // Acquire credentials for AWS:
+  aws: fromNodeProviderChain()
+};
 ```
 
 #### kmsProviders
