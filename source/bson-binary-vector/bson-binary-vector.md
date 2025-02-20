@@ -11,8 +11,8 @@ This document describes a new *Vector* subtype (9) for BSON Binary items, used t
 collections of uniformly-typed elements. A framework is presented for future type extensibility, but adoption complexity
 is limited by allowing support for only a restricted set of element types at first:
 
-- 1-bit unsigned integers
-- 8-bit signed integers
+- 1-bit unsigned integer
+- 8-bit signed integer
 - 32-bit floating point
 
 ## Meta
