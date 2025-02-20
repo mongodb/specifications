@@ -622,8 +622,8 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
     [ClientEncryptionOpts](#ClientEncryptionOpts) or [AutoEncryptionOpts](#AutoEncryptionOpts).
 2. Initialize $P$ to an empty [KMSProviders](#kmsproviders) object.
 3. If $K$ contains an `aws` property, and that property is an empty map:
-    1. If a custom credential provider is supplied via the `credentialProviders.aws` applicable encryption option, use that to
-        fetch the credentials from AWS.
+    1. If a custom credential provider is supplied via the `credentialProviders.aws` applicable encryption option, use
+        that to fetch the credentials from AWS.
     2. Otherwise:
         1. Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
             [the obtaining-AWS-credentials section from the Driver Authentication specification](../auth/auth.md#obtaining-credentials),
