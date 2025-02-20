@@ -3419,7 +3419,7 @@ Repeat this test with the `azure` and `gcp` masterKeys.
 This test requires libmongocrypt 1.13.0. Unless otherwise noted, tests require mongocryptd/crypt_shared 8.1+.
 
 The syntax `<filename.json>` is used to refer to files in
-[source/client-side-encryption/etc/data/lookup](/source/client-side-encryption/etc/data/lookup/).
+[source/client-side-encryption/etc/data/lookup](../etc/data/lookup/).
 
 #### Setup
 
