@@ -380,9 +380,7 @@ class AutoEncryptionOpts {
    // without the MongoDB Enterprise Advanced licensed crypt_shared library.
    bypassQueryAnalysis: Optional<Boolean>; // Default false.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
-   // Depending on the language's AWS SDK, this is a function or object used to fetch
-   // credentials from the environment or identity provider.
-   awsCredentialProvider: Optional<Function> | Optional<Object>;
+   credentialProviders: Optional<CredentialProviders>;
 }
 ```
 
@@ -477,6 +475,34 @@ See
 
 <span id="GCPKMSOptions"></span> <span id="AWSKMSOptions"></span> <span id="KMSProvider"></span>
 <span id="KMSProviders"></span> <span id="AzureAccessToken"></span> <span id="kmsproviders"></span>
+
+#### credentialProviders
+
+The `credentialProviders` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
+[AutoEncryptionOpts](#AutoEncryptionOpts). Current support is for AWS only, but is designed to be able to accomodate
+additional providers in the future. If a custom credential provider is present, it MUST be used instead of the
+default flow for fetching automatic credentials.
+
+```typescript
+interface CredentialProviders {
+   aws? AWSCredentialProvider
+}
+
+// The type of the AWS credential provider is dictated by the AWS SDK's credential provider for the specific
+// lamguage.
+type AWSCredentialProvider = Function | Object;
+```
+
+The following shows an example object of `CredentialProviders` for Node.js:
+
+```typescript
+import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+
+{
+   // Acquire credentials for AWS:
+   aws: fromNodeProviderChain()
+}
+```
 
 #### kmsProviders
 
@@ -596,7 +622,7 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
     [ClientEncryptionOpts](#ClientEncryptionOpts) or [AutoEncryptionOpts](#AutoEncryptionOpts).
 2. Initialize $P$ to an empty [KMSProviders](#kmsproviders) object.
 3. If $K$ contains an `aws` property, and that property is an empty map:
-    1. If a custom credential provider is supplied via the `awsCredentialProvider` auto encryption option, use that to
+    1. If a custom credential provider is supplied via the `credentialProviders.aws` applicable encryption option, use that to
         fetch the credentials from AWS.
     2. Otherwise:
         1. Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
@@ -1057,6 +1083,7 @@ interface ClientEncryptionOpts {
    keyVaultClient: MongoClient;
    keyVaultNamespace: String;
    kmsProviders: KMSProviders;
+   credentialProviders: CredentialProviders;
    tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
 };
@@ -1285,11 +1312,6 @@ non-applicable queryType.
 
 rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
 non-applicable algorithm.
-
-### Custom AWS Credential Provider
-
-When using a `ClientEncryption` object directly and a custom AWS credential provider is specified as an auth mechanism
-property on the `MongoClient`, that provider must be used to fetch the credentials for the KMS requests.
 
 ## User facing API: When Auto Encryption Fails
 
