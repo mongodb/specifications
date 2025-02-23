@@ -81,8 +81,28 @@ source the `secrets-export.sh` file and use the associated env variables in your
 **2.5 Invalid use of ALLOWED_HOSTS**
 
 - Create an OIDC configured client with auth mechanism properties `{"ENVIRONMENT": "azure", "ALLOWED_HOSTS": []}`.
+
 - Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
     connection.
+
+- Create an OIDC configured client with auth mechanism properties
+    `{"OIDC_CALBACK": "<callback object>", "ALLOWED_HOSTS": []}`.
+
+- Assert it returns a client configuration error upon client creation, or client connect if your driver validates on
+    connection.
+
+**2.6 ALLOWED_HOSTS defaults ignored**
+
+If it is possible to validate an authentication without making a connection, for example by instantiating an
+authenticator class directly, test the following combinations:
+
+- Create a MongoCredential for OIDC with a machine callback property.
+
+- Create an Authenticator object for "example.com" that does not result in an error.
+
+- Create a MongoCredential for OIDC with an `ENVIRONMENT` of "test".
+
+- Create an Authenticator object for "example.com" that does not result in an error.
 
 ### (3) Authentication Failure
 
