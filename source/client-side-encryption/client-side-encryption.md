@@ -489,7 +489,7 @@ interface CredentialProviders {
 }
 
 // The type of the AWS credential provider is dictated by the AWS SDK's credential provider for the specific
-// lamguage.
+// language.
 type AWSCredentialProvider = Function | Object;
 ```
 
@@ -498,7 +498,7 @@ The following shows an example object of `CredentialProviders` for Node.js:
 ```typescript
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-const creentialProviders = {
+const credentialProviders = {
   // Acquire credentials for AWS:
   aws: fromNodeProviderChain()
 };
