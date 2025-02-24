@@ -3420,7 +3420,7 @@ Unless otherwise noted, these tests require: libmongocrypt 1.13.0, mongocryptd/c
 
 Tests require server support of QE: Require MongoDB server 7.0+. Skip on standalone.
 
-The syntax `<filename.json>` is used to refer to files in `../etc/data/lookup`.
+The syntax `<filename.json>` is used to refer to the content of the corresponding file in `../etc/data/lookup`.
 
 #### Setup
 
