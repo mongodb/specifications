@@ -3416,7 +3416,7 @@ Repeat this test with the `azure` and `gcp` masterKeys.
 
 ### 25. Test $lookup
 
-This test requires libmongocrypt 1.13.0. Unless otherwise noted, tests require mongocryptd/crypt_shared 8.1+.
+Unless otherwise noted, these tests require: libmongocrypt 1.13.0, mongocryptd/crypt_shared 8.1+.
 
 Tests require server support of QE: Require MongoDB server 7.0+. Skip on standalone.
 
