@@ -1016,6 +1016,8 @@ There should be no backwards compatibility concerns.
 
 ## Changelog
 
+- 2025-02-24: Make `nsType` `Optional` to match other optional fields in the change stream spec.
+
 - 2025-01-29: Add `nsType` to `ChangeStreamDocument`.
 
 - 2024-02-09: Migrated from reStructuredText to Markdown.
