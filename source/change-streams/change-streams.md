@@ -128,7 +128,7 @@ class ChangeStreamDocument {
    * 
    * @since 8.1.0
    */
-  nsType: "collection" | "timeseries" | "view" | null;
+  nsType: Optional<"collection" | "timeseries" | "view">;
 
   /**
    * Only present for ops of type 'rename'.
