@@ -481,7 +481,8 @@ See
 The `credentialProviders` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
 [AutoEncryptionOpts](#AutoEncryptionOpts). Current support is for AWS only, but is designed to be able to accommodate
 additional providers in the future. If a custom credential provider is present, it MUST be used instead of the default
-flow for fetching automatic credentials.
+flow for fetching automatic credentials and if the `kmsProviders` are not configured for automatic credential fetching
+an error MUST be thrown.
 
 ```typescript
 interface CredentialProviders {
