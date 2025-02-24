@@ -3426,7 +3426,7 @@ The syntax `<filename.json>` is used to refer to the content of the correspondin
 
 Create an unencrypted MongoClient. Drop database `db`.
 
-Insert `<key-doc.json>` into `db.keyvault`.
+Insert `<key-doc.json>` into `db.keyvault` with majority write concern.
 
 Create the following collections:
 
