@@ -3424,7 +3424,7 @@ The syntax `<filename.json>` is used to refer to the content of the correspondin
 
 #### Setup
 
-Create an unencrypted MongoClient. Drop database `db`.
+Create an unencrypted MongoClient named `unencryptedClient`. Drop database `db`.
 
 Insert `<key-doc.json>` into `db.keyvault` with majority write concern.
 
@@ -3437,7 +3437,7 @@ Create the following collections:
 - `db.no_schema` with no options.
 - `db.no_schema2` with no options.
 
-Create an encrypted MongoClient configured with:
+Create an encrypted MongoClient named `encryptedClient` configured with:
 
 ```python
 AutoEncryptionOpts(
@@ -3446,23 +3446,23 @@ AutoEncryptionOpts(
 )
 ```
 
-Insert documents with the encrypted MongoClient:
+Insert documents with `encryptedClient`:
 
 - `{"csfle": "csfle"}` into `db.csfle`
-    - Use the unencrypted client to retrieve it. Assert the `csfle` field is BSON binary.
+    - Use `unencryptedClient` to retrieve it. Assert the `csfle` field is BSON binary.
 - `{"csfle2": "csfle2"}` into `db.csfle2`
-    - Use the unencrypted client to retrieve it. Assert the `csfle2` field is BSON binary.
+    - Use `unencryptedClient` to retrieve it. Assert the `csfle2` field is BSON binary.
 - `{"qe": "qe"}` into `db.qe`
-    - Use the unencrypted client to retrieve it. Assert the `qe` field is BSON binary.
+    - Use `unencryptedClient` to retrieve it. Assert the `qe` field is BSON binary.
 - `{"qe2": "qe2"}` into `db.qe2`
-    - Use the unencrypted client to retrieve it. Assert the `qe2` field is BSON binary.
+    - Use `unencryptedClient` to retrieve it. Assert the `qe2` field is BSON binary.
 - `{"no_schema": "no_schema"}` into `db.no_schema`
 - `{"no_schema2": "no_schema2"}` into `db.no_schema2`
 
 #### Case 1: `db.csfle` joins `db.no_schema`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.csfle` with the following pipeline:
 
@@ -3484,8 +3484,8 @@ Expect one document to be returned matching: `{"csfle" : "csfle", "matched" : [ 
 
 #### Case 2: `db.qe` joins `db.no_schema`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.qe` with the following pipeline:
 
@@ -3508,8 +3508,8 @@ Expect one document to be returned matching: `{"qe" : "qe", "matched" : [ {"no_s
 
 #### Case 3: `db.no_schema` joins `db.csfle`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.no_schema` with the following pipeline:
 
@@ -3531,8 +3531,8 @@ Expect one document to be returned matching: `{"no_schema" : "no_schema", "match
 
 #### Case 4: `db.no_schema` joins `db.qe`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.no_schema` with the following pipeline:
 
@@ -3554,8 +3554,8 @@ Expect one document to be returned matching: `{"no_schema" : "no_schema", "match
 
 #### Case 5: `db.csfle` joins `db.csfle2`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.csfle` with the following pipeline:
 
@@ -3577,8 +3577,8 @@ Expect one document to be returned matching: `{"csfle" : "csfle", "matched" : [ 
 
 #### Case 6: `db.qe` joins `db.qe2`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.qe` with the following pipeline:
 
@@ -3600,8 +3600,8 @@ Expect one document to be returned matching: `{"qe" : "qe", "matched" : [ {"qe2"
 
 #### Case 7: `db.no_schema` joins `db.no_schema2`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.no_schema` with the following pipeline:
 
@@ -3624,8 +3624,8 @@ Expect one document to be returned matching:
 
 #### Case 8: `db.csfle` joins `db.qe`
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.csfle` with the following pipeline:
 
@@ -3649,8 +3649,8 @@ Expect an exception to be thrown with a message containing the substring `not su
 
 This case requires mongocryptd/crypt_shared \<8.1.
 
-Create a new encrypted MongoClient with the same `AutoEncryptionOpts` as the setup. (Creating a new client prevents
-schema caching from impacting the test).
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
 
 Run an aggregate operation on `db.csfle` with the following pipeline:
 
