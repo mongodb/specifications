@@ -3424,19 +3424,6 @@ The syntax `<filename.json>` is used to refer to the content of the correspondin
 
 #### Setup
 
-Create an unencrypted MongoClient named `unencryptedClient`. Drop database `db`.
-
-Insert `<key-doc.json>` into `db.keyvault` with majority write concern.
-
-Create the following collections:
-
-- `db.csfle` with options: `{ "validator": { "$jsonSchema": "<schema-csfle.json>"}}`.
-- `db.csfle2` with options: `{ "validator": { "$jsonSchema": "<schema-csfle2.json>"}}`.
-- `db.qe` with options: `{ "encryptedFields": "<schema-qe.json>"}`.
-- `db.qe2` with options: `{ "encryptedFields": "<schema-qe2.json>"}`.
-- `db.no_schema` with no options.
-- `db.no_schema2` with no options.
-
 Create an encrypted MongoClient named `encryptedClient` configured with:
 
 ```python
@@ -3445,6 +3432,19 @@ AutoEncryptionOpts(
     kmsProviders={"local": { "key": "<base64 decoding of LOCAL_MASTERKEY>" }}
 )
 ```
+
+Use `encryptedClient` to drop `db.keyvault`. Insert `<key-doc.json>` into `db.keyvault` with majority write concern.
+
+Use `encryptedClient` to drop and create the following collections:
+
+- `db.csfle` with options: `{ "validator": { "$jsonSchema": "<schema-csfle.json>"}}`.
+- `db.csfle2` with options: `{ "validator": { "$jsonSchema": "<schema-csfle2.json>"}}`.
+- `db.qe` with options: `{ "encryptedFields": "<schema-qe.json>"}`.
+- `db.qe2` with options: `{ "encryptedFields": "<schema-qe2.json>"}`.
+- `db.no_schema` with no options.
+- `db.no_schema2` with no options.
+
+Create an unencrypted MongoClient named `unencryptedClient`.
 
 Insert documents with `encryptedClient`:
 
