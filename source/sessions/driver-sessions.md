@@ -90,6 +90,11 @@ with sessions.
 
 Any network exception writing to or reading from a socket (e.g. a socket timeout or error).
 
+**SDAM**
+
+An abbreviated form of "Server Discovery and Monitoring", specification defined in
+[Server Discovery and Monitoring Specification](../server-discovery-and-monitoring/server-discovery-and-monitoring.md).
+
 ## Specification
 
 Drivers currently have no concept of a session. The driver API will be expanded to provide a way for applications to
@@ -710,7 +715,8 @@ expiration.
 
 ## Gossipping the cluster time
 
-Drivers MUST gossip the cluster time when connected to a deployment that uses cluster times.
+Drivers MUST gossip the cluster time when connected to a deployment that uses cluster times. However, drivers MUST NOT
+gossip cluster time on SDAM commands.
 
 Gossipping the cluster time is a process in which the driver participates in distributing the logical cluster time in a
 deployment. Drivers learn the current cluster time (from a particular server's perspective) in responses they receive
@@ -722,7 +728,7 @@ received from a server.
 
 ### Receiving the current cluster time
 
-Drivers MUST examine all responses from the server commands to see if they contain a top level field named
+Drivers MUST examine all non-SDAM responses from the server commands to see if they contain a top level field named
 `$clusterTime` formatted as follows:
 
 ```typescript
@@ -748,8 +754,9 @@ not participate in the comparison.
 
 ### Sending the highest seen cluster time
 
-Whenever a driver sends a command to a server it MUST include the highest seen cluster time in a top level field called
-`$clusterTime`, in the same format as it was received in (but see Gossipping with mixed server versions below).
+Whenever a driver sends a non-SDAM command to a server it MUST include the highest seen cluster time in a top level
+field called `$clusterTime`, in the same format as it was received in (but see Gossipping with mixed server versions
+below).
 
 ### How to compute the `$clusterTime` to send to a server
 
@@ -790,6 +797,15 @@ Drivers MUST check that the server they are sending a command to supports `$clus
 the command. A server supports `$clusterTime` when the `maxWireVersion` >= 6.
 
 This supports the (presumably short lived) scenario where not all servers have been upgraded to 3.6.
+
+### Do not gossip on SDAM commands
+
+Drivers MUST NOT gossip cluster time on SDAM commands. In earlier versions of this spec, drivers did gossip cluster time
+on SDAM commands, however it was discovered that doing so provides little benefit and can result in a loss of
+availability. For example, if the driver attempts to connect to a member of a different replica set, the driver can end
+up with an invalid cluster time. Worse, this invalid cluster time may remain the highest for an indefinite time since
+clocks between different clusters are not synced. This results in all operations failing until the application is
+restarted. To fix this issue we decided it was more robust to stop gossiping on SDAM commands altogether.
 
 ## Test Plan
 
@@ -918,6 +934,7 @@ has risks that do not justify the potential guaranteed `ServerSession` allocatio
 
 ## Changelog
 
+- 2025-02-24: Drivers MUST NOT gossip $clusterTime on SDAM commands.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2017-09-13: If causalConsistency option is omitted assume true
 - 2017-09-16: Omit session ID when opening and authenticating a connection
