@@ -427,8 +427,8 @@ writeConcernError but may not be exhaustive. Note that some errors have been abb
 - `{ok:1, writeConcernError: {code: 11600, codeName: "InterruptedAtShutdown"}}`
 - `{ok:1, writeConcernError: {code: 11601, codeName: "Interrupted"}}`
 - `{ok:1, writeConcernError: {code: 11602, codeName: "InterruptedDueToReplStateChange"}}`
-- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "waiting for replication timed out", errInfo: {wtimeout: True}}}`
-- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "multiple errors reported : {...} at shardName1 :: and :: {...} at shardName2"}}`[^1]
+- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernTimeout", errmsg: "waiting for replication timed out", errInfo: {wtimeout: True}}}`
+- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernTimeout", errmsg: "multiple errors reported : {...} at shardName1 :: and :: {...} at shardName2"}}`[^1]
 - `{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}`
 - `{ok:1, writeConcernError: {code: 100, codeName: "UnsatisfiableWriteConcern", errmsg: "Not enough data-bearing nodes"}}`
 - `{ok:1, writeConcernError: {code: 79, codeName: "UnknownReplWriteConcern"}}`
@@ -532,6 +532,7 @@ don't send one and if a user does specify a `ReadConcern`, we do send one. If th
 instance, we send it.
 
 ## Changelog
+- 2025-02-25: Rename WriteConcernFailed to WriteConcernTimeout
 
 - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion \< 4.
 
