@@ -1,10 +1,9 @@
-description: "timeoutMS behaves correctly for tailable awaitData cursors"
+description: "timeoutMS behaves correctly for tailable non-awaitData cursors"
 
 schemaVersion: "1.9"
 
 runOnRequirements:
   - minServerVersion: "4.4"
-    serverless: forbid # Capped collections are not allowed for serverless.
 
 createEntities:
   - client:
@@ -44,31 +43,7 @@ tests:
         arguments:
           filter: {}
           timeoutMode: cursorLifetime
-          cursorType: tailableAwait
-        expectError:
-          isClientError: true
-
-  - description: "error if maxAwaitTimeMS is greater than timeoutMS"
-    operations:
-      - name: find
-        object: *collection
-        arguments:
-          filter: {}
-          cursorType: tailableAwait
-          timeoutMS: 5
-          maxAwaitTimeMS: 10
-        expectError:
-          isClientError: true
-
-  - description: "error if maxAwaitTimeMS is equal to timeoutMS"
-    operations:
-      - name: find
-        object: *collection
-        arguments:
-          filter: {}
-          cursorType: tailableAwait
-          timeoutMS: 5
-          maxAwaitTimeMS: 5
+          cursorType: tailable
         expectError:
           isClientError: true
 
@@ -84,29 +59,32 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 300
+              blockTimeMS: 250
       - name: find
         object: *collection
         arguments:
           filter: {}
-          cursorType: tailableAwait
+          cursorType: tailable
         expectError:
           isTimeoutError: true
     expectEvents:
       - client: *client
         events:
+          # Due to SERVER-51153, the find command should not contain a maxTimeMS field for tailable non-awaitData
+          # cursors because that would cap the lifetime of the created cursor.
           - commandStartedEvent:
               commandName: find
               databaseName: *databaseName
               command:
                 find: *collectionName
                 tailable: true
-                awaitData: true
-                maxTimeMS: { $$exists: true }
-  
-  # If maxAwaitTimeMS is not set, timeoutMS should be refreshed for the getMore and the getMore should not have a
-  # maxTimeMS field.
-  - description: "timeoutMS is refreshed for getMore if maxAwaitTimeMS is not set"
+                awaitData: { $$exists: false }
+                maxTimeMS: { $$exists: false }
+
+  # The timeoutMS option should apply separately to the initial "find" and each getMore. This is a success test. The
+  # find is executed with timeoutMS=20 and both find and getMore commands are configured to block for 15ms each. Neither
+  # exceeds the timeout so the operation succeeds.
+  - description: "timeoutMS is refreshed for getMore - success"
     operations:
       - name: failPoint
         object: testRunner
@@ -123,11 +101,11 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          cursorType: tailableAwait
-          timeoutMS: 250
+          cursorType: tailable
+          timeoutMS: 200
           batchSize: 1
         saveResultAsEntity: &tailableCursor tailableCursor
-      # Iterate twice to force a getMore. The first iteration will return the document from the first batch and the
+      # Iterate the cursor twice: the first iteration will return the document from the batch in the find and the
       # second will do a getMore.
       - name: iterateUntilDocumentOrError
         object: *tailableCursor
@@ -142,8 +120,8 @@ tests:
               command:
                 find: *collectionName
                 tailable: true
-                awaitData: true
-                maxTimeMS: { $$exists: true }
+                awaitData: { $$exists: false }
+                maxTimeMS: { $$exists: false }
           - commandStartedEvent:
               commandName: getMore
               databaseName: *databaseName
@@ -152,56 +130,9 @@ tests:
                 collection: *collectionName
                 maxTimeMS: { $$exists: false }
 
-  # If maxAwaitTimeMS is set for the initial command, timeoutMS should still be refreshed for the getMore and the
-  # getMore command should have a maxTimeMS field.
-  - description: "timeoutMS is refreshed for getMore if maxAwaitTimeMS is set"
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 2 }
-            data:
-              failCommands: ["find", "getMore"]
-              blockConnection: true
-              blockTimeMS: 150
-      - name: createFindCursor
-        object: *collection
-        arguments:
-          filter: {}
-          cursorType: tailableAwait
-          timeoutMS: 250
-          batchSize: 1
-          maxAwaitTimeMS: 1
-        saveResultAsEntity: &tailableCursor tailableCursor
-      # Iterate twice to force a getMore.
-      - name: iterateUntilDocumentOrError
-        object: *tailableCursor
-      - name: iterateUntilDocumentOrError
-        object: *tailableCursor
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *databaseName
-              command:
-                find: *collectionName
-                tailable: true
-                awaitData: true
-                maxTimeMS: { $$exists: true }
-          - commandStartedEvent:
-              commandName: getMore
-              databaseName: *databaseName
-              command:
-                getMore: { $$type: ["int", "long"] }
-                collection: *collectionName
-                maxTimeMS: 1
-
-  # The timeoutMS value should be refreshed for getMore's. This is a failure test. The find inherits timeoutMS=200 from
-  # the collection and the getMore blocks for 250ms, causing iteration to fail with a timeout error.
+  # The timeoutMS option should apply separately to the initial "find" and each getMore. This is a failure test. The
+  # find inherits timeoutMS=200 from the collection and the getMore command blocks for 250ms, causing iteration to fail
+  # with a timeout error.
   - description: "timeoutMS is refreshed for getMore - failure"
     operations:
       - name: failPoint
@@ -219,10 +150,11 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          cursorType: tailableAwait
+          cursorType: tailable
           batchSize: 1
         saveResultAsEntity: &tailableCursor tailableCursor
-      # Iterate twice to force a getMore.
+      # Iterate the cursor twice: the first iteration will return the document from the batch in the find and the
+      # second will do a getMore.
       - name: iterateUntilDocumentOrError
         object: *tailableCursor
       - name: iterateUntilDocumentOrError
@@ -238,71 +170,12 @@ tests:
               command:
                 find: *collectionName
                 tailable: true
-                awaitData: true
-                maxTimeMS: { $$exists: true }
+                awaitData: { $$exists: false }
+                maxTimeMS: { $$exists: false }
           - commandStartedEvent:
               commandName: getMore
               databaseName: *databaseName
               command:
                 getMore: { $$type: ["int", "long"] }
                 collection: *collectionName
-
-  - description: "apply remaining timeoutMS if less than maxAwaitTimeMS"
-    operations:
-      - name: createFindCursor
-        object: *collection
-        arguments:
-          filter: {}
-          cursorType: tailableAwait
-          batchSize: 1
-          maxAwaitTimeMS: 100
-          timeoutMS: 50
-        saveResultAsEntity: &tailableCursor tailableCursor
-      # Iterate twice to force a getMore.
-      - name: iterateOnce
-        object: *tailableCursor
-        arguments: 
-      - name: iterateOnce
-        object: *tailableCursor
-        arguments: 
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *databaseName
-          - commandStartedEvent:
-              commandName: getMore 
-              databaseName: *databaseName
-              command:
-                maxTimeMS: { $$lte: 50 }
-
-  - description: "apply maxAwaitTimeMS if less than remaining timeout"
-    operations:
-      - name: createFindCursor
-        object: *collection
-        arguments:
-          filter: {}
-          cursorType: tailableAwait
-          batchSize: 1
-          maxAwaitTimeMS: 50
-          timeoutMS: 100
-        saveResultAsEntity: &tailableCursor tailableCursor
-      # Iterate twice to force a getMore.
-      - name: iterateOnce
-        object: *tailableCursor
-        arguments: 
-      - name: iterateOnce
-        object: *tailableCursor
-        arguments: 
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *databaseName
-          - commandStartedEvent:
-              commandName: getMore 
-              databaseName: *databaseName
-              command:
-                maxTimeMS: { $$lte: 50 }
+                maxTimeMS: { $$exists: false }
