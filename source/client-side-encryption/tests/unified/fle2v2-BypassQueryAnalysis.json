@@ -181,7 +181,7 @@
                     "name": "default"
                   }
                 },
-                "command_name": "listCollections"
+                "commandName": "listCollections"
               }
             },
             {
@@ -238,7 +238,7 @@
                     }
                   }
                 },
-                "command_name": "insert"
+                "commandName": "insert"
               }
             },
             {
@@ -249,7 +249,7 @@
                     "_id": 1
                   }
                 },
-                "command_name": "find"
+                "commandName": "find"
               }
             },
             {
@@ -282,7 +282,7 @@
                     "level": "majority"
                   }
                 },
-                "command_name": "find"
+                "commandName": "find"
               }
             }
           ]

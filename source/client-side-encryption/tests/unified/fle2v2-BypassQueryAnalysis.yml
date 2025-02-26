@@ -76,7 +76,7 @@ tests:
               listCollections: 1
               filter:
                 name: *encryptedCollName
-            command_name: listCollections
+            commandName: listCollections
         - commandStartedEvent:
             command:
               insert: *encryptedCollName
@@ -91,12 +91,12 @@ tests:
                       escCollection: "enxcol_.default.esc"
                       ecocCollection: "enxcol_.default.ecoc"
                       <<: *encrypted_fields
-            command_name: insert
+            commandName: insert
         - commandStartedEvent:
             command:
               find: *encryptedCollName
               filter: { "_id": 1 }
-            command_name: find
+            commandName: find
         - commandStartedEvent:
             command:
               find: datakeys
@@ -118,7 +118,7 @@ tests:
                 }
               $db: keyvault
               readConcern: { level: "majority" }
-            command_name: find
+            commandName: find
     outcome:
       - collectionName: *encryptedCollName
         databaseName: *encryptedDBName
