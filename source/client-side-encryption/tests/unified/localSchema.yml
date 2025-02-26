@@ -44,11 +44,11 @@ createEntities:
   - database:
       id: &encryptedDB2 encryptedDB2
       client: *client1
-      databaseName: &encryptedDBName default
+      databaseName: *encryptedDBName
   - collection:
       id: &encryptedColl2 encryptedColl2
       database: *encryptedDB2
-      collectionName: &encryptedCollName default
+      collectionName: *encryptedDBName
 
 initialData:
   - databaseName: *keyvaultDBName
