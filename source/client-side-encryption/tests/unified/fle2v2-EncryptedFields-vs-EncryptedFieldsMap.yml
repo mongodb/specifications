@@ -6,6 +6,8 @@ runOnRequirements:
   - minServerVersion: "7.0.0"
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
     # FLE 2 Encrypted collections are not supported on standalone.
+    serverless: forbid
+    csfle: true
     topologies: [ "replicaset", "sharded", "load-balanced" ]
 
 createEntities:
@@ -36,7 +38,6 @@ createEntities:
       id: &encryptedColl encryptedColl
       database: *encryptedDB
       collectionName: &encryptedCollName default
-    # intentionally the same DB and collection name as encryptedDB/Coll
 
 initialData:
   - databaseName: *keyvaultDBName
