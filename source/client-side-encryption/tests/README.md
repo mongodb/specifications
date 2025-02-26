@@ -3416,8 +3416,7 @@ Repeat this test with the `azure` and `gcp` masterKeys.
 
 ### 25. Test $lookup
 
-Unless otherwise noted, these tests require: libmongocrypt 1.13.0, mongocryptd/crypt_shared 8.1+, and server 8.1+. Skip
-on standalone.
+All tests require libmongocrypt 1.13.0, server 7.0+, and must be skipped on standalone. Tests define more constraints.
 
 The syntax `<filename.json>` is used to refer to the content of the corresponding file in `../etc/data/lookup`.
 
@@ -3460,6 +3459,8 @@ Insert documents with `encryptedClient`:
 
 #### Case 1: `db.csfle` joins `db.no_schema`
 
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
+
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
 
@@ -3482,6 +3483,8 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 Expect one document to be returned matching: `{"csfle" : "csfle", "matched" : [ {"no_schema" : "no_schema"} ]}`.
 
 #### Case 2: `db.qe` joins `db.no_schema`
+
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
@@ -3507,6 +3510,8 @@ Expect one document to be returned matching: `{"qe" : "qe", "matched" : [ {"no_s
 
 #### Case 3: `db.no_schema` joins `db.csfle`
 
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
+
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
 
@@ -3529,6 +3534,8 @@ Run an aggregate operation on `db.no_schema` with the following pipeline:
 Expect one document to be returned matching: `{"no_schema" : "no_schema", "matched" : [ {"csfle" : "csfle"} ]}`.
 
 #### Case 4: `db.no_schema` joins `db.qe`
+
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
@@ -3553,6 +3560,8 @@ Expect one document to be returned matching: `{"no_schema" : "no_schema", "match
 
 #### Case 5: `db.csfle` joins `db.csfle2`
 
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
+
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
 
@@ -3576,6 +3585,8 @@ Expect one document to be returned matching: `{"csfle" : "csfle", "matched" : [ 
 
 #### Case 6: `db.qe` joins `db.qe2`
 
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
+
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
 
@@ -3598,6 +3609,8 @@ Run an aggregate operation on `db.qe` with the following pipeline:
 Expect one document to be returned matching: `{"qe" : "qe", "matched" : [ {"qe2" : "qe2"} ]}`.
 
 #### Case 7: `db.no_schema` joins `db.no_schema2`
+
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
@@ -3623,6 +3636,8 @@ Expect one document to be returned matching:
 
 #### Case 8: `db.csfle` joins `db.qe`
 
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
+
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
 
@@ -3644,9 +3659,9 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 
 Expect an exception to be thrown with a message containing the substring `not supported`.
 
-#### Case 9: test error with \<8.1
+#### Case 9: test error with pre-8.1
 
-This case requires mongocryptd/crypt_shared \<8.1.
+This case requires mongocryptd/crypt_shared pre-8.1.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
