@@ -27,6 +27,7 @@
               }
             }
           },
+          "keyVaultNamespace": "keyvault.datakeys",
           "bypassQueryAnalysis": true
         },
         "observeEvents": [

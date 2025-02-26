@@ -28,6 +28,7 @@
               }
             }
           },
+          "keyVaultNamespace": "keyvault.datakeys",
           "encryptedFieldsMap": {
             "default.default": {
               "fields": []

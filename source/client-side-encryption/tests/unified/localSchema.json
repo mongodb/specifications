@@ -68,6 +68,7 @@
               "bsonType": "object"
             }
           },
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {}
           }
