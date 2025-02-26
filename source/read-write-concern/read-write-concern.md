@@ -532,6 +532,7 @@ don't send one and if a user does specify a `ReadConcern`, we do send one. If th
 instance, we send it.
 
 ## Changelog
+
 - 2025-02-25: Rename WriteConcernFailed to WriteConcernTimeout
 
 - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion \< 4.
@@ -580,7 +581,7 @@ instance, we send it.
 - 2024-10-30: Remove reference to getLastError
 
 [^1]: This is only possible in a sharded cluster. When a write is routed to multiple shards and more than one shard
-    returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernFailed" error
+    returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernTimeout" error
     code and an errmsg field contains the stringified writeConcernError from each shard. Note that each shard may return
     a different writeConcernError.
 
