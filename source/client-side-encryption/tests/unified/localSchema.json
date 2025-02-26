@@ -95,6 +95,7 @@
               ]
             }
           },
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {}
           }

@@ -21,6 +21,7 @@ createEntities:
       autoEncryptOpts:
         schemaMap:
           "default.default": {'properties': {'test': {'bsonType': 'string'}}, 'bsonType': 'object', 'required': ['test']}
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           aws: {} # Credentials filled in from environment.
       observeEvents: [ commandStartedEvent ]
