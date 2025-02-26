@@ -3659,9 +3659,9 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 
 Expect an exception to be thrown with a message containing the substring `not supported`.
 
-#### Case 9: test error with pre-8.1
+#### Case 9: test error with \<8.1
 
-This case requires mongocryptd/crypt_shared pre-8.1.
+This case requires mongocryptd/crypt_shared \<8.1.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
