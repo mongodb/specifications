@@ -47,11 +47,6 @@ initialData:
 
 tests:
   - description: "BypassQueryAnalysis decrypts"
-    clientOptions:
-      autoEncryptOpts:
-        kmsProviders:
-          local: {'key': {'$binary': {'base64': 'Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk', 'subType': '00'}}}
-        bypassQueryAnalysis: true
     operations:
       - object: *encryptedColl
         name: insertOne
@@ -70,57 +65,60 @@ tests:
         name: find
         arguments:
           filter: { "_id": 1 }
-        result: [{"_id": 1, "encryptedIndexed": "123" }]
+        expectResult: [{"_id": 1, "encryptedIndexed": "123" }]
     expectEvents:
-      - commandStartedEvent:
-          command:
-            listCollections: 1
-            filter:
-              name: *collection_name
-          command_name: listCollections
-      - command_started_event:
-          command:
-            insert: *collection_name
-            documents:
-              - *doc0_encrypted
-            ordered: true
-            encryptionInformation:
-                type: 1
-                schema:
-                  "default.default":
-                    # libmongocrypt applies escCollection and ecocCollection to outgoing command.
-                    escCollection: "enxcol_.default.esc"
-                    ecocCollection: "enxcol_.default.ecoc"
-                    <<: *encrypted_fields
-          command_name: insert
-      - command_started_event:
-          command:
-            find: *collection_name
-            filter: { "_id": 1 }
-          command_name: find
-      - command_started_event:
-          command:
-            find: datakeys
-            filter: {
-                  "$or": [
-                      {
-                          "_id": {
-                              "$in": [
-                                  {'$binary': {'base64': 'EjRWeBI0mHYSNBI0VniQEg==', 'subType': '04'}}
-                              ]
-                          }
-                      },
-                      {
-                          "keyAltNames": {
-                              "$in": []
-                          }
-                      }
-                  ]
-              }
-            $db: keyvault
-            readConcern: { level: "majority" }
-          command_name: find
+      - client: *client0
+        events:
+        - commandStartedEvent:
+            command:
+              listCollections: 1
+              filter:
+                name: *encryptedCollName
+            command_name: listCollections
+        - commandStartedEvent:
+            command:
+              insert: *encryptedCollName
+              documents:
+                - *doc0_encrypted
+              ordered: true
+              encryptionInformation:
+                  type: 1
+                  schema:
+                    "default.default":
+                      # libmongocrypt applies escCollection and ecocCollection to outgoing command.
+                      escCollection: "enxcol_.default.esc"
+                      ecocCollection: "enxcol_.default.ecoc"
+                      <<: *encrypted_fields
+            command_name: insert
+        - commandStartedEvent:
+            command:
+              find: *encryptedCollName
+              filter: { "_id": 1 }
+            command_name: find
+        - commandStartedEvent:
+            command:
+              find: datakeys
+              filter: {
+                    "$or": [
+                        {
+                            "_id": {
+                                "$in": [
+                                    {'$binary': {'base64': 'EjRWeBI0mHYSNBI0VniQEg==', 'subType': '04'}}
+                                ]
+                            }
+                        },
+                        {
+                            "keyAltNames": {
+                                "$in": []
+                            }
+                        }
+                    ]
+                }
+              $db: keyvault
+              readConcern: { level: "majority" }
+            command_name: find
     outcome:
-      collection:
-        data:
+      - collectionName: *encryptedCollName
+        databaseName: *encryptedDBName
+        documents:
           - {"_id": 1, "encryptedIndexed": { "$$type": "binData" }, "__safeContent__": [{ "$binary" : { "base64" : "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=", "subType" : "00" } }] }
