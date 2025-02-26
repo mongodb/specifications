@@ -94,6 +94,9 @@ preference parameters.
 
 A server mode in which the same query is dispatched in parallel to multiple replica set members.
 
+> [!NOTE]
+> Hedged reads are deprecated in MongoDB Server version 8.0.
+
 **Immediate topology check**
 
 For a multi-threaded or asynchronous client, this means waking all server monitors for an immediate check. For a
@@ -125,8 +128,9 @@ An OP_QUERY operation targeting a regular (non '$cmd') collection namespace.
 
 **Read preference**
 
-The parameters describing which servers in a deployment can receive read operations, including `mode`, `tag_sets`,
-`maxStalenessSeconds`, and `hedge`.
+The parameters describing which servers in a deployment can receive read
+operations, including `mode`, `tag_sets`, `maxStalenessSeconds`, and `hedge`
+(deprecated).
 
 **RS**
 
@@ -312,10 +316,12 @@ the [Rules for server selection](#rules-for-server-selection) section.
 
 #### Components of a read preference
 
-A read preference consists of a `mode` and optional `tag_sets`, `maxStalenessSeconds`, and `hedge`. The `mode`
-prioritizes between primaries and secondaries to produce either a single suitable server or a list of candidate servers.
-If `tag_sets` and `maxStalenessSeconds` are set, they determine which candidate servers are eligible for selection. If
-`hedge` is set, it configures how server hedged reads are used.
+A read preference consists of a `mode` and optional `tag_sets`,
+`maxStalenessSeconds`, and `hedge` (deprecated). The `mode` prioritizes between
+primaries and secondaries to produce either a single suitable server or a list
+of candidate servers. If `tag_sets` and `maxStalenessSeconds` are set, they
+determine which candidate servers are eligible for selection. If `hedge` is set,
+it configures how server hedged reads are used.
 
 The default `mode` is 'primary'. The default `tag_sets` is a list with an empty tag set: `[{}]`. The default
 `maxStalenessSeconds` is -1 or null, depending on the language. The default `hedge` is unset.
@@ -454,8 +460,8 @@ Eligibility MUST be determined from `tag_sets` as follows:
 
 ##### hedge
 
-The read preference `hedge` parameter is a document that configures how the server will perform hedged reads. It
-consists of the following keys:
+The deprecated read preference `hedge` parameter is a document that configures
+how the server will perform hedged reads. It consists of the following keys:
 
 - `enabled`: Enables or disables hedging
 
@@ -467,6 +473,12 @@ Drivers MAY allow users to specify an empty hedge document if they accept docume
 driver that exposes a builder API for read preference objects MUST NOT allow an empty `hedge` document to be
 constructed. In this case, the user MUST specify a value for `enabled`, which MUST default to `true`. If the user does
 not call a `hedge` API method, drivers MUST NOT send a `hedge` option to the server.
+
+Driver APIs related to the `hedge` parameter SHOULD be annotated and documented
+as deprecated. If static annotations are not used, drivers MUST emit a runtime
+deprecation warning if a `hedge` parameter is specified. Such deprecation
+warnings should note that hedged reads are deprecated in MongoDB Server 8.0 and
+will be removed in a future version.
 
 #### Read preference configuration
 
@@ -488,8 +500,7 @@ db.collection.find(
     {},
     read_preference=ReadPreference.NEAREST,
     tag_sets=[{'dc': 'ny'}],
-    maxStalenessSeconds=120,
-    hedge={'enabled': true})
+    maxStalenessSeconds=120)
 ```
 
 <span id="passing-read-preference-to-mongos"></span>
@@ -518,9 +529,11 @@ Therefore, when sending queries to a mongos or load balancer, the following rule
 - For mode 'primary', drivers MUST NOT set the `SecondaryOk` wire protocol flag and MUST NOT use `$readPreference`
 - For mode 'secondary', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
 - For mode 'primaryPreferred', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
-- For mode 'secondaryPreferred', drivers MUST set the `SecondaryOk` wire protocol flag. If the read preference contains
-    a non-empty `tag_sets` parameter, `maxStalenessSeconds` is a positive integer, or the `hedge` parameter is
-    non-empty, drivers MUST use `$readPreference`; otherwise, drivers MUST NOT use `$readPreference`
+- For mode 'secondaryPreferred', drivers MUST set the `SecondaryOk` wire
+  protocol flag. If the read preference contains a non-empty `tag_sets`
+  parameter, `maxStalenessSeconds` is a positive integer, or the deprecated
+  `hedge` parameter is non-empty, drivers MUST use `$readPreference`; otherwise,
+  drivers MUST NOT use `$readPreference`
 - For mode 'nearest', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
 
 The `$readPreference` query modifier sends the read preference as part of the query. The read preference fields
@@ -538,8 +551,7 @@ query MUST be provided using the `$query` modifier like so:
     $readPreference: {
         mode: 'secondary',
         tags: [ { 'dc': 'ny' } ],
-        maxStalenessSeconds: 120,
-        hedge: { enabled: true }
+        maxStalenessSeconds: 120
     }
 }
 ```
@@ -1263,7 +1275,7 @@ def getServer(criteria):
         else if loopEndTime > maxTime:
             throw server selection error with details
 
-        if the message was not logged already: 
+        if the message was not logged already:
             log a "waiting for suitable server to become available" message
 ```
 
@@ -1678,6 +1690,8 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
 - 2023-08-26: Add list of deprioritized servers for sharded cluster topology.
 
 - 2024-02-07: Migrated from reStructuredText to Markdown.
+
+- 2025-02-25: Note the deprecation of hedged reads.
 
 [^1]: mongos 3.4 refuses to connect to mongods with maxWireVersion \< 5, so it does no additional wire version checks
     related to maxStalenessSeconds.
