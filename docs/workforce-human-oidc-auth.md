@@ -245,7 +245,8 @@ format for expressing MongoDB clusters as resource URLs.
 ## Changelog
 
 - 2024-11-14: Initial version.
-- 2025-02-27: Specify that the local http server in [Authorization Code Flow](#authorization-code-flow) must listen on unique addresses. 
+- 2025-02-27: Specify that the local http server in [Authorization Code Flow](#authorization-code-flow) must listen on
+    unique addresses.
 
 [^1]: Technically, this refers to an Authorization Server (AS). Inside MongoDB, the usage of AS and IdP has been
     considered more or less interchangeable.
