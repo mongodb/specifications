@@ -4,6 +4,7 @@ schemaVersion: "1.23"
 
 runOnRequirements:
   - maxServerVersion: "4.0.99"
+    csfle: true
 
 createEntities:
   - client:
@@ -13,7 +14,7 @@ createEntities:
           aws: {}
         keyVaultNamespace: keyvault.datakeys
         extraOptions:
-          mongocryptdBypassSpawn: true # mongocryptd probably won't be on the path
+          mongocryptdBypassSpawn: true # mongocryptd probably won't be on the path. mongocryptd was introduced in server 4.2.
   - database:
       id: &database0 database0
       client: *client0
