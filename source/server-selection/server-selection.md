@@ -128,9 +128,8 @@ An OP_QUERY operation targeting a regular (non '$cmd') collection namespace.
 
 **Read preference**
 
-The parameters describing which servers in a deployment can receive read
-operations, including `mode`, `tag_sets`, `maxStalenessSeconds`, and `hedge`
-(deprecated).
+The parameters describing which servers in a deployment can receive read operations, including `mode`, `tag_sets`,
+`maxStalenessSeconds`, and `hedge` (deprecated).
 
 **RS**
 
@@ -316,12 +315,10 @@ the [Rules for server selection](#rules-for-server-selection) section.
 
 #### Components of a read preference
 
-A read preference consists of a `mode` and optional `tag_sets`,
-`maxStalenessSeconds`, and `hedge` (deprecated). The `mode` prioritizes between
-primaries and secondaries to produce either a single suitable server or a list
-of candidate servers. If `tag_sets` and `maxStalenessSeconds` are set, they
-determine which candidate servers are eligible for selection. If `hedge` is set,
-it configures how server hedged reads are used.
+A read preference consists of a `mode` and optional `tag_sets`, `maxStalenessSeconds`, and `hedge` (deprecated). The
+`mode` prioritizes between primaries and secondaries to produce either a single suitable server or a list of candidate
+servers. If `tag_sets` and `maxStalenessSeconds` are set, they determine which candidate servers are for selection. If
+`hedge` is set, it configures how server hedged reads are used.
 
 The default `mode` is 'primary'. The default `tag_sets` is a list with an empty tag set: `[{}]`. The default
 `maxStalenessSeconds` is -1 or null, depending on the language. The default `hedge` is unset.
@@ -460,8 +457,8 @@ Eligibility MUST be determined from `tag_sets` as follows:
 
 ##### hedge
 
-The deprecated read preference `hedge` parameter is a document that configures
-how the server will perform hedged reads. It consists of the following keys:
+The deprecated read preference `hedge` parameter is a document that configures how the server will perform hedged reads.
+It consists of the following keys:
 
 - `enabled`: Enables or disables hedging
 
@@ -474,11 +471,9 @@ driver that exposes a builder API for read preference objects MUST NOT allow an 
 constructed. In this case, the user MUST specify a value for `enabled`, which MUST default to `true`. If the user does
 not call a `hedge` API method, drivers MUST NOT send a `hedge` option to the server.
 
-Driver APIs related to the `hedge` parameter SHOULD be annotated and documented
-as deprecated. If static annotations are not used, drivers MUST emit a runtime
-deprecation warning if a `hedge` parameter is specified. Such deprecation
-warnings should note that hedged reads are deprecated in MongoDB Server 8.0 and
-will be removed in a future version.
+Driver APIs related to the `hedge` parameter SHOULD be annotated and documented as deprecated. If static annotations are
+not used, drivers MUST emit a runtime deprecation warning if a `hedge` parameter is specified. Such deprecation warnings
+should note that hedged reads are deprecated in MongoDB Server 8.0 and will be removed in a future version.
 
 #### Read preference configuration
 
@@ -529,11 +524,9 @@ Therefore, when sending queries to a mongos or load balancer, the following rule
 - For mode 'primary', drivers MUST NOT set the `SecondaryOk` wire protocol flag and MUST NOT use `$readPreference`
 - For mode 'secondary', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
 - For mode 'primaryPreferred', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
-- For mode 'secondaryPreferred', drivers MUST set the `SecondaryOk` wire
-  protocol flag. If the read preference contains a non-empty `tag_sets`
-  parameter, `maxStalenessSeconds` is a positive integer, or the deprecated
-  `hedge` parameter is non-empty, drivers MUST use `$readPreference`; otherwise,
-  drivers MUST NOT use `$readPreference`
+- For mode 'secondaryPreferred', drivers MUST set the `SecondaryOk` wire protocol flag. If the read preference contains
+    a non-empty `tag_sets` parameter, `maxStalenessSeconds` is a positive integer, or the deprecated `hedge` parameter
+    is non-empty, drivers MUST use `$readPreference`; otherwise, drivers MUST NOT use `$readPreference`
 - For mode 'nearest', drivers MUST set the `SecondaryOk` wire protocol flag and MUST also use `$readPreference`
 
 The `$readPreference` query modifier sends the read preference as part of the query. The read preference fields
