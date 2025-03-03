@@ -3721,5 +3721,5 @@ class ClientEncryptionOpts {
 }
 ```
 
-Use the client encryption to create a datakey using the "aws" KMS provider. This should successfully load and use
-the AWS credentials that were defined in the environment.
+Use the client encryption to create a datakey using the "aws" KMS provider. This should successfully load and use the
+AWS credentials that were defined in the environment.
