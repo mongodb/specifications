@@ -105,7 +105,7 @@ described in [RFC8252](https://datatracker.ietf.org/doc/html/rfc8252).[^4] The a
 2. Launch a local HTTP server. The default (incoming) redirect URL for MongoDB applications is
     `http://localhost:27097/redirect`, which MAY be configurable. If the application allows configuring the URL, the
     port MAY be specified as `0` to allow listening on an arbitrary port. The application listens on the host and port
-    listed in the URL. The application MUST listen on all addresses that the hostname resolves to through
+    listed in the URL. The application MUST listen on all unique addresses that the hostname resolves to through
     `getaddrinfo()`, and MUST listen on the same port in all cases. If listening on any address fails, or
     `getaddrinfo()` did not return any addresses, it must abort this process and the application MAY fall back to
     Device Auth.
@@ -245,6 +245,8 @@ format for expressing MongoDB clusters as resource URLs.
 ## Changelog
 
 - 2024-11-14: Initial version.
+- 2025-02-27: Specify that the local http server in [Authorization Code Flow](#authorization-code-flow) must listen on
+    unique addresses.
 
 [^1]: Technically, this refers to an Authorization Server (AS). Inside MongoDB, the usage of AS and IdP has been
     considered more or less interchangeable.
