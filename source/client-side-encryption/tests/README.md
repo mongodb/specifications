@@ -3683,3 +3683,43 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 ```
 
 Expect an exception to be thrown with a message containing the substring `Upgrade`.
+
+### 26. Custom AWS Credentials
+
+These tests require valid AWS credentials. Refer:
+[Automatic AWS Credentials](../client-side-encryption.md#automatic-credentials).
+
+#### Case 1: Explicit encryption with credentials and custom credential provider
+
+Create a MongoClient named `setupClient`.
+
+Create a [ClientEncryption](../client-side-encryption.md#clientencryption) object with the following options:
+
+```typescript
+class ClientEncryptionOpts {
+   keyVaultClient: <setupClient>,
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "aws": { "accessKeyId": <set from environment>, "secretAccessKey": <set from environment> } },
+   credentialProviders: { "aws": <default provider from AWS SDK> }
+}
+```
+
+Assert that an error is thrown.
+
+#### Case 2: Explicit encryption with custom credential provider
+
+Create a MongoClient named `setupClient`.
+
+Create a [ClientEncryption](../client-side-encryption.md#clientencryption) object with the following options:
+
+```typescript
+class ClientEncryptionOpts {
+   keyVaultClient: <setupClient>,
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "aws": {} },
+   credentialProviders: { "aws": <default provider from AWS SDK> }
+}
+```
+
+Use the client encryption to create a datakey using the "aws" KMS provider. This should successfully load and use
+the AWS credentials that were defined in the environment.
