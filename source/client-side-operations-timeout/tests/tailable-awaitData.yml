@@ -4,6 +4,7 @@ schemaVersion: "1.9"
 
 runOnRequirements:
   - minServerVersion: "4.4"
+    serverless: forbid # Capped collections are not allowed for serverless.
 
 createEntities:
   - client:
@@ -245,3 +246,66 @@ tests:
               command:
                 getMore: { $$type: ["int", "long"] }
                 collection: *collectionName
+
+  - description: "apply remaining timeoutMS if less than maxAwaitTimeMS"
+    operations:
+      - name: createFindCursor
+        object: *collection
+        arguments:
+          filter: { _id:  1 }
+          cursorType: tailableAwait
+          batchSize: 1
+          maxAwaitTimeMS: 100
+          timeoutMS: 200
+        saveResultAsEntity: &tailableCursor tailableCursor
+      - name: iterateOnce
+        object: *tailableCursor
+      - name: iterateUntilDocumentOrError 
+        object: *tailableCursor
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        ignoreExtraEvents: true
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+          - commandStartedEvent:
+              commandName: getMore 
+              databaseName: *databaseName
+              command:
+                maxTimeMS: { $$lte: 100 }
+          - commandStartedEvent:
+              commandName: getMore 
+              databaseName: *databaseName
+              command:
+                maxTimeMS: { $$lte: 99 }
+
+  - description: "apply maxAwaitTimeMS if less than remaining timeout"
+    operations:
+      - name: createFindCursor
+        object: *collection
+        arguments:
+          filter: {}
+          cursorType: tailableAwait
+          batchSize: 1
+          maxAwaitTimeMS: 100
+          timeoutMS: 200
+        saveResultAsEntity: &tailableCursor tailableCursor
+      # Iterate twice to force a getMore.
+      - name: iterateOnce
+        object: *tailableCursor
+      - name: iterateOnce
+        object: *tailableCursor
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+          - commandStartedEvent:
+              commandName: getMore 
+              databaseName: *databaseName
+              command:
+                maxTimeMS: { $$lte: 100 }
