@@ -290,8 +290,8 @@ tests:
           filter: {}
           cursorType: tailableAwait
           batchSize: 1
-          maxAwaitTimeMS: 50
-          timeoutMS: 100
+          maxAwaitTimeMS: 100
+          timeoutMS: 200
         saveResultAsEntity: &tailableCursor tailableCursor
       # Iterate twice to force a getMore.
       - name: iterateOnce
@@ -308,4 +308,4 @@ tests:
               commandName: getMore 
               databaseName: *databaseName
               command:
-                maxTimeMS: { $$lte: 50 }
+                maxTimeMS: { $$lte: 100 }

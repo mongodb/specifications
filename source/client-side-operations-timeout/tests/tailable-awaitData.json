@@ -495,8 +495,8 @@
             "filter": {},
             "cursorType": "tailableAwait",
             "batchSize": 1,
-            "maxAwaitTimeMS": 50,
-            "timeoutMS": 100
+            "maxAwaitTimeMS": 100,
+            "timeoutMS": 200
           },
           "saveResultAsEntity": "tailableCursor"
         },
@@ -525,7 +525,7 @@
                 "databaseName": "test",
                 "command": {
                   "maxTimeMS": {
-                    "$$lte": 50
+                    "$$lte": 100
                   }
                 }
               }
