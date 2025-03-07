@@ -247,6 +247,8 @@ See the [README](tests/README.md) for tests.
 
 ## Changelog
 
+- 2025-03-07: Update tests to use Extended JSON representation of +/-Infinity. (DRIVERS-3095)
+
 - 2025-02-04: Update validation for decoding into a FLOAT32 vector.
 
 - 2024-11-01: BSON Binary Subtype 9 accepted DRIVERS-2926 (#1708)
