@@ -26,14 +26,6 @@ createEntities:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
       observeEvents: [ commandStartedEvent ]
   - database:
-      id: &keyvault keyvaultDB
-      client: *client0
-      databaseName: &keyvaultDBName keyvault
-  - collection:
-      id: &datakeys datakeysColl
-      database: *keyvault
-      collectionName: &datakeysCollName datakeys
-  - database:
       id: &encryptedDB encryptedDB
       client: *client0
       databaseName: &encryptedDBName default
@@ -52,8 +44,8 @@ createEntities:
       collectionName: *encryptedDBName
 
 initialData:
-  - databaseName: *keyvaultDBName
-    collectionName: *datakeysCollName
+  - databaseName: &keyvaultDBName keyvault
+    collectionName: &datakeysCollName datakeys
     documents:
       - {'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updateDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEqnsxXlR51T5EbEVezUqqKAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDHa4jo6yp0Z18KgbUgIBEIB74sKxWtV8/YHje5lv5THTl0HIbhSwM6EqRlmBiFFatmEWaeMk4tO4xBX65eq670I5TWPSLMzpp8ncGHMmvHqRajNBnmFtbYxN3E3/WjxmdbOOe+OXpnGJPcGsftc7cB2shRfA4lICPnE26+oVNXT6p0Lo20nY5XC7jyCO', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyAltNames': ['altname', 'another_altname']}
 

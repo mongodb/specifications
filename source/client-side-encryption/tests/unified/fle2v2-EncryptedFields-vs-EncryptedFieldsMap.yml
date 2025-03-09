@@ -25,14 +25,6 @@ createEntities:
         }
       observeEvents: [ commandStartedEvent ]
   - database:
-      id: &keyvault keyvaultDB
-      client: *client0
-      databaseName: &keyvaultDBName keyvault
-  - collection:
-      id: &datakeys datakeysColl
-      database: *keyvault
-      collectionName: &datakeysCollName datakeys
-  - database:
       id: &encryptedDB encryptedDB
       client: *client0
       databaseName: &encryptedDBName default
@@ -42,8 +34,8 @@ createEntities:
       collectionName: &encryptedCollName default
 
 initialData:
-  - databaseName: *keyvaultDBName
-    collectionName: *datakeysCollName
+  - databaseName: &keyvaultDBName keyvault
+    collectionName: &datakeysCollName datakeys
     documents:
       - {'_id': {'$binary': {'base64': 'q83vqxI0mHYSNBI0VniQEg==', 'subType': '04'}}, 'keyMaterial': {'$binary': {'base64': 'HBk9BWihXExNDvTp1lUxOuxuZK2Pe2ZdVdlsxPEBkiO1bS4mG5NNDsQ7zVxJAH8BtdOYp72Ku4Y3nwc0BUpIKsvAKX4eYXtlhv5zUQxWdeNFhg9qK7qb8nqhnnLeT0f25jFSqzWJoT379hfwDeu0bebJHr35QrJ8myZdPMTEDYF08QYQ48ShRBli0S+QzBHHAQiM2iJNr4svg2WR8JSeWQ==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1648914851981'}}, 'updateDate': {'$date': {'$numberLong': '1648914851981'}}, 'status': {'$numberInt': '0'}, 'masterKey': {'provider': 'local'}}
   - databaseName: *encryptedDBName

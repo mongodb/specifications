@@ -127,20 +127,6 @@
     },
     {
       "database": {
-        "id": "keyvaultDB",
-        "client": "client0",
-        "databaseName": "keyvault"
-      }
-    },
-    {
-      "collection": {
-        "id": "datakeysColl",
-        "database": "keyvaultDB",
-        "collectionName": "datakeys"
-      }
-    },
-    {
-      "database": {
         "id": "encryptedDB",
         "client": "client0",
         "databaseName": "default"

@@ -4,6 +4,7 @@
   "runOnRequirements": [
     {
       "minServerVersion": "7.0.0",
+      "serverless": "forbid",
       "csfle": true,
       "topologies": [
         "replicaset",
@@ -28,20 +29,6 @@
         "observeEvents": [
           "commandStartedEvent"
         ]
-      }
-    },
-    {
-      "database": {
-        "id": "keyvaultDB",
-        "client": "client0",
-        "databaseName": "keyvault"
-      }
-    },
-    {
-      "collection": {
-        "id": "datakeysColl",
-        "database": "keyvaultDB",
-        "collectionName": "datakeys"
       }
     },
     {
