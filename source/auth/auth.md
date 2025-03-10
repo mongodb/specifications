@@ -1008,8 +1008,8 @@ The order in which Drivers MUST search for credentials is:
 1. The URI
 2. Environment variables
 3. A custom AWS credential provider if the driver supports it.
-3. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
-4. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
+4. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
+5. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
 > [!NOTE]
 > See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q-and-a)

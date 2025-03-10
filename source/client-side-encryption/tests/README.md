@@ -3686,9 +3686,9 @@ Expect an exception to be thrown with a message containing the substring `Upgrad
 
 ### 26. Custom AWS Credentials
 
-These tests require valid AWS credentials for the remote KMS provider via the secrets manager. These tests MUST NOT
-run inside an AWS environment that has the same credentials set in order to properly ensure the tests would fail
-using on-demand credentials.
+These tests require valid AWS credentials for the remote KMS provider via the secrets manager. These tests MUST NOT run
+inside an AWS environment that has the same credentials set in order to properly ensure the tests would fail using
+on-demand credentials.
 
 #### Case 1: Explicit encryption with credentials and custom credential provider
 
