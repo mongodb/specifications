@@ -537,7 +537,8 @@ The structure of this object is as follows:
     <span id="entity_client_autoEncryptOpts"></span>
 
     - `autoEncryptOpts`: Optional object corresponding to
-        [AutoEncryptionOpts](../client-side-encryption/client-side-encryption.md#mongoclient-changes) with the following fields:
+        [AutoEncryptionOpts](../client-side-encryption/client-side-encryption.md#mongoclient-changes) with the following
+        fields:
         - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
         - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
         - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
