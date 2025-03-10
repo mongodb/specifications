@@ -194,6 +194,11 @@
           ]
         }
       ]
+    },
+    {
+      "databaseName": "default",
+      "collectionName": "default",
+      "documents": []
     }
   ],
   "tests": [
