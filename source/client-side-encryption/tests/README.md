@@ -3686,8 +3686,9 @@ Expect an exception to be thrown with a message containing the substring `Upgrad
 
 ### 26. Custom AWS Credentials
 
-These tests require valid AWS credentials. Refer:
-[Automatic AWS Credentials](../client-side-encryption.md#automatic-credentials).
+These tests require valid AWS credentials for the remote KMS provider via the secrets manager. These tests MUST NOT
+run inside an AWS environment that has the same credentials set in order to properly ensure the tests would fail
+using on-demand credentials.
 
 #### Case 1: Explicit encryption with credentials and custom credential provider
 
@@ -3697,10 +3698,10 @@ Create a [ClientEncryption](../client-side-encryption.md#clientencryption) objec
 
 ```typescript
 class ClientEncryptionOpts {
-   keyVaultClient: <setupClient>,
-   keyVaultNamespace: "keyvault.datakeys",
-   kmsProviders: { "aws": { "accessKeyId": <set from environment>, "secretAccessKey": <set from environment> } },
-   credentialProviders: { "aws": <default provider from AWS SDK> }
+  keyVaultClient: <setupClient>,
+  keyVaultNamespace: "keyvault.datakeys",
+  kmsProviders: { "aws": { "accessKeyId": <set from secrets manager>, "secretAccessKey": <set from secrets manager> } },
+  credentialProviders: { "aws": <default provider from AWS SDK> }
 }
 ```
 
@@ -3714,12 +3715,28 @@ Create a [ClientEncryption](../client-side-encryption.md#clientencryption) objec
 
 ```typescript
 class ClientEncryptionOpts {
-   keyVaultClient: <setupClient>,
-   keyVaultNamespace: "keyvault.datakeys",
-   kmsProviders: { "aws": {} },
-   credentialProviders: { "aws": <object/function that returns valid credentials from the environment> }
+  keyVaultClient: <setupClient>,
+  keyVaultNamespace: "keyvault.datakeys",
+  kmsProviders: { "aws": {} },
+  credentialProviders: { "aws": <object/function that returns valid credentials from the secrets manager> }
 }
 ```
 
 Use the client encryption to create a datakey using the "aws" KMS provider. This should successfully load and use the
-AWS credentials that were defined in the environment. Assert the datakey was created.
+AWS credentials that were provided by the secrets manager for the remote provider. Assert the datakey was created.
+
+#### Case 3: Auto encryption with credentials and custom credential provider
+
+Create a `MongoClient` object with the following options:
+
+```typescript
+class AutoEncryptionOpts {
+  autoEncryption: {
+    keyVaultNamespace: "keyvault.datakeys",
+    kmsProviders: { "aws": { "accessKeyId": <set from secrets manager>, "secretAccessKey": <set from secrets manager> } },
+    credentialProviders: { "aws": <default provider from AWS SDK> }
+  }
+}
+```
+
+Assert that an error is thrown.

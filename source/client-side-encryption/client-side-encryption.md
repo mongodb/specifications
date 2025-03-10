@@ -486,7 +486,7 @@ an error MUST be thrown.
 
 ```typescript
 interface CredentialProviders {
-   aws? AWSCredentialProvider
+   aws?: AWSCredentialProvider
 }
 
 // The type of the AWS credential provider is dictated by the AWS SDK's credential provider for the specific
