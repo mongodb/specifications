@@ -3725,6 +3725,32 @@ class ClientEncryptionOpts {
 Use the client encryption to create a datakey using the "aws" KMS provider. This should successfully load and use the
 AWS credentials that were provided by the secrets manager for the remote provider. Assert the datakey was created.
 
+An example of this in Node.js:
+
+```typescript
+import { ClientEncryption, MongoClient } from 'mongodb';
+
+const masterKey = {
+  region: '<aws region>',
+  key: '<key for arn>'
+};
+const keyVaultClient = new MongoClient(process.env.MONGODB_URI);
+const options = {
+  keyVaultNamespace: 'keyvault.datakeys',
+  kmsProviders: { aws: {} },
+  credentialProviders: {
+    aws: async () => {
+      return {
+        accessKeyId: process.env.FLE_AWS_KEY,
+        secretAccessKey: process.env.FLE_AWS_SECRET
+      };
+    }
+  }
+};
+const clientEncryption = new ClientEncryption(keyVaultClient, options);
+const dk = await clientEncryption.createDataKey('aws', { masterKey });
+```
+
 #### Case 3: Auto encryption with credentials and custom credential provider
 
 Create a `MongoClient` object with the following options:
