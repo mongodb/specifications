@@ -3756,7 +3756,7 @@ expect(dk).to.be.a(Binary);
 expect(calledCount).to.be.greaterThan(0);
 ```
 
-#### Case 3: Auto encryption with credentials and custom credential provider
+#### Case 3: `AutoEncryptionOpts` with `credentialProviders` and incorrect `kmsProviders`
 
 Create a `MongoClient` object with the following options:
 
