@@ -3707,7 +3707,7 @@ class ClientEncryptionOpts {
 
 Assert that an error is thrown.
 
-#### Case 2: Explicit encryption with custom credential provider
+#### Case 2: ClientEncryption with `credentialProviders` works
 
 Create a MongoClient named `setupClient`.
 
