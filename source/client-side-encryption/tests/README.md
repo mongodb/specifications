@@ -3690,7 +3690,7 @@ These tests require valid AWS credentials for the remote KMS provider via the se
 FLE_AWS_SECRET). These tests MUST NOT run inside an AWS environment that has the same credentials set in order to
 properly ensure the tests would fail using on-demand credentials.
 
-#### Case 1: Explicit encryption with credentials and custom credential provider
+#### Case 1: ClientEncryption with `credentialProviders` and incorrect `kmsProviders`
 
 Create a MongoClient named `setupClient`.
 
