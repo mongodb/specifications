@@ -1325,7 +1325,9 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
     - AWS_CREDENTIAL_PROVIDER
 
-        A function or object from the AWS SDK that can be used to return AWS credentials.
+        A function or object from the AWS SDK that can be used to return AWS credentials. Drivers MAY allow the user to
+        specify the callback using a `MongoClient` configuration instead of a mechanism property, depending on what is
+        idiomatic for the driver.
 
 <span id="built-in-provider-integrations"/>
 
