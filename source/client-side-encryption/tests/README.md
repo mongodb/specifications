@@ -3723,13 +3723,15 @@ class ClientEncryptionOpts {
 ```
 
 Use the client encryption to create a datakey using the "aws" KMS provider. This should successfully load and use the
-AWS credentials that were provided by the secrets manager for the remote provider. Assert the datakey was created.
+AWS credentials that were provided by the secrets manager for the remote provider. Assert the datakey was created and
+that the custom credential provider was called at least once.
 
 An example of this in Node.js:
 
 ```typescript
 import { ClientEncryption, MongoClient } from 'mongodb';
 
+let calledCount = 0;
 const masterKey = {
   region: '<aws region>',
   key: '<key for arn>'
@@ -3740,6 +3742,7 @@ const options = {
   kmsProviders: { aws: {} },
   credentialProviders: {
     aws: async () => {
+      calledCount++;
       return {
         accessKeyId: process.env.FLE_AWS_KEY,
         secretAccessKey: process.env.FLE_AWS_SECRET
@@ -3749,6 +3752,8 @@ const options = {
 };
 const clientEncryption = new ClientEncryption(keyVaultClient, options);
 const dk = await clientEncryption.createDataKey('aws', { masterKey });
+expect(dk).to.be.a(Binary);
+expect(calledCount).to.be.greaterThan(0);
 ```
 
 #### Case 3: Auto encryption with credentials and custom credential provider
