@@ -3683,3 +3683,91 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 ```
 
 Expect an exception to be thrown with a message containing the substring `Upgrade`.
+
+### 26. Custom AWS Credentials
+
+These tests require valid AWS credentials for the remote KMS provider via the secrets manager (FLE_AWS_KEY and
+FLE_AWS_SECRET). These tests MUST NOT run inside an AWS environment that has the same credentials set in order to
+properly ensure the tests would fail using on-demand credentials.
+
+#### Case 1: ClientEncryption with `credentialProviders` and incorrect `kmsProviders`
+
+Create a MongoClient named `setupClient`.
+
+Create a [ClientEncryption](../client-side-encryption.md#clientencryption) object with the following options:
+
+```typescript
+class ClientEncryptionOpts {
+  keyVaultClient: <setupClient>,
+  keyVaultNamespace: "keyvault.datakeys",
+  kmsProviders: { "aws": { "accessKeyId": <set from secrets manager>, "secretAccessKey": <set from secrets manager> } },
+  credentialProviders: { "aws": <default provider from AWS SDK> }
+}
+```
+
+Assert that an error is thrown.
+
+#### Case 2: ClientEncryption with `credentialProviders` works
+
+Create a MongoClient named `setupClient`.
+
+Create a [ClientEncryption](../client-side-encryption.md#clientencryption) object with the following options:
+
+```typescript
+class ClientEncryptionOpts {
+  keyVaultClient: <setupClient>,
+  keyVaultNamespace: "keyvault.datakeys",
+  kmsProviders: { "aws": {} },
+  credentialProviders: { "aws": <object/function that returns valid credentials from the secrets manager> }
+}
+```
+
+Use the client encryption to create a datakey using the "aws" KMS provider. This should successfully load and use the
+AWS credentials that were provided by the secrets manager for the remote provider. Assert the datakey was created and
+that the custom credential provider was called at least once.
+
+An example of this in Node.js:
+
+```typescript
+import { ClientEncryption, MongoClient } from 'mongodb';
+
+let calledCount = 0;
+const masterKey = {
+  region: '<aws region>',
+  key: '<key for arn>'
+};
+const keyVaultClient = new MongoClient(process.env.MONGODB_URI);
+const options = {
+  keyVaultNamespace: 'keyvault.datakeys',
+  kmsProviders: { aws: {} },
+  credentialProviders: {
+    aws: async () => {
+      calledCount++;
+      return {
+        accessKeyId: process.env.FLE_AWS_KEY,
+        secretAccessKey: process.env.FLE_AWS_SECRET
+      };
+    }
+  }
+};
+const clientEncryption = new ClientEncryption(keyVaultClient, options);
+const dk = await clientEncryption.createDataKey('aws', { masterKey });
+expect(dk).to.be.a(Binary);
+expect(calledCount).to.be.greaterThan(0);
+```
+
+#### Case 3: `AutoEncryptionOpts` with `credentialProviders` and incorrect `kmsProviders`
+
+Create a `MongoClient` object with the following options:
+
+```typescript
+class AutoEncryptionOpts {
+  autoEncryption: {
+    keyVaultNamespace: "keyvault.datakeys",
+    kmsProviders: { "aws": { "accessKeyId": <set from secrets manager>, "secretAccessKey": <set from secrets manager> } },
+    credentialProviders: { "aws": <default provider from AWS SDK> }
+  }
+}
+```
+
+Assert that an error is thrown.
