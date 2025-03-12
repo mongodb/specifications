@@ -499,10 +499,19 @@ The following shows an example object of `CredentialProviders` for Node.js:
 ```typescript
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-const credentialProviders = {
-  // Acquire credentials for AWS:
-  aws: fromNodeProviderChain()
-};
+const client = new MongoClient(process.env.MONGODB_URI, {
+  autoEncryption: {
+    keyVaultNamespace: 'keyvault.datakeys',
+    kmsProviders: {
+      // Set to empty map to use `credentialProviders`.
+      aws: {}
+   },
+    credentialProviders: {
+      // Acquire credentials for AWS:
+      aws: fromNodeProviderChain()
+    }
+  }
+}
 ```
 
 #### kmsProviders
