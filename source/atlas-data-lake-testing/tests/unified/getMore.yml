@@ -42,7 +42,7 @@ tests:
                 getMore: { $$type: [ int, long ] }
                 # collection name will be an internal identifier
                 collection: { $$type: string }
-                batchSize: 1
+                batchSize: 3
               commandName: getMore
               # mongohoused always expects getMores on the "cursors" database
               databaseName: cursors
