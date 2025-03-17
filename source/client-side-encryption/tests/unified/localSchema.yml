@@ -4,7 +4,7 @@ schemaVersion: "1.23"
 
 runOnRequirements:
   - minServerVersion: "4.1.10"
-  - csfle: true
+    csfle: true
 
 createEntities:
   - client:
@@ -12,25 +12,19 @@ createEntities:
       autoEncryptOpts:
         schemaMap:
           "default.default": {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname', 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}, 'encrypted_string': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'random': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}, 'encrypted_string_equivalent': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: {} # Credentials filled in from environment.
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
       observeEvents: [ commandStartedEvent ]
   - client:
       id: &client1 client1
       autoEncryptOpts:
         schemaMap:
           "default.default": {'properties': {'test': {'bsonType': 'string'}}, 'bsonType': 'object', 'required': ['test']}
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: {} # Credentials filled in from environment.
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
       observeEvents: [ commandStartedEvent ]
-  - database:
-      id: &keyvault keyvaultDB
-      client: *client0
-      databaseName: &keyvaultDBName keyvault
-  - collection:
-      id: &datakeys datakeysColl
-      database: *keyvault
-      collectionName: &datakeysCollName datakeys
   - database:
       id: &encryptedDB encryptedDB
       client: *client0
@@ -43,22 +37,20 @@ createEntities:
   - database:
       id: &encryptedDB2 encryptedDB2
       client: *client1
-      databaseName: &encryptedDBName default
+      databaseName: *encryptedDBName
   - collection:
       id: &encryptedColl2 encryptedColl2
       database: *encryptedDB2
-      collectionName: &encryptedCollName default
+      collectionName: *encryptedDBName
 
 initialData:
-  - databaseName: *keyvaultDBName
-    collectionName: *datakeysCollName
+  - databaseName: &keyvaultDBName keyvault
+    collectionName: &datakeysCollName datakeys
     documents:
       - {'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updateDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEqnsxXlR51T5EbEVezUqqKAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDHa4jo6yp0Z18KgbUgIBEIB74sKxWtV8/YHje5lv5THTl0HIbhSwM6EqRlmBiFFatmEWaeMk4tO4xBX65eq670I5TWPSLMzpp8ncGHMmvHqRajNBnmFtbYxN3E3/WjxmdbOOe+OXpnGJPcGsftc7cB2shRfA4lICPnE26+oVNXT6p0Lo20nY5XC7jyCO', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyAltNames': ['altname', 'another_altname']}
   - databaseName: *encryptedDBName
     collectionName: *encryptedCollName
     documents: []
-    createOptions:
-      validator: {}
 
 tests:
   - description: "A local schema should override"

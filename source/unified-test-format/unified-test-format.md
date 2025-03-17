@@ -536,16 +536,17 @@ The structure of this object is as follows:
 
     <span id="entity_client_autoEncryptOpts"></span>
 
-    - `autoEncryptOpts`: Optional object with the following fields:
+    - `autoEncryptOpts`: Optional object corresponding to
+        [AutoEncryptionOpts](../client-side-encryption/client-side-encryption.md#mongoclient-changes) with the following
+        fields:
         - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
         - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
         - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
-            Defaults to `false`.
-        - `schemaMap`: Optional object. Maps namespaces to encrypted fields.
-        - `encryptedFieldsMap`: Optional object. Specifies which fields to automatically encrypt and the types of queries allowed on those fields.
+        - `schemaMap`: Optional object. Maps namespaces to CSFLE schemas.
+        - `encryptedFieldsMap`: Optional object. Maps namespaces to QE schemas.
         - `extraOptions`: Optional object. Configuration options for the encryption library.
         - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
-        - `keyExpirationMS`: Optional integer. Sets how long data encryption keys are cached. Defaults to 60,000.
+        - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
 
 <span id="entity_clientEncryption"></span>
 

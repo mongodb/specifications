@@ -226,7 +226,8 @@ Fields:
     field in the server's hello or legacy hello response, in the case that the server reports an address different from
     the address the client uses.
 
-- (=) `error`: information about the last error related to this server. Default null.
+- (=) `error`: information about the last error related to this server. Default null. MUST contain or be able to produce
+    a string describing the error.
 
 - `roundTripTime`: the duration of the hello or legacy hello call. Default null.
 
@@ -485,7 +486,13 @@ removed once the primary is checked.
 #### error
 
 If the client experiences any error when checking a server, it stores error information in the ServerDescription's error
-field.
+field. The message contained in this field MUST contain the substrings detailed in the table below when the
+ServerDescription is changed to Unknown in the circumstances outlined.
+
+| circumstance                                               | error substring                                                                                                |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| RSPrimary with a stale electionId/setVersion is discovered | `'primary marked stale due to electionId/setVersion mismatch, <stale tuple> is stale compared to <max tuple>'` |
+| New primary is elected/discovered                          | `'primary marked stale due to discovery of newer primary'`                                                     |
 
 #### roundTripTime
 
@@ -871,7 +878,8 @@ if serverDescription.maxWireVersion >= 17:  # MongoDB 6.0+
         topologyDescription.maxSetVersion = serverDescription.setVersion
     else:
         # Stale primary.
-        # replace serverDescription with a default ServerDescription of type "Unknown"
+        # The error field MUST include the substring "primary marked stale due to electionId/setVersion mismatch"
+         replace serverDescription with a default ServerDescription of type "Unknown"
         checkIfHasPrimary()
         return
 else:
@@ -889,7 +897,8 @@ else:
             )
         ):
             # Stale primary.
-            # replace serverDescription with a default ServerDescription of type "Unknown"
+            # The error field MUST include the substring "primary marked stale due to electionId/setVersion mismatch"
+            replace serverDescription with a default ServerDescription of type "Unknown" 
             checkIfHasPrimary()
             return
 
@@ -906,6 +915,7 @@ for each server in topologyDescription.servers:
     if server.address != serverDescription.address:
         if server.type is RSPrimary:
             # See note below about invalidating an old primary.
+            # the error field MUST include the substring "primary marked stale due to discovery of newer primary"
             replace the server with a default ServerDescription of type "Unknown"
 
 for each address in serverDescription's "hosts", "passives", and "arbiters":
@@ -921,9 +931,10 @@ checkIfHasPrimary()
 ```
 
 A note on invalidating the old primary: when a new primary is discovered, the client finds the previous primary (there
-should be none or one) and replaces its description with a default ServerDescription of type "Unknown." A multi-threaded
-client MUST [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as
-possible.
+should be none or one) and replaces its description with a default ServerDescription of type "Unknown". Additionally,
+the `error` field of the new `ServerDescription` object MUST include a descriptive error explaining that it was
+invalidated because the primary was determined to be stale. A multi-threaded client MUST
+[request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as possible.
 
 If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
 the connections are all bad because the old primary has closed its sockets. If the old primary server version is 4.2 or
@@ -934,6 +945,8 @@ See [replica set monitoring with and without a primary](#replica-set-monitoring-
 If the server is primary with an obsolete electionId or setVersion, it is likely a stale primary that is going to step
 down. Mark it Unknown and let periodic monitoring detect when it becomes secondary. See
 [using electionId and setVersion to detect stale primaries](#using-electionid-and-setversion-to-detect-stale-primaries).
+Drivers MAY additionally specify whether this was due to an electionId or setVersion mismatch as described in the
+[ServerDescripion.error section](#error).
 
 A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is
 not equal to "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the
@@ -1921,16 +1934,6 @@ oversaw the specification process.
 
 ## Changelog
 
-- 2024-11-11: Removed references to `getLastError`
-
-- 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
-
-- 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
-
-- 2024-08-09: Updated wire versions in tests to 4.0+.
-
-- 2024-05-08: Migrated from reStructuredText to Markdown.
-
 - 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
 
 - 2015-10-09: Specify electionID comparison method.
@@ -2011,6 +2014,19 @@ oversaw the specification process.
 - 2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
 
 - 2024-01-17: Add section on expected client close behaviour
+
+- 2024-05-08: Migrated from reStructuredText to Markdown.
+
+- 2024-08-09: Updated wire versions in tests to 4.0+.
+
+- 2024-08-16: Updated host b wire versions in `too_new` and `too_old` tests
+
+- 2024-11-04: Make the description of `TopologyDescription.servers` consistent with the spec tests.
+
+- 2024-11-11: Removed references to `getLastError`
+
+- 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionId or setVersion is
+    discovered.
 
 ______________________________________________________________________
 

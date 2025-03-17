@@ -517,12 +517,12 @@ This message MUST be published under the same circumstances as a `ServerHeartbea
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pairs:
 
-| Key        | Suggested Type | Value                                                                                                                                                         |
-| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| message    | String         | "Server heartbeat succeeded"                                                                                                                                  |
-| awaited    | Boolean        | Whether this log message is for an awaitable hello or legacy "hello".                                                                                         |
-| durationMS | Int            | The execution time for the heartbeat in milliseconds. See `ServerHeartbeatSucceededEvent` in [Events API](#events-api) for details on calculating this value. |
-| reply      | String         | Relaxed extended JSON representation of the reply to the heartbeat command.                                                                                   |
+| Key        | Suggested Type     | Value                                                                                                                                                         |
+| ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| message    | String             | "Server heartbeat succeeded"                                                                                                                                  |
+| awaited    | Boolean            | Whether this log message is for an awaitable hello or legacy "hello".                                                                                         |
+| durationMS | Int32/Int64/Double | The execution time for the heartbeat in milliseconds. See `ServerHeartbeatSucceededEvent` in [Events API](#events-api) for details on calculating this value. |
+| reply      | String             | Relaxed extended JSON representation of the reply to the heartbeat command.                                                                                   |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -538,12 +538,12 @@ This message MUST be published under the same circumstances as a `ServerHeartbea
 
 In addition to the relevant common fields, these messages MUST contain the following key-value pairs:
 
-| Key        | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                                                                 |
-| ---------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| message    | String         | "Server heartbeat failed"                                                                                                                                                                                                                                                                                                                                                                             |
-| awaited    | Boolean        | Whether this log message is for an awaitable hello or legacy "hello".                                                                                                                                                                                                                                                                                                                                 |
-| durationMS | Int            | The execution time for the heartbeat in milliseconds. See `ServerHeartbeatFailedEvent` in [Events API](#events-api) for details on calculating this value.                                                                                                                                                                                                                                            |
-| failure    | Flexible       | The error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null. |
+| Key        | Suggested Type     | Value                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| message    | String             | "Server heartbeat failed"                                                                                                                                                                                                                                                                                                                                                                             |
+| awaited    | Boolean            | Whether this log message is for an awaitable hello or legacy "hello".                                                                                                                                                                                                                                                                                                                                 |
+| durationMS | Int32/Int64/Double | The execution time for the heartbeat in milliseconds. See `ServerHeartbeatFailedEvent` in [Events API](#events-api) for details on calculating this value.                                                                                                                                                                                                                                            |
+| failure    | Flexible           | The error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages. If the command is considered sensitive, the error MUST be redacted and replaced with a language-appropriate alternative for a redacted error, e.g. an empty string, empty document, or null. |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -557,6 +557,8 @@ placeholders as appropriate:
 See the [README](tests/monitoring/README.md).
 
 ## Changelog
+
+- 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 
 - 2024-05-02: Migrated from reStructuredText to Markdown.
 

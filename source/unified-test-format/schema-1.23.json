@@ -189,6 +189,7 @@
             },
             "autoEncryptOpts": {
               "type": "object",
+              "additionalProperties": false,
               "required": [
                 "keyVaultNamespace",
                 "kmsProviders"
