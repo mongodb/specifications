@@ -159,7 +159,7 @@ supports indexed encrypted fields, which are further processed server-side.
 
 Is an umbrella term describing the both CSFLE and Queryable Encryption.
 
-**encryptedFields**
+<span id="encryptedFields"></span> **encryptedFields**
 
 A BSON document describing the Queryable Encryption encrypted fields. This is analogous to the JSON Schema in FLE. The
 following is an example encryptedFields in extended canonical JSON:
