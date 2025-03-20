@@ -676,7 +676,9 @@ query operator use case will require that the rules set forth in the 1.0.0 versi
 for `$regex`; specifically, that a document with a `$regex` key whose value is a JSON object should be parsed as a
 normal document and not reported as an error.
 
-## **Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON binary values were represented like `{"$binary": "AQIDBAU=", "$type": "80"}`, handle parsing of extended JSON test representing a MongoDB query filter containing the `$type`operator?
+**Q**. How can implementations which require backwards compatibility with Legacy Extended JSON, in which BSON binary
+values were represented like `{"$binary": "AQIDBAU=", "$type": "80"}`, handle parsing of extended JSON test representing
+a MongoDB query filter containing the `$type`operator?
 
 **A**. An implementation can handle this in a number of ways:
 

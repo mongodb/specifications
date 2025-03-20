@@ -427,8 +427,8 @@ writeConcernError but may not be exhaustive. Note that some errors have been abb
 - `{ok:1, writeConcernError: {code: 11600, codeName: "InterruptedAtShutdown"}}`
 - `{ok:1, writeConcernError: {code: 11601, codeName: "Interrupted"}}`
 - `{ok:1, writeConcernError: {code: 11602, codeName: "InterruptedDueToReplStateChange"}}`
-- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "waiting for replication timed out", errInfo: {wtimeout: True}}}`
-- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "multiple errors reported : {...} at shardName1 :: and :: {...} at shardName2"}}`[^1]
+- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernTimeout", errmsg: "waiting for replication timed out", errInfo: {wtimeout: True}}}`
+- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernTimeout", errmsg: "multiple errors reported : {...} at shardName1 :: and :: {...} at shardName2"}}`[^1]
 - `{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}`
 - `{ok:1, writeConcernError: {code: 100, codeName: "UnsatisfiableWriteConcern", errmsg: "Not enough data-bearing nodes"}}`
 - `{ok:1, writeConcernError: {code: 79, codeName: "UnknownReplWriteConcern"}}`
@@ -533,6 +533,8 @@ instance, we send it.
 
 ## Changelog
 
+- 2025-02-25: Rename WriteConcernFailed to WriteConcernTimeout
+
 - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion \< 4.
 
 - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
@@ -579,7 +581,7 @@ instance, we send it.
 - 2024-10-30: Remove reference to getLastError
 
 [^1]: This is only possible in a sharded cluster. When a write is routed to multiple shards and more than one shard
-    returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernFailed" error
+    returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernTimeout" error
     code and an errmsg field contains the stringified writeConcernError from each shard. Note that each shard may return
     a different writeConcernError.
 
