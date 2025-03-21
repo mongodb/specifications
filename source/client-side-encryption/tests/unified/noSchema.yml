@@ -1,0 +1,50 @@
+description: noSchema
+schemaVersion: '1.23'
+runOnRequirements:
+  - minServerVersion: "4.1.10"
+createEntities:
+  - client:
+      id: "client0"
+      autoEncryptOpts:
+        kmsProviders:
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: "db"
+      client: "client0"
+      databaseName: default
+  - collection:
+      id: "coll"
+      database: "db"
+      collectionName: unencrypted
+tests:
+  - description: "Insert on an unencrypted collection"
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc0 {_id: 1}
+        object: "coll"
+    outcome:
+      - documents:
+          - *doc0
+        collectionName: &collection_name "unencrypted"
+
+        databaseName: &database_name "default"
+    expectEvents:
+      - client: "client0"
+        events:
+      # Auto encryption will request the collection info.
+          - commandStartedEvent:
+              command:
+                listCollections: 1
+                filter:
+                  name: *collection_name
+              commandName: listCollections
+          - commandStartedEvent:
+              command:
+                insert: *collection_name
+                documents:
+                  - *doc0
+                ordered: true
+              commandName: insert

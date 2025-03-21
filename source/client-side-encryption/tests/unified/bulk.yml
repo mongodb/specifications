@@ -1,4 +1,4 @@
-description: keyCache
+description: bulk
 schemaVersion: '1.23'
 runOnRequirements:
   - minServerVersion: "4.1.10"
@@ -8,7 +8,6 @@ createEntities:
       autoEncryptOpts:
         kmsProviders:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
-        keyExpirationMS: 1
       observeEvents:
         - commandStartedEvent
   - database:
@@ -43,25 +42,30 @@ initialData:
               'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
           'keyAltNames': ['altname', 'another_altname']}]
 tests:
-  - description: "Insert with deterministic encryption, then find it"
+  - description: "Bulk write with encryption"
     operations:
-      - name: insertOne
+      - name: bulkWrite
         arguments:
-          document: &doc0 {_id: 1, encrypted_string: "string0"}
+          requests:
+            - name: insertOne
+              arguments:
+                document: {_id: 1, encrypted_string: "string0", random: "abc"}
+            - name: insertOne
+              arguments:
+                document: {_id: 2, encrypted_string: "string1"}
+            - name: updateOne
+              arguments:
+                filter: {encrypted_string: "string0"}
+                update: {$set: {encrypted_string: "string1"}}
+            - name: deleteOne
+              arguments:
+                filter: {$and: [encrypted_string: "string1", _id: 2]}
+          options: {ordered: true}
         object: "coll"
-      - name: wait
-        object: "coll"
-        arguments:
-          ms: 50 # Wait long enough to account for coarse time resolution on Windows (CDRIVER-4526).
-      - name: find
-        arguments:
-          filter: {_id: 1}
-        object: "coll"
-        expectResult: [*doc0]
     outcome:
       - documents:
-          - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
-                'subType': '06'}}}
+          - {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
+                'subType': '06'}}, random: {$$type: "binData"}}
         collectionName: &collection_name "default"
 
         databaseName: &database_name "default"
@@ -87,19 +91,28 @@ tests:
               command:
                 insert: *collection_name
                 documents:
-                  - *doc0_encrypted
+                  - {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+                        'subType': '06'}}, random: {$$type: "binData"}}
+                  - {_id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
+                        'subType': '06'}}}
                 ordered: true
               commandName: insert
           - commandStartedEvent:
               command:
-                find: *collection_name
-                filter: {_id: 1}
-              commandName: find
+                update: *collection_name
+                updates:
+                  - q: {encrypted_string: {$eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+                            'subType': '06'}}}}
+                    u: {$set: {encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
+                            'subType': '06'}}}}
+                ordered: true
+              commandName: update
           - commandStartedEvent:
               command:
-                find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
-                $db: keyvault
-                readConcern: {level: "majority"}
-              commandName: find
+                delete: *collection_name
+                deletes:
+                  - q: {"$and": ["encrypted_string": {"$eq": {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
+                                  'subType': '06'}}}, "_id": {"$eq": 2}]}
+                    limit: 1
+                ordered: true
+              commandName: delete

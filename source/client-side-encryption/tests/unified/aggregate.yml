@@ -1,4 +1,4 @@
-description: keyCache
+description: aggregate
 schemaVersion: '1.23'
 runOnRequirements:
   - minServerVersion: "4.1.10"
@@ -8,7 +8,6 @@ createEntities:
       autoEncryptOpts:
         kmsProviders:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
-        keyExpirationMS: 1
       observeEvents:
         - commandStartedEvent
   - database:
@@ -22,7 +21,9 @@ createEntities:
 initialData:
   - databaseName: default
     collectionName: default
-    documents: []
+    documents:
+      - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+            'subType': '06'}}}
     createOptions:
       validator:
         $jsonSchema: {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname',
@@ -43,25 +44,19 @@ initialData:
               'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
           'keyAltNames': ['altname', 'another_altname']}]
 tests:
-  - description: "Insert with deterministic encryption, then find it"
+  - description: "Aggregate with deterministic encryption"
+    skipReason: "SERVER-39395"
     operations:
-      - name: insertOne
+      - name: aggregate
         arguments:
-          document: &doc0 {_id: 1, encrypted_string: "string0"}
+          pipeline:
+            - {$match: {encrypted_string: "457-55-5642"}}
         object: "coll"
-      - name: wait
-        object: "coll"
-        arguments:
-          ms: 50 # Wait long enough to account for coarse time resolution on Windows (CDRIVER-4526).
-      - name: find
-        arguments:
-          filter: {_id: 1}
-        object: "coll"
-        expectResult: [*doc0]
+        expectResult:
+          - {_id: 1, encrypted_string: "string0"}
     outcome:
       - documents:
-          - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
-                'subType': '06'}}}
+          - *doc0_encrypted
         collectionName: &collection_name "default"
 
         databaseName: &database_name "default"
@@ -85,16 +80,40 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                insert: *collection_name
-                documents:
-                  - *doc0_encrypted
-                ordered: true
-              commandName: insert
+                aggregate: *collection_name
+                pipeline:
+                  - {$match: {encrypted_string: "457-55-5642"}}
+              commandName: aggregate
+  - description: "Aggregate with empty pipeline"
+    skipReason: "SERVER-40829 hides agg support behind enableTestCommands flag."
+    operations:
+      - name: aggregate
+        arguments:
+          pipeline: []
+        object: "coll"
+        expectResult:
+          - {_id: 1, encrypted_string: "string0"}
+    outcome:
+      - documents:
+          - *doc0_encrypted
+        collectionName: *collection_name
+        databaseName: *database_name
+    expectEvents:
+      - client: "client0"
+        events:
+      # Auto encryption will request the collection info.
           - commandStartedEvent:
               command:
-                find: *collection_name
-                filter: {_id: 1}
-              commandName: find
+                listCollections: 1
+                filter:
+                  name: *collection_name
+              commandName: listCollections
+          - commandStartedEvent:
+              command:
+                aggregate: *collection_name
+                pipeline: []
+                cursor: {}
+              commandName: aggregate
           - commandStartedEvent:
               command:
                 find: datakeys
@@ -103,3 +122,26 @@ tests:
                 $db: keyvault
                 readConcern: {level: "majority"}
               commandName: find
+  - description: "Aggregate should fail with random encryption"
+    skipReason: "SERVER-39395"
+    operations:
+      - name: aggregate
+        arguments:
+          pipeline:
+            - {$match: {random: "abc"}}
+        object: "coll"
+        expectError:
+          errorContains: "Cannot query on fields encrypted with the randomized encryption"
+  - description: "Database aggregate should fail"
+    operations:
+      - name: aggregate
+        object: "coll"
+        arguments:
+          pipeline:
+            - $currentOp: {allUsers: false, idleConnections: false, localOps: true}
+            - $match: {command.aggregate: {$eq: 1}}
+            - $project: {command: 1}
+            - $project: {command.lsid: 0}
+        expectError:
+          errorContains: "non-collection command not supported for auto encryption:
+            aggregate"

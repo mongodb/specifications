@@ -1,4 +1,4 @@
-description: keyCache
+description: keyAltName
 schemaVersion: '1.23'
 runOnRequirements:
   - minServerVersion: "4.1.10"
@@ -8,7 +8,6 @@ createEntities:
       autoEncryptOpts:
         kmsProviders:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
-        keyExpirationMS: 1
       observeEvents:
         - commandStartedEvent
   - database:
@@ -43,25 +42,15 @@ initialData:
               'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
           'keyAltNames': ['altname', 'another_altname']}]
 tests:
-  - description: "Insert with deterministic encryption, then find it"
+  - description: "Insert with encryption using key alt name"
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 {_id: 1, encrypted_string: "string0"}
+          document: {_id: 1, encrypted_w_altname: "string0", altname: "altname"}
         object: "coll"
-      - name: wait
-        object: "coll"
-        arguments:
-          ms: 50 # Wait long enough to account for coarse time resolution on Windows (CDRIVER-4526).
-      - name: find
-        arguments:
-          filter: {_id: 1}
-        object: "coll"
-        expectResult: [*doc0]
     outcome:
       - documents:
-          - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
-                'subType': '06'}}}
+          - &doc0_encrypted {_id: 1, encrypted_w_altname: {$$type: "binData"}, altname: "altname"}
         collectionName: &collection_name "default"
 
         databaseName: &database_name "default"
@@ -78,8 +67,7 @@ tests:
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter: {$or: [_id: {$in: []}, keyAltNames: {$in: ["altname"]}]}
                 $db: keyvault
                 readConcern: {level: "majority"}
               commandName: find
@@ -90,16 +78,17 @@ tests:
                   - *doc0_encrypted
                 ordered: true
               commandName: insert
-          - commandStartedEvent:
-              command:
-                find: *collection_name
-                filter: {_id: 1}
-              commandName: find
-          - commandStartedEvent:
-              command:
-                find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
-                $db: keyvault
-                readConcern: {level: "majority"}
-              commandName: find
+  - description: "Replace with key alt name fails"
+    operations:
+      - name: updateOne
+        arguments:
+          filter: {}
+          update: {$set: {encrypted_w_altname: "string0"}}
+          upsert: true
+        object: "coll"
+        expectError:
+          errorContains: "A non-static (JSONPointer) keyId is not supported"
+    outcome:
+      - documents: []
+        collectionName: *collection_name
+        databaseName: *database_name

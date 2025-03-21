@@ -1,4 +1,4 @@
-description: keyCache
+description: insert
 schemaVersion: '1.23'
 runOnRequirements:
   - minServerVersion: "4.1.10"
@@ -8,7 +8,6 @@ createEntities:
       autoEncryptOpts:
         kmsProviders:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
-        keyExpirationMS: 1
       observeEvents:
         - commandStartedEvent
   - database:
@@ -43,25 +42,16 @@ initialData:
               'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
           'keyAltNames': ['altname', 'another_altname']}]
 tests:
-  - description: "Insert with deterministic encryption, then find it"
+  - description: "insertOne with encryption"
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 {_id: 1, encrypted_string: "string0"}
+          document: &doc0 {_id: 1, encrypted_string: "string0", random: "abc"}
         object: "coll"
-      - name: wait
-        object: "coll"
-        arguments:
-          ms: 50 # Wait long enough to account for coarse time resolution on Windows (CDRIVER-4526).
-      - name: find
-        arguments:
-          filter: {_id: 1}
-        object: "coll"
-        expectResult: [*doc0]
     outcome:
       - documents:
           - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
-                'subType': '06'}}}
+                'subType': '06'}}, random: {$$type: "binData"}}
         collectionName: &collection_name "default"
 
         databaseName: &database_name "default"
@@ -90,11 +80,31 @@ tests:
                   - *doc0_encrypted
                 ordered: true
               commandName: insert
+  - description: "insertMany with encryption"
+    operations:
+      - name: insertMany
+        arguments:
+          documents:
+            - *doc0
+            - {_id: 2, encrypted_string: "string1"}
+        object: "coll"
+    outcome:
+      - documents:
+          - *doc0_encrypted
+          - &doc1_encrypted {_id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
+                'subType': '06'}}}
+        collectionName: *collection_name
+        databaseName: *database_name
+    expectEvents:
+      - client: "client0"
+        events:
+      # Auto encryption will request the collection info.
           - commandStartedEvent:
               command:
-                find: *collection_name
-                filter: {_id: 1}
-              commandName: find
+                listCollections: 1
+                filter:
+                  name: *collection_name
+              commandName: listCollections
           - commandStartedEvent:
               command:
                 find: datakeys
@@ -103,3 +113,11 @@ tests:
                 $db: keyvault
                 readConcern: {level: "majority"}
               commandName: find
+          - commandStartedEvent:
+              command:
+                insert: *collection_name
+                documents:
+                  - *doc0_encrypted
+                  - *doc1_encrypted
+                ordered: true
+              commandName: insert

@@ -1,14 +1,13 @@
-description: keyCache
+description: explain
 schemaVersion: '1.23'
 runOnRequirements:
-  - minServerVersion: "4.1.10"
+  - minServerVersion: "7.0.0"
 createEntities:
   - client:
       id: "client0"
       autoEncryptOpts:
         kmsProviders:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
-        keyExpirationMS: 1
       observeEvents:
         - commandStartedEvent
   - database:
@@ -22,7 +21,11 @@ createEntities:
 initialData:
   - databaseName: default
     collectionName: default
-    documents: []
+    documents:
+      - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+            'subType': '06'}}}
+      - &doc1_encrypted {_id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
+            'subType': '06'}}}
     createOptions:
       validator:
         $jsonSchema: {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname',
@@ -43,27 +46,22 @@ initialData:
               'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
           'keyAltNames': ['altname', 'another_altname']}]
 tests:
-  - description: "Insert with deterministic encryption, then find it"
+  - description: "Explain a find with deterministic encryption"
     operations:
-      - name: insertOne
-        arguments:
-          document: &doc0 {_id: 1, encrypted_string: "string0"}
-        object: "coll"
-      - name: wait
+      - name: runCommand
         object: "coll"
         arguments:
-          ms: 50 # Wait long enough to account for coarse time resolution on Windows (CDRIVER-4526).
-      - name: find
-        arguments:
-          filter: {_id: 1}
-        object: "coll"
-        expectResult: [*doc0]
+          command:
+            explain:
+              find: &collection_name "default"
+
+              filter: {encrypted_string: "string1"}
+          commandName: explain
     outcome:
       - documents:
-          - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
-                'subType': '06'}}}
-        collectionName: &collection_name "default"
-
+          - *doc0_encrypted
+          - *doc1_encrypted
+        collectionName: *collection_name
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
@@ -85,21 +83,9 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                insert: *collection_name
-                documents:
-                  - *doc0_encrypted
-                ordered: true
-              commandName: insert
-          - commandStartedEvent:
-              command:
-                find: *collection_name
-                filter: {_id: 1}
-              commandName: find
-          - commandStartedEvent:
-              command:
-                find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
-                $db: keyvault
-                readConcern: {level: "majority"}
-              commandName: find
+                explain:
+                  find: *collection_name
+                  filter: {encrypted_string: {$eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
+                          'subType': '06'}}}}
+                verbosity: "allPlansExecution"
+              commandName: explain

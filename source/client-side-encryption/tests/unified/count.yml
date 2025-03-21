@@ -1,4 +1,4 @@
-description: keyCache
+description: count
 schemaVersion: '1.23'
 runOnRequirements:
   - minServerVersion: "4.1.10"
@@ -8,7 +8,6 @@ createEntities:
       autoEncryptOpts:
         kmsProviders:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
-        keyExpirationMS: 1
       observeEvents:
         - commandStartedEvent
   - database:
@@ -22,7 +21,11 @@ createEntities:
 initialData:
   - databaseName: default
     collectionName: default
-    documents: []
+    documents:
+      - {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+            'subType': '06'}}}
+      - {_id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+            'subType': '06'}}}
     createOptions:
       validator:
         $jsonSchema: {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname',
@@ -43,28 +46,13 @@ initialData:
               'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
           'keyAltNames': ['altname', 'another_altname']}]
 tests:
-  - description: "Insert with deterministic encryption, then find it"
+  - description: "Count with deterministic encryption"
     operations:
-      - name: insertOne
+      - name: count
         arguments:
-          document: &doc0 {_id: 1, encrypted_string: "string0"}
+          filter: {encrypted_string: "string0"}
         object: "coll"
-      - name: wait
-        object: "coll"
-        arguments:
-          ms: 50 # Wait long enough to account for coarse time resolution on Windows (CDRIVER-4526).
-      - name: find
-        arguments:
-          filter: {_id: 1}
-        object: "coll"
-        expectResult: [*doc0]
-    outcome:
-      - documents:
-          - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
-                'subType': '06'}}}
-        collectionName: &collection_name "default"
-
-        databaseName: &database_name "default"
+        expectResult: 2
     expectEvents:
       - client: "client0"
         events:
@@ -73,7 +61,8 @@ tests:
               command:
                 listCollections: 1
                 filter:
-                  name: *collection_name
+                  name: &collection_name "default"
+
               commandName: listCollections
           - commandStartedEvent:
               command:
@@ -85,21 +74,15 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                insert: *collection_name
-                documents:
-                  - *doc0_encrypted
-                ordered: true
-              commandName: insert
-          - commandStartedEvent:
-              command:
-                find: *collection_name
-                filter: {_id: 1}
-              commandName: find
-          - commandStartedEvent:
-              command:
-                find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
-                $db: keyvault
-                readConcern: {level: "majority"}
-              commandName: find
+                count: *collection_name
+                query: {encrypted_string: {$eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+                        'subType': '06'}}}}
+              commandName: count
+  - description: "Count fails when filtering on a random encrypted field"
+    operations:
+      - name: count
+        arguments:
+          filter: {random: "abc"}
+        object: "coll"
+        expectError:
+          errorContains: "Cannot query on fields encrypted with the randomized encryption"

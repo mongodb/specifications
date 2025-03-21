@@ -1,0 +1,69 @@
+description: create-and-createIndexes
+schemaVersion: '1.23'
+runOnRequirements:
+  - minServerVersion: "4.1.10"
+createEntities:
+  - client:
+      id: "client0"
+      autoEncryptOpts:
+        kmsProviders:
+          local: {'key': {'$binary': {'base64': 'Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk',
+                'subType': '00'}}}
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: "db"
+      client: "client0"
+      databaseName: default
+  - collection:
+      id: "coll"
+      database: "db"
+      collectionName: default
+initialData:
+  - databaseName: default
+    collectionName: default
+    documents: []
+tests:
+  - description: "create is OK"
+    operations:
+    # Drop to remove a collection that may exist from previous test runs.
+      - name: dropCollection
+        object: "coll"
+        arguments:
+          collection: "unencryptedCollection"
+      - name: createCollection
+        object: "coll"
+        arguments:
+          collection: "unencryptedCollection"
+          validator:
+            unencrypted_string: "foo"
+      - name: assertCollectionExists
+        object: "coll"
+        arguments:
+          database: &database_name "default"
+          collection: "unencryptedCollection"
+  - description: "createIndexes is OK"
+    operations:
+    # Drop to remove a collection that may exist from previous test runs.
+      - name: dropCollection
+        object: "coll"
+        arguments:
+          collection: "unencryptedCollection"
+      - name: createCollection
+        object: "coll"
+        arguments:
+          collection: "unencryptedCollection"
+      - name: runCommand
+        object: "coll"
+        arguments:
+          command:
+            createIndexes: "unencryptedCollection"
+            indexes:
+              - name: "name"
+                key: {name: 1}
+      - name: assertIndexExists
+        object: "coll"
+        arguments:
+          database: *database_name
+          collection: "unencryptedCollection"
+          index: name
