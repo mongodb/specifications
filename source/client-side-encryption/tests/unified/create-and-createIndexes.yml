@@ -18,52 +18,49 @@ createEntities:
   - collection:
       id: "coll"
       database: "db"
-      collectionName: default
+      collectionName: unencryptedCollection
 initialData:
   - databaseName: default
-    collectionName: default
+    collectionName: unencryptedCollection
     documents: []
 tests:
   - description: "create is OK"
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "unencryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "unencryptedCollection"
           validator:
             unencrypted_string: "foo"
       - name: assertCollectionExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: &database_name "default"
-          collection: "unencryptedCollection"
+          databaseName: &database_name "default"
+          collectionName: "unencryptedCollection"
   - description: "createIndexes is OK"
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "unencryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "unencryptedCollection"
-      - name: runCommand
+      - name: createIndex
         object: "coll"
         arguments:
-          command:
-            createIndexes: "unencryptedCollection"
-            indexes:
-              - name: "name"
-                key: {name: 1}
+          keys: { x: 1 }
+          name: "name"
       - name: assertIndexExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: *database_name
-          collection: "unencryptedCollection"
-          index: name
+          databaseName: *database_name
+          collectionName: "unencryptedCollection"
+          indexName: name
