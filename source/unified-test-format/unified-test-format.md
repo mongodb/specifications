@@ -1320,6 +1320,8 @@ The structure of this object is as follows:
 
 - `readConcern`: Optional object. See [commonOptions_readConcern](#commonOptions_readConcern).
 - `readPreference`: Optional object. See [commonOptions_readPreference](#commonOptions_readPreference).
+- `timeoutMS`: Optional integer. See
+  [Client Side Operations Timeout spec](../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms).
 - `writeConcern`: Optional object. See [commonOptions_writeConcern](#commonOptions_writeConcern).
 
 ### Common Options
