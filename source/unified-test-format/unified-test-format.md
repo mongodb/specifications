@@ -3675,7 +3675,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 - 2022-04-27: **Schema version 1.9.**
 
     Added `createOptions` field to `initialData`, introduced a new `timeoutMS` field in `collectionOrDatabaseOptions`, and
-    added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation.
+    added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation and `$$lte`
+    operator.
 
 - 2022-04-27: **Schema version 1.8.**
 
