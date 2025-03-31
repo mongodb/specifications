@@ -62,6 +62,8 @@ configuration and execute a ping command. Repeat this test using SCRAM-SHA-256.
 
 ## Changelog
 
+- 2025-03-31: Fix incorrect batchSize assertion in "A successful find event with getMore" test.
+
 - 2024-03-08: Convert legacy ADL tests to unified format. Convert test README from reStructuredText to Markdown.
 
 - 2022-10-05: Add spec front matter
